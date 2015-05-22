@@ -22,7 +22,7 @@
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
-        <shindig.wso2.version>2.5.2.wso2v1-SNAPSHOT</shindig.wso2.version>
+        <carbon.dashboards.version>1.0.0-SNAPSHOT</carbon.dashboards.version>
     </properties>
 
     <scm>
@@ -43,7 +43,7 @@
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>shindig-server</artifactId>
-                <version>${shindig.wso2.version}</version>
+                <version>${carbon.dashboards.version}</version>
                 <type>war</type>
             </dependency>
         </dependencies>

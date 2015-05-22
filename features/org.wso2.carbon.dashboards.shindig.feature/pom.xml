@@ -59,7 +59,6 @@
                                 <artifactItem>
                                     <groupId>org.wso2.carbon.dashboards</groupId>
                                     <artifactId>shindig-server</artifactId>
-                                    <version>${shindig.wso2.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${basedir}/src/main/resources/</outputDirectory>
