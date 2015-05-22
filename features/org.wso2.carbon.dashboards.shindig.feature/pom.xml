@@ -36,7 +36,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.shindig.wso2</groupId>
+            <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>shindig-server</artifactId>
             <type>war</type>
         </dependency>
@@ -57,7 +57,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.apache.shindig.wso2</groupId>
+                                    <groupId>org.wso2.carbon.dashboards</groupId>
                                     <artifactId>shindig-server</artifactId>
                                     <version>${shindig.wso2.version}</version>
                                     <type>war</type>
