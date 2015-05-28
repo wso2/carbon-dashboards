@@ -1,0 +1,19 @@
+{
+    "id": "g2",
+    "title": "G2",
+    "type": "gadget",
+    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "data": {
+        "url": "store://gadget/g2/index.xml"
+    },
+    "listen": {
+        "state-selected": {
+            "type": "address",
+            "description": "Used to filter based on state"
+        },
+        "auto-update": {
+            "type": "boolean",
+            "description": "Used to filter based on state"
+        }
+    }
+}

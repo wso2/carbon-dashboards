@@ -1,0 +1,63 @@
+<%
+var dashboardId;
+var pageId;
+var dashboard;
+var fresh;
+
+(function () {
+    var vars;
+    var dashboardId;
+    var pageId;
+    var matcher = new URIMatcher(request.getRequestURI());
+
+    if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
+        vars = matcher.elements();
+        dashboardId = vars.id;
+        pageId = vars.page;
+    }
+
+    if (!dashboardId) {
+        response.sendRedirect(tenantedUrlPrefix + 'create-dashboard');
+        return;
+    }
+
+    var dashboards;
+    var editor;
+    var method = request.getMethod();
+    var utils = require('/modules/utils.js');
+
+    if (method === 'GET') {
+        dashboards = require('/modules/dashboards.js');
+        utils.sandbox(context, function () {
+            dashboard = dashboards.findOne(dashboardId);
+        });
+
+        if (!dashboard) {
+            response.sendError(404, 'requested dashboard cannot be found');
+            return;
+        }
+
+        editor = request.getParameter('editor');
+        editor ? include('includes/designer.jag') : include('includes/renderer.jag');
+        return;
+    }
+
+    if (method === 'POST') {
+        dashboard = {
+            id: dashboardId,
+            title: request.getParameter('title'),
+            description: request.getParameter('description'),
+            permissions: {
+                viewers: [],
+                editors: ['Internal/everyone']
+            },
+            pages: []
+        };
+        fresh = true;
+        include('includes/designer.jag');
+        return;
+    }
+
+    response.sendError(400, 'bad dashboard request');
+}());
+%>

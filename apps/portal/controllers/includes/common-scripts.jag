@@ -1,0 +1,18 @@
+<%
+var log = new Log();
+var process = require('process');
+//TODO: fix carbon module and use it
+var httpPort = process.getProperty('mgt.transport.http.port');
+var httpsPort = process.getProperty('mgt.transport.https.port');
+%>
+<script>
+ues.global.userDomain = <%=JSON.stringify(userDomain)%>;
+ues.global.urlDomain = <%=JSON.stringify(urlDomain)%>;
+ues.global.tenantPrefix = <%=JSON.stringify(tenantPrefix)%>;
+
+ues.global.context = <%=JSON.stringify(request.getContextPath())%>;
+ues.global.server = {
+    httpPort: <%=JSON.stringify(httpPort)%>,
+    httpsPort: <%=JSON.stringify(httpsPort)%>
+};
+</script>

@@ -1,0 +1,20 @@
+<%
+(function () {
+    if (!user) {
+        response.sendError(401, 'unauthorized to access roles');
+        return;
+    }
+
+    var utils = require('/modules/utils.js');
+    var configs = require('/configs/designer.json');
+
+    if (!utils.allowed(user.roles, configs.designers)) {
+        response.sendError(401, 'roles access not authorized');
+        return;
+    }
+
+    var usr = require('/modules/user.js');
+    response.contentType = 'application/json';
+    print(usr.roles());
+}());
+%>

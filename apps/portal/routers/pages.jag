@@ -1,0 +1,38 @@
+<%
+var urlPrefix;
+var tenantedUrlPrefix;
+var sendLogin;
+
+(function () {
+    var log = new Log();
+    var utils = require('/modules/utils.js');
+
+    urlPrefix = utils.relativePrefix(originalURI);
+    tenantedUrlPrefix = utils.tenantedPrefix(urlPrefix, urlDomain);
+
+    sendLogin = function () {
+        var query = request.getQueryString();
+        var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
+        response.sendRedirect(urlPrefix + 'login?destination=' + dest);
+    };
+
+    var page = request.getRequestURI();
+    var controller = '/controllers';
+    if (page === '') {
+        controller += '/index.jag';
+    } else if (page === '/') {
+        controller += '/index.jag';
+    } else {
+        controller += page + '.jag';
+    }
+
+    var path = utils.findJag(controller);
+    if (!path) {
+        response.sendError(404, 'requested page cannot be found');
+        return;
+    }
+
+    include(path);
+
+}());
+%>

@@ -1,0 +1,79 @@
+<%
+(function() {
+    if (!user) {
+        sendLogin();
+        return;
+    }
+
+    var utils = require('/modules/utils.js');
+    if (userDomain !== (urlDomain || superDomain)) {
+        response.sendRedirect(utils.tenantedPrefix(urlPrefix, userDomain));
+        return;
+    }
+%>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboards</title>
+    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/nunito.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/navigation.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <!--<link rel="stylesheet" href="css/theme.css">-->
+</head>
+<body>
+<% include('includes/designer-navigation.jag'); %>
+<div id="wrapper" class="container-fluid"></div>
+<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/spin.min.js"></script>
+<script src="<%=urlPrefix%>js/ladda.min.js"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>
+<% include('includes/common-scripts.jag'); %>
+<script src="<%=urlPrefix%>js/ues-store.js"></script>
+<script src="<%=urlPrefix%>js/portal.js"></script>
+<script id="dashboards-list-hbs" type="text/x-handlebars-template">
+    <div class="row thumbnails ues-dashboards">
+        {{#if length}}
+        {{#each .}}
+        <div class="col-md-3 col-sm-4 box">
+            <div class="thumbnail ues-dashboard" data-id="{{id}}">
+                <div class="caption">
+                    <h3>{{title}}</h3>
+                    <p class="ues-description">{{description}}</p>
+                    <div class="ues-actions">
+                        {{#if editable}}
+                        <a class="btn btn-default ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">Edit</a>
+                        {{/if}}
+                        <a class="btn btn-default ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">View</a>
+                         {{#if editable}}
+                        <a class="btn btn-danger ues-delete ladda-button" data-style="expand-right" data-size="l" href="#">
+                            <span class="ladda-label">Delete</span>
+                        </a>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+        {{else}}
+            <div class="col-md-12">
+                <div class="caption">
+                    <h4>No dashboards found. Please create dashboards by visiting
+                    <a href="<%=tenantedUrlPrefix%>create-dashboard">here</a>.
+                    </h4>
+                </div>
+            </div>
+        {{/if}}
+    </div>
+</script>
+</body>
+</html>
+<% } ()); %>
