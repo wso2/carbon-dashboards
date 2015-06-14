@@ -1,7 +1,27 @@
 body {
-    padding-top: 70px;
+    padding-top: 100px;
 }
 
-.ues-dashboard .caption {
-    text-align: center;
+.ues-context-menu {
+    top: 50px;
+}
+
+#ues-portal .ues-dashboard {
+    padding: 10px;
+    position: relative;
+    height: 125px;
+}
+
+#ues-portal .ues-dashboard .ues-actions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+#ues-portal .ues-dashboard .ues-actions a {
+    padding: 0 10px;
+}
+
+#ues-portal .ues-dashboard h2 {
+    margin-top: 0;
 }

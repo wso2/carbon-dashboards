@@ -1,0 +1,203 @@
+body {
+    padding-top: 100px;
+    font-family: "Oxygen", Helvetica, Arial, sans-serif;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 22px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+h4 {
+    font-size: 18px;
+}
+
+a, a:focus {
+    outline: 0;
+}
+
+.ues-hidden {
+    display: none;
+}
+
+/**
+ * global menu styles
+ */
+.ues-global-navigation {
+    background: #11375B;
+}
+
+.ues-global-navigation .navbar-brand {
+    color: #fff;
+}
+
+.ues-global-navigation .nav li a {
+    color: #fff;
+}
+
+.ues-global-navigation .nav .active a {
+    color: #fff;
+}
+
+.ues-global-navigation .nav li a:hover {
+    color: #fff;
+    background: #132D45;
+}
+
+.ues-global-navigation .nav .active a:hover {
+    color: #fff;
+    background: #132D45;
+}
+
+.ues-global-navigation .dropdown-menu {
+    z-index: 1100;
+}
+
+/**
+ * context menu styles
+ */
+.ues-context-menu {
+    top: 50px;
+    background: #526A84;
+    border: none;
+    margin-bottom: 0;
+}
+
+.ues-context-menu .navbar-brand {
+    color: #fff;
+}
+
+.ues-context-menu .navbar-brand:hover {
+    color: #fff;
+    background: #132D45;
+}
+
+.ues-context-menu .nav li a {
+    color: #fff;
+}
+
+.ues-context-menu .nav .active a {
+    background: #262933;
+    color: #fff;
+}
+
+.ues-context-menu .nav .active a:focus {
+    background: #262933;
+    color: #fff;
+}
+
+.ues-context-menu .nav li a:focus {
+    color: #fff;
+}
+
+.ues-context-menu .nav li a:hover {
+    color: #fff;
+    background: #132D45;
+}
+
+.ues-context-menu .nav .active a:hover {
+    background: #262933;
+    color: #fff;
+}
+
+.ues-context-menu .ues-tiles-menu-toggle {
+    background: #F47415;
+}
+.ues-context-menu .ues-tiles-menu-toggle:hover {
+    background: #D56613;
+}
+
+.ues-context-menu .ues-tiles-menu-toggle.active {
+    background: #132D45;
+}
+
+.ues-context-menu .ues-context-menu-actions .ues-hidden {
+    display: none;
+}
+
+.ues-wizard-steps {
+    padding-bottom: 20px;
+    margin: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.ues-wizard-steps .ues-wizard-step .ues-step-no {
+    width: 50px;
+    height: 50px;
+    font-size: 33px;
+    font-weight: 100;
+    border-radius: 80px;
+    background: #ccc;
+    text-align: center;
+    color: #fff;
+    display: inline-block;
+}
+
+.ues-wizard-steps .ues-wizard-step.ues-active .ues-step-no {
+    background: #444;
+}
+
+.ues-wizard-steps .ues-wizard-step .ues-title {
+    display: inline-block;
+}
+
+.ues-wizard-body {
+    margin-bottom: 20px;
+}
+
+/**
+ *  typeahead styles
+ */
+.twitter-typeahead {
+    width: 100%;
+}
+
+.tt-input,
+.tt-hint {
+    width: 396px;
+    height: 34px;
+    padding: 8px 11px;
+    line-height: 34px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.tt-input {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.tt-hint {
+    color: #999
+}
+
+.tt-menu {
+    width: 422px;
+    margin-top: 12px;
+    padding: 4px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.tt-suggestion {
+    padding: 3px 11px;
+    line-height: 24px;
+}
+
+.tt-suggestion.tt-cursor {
+    color: #fff;
+    background-color: #0097cf;
+
+}
+
+.tt-suggestion p {
+    margin: 0;
+}

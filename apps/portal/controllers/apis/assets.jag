@@ -7,13 +7,12 @@
         return;
     }
 
-    var config = require('/configs/designer.json');
-
-    var storeType = config.store.type;
-    var storePath = '/extensions/stores/' + storeType + '/index.js';
-    var store = require(storePath);
-
     var id;
+    var start;
+    var count;
+    var query;
+    var utils = require('/modules/utils.js');
+    var store = utils.store();
     var assetType = request.getParameter('type');
     var method = request.getMethod();
 
@@ -21,7 +20,6 @@
 
     var assets;
 
-    var utils = require('/modules/utils.js');
     var matcher = new URIMatcher(request.getRequestURI());
     if (matcher.match('/assets/{id}')) {
         id = matcher.elements().id;
@@ -50,8 +48,11 @@
     if (matcher.match('/assets')) {
         id = matcher.elements().id;
         if (method === 'GET') {
+            start = request.getParameter('start');
+            count = request.getParameter('count');
+            query = request.getParameter('query');
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.find(assetType);
+                assets = store.find(assetType, query, start, count);
             });
             print(assets);
             return;

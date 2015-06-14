@@ -123,3 +123,10 @@ var handlers = function (name) {
         handle.apply(script, args);
     });
 };
+
+var store = function () {
+    var config = require('/configs/designer.json');
+    var storeType = config.store.type;
+    var storePath = '/extensions/stores/' + storeType + '/index.js';
+    return require(storePath);
+};

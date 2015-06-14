@@ -13,7 +13,11 @@
     };
 
     store.assets = function (type, paging, cb) {
-        $.get(assetsUrl + '?' + (domain ? 'domain=' + domain + '&' : '') + 'start=' + paging.start + '&count=' + paging.count + '&type=' + type, function (data) {
+        var query = 'type=' + type;
+        query += domain ? '&domain=' + domain : '';
+        query += paging.query ? '&query=' + paging.query : '';
+        query += '&start=' + paging.start + '&count=' + paging.count;
+        $.get(assetsUrl + '?' + query, function (data) {
             cb(false, data);
         }, 'json');
     };

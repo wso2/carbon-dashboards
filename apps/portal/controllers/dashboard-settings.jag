@@ -1,0 +1,136 @@
+<%
+var fresh = false;
+var pageId = null;
+var dashboard;
+var dashboardId;
+(function() {
+    if (!user) {
+        sendLogin();
+        return;
+    }
+
+    var utils = require('/modules/utils.js');
+    if (userDomain !== (urlDomain || superDomain)) {
+        response.sendRedirect(utils.tenantedPrefix(urlPrefix, userDomain));
+        return;
+    }
+
+    var matcher = new URIMatcher(request.getRequestURI());
+
+    if (!matcher.match('/dashboard-settings/{id}')) {
+        response.sendError(400, 'bad dashboard request');
+        return;
+    }
+
+    var vars = matcher.elements();
+    dashboardId = vars.id;
+
+    var dashboards = require('/modules/dashboards.js');
+    utils.sandbox(context, function () {
+        dashboard = dashboards.findOne(dashboardId);
+    });
+
+    if (!dashboard) {
+        response.sendError(404, 'requested dashboard cannot be found');
+        return;
+    }
+
+    if (userDomain !== (urlDomain || superDomain)) {
+        response.sendError(401, 'settings access not authorized of this tenant');
+        return;
+    }
+
+    var configs = require('/configs/designer.json');
+
+    if (!utils.allowed(user.roles, configs.designers)) {
+        response.sendError(401, 'settings access not authorized');
+        return;
+    }
+
+    var permissions = dashboard.permissions;
+    if (!utils.allowed(user.roles, permissions.editors)) {
+        response.sendError(401, 'dashboard editing not authorized');
+        return;
+    }
+%>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboards</title>
+    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/nunito.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
+    <!--<link rel="stylesheet" href="css/theme.css">-->
+</head>
+<body>
+<% include('includes/global-navigation.jag'); %>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fa fa-th"></i></a>
+        </div>
+        <div class="collapse navbar-collapse ues-context-menu-actions">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>?editor=true"><i class="fa fa-pencil-square-o"></i> Edit Dashboard</a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>
+<div id="ues-dashboard-settings" class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Dashboard Settings</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="ues-share-view" class="col-sm-2 control-label">Viewers</label>
+                    <div class="col-sm-10">
+                        <input id="ues-share-view" type="text" class="form-control typeahead" placeholder="Roles">
+                        <div class="ues-shared-view"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ues-share-edit" class="col-sm-2 control-label">Editors</label>
+                    <div class="col-sm-10">
+                        <input id="ues-share-edit" type="text" class="form-control typeahead" placeholder="Roles">
+                        <div class="ues-shared-edit"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/typeahead.bundle.min.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/spin.min.js"></script>
+<script src="<%=urlPrefix%>js/ladda.min.js"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>
+<% include('includes/common-scripts.jag'); %>
+<% include('includes/dashboard-scripts.jag'); %>
+<script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
+<script id="ues-shared-role-hbs" type="text/x-handlebars-template">
+    <button type="button" class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <i class="fa fa-times remove-button"></i></button>
+</script>
+</body>
+</html>
+<% } ()); %>

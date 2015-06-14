@@ -1,5 +1,7 @@
 $(function () {
 
+    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
+
     var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
 
     var dashboard = ues.global.dashboard;
@@ -10,16 +12,29 @@ $(function () {
 
     var editors = permissions.editors;
 
-    var saveDashboard = ues.dashboards.save;
+    var url = dashboardsApi + '/' + dashboard.id;
 
-    var sharedRoleHbs = Handlebars.compile($("#shared-role-hbs").html());
+    var saveDashboard = function () {
+        $.ajax({
+            url: url,
+            method: 'PUT',
+            data: JSON.stringify(dashboard),
+            contentType: 'application/json'
+        }).success(function (data) {
+            console.log('dashboard saved successfully');
+        }).error(function () {
+            console.log('error saving dashboard');
+        });
+    };
+
+    var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
 
     var viewer = function (el, role) {
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
         viewers.push(role);
         saveDashboard();
-        $('.ues-settings .ues-shared-view').append(sharedRoleHbs(role));
+        $('#ues-dashboard-settings').find('.ues-shared-view').append(sharedRoleHbs(role));
         el.typeahead('val', '');
     };
 
@@ -28,7 +43,7 @@ $(function () {
         var editors = permissions.editors;
         editors.push(role);
         saveDashboard();
-        $('.ues-settings .ues-shared-edit').append(sharedRoleHbs(role));
+        $('#ues-dashboard-settings').find('.ues-shared-edit').append(sharedRoleHbs(role));
         el.typeahead('val', '');
     };
 
@@ -42,7 +57,9 @@ $(function () {
             role = viewers[i];
             html += sharedRoleHbs(role);
         }
-        $('.ues-settings .ues-shared-view').append(html);
+
+        var settings = $('#ues-dashboard-settings');
+        settings.find('.ues-shared-view').append(html);
 
         html = '';
         length = editors.length;
@@ -50,7 +67,7 @@ $(function () {
             role = editors[i];
             html += sharedRoleHbs(role);
         }
-        $('.ues-settings .ues-shared-edit').append(html);
+        settings.find('.ues-shared-edit').append(html);
     };
 
     var initTypeahead = function () {
@@ -116,7 +133,7 @@ $(function () {
             editor($(this), role.name);
         });
 
-        $('#settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
+        $('#ues-dashboard-settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
             var el = $(this).closest('.ues-shared-role');
             var role = el.data('role');
             editors.splice(editors.indexOf(role), 1);

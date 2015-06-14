@@ -1,20 +1,33 @@
 $(function () {
     //TODO: cleanup this
 
+    var COMPONENTS_PAGE_SIZE = 3;
+
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
 
     var dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards';
+
+    var resolveURI = ues.dashboards.resolveURI;
+
+    var findPage = ues.dashboards.findPage;
 
     var dashboard;
 
     var page;
 
+    var activeComponent;
+
     var freshDashboard = true;
 
-    var storeCache = {};
+    var storeCache = {
+        gadget: [],
+        widget: [],
+        layout: []
+    };
 
-    var resolveURI = ues.dashboards.resolveURI;
-
+    /**
+     * Handlebars helpers
+     */
     Handlebars.registerHelper('has', function () {
         var has = function (o) {
             if (!o) {
@@ -61,22 +74,184 @@ $(function () {
         return ues.dashboards.resolveURI(path);
     });
 
-    var layoutsListHbs = Handlebars.compile($("#layouts-list-hbs").html());
+    /**
+     * Precompiling Handlebar templates
+     */
+    var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html() || '');
 
-    var layoutHbs = Handlebars.compile($("#layout-hbs").html());
+    var layoutHbs = Handlebars.compile($("#ues-layout-hbs").html());
 
-    var componentsListHbs = Handlebars.compile($("#components-list-hbs").html());
+    var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html());
 
-    var componentToolbarHbs = Handlebars.compile($("#component-toolbar-hbs").html());
+    var noComponentsHbs = Handlebars.compile($("#ues-no-components-hbs").html());
 
-    var pageOptionsHbs = Handlebars.compile($("#page-options-hbs").html());
+    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
 
-    var componentPropertiesHbs = Handlebars.compile($("#component-properties-hbs").html());
+    var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html());
 
+    var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html() || '');
+
+    var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
+
+    /**
+     * generates a random id
+     * @returns {string}
+     */
     var randomId = function () {
         return Math.random().toString(36).slice(2);
     };
 
+    /**
+     * switches workspaces in the designer
+     * @param name
+     */
+    var showWorkspace = function (name) {
+        $('.ues-workspace').hide();
+        $('#ues-workspace-' + name).show();
+    };
+
+    /**
+     * show the store of a given type
+     * @param type
+     */
+    var showStore = function (type) {
+        var store = $('#ues-store').removeClass('ues-hidden');
+        store.find('.ues-store-assets').addClass('ues-hidden');
+        store.find('#ues-store-' + type).removeClass('ues-hidden');
+
+        var designer = $('#ues-designer');
+        if (designer.hasClass('ues-storeprop-visible') || designer.hasClass('ues-store-visible')) {
+            return;
+        }
+        if (designer.hasClass('ues-properties-visible')) {
+            designer.removeClass('ues-properties-visible').addClass('ues-storeprop-visible');
+            return;
+        }
+        designer.addClass('ues-store-visible');
+    };
+
+    /**
+     * hide the store
+     */
+    var hideStore = function () {
+        $('#ues-store').addClass('ues-hidden');
+
+        var designer = $('#ues-designer');
+        if (designer.hasClass('ues-storeprop-visible')) {
+            designer.removeClass('ues-storeprop-visible').addClass('ues-properties-visible');
+            return;
+        }
+        designer.removeClass('ues-store-visible');
+
+    };
+
+    /**
+     * check whether store is visible
+     * @returns {boolean}
+     */
+    var storeVisible = function () {
+        return !$('#ues-store').hasClass('ues-hidden');
+    };
+
+    /**
+     * shows properties panel
+     */
+    var showProperties = function () {
+        $('#ues-properties').removeClass('ues-hidden');
+        var designer = $('#ues-designer');
+        if (designer.hasClass('ues-storeprop-visible') || designer.hasClass('ues-properties-visible')) {
+            return;
+        }
+        if (designer.hasClass('ues-store-visible')) {
+            designer.removeClass('ues-store-visible').addClass('ues-storeprop-visible');
+            return;
+        }
+        designer.addClass('ues-properties-visible');
+    };
+
+    /**
+     * hides properties panel
+     */
+    var hideProperties = function () {
+        $('#ues-properties').addClass('ues-hidden');
+        var designer = $('#ues-designer');
+        if (designer.hasClass('ues-storeprop-visible')) {
+            designer.removeClass('ues-storeprop-visible').addClass('ues-store-visible');
+            return;
+        }
+        designer.removeClass('ues-properties-visible');
+
+        var menu = $('.ues-context-menu');
+        menu.find('.ues-component-properties-toggle').parent().removeClass('active');
+        menu.find('.ues-page-properties-toggle').parent().removeClass('active');
+    };
+
+    /**
+     * removes properties panel
+     */
+    var removeProperties = function () {
+        $('#ues-properties').empty();
+    };
+
+    /**
+     * checks whether properties panel is visible
+     * @returns {boolean}
+     */
+    var propertiesVisible = function () {
+        return !$('#ues-properties').hasClass('ues-hidden');
+    };
+
+    /**
+     * update component properties panel and save
+     * @param sandbox
+     */
+    var updateComponentProperties = function (sandbox) {
+        var notifiers = {};
+        var options = {};
+        var settings = {};
+        var styles = {};
+        var id = sandbox.data('component');
+
+        saveOptions(sandbox, options);
+        saveSettings(sandbox, settings);
+        saveStyles(sandbox, styles);
+        saveNotifiers(sandbox, notifiers);
+
+        saveComponentProperties(id, {
+            options: options,
+            settings: settings,
+            styles: styles,
+            notifiers: notifiers
+        });
+    };
+
+    /**
+     * renders the component properties panel
+     * @param component
+     */
+    var renderComponentProperties = function (component) {
+        activeComponent = component;
+        var ctx = buildPropertiesContext(component, page);
+        var el = $('#ues-properties').find('.ues-content').html(componentPropertiesHbs(ctx))
+            .find('.ues-sandbox').on('change', 'input, select, textarea', function () {
+                updateComponentProperties($(this).closest('.ues-sandbox'));
+            });
+        $('[data-toggle="tooltip"]', el).tooltip();
+        var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
+            .find('.ues-context-menu-actions')
+            .find('.ues-component-properties-toggle');
+        var parent = toggle.parent();
+        parent.siblings().removeClass('active');
+        parent.addClass('active').show();
+        showProperties();
+    };
+
+    /**
+     * find an asset of the given type from the store cache
+     * @param type
+     * @param id
+     * @returns {*}
+     */
     var findStoreCache = function (type, id) {
         var i;
         var item;
@@ -90,6 +265,11 @@ $(function () {
         }
     };
 
+    /**
+     * find a given component in the current page
+     * @param id
+     * @returns {*}
+     */
     var findComponent = function (id) {
         var i;
         var length;
@@ -111,6 +291,11 @@ $(function () {
         }
     };
 
+    /**
+     * save component properties
+     * @param id
+     * @param data
+     */
     var saveComponentProperties = function (id, data) {
         var o;
         var opt;
@@ -150,6 +335,11 @@ $(function () {
         saveDashboard();
     };
 
+    /**
+     * removes and destroys the given component from the page
+     * @param component
+     * @param done
+     */
     var removeComponent = function (component, done) {
         destroyComponent(component, function (err) {
             if (err) {
@@ -163,16 +353,22 @@ $(function () {
             area.splice(index, 1);
             container.remove();
 
-            var el = $('#middle').find('.ues-designer .ues-properties');
-            var oid = el.find('.ues-sandbox').data('id');
-            if (oid !== component.id) {
+            var properties = $('#ues-properties');
+            var compId = properties.find('.ues-sandbox').data('component');
+            if (compId !== component.id) {
                 return done();
             }
-            el.empty();
+            properties.empty();
+            hideProperties();
             done();
         });
     };
 
+    /**
+     * destroys the given component
+     * @param component
+     * @param done
+     */
     var destroyComponent = function (component, done) {
         ues.components.destroy(component, function (err) {
             if (err) {
@@ -182,6 +378,11 @@ $(function () {
         });
     };
 
+    /**
+     * destroys a given list of components of an area
+     * @param components
+     * @param done
+     */
     var destroyArea = function (components, done) {
         var i;
         var length = components.length;
@@ -200,6 +401,11 @@ $(function () {
         });
     };
 
+    /**
+     * destroys all areas in a given page
+     * @param page
+     * @param done
+     */
     var destroyPage = function (page, done) {
         var area;
         var content = page.content;
@@ -216,26 +422,49 @@ $(function () {
             }
         }
         async.parallel(tasks, function (err, results) {
-            $('#middle').find('.ues-designer .ues-layout').empty();
+            $('#ues-designer').empty();
+            if (!done) {
+                return;
+            }
             done(err);
         });
     };
 
-    var removePage = function (page, done) {
+    /**
+     * remove and destroys a given page
+     * @param pid
+     * @param done
+     */
+    var removePage = function (pid, done) {
+        var p = findPage(dashboard, pid);
         var pages = dashboard.pages;
-        var index = pages.indexOf(page);
+        var index = pages.indexOf(p);
         pages.splice(index, 1);
-        destroyPage(page, done);
+        saveDashboard();
+        if (page.id !== pid) {
+            return done(false);
+        }
+        destroyPage(p, done);
     };
 
+    /**
+     * pops up the preview dashboard page
+     * @param page
+     */
     var previewDashboard = function (page) {
         window.open(dashboardsUrl + '/' + dashboard.id + '/' + page.id, '_blank');
     };
 
-    var exportDashboard = function (page) {
+    /**
+     * pops up the export dashboard page
+     */
+    var exportDashboard = function () {
         window.open(dashboardsApi + '/' + dashboard.id, '_blank');
     };
 
+    /**
+     * saves the dashboard content
+     */
     var saveDashboard = function () {
         var method;
         var url;
@@ -259,8 +488,11 @@ $(function () {
         });
     };
 
+    /**
+     * initializes the component toolbar
+     */
     var initComponentToolbar = function () {
-        var designer = $('#middle').find('.ues-designer');
+        var designer = $('#ues-designer');
         designer.on('click', '.ues-component .ues-toolbar .ues-properties-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
@@ -291,11 +523,19 @@ $(function () {
         });
     };
 
+    /**
+     * renders the component toolbar of a given component
+     * @param component
+     */
     var renderComponentToolbar = function (component) {
         var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
         $('[data-toggle="tooltip"]', el).tooltip();
     };
 
+    /**
+     * updates the styles of a given store asset
+     * @param asset
+     */
     var updateStyles = function (asset) {
         var styles = asset.styles || (asset.styles = {
                 title: true,
@@ -306,6 +546,11 @@ $(function () {
         }
     };
 
+    /**
+     * creates a component in the given container
+     * @param container
+     * @param asset
+     */
     var createComponent = function (container, asset) {
         var id = randomId();
         //TODO: remove hardcoded gadget
@@ -328,6 +573,11 @@ $(function () {
         });
     };
 
+    /**
+     * move given component into the given container
+     * @param container
+     * @param id
+     */
     var moveComponent = function (container, id) {
         var component = findComponent(id);
         var area = container.attr('id');
@@ -349,6 +599,10 @@ $(function () {
         });
     };
 
+    /**
+     * triggers update hook of a given component
+     * @param id
+     */
     var updateComponent = function (id) {
         ues.components.update(findComponent(id), function (err) {
             if (err) {
@@ -357,6 +611,12 @@ $(function () {
         });
     };
 
+    /**
+     * builds up the component notifiers
+     * @param notifiers
+     * @param current
+     * @param component
+     */
     var componentNotifiers = function (notifiers, current, component) {
         if (current.id === component.id) {
             return;
@@ -383,6 +643,12 @@ $(function () {
         }
     };
 
+    /**
+     * builds up the area notifiers
+     * @param notifiers
+     * @param component
+     * @param components
+     */
     var areaNotifiers = function (notifiers, component, components) {
         var i;
         var length = components.length;
@@ -391,6 +657,12 @@ $(function () {
         }
     };
 
+    /**
+     * builds up the page notifiers
+     * @param component
+     * @param page
+     * @returns {{}}
+     */
     var pageNotifiers = function (component, page) {
         var area;
         var notifiers = {};
@@ -403,6 +675,12 @@ $(function () {
         return notifiers;
     };
 
+    /**
+     * find matching notifiers for a given component
+     * @param component
+     * @param page
+     * @returns {Array}
+     */
     var findNotifiers = function (component, page) {
         var event, listener, notifiers;
         var listeners = [];
@@ -427,6 +705,13 @@ $(function () {
         return listeners;
     };
 
+    /**
+     * find the wired notifier
+     * @param from
+     * @param event
+     * @param notifiers
+     * @returns {*}
+     */
     var wiredNotifier = function (from, event, notifiers) {
         var i, notifier;
         var length = notifiers.length;
@@ -438,6 +723,11 @@ $(function () {
         }
     };
 
+    /**
+     * wire an event
+     * @param on
+     * @param notifiers
+     */
     var wireEvent = function (on, notifiers) {
         var i, notifier;
         var length = on.length;
@@ -451,6 +741,12 @@ $(function () {
         }
     };
 
+    /**
+     * get all notifiers of a given event
+     * @param event
+     * @param notifiers
+     * @returns {notifiers|*}
+     */
     var eventNotifiers = function (event, notifiers) {
         var i, events;
         var length = notifiers.length;
@@ -462,6 +758,12 @@ $(function () {
         }
     };
 
+    /**
+     * wire events of a given component
+     * @param component
+     * @param notifiers
+     * @returns {*}
+     */
     var wireEvents = function (component, notifiers) {
         var listen = component.content.listen;
         if (!listen) {
@@ -480,6 +782,12 @@ $(function () {
         return notifiers;
     };
 
+    /**
+     * build the hbs context for component properties panel
+     * @param component
+     * @param page
+     * @returns {{id: (*|component.id), title: *, options: *, styles: (styles|*|buildPropertiesContext.styles), settings: *, listeners: *}}
+     */
     var buildPropertiesContext = function (component, page) {
         var notifiers = findNotifiers(component, page);
         var content = component.content;
@@ -493,33 +801,50 @@ $(function () {
         };
     };
 
-    var updatePageOptions = function (sandbox) {
+    /**
+     * update page options
+     * @param sandbox
+     */
+    var updatePageProperties = function (sandbox) {
         var id = $('.id', sandbox).val();
         var title = $('.title', sandbox).val();
         var landing = $('.landing', sandbox);
-        var link = $('#middle').find('.ues-designer').children('.ues-toolbar')
-            .find('.ues-pages a[data-id="' + page.id + '"]');
-
-        link.data('id', id);
-        link.text(title);
         page.id = id;
         page.title = title;
         if (landing.is(':checked')) {
             dashboard.landing = id;
         }
-
+        $('#ues-designer').find('.ues-page-title').text(title);
+        $('#ues-properties').find('.ues-page-title').text(title);
+        updatePagesList();
         saveDashboard();
     };
 
-    var renderPageOptions = function (page) {
-        $('#middle').find('.ues-designer .ues-properties').html(pageOptionsHbs({
+    /**
+     * renders page options
+     * @param page
+     */
+    var renderPageProperties = function (page) {
+        $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
             id: page.id,
             title: page.title
         })).find('.ues-sandbox').on('change', 'input', function () {
-            updatePageOptions($(this).closest('.ues-sandbox'));
+            updatePageProperties($(this).closest('.ues-sandbox'));
         });
+        var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
+            .find('.ues-context-menu-actions')
+            .find('.ues-page-properties-toggle');
+        var parent = toggle.parent();
+        parent.siblings().removeClass('active');
+        parent.addClass('active');
+        showProperties();
     };
 
+    /**
+     * saves page options of the component
+     * @param sandbox
+     * @param options
+     */
     var saveOptions = function (sandbox, options) {
         $('.ues-options input', sandbox).each(function () {
             var el = $(this);
@@ -531,6 +856,11 @@ $(function () {
         });
     };
 
+    /**
+     * save settings of the component
+     * @param sandbox
+     * @param settings
+     */
     var saveSettings = function (sandbox, settings) {
         $('.ues-settings input', sandbox).each(function () {
             var el = $(this);
@@ -546,6 +876,11 @@ $(function () {
         });
     };
 
+    /**
+     * save styles of the component
+     * @param sandbox
+     * @param styles
+     */
     var saveStyles = function (sandbox, styles) {
         $('.ues-styles input', sandbox).each(function () {
             var el = $(this);
@@ -563,6 +898,11 @@ $(function () {
         styles.titlePosition = $('.ues-styles .ues-title-position', sandbox).val();
     };
 
+    /**
+     * save notifiers of the component
+     * @param sandbox
+     * @param notifiers
+     */
     var saveNotifiers = function (sandbox, notifiers) {
         $('.ues-notifiers .notifier', sandbox).each(function () {
             var el = $(this);
@@ -580,194 +920,339 @@ $(function () {
         });
     };
 
-    var updateComponentProperties = function (sandbox) {
-        var notifiers = {};
-        var options = {};
-        var settings = {};
-        var styles = {};
-        var id = sandbox.data('id');
+    /**
+     * holds the store paging history for infinite scroll
+     * @type {{}}
+     */
+    var pagingHistory = {};
 
-        saveOptions(sandbox, options);
-        saveSettings(sandbox, settings);
-        saveStyles(sandbox, styles);
-        saveNotifiers(sandbox, notifiers);
-
-        saveComponentProperties(id, {
-            options: options,
-            settings: settings,
-            styles: styles,
-            notifiers: notifiers
-        });
-    };
-
-    var renderComponentProperties = function (component) {
-        var ctx = buildPropertiesContext(component, page);
-        var el = $('#middle').find('.ues-designer .ues-properties').html(componentPropertiesHbs(ctx))
-            .find('.ues-sandbox').on('change', 'input, select, textarea', function () {
-                updateComponentProperties($(this).closest('.ues-sandbox'));
+    /**
+     * loads given type of assets matching the query
+     * @param type
+     * @param query
+     */
+    var loadAssets = function (type, query) {
+        var paging = pagingHistory[type] || (pagingHistory[type] = {
+                start: 0,
+                count: COMPONENTS_PAGE_SIZE
             });
-        $('[data-toggle="tooltip"]', el).tooltip();
-    };
-
-    var loadAssets = function (type, start, count) {
-        ues.store.assets(type, {
-            start: start,
-            count: count
-        }, function (err, data) {
-            storeCache.gadget = data;
-            $('#middle').find('.ues-components .ues-content').html(componentsListHbs(data));
+        var buildPaging = function (paging, query) {
+            if (paging.query === query) {
+                return;
+            }
+            paging.end = false;
+            paging.query = query;
+            paging.start = 0;
+            paging.count = COMPONENTS_PAGE_SIZE;
+        };
+        buildPaging(paging, query);
+        if (paging.loading) {
+            return;
+        }
+        if (paging.end) {
+            return;
+        }
+        paging.loading = true;
+        ues.store.assets(type, paging, function (err, data) {
+            paging.loading = false;
+            if (err) {
+                console.log(err);
+                return;
+            }
+            var assets = $('#ues-store-' + type).find('.ues-thumbnails');
+            var fresh = !paging.start;
+            var assetz = storeCache[type];
+            storeCache[type] = assetz.concat(data);
+            paging.start += COMPONENTS_PAGE_SIZE;
+            paging.end = !data.length;
+            if (!fresh) {
+                assets.append(componentsListHbs({
+                    type: type,
+                    assets: data
+                }));
+                return;
+            }
+            if (data.length) {
+                assets.html(componentsListHbs({
+                    type: type,
+                    assets: data
+                }));
+                return;
+            }
+            assets.html(noComponentsHbs());
         });
     };
 
+    /**
+     * initializes the components
+     */
     var initComponents = function () {
-        $('.ues-components').on('mouseenter', '.thumbnail .ues-drag-handle', function () {
+        $('#ues-store').on('mouseenter', '.ues-thumbnail', function () {
             $(this).draggable({
                 cancel: false,
                 appendTo: 'body',
                 helper: 'clone',
                 start: function (event, ui) {
-                    console.log('dragging');
-                    $('#left').find('a[href="#designer"]').tab('show');
+                    ui.helper.addClass('ues-store-thumbnail');
                 },
-                stop: function () {
-                    //$('#left a[href="#components"]').tab('show');
+                stop: function (event, ui) {
+                    ui.helper.removeClass('ues-store-thumbnail');
                 }
             });
-        }).on('mouseleave', '.thumbnail .ues-drag-handle', function () {
+        }).on('mouseleave', '.ues-thumbnail', function () {
             $(this).draggable('destroy');
         });
     };
 
-    var initLeftMenu = function () {
-        $('#left')
-            .find('.nav-tabs a')
-            .click(function (e) {
-                e.preventDefault();
-                var el = $(this);
-                el.tab('show');
+    /**
+     * initializes the designer
+     */
+    var initDesigner = function () {
+        $('#ues-store-menu-actions').find('.ues-store-toggle').click(function () {
+            var thiz = $(this);
+            var parent = thiz.parent();
+            var type = thiz.data('type');
+            parent.siblings().addBack().removeClass('active');
+
+            var store = $('#ues-store');
+            var assets = $('#ues-store-' + type);
+            if (store.hasClass('ues-hidden') || assets.hasClass('ues-hidden')) {
+                parent.addClass('active');
+                showStore(type);
+                return;
+            }
+            hideStore();
+        });
+    };
+
+    var loadLayouts = function () {
+        ues.store.assets('layout', {
+            start: 0,
+            count: 20
+        }, function (err, data) {
+            storeCache.layout = data;
+            var workspace = $('#ues-workspace-layout').find('.ues-content').html(layoutsListHbs(data));
+        });
+    };
+
+    var initLayoutWorkspace = function () {
+        $('#ues-workspace-layout').find('.ues-content').on('click', '.thumbnail .ues-add', function () {
+            createPage(pageOptions(), $(this).data('id'), function (err) {
+                showWorkspace('designer');
             });
+        });
+        loadLayouts();
     };
 
-    var initComponentsStore = function () {
-        var toolbar = $('#middle').find('.ues-components .ues-toolbar');
-        $('.ues-gadgets', toolbar).on('click', function () {
-            var el = $(this);
-            el.siblings().removeClass('active');
-            el.addClass('active');
-            loadAssets('gadget', 0, 20);
-        });
-        $('.ues-widgets', toolbar).on('click', function () {
-            var el = $(this);
-            el.siblings().removeClass('active');
-            el.addClass('active');
-            loadAssets('widget', 0, 20);
-        });
-        loadAssets('gadget', 0, 20);
+    /**
+     * initializes the store
+     */
+    var initStore = function () {
+        loadAssets('gadget');
+        loadAssets('widget');
+        $('#ues-store').find('.ues-store-assets').scroll(function () {
+            var thiz = $(this);
+            var type = thiz.data('type');
+            var child = $('.ues-content', thiz);
+            if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
+                return;
+            }
+            var query = $('.ues-search-box input', thiz).val();
+            loadAssets(type, query);
+        }).find('.ues-search-box input').on('keypress', function (e) {
+            if (e.which !== 13) {
+                return;
+            }
+            e.preventDefault();
+            var thiz = $(this);
+            var query = thiz.val();
+            var type = thiz.closest('.ues-store-assets').data('type');
+            loadAssets(type, query);
+        })
     };
 
+    var toggleProperties = function () {
+
+    };
+
+    var initDesignerMenu = function () {
+        var menu = $('#ues-workspace-designer').find('.ues-context-menu');
+
+        menu.find('.ues-page-add').on('click', function () {
+            layoutWorkspace();
+        });
+        menu.find('.ues-dashboard-preview').on('click', function () {
+            previewDashboard(page);
+        });
+        menu.find('.ues-dashboard-export').on('click', function () {
+            exportDashboard();
+        });
+
+        menu.find('.ues-tiles-menu-toggle').click(function () {
+            $('#ues-tiles-menu').slideToggle();
+        });
+
+        var actions = menu.find('.ues-context-menu-actions');
+
+        actions.find('.ues-component-properties-toggle').click(function () {
+            var thiz = $(this);
+            var parent = thiz.parent();
+            if (parent.hasClass('active')) {
+                //parent.removeClass('active');
+                hideProperties();
+                return;
+            }
+            renderComponentProperties(activeComponent);
+        });
+
+        actions.find('.ues-page-properties-toggle').click(function () {
+            var thiz = $(this);
+            var parent = thiz.parent();
+            if (parent.hasClass('active')) {
+                //parent.removeClass('active');
+                hideProperties();
+                return;
+            }
+            renderPageProperties(page);
+        });
+
+        actions.find('.ues-pages-list').on('click', 'li a', function () {
+            var thiz = $(this);
+            var pid = thiz.data('id');
+            switchPage(pid);
+        });
+
+        actions.find('.ues-pages-list').on('click', 'li a .ues-trash', function (e) {
+            e.stopPropagation();
+            var thiz = $(this);
+            var pid = thiz.parent().data('id');
+            removePage(pid, function (err) {
+                var pages = dashboard.pages;
+                updatePagesList(pages);
+                if (!pages.length) {
+                    dashboard.landing = null;
+                    hideProperties();
+                    initFirstPage();
+                    return;
+                }
+                var first = pages[0];
+                if (pid === dashboard.landing) {
+                    dashboard.landing = first.id;
+                }
+                if (pid !== page.id) {
+                    return;
+                }
+                hideProperties();
+                renderPage(first.id);
+            });
+        });
+    };
+
+    var initLayoutMenu = function () {
+        var menu = $('#ues-workspace-layout').find('.ues-context-menu');
+        menu.find('.ues-go-back').on('click', function () {
+            showWorkspace('designer');
+        });
+    };
+
+    var initContextMenus = function () {
+        initDesignerMenu();
+        initLayoutMenu();
+    };
+
+    /**
+     * initializes the UI
+     */
     var initUI = function () {
-        initLeftMenu();
+        initContextMenus();
+        initLayoutWorkspace();
+        initDesigner();
+        initStore();
         initComponentToolbar();
-        initComponentsStore();
         initComponents();
     };
 
+    /**
+     * initializes the layout listeners
+     */
     var listenLayout = function () {
-        $('#middle').find('.ues-designer')
-            .children('.ues-toolbar')
-            .find('.ues-page').on('click', function () {
-                destroyPage(page, function (err) {
-                    if (err) {
-                        return console.error(err);
-                    }
-                    initPage();
-                });
-            }).end()
-            .find('.ues-preview').on('click', function () {
-                previewDashboard(page);
-            }).end()
-            .find('.ues-export').on('click', function () {
-                exportDashboard(page);
-            }).end()
-            .find('.ues-settings').on('click', function () {
-                renderPageOptions(page);
-            }).end()
-            .find('.ues-remove').on('click', function () {
-                removePage(page, function (err) {
-                    if (err) {
-                        return console.error(err);
-                    }
-                    var landing = dashboard.landing;
-                    if (landing !== page.id) {
-                        return renderPage(landing);
-                    }
-                    var pages = dashboard.pages;
-                    var p = pages[0];
-                    if (p) {
-                        landing = (dashboard.landing = p.id);
-                        return renderPage(landing);
-                    }
-                    dashboard.landing = null;
-                    initPage('landing');
-                });
-            }).end()
-            .find('.ues-pages').on('click', 'a', function () {
-                var next = $(this).data('id');
-                switchPage(next);
-            }).end()
-            .end()
-            .find('.ues-component-box').droppable({
-                //activeClass: 'ui-state-default',
-                hoverClass: 'ui-state-hover',
-                //accept: ':not(.ui-sortable-helper)',
-                drop: function (event, ui) {
-                    //$(this).find('.placeholder').remove();
-                    var id = ui.helper.data('id');
-                    var action = ui.helper.data('action');
-                    var el = $(this);
-                    switch (action) {
-                        case 'move':
-                            moveComponent(el, id);
-                            break;
-                        default:
-                            createComponent(el, findStoreCache('gadget', id));
-                    }
+        $('#ues-designer').find('.ues-component-box').droppable({
+            //activeClass: 'ui-state-default',
+            hoverClass: 'ui-state-hover',
+            //accept: ':not(.ui-sortable-helper)',
+            drop: function (event, ui) {
+                //$(this).find('.placeholder').remove();
+                var id = ui.helper.data('id');
+                var action = ui.helper.data('action');
+                var type = ui.helper.data('type');
+                var el = $(this);
+                switch (action) {
+                    case 'move':
+                        moveComponent(el, id);
+                        break;
+                    default:
+                        createComponent(el, findStoreCache(type, id));
                 }
-            });
+            }
+        });
     };
 
+    /**
+     * get the container for layouts
+     * @returns {*|jQuery}
+     */
     var layoutContainer = function () {
-        return $('#middle').find('.ues-designer').html(layoutHbs({
+        return $('#ues-designer').html(layoutHbs({
             pages: dashboard.pages,
             current: page
         })).find('.ues-layout');
     };
 
-    var createPage = function (options, lid) {
+    var updatePagesList = function () {
+        $('#ues-workspace-designer').find('.ues-context-menu .ues-pages-list').html(pagesListHbs({
+            current: page,
+            pages: dashboard.pages
+        }));
+    };
+
+    /**
+     * creates a page with the given options
+     * @param options
+     * @param lid
+     * @param done
+     */
+    var createPage = function (options, lid, done) {
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
-            var id = options.id;
             layout.content = data;
-            currentPage({
+            var id = options.id;
+            var page = {
                 id: id,
                 title: options.title,
                 layout: layout,
                 content: {}
-            });
+            };
             dashboard.landing = dashboard.landing || id;
             dashboard.pages.push(page);
             saveDashboard();
-            var container = layoutContainer();
-            ues.dashboards.render(container, dashboard, id, function () {
-                listenLayout();
-            });
+            hideProperties();
+            renderPage(id, done);
         }, 'html');
     };
 
+    /**
+     * returns the current page
+     * @param p
+     * @returns {*}
+     */
     var currentPage = function (p) {
         return page = (ues.global.page = p);
     };
 
+    /**
+     * switches the given page
+     * @param pid
+     */
     var switchPage = function (pid) {
         if (!page) {
             return renderPage(pid);
@@ -780,72 +1265,105 @@ $(function () {
         });
     };
 
-    var renderPage = function (pid) {
-        currentPage(ues.dashboards.findPage(dashboard, pid));
+    /**
+     * renders the given page
+     * @param pid
+     * @param done
+     */
+    var renderPage = function (pid, done) {
+        currentPage(findPage(dashboard, pid));
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
+        if (propertiesVisible()) {
+            renderPageProperties(page);
+        }
+        $('.ues-context-menu .ues-component-properties-toggle').parent().hide();
         var container = layoutContainer();
-        ues.dashboards.render(container, dashboard, pid, function () {
-            $('#middle').find('.ues-designer .ues-component').each(function () {
+        ues.dashboards.render(container, dashboard, pid, function (err) {
+            $('#ues-designer').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
+            if (!done) {
+                return;
+            }
+            done(err);
         });
+        updatePagesList();
     };
 
+    /**
+     * build up the page options for the given type of page
+     * @param type
+     * @returns {{id: string, title: string}}
+     */
     var pageOptions = function (type) {
-        switch (type) {
-            case 'landing':
-                return {
-                    id: 'landing',
-                    title: 'My Dashboard'
-                };
-            case 'login':
-                return {
-                    id: 'login',
-                    title: 'Login'
-                };
-            default:
-                var i;
-                var pid = 0;
-                var prefix = 'page';
-                var titlePrefix = 'Page ';
-                var page = prefix + pid;
-                var pages = dashboard.pages;
-                var length = pages.length;
-                for (i = 0; i < length; i++) {
-                    if (pages[i].id === page) {
-                        pid++;
-                        page = prefix + pid;
-                    }
-                }
-                return {
-                    id: page,
-                    title: titlePrefix + pid
-                };
+        var pages = dashboard.pages;
+        if (type === 'landing' || !pages.length) {
+            return {
+                id: 'landing',
+                title: 'Welcome'
+            };
         }
+        if (type === 'login') {
+            return {
+                id: 'login',
+                title: 'Login'
+            };
+        }
+        var i;
+        var pid = 0;
+        var prefix = 'page';
+        var titlePrefix = 'Page ';
+        var page = prefix + pid;
+        var length = pages.length;
+        for (i = 0; i < length; i++) {
+            if (pages[i].id === page) {
+                pid++;
+                page = prefix + pid;
+            }
+        }
+        return {
+            id: page,
+            title: titlePrefix + pid
+        };
     };
 
-    var initPage = function (type) {
-        ues.store.assets('layout', {
-            start: 0,
-            count: 20
-        }, function (err, data) {
-            storeCache.layout = data;
-            $('#middle')
-                .find('.ues-designer .ues-content').html(layoutsListHbs(data))
-                .on('click', '.thumbnails .ues-add', function () {
-                    createPage(pageOptions(type), $(this).data('id'));
-                });
-        });
+    var layoutWorkspace = function () {
+        var firstPage = !dashboard.pages.length;
+        var back = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-go-back');
+        firstPage ? back.hide() : back.show();
+        showWorkspace('layout');
     };
 
+    /**
+     * initializes the given type of page
+     */
+    var initFirstPage = function () {
+        layoutWorkspace();
+    };
+
+    /**
+     * initializes the dashboard
+     * @param db
+     * @param page
+     * @param fresh
+     */
     var initDashboard = function (db, page, fresh) {
         freshDashboard = fresh;
         dashboard = (ues.global.dashboard = db);
-        fresh ? initPage('landing') : renderPage(page || db.landing);
+        if (fresh) {
+            initFirstPage();
+            return;
+        }
+        var pages = dashboard.pages;
+        if (!pages.length) {
+            initFirstPage();
+            return;
+        }
+        renderPage(page || db.landing || pages[0].id);
     };
 
     initUI();

@@ -113,15 +113,31 @@ var findOne, find, create, update, remove;
         var parent = new File(assetsDir(ctx, type));
         var assetz = parent.listFiles();
         var assets = [];
-        assetz.forEach(function (asset) {
-            if (!asset.isDirectory()) {
+        query = query ? new RegExp(query, 'i') : null;
+        assetz.forEach(function (file) {
+            if (!file.isDirectory()) {
                 return;
             }
-            asset = new File(asset.getPath() + '/' + type + '.json');
-            asset.open('r');
-            assets.push(JSON.parse(asset.readAll()));
-            asset.close();
+            file = new File(file.getPath() + '/' + type + '.json');
+            file.open('r');
+            var asset = JSON.parse(file.readAll());
+            if (!query) {
+                assets.push(asset);
+                file.close();
+                return;
+            }
+            var title = asset.title || '';
+            var description = asset.description || '';
+            if (!query.test(title) && !query.test(description)) {
+                file.close();
+                return;
+            }
+            assets.push(asset);
+            file.close();
         });
+        var end = start + count;
+        end = end > assets.length ? assets.length : end;
+        assets = assets.slice(start, end);
         return assets;
     };
 

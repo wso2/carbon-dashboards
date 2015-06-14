@@ -10,23 +10,23 @@ $(function () {
         if (overridden) {
             return;
         }
-        var title = $('#dashboard-title').val();
-        $('#dashboard-id').val(generateUrl(title));
+        var title = $('#ues-dashboard-title').val();
+        $('#ues-dashboard-id').val(generateUrl(title));
     };
 
-    $('#dashboard-title').on('keyup', function () {
+    $('#ues-dashboard-title').on('keyup', function () {
         updateUrl();
     }).on('change', function () {
         updateUrl();
     });
 
-    $('#dashboard-id').on('keyup', function () {
+    $('#ues-dashboard-id').on('keyup', function () {
         overridden = overridden || true;
     });
 
-    $('#dashboard-create').on('click', function () {
-        var form = $('#dashboard-form');
+    $('#ues-dashboard-create').on('click', function () {
+        var form = $('#ues-dashboard-form');
         var action = form.attr('action');
-        form.attr('action', action + '/' + $('#dashboard-id').val());
+        form.attr('action', action + '/' + $('#ues-dashboard-id').val());
     });
 });

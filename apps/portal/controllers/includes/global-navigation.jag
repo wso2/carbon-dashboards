@@ -2,24 +2,22 @@
 var query = request.getQueryString();
 var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
 %>
-<div id="navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+<nav id="ues-global-navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button data-target=".horizontal-bar" data-toggle="collapse" class="navbar-toggle" type="button">
+            <button data-target=".ues-global-navigation-bar" data-toggle="collapse" class="navbar-toggle" type="button">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<%=tenantedUrlPrefix%>./" class="navbar-brand">Dashboards</a>
+            <a href="<%=tenantedUrlPrefix%>./" class="navbar-brand">
+                <img src="<%=urlPrefix%>images/logo.png"/> Dashboard Designer
+            </a>
         </div>
-        <div class="collapse navbar-collapse horizontal-bar">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./">Home</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right ues-global-navigation-bar">
                 <% if (user) { %>
-                <li><a href="<%=tenantedUrlPrefix%>create-dashboard"><i class="fa fa-plus"></i> Dashboard</a></li>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         <%=user.username%> <span class="caret"></span>
@@ -36,4 +34,4 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
         </div>
         <!--/.nav-collapse -->
     </div>
-</div>
+</nav>
