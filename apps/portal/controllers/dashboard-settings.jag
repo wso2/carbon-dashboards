@@ -85,7 +85,8 @@ var dashboardId;
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
-                <li><a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>?editor=true"><i class="fa fa-pencil-square-o"></i> Edit Dashboard</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-arrow-left"></i> Go Back</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>?editor=true"><i class="fa fa-pencil-square-o"></i> Design Dashboard</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->

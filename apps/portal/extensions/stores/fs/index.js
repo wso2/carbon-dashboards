@@ -53,8 +53,8 @@ var findOne, find, create, update, remove;
         var userRoles = um.getRoleListOfUser(ctx.username);
 
         var dashboards = registry.content(registryPath(), {
-            start: 0,
-            count: 20
+            start: start,
+            count: count
         });
         if (!dashboards) {
             return [];

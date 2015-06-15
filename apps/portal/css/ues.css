@@ -32,6 +32,7 @@ a, a:focus {
  */
 .ues-global-navigation {
     background: #11375B;
+    z-index: 1200;
 }
 
 .ues-global-navigation .navbar-brand {
@@ -56,8 +57,8 @@ a, a:focus {
     background: #132D45;
 }
 
-.ues-global-navigation .dropdown-menu {
-    z-index: 1100;
+.ues-global-navigation .dropdown-menu li a {
+    color: #132D45;
 }
 
 /**
@@ -110,6 +111,7 @@ a, a:focus {
 .ues-context-menu .ues-tiles-menu-toggle {
     background: #F47415;
 }
+
 .ues-context-menu .ues-tiles-menu-toggle:hover {
     background: #D56613;
 }

@@ -49,7 +49,15 @@
         <!--/.nav-collapse -->
     </div>
 </nav>
-<div id="ues-portal" class="container-fluid"></div>
+<div id="ues-portal" class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Dashboards</h1>
+            <p>* View, Modify and Delete dashboards</p>
+        </div>
+    </div>
+    <div class="row thumbnails ues-dashboards"></div>
+</div>
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
@@ -60,45 +68,49 @@
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
 <script src="<%=urlPrefix%>js/portal.js"></script>
 <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Dashboards</h1>
-            <p>* View, Modify and Delete dashboards</p>
+    {{#each .}}
+    <div class="col-md-3 col-sm-6">
+        <div class="thumbnail ues-dashboard" data-id="{{id}}">
+            {{>ues-dashboard-thumbnail-hbs}}
         </div>
     </div>
-    <div class="row thumbnails ues-dashboards">
-        {{#if length}}
-        {{#each .}}
-        <div class="col-md-3 col-sm-6">
-            <div class="thumbnail ues-dashboard" data-id="{{id}}">
-                <h2>{{title}}</h2>
-                <p class="ues-description">{{description}}</p>
-                <div class="ues-actions">
-                    <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank"><i class="fa fa-eye"></i> View</a>
-                    {{#if editable}}
-                    <a class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
-                        <i class="fa fa-pencil"></i> Design
-                    </a>
-                    <a class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
-                        <i class="fa fa-cog"></i> Settings
-                    </a>
-                    {{/if}}
-                </div>
-                <a href="#" class="ues-trash-handle ladda-button" data-style="zoom-out" data-size="l" data-spinner-color="#2a6496">
-                    <i class="fa fa-trash ladda-label"></i>
-                </a>
-            </div>
+    {{/each}}
+</script>
+<script id="ues-dashboards-empty-hbs" type="text/x-handlebars-template">
+    <div class="col-md-12">
+        <div class="caption">
+            <h4>No dashboards found. Please create dashboards by visiting
+            <a href="<%=tenantedUrlPrefix%>create-dashboard">here</a>.
+            </h4>
         </div>
-        {{/each}}
-        {{else}}
-            <div class="col-md-12">
-                <div class="caption">
-                    <h4>No dashboards found. Please create dashboards by visiting
-                    <a href="<%=tenantedUrlPrefix%>create-dashboard">here</a>.
-                    </h4>
-                </div>
-            </div>
+    </div>
+</script>
+<script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
+    <h2>{{title}}</h2>
+    <p class="ues-description">{{description}}</p>
+    <div class="ues-actions">
+        <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank"><i class="fa fa-eye"></i> View</a>
+        {{#if editable}}
+        <a class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
+            <i class="fa fa-pencil"></i> Design
+        </a>
+        <a class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+            <i class="fa fa-cog"></i> Settings
+        </a>
         {{/if}}
+    </div>
+    <a href="#" class="ues-dashboard-trash-handle">
+        <i class="fa fa-trash ladda-label"></i>
+    </a>
+</script>
+<script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
+    <h2>Do you want to delete {{title}}?</h2>
+    <div class="ues-trash-actions">
+        <a href="#" class="btn btn-danger ladda-button ues-dashboard-trash-confirm"
+            role="button" data-style="expand-left" data-size="l">
+            <span class="ladda-label">Delete</span>
+        </a>
+        <a href="#" class="btn btn-default ues-dashboard-trash-cancel" role="button">Cancel</a>
     </div>
 </script>
 </body>
