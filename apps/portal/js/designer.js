@@ -174,16 +174,17 @@ $(function () {
      */
     var hideProperties = function () {
         $('#ues-properties').addClass('ues-hidden');
+
+        var menu = $('.ues-context-menu');
+        menu.find('.ues-component-properties-toggle').parent().removeClass('active');
+        menu.find('.ues-page-properties-toggle').parent().removeClass('active');
+
         var designer = $('#ues-designer');
         if (designer.hasClass('ues-storeprop-visible')) {
             designer.removeClass('ues-storeprop-visible').addClass('ues-store-visible');
             return;
         }
         designer.removeClass('ues-properties-visible');
-
-        var menu = $('.ues-context-menu');
-        menu.find('.ues-component-properties-toggle').parent().removeClass('active');
-        menu.find('.ues-page-properties-toggle').parent().removeClass('active');
     };
 
     /**

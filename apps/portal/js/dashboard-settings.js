@@ -146,6 +146,16 @@ $(function () {
             saveDashboard();
             el.remove();
         });
+
+        $('#ues-dashboard-title').on('change', function () {
+            dashboard.title = $(this).val();
+            saveDashboard();
+        });
+
+        $('#ues-dashboard-description').on('change', function () {
+            dashboard.description = $(this).val();
+            saveDashboard();
+        });
     };
 
     initTypeahead();

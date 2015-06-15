@@ -161,7 +161,6 @@ a, a:focus {
 
 .tt-input,
 .tt-hint {
-    width: 396px;
     height: 34px;
     padding: 8px 11px;
     line-height: 34px;
@@ -179,7 +178,6 @@ a, a:focus {
 }
 
 .tt-menu {
-    width: 422px;
     margin-top: 12px;
     padding: 4px 0;
     background-color: #fff;

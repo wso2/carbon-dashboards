@@ -391,8 +391,8 @@
                         </label>
                     </div>
                     <div class="form-group">
-                        <label>Id
-                            <input type="text" class="form-control id" name="id" placeholder="Id" value="{{id}}">
+                        <label>URL
+                            <input type="text" class="form-control id" name="id" placeholder="URL" value="{{id}}">
                         </label>
                     </div>
                     <div class="checkbox">

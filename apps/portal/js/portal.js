@@ -10,7 +10,7 @@ $(function () {
             count: 20
         }, function (err, data) {
             $('#ues-portal').html(dashboardsListHbs(data))
-                .find('.ues-dashboards .ues-delete').on('click', function () {
+                .find('.ues-dashboards .ues-trash-handle').on('click', function () {
                     var button = Ladda.create(this);
                     button.start();
                     var id = $(this).closest('.ues-dashboard').data('id');

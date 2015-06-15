@@ -84,6 +84,9 @@
                     </a>
                     {{/if}}
                 </div>
+                <a href="#" class="ues-trash-handle ladda-button" data-style="zoom-out" data-size="l" data-spinner-color="#2a6496">
+                    <i class="fa fa-trash ladda-label"></i>
+                </a>
             </div>
         </div>
         {{/each}}
