@@ -1,0 +1,7 @@
+<%
+    var utils = require('/modules/utils.js');
+    var scripts = utils.portalScripts();
+%>
+<% if(scripts) { %>
+<script src="<%=urlPrefix%><%=scripts%>"></script>
+<% } %>

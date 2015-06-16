@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <% include('includes/theme-portal-styles.jag'); %>
     <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
@@ -67,6 +68,7 @@
 <% include('includes/common-scripts.jag'); %>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
 <script src="<%=urlPrefix%>js/portal.js"></script>
+<% include('includes/theme-portal-scripts.jag'); %>
 <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
     {{#each .}}
     <div class="col-md-3 col-sm-6">

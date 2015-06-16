@@ -67,6 +67,7 @@ var dashboardId;
     <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
+    <% include('includes/theme-portal-styles.jag'); %>
     <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
@@ -155,6 +156,7 @@ var dashboardId;
 <% include('includes/common-scripts.jag'); %>
 <% include('includes/dashboard-scripts.jag'); %>
 <script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
+<% include('includes/theme-portal-scripts.jag'); %>
 <script id="ues-shared-role-hbs" type="text/x-handlebars-template">
     <button type="button" class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <i class="fa fa-times remove-button"></i></button>
 </script>

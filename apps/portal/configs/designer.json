@@ -5,5 +5,6 @@
     },
     "designers": ["Internal/everyone"],
     "tenantPrefix": "/t",
-    "shareStore": false
+    "shareStore": false,
+    "theme": "basic"
 }

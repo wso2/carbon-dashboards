@@ -46,6 +46,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
+    <% include('includes/theme-portal-styles.jag'); %>
     <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
@@ -102,6 +103,7 @@
 <!--<iframe id="sandbox" src="preview.jag"></iframe>-->
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<% include('includes/theme-portal-scripts.jag'); %>
 </body>
 </html>
 <% }()); %>

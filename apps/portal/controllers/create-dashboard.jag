@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
+    <% include('includes/theme-portal-styles.jag'); %>
     <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
@@ -84,6 +85,7 @@
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
 <script src="<%=urlPrefix%>js/create.js"></script>
+<% include('includes/theme-portal-scripts.jag'); %>
 </body>
 </html>
 <% } ()); %>

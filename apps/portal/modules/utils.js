@@ -130,3 +130,35 @@ var store = function () {
     var storePath = '/extensions/stores/' + storeType + '/index.js';
     return require(storePath);
 };
+
+var dashboardStyles = function () {
+    var config = require('/configs/designer.json');
+    var theme = config.theme;
+    var path = 'extensions/themes/' + theme + '/css/dashboard.css';
+    var file = new File('/' + path);
+    return file.isExists() ? path : null;
+};
+
+var dashboardScripts = function () {
+    var config = require('/configs/designer.json');
+    var theme = config.theme;
+    var path = 'extensions/themes/' + theme + '/js/dashboard.js';
+    var file = new File('/' + path);
+    return file.isExists() ? path : null;
+};
+
+var portalStyles = function () {
+    var config = require('/configs/designer.json');
+    var theme = config.theme;
+    var path = 'extensions/themes/' + theme + '/css/portal.css';
+    var file = new File('/' + path);
+    return file.isExists() ? path : null;
+};
+
+var portalScripts = function () {
+    var config = require('/configs/designer.json');
+    var theme = config.theme;
+    var path = 'extensions/themes/' + theme + '/js/portal.js';
+    var file = new File('/' + path);
+    return file.isExists() ? path : null;
+};
