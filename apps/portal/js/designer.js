@@ -1090,7 +1090,7 @@ $(function () {
         });
 
         menu.find('.ues-tiles-menu-toggle').click(function () {
-            $('#ues-tiles-menu').slideToggle();
+            menu.find('.ues-tiles-menu').slideToggle();
         });
 
         var actions = menu.find('.ues-context-menu-actions');
@@ -1153,6 +1153,9 @@ $(function () {
         var menu = $('#ues-workspace-layout').find('.ues-context-menu');
         menu.find('.ues-go-back').on('click', function () {
             showWorkspace('designer');
+        });
+        menu.find('.ues-tiles-menu-toggle').click(function () {
+            menu.find('.ues-tiles-menu').slideToggle();
         });
     };
 

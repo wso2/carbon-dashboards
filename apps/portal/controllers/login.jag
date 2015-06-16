@@ -47,7 +47,6 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('includes/theme-portal-styles.jag'); %>
-    <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
 <div role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">

@@ -124,6 +124,25 @@ a, a:focus {
     display: none;
 }
 
+/**
+ * tiles menu styles
+ */
+.ues-context-menu .ues-tiles-menu {
+    margin-bottom: 0;
+    background: #132D45;
+    display: none;
+}
+
+.ues-context-menu .ues-tiles-menu .nav a .fa {
+    font-size: 60px;
+    display: block;
+}
+
+.ues-context-menu .ues-tiles-menu .nav a {
+    padding: 25px;
+    text-align: center;
+}
+
 .ues-wizard-steps {
     padding-bottom: 20px;
     margin: 20px 0;

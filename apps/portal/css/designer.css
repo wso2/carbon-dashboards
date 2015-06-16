@@ -47,25 +47,6 @@
 }
 
 /**
- * tiles menu styles
- */
-#ues-tiles-menu {
-    margin-bottom: 0;
-    background: #132D45;
-    display: none;
-}
-
-#ues-tiles-menu .nav a .fa {
-    font-size: 60px;
-    display: block;
-}
-
-#ues-tiles-menu .nav a {
-    padding: 25px;
-    text-align: center;
-}
-
-/**
  * store styles
  */
 #ues-store {

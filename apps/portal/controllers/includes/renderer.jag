@@ -48,7 +48,6 @@ var dbRoot;
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css">
     <% include('theme-dashboard-styles.jag'); %>
-    <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
 <div id="navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top">

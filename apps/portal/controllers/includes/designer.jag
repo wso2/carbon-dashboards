@@ -41,7 +41,6 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/designer.css">
     <% include('theme-portal-styles.jag'); %>
-    <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
 <% include('global-navigation.jag'); %>
@@ -76,7 +75,7 @@
             </div>
             <!--/.nav-collapse -->
         </div>
-        <div id="ues-tiles-menu">
+        <div class="ues-tiles-menu">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-pie-chart"></i> Dashboards</a></li>
@@ -165,11 +164,10 @@
             </div>
             <!--/.nav-collapse -->
         </div>
-        <div id="ues-tiles-menu">
+        <div class="ues-tiles-menu">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-pie-chart"></i> Dashboards</a></li>
-                    <li><a href="#"><i class="fa fa-columns"></i> Layouts</a></li>
                 </ul>
             </div>
         </div>

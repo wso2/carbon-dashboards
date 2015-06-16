@@ -70,7 +70,7 @@ $(function () {
         settings.find('.ues-shared-edit').append(html);
     };
 
-    var initTypeahead = function () {
+    var initUI = function () {
         var viewerRoles = new Bloodhound({
             name: 'roles',
             limit: 10,
@@ -156,8 +156,13 @@ $(function () {
             dashboard.description = $(this).val();
             saveDashboard();
         });
+
+        var menu = $('.ues-context-menu');
+        menu.find('.ues-tiles-menu-toggle').click(function () {
+            menu.find('.ues-tiles-menu').slideToggle();
+        });
     };
 
-    initTypeahead();
+    initUI();
     initExistingRoles();
 });

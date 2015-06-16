@@ -29,4 +29,9 @@ $(function () {
         var action = form.attr('action');
         form.attr('action', action + '/' + $('#ues-dashboard-id').val());
     });
+
+    var menu = $('.ues-context-menu');
+    menu.find('.ues-tiles-menu-toggle').click(function () {
+        menu.find('.ues-tiles-menu').slideToggle();
+    });
 });

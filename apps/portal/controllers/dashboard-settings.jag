@@ -68,7 +68,6 @@ var dashboardId;
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
     <% include('includes/theme-portal-styles.jag'); %>
-    <!--<link rel="stylesheet" href="css/theme.css">-->
 </head>
 <body>
 <% include('includes/global-navigation.jag'); %>
@@ -91,6 +90,13 @@ var dashboardId;
             </ul>
         </div>
         <!--/.nav-collapse -->
+    </div>
+    <div class="ues-tiles-menu">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-pie-chart"></i> Dashboards</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 <div id="ues-dashboard-settings" class="container-fluid">

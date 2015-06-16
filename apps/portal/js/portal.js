@@ -99,6 +99,11 @@ $(function () {
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
         });
 
+        var menu = $('.ues-context-menu');
+        menu.find('.ues-tiles-menu-toggle').click(function () {
+            menu.find('.ues-tiles-menu').slideToggle();
+        });
+
         $(window).scroll(function () {
             var win = $(window);
             var doc = $(document);
