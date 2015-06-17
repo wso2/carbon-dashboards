@@ -1,7 +1,6 @@
 {
     "store": {
-        "type": "fs",
-        "url": "https://localhost:9443"
+        "type": "fs"
     },
     "designers": ["Internal/everyone"],
     "tenantPrefix": "/t",
