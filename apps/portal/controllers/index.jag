@@ -122,7 +122,7 @@
         {{/if}}
     </div>
     <a href="#" class="ues-dashboard-trash-handle">
-        <i class="fw fw-delete ladda-label" ></i>
+        <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="Delete Dashboard"></i>
     </a>
 </script>
 <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
