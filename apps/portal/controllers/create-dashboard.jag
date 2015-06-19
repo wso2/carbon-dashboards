@@ -28,6 +28,7 @@
     <title>Dashboards</title>
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
     <% include('includes/theme-portal-styles.jag'); %>
