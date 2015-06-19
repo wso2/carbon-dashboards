@@ -34,7 +34,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/jquery-ui.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
