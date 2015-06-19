@@ -60,10 +60,27 @@
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Dashboard Design</a></li>
-                    <li><a href="#" class="ues-page-add"><i class="fa fa-plus"></i> Add Page</a></li>
-                    <li><a href="#" class="ues-dashboard-preview"><i class="fa fa-eye"></i> Preview</a></li>
-                    <li><a href="#" class="ues-dashboard-export"><i class="fa fa-cloud-download"></i> Export</a></li>
-                    <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>"><i class="fa fa-cog"></i> Settings</a></li>
+                    <li><a href="#" class="ues-page-add">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-add fw-stack-1x"></i>
+                        </span> Add Page</a>
+                    </li>
+                    <li><a href="#" class="ues-dashboard-preview">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-view fw-stack-1x"></i>
+                        </span> Preview</a></li>
+                    <li><a href="#" class="ues-dashboard-export">
+                     <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
+                        </span> Export</a></li>
+                    <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
+                     <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-settings fw-stack-1x"></i>
+                        </span> Settings</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -79,7 +96,7 @@
         <div class="ues-tiles-menu">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-pie-chart"></i> Dashboards</a></li>
+                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
                 </ul>
             </div>
         </div>
@@ -99,8 +116,8 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="ues-store-menu-actions" class="collapse navbar-collapse">
             <ul class="nav navbar-nav nav-tabs" role="tablist">
-                <li><a class="ues-store-toggle" data-type="gadget" href="#"><i class="fa fa-pie-chart"></i></a></li>
-                <li><a class="ues-store-toggle" data-type="widget" href="#"><i class="fa fa-columns"></i></a></li>
+                <li><a class="ues-store-toggle" data-type="gadget" href="#"><i class="fw fw-pie-chart "></i></a></li>
+                <li><a class="ues-store-toggle" data-type="widget" href="#"><i class="fw fw-applications"></i></a></li>
             </ul>
         </div>
     </nav>
@@ -221,10 +238,10 @@
 <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
     <div class="ues-toolbar">
         <ul class="list-inline pull-right">
-            <li><a href="#" data-toggle="tooltip" title="{{id}}"><i class="fa fa-info-circle"></i></a></li>
-            <li><a href="#" class="ues-move-handle" data-id="{{id}}" data-action="move"><i class="fa fa-arrows"></i></a></li>
-            <li><a href="#" class="ues-properties-handle"><i class="fa fa-cog"></i></a></li>
-            <li><a href="#" class="ues-trash-handle"><i class="fa fa-trash"></i></a></li>
+            <li><a href="#" data-toggle="tooltip" title="{{id}}"> <i class="fw fw-info"> </i></a></li>
+            <li><a href="#" class="ues-move-handle" data-id="{{id}}" data-action="move"><i class="fw fw-endpoint"></i></a></li>
+            <li><a href="#" class="ues-properties-handle"><i class="fw fw-settings"></i></a></li>
+            <li><a href="#" class="ues-trash-handle"><i class="fw fw-delete"></i></a></li>
         </ul>
     </div>
 </script>

@@ -44,7 +44,11 @@
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
-                <li><a href="<%=tenantedUrlPrefix%>create-dashboard"><i class="fa fa-plus"></i> Create Dashboard</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>create-dashboard">
+                    <span class="fw-stack">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-add fw-stack-1x"></i>
+                    </span> Create Dashboard</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->
@@ -52,7 +56,7 @@
     <div class="ues-tiles-menu">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard fw-2x"></i> Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
             </ul>
         </div>
     </div>

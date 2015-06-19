@@ -86,6 +86,8 @@
 
 #ues-store .ues-help {
     margin-bottom: 15px;
+    font-size: 12px;
+    margin-top: 10px;
 }
 
 /**
@@ -134,7 +136,7 @@
 
 }
 
-#ues-store-menu .nav-tabs > li > a .fa {
+#ues-store-menu .nav-tabs > li > a .fw {
     font-size: 40px;
     line-height: normal;
 }
@@ -210,4 +212,10 @@
     position: absolute;
     padding-top: 8px;
     padding-right: 8px;
+}
+
+h4.ues-page-title {
+    margin: 20px 0px;
+    background-color: rgb(228, 228, 228);
+    padding: 13px;
 }

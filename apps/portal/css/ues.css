@@ -137,13 +137,18 @@ a, a:focus {
 .ues-context-menu .ues-tiles-menu .nav a .fw {
     font-size: 60px;
     display: block;
+    margin-bottom: 7px;
 }
 
 .ues-context-menu .ues-tiles-menu .nav a {
-    padding: 25px;
+    padding: 13px;
     text-align: center;
+    margin: 17px;
 }
 
+.ues-context-menu .ues-tiles-menu .nav a:hover{
+    background: #526A84;
+}
 .ues-wizard-steps {
     padding-bottom: 20px;
     margin: 20px 0;
@@ -267,3 +272,4 @@ h2.app-title {
     text-transform: uppercase;
     font-size: 24px;
 }
+.fw-stack{height: 1.4em;margin-top: -6px;}
