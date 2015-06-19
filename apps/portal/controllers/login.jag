@@ -52,15 +52,9 @@
 <body>
 <div role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
     <div class="container">
-        <div class="navbar-header">
-            <button data-target=".ues-global-navigation-bar" data-toggle="collapse" class="navbar-toggle" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="<%=urlPrefix%>" class="navbar-brand">
-                <img src="<%=urlPrefix%>images/logo.png"/> Dashboard Designer
+        <div class="navbar-header app-logo">
+            <a href="<%=urlPrefix%>">
+                <img src="<%=urlPrefix%>images/logo.png"/> <h2 class="app-title">Dashboard Designer</h2>
             </a>
         </div>
         <div class="collapse navbar-collapse ues-global-navigation-bar">

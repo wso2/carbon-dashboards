@@ -1,3 +1,9 @@
 .ues-signin-form {
     margin-bottom: 10px;
 }
+.ues-signin-heading{
+    font-weight: 300;
+}
+.ues-signin{
+    border-radius: 0px;
+}

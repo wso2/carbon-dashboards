@@ -220,3 +220,26 @@ a, a:focus {
 .tt-suggestion p {
     margin: 0;
 }
+
+.app-logo {
+    height: 50px;
+    padding: 12px 10px;
+    width: 100%;
+}
+.app-logo img {
+    float: left;
+    margin-right: 10px;
+}
+
+h2.app-title {
+    font-weight: 500;
+    font-size: 17px;
+    margin: 0;
+    padding: 3px 0 0 0;
+    color: #fafafa;
+    text-transform: uppercase;
+}
+.form-control{
+    border-radius: 0px;
+}
+
