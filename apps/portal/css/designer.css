@@ -250,6 +250,9 @@ h4.ues-page-title {
     background-color: rgb(38, 41, 51);
 }
 
-.ues-properties h4, .ues-properties label{
+.ues-properties h4, .ues-properties label, .ues-sandbox label,  .ues-sandbox h4{
     font-weight: 200;
+}
+.ues-title, .ues-page-title{
+    font-weight: 400;
 }

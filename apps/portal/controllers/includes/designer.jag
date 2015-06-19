@@ -88,7 +88,7 @@
                         <ul class="dropdown-menu ues-pages-list" role="menu"></ul>
                     </li>
                     <li class="ues-hidden"><a href="#" class="ues-component-properties-toggle"><i class="fw fw-settings"></i></a></li>
-                    <li><a href="#" class="ues-page-properties-toggle"><i class="fa fa-pencil-square-o"></i></a></li>
+                    <li><a href="#" class="ues-page-properties-toggle"><i class="fw fw-register2"></i></a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -400,7 +400,7 @@
 </script>
 <script id="ues-page-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 title-section">
             <h3 class="ues-page-title">{{title}}</h3>
         </div>
     </div>
