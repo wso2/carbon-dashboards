@@ -224,7 +224,7 @@ a, a:focus {
 .app-logo {
     height: 50px;
     padding: 12px 10px;
-    width: 100%;
+    width: 35%;
 }
 .app-logo img {
     float: left;
@@ -243,3 +243,6 @@ h2.app-title {
     border-radius: 0px;
 }
 
+.app-logo a{
+    text-decoration: none;
+}
