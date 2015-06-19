@@ -21,8 +21,6 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/nunito.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
     <% include('includes/theme-portal-styles.jag'); %>
