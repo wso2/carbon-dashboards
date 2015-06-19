@@ -69,6 +69,7 @@ a, a:focus {
     background: #526A84;
     border: none;
     margin-bottom: 0;
+    text-transform: uppercase;
 }
 
 .ues-context-menu .navbar-brand {
