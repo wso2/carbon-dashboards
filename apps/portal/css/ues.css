@@ -251,3 +251,6 @@ h2.app-title {
 .btn{
     border-radius: 0px;
 }
+.navbar{
+    border: none;
+}
