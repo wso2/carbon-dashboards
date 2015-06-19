@@ -272,4 +272,10 @@ h2.app-title {
     text-transform: uppercase;
     font-size: 24px;
 }
-.fw-stack{height: 1.4em;margin-top: -6px;}
+.fw-stack{
+    height: 1.4em;
+    margin-top: -6px;
+}
+.ues-title{
+    font-weight: 400;
+}
