@@ -98,18 +98,31 @@
     <h2>{{title}}</h2>
     <p class="ues-description">{{description}}</p>
     <div class="ues-actions">
-        <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank"><i class="fa fa-eye"></i> View</a>
+        <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
+            <span class="fw-stack">
+                <i class="fw fw-ring fw-stack-2x"></i>
+                <i class="fw fw-view fw-stack-1x"></i>
+            </span>
+         View</a>
         {{#if editable}}
         <a class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
-            <i class="fa fa-pencil"></i> Design
+            <span class="fw-stack">
+                <i class="fw fw-ring fw-stack-2x"></i>
+                <i class="fw fw-edit fw-stack-1x"></i>
+            </span>
+            Design
         </a>
         <a class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
-            <i class="fa fa-cog"></i> Settings
+            <span class="fw-stack">
+                <i class="fw fw-ring fw-stack-2x"></i>
+                <i class="fw fw-settings fw-stack-1x"></i>
+            </span>
+             Settings
         </a>
         {{/if}}
     </div>
     <a href="#" class="ues-dashboard-trash-handle">
-        <i class="fa fa-trash ladda-label"></i>
+        <i class="fw fw-delete ladda-label"></i>
     </a>
 </script>
 <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">

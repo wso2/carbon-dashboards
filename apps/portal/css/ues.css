@@ -247,3 +247,7 @@ h2.app-title {
 .app-logo a{
     text-decoration: none;
 }
+
+.btn{
+    border-radius: 0px;
+}

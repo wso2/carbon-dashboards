@@ -1,7 +1,9 @@
 #ues-portal .ues-dashboard {
-    padding: 10px;
+    padding: 10px 15px;
     position: relative;
     height: 125px;
+    background: #11375B;
+    color: #fff;
 }
 
 #ues-portal .ues-dashboard .ues-actions {
@@ -16,6 +18,9 @@
 
 #ues-portal .ues-dashboard h2 {
     margin-top: 0;
+    font-size: 16px;
+    font-weight: 400;
+    height: 20px;
 }
 
 #ues-portal .ues-dashboard .ues-dashboard-trash-handle {
@@ -23,4 +28,20 @@
     top: 4px;
     right: 4px;
     width: 20px;
+    font-size: 12px;
+    color: #fff;
+}
+.thumbnail{
+    border:none;
+    border-radius:0px;
+}
+.ues-description{
+    font-weight: 200;
+}
+.ues-actions a{
+    color: #B4C2D0;
+    text-decoration: none;
+}
+.ues-actions a:hover{
+    color: #fff;
 }
