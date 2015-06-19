@@ -103,7 +103,7 @@ var dashboardId;
 <div id="ues-dashboard-settings" class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1>Dashboard Settings</h1>
+            <h1 class="page-sub-title">Dashboard Settings</h1>
         </div>
     </div>
     <div class="row">
@@ -165,7 +165,7 @@ var dashboardId;
 <script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
 <% include('includes/theme-portal-scripts.jag'); %>
 <script id="ues-shared-role-hbs" type="text/x-handlebars-template">
-    <button type="button" class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <i class="fa fa-times remove-button"></i></button>
+    <button type="button" class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <i class="fw fw-uncheck remove-button"></i></button>
 </script>
 </body>
 </html>

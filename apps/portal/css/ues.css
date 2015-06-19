@@ -134,7 +134,7 @@ a, a:focus {
     display: none;
 }
 
-.ues-context-menu .ues-tiles-menu .nav a .fa {
+.ues-context-menu .ues-tiles-menu .nav a .fw {
     font-size: 60px;
     display: block;
 }
@@ -200,17 +200,24 @@ a, a:focus {
 }
 
 .tt-menu {
-    margin-top: 12px;
+    width: 100%;
     padding: 4px 0;
     background-color: #fff;
     border: 1px solid #ccc;
-    border-radius: 4px;
+}
+
+.ues-shared-role {
+    padding: 1px 11px;
 }
 
 .tt-suggestion {
     padding: 3px 11px;
     line-height: 24px;
 }
+.tt-suggestion:hover {
+background-color: rgb(229, 229, 229);
+}
+
 
 .tt-suggestion.tt-cursor {
     color: #fff;
@@ -253,4 +260,10 @@ h2.app-title {
 }
 .navbar{
     border: none;
+}
+
+.page-sub-title {
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 24px;
 }

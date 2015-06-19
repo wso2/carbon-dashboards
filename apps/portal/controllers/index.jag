@@ -52,7 +52,7 @@
     <div class="ues-tiles-menu">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-pie-chart"></i> Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard fw-2x"></i> Dashboards</a></li>
             </ul>
         </div>
     </div>
