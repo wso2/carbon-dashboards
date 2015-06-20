@@ -1,6 +1,6 @@
 body {
     padding-top: 100px;
-    font-family: "Oxygen", Helvetica, Arial, sans-serif;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 h1 {
@@ -69,6 +69,7 @@ a, a:focus {
     background: #526A84;
     border: none;
     margin-bottom: 0;
+    text-transform: uppercase;
 }
 
 .ues-context-menu .navbar-brand {
@@ -133,16 +134,21 @@ a, a:focus {
     display: none;
 }
 
-.ues-context-menu .ues-tiles-menu .nav a .fa {
+.ues-context-menu .ues-tiles-menu .nav a .fw {
     font-size: 60px;
     display: block;
+    margin-bottom: 7px;
 }
 
 .ues-context-menu .ues-tiles-menu .nav a {
-    padding: 25px;
+    padding: 13px;
     text-align: center;
+    margin: 17px;
 }
 
+.ues-context-menu .ues-tiles-menu .nav a:hover{
+    background: #526A84;
+}
 .ues-wizard-steps {
     padding-bottom: 20px;
     margin: 20px 0;
@@ -199,17 +205,24 @@ a, a:focus {
 }
 
 .tt-menu {
-    margin-top: 12px;
+    width: 100%;
     padding: 4px 0;
     background-color: #fff;
     border: 1px solid #ccc;
-    border-radius: 4px;
+}
+
+.ues-shared-role {
+    padding: 1px 11px;
 }
 
 .tt-suggestion {
     padding: 3px 11px;
     line-height: 24px;
 }
+.tt-suggestion:hover {
+background-color: rgb(229, 229, 229);
+}
+
 
 .tt-suggestion.tt-cursor {
     color: #fff;
@@ -219,4 +232,47 @@ a, a:focus {
 
 .tt-suggestion p {
     margin: 0;
+}
+
+.app-logo {
+    height: 50px;
+    padding: 12px 10px;
+    width: 35%;
+}
+.app-logo img {
+    float: left;
+    margin-right: 10px;
+}
+
+h2.app-title {
+    font-weight: 500;
+    font-size: 17px;
+    margin: 0;
+    padding: 3px 0 0 0;
+    color: #fafafa;
+    text-transform: uppercase;
+}
+.form-control{
+    border-radius: 0px;
+}
+
+.app-logo a{
+    text-decoration: none;
+}
+
+.btn{
+    border-radius: 0px;
+}
+.navbar{
+    border: none;
+}
+
+.page-sub-title {
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 24px;
+}
+.fw-stack{
+    height: 1.4em;
+    margin-top: -6px;
 }

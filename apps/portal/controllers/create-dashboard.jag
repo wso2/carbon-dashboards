@@ -26,10 +26,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboards</title>
+    <link rel="icon" href="<%=urlPrefix%>images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/nunito.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
     <% include('includes/theme-portal-styles.jag'); %>
@@ -45,12 +46,16 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fa fa-th"></i></a>
+            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
-                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-times"></i> Cancel</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./">
+                    <span class="fw-stack">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-cancel fw-stack-1x"></i>
+                    </span> Cancel</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->
@@ -58,7 +63,7 @@
     <div class="ues-tiles-menu">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fa fa-pie-chart"></i> Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
             </ul>
         </div>
     </div>
@@ -67,7 +72,7 @@
     <div class="row thumbnails ues-dashboard">
         <div class="col-md-8 col-md-offset-2">
             <form action="<%=tenantedUrlPrefix%>dashboards" method="post" id="ues-dashboard-form">
-                <h2>Create a Dashboard</h2>
+                <h1 class="page-sub-title">Create a Dashboard</h1>
                 <div class="form-group">
                     <label for="dashboard-title">Name of your Dashboard</label>
                     <input type="text" name="title" class="form-control" id="ues-dashboard-title" placeholder="E.g. Sales Statistics">

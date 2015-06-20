@@ -32,10 +32,11 @@
     position: fixed;
     height: calc(100% - 100px);
     right: 0;
-    background: #262933;
+    background: #505050;
     color: #fff;
     width: 200px;
     overflow: scroll;
+    font-weight: 200;
 }
 
 #ues-properties .ues-page-title {
@@ -86,6 +87,8 @@
 
 #ues-store .ues-help {
     margin-bottom: 15px;
+    font-size: 12px;
+    margin-top: 10px;
 }
 
 /**
@@ -134,7 +137,7 @@
 
 }
 
-#ues-store-menu .nav-tabs > li > a .fa {
+#ues-store-menu .nav-tabs > li > a .fw {
     font-size: 40px;
     line-height: normal;
 }
@@ -210,4 +213,46 @@
     position: absolute;
     padding-top: 8px;
     padding-right: 8px;
+}
+
+h4.ues-page-title {
+    margin: 20px 0px;
+    background-color: rgb(228, 228, 228);
+    padding: 13px;
+}
+
+.page-sub-title {
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 24px;
+}
+
+.layout-slection{
+    background: #11375B;
+    color: #fff;
+    padding: 10px 15px;
+    height: 246px;
+    margin-bottom: 20px;
+}
+
+.caption h3{
+    margin-top: 3px;
+}
+.ues-toolbar{
+    float: right;
+}
+.thumbnail .caption h3{
+    font-weight: 200;
+    color: #fff;
+}
+.title-section {
+    box-shadow: 6px 0px 4px 4px #464646;
+    background-color: rgb(38, 41, 51);
+}
+
+.ues-properties h4, .ues-properties label, .ues-sandbox label,  .ues-sandbox h4{
+    font-weight: 200;
+}
+.ues-title, .ues-page-title{
+    font-weight: 400;
 }

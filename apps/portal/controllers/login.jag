@@ -40,10 +40,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboards</title>
+    <link rel="icon" href="<%=urlPrefix%>images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/nunito.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/oxygen.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('includes/theme-portal-styles.jag'); %>
@@ -51,15 +52,9 @@
 <body>
 <div role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
     <div class="container">
-        <div class="navbar-header">
-            <button data-target=".ues-global-navigation-bar" data-toggle="collapse" class="navbar-toggle" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="<%=urlPrefix%>" class="navbar-brand">
-                <img src="<%=urlPrefix%>images/logo.png"/> Dashboard Designer
+        <div class="navbar-header app-logo">
+            <a href="<%=urlPrefix%>">
+                <img src="<%=urlPrefix%>images/logo.png"/> <h2 class="app-title">Dashboard Designer</h2>
             </a>
         </div>
         <div class="collapse navbar-collapse ues-global-navigation-bar">
