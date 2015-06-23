@@ -1,0 +1,331 @@
+<%
+(function() {
+    if (!user) {
+        sendLogin();
+        return;
+    }
+
+    if(userDomain !== (urlDomain || superDomain)) {
+        response.sendError(401, 'designer access not authorized of this tenant');
+        return;
+    }
+
+    var utils = require('/modules/utils.js');
+    var configs = require('/configs/designer.json');
+
+    if (!utils.allowed(user.roles, configs.designers)) {
+        response.sendError(401, 'designer access not authorized');
+        return;
+    }
+
+    %>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Gadget</title>
+    <link rel="icon" href="<%=urlPrefix%>images/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">
+    <% include('includes/theme-portal-styles.jag'); %>
+</head>
+<body>
+<% include('includes/global-navigation.jag'); %>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+        </div>
+        <div class="collapse navbar-collapse ues-context-menu-actions">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./">
+                    <span class="fw-stack">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-cancel fw-stack-1x"></i>
+                    </span> Cancel</a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+    <div class="ues-tiles-menu">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row thumbnails ues-dashboard">
+        <div class="col-md-8 col-md-offset-2">
+            <h1 class="page-sub-title">Create a Gadget</h1>
+
+            <div class="wizard" id="rootwizard">
+                <div class="navbar">
+                  <div class="navbar-inner">
+                    <div class="container">
+                <ul>
+                    <li><a href="#tab1" data-toggle="tab">Select Datasource</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
+                </ul>
+                 </div>
+                  </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab1">
+                        <form class="form-horizontal">
+                        <fieldset>
+
+                            <!-- Select Basic -->
+                            <div class="form-group">
+                              <label class="col-md-4 control-label" for="datasource">Datasource</label>
+                              <div class="col-md-4">
+                                <select id="dsList" name="datasource" class="form-control" style="width: 100%">
+                                </select>
+                              </div>
+                              <div class="col-md-1">
+                                <button type="button" id="btnPreview" class="btn btn-success" role="button">
+                                    <i class="fa fa-eye"> Preview Data</i>
+                                </button>
+                              </div>
+                            </div>
+
+                            <div id="previewPane"></div>
+
+                        </fieldset>
+                        </form>
+                    </div>
+
+                    <!--<div class="tab-pane" id="tab2">
+                        <form class="form-horizontal">
+                        <fieldset>
+
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="txtFilter">Filter Query</label>  
+                          <div class="col-md-5">
+                          <input id="txtFilter" name="txtFilter" type="text" placeholder="" class="form-control input-md">
+                          <span class="help-block">Provide a filter query if you need to filter datasource. Query must follow Apache Lucene syntax.
+                           E.g title:"War and Peace" will return records that has title field matched with "War and Peace"</span>  
+                          <button type="button" id="btnPreview" class="btn btn-success" role="button">Preview Data</button>
+                          </div>
+                        </div>
+
+                        <div id="previewPane"></div>
+
+                        </fieldset>
+                        </form>
+
+                    </div>-->
+                    <div class="tab-pane" id="tab2">
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <h4>Configuration</h4>
+                                <form class="form-horizontal">
+
+                                    <div class="form-group" id="chartTypeSelection">
+                                        <label for="chartType" class="col-sm-6 control-label">
+                                            Chart Type 
+                                        </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="chartType"
+                                                    name="chartType">
+                                                <option value="">--Select--</option>
+                                                <option value="bar">Bar</option>
+                                                <option value="line">Line</option>
+                                                <option value="area">Area</option>
+                                                <option value="tabular">Table</option>
+                                                <option value="arc">Arc</option>
+                                                <option value="scatter">Scatter</option>
+                                                <!-- <option value="stackedBar">StackedBar</option>
+                                                <option value="groupedBar">GroupedBar</option>
+                                                <option value="stackedArea">StackedArea</option>
+                                                <option value="multiArea">MultiArea</option>
+                                                <option value="scatter">Scatter</option> -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group attr bar line area arc stackedBar groupedBar stackedArea multiArea scatter tabular">
+                                        <label for="title"
+                                               class="col-sm-6 control-label">Title</label>
+
+                                        <div class="col-sm-6">
+                                            <input name='title' type="text" class="form-control"
+                                                   id="title" placeholder="Untitled Widget">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group attr var arc">
+                                        <label for="percentage"
+                                               class="col-sm-6 control-label">Percentage </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="percentage"
+                                                    name="percentage">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group attr var bar line area stackedBar groupedBar stackedArea multiArea scatter">
+                                        <label for="xAxis"
+                                               class="col-sm-6 control-label">X-Axis </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="xAxis"
+                                                    name="xAxis">
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group var attr bar area stackedBar groupedBar stackedArea  scatter">
+                                        <label for="yAxis"
+                                               class="col-sm-6 control-label">Y-Axis </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="yAxis"
+                                                    name="yAxis">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var  attr line multiArea">
+                                        <label for="yAxises" class="col-sm-6 control-label">Y-Axis </label>
+
+                                        <div class="col-sm-6">
+                                            <select multiple class="form-control" id="yAxises"
+                                                    name="yAxis">
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var  attr scatter">
+                                        <label for="yAxises" class="col-sm-6 control-label">Point Color </label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="pointColor"
+                                                    name="pointColor">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var  attr scatter">
+                                        <label for="yAxises" class="col-sm-6 control-label">Point Size </label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="pointSize"
+                                                    name="pointSize">
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group var attr stackedBar groupedBar stackedArea ">
+                                        <label for="groupedBy" class="col-sm-6 control-label">GroupedBy </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="groupedBy"
+                                                    name="groupedBy">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var attr stackedBar groupedBar stackedArea tabular">
+                                        <label for="xAxis"
+                                               class="col-sm-6 control-label">Table Column</label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="column"
+                                                    name="column">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var attr stackedBar groupedBar stackedArea tabular">
+                                        <label for="tableStyle" class="col-sm-6 control-label">Table Style </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="tableStyle"
+                                                    name="tableStyle">
+                                                    <option value="row">Row based (Default)</option>
+                                                    <option value="color">Color based</option>
+                                                    <option value="font">Font based</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                   
+                                    <div class="form-group">
+                                        <div class="col-md-6 pull-right">
+                                            <button id="previewChart" class="btn btn-success" type="button">Preview</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <!-- /col-md-6 -->
+
+                            <div class="col-md-6">
+                                <h4>Preview</h4>
+                                <div id="chartDiv"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <ul class="pager wizard">
+                        <li class="previous first" style="display:none;"><a href="#">First</a></li>
+                        <li class="previous"><a href="#">Previous</a></li>
+                        <li class="next last" style="display:none;"><a href="#">Last</a></li>
+                        <li class="next"><a href="#">Next</a></li>
+                        <li class="next finish" style="display:none;"><a href="#">Finish</a></li>
+                    </ul>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>
+<script src="<%=urlPrefix%>js/ues-store.js"></script>
+<script src="<%=urlPrefix%>js/create.js"></script>
+
+<script src="<%=urlPrefix%>js/jquery.bootstrap.wizard.min.js"></script>
+<script src="<%=urlPrefix%>js/select2.min.js"></script>
+<script src="<%=urlPrefix%>js/d3.min.js"></script>
+<script src="<%=urlPrefix%>js/vega.js"></script>
+<script src="<%=urlPrefix%>js/igviz.js"></script>
+<script src="<%=urlPrefix%>js/charts.js"></script>
+<script src="<%=urlPrefix%>js/carbon-analytics.js"></script>
+<script src="<%=urlPrefix%>js/wizard.js"></script>
+<script src="<%=urlPrefix%>js/outputAdapterUiLibrary.js"></script>
+<script id="wizard-error-hbs" type="text/x-handlebars-template">
+    <div class="alert alert-danger" role="alert">
+        Something went wrong while initiating Gadget generation wizard.<br/>Detailed error message: {{error}}
+    </div>
+</script>
+<script id="wizard-zerods-hbs" type="text/x-handlebars-template">
+    <div class="alert alert-danger" role="alert">
+       No datasources available to create a gadget. Please create a datasource to proceed.
+    </div>
+</script>
+<% include('includes/theme-portal-scripts.jag'); %>
+</body>
+</html>
+<% } ()); %>

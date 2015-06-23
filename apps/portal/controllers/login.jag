@@ -18,6 +18,10 @@
             usr = require('/modules/user.js');
             password = request.getParameter('password');
             if (usr.login(username, password)) {
+                //authorize the backend API too
+                var api = require('/modules/api.jag');
+                var authToken = api.authenticate(username,password);
+                session.put('authToken' ,authToken);
                 if (dest) {
                     response.sendRedirect(dest);
                     return;
