@@ -349,6 +349,11 @@
        No datasources available to create a gadget. Please create a datasource to proceed.
     </div>
 </script>
+<script id="wizard-zeroevents-hbs" type="text/x-handlebars-template">
+    <div class="alert alert-warning" role="alert">
+       No events published. Publish events to see a preview of the selected chart.
+    </div>
+</script>
 <% include('includes/theme-portal-scripts.jag'); %>
 </body>
 </html>

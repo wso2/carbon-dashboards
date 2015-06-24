@@ -83,6 +83,10 @@ $("#previewChart").click(function() {
                 //TODO DOn't do this! read this from a config file
                 subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
                     onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, 'localhost', '9443', 'WEBSOCKET', "SECURED");
+                var source = $("#wizard-zeroevents-hbs").html();;
+                var template = Handlebars.compile(source);
+                $("#chartDiv").empty();
+                $("#chartDiv").append(template());
             }
         });
     } else {
@@ -400,6 +404,7 @@ var counter = 0;
 var globalDataArray = [];
 function drawRealtimeChart(data) {
     console.log("+++++++++++ drawRealtimeChart "); 
+    $("#chartDiv").empty();
     var chartType = $("#chartType").val();
     if (chartType == "map") {
         var region = 5;
