@@ -73,7 +73,18 @@ $("#btnPreview").click(function() {
 
 $("#previewChart").click(function() {
     if (datasourceType === "realtime") {
-        //TODO display a friendly message saying preview is not available for RT charts
+        var streamId = $("#dsList").val();
+        var url = "/portal/apis/rt?action=publisherIsExist&streamId=" + streamId;
+        $.getJSON(url, function(data) {
+            if (!data) {
+                alert("You have not deployed a Publisher adapter UI Corresponding to selected StreamID:" + streamId +
+                    " Please deploy an adapter to Preview Data.")
+            } else {
+                //TODO DOn't do this! read this from a config file
+                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
+                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, 'localhost', '9443', 'WEBSOCKET', "SECURED");
+            }
+        });
     } else {
         var dataTable = makeDataTable();
         var chartType = $("#chartType").val();
@@ -118,6 +129,7 @@ $(".pager .finish").click(function() {
         };
         configureChart(config);
         config = chartConfig;
+        // console.log(config); 
         var request = {
             id: $("#title").val().replace(/ /g, "_"),
             title: $("#title").val(),
@@ -143,6 +155,14 @@ $(".pager .finish").click(function() {
         //console.log("Not ready");
     }
 });
+
+function onRealTimeEventSuccessRecieval(streamId, data) {
+    drawRealtimeChart(data);
+};
+
+function onRealTimeEventErrorRecieval(dataError) {
+    console.log(dataError);
+};
 
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
 
@@ -333,4 +353,139 @@ function makeDataTable() {
     });
     dataTable.addRows(previewData);
     return dataTable;
+};
+
+function createDataTable(data) {
+    var realTimeData = new igviz.DataTable();
+    if (columns.length > 0) {
+        columns.forEach(function(column, i) {
+            var type = "N";
+            if (column.type == "STRING" || column.type == "string") {
+                type = "C";
+            }
+            realTimeData.addColumn(column.name, type);
+        });
+    }
+    for (var i = 0; i < data.length; i++) {
+        realTimeData.addRow(data[i]);
+    }
+    return realTimeData;
+};
+
+function makeMapDataTable(data) {
+    var dataTable = new igviz.DataTable();
+    if (columns.length > 0) {
+        columns.forEach(function (column, i) {
+            var type = "N";
+            if (column.type == "STRING" || column.type == "string") {
+                type = "C";
+            }
+            dataTable.addColumn(column.name, type);
+        });
+    }
+    data.forEach(function (row, index) {
+        for (var i = 0; i < row.length; i++) {
+            if (dataTable.metadata.types[i] == "N") {
+                data[index][i] = parseInt(data[index][i]);
+            }
+        }
+    });
+    dataTable.addRows(data);
+    return dataTable;
+};
+
+var dataTable;
+var chart;
+var counter = 0;
+var globalDataArray = [];
+function drawRealtimeChart(data) {
+    console.log("+++++++++++ drawRealtimeChart "); 
+    var chartType = $("#chartType").val();
+    if (chartType == "map") {
+        var region = 5;
+        if ($("#region").val().trim() != "") {
+            region = $("#region").val();
+        }
+        var xAxis = getColumnIndex($("#xAxis").val());
+        var yAxis = getColumnIndex($("#yAxis").val());
+        var legendGradientLevel;
+        if ($("#legendGradientLevel").val().trim() == ""){
+            legendGradientLevel = 5;
+        } else {
+            legendGradientLevel = $("#legendGradientLevel").val();
+        }
+        var config = {
+            "yAxis": yAxis,
+            "xAxis": xAxis,
+            "chartType": "map",
+            "title": "Map By Country",
+            "padding": 65,
+            "width": document.getElementById("chartDiv").offsetWidth,
+            "height": 240,
+            "region": region,
+            "legendGradientLevel": legendGradientLevel
+        }
+        if (counter == 0) {
+            dataTable = makeMapDataTable(data);
+            console.log(dataTable); 
+            chart = igviz.draw("#chartDiv", config, dataTable);
+            chart.plot(dataTable.data,null,0);
+            counter++;
+        } else {
+            chart.update(data);
+        }
+    } else if (chartType === "arc") {
+        //WARNING: very ugly code!!!! refactor this immediately
+        var percentage = getColumnIndex($("#percentage").val());
+        var config = { chartType: "arc", percentage: percentage};
+        igviz.draw("#chartDiv",config,createDataTable(data));
+    } else {
+        dataTable = createDataTable(data);
+        if (counter == 0) {
+            var xAxis = getColumnIndex($("#xAxis").val());
+            var yAxis = getColumnIndex($("#yAxis").val());
+            //console.log("X " + xAxis + " Y " + yAxis);
+
+            var width = document.getElementById("chartDiv").offsetWidth;
+            var height = 240; //canvas height
+            var config = {
+                "yAxis": yAxis,
+                "xAxis": xAxis,
+                "width": width,
+                "height": height,
+                "chartType": chartType
+            }
+            if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
+                dataTable.metadata.types[xAxis] = "C";
+            }
+            chart = igviz.setUp("#chartDiv", config, dataTable);
+            chart.setXAxis({
+                "labelAngle": -35,
+                "labelAlign": "right",
+                "labelDy": 0,
+                "labelDx": 0,
+                "titleDy": 25
+            })
+                .setYAxis({
+                    "titleDy": -30
+                })
+                .setDimension({
+                    height: 270
+                })
+
+            globalDataArray.push(dataTable.data[0]);
+            chart.plot(globalDataArray);
+            counter++;
+        } else if (counter == 5) {
+            globalDataArray.shift();
+            globalDataArray.push(dataTable.data[0]);
+            chart.update(dataTable.data[0]);
+        } else {
+            globalDataArray.push(dataTable.data[0]);
+            chart.plot(globalDataArray);
+            counter++;
+        }
+
+    }
+
 };

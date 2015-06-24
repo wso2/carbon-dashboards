@@ -4,6 +4,7 @@
 	var TABLE_CHART_TYPE = "tabular";
 	var ARC_CHART_TYPE = "arc";
 	var SCATTER_CHART_TYPE = "scatter";
+	var MAP_CHART_TYPE = "map";
 
 	//initialise all chart types supported by gadget generation wizard
 	var charts= [
@@ -31,6 +32,10 @@
 		    name: 'Scatter',
 		    type: SCATTER_CHART_TYPE,
 		    value: new ScatterChart()
+		}, {
+		    name: 'Map',
+		    type: MAP_CHART_TYPE,
+		    value: new MapChart()
 		}
 	];
 
@@ -278,9 +283,45 @@
 	    });
 	};
 
-	ArcChart.prototype.draw = function(config, dataTable) {
+	ArcChart.prototype.configure = function(config) {
 		config.percentage = getColumnIndex($("#percentage").val());
+		chartConfig = config;
+	};
+
+	ArcChart.prototype.draw = function(config, dataTable) {
+		this.configure(config);
 		igviz.draw("#chartDiv", config, dataTable);
 	};
+
+	///////////////////////////////////////////////////// Map ///////////////////////////////////////////////////////////
+	function MapChart() {};
+
+	MapChart.prototype.bindConfigs = function(columns) {
+		// body...
+	};
+
+	MapChart.prototype.configure = function(config) {
+		var region = 5;
+		if ($("#region").val().trim() != "") {
+		    region = $("#region").val();
+		}
+		config.xAxis = getColumnIndex($("#xAxis").val());
+        config.yAxis = getColumnIndex($("#yAxis").val())
+        config.region = region;
+        if ($("#legendGradientLevel").val().trim() == ""){
+            config.legendGradientLevel = 5;
+        } else {
+            config.legendGradientLevel = $("#legendGradientLevel").val();
+        }
+        chartConfig = config;
+	};
+
+	MapChart.prototype.draw = function(config, dataTable) {
+		this.configure(config);
+		var chart = igviz.draw("#chartDiv", chartConfig, dataTable);
+        chart.plot(dataTable.data,null,0);
+	};
+
+	
 
 	
