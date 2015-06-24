@@ -175,7 +175,7 @@ function drawRealtimeChart(data) {
 
     } else if(gadgetConfig.chartConfig.chartType === "arc") {
         gadgetConfig.chartConfig.height = $("#placeholder").height();
-        igviz.draw("#placeHolder",gadgetConfig.chartConfig,dataTable);
+        igviz.draw("#placeHolder",gadgetConfig.chartConfig,createDataTable(data));
     } else {
         dataTable = makeDataTable(data);
         gadgetConfig.chartConfig.width = $("#placeholder").width();
