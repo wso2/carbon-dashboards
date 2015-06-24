@@ -2800,6 +2800,12 @@
 
         if (this.config.chartType == "map") {
             config = this.config;
+            $.each( mapSVG[0][0].__data__, function( i, val ) {
+                if ( mapSVG[0][0].__data__[i][config.xAxis] == "DEF") {
+                    mapSVG[0][0].__data__.splice(i,1);
+                }
+            });
+
             $.each( pointObj, function( i, val ) {
                 pointObj[i][config.xAxis] = getMapCode(pointObj[i][config.xAxis], config.region);
                 mapSVG[0][0].__data__.push(pointObj[i]);
@@ -3063,7 +3069,12 @@
             $.each( dataset, function( i, val ) {
                 dataset[i][config.xAxis] = getMapCode(dataset[i][config.xAxis], config.region);
             });
-            dataset.push(["ABC", 0]);
+
+            var defaultRow = jQuery.extend({}, dataset[0])
+            defaultRow[config.xAxis]="DEF";
+            defaultRow[config.yAxis]=0;
+
+            dataset.push(defaultRow);
             mapSVG = d3.select(this.canvas).datum(dataset).call(mapChart.draw, mapChart);
 
         } else if(config.chartType == "table"){
