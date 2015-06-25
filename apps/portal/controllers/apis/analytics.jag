@@ -6,6 +6,7 @@
     var TIME_TO = "timeTo";
     var START = "start";
     var COUNT = "count";
+    var RECORDSTORE_NAME = "recordStore";
     var HTTPS_TRANSPORT = "https";
     var CONTENT_TYPE_JSON = "application/json";
     var AUTHORIZATION_HEADER = "Authorization";
@@ -46,6 +47,8 @@
     var TYPE_GET_STREAM_DEFINITION = 23;
     var TYPE_PUBLISH_EVENTS = 24;
     var TYPE_GET_WITH_KEY_VALUES = 25;
+    var TYPE_GET_RECORDSTORES = 26;
+    var TYPE_GET_RECORDSTORE_BY_TABLE = 27;
     var log = new Log();
     var carbon = require('carbon');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
@@ -90,6 +93,13 @@
         type = parseInt(typeParam);
     }
 
+    if (type == 0) {
+        log.error("operation type is not specified!");
+        response.status = HTTP_INTERNAL_ERROR;
+        print('{ "status": "Failed", "message": "Operation type is not specified" }');
+        return;
+    }
+
     var tableName = request.getParameter(TABLE_NAME);
     if (type != TYPE_LIST_TABLES &&
         //        type != TYPE_PUT_RECORDS &&
@@ -97,7 +107,8 @@
         type != TYPE_ADD_STREAM_DEFINITION &&
         type != TYPE_GET_STREAM_DEFINITION &&
         type != TYPE_PUBLISH_EVENTS &&
-        type != TYPE_WAIT_FOR_INDEXING) {
+        type != TYPE_WAIT_FOR_INDEXING &&
+        type != TYPE_GET_RECORDSTORES) {
         if (tableName == null) {
             log.error("tableName is not provided!");
             response.status = HTTP_INTERNAL_ERROR;
@@ -209,7 +220,8 @@
             }
             case TYPE_PAGINATION_SUPPORTED:
             {
-                result = connector.isPaginationSupported();
+                var recordStore = request.getParameter(RECORDSTORE_NAME)
+                result = connector.isPaginationSupported(recordStore);
                 break;
             }
             case TYPE_WAIT_FOR_INDEXING:
@@ -251,6 +263,16 @@
             case TYPE_PUBLISH_EVENTS:
             {
                 result = connector.publishEvent(contentAsString);
+                break;
+            }
+            case TYPE_GET_RECORDSTORES:
+            {
+                result = connector.getRecordStoreList();
+                break;
+            }
+            case TYPE_GET_RECORDSTORE_BY_TABLE:
+            {
+                result = connector.getRecordStoreByTable(tableName);
                 break;
             }
             default:
