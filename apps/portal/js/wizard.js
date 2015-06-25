@@ -203,12 +203,12 @@ function getDatasources() {
                 $("#dsList").append(item);
             });
         },
-        error: function(error) {
+        error: function(xhr,message,errorObj) {
             var source = $("#wizard-error-hbs").html();;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
-                error: error
+                error: xhr.responseText
             }));
         }
     });
