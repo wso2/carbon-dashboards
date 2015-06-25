@@ -32,14 +32,18 @@
 
     <modules>
         <module>components/shindig-server</module>
+        <module>components/dashboard-deployment</module>
         <module>features/org.wso2.carbon.dashboards.shindig.feature</module>
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
+        <module>features/org.wso2.carbon.dashboards.deployment.feature</module>
     </modules>
 
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
         <carbon.dashboards.version>1.0.1-SNAPSHOT</carbon.dashboards.version>
+        <carbon.kernel.version>4.4.0</carbon.kernel.version>
+        <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
     </properties>
 
     <scm>
@@ -62,6 +66,21 @@
                 <artifactId>shindig-server</artifactId>
                 <version>${carbon.dashboards.version}</version>
                 <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.core</artifactId>
+                <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.utils</artifactId>
+                <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.application.deployer</artifactId>
+                <version>${carbon.kernel.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
