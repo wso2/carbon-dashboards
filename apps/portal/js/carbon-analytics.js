@@ -49,6 +49,8 @@ function AnalyticsClient() {
     var TYPE_GET_STREAM_DEFINITION = 23;
     var TYPE_PUBLISH_EVENTS = 24;
     var TYPE_GET_WITH_KEY_VALUES = 25;
+    var TYPE_GET_RECORDSTORES = 26;
+    var TYPE_GET_RECORDSTORE_BY_TABLE = 27;
     var HTTP_GET = "GET";
     var HTTP_POST = "POST";
     var RESPONSE_ELEMENT = "responseJSON";
@@ -62,6 +64,42 @@ function AnalyticsClient() {
     this.listTables = function (callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_LIST_TABLES,
+                        type: HTTP_GET,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * Lists all the recordstores.
+     * @param callback The callback functions which has one argument containing the response data.
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.listRecordStores = function (callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_GET_RECORDSTORES,
+                        type: HTTP_GET,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * returns the recordstore to which the given table belongs.
+     * @param callback The callback functions which has one argument containing the response data.
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.getRecordStoreByTable = function (tableName, callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_GET_RECORDSTORE_BY_TABLE + "&tableName=" + tableName,
                         type: HTTP_GET,
                         success: function (data) {
                             callback(data);
@@ -496,13 +534,13 @@ function AnalyticsClient() {
     };
 
     /**
-     * Returns if the underlying AnalyticsService supports pagination.
+     * Returns if the underlying recordStore supports pagination.
      * @param callback The callback function which has one argument containing true/false.
      * @param error The callback function which has one argument which contains the error if any
      */
-    this.isPaginationSupported = function (callback, error) {
+    this.isPaginationSupported = function (recordStore, callback, error) {
         jQuery.ajax({
-                        url: this.serverUrl + "?type=" + TYPE_PAGINATION_SUPPORTED,
+                        url: this.serverUrl + "?type=" + TYPE_PAGINATION_SUPPORTED + "&recordStore=" + recordStore,
                         type: HTTP_GET,
                         success: function (data) {
                             callback(data);
@@ -739,7 +777,7 @@ function AnalyticsClient() {
  */
 AnalyticsClient.prototype.init = function (username, password, svrUrl) {
     if (svrUrl == null) {
-        this.serverUrl = "https://localhost:9443/portal/apis/analytics";
+        this.serverUrl = "https://localhost:9443/portal/controllers/apis/analytics.jag";
     } else {
         this.serverUrl = svrUrl;
     }
