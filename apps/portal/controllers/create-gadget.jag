@@ -289,6 +289,18 @@
                                                    id="legendGradientLevel" placeholder="An integer (eg:-5)">
                                         </div>
                                     </div>
+
+                                    <div class="form-group var attr line">
+                                        <label for="tableStyle" class="col-sm-6 control-label">Interpolation Mode</label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="interpolationMode"
+                                                    name="nterpolationMode">
+                                                    <option value="monotone">Monotone</option>
+                                                    <option value="line">Line</option>
+                                                    <option value="basis">Basis</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                    
                                     <div class="form-group">
                                         <div class="col-md-6 pull-right">
