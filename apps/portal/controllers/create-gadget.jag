@@ -112,26 +112,6 @@
                         </form>
                     </div>
 
-                    <!--<div class="tab-pane" id="tab2">
-                        <form class="form-horizontal">
-                        <fieldset>
-
-                        <div class="form-group">
-                          <label class="col-md-4 control-label" for="txtFilter">Filter Query</label>  
-                          <div class="col-md-5">
-                          <input id="txtFilter" name="txtFilter" type="text" placeholder="" class="form-control input-md">
-                          <span class="help-block">Provide a filter query if you need to filter datasource. Query must follow Apache Lucene syntax.
-                           E.g title:"War and Peace" will return records that has title field matched with "War and Peace"</span>  
-                          <button type="button" id="btnPreview" class="btn btn-success" role="button">Preview Data</button>
-                          </div>
-                        </div>
-
-                        <div id="previewPane"></div>
-
-                        </fieldset>
-                        </form>
-
-                    </div>-->
                     <div class="tab-pane" id="tab2">
                         <div class="row">
 
@@ -236,7 +216,6 @@
                                         </div>
                                     </div>
 
-
                                     <div class="form-group var attr stackedBar groupedBar stackedArea ">
                                         <label for="groupedBy" class="col-sm-6 control-label">GroupedBy </label>
 
@@ -325,7 +304,7 @@
                         <li class="previous"><a href="#">Previous</a></li>
                         <li class="next last" style="display:none;"><a href="#">Last</a></li>
                         <li class="next"><a href="#">Next</a></li>
-                        <li class="next finish" style="display:none;"><a href="#">Finish</a></li>
+                        <li class="next finish" style="display:none;"><a href="#">Add to Gadget Store</a></li>
                     </ul>
                 </div>  
             </div>
