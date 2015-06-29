@@ -25,6 +25,10 @@ $(function () {
         layout: []
     };
 
+    var clone = function (o) {
+        return JSON.parse(JSON.stringify(o));
+    };
+
     /**
      * Handlebars helpers
      */
@@ -261,7 +265,7 @@ $(function () {
         for (i = 0; i < length; i++) {
             item = items[i];
             if (item.id === id) {
-                return item;
+                return clone(item);
             }
         }
     };
