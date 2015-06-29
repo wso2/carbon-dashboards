@@ -354,7 +354,7 @@ $(function () {
             area.splice(index, 1);
             container.remove();
 
-            var properties = $('#ues-properties');
+            var properties = $('#ues-properties').find('.ues-content');
             var compId = properties.find('.ues-sandbox').data('component');
             if (compId !== component.id) {
                 return done();
