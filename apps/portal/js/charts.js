@@ -149,6 +149,7 @@
 	    });
 	    config.yAxis = axis;
 	    config.xAxis = getColumnIndex($("#xAxis").val());
+	    config.interpolationMode=$("#interpolationMode").val();
 	    chartConfig = config;
 	};
 

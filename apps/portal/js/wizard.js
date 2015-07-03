@@ -90,7 +90,7 @@ $("#previewChart").click(function() {
             }
         });
     } else {
-        var dataTable = makeDataTable();
+        var dataTable = makeDataTable(previewData);
         var chartType = $("#chartType").val();
         var width = document.getElementById("chartDiv").offsetWidth;
         var height = 240; //canvas height
@@ -151,7 +151,7 @@ $(".pager .finish").click(function() {
             data: JSON.stringify(request),
             contentType: "application/json",
             success: function(d) {
-                //console.log("***** Gadget [ " + $("#title").val() + " ] has been generated. " + d);
+                console.log("***** Gadget [ " + $("#title").val() + " ] has been generated. " + d);
                 window.location.href = "/portal/";
             }
         });
@@ -335,46 +335,9 @@ function makeRows(data) {
     return rows;
 };
 
-function makeDataTable() {
-    var dataTable = new igviz.DataTable();
-    if (columns.length > 0) {
-        columns.forEach(function(column, i) {
-            var type = "N";
-            if (column.type == "STRING" || column.type == "string") {
-                type = "C";
-            }
-            dataTable.addColumn(column.name, type);
-        });
-    }
-    previewData.forEach(function(row, index) {
-        for (var i = 0; i < row.length; i++) {
-            if (columns[i].type == "FLOAT" || columns[i].type == "DOUBLE") {
-                row[i] = parseFloat(row[i]);
-            } else if (columns[i].type == "INTEGER" || columns[i].type == "LONG") {
-                row[i] = parseInt(row[i]);
-            }
-        }
-    });
-    dataTable.addRows(previewData);
-    return dataTable;
-};
 
-function createDataTable(data) {
-    var realTimeData = new igviz.DataTable();
-    if (columns.length > 0) {
-        columns.forEach(function(column, i) {
-            var type = "N";
-            if (column.type == "STRING" || column.type == "string") {
-                type = "C";
-            }
-            realTimeData.addColumn(column.name, type);
-        });
-    }
-    for (var i = 0; i < data.length; i++) {
-        realTimeData.addRow(data[i]);
-    }
-    return realTimeData;
-};
+
+
 
 function makeMapDataTable(data) {
     var dataTable = new igviz.DataTable();
@@ -406,6 +369,8 @@ function drawRealtimeChart(data) {
     console.log("+++++++++++ drawRealtimeChart "); 
     $("#chartDiv").empty();
     var chartType = $("#chartType").val();
+
+
     if (chartType == "map") {
         var region = 5;
         if ($("#region").val().trim() != "") {
@@ -445,7 +410,7 @@ function drawRealtimeChart(data) {
         var config = { chartType: "arc", percentage: percentage};
         igviz.draw("#chartDiv",config,createDataTable(data));
     } else {
-        dataTable = createDataTable(data);
+        dataTable = makeDataTable(data);
         if (counter == 0) {
             var xAxis = getColumnIndex($("#xAxis").val());
             var yAxis = getColumnIndex($("#yAxis").val());
@@ -493,4 +458,45 @@ function drawRealtimeChart(data) {
 
     }
 
+};
+
+// function createDataTable(data) {
+//     var realTimeData = new igviz.DataTable();
+//     if (columns.length > 0) {
+//         columns.forEach(function(column, i) {
+//             var type = "N";
+//             if (column.type == "STRING" || column.type == "string") {
+//                 type = "C";
+//             }
+//             realTimeData.addColumn(column.name, type);
+//         });
+//     }
+//     for (var i = 0; i < data.length; i++) {
+//         realTimeData.addRow(data[i]);
+//     }
+//     return realTimeData;
+// };
+
+function makeDataTable(data) {
+    var dataTable = new igviz.DataTable();
+    if (columns.length > 0) {
+        columns.forEach(function(column, i) {
+            var type = "N";
+            if (column.type == "STRING" || column.type == "string") {
+                type = "C";
+            }
+            dataTable.addColumn(column.name, type);
+        });
+    }
+    data.forEach(function(row, index) {
+        for (var i = 0; i < row.length; i++) {
+            if (columns[i].type == "FLOAT" || columns[i].type == "DOUBLE") {
+                row[i] = parseFloat(row[i]);
+            } else if (columns[i].type == "INTEGER" || columns[i].type == "LONG") {
+                row[i] = parseInt(row[i]);
+            }
+        }
+    });
+    dataTable.addRows(data);
+    return dataTable;
 };
