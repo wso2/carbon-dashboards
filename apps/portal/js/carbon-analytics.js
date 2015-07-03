@@ -719,7 +719,7 @@ function AnalyticsClient() {
      * e.g. eventData = {
      *          streamId : "TEST:1.0.0",
      *          timestamp : 54326543254532, "optional"
-     *          publishData : {
+     *          payloadData : {
      *          },
      *          metaData : {
      *          },
