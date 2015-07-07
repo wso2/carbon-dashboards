@@ -5,6 +5,7 @@
     -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
     -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
+    margin-bottom: 0;
 }
 
 .ues-component .ues-borderless .panel-heading {

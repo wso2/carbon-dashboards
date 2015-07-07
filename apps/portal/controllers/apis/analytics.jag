@@ -154,9 +154,9 @@
                 if (from == 'undefined') from = JS_MIN_VALUE;
                 var to = request.getParameter(TIME_TO);
                 if (to == 'undefined') to = JS_MAX_VALUE;
-                var start = request.getParameter(START);
+                var start = parseInt(request.getParameter(START), 10);
                 if (start == 'undefined') start = ZERO_INDEX;
-                var count = request.getParameter(COUNT);
+                var count = parseInt(request.getParameter(COUNT), 10);
                 if (count == 'undefined') count = LAST_INDEX;
                 result = connector.getRecordsByRange(tableName, from, to, start, count, contentAsString);
                 break;

@@ -101,8 +101,8 @@
             return;
         }
         if (method === 'GET') {
-            start = request.getParameter('start');
-            count = request.getParameter('count');
+            start = parseInt(request.getParameter('start'), 10);
+            count = parseInt(request.getParameter('count'), 10);
             utils.sandbox(context, function () {
                 allDashboards = dashboards.find({
                     start: start,
