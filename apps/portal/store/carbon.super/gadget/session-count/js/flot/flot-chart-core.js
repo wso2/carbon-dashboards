@@ -85,9 +85,11 @@ function fetchData() {
     var data = {
         start_time: start,
         end_time: end,
-        node: node,
         action: statType
     };
+    if(node) {
+        data.node = node;
+    }
 
     var appname = pref.getString("appname");
     if(appname!=""){

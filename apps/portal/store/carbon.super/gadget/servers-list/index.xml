@@ -20,7 +20,7 @@
                     var url = '/portal/store/carbon.super/gadget/servers-list/api/as-data.jag';
                     var data = { action: 'node-list' };
                     var success = function(data) {
-                        var html = '';
+                        var html = '<option value="">All</option>';
                         data.forEach(function(server) {
                             html += '<option>' + server + '</option>';
                         });
