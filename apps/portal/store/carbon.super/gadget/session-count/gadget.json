@@ -2,7 +2,7 @@
     "id": "session-count",
     "title": "Sessions Count",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/session-count/index.png",
     "data": {
         "url": "store://gadget/session-count/index.xml"
     },

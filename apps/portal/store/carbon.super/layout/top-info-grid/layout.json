@@ -2,7 +2,7 @@
     "id": "top-info-grid",
     "title": "Top Info Grid",
     "description": "Grid with info boxes at top",
-    "thumbnail": "store://layout/top-info-grid/index.jpg",
+    "thumbnail": "store://layout/top-info-grid/index.png",
     "url": "store://layout/top-info-grid/index.hbs"
 }
 

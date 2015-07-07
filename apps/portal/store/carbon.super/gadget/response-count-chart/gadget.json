@@ -2,7 +2,7 @@
     "id": "response-count-chart",
     "title": "Response Count Chart",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/response-count-chart/index.png",
     "data": {
         "url": "store://gadget/response-count-chart/index.xml"
     },

@@ -2,7 +2,7 @@
     "id": "error-count-chart",
     "title": "Error Count Chart",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/error-count-chart/index.png",
     "data": {
         "url": "store://gadget/error-count-chart/index.xml"
     },

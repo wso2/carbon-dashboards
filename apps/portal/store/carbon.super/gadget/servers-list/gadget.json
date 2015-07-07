@@ -2,7 +2,7 @@
     "id": "servers-list",
     "title": "Servers List",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/servers-list/index.png",
     "data": {
         "url": "store://gadget/servers-list/index.xml"
     },

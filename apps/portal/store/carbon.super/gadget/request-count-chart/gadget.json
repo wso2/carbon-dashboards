@@ -2,7 +2,7 @@
     "id": "request-count-chart",
     "title": "Request Count Chart",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/request-count-chart/index.png",
     "data": {
         "url": "store://gadget/request-count-chart/index.xml"
     },

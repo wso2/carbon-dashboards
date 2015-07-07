@@ -2,7 +2,7 @@
     "id": "total-requests",
     "title": "Total Requests",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/total-requests/index.png",
     "data": {
         "url": "store://gadget/total-requests/index.xml"
     },

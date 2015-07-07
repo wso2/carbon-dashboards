@@ -2,7 +2,7 @@
     "id": "easy-servers-list",
     "title": "Easy Servers List",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/easy-servers-list/index.png",
     "data": {
         "url": "store://gadget/easy-servers-list/index.xml"
     },

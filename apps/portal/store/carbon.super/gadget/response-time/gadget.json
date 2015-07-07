@@ -2,7 +2,7 @@
     "id": "response-time",
     "title": "Response Time",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/response-time/index.png",
     "data": {
         "url": "store://gadget/response-time/index.xml"
     },

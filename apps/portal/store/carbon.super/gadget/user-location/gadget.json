@@ -2,7 +2,7 @@
     "id": "user-location",
     "title": "User Location",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/user-location/index.png",
     "data": {
         "url": "store://gadget/user-location/index.xml"
     },

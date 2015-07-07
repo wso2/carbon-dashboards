@@ -2,7 +2,7 @@
     "id": "errors-count",
     "title": "Errors Count",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "store://gadget/errors-count/index.png",
     "data": {
         "url": "store://gadget/errors-count/index.xml"
     },
