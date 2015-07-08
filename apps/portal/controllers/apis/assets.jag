@@ -7,6 +7,8 @@
         return;
     }
 
+    var DEFAULT_START = 0;
+    var DEFAULT_COUNT = 10;
     var id;
     var start;
     var count;
@@ -48,8 +50,18 @@
     if (matcher.match('/assets')) {
         id = matcher.elements().id;
         if (method === 'GET') {
-            start = parseInt(request.getParameter('start'), 10);
-            count = parseInt(request.getParameter('count'), 10);
+            var startAsString = request.getParameter('start');
+            if (startAsString != null && startAsString != 'undefined') {
+                start = parseInt(startAsString, 10);
+            } else {
+                start = DEFAULT_START;
+            }
+            var countAsString = request.getParameter('count');
+            if (countAsString != null && countAsString != 'undefined') {
+                count = parseInt(countAsString, 10);
+            } else {
+                count = DEFAULT_COUNT;
+            }
             query = request.getParameter('query');
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.find(assetType, query, start, count);
