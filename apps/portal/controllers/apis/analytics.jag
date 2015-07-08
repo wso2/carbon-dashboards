@@ -154,11 +154,17 @@
                 if (from == 'undefined') from = JS_MIN_VALUE;
                 var to = request.getParameter(TIME_TO);
                 if (to == 'undefined') to = JS_MAX_VALUE;
-                var start = parseInt(request.getParameter(START), 10);
-                if (start == 'undefined') start = ZERO_INDEX;
-                var count = parseInt(request.getParameter(COUNT), 10);
-                if (count == 'undefined') count = LAST_INDEX;
-                result = connector.getRecordsByRange(tableName, from, to, start, count, contentAsString);
+                var start = request.getParameter(START);
+                var intStart = ZERO_INDEX;
+                if (start != 'undefined' && start != null) {
+                    intStart = parseInt(start, 10);
+                }
+                var count = request.getParameter(COUNT);
+                var intCount = LAST_INDEX;
+                if (count != 'undefined' && count != null) {
+                    intCount = parseInt(count, 10);
+                }
+                result = connector.getRecordsByRange(tableName, from, to, intStart, intCount, contentAsString);
                 break;
             }
             case TYPE_GET_WITH_KEY_VALUES:
@@ -285,6 +291,7 @@
         if (result != null) {
             if(log.isDebugEnabled()) {
                 log.debug("value of result: " + result);
+                log.debug("status code: " + result.getstatusCode())
             }
             var statusCode = result.getStatusCode();
             var status = result.getStatus();

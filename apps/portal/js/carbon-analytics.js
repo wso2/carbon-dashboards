@@ -719,11 +719,13 @@ function AnalyticsClient() {
      * e.g. eventData = {
      *          streamId : "TEST:1.0.0",
      *          timestamp : 54326543254532, "optional"
-     *          publishData : {
+     *          payloadData : {
      *          },
      *          metaData : {
      *          },
      *          correlationData : {
+     *          },
+     *          arbitraryDataMap : {
      *          }
      *      }
      * @param callback callback The callback function which has one argument which contains the response.
