@@ -285,6 +285,7 @@
         if (result != null) {
             if(log.isDebugEnabled()) {
                 log.debug("value of result: " + result);
+                log.debug("status code: " + result.getstatusCode())
             }
             var statusCode = result.getStatusCode();
             var status = result.getStatus();

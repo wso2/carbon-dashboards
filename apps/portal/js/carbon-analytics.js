@@ -724,6 +724,8 @@ function AnalyticsClient() {
      *          metaData : {
      *          },
      *          correlationData : {
+     *          },
+     *          arbitraryDataMap : {
      *          }
      *      }
      * @param callback callback The callback function which has one argument which contains the response.
