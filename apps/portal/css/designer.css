@@ -172,6 +172,13 @@
 
 .ues-context-menu .nav .ues-pages-list li a {
     color: #11375B;
+    position: relative;
+}
+
+.ues-context-menu .nav .ues-pages-list li a .ues-trash {
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 .ues-context-menu .nav .ues-pages-list .active a, .ues-context-menu .nav .ues-pages-list li a:hover {

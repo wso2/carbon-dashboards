@@ -11,3 +11,7 @@ a, a:focus {
 .navbar-inverse {
 
 }
+
+.ues-component-box iframe {
+    transition: height 0.4s;
+}
