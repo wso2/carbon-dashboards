@@ -48,8 +48,8 @@
     if (matcher.match('/assets')) {
         id = matcher.elements().id;
         if (method === 'GET') {
-            start = request.getParameter('start');
-            count = request.getParameter('count');
+            start = parseInt(request.getParameter('start'), 10);
+            count = parseInt(request.getParameter('count'), 10);
             query = request.getParameter('query');
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.find(assetType, query, start, count);
