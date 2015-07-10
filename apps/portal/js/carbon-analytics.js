@@ -230,8 +230,8 @@ function AnalyticsClient() {
      *               column2 : "value2"
      *              },
      *              {
-     *              column1 : "newValue1",
-     *              column2 : "newValue2"
+     *              column1 : "anotherValue1",
+     *              column2 : "anotherValue2"
      *              }
      *          ],
      *          columns : [ "column1"]
