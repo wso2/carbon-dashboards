@@ -22,7 +22,6 @@ var fresh;
     var dashboards;
     var editor;
     var method = request.getMethod();
-    var utils = require('/modules/utils.js');
 
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');

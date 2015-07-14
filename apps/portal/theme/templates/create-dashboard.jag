@@ -1,0 +1,69 @@
+<% include(utils.resolvePath('templates/portal-header.jag')); %>
+    <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
+    <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <title>Dashboards</title>
+</head>
+<body>
+<% include(utils.resolvePath('templates/global-navigation.jag')); %>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+        </div>
+        <div class="collapse navbar-collapse ues-context-menu-actions">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./">
+                    <span class="fw-stack">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-cancel fw-stack-1x"></i>
+                    </span> Cancel</a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+    <div class="ues-tiles-menu">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row thumbnails ues-dashboard">
+        <div class="col-md-8 col-md-offset-2">
+            <form action="<%=tenantedUrlPrefix%>dashboards" method="post" id="ues-dashboard-form">
+                <h1 class="page-sub-title">Create a Dashboard</h1>
+                <div class="form-group">
+                    <label for="dashboard-title">Name of your Dashboard</label>
+                    <input type="text" name="title" class="form-control" id="ues-dashboard-title" placeholder="E.g. Sales Statistics">
+                </div>
+                <div class="form-group">
+                    <label for="dashboard-id">URL</label>
+                    <input type="text" name="id" class="form-control" id="ues-dashboard-id" placeholder="E.g. sales-stats">
+                </div>
+                <div class="form-group">
+                    <label for="dashboard-description">Description</label>
+                    <textarea name="description" class="form-control" id="ues-dashboard-description" placeholder="E.g. Monthly Sales Statistics" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-default" id="ues-dashboard-create">Next</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>
+<script src="<%=urlPrefix%>js/ues-store.js"></script>
+<script src="<%=urlPrefix%>js/create.js"></script>
+<% include('/controllers/includes/theme-portal-scripts.jag'); %>
+</body>
+</html>

@@ -1,5 +1,4 @@
 <%
-var utils = require('/modules/utils.js');
 var usr = require('/modules/user.js');
 var dest = request.getParameter('destination');
 usr.logout();

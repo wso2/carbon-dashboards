@@ -1,5 +1,4 @@
 <%
-var utils = require('/modules/utils.js');
 var styles = utils.portalStyles();
 %>
 <% if(styles) { %>

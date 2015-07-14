@@ -12,7 +12,7 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
                 <span class="icon-bar"></span>
             </button>
             <a href="<%=tenantedUrlPrefix%>./" >
-                <img src="<%=urlPrefix%>images/logo.png"/> <h2 class="app-title">Dashboard Designer</h2>
+                <img src="<%=urlPrefix%><%=utils.resolveUrl('images/logo.png')%>"/> <h2 class="app-title">Dashboard Designer</h2>
             </a>
         </div>
         <div class="collapse navbar-collapse">

@@ -1,0 +1,124 @@
+<% include(utils.resolvePath('templates/portal-header.jag')); %>
+    <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <title>Dashboards</title>
+</head>
+<body>
+<% include(utils.resolvePath('templates/global-navigation.jag')); %>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+        </div>
+        <div class="collapse navbar-collapse ues-context-menu-actions">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>create-dashboard">
+                    <span class="fw-stack">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-add fw-stack-1x"></i>
+                    </span> Create Dashboard</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>create-gadget">
+                    <span class="fw-stack">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-add fw-stack-1x"></i>
+                    </span> Create Gadget</a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+    <div class="ues-tiles-menu">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="ues-portal" class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="page-sub-title">Dashboards</h1>
+            <p class="page-description">* View, Modify and Delete dashboards</p>
+        </div>
+    </div>
+    <div class="row thumbnails ues-dashboards"></div>
+</div>
+<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/spin.min.js"></script>
+<script src="<%=urlPrefix%>js/ladda.min.js"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>
+<% include('/controllers/includes/common-scripts.jag'); %>
+<script src="<%=urlPrefix%>js/ues-store.js"></script>
+<script src="<%=urlPrefix%>js/portal.js"></script>
+<% include('/controllers/includes/theme-portal-scripts.jag'); %>
+<script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
+    {{#each .}}
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="thumbnail ues-dashboard" data-id="{{id}}">
+            {{>ues-dashboard-thumbnail-hbs}}
+        </div>
+    </div>
+    {{/each}}
+</script>
+<script id="ues-dashboards-empty-hbs" type="text/x-handlebars-template">
+    <div class="col-md-12">
+        <div class="caption">
+            <h4>No dashboards found. Please create dashboards by visiting
+            <a href="<%=tenantedUrlPrefix%>create-dashboard">here</a>.
+            </h4>
+        </div>
+    </div>
+</script>
+<script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
+    <h2>{{title}}</h2>
+    <p class="ues-description">{{description}}</p>
+    <div class="ues-actions">
+        <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
+            <span class="fw-stack">
+                <i class="fw fw-ring fw-stack-2x"></i>
+                <i class="fw fw-view fw-stack-1x"></i>
+            </span>
+         View</a>
+        {{#if editable}}
+        <a class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
+            <span class="fw-stack">
+                <i class="fw fw-ring fw-stack-2x"></i>
+                <i class="fw fw-edit fw-stack-1x"></i>
+            </span>
+            Design
+        </a>
+        <a class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+            <span class="fw-stack">
+                <i class="fw fw-ring fw-stack-2x"></i>
+                <i class="fw fw-settings fw-stack-1x"></i>
+            </span>
+             Settings
+        </a>
+        {{/if}}
+    </div>
+    <a href="#" class="ues-dashboard-trash-handle">
+        <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="Delete Dashboard"></i>
+    </a>
+</script>
+<script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
+    <h2>Do you want to delete {{title}}?</h2>
+    <div class="ues-trash-actions">
+        <a href="#" class="btn btn-danger ladda-button ues-dashboard-trash-confirm"
+            role="button" data-style="expand-left" data-size="l">
+            <span class="ladda-label">Delete</span>
+        </a>
+        <a href="#" class="btn btn-default ues-dashboard-trash-cancel" role="button" >Cancel</a>
+    </div>
+</script>
+</body>
+</html>
