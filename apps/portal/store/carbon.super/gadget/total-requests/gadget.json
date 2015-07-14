@@ -1,0 +1,23 @@
+{
+    "id": "total-requests",
+    "title": "Total Requests",
+    "type": "gadget",
+    "thumbnail": "store://gadget/total-requests/index.png",
+    "data": {
+        "url": "store://gadget/total-requests/index.xml"
+    },
+    "styles": {
+        "borders": false,
+        "title": false
+    },
+    "listen": {
+        "server-selected": {
+            "type": "server",
+            "description": "Used to filter based on state"
+        },
+        "date-selected": {
+            "type": "date-range",
+            "description": "Used to filter based on state"
+        }
+    }
+}

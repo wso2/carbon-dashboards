@@ -162,3 +162,19 @@ var portalScripts = function () {
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
+
+var resolvePath = function (path) {
+    var config = require('/configs/designer.json');
+    var theme = config.theme;
+    var extendedPath = '/extensions/themes/' + theme + '/' + path;
+    var file = new File(extendedPath);
+    return file.isExists() ? extendedPath : '/theme/' + path;
+};
+
+var resolveUrl = function (path) {
+    var config = require('/configs/designer.json');
+    var theme = config.theme;
+    var extendedPath = 'extensions/themes/' + theme + '/' + path;
+    var file = new File('/' + extendedPath);
+    return file.isExists() ? extendedPath : 'theme/' + path;
+};

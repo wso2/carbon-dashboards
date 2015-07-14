@@ -75,6 +75,7 @@
     cursor: move;
     border: 1px solid #e7e7e7;
     background: #fff;
+    width: 169px;
 }
 
 #ues-store .ues-thumbnail img, .ues-store-thumbnail img {

@@ -1,4 +1,5 @@
 <%
+var utils;
 var user;
 var context;
 var tenantPrefix;
@@ -15,7 +16,8 @@ var originalURI;
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
     var usr = require('/modules/user.js');
-    var utils = require('/modules/utils.js');
+
+    utils = require('/modules/utils.js');
 
     superDomain = String(carbon.server.superTenant.domain);
     user = usr.current();

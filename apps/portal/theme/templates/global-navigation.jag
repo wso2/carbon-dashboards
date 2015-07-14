@@ -1,0 +1,37 @@
+<%
+var query = request.getQueryString();
+var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
+%>
+<nav id="ues-global-navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
+    <div class="container-fluid">
+        <div class="navbar-header app-logo">
+            <button data-target=".ues-global-navigation-bar" data-toggle="collapse" class="navbar-toggle" type="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="<%=tenantedUrlPrefix%>./" >
+                <img src="<%=urlPrefix%><%=utils.resolveUrl('images/logo.png')%>"/> <h2 class="app-title">Dashboard Designer</h2>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right ues-global-navigation-bar">
+                <% if (user) { %>
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <%=user.username%> <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
+                    </ul>
+                </li>
+                </li>
+                <% } else { %>
+                <li><a href="<%=urlPrefix%>login?destination=<%=dest%>">Login</a></li>
+                <% } %>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>

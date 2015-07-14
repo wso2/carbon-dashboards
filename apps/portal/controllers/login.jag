@@ -1,15 +1,15 @@
 <%
+var message;
+var dest;
 (function() {
     var usr;
     var user;
     var username;
     var password;
-    var message;
     var carbon;
     var log = new Log();
-    var utils = require('/modules/utils.js');
     var method = request.getMethod();
-    var dest = request.getParameter('destination');
+    dest = request.getParameter('destination');
     if (method === 'POST') {
         carbon = require('carbon');
         username = request.getParameter('username');
@@ -19,9 +19,10 @@
             password = request.getParameter('password');
             if (usr.login(username, password)) {
                 //authorize the backend API too
-                var api = require('/modules/api.jag');
-                var authToken = api.authenticate(username,password);
-                session.put('authToken' ,authToken);
+                //TODO: move this to a handler
+                var api = require('/modules/api.js');
+                var authToken = api.authenticate(username, password);
+                session.put('authToken', authToken);
                 if (dest) {
                     response.sendRedirect(dest);
                     return;
@@ -36,72 +37,6 @@
         }
         message = 'The username or password you entered is incorrect.';
     }
-%>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboards</title>
-    <link rel="icon" href="<%=urlPrefix%>images/favicon.png" type="image/x-icon" />
-    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
-    <% include('includes/theme-portal-styles.jag'); %>
-</head>
-<body>
-<div role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
-    <div class="container">
-        <div class="navbar-header app-logo">
-            <a href="<%=urlPrefix%>">
-                <img src="<%=urlPrefix%>images/logo.png"/> <h2 class="app-title">Dashboard Designer</h2>
-            </a>
-        </div>
-        <div class="collapse navbar-collapse ues-global-navigation-bar">
-            <ul class="nav navbar-nav">
 
-            </ul>
-        </div>
-        <!--/.nav-collapse -->
-    </div>
-</div>
-<div id="wrapper" class="container">
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <form class="ues-signin-form" action="<%=tenantedUrlPrefix%>login" method="post">
-                <h2 class="ues-signin-heading">Login</h2>
-                <div class="form-group">
-                    <label for="ues-username" class="sr-only">Username</label>
-                    <input type="text" name="username" class="form-control ues-username" placeholder="Username" required autofocus>
-                </div>
-                <div class="form-group">
-                    <label for="ues-password" class="sr-only">Password</label>
-                    <input type="password" name="password" class="form-control ues-password" placeholder="Password" required>
-                </div>
-                <!--div class="checkbox">
-                    <label>
-                    <input type="checkbox" value="remember-me" class="ues-remember"> Remember me
-                    </label>
-                </div-->
-                <% if (dest) { %>
-                <input type="hidden" name="destination" value="<%=dest%>">
-                <% } %>
-                <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">Login</button>
-            </form>
-            <% if (message) { %>
-            <div class="alert alert-danger" role="alert"><%=message%></div>
-            <% } %>
-        </div>
-    </div>
-</div>
-<!--<iframe id="sandbox" src="preview.jag"></iframe>-->
-<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
-<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
-<% include('includes/theme-portal-scripts.jag'); %>
-</body>
-</html>
-<% }()); %>
+    include(utils.resolvePath('templates/login.jag'))
+}()); %>

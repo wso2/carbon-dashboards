@@ -1,7 +1,7 @@
 $(function () {
     //TODO: cleanup this
 
-    var COMPONENTS_PAGE_SIZE = 3;
+    var COMPONENTS_PAGE_SIZE = 20;
 
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
 

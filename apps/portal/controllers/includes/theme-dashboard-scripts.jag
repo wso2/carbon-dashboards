@@ -1,5 +1,4 @@
 <%
-    var utils = require('/modules/utils.js');
     var scripts = utils.dashboardScripts();
 %>
 <% if(scripts) { %>

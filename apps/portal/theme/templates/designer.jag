@@ -1,0 +1,402 @@
+<% include(utils.resolvePath('templates/portal-header.jag')); %>
+    <link rel="stylesheet" href="<%=urlPrefix%>css/jquery-ui.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/designer.css">
+    <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <title>WSO2 UES - Dashboard Designer</title>
+</head>
+<body>
+<% include(utils.resolvePath('templates/global-navigation.jag')); %>
+<div id="ues-workspace-designer" class="ues-workspace">
+    <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+            </div>
+            <div class="collapse navbar-collapse ues-context-menu-actions">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Dashboard Design</a></li>
+                    <li><a href="#" class="ues-page-add">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-add fw-stack-1x"></i>
+                        </span> Add Page</a>
+                    </li>
+                    <li><a href="#" class="ues-dashboard-preview">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-view fw-stack-1x"></i>
+                        </span> Preview</a></li>
+                    <li><a href="#" class="ues-dashboard-export">
+                     <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
+                        </span> Export</a></li>
+                    <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
+                     <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-settings fw-stack-1x"></i>
+                        </span> Settings</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" class="ues-page-switcher dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pages <span class="caret"></span></a>
+                        <ul class="dropdown-menu ues-pages-list" role="menu"></ul>
+                    </li>
+                    <li class="ues-hidden"><a href="#" class="ues-component-properties-toggle"><i class="fw fw-settings"></i></a></li>
+                    <li><a href="#" class="ues-page-properties-toggle"><i class="fw fw-register2"></i></a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+        <div class="ues-tiles-menu">
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <nav id="ues-store-menu" class="navbar-default navbar" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#ues-store-menu-actions">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <span class="visible-xs navbar-brand">Designer Menu</span>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="ues-store-menu-actions" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav nav-tabs" role="tablist">
+                <li><a class="ues-store-toggle" data-type="gadget" href="#"><i class="fw fw-pie-chart "></i></a></li>
+                <li><a class="ues-store-toggle" data-type="widget" href="#"><i class="fw fw-applications"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <div id="ues-store" class="ues-hidden">
+        <div id="ues-store-gadget" class="ues-store-assets ues-hidden" data-type="gadget">
+            <div class="container-fluid ues-content">
+                <div class="row ues-search-box">
+                    <div class="col-md-12">
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row ues-help">
+                    <div class="col-md-12">* Drag and drop Gadgets to the design view</div>
+                </div>
+                <div class="row ues-thumbnails"></div>
+            </div>
+        </div>
+        <div id="ues-store-widget" class="ues-store-assets ues-hidden" data-type="widget">
+            <div class="container-fluid ues-content">
+                <div class="row ues-search-box">
+                    <div class="col-md-12">
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row ues-help">
+                    <div class="col-md-12">* Drag and drop Widgets to the design view</div>
+                </div>
+                <div class="row ues-thumbnails"></div>
+            </div>
+        </div>
+    </div>
+    <div id="ues-properties" class="ues-hidden">
+        <div class="container-fluid ues-content"></div>
+    </div>
+    <div id="ues-designer"></div>
+</div>
+<div id="ues-workspace-layout" class="ues-workspace ues-hidden">
+    <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+            </div>
+            <div class="collapse navbar-collapse ues-context-menu-actions">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Dashboard Design</a></li>
+                    <li><a href="#" class="ues-go-back">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-left-arrow fw-stack-1x"></i>
+                        </span> Go Back</a>
+                    </li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+        <div class="ues-tiles-menu">
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="page-sub-title">Please select a layout</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 ues-content"></div>
+        </div>
+    </div>
+</div>
+<script src="<%=urlPrefix%>js/async.js"></script>
+<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/jquery-ui.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<!-- TODO fix shindig url -->
+<script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>
+<script src="<%=urlPrefix%>js/ues-prefs.js"></script>
+<% include('/controllers/includes/common-scripts.jag'); %>
+<% include('/controllers/includes/dashboard-scripts.jag'); %>
+<script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
+<script src="<%=urlPrefix%>js/ues-store.js"></script>
+<script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+<script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
+<script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
+<script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
+<script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
+<script src="<%=urlPrefix%>js/designer.js"></script>
+<% include('/controllers/includes/theme-portal-scripts.jag'); %>
+<script id="ues-layout-hbs" type="text/x-handlebars-template">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="ues-page-title">{{current.title}}</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="ues-layout container-fluid"></div>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
+    <div class="ues-toolbar">
+        <ul class="list-inline pull-right">
+            <li><a href="#" data-toggle="tooltip" title="{{id}}"> <i class="fw fw-info"> </i></a></li>
+            <li><a href="#" class="ues-move-handle" data-id="{{id}}" data-action="move"><i class="fw fw-endpoint"></i></a></li>
+            <li><a href="#" class="ues-properties-handle"><i class="fw fw-settings"></i></a></li>
+            <li><a href="#" class="ues-trash-handle"><i class="fw fw-delete"></i></a></li>
+        </ul>
+    </div>
+</script>
+<script id="ues-component-properties-hbs" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-md-12 title-section">
+            <h3 class="ues-title">{{title}}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ues-sandbox" data-component="{{id}}">
+                <form class="ues-component-properties">
+                    {{#has options}}
+                        <div class="ues-options ues-properties">
+                            <h4>Options</h4>
+                            {{#each options}}
+                                <div class="form-group">
+                                    <label>{{title}}
+                                        {{#equals type "text"}}
+                                        <textarea name="{{@key}}" class="form-control" rows="4">{{value}}</textarea>
+                                        {{else}}
+                                        <input type="text" class="form-control" name="{{@key}}" placeholder="{{title}}" value="{{value}}">
+                                        {{/equals}}
+                                    </label>
+                                </div>
+                            {{/each}}
+                        </div>
+                        <hr/>
+                    {{/has}}
+                    {{#has settings}}
+                        <div class="ues-settings ues-properties">
+                            <h4>Settings</h4>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="personalize"{{#if settings.personalize}} checked="checked"{{/if}}> Personalizable
+                                </label>
+                            </div>
+                        </div>
+                        <hr/>
+                    {{/has}}
+                    {{#has styles}}
+                        <div class="ues-styles ues-properties">
+                            <h4>Styles</h4>
+                            <div class="form-group">
+                                <label>Title
+                                    <input type="text" class="form-control" name="title" placeholder="Title" value="{{#if styles.title}}{{styles.title}}{{/if}}">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>Title Position
+                                    <select class="form-control ues-title-position">
+                                        <option value="left"{{#equals "left" styles.titlePosition}} selected="selected"{{/equals}}>Left</option>
+                                        <option value="center"{{#equals "center" styles.titlePosition}} selected="selected"{{/equals}}>Center</option>
+                                        <option value="right"{{#equals "right" styles.titlePosition}} selected="selected"{{/equals}}>Right</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>Height
+                                    <input type="text" class="form-control" name="height" placeholder="Height" value="{{#if styles.height}}{{styles.height}}{{/if}}">
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="borders"{{#if styles.borders}} checked="checked"{{/if}}> Borders
+                                </label>
+                            </div>
+                        </div>
+                        <hr/>
+                    {{/has}}
+                    {{#has listeners}}
+                        <div class="panel-group ues-notifiers ues-properties" id="accordion-events" role="tablist" aria-multiselectable="true">
+                            <h4>Events</h4>
+                            {{#each listeners}}
+                              <div class="panel panel-default listener" data-event="{{event}}">
+                                <div class="panel-heading" role="tab" id="heading-{{event}}" data-event="{{event}}">
+                                  <h4 class="panel-title">
+                                    <a data-toggle="collapse"
+                                        data-parent="#accordion-events"
+                                        href="#collapse-{{event}}" aria-expanded="true" aria-controls="collapse-{{event}}">{{event}}
+                                    </a>
+                                  </h4>
+                                </div>
+                                <div id="collapse-{{event}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{event}}">
+                                  <div class="panel-body">
+                                  {{#each notifiers}}
+                                    <div class="checkbox">
+                                      <label>
+                                        <input type="checkbox" class="notifier" data-from="{{from}}"
+                                        data-event="{{event}}" value=""{{#if wired}} checked="checked"{{/if}}>{{event}} ({{content.title}}
+                                        <a href="#" data-toggle="tooltip" title="{{from}}">
+                                            <i class="fw fw-info"></i>
+                                        </a>)
+                                        </label>
+                                    </div>
+                                  {{/each}}
+                                  </div>
+                                </div>
+                              </div>
+                            {{/each}}
+                        </div>
+                    {{/has}}
+                    {{#has options listeners settings styles}}
+                    {{else}}
+                        No properties to configure.
+                    {{/has}}
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="ues-components-list-hbs" type="text/x-handlebars-template">
+    {{#each assets}}
+    <div class="col-md-12">
+        <div class="ues-thumbnail" data-id="{{id}}" data-type="{{../type}}">
+            <img src="{{resolveURI thumbnail}}"/>
+            <h4 class="ues-title">{{title}}</h4>
+        </div>
+    </div>
+    {{/each}}
+</script>
+<script id="ues-no-components-hbs" type="text/x-handlebars-template">
+    <div class="col-md-12">No items found.</div>
+</script>
+<script id="ues-layouts-list-hbs" type="text/x-handlebars-template">
+    <div class="row thumbnails">
+        {{#if length}}
+        {{#each .}}
+        <div class="col-md-3 col-sm-4 box">
+            <div class="thumbnail layout-slection">
+                <div class="caption">
+                    <h3>{{title}}</h3>
+                </div>
+                <img src="{{resolveURI thumbnail}}"/>
+
+                <div class="ues-toolbar">
+                    <button type="button" class="btn btn-default ues-add" data-id="{{id}}">Select</button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+        {{else}}
+        <div class="col-md-12">
+            <div class="caption">
+                <h4>No layouts found.</h4>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</script>
+<script id="ues-page-properties-hbs" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-md-12 title-section">
+            <h3 class="ues-page-title">{{title}}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ues-sandbox">
+                <form>
+                    <h4>Properties</h4>
+                    <div class="form-group">
+                        <label>Title
+                            <input type="text" class="form-control title" name="title" placeholder="Page Title" value="{{title}}">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>URL
+                            <input type="text" class="form-control id" name="id" placeholder="URL" value="{{id}}">
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> Use as Landing
+                        </label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="ues-pages-list-hbs" type="text/x-handlebars-template">
+    {{#each pages}}
+    <li{{#equals id ../current.id}} class="active"{{/equals}}>
+        <a href="#" data-id="{{id}}">{{title}} <i class="fw fw-delete pull-right ues-trash"></i></a>
+    </li>
+    {{/each}}
+</script>
+</body>
+</html>

@@ -2,10 +2,10 @@
 var urlPrefix;
 var tenantedUrlPrefix;
 var sendLogin;
+var dest;
 
 (function () {
     var log = new Log();
-    var utils = require('/modules/utils.js');
 
     urlPrefix = utils.relativePrefix(originalURI);
     tenantedUrlPrefix = utils.tenantedPrefix(urlPrefix, urlDomain);
@@ -31,6 +31,9 @@ var sendLogin;
         response.sendError(404, 'requested page cannot be found');
         return;
     }
+
+    var query = request.getQueryString();
+    dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
 
     include(path);
 

@@ -1,0 +1,23 @@
+{
+    "id": "errors-count",
+    "title": "Errors Count",
+    "type": "gadget",
+    "thumbnail": "store://gadget/errors-count/index.png",
+    "data": {
+        "url": "store://gadget/errors-count/index.xml"
+    },
+    "styles": {
+        "borders": false,
+        "title": false
+    },
+    "listen": {
+        "server-selected": {
+            "type": "server",
+            "description": "Used to filter based on state"
+        },
+        "date-selected": {
+            "type": "date-range",
+            "description": "Used to filter based on state"
+        }
+    }
+}

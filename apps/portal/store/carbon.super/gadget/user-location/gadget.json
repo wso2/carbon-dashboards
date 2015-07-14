@@ -1,0 +1,23 @@
+{
+    "id": "user-location",
+    "title": "User Location",
+    "type": "gadget",
+    "thumbnail": "store://gadget/user-location/index.png",
+    "data": {
+        "url": "store://gadget/user-location/index.xml"
+    },
+    "styles": {
+        "borders": false,
+        "title": true
+    },
+    "listen": {
+        "server-selected": {
+            "type": "server",
+            "description": "Used to filter based on state"
+        },
+        "date-selected": {
+            "type": "date-range",
+            "description": "Used to filter based on state"
+        }
+    }
+}

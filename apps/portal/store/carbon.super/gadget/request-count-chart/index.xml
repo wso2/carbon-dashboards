@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <Module>
+    <ModulePrefs title="Request Count Chart"
+                 author="WSO2 Gadget Server"
+                 height="230"
+                 scrolling="true"  category="Templates"
+                 tags="charts,stacked,visualization,template"
+                 description="A generic Stacked Chart gadget, takes a json datasource as an input. It can be be configured to fetch data in defined intervals. This gadget can be used to create dashboards with statistical data. This gadget can be reused as an iframe in any web page as it is self contained">
+        <Require feature="pubsub-2">
+            <Param name="topics">
+                <![CDATA[
+                <Topic title="" name="wso2.gadgets.charts.timeRangeChange"
+                description="time range for filtering has been changed" type="object"
+                subscribe="true"/>
+
+                <Topic title="" name="wso2.gadgets.charts.ipChange"
+                description="ip for filtering has been changed" type="string"
+                subscribe="true"/>
+                ]]>
+            </Param>
+        </Require>
+    </ModulePrefs>
+    <UserPref name="appname"
+              display_name="Web App Name"
+              default_value="">
+    </UserPref>
+    <UserPref name="startTime"
+              display_name="Start time"
+              default_value="">
+    </UserPref>
+    <UserPref name="endTime"
+              display_name="End time"
+              default_value="">
+    </UserPref>
+    <UserPref name="node"
+              display_name="Node IP"
+              default_value="">
+    </UserPref>
+    <Content type="html">
+    <![CDATA[
+ <html>
+ <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Bar Chart</title>
+	<link href="css/flot-graph.css" rel="stylesheet" type="text/css">
+	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="css/custom.css" rel="stylesheet" type="text/css">
+	<script language="javascript" type="text/javascript" src="js/chart-options.js"></script>
+	<script language="javascript" type="text/javascript" src="js/excanvas.min.js"></script>
+	<script language="javascript" type="text/javascript" src="js/jquery.js"></script>
+	<script language="javascript" type="text/javascript" src="js/bootstrap.js"></script>
+	<script language="javascript" type="text/javascript" src="js/moment.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.selection.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.stack.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.navigate.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.resize.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.tickrotor.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.axislabels.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/jquery.flot.time.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot/flot-chart-core.js"></script>
+
+</head>
+
+<body>
+	<div class="gadgetInnerWrapper">			
+			<div id="placeholder" class="demo-placeholder" style="height:100%"></div>
+	</div>
+<script type="text/javascript">
+
+</script>
+</body>
+</html>
+
+    ]]>
+</Content>
+</Module>
+
+
