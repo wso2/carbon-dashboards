@@ -51,13 +51,13 @@
         id = matcher.elements().id;
         if (method === 'GET') {
             var startAsString = request.getParameter('start');
-            if (startAsString != null && startAsString != 'undefined') {
+            if (startAsString != null && startAsString != undefined) {
                 start = parseInt(startAsString, 10);
             } else {
                 start = DEFAULT_START;
             }
             var countAsString = request.getParameter('count');
-            if (countAsString != null && countAsString != 'undefined') {
+            if (countAsString != null && countAsString != undefined) {
                 count = parseInt(countAsString, 10);
             } else {
                 count = DEFAULT_COUNT;
