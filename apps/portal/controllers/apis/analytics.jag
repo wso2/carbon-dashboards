@@ -36,7 +36,7 @@
 //    var TYPE_PUT_RECORDS_TO_TABLE = 12;
     var TYPE_SEARCH = 13;
     var TYPE_SEARCH_COUNT = 14;
-//    var TYPE_SET_SCHEMA = 15;
+    var TYPE_SET_SCHEMA = 15;
     var TYPE_TABLE_EXISTS = 16;
     var TYPE_WAIT_FOR_INDEXING = 17;
     var TYPE_PAGINATION_SUPPORTED = 18;
@@ -214,11 +214,11 @@
                 result = connector.search(tableName, contentAsString);
                 break;
             }
-            /*case TYPE_SET_SCHEMA:
+            case TYPE_SET_SCHEMA:
              {
-             print(connector.setTableSchema(tableName, contentAsString));
-             break;
-             }*/
+                print(connector.setTableSchema(tableName, contentAsString));
+                break;
+             }
             case TYPE_GET_SCHEMA:
             {
                 result = connector.getTableSchema(tableName);
