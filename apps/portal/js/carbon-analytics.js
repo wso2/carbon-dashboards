@@ -38,7 +38,7 @@ function AnalyticsClient() {
     //var TYPE_PUT_RECORDS_TO_TABLE = 12;
     var TYPE_SEARCH = 13;
     var TYPE_SEARCH_COUNT = 14;
-    //var TYPE_SET_SCHEMA = 15;
+    var TYPE_SET_SCHEMA = 15;
     var TYPE_TABLE_EXISTS = 16;
     var TYPE_WAIT_FOR_INDEXING = 17;
     var TYPE_PAGINATION_SUPPORTED = 18;
@@ -500,7 +500,7 @@ function AnalyticsClient() {
      * @param callback The callback function which has one argument containing the response message
      * @param error The callback function which has one argument which contains the error if any
      */
-    /*this.setSchema = function (schemaInfo, callback, error) {
+    this.setSchema = function (schemaInfo, callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_SET_SCHEMA + "&tableName=" + schemaInfo["tableName"],
                         data: JSON.stringify(schemaInfo["schema"]),
@@ -512,7 +512,7 @@ function AnalyticsClient() {
                             error(msg);
                         }
                     });
-    };*/
+    };
 
     /**
      * Gets the schema of a table.
@@ -717,7 +717,8 @@ function AnalyticsClient() {
      * Publishes an event to a given stream.
      * @param event object containing event data.
      * e.g. eventData = {
-     *          streamId : "TEST:1.0.0",
+     *          streamName : "TEST",
+     *          streamVersion : "1.0.0",
      *          timestamp : 54326543254532, "optional"
      *          payloadData : {
      *          },
