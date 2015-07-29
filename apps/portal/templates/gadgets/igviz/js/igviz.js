@@ -73,6 +73,7 @@
             "schema":dataTable.metadata,
             "name": "x",
             "range": "width",
+            "zero": false,
             "clamp":false,
             "field": xString
         }
@@ -870,6 +871,7 @@
             "index":chartConfig.xAxis,
             "schema":dataTable.metadata,
             "name": "x",
+            "zero": false,
             "range": "width",
             "field": xString
         }
@@ -1699,7 +1701,7 @@
             "schema":dataTable.metadata,
             "name": "x",
             "range": "width",
-
+            "zero": false,
             "field": xString
 
         }
