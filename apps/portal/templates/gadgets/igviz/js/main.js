@@ -84,6 +84,8 @@ function makeDataTable(data) {
             var type = "N";
             if (column.type == "STRING" || column.type == "string") {
                 type = "C";
+            } else if (column.type == "TIME" || column.type == "time") {
+                type = "T";
             }
             dataTable.addColumn(column.name, type);
         });

@@ -102,6 +102,11 @@
                 payloadDataLength = payloadData.length;
             }
 
+            output.push({
+                name : "TIMESTAMP",
+                type : "time"
+            });
+
             var allDataLength = metaDataLength + correlationDataLength + payloadDataLength;
             for(var i=0;i<metaDataLength;i++){
                 output.push({
