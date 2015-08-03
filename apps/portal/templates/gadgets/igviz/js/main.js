@@ -53,8 +53,9 @@ function parseColumns(data) {
 };
 
 function fetchData(callback) {
-    var timeFrom = new Date("1970-01-01").getTime();
-    var timeTo = new Date().getTime();
+    var timeFrom = "undefined";
+    var timeTo = "undefined";
+    var count = "undefined";
     var request = {
         type: 8,
         tableName: datasource,
@@ -62,7 +63,7 @@ function fetchData(callback) {
         timeFrom: timeFrom,
         timeTo: timeTo,
         start: 0,
-        count: 10
+        count: count
     };
     $.ajax({
         url: "/portal/apis/analytics",
