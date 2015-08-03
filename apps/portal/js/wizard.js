@@ -2,6 +2,7 @@ var datasource, datasourceType;
 var previewData = [];
 var columns = [];
 var done = false;
+var isPaginationSupported = true;
 
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 $(document).ready(function() {
@@ -41,7 +42,7 @@ $('#rootwizard').bootstrapWizard({
             $('#rootwizard').find('.pager .finish').show();
             $("#previewChart").hide();
             done = true;
-            if (datasourceType === "batch") {
+            if (datasourceType === "batch" && isPaginationSupported) {
                 fetchData();
             }
             renderChartConfig();
@@ -55,11 +56,21 @@ $("#dsList").change(function() {
         $('#rootwizard').find('.pager .next').removeClass("disabled");
         datasourceType = $("#dsList option:selected").attr("data-type");
         getColumns(datasource, datasourceType);
-        if (datasourceType == "batch") {
-            $("#btnPreview").show();
-        } else {
-            $("#btnPreview").hide();
-        }
+
+        //check whether the seleced datasource supports pagination as well
+        //first, get the recordstore for this table
+        var recordStore;
+        var tableName = datasource;
+        var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
+        $.getJSON(url, function(data) {
+            if (data.status==="success") {
+                recordStore = data.message;
+                //then check for pagination support on this recordstore
+                recordStore = recordStore.replace(/"/g,"");
+                checkPaginationSupported(recordStore);
+            }
+        });
+
     } else {
         $('#rootwizard').find('.pager .next').addClass("disabled");
     }
@@ -192,7 +203,7 @@ function getDatasources() {
             });
             $("#dsList").empty();
             $("#dsList").append($('<option/>').val("-1")
-                    .html("--Select a Datasource--")
+                    .html("--Select a table/stream--")
                     .attr("type", "-1")
             );
             datasources.forEach(function(datasource, i) {
@@ -234,13 +245,29 @@ function getColumns(datasource, datasourceType) {
     }
 };
 
+function checkPaginationSupported(recordStore) {
+    console.log("Checking pagination support on recordstore : " + recordStore); 
+    var url = "/portal/apis/analytics?type=18&recordStore=" + recordStore;
+    $.getJSON(url, function(data) {
+        if (data.status==="success") {
+            if(data.message==="true" && datasourceType==="batch") {
+                console.log("Pagination supported for recordstore: " + recordStore); 
+                $("#btnPreview").show();
+                isPaginationSupported = true;
+            } else {
+                $("#btnPreview").hide();
+                isPaginationSupported = false;
+            }
+        }
+    });
+};
+
 function fetchData(callback) {
     var timeFrom = new Date("1970-01-01").getTime();
     var timeTo = new Date().getTime();
     var request = {
         type: 8,
         tableName: $("#dsList").val(),
-        filter: $("#txtFilter").val(),
         timeFrom: timeFrom,
         timeTo: timeTo,
         start: 0,

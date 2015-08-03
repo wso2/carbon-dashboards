@@ -49,7 +49,7 @@
                   <div class="navbar-inner">
                     <div class="container">
                 <ul>
-                    <li><a href="#tab1" data-toggle="tab">Select Datasource</a></li>
+                    <li><a href="#tab1" data-toggle="tab">Select Table/Event Stream</a></li>
                     <li><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
                 </ul>
                  </div>
@@ -62,7 +62,7 @@
 
                             <!-- Select Basic -->
                             <div class="form-group">
-                              <label class="col-md-4 control-label" for="datasource">Datasource</label>
+                              <label class="col-md-4 control-label" for="datasource">Analytics Table/Event Stream</label>
                               <div class="col-md-4">
                                 <select id="dsList" name="datasource" class="form-control" style="width: 100%">
                                 </select>
