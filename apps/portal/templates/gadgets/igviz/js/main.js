@@ -121,7 +121,7 @@ function drawChart(data) {
     gadgetConfig.chartConfig.height = $("#placeholder").height() - 65;
     var chartType = gadgetConfig.chartConfig.chartType;
     var xAxis = gadgetConfig.chartConfig.xAxis;
-
+    jQuery("#noChart").html("");
     if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
         dataTable.metadata.types[xAxis] = "C";
     }
@@ -162,7 +162,7 @@ var chart;
 
 function drawRealtimeChart(data) {
     var chartType = gadgetConfig.chartConfig.chartType;
-
+    jQuery("#noChart").html("");
     if (chartType == "map") {
         gadgetConfig.chartConfig.width = $("#placeholder").width();
         gadgetConfig.chartConfig.height = $("#placeholder").height() + 20;
