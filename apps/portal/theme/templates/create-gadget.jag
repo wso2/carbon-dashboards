@@ -87,6 +87,16 @@
                                 <h4>Configuration</h4>
                                 <form class="form-horizontal">
 
+                                    <div class="form-group attr bar line area arc stackedBar groupedBar stackedArea multiArea scatter tabular map">
+                                        <label for="title"
+                                               class="col-sm-6 control-label">Title</label>
+
+                                        <div class="col-sm-6">
+                                            <input name='title' type="text" class="form-control"
+                                                   id="title" placeholder="Untitled Widget">
+                                        </div>
+                                    </div>
+
                                     <div class="form-group" id="chartTypeSelection">
                                         <label for="chartType" class="col-sm-6 control-label">
                                             Chart Type
@@ -111,15 +121,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group attr bar line area arc stackedBar groupedBar stackedArea multiArea scatter tabular map">
-                                        <label for="title"
-                                               class="col-sm-6 control-label">Title</label>
-
-                                        <div class="col-sm-6">
-                                            <input name='title' type="text" class="form-control"
-                                                   id="title" placeholder="Untitled Widget">
-                                        </div>
-                                    </div>
 
                                     <div class="form-group attr var arc">
                                         <label for="percentage"
@@ -142,7 +143,6 @@
                                             </select>
                                         </div>
                                     </div>
-
 
                                     <div class="form-group var attr bar area stackedBar groupedBar stackedArea  scatter map">
                                         <label for="yAxis"
