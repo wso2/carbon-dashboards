@@ -46,7 +46,7 @@
                 <div id="placeholder" class="demo-placeholder" style="height:90%"></div>
                 <script language="javascript" type="text/javascript">
                   if(jQuery("#placeholder").html() == ""){
-                    jQuery("#placeholder").append('<div id="noChart"><b><p  align="left"><img src="../../portal/images/noEvents.png" align="left" style="width:100;height:80;position:relative;opacity:0.4;filter:alpha(opacity=40);"> <br/> Data is not available for plotting</p></b><p>Chart will be appeared once dashboard receives events</p></div>');
+                    jQuery("#placeholder").append('<div id="noChart"><table><tr><td style="padding:30px 20px 0px 20px"><img src="../../portal/images/noEvents.png" align="left" style="width:24;height:24"/></td><td><br/><b><p><br/> Data is not available for plotting</p></b></td></tr><tr><td></td><td><p>Chart will be appeared once dashboard receives events</p><td/></tr></table></div>');
                   }
                 </script>
             </body>
