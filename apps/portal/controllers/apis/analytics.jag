@@ -49,6 +49,8 @@
     var TYPE_GET_WITH_KEY_VALUES = 25;
     var TYPE_GET_RECORDSTORES = 26;
     var TYPE_GET_RECORDSTORE_BY_TABLE = 27;
+    var TYPE_WAIT_FOR_INDEXING_FOR_TABLE = 28;
+    var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var log = new Log();
     var carbon = require('carbon');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
@@ -232,13 +234,22 @@
             }
             case TYPE_WAIT_FOR_INDEXING:
             {
-
                 var waitTimeAsString = request.getParameter(WAIT_TIME);
                 var waitTime = -1;
                 if (waitTimeAsString != null) {
                     waitTime = parseInt(waitTimeAsString);
                 }
                 result = connector.waitForIndexing(waitTime * MILLISECONDS_PER_SECOND);
+                break;
+            }
+            case TYPE_WAIT_FOR_INDEXING_FOR_TABLE:
+            {
+                var waitTimeAsString = request.getParameter(WAIT_TIME);
+                var waitTime = -1;
+                if (waitTimeAsString != null) {
+                    waitTime = parseInt(waitTimeAsString);
+                }
+                result = connector.waitForIndexing(tableName, waitTime * MILLISECONDS_PER_SECOND);
                 break;
             }
             case TYPE_DRILLDOWN_CATEGORIES:
@@ -279,6 +290,11 @@
             case TYPE_GET_RECORDSTORE_BY_TABLE:
             {
                 result = connector.getRecordStoreByTable(tableName);
+                break;
+            }
+            case TYPE_SEARCH_WITH_AGGREGATES:
+            {
+                result = connector.searchWithAggregates(contentAsString);
                 break;
             }
             default:
