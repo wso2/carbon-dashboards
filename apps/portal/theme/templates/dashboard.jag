@@ -60,7 +60,7 @@ pages.forEach(function (p) {
            <!--/.nav-collapse -->
      </div>
 </div>
-<div id="wrapper" class="container"></div>
+<div id="wrapper"></div>
 <!--<iframe id="sandbox" src="preview.jag"></iframe>-->
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>

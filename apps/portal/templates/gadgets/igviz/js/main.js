@@ -193,12 +193,11 @@ function drawRealtimeChart(data) {
 
             gadgetConfig.chartConfig.height = $("#placeholder").height();
             if (counter == 0) {
-                dataTable = makeDataTable(data);
                 chart = igviz.draw("#placeholder", gadgetConfig.chartConfig, dataTable);
                 chart.plot(dataTable.data,null,maxUpdateValue);
                 counter++;
             } else {
-                chart.update(data);
+                chart.update(dataTable.data[0]);
             }
         } else {
 
