@@ -24,7 +24,8 @@ function formatDS(item) {
         $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
     }
     // var $item = $(
-    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> ' + item.text + '</span>'
+    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> '
+    // + item.text + '</span>'
     //   );
     return $item;
 };
@@ -93,7 +94,8 @@ $("#previewChart").click(function() {
             } else {
                 //TODO DOn't do this! read this from a config file
                 subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
-                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, 'localhost', '9443', 'WEBSOCKET', "SECURED");
+                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
+                    'WEBSOCKET', "SECURED");
                 var source = $("#wizard-zeroevents-hbs").html();;
                 var template = Handlebars.compile(source);
                 $("#chartDiv").empty();
@@ -179,7 +181,7 @@ function onRealTimeEventErrorRecieval(dataError) {
     console.log(dataError);
 };
 
-////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
+////////////////////////////////////////////////// end of event handlers //////////////////////////////////////////////
 
 function getDatasources() {
     $.ajax({
@@ -334,7 +336,7 @@ function getColumnIndex(columnName) {
     }
 };
 
-/////////////////////////////////////////////////////// data formatting related functions ///////////////////////////////////////////////////////
+///////////////////////////////////// data formatting related functions ///////////////////////////////////////////////
 
 function parseColumns(data) {
     if (data.columns) {
