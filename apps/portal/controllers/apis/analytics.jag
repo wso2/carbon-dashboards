@@ -65,7 +65,6 @@
         var analyticsWSUrl = carbon.server.address(HTTPS_TRANSPORT) + ANALYTICS_SERVICE;
         var authenticationWSUrl = carbon.server.address(HTTPS_TRANSPORT) + AUTHENTICATION_SERVICE;
         var analyticsStub = new AnalyticsWebServiceStub(analyticsWSUrl);
-        var authenticationStub = null;
         var serviceClient = analyticsStub._getServiceClient();
         var options = serviceClient.getOptions();
         options.setManageSession(true);
@@ -305,10 +304,6 @@
                 }
                 default:
                     result = '{ "status": "Failed", "statusCode": "500", "message": "Unidentified operation" }';
-            }
-            if (authenticationStub != null) {
-                authenticationStub.logout();
-                authenticationStub = null;
             }
             if (result != null) {
                 if (log.isDebugEnabled()) {
