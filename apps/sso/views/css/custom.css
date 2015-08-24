@@ -1,0 +1,443 @@
+/*  _____________________________________________________________________________
+
+	 FONT
+    _____________________________________________________________________________  */
+@font-face {
+    font-family: 'Open Sans';
+
+    src: url('../fonts/OpenSans-Regular-webfont.eot');
+    src: url('../fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-Regular-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-Regular-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-Regular-webfont.svg#OpenSansRegular') format('svg');
+    font-weight: normal;
+    font-weight: 400;
+    font-style: normal;
+
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Italic-webfont.eot');
+    src: url('../fonts/OpenSans-Italic-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-Italic-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-Italic-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-Italic-webfont.svg#OpenSansItalic') format('svg');
+    font-weight: normal;
+    font-weight: 400;
+    font-style: italic;
+
+}
+
+/* Light */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Light-webfont.eot');
+    src: url('../fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-Light-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-Light-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-Light-webfont.svg#OpenSansLight') format('svg');
+    font-weight: 200;
+    font-style: normal;
+
+}
+
+/* Light Italic */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-LightItalic-webfont.eot');
+    src: url('../fonts/OpenSans-LightItalic-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-LightItalic-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-LightItalic-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-LightItalic-webfont.svg#OpenSansLightItalic') format('svg');
+    font-weight: 200;
+    font-style: italic;
+
+}
+
+/* Semibold */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Semibold-webfont.eot');
+    src: url('../fonts/OpenSans-Semibold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-Semibold-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-Semibold-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-Semibold-webfont.svg#OpenSansSemibold') format('svg');
+    font-weight: 500;
+    font-style: normal;
+
+}
+
+/* Semibold Italic */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-SemiboldItalic-webfont.eot');
+    src: url('../fonts/OpenSans-SemiboldItalic-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-SemiboldItalic-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-SemiboldItalic-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-SemiboldItalic-webfont.svg#OpenSansSemiboldItalic') format('svg');
+    font-weight: 500;
+    font-style: italic;
+
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Bold-webfont.eot');
+    src: url('../fonts/OpenSans-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-Bold-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-Bold-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-Bold-webfont.svg#OpenSansBold') format('svg');
+    font-weight: bold;
+    font-weight: 700;
+    font-style: normal;
+
+}
+
+/* Bold Italic */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-BoldItalic-webfont.eot');
+    src: url('../fonts/OpenSans-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-BoldItalic-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-BoldItalic-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-BoldItalic-webfont.svg#OpenSansBoldItalic') format('svg');
+    font-weight: bold;
+    font-weight: 700;
+    font-style: italic;
+
+}
+
+/* Extra Bold */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-ExtraBold-webfont.eot');
+    src: url('../fonts/OpenSans-ExtraBold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-ExtraBold-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-ExtraBold-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-ExtraBold-webfont.svg#OpenSansExtrabold') format('svg');
+    font-weight: 900;
+    font-style: normal;
+
+}
+
+/* Extra Bold Italic */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-ExtraBoldItalic-webfont.eot');
+    src: url('../fonts/OpenSans-ExtraBoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/OpenSans-ExtraBoldItalic-webfont.woff') format('woff'),
+    url('../fonts/OpenSans-ExtraBoldItalic-webfont.ttf') format('truetype'),
+    url('../fonts/OpenSans-ExtraBoldItalic-webfont.svg#OpenSansExtraboldItalic') format('svg');
+    font-weight: 900;
+    font-style: italic;
+
+}
+h4{font-size: 18px; line-height: normal;}
+body{
+    background:#f9f9f9;}
+
+/* application top level header */
+h2.app-title {
+    font-weight:500;
+    font-size:17px;
+    margin:0;
+    padding:3px 0 0 0;
+    color:#fafafa;
+    text-transform: uppercase;
+}
+
+.wr-global-header {
+    background:#444444;
+}
+
+.app-logo {
+	height:50px;
+	padding:12px 20px 12px 16px;
+}
+
+.app-logo a:hover {
+    text-decoration: none;
+    color:#e4e4e4 !important;
+}
+
+.app-logo img {
+	float:left;
+	margin-right:20px;
+}
+
+.wr-app-bar {
+	background:#237bd5;
+	height:54px;    
+}
+
+header {
+	height:50px;
+}
+
+@media (max-width: 768px) {
+    .app-logo {
+        padding: 16px 10px;
+    }
+    .app-logo img {
+        width: 50px;
+        height: auto;
+        margin-right:10px;
+    }
+    h2.app-title {
+        font-size: 17px;
+    }
+}
+header {
+	height:50px;
+}
+
+*:focus {
+    outline: 0;
+}
+input:focus {outline:none; border: 0px;}
+
+
+hr {
+    float:left;
+    width:100%;
+    margin:0
+}
+footer{float:left; width:100%;}
+
+/*  _____________________________________________________________________________
+
+	 TYPOGRAPHY & COLOR
+    _____________________________________________________________________________  */
+
+h2, h3, h4, h5, h6, body{font-family: 'Open Sans';}
+
+.font-large{font-size:16px;}
+button.font-extra-large{font-size:20px;}
+
+.uppercase{text-transform:uppercase;}
+
+
+.blue-bg{background-color: #237bd5;}
+button.grey-bg{background-color: #222222;}
+button.grey-bg:hover{background-color: #3A9ECF;}
+
+.white{color:#FFF;}
+
+.padding-double{padding:20px;}
+
+.margin-none{margin: 0px;}
+
+
+.float-left{float:left;}
+.clear{ clear:both;}
+
+
+
+/*  _____________________________________________________________________________
+
+	 LOGIN & REGISTER
+    _____________________________________________________________________________  */
+
+.boarder-bottom-blue{border-bottom: 2px solid #006596;}
+.no-border-top{
+    border-top:none;
+}
+input::-moz-placeholder, textarea::-moz-placeholder  {
+    padding: 10px 5px 12px 8px;
+    color: #aba8a8;
+    font-size: 18px;
+}
+input::-webkit-input-placeholder{
+
+    color: #aba8a8;
+    font-size: 18px;
+}
+input:-ms-input-placeholder{
+    padding: 10px 5px 12px 8px;
+    color: #aba8a8;
+    font-size: 18px;
+}
+.boarder-all{border: 1px solid #d8d8d8; background: #FFF;margin-bottom: 20px;}
+
+.wr-content {
+    padding-left: inherit;
+}
+
+/*
+@media (max-width:500px){
+
+    .wr-content {  padding: 0; }
+}
+*/
+
+
+/* assets */
+.wr-btn {
+    font-weight: normal;
+    font-size:13px;
+    color:#fff;
+    background:#5d81d2;
+    padding:10px 10px;
+    display:inline-block;
+    border: none;
+}
+.wr-btn:hover {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #6b94f1;
+}
+/*
+@media (min-width: 360px){
+    . col-xs-5 {padding-left: 10px  padding-right: 0  width: 43%;}
+
+}
+
+@media (min-width: 500px){
+    . col-xs-5 {padding-left: 10px; padding-right: 0; width: 43%;}
+}
+*/
+/* login page styles */
+
+.wr-login {
+    padding-top:50px;
+}
+
+/* form styles */
+
+
+.wr-input-control {
+    margin-bottom: 20px;
+}
+
+.wr-input-control input[type="text"], .wr-input-control input[type="password"]{
+    border: 1px #d2d2d2 solid;
+    width: 100%;
+    height: 50px;
+    padding: 6px 10px;
+    z-index: 1;
+    -webkit-appearance: none;
+}
+.form-control{
+    border: 1px #d2d2d2 solid;
+    width: 100%;
+    height: 50px;
+    padding: 6px 10px;
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+    -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+    -webkit-appearance: none;
+}
+.form-control:focus{
+    border: 1px solid #999;
+    outline: 0;
+    -webkit-box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+}
+.wr-input-control select{
+    width: 100%;
+}
+
+::-webkit-input-placeholder {
+    color: #fff;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+    color: #fff;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+    color: #fff;
+}
+
+:-ms-input-placeholder {
+    color: #fff;
+}
+.wr-modelpopup {
+    display: none;
+}
+
+.wr-modelpopup .modelpopup-content {
+    display: block;
+    min-height: 100px;
+    width: 100%;
+    position: fixed;
+    background: #ffffff;
+    top: 200px;
+    z-index: 10001;
+    align-content: center;
+    text-align: center;
+    padding: 30px;
+}
+.wr-modelpopup .modelpopup-bg {
+    position:absolute;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    opacity: 0.7;
+    display: block;
+}
+a.ctrl-filter-category:hover {
+    background:#666;
+    color:#e4e4e4;
+    text-decoration: none;
+    border:1px solid #666;
+}
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}
+.login-link{
+    cursor: pointer;
+}
+.error-msg{
+    color: #aa2d1e;
+    text-align: left;
+    padding: 10px 0 10px 0;
+    display: block;
+}
+label.error{
+    line-height: 1.5em;
+    color: #fff;
+    background-color: #e74c3c;
+    width: 100%;
+    padding: 5px 10px;
+    border-left: 5px solid #942F25;
+    font-weight: 500;
+}
+input[type="text"].error, input[type="password"].error{
+    border-color: #e74c3c;
+}
+
+.no-gutter{
+    padding-left:0px;
+    padding-right:0px;
+}
+.no-border-top{
+    border-top:none;
+}
+.alert-success{
+    color:#fff;
+    background-color: #339900;
+    border:none;
+    border-left: 5px solid #336633;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+.alert-error{
+    color:#fff;
+    background-color: #e74c3c;
+    border:none;
+    border-left: 5px solid #942F25;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}

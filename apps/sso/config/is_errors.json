@@ -1,0 +1,9 @@
+{
+    "errors" : {
+        "18001" : "Expired code. Recovery failed",
+        "18002" : "The confirmation code provided has expired",
+        "18003" : "Invalid user name is given",
+        "18004" : "Captcha answer is invalid",
+        "18013" : "Error occurred. Recovery failed"
+    }
+}

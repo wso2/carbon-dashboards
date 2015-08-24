@@ -1,0 +1,142 @@
+<%
+/*
+ *  Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+
+/**
+ *  Contains endpoints related to captcha
+ */
+
+var action = request.getParameter('action'),
+    confirmationCode = session.get('confirmation'),
+    userName = session.get('username'),
+    captchaKey = request.getParameter('captcha-key'),
+    captchaPath = request.getParameter('captcha-path'),
+    captchaAnswer = request.getParameter('captcha-answer'),
+    responseProcessor = require('utils').response,
+    constants = require('rxt').constants,
+    log = new Log(),
+    res = {};
+
+var errorProcessor = require('/modules/error.js');
+
+(function () {
+    var recoveryModule = require('account-management').recovery;
+
+    /**
+     * Get the key and path related to a new captcha
+     *
+     * @return captcha key and path
+     */
+    var getCaptcha = function () {
+        var captchaBean = null;
+        try{
+            captchaBean = recoveryModule.getCaptcha();
+        }catch (e) {
+            var errorMsg = 'Failed to retrieve captcha';
+            log.error(errorMsg, e);
+            res.error = true;
+            res.msg = errorMsg;
+            response = responseProcessor.buildErrorResponse(response, constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
+                    res);
+        }
+        if (captchaBean) {
+            var captchaPath = captchaBean.getImagePath();
+            var captchaKey = captchaBean.getSecretKey();
+            res.error = false;
+            res.msg = 'Captcha generated';
+            res.captchaPath = captchaPath;
+            res.captchaKey = captchaKey;
+            response = responseProcessor.buildSuccessResponse(response, constants.STATUS_CODES.OK, res);
+        } else {
+            res.error = true;
+            res.msg = 'Captcha generation failed';
+            response = responseProcessor.buildErrorResponse(response, constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
+                    res);
+        }
+    };
+
+    /**
+     * Verify confirmation code
+     *
+     * @param captchaPath path of the captcha image
+     * @param captchaKey key related to the captcha
+     * @param captchaAnswer user answer
+     * @param userName user name
+     * @param confirmationCode
+     * @return success status
+     */
+    var verifyConfirmationCode = function (captchaPath, captchaKey, captchaAnswer, userName, confirmationCode) {
+        var isCaptchaEnabled = recoveryModule.isCaptchaEnabled();
+        var isCaptchaMissing = false;
+        if(isCaptchaEnabled && !captchaAnswer) {
+            isCaptchaMissing = true;
+        }
+        if (!userName || isCaptchaMissing || !confirmationCode) {
+            res.error = true;
+            res.msg = 'Recovery failed. Username or Captcha Answer or Confirmation code is not provided';
+            if (log.isDebugEnabled()) {
+                log.debug(res.msg + ' user:' + userName + ' captcha answer:' + captchaAnswer + ' captcha key: ' +
+                        captchaKey);
+            }
+            response = responseProcessor.buildErrorResponse(response, constants.STATUS_CODES.BAD_REQUEST, res);
+        } else {
+            var captchaBean = recoveryModule.createCaptchaInfoBean(captchaPath, captchaKey, captchaAnswer);
+            var verificationBean = null;
+            try {
+                verificationBean = recoveryModule.verifyConfirmationCode(userName, confirmationCode, captchaBean);
+            } catch (e) {
+                var errorText = 'Failed confirmation code verification';
+                log.error(errorText, e);
+                res.error = true;
+                res.msg = errorText;
+                response = responseProcessor.buildErrorResponse(response,
+                        constants.STATUS_CODES.INTERNAL_SERVER_ERROR, res);
+            }
+            if (verificationBean) {
+                var isVerified = verificationBean.isVerified();
+                if (isVerified) {
+                    var key = verificationBean.getKey();
+                    res.error = false;
+                    res.msg = 'Verification successful';
+                    session.put('confirmation', key);
+                    response = responseProcessor.buildSuccessResponse(response, constants.STATUS_CODES.OK, res);
+                } else {
+                    var error = verificationBean.getError();
+                    var errorMsg = errorProcessor.getErrorMessage(error);
+                    if (log.isDebugEnabled()) {
+                        log.debug(errorMsg + ' -for user:' + userName);
+                    }
+                    res.error = true;
+                    res.msg = errorMsg;
+                    response = responseProcessor.buildSuccessResponse(response, constants.STATUS_CODES.OK, res);
+                }
+            }
+        }
+    };
+
+    if (action == 'verifyCode') {
+        verifyConfirmationCode(captchaPath, captchaKey, captchaAnswer, userName, confirmationCode);
+    } else if (action == 'getCaptcha') {
+        getCaptcha();
+    } else {
+        response = responseProcessor.buildErrorResponse(response, constants.STATUS_CODES.NOT_FOUND, null);
+    }
+
+}());
+%>

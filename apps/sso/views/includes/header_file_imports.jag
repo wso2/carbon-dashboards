@@ -1,0 +1,16 @@
+<%
+var themeModule = require('/modules/theme.js');
+%>
+    <!-- Le styles -->
+<link href="<%=themeModule.getThemedUrl('views/css/bootstrap.min.css')%>" rel="stylesheet">
+<link href="<%=themeModule.getThemedUrl('views/css/custom.css')%>" rel="stylesheet">
+
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="<%=themeModule.getThemedUrl('views/js/html5.js')%>"></script>
+<script src="<%=themeModule.getThemedUrl('views/js/respond.min.js')%>"></script>
+<link rel="stylesheet" href="<%=themeModule.getThemedUrl('views/css/ie.css')%>" type="text/css">
+<![endif]-->
+
+<!-- Fav and touch icons -->
+<link rel="shortcut icon" href="<%=themeModule.getThemedUrl('views/images/favicon.png')%>" type="image/x-icon"/>
