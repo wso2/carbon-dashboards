@@ -127,7 +127,7 @@ function drawChart(data) {
         dataTable.metadata.types[xAxis] = "C";
     }
 
-    if(gadgetConfig.chartConfig.chartType==="table" || gadgetConfig.chartConfig.chartType==="singleNumber") {
+    if(gadgetConfig.chartConfig.chartType==="tabular" || gadgetConfig.chartConfig.chartType==="singleNumber") {
         gadgetConfig.chartConfig.height = $("#placeholder").height();
         var chart = igviz.draw("#placeholder", gadgetConfig.chartConfig, dataTable);
         chart.plot(dataTable.data);
@@ -190,7 +190,7 @@ function drawRealtimeChart(data) {
             dataTable.metadata.types[xAxis] = "C";
         }
 
-        if(gadgetConfig.chartConfig.chartType === "table" || gadgetConfig.chartConfig.chartType==="singleNumber") {
+        if(gadgetConfig.chartConfig.chartType === "tabular" || gadgetConfig.chartConfig.chartType==="singleNumber") {
 
             gadgetConfig.chartConfig.height = $("#placeholder").height();
             if (counter == 0) {
