@@ -1,0 +1,229 @@
+h4{font-size: 18px; line-height: normal;}
+body{
+    background:#f9f9f9;}
+
+/* application top level header */
+h2.app-title {
+    font-weight:100;
+    font-size:20px;
+    margin:0;
+    padding:0;
+    color:#fff;
+}
+
+.wr-global-header {
+    background:#282828;
+}
+
+.app-logo {
+    height:50px;
+    padding:12px 10px;
+}
+
+.app-logo a {
+    text-decoration: none;
+}
+
+.app-logo img {
+    float:left;
+    margin-right:20px;
+}
+
+@media (max-width: 768px) {
+    .app-logo {
+        padding: 16px 10px;
+    }
+    .app-logo img {
+        width: 50px;
+        height: auto;
+        margin-right:10px;
+    }
+    h2.app-title {
+        font-size: 17px;
+    }
+}
+header {
+    height:50px;
+}
+
+*:focus {
+    outline: 0;
+}
+input:focus {outline:none; border: 0px;}
+
+
+hr {
+    float:left;
+    width:100%;
+    margin:0
+}
+footer{float:left; width:100%;}
+
+/*  _____________________________________________________________________________
+
+	 TYPOGRAPHY & COLOR
+    _____________________________________________________________________________  */
+
+h2, h3, h4, h5, h6{font-family: 'Roboto' !important;}
+
+.font-large{font-size:16px;}
+.font-extra-large{font-size:20px !important;}
+
+.uppercase{text-transform:uppercase;}
+
+
+.blue-bg{background-color: #000 !important;}
+.grey-bg{background-color: #222222 !important;}
+
+.white{color:#FFF;}
+
+.padding-double{padding:20px;}
+
+.margin-none{margin: 0px !important;}
+
+
+.float-left{float:left;}
+.clear{ clear:both;}
+
+
+
+/*  _____________________________________________________________________________
+
+	 LOGIN & REGISTER
+    _____________________________________________________________________________  */
+
+.boarder-bottom-blue{border-bottom: 2px solid #006596;}
+input::-moz-placeholder, textarea::-moz-placeholder  {
+    padding: 10px 5px 12px 8px;
+    color: #aba8a8;
+    font-size: 18px;
+}
+input::-webkit-input-placeholder{
+
+    color: #aba8a8;
+    font-size: 18px;
+}
+input:-ms-input-placeholder{
+    padding: 10px 5px 12px 8px;
+    color: #aba8a8;
+    font-size: 18px;
+}
+.boarder-all{border: 1px solid #d8d8d8; background: #FFF;margin-bottom: 20px;}
+
+.wr-content {
+    padding-left: inherit;
+}
+
+@media (max-width:500px){
+
+    .wr-content {  padding: 0; }
+}
+
+@media (max-width:768px){
+
+}
+
+/* assets */
+.wr-btn {
+    font-weight: normal;
+    font-size:13px;
+    color:#fff;
+    background:#5d81d2;
+    padding:10px 10px;
+    display:inline-block;
+    margin-right:20px;
+    border: none;
+}
+.wr-btn:hover {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #6b94f1;
+}
+@media (min-width: 360px){
+    . col-xs-5 {padding-left: 10px !important; padding-right: 0 !important; width: 43%;}
+
+}
+
+@media (min-width: 500px){
+    . col-xs-5 {padding-left: 10px; padding-right: 0; width: 43%;}
+}
+/* login page styles */
+
+.wr-login {
+    padding-top:50px;
+}
+
+/* form styles */
+
+
+.wr-input-control {
+    margin-bottom: 20px;
+}
+
+.wr-input-control input[type="text"], .wr-input-control input[type="password"]{
+    border: 1px #d2d2d2 solid;
+    width: 100%;
+    height: 50px;
+    padding: 6px 10px;
+    z-index: 1;
+    -webkit-appearance: none;
+}
+.wr-input-control select{
+    width: 100%;
+}
+
+::-webkit-input-placeholder {
+    color: #fff;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+    color: #fff;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+    color: #fff;
+}
+
+:-ms-input-placeholder {
+    color: #fff;
+}
+.wr-modelpopup {
+    display: none;
+}
+
+.wr-modelpopup .modelpopup-content {
+    display: block;
+    min-height: 100px;
+    width: 100%;
+    position: fixed;
+    background: #ffffff;
+    top: 200px;
+    z-index: 10001;
+    align-content: center;
+    text-align: center;
+    padding: 30px;
+}
+
+
+.wr-modelpopup .modelpopup-bg {
+    position:absolute;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    opacity: 0.7;
+    display: block;
+}
+a.ctrl-filter-category:hover {
+    background:#666;
+    color:#e4e4e4;
+    text-decoration: none;
+    border:1px solid #666;
+}
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}
+.login-link{
+    cursor: pointer;
+}

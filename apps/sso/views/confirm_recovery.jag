@@ -1,0 +1,179 @@
+<%
+/*
+ *  Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+
+/**
+ *  User confirmation page for password recovery
+ */
+
+var recovery = require('account-management').recovery,
+    recoveryOption = request.getParameter('recovery-option'),
+    isCaptchaEnabled = recovery.isCaptchaEnabled();
+
+var captchaBean,
+    captchaPath,
+    captchaKey;
+
+if(isCaptchaEnabled) {
+    captchaBean = recovery.getCaptcha();
+    captchaPath = captchaBean.getImagePath();
+    captchaKey = captchaBean.getSecretKey();
+}
+
+var isChallengeRecovery = false;
+if(recoveryOption === 'challenge'){
+    isChallengeRecovery = true;
+}
+var themeModule = require('/modules/theme.js');
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Forgot password | <% include(themeModule.getThemedUrl('includes/title.jag')); %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <% include(themeModule.getThemedUrl('includes/header_file_imports.jag')); %>
+
+</head>
+
+<body>
+
+<div class="container col-lg-12 col-md-12 col-sm-12">
+        <% include("includes/header.jag"); %>
+        <div class="row">
+            <div class="col-md-12">
+
+                <!-- content -->
+                <div class="container col-xs-10 col-sm-6 col-md-6 col-lg-4 col-centered wr-content wr-login col-centered">
+                         <h2 class="wr-title uppercase blue-bg padding-double white boarder-bottom-blue margin-none">Reset your password</h2>
+
+                         <div class="boarder-all ">
+                            <div class="clear"></div>
+                            <span class="padding-double float-left font-large">Enter your username below. Follow the instructions given in the subsequent steps.</span>
+                            <!-- validation -->
+                            <div class="wr-input-control padding-double">
+                            <div class="clear"></div>
+                            <form id="resetForm">
+                                    <div id="resetFormError" class="alert alert-error" style="display:none"></div>
+                                    <label>Username</label>
+                                    <input id="username" name="username" type="text" class="padding-double required">
+                                    <br><br>
+                                    <% if(isCaptchaEnabled){%>
+                                    <div id="captcha" class="control">
+                                        <label id='newCaptcha'>Can't read this? <a href='#'>Try another.</a></label>
+                                        <div id="captcha-div">
+                                            <img src="../<%=captchaPath%>" class="captcha-img">
+                                        </div>
+                                    </div>
+                                    <br><br>
+                                    <label>Text in the box</label>
+                                    <input id="captcha-answer" name="captcha-answer" type="text"
+                                            class="padding-double required">
+
+                                    <input type="hidden" id="captcha-path"
+                                           name="captcha-path" value="<%=captchaPath%>">
+                                    <input type="hidden" id="captcha-key" name="captcha-key" value="<%=captchaKey%>">
+                                    <% } %>
+                                    <input type="hidden" id="recovery-option" name="recovery-option"
+                                           value="<%=isChallengeRecovery ? 'challenge' : 'email'%>">
+                                    <input id="action" name="action" type="hidden" value="verifyUser">
+                                    <br><br>
+                                    <button id="validationSubmit" class="wr-btn grey-bg col-xs-12 col-md-12 col-lg-12 uppercase font-extra-large" type="button">Continue
+                                    </button>
+                                    <div class="clear"></div>
+                                </form>
+
+
+                    </div>
+                </div>
+             </div>
+         </div>
+     </div>
+</div>
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="views/js/jquery-1.11.1.min.js"></script>
+<script src="views/js/bootstrap.min.js"></script>
+<script src="views/js/jquery.validate.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var ENTER_KEY = 13;
+
+        function validateUser() {
+            var resetForm = $('#resetForm');
+
+            if (!resetForm.valid()) {
+                return;
+            }
+
+            var formData = resetForm.serialize();
+
+            // user verification using user endpoint
+            $.post('user', formData, function (data) {
+                var responseData = data.data;
+                if (!responseData.error) {
+                    $('#resetFormError').hide();
+                    if ($('#recovery-option').val() == 'email') {
+                        window.location = 'recover';
+                    } else {
+                        window.location = 'view-challenges';
+                    }
+                } else {
+                    var resetFormError = $('#resetFormError');
+                    resetFormError.show();
+                    resetFormError.text(responseData.msg);
+                    $('#username').val('');
+                    // Regenerating a captcha if validation fails
+                    getNewCaptcha();
+                }
+            });
+        }
+
+        // get a new captcha using captcha endpoint
+        function getNewCaptcha() {
+            $('#action').val('getCaptcha');
+            var formData = $("#resetForm").serialize();
+            $.post('captcha', formData, function (data) {
+                var responseData = data.data;
+                $('#captcha-div').html('<img src="../' + responseData.captchaPath + '" class="captcha-img">');
+                $('#captcha-answer').val('');
+                $('#captcha-path').val(responseData.captchaPath);
+                $('#captcha-key').val(responseData.captchaKey);
+                $('#action').val('verifyUser');
+            });
+        }
+
+        $('#newCaptcha').bind('click', getNewCaptcha);
+        $('#validationSubmit').bind('click', validateUser);
+
+        $('#resetForm').find('input').bind('keypress', function (e) {
+            if (e.which == ENTER_KEY) {
+                validateUser();
+            }
+        });
+
+    });
+</script>
+</body>
+</html>
