@@ -2,6 +2,24 @@
     "store": {
         "type": "fs"
     },
+    "authentication": {
+    	"activeMethod" : "sso",
+    	"methods": {
+            "sso": {
+                "attributes": {
+                    "issuer": "portal",
+                    "identityProviderURL": "https://localhost:9443/samlsso",
+                    "responseSigningEnabled": "true",
+                    "acs": "%https.host%/portal/acs",
+                    "identityAlias": "wso2carbon",
+                    "useTenantKey": false
+                }
+            },
+            "basic": {
+                "attributes": {}
+            }
+        }
+    	},
     "designers": ["Internal/everyone"],
     "tenantPrefix": "/t",
     "shareStore": false,

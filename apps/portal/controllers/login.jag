@@ -9,6 +9,7 @@ var dest;
     var carbon;
     var log = new Log();
     var method = request.getMethod();
+    var configs = require('/configs/portal.js').config();
     dest = request.getParameter('destination');
     if (method === 'POST') {
         carbon = require('carbon');
@@ -37,6 +38,12 @@ var dest;
         }
         message = 'The username or password you entered is incorrect.';
     }
-
-    include(utils.resolvePath('templates/login.jag'))
+//include this if basic auth enabled
+    if(configs.authentication.activeMethod === 'sso'){
+        include('sso-login.jag');
+    }else{
+       include(utils.resolvePath('templates/login.jag')); 
+    }
+    
+//else include sso-login
 }()); %>
