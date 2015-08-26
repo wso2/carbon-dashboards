@@ -14,7 +14,8 @@ if(type === "realtime") {
     columns = gadgetConfig.columns;
     //subscribe to websocket
     subscribe(datasource.split(":")[0], datasource.split(":")[1], '10', 'carbon.super',
-        onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, location.hostname, location.port, 'WEBSOCKET', "SECURED");
+        onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, location.hostname, location.port,
+        'WEBSOCKET', "SECURED");
 } else {
     //first, fetch datasource schema
     getColumns(datasource);
@@ -126,7 +127,7 @@ function drawChart(data) {
         dataTable.metadata.types[xAxis] = "C";
     }
 
-    if(gadgetConfig.chartConfig.chartType==="table" || gadgetConfig.chartConfig.chartType==="singleNumber") {
+    if(gadgetConfig.chartConfig.chartType==="tabular" || gadgetConfig.chartConfig.chartType==="singleNumber") {
         gadgetConfig.chartConfig.height = $("#placeholder").height();
         var chart = igviz.draw("#placeholder", gadgetConfig.chartConfig, dataTable);
         chart.plot(dataTable.data);
@@ -189,16 +190,15 @@ function drawRealtimeChart(data) {
             dataTable.metadata.types[xAxis] = "C";
         }
 
-        if(gadgetConfig.chartConfig.chartType === "table" || gadgetConfig.chartConfig.chartType==="singleNumber") {
+        if(gadgetConfig.chartConfig.chartType === "tabular" || gadgetConfig.chartConfig.chartType==="singleNumber") {
 
             gadgetConfig.chartConfig.height = $("#placeholder").height();
             if (counter == 0) {
-                dataTable = makeDataTable(data);
                 chart = igviz.draw("#placeholder", gadgetConfig.chartConfig, dataTable);
                 chart.plot(dataTable.data,null,maxUpdateValue);
                 counter++;
             } else {
-                chart.update(data);
+                chart.update(dataTable.data[0]);
             }
         } else {
 

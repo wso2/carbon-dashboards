@@ -1,0 +1,6 @@
+<%
+var themeModule = require('/modules/theme.js');
+%>
+<script src="<%=themeModule.getThemedUrl('views/js/jquery-1.11.1.min.js')%>"></script>
+<script src="<%=themeModule.getThemedUrl('views/js/bootstrap.min.js')%>"></script>
+<script src="<%=themeModule.getThemedUrl('views/js/jquery.validate.min.js')%>"></script>

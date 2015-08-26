@@ -51,6 +51,8 @@ function AnalyticsClient() {
     var TYPE_GET_WITH_KEY_VALUES = 25;
     var TYPE_GET_RECORDSTORES = 26;
     var TYPE_GET_RECORDSTORE_BY_TABLE = 27;
+    var TYPE_WAIT_FOR_INDEXING_FOR_TABLE = 28;
+    var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var HTTP_GET = "GET";
     var HTTP_POST = "POST";
     var RESPONSE_ELEMENT = "responseJSON";
@@ -454,7 +456,7 @@ function AnalyticsClient() {
     };
 
     /**
-     * Returns the search count of records in a given table using lucene queries.
+     * Returns the records in a given table using lucene queries.
      * @param queryInfo Query information which contains the table name and search parameters.
      *  e.g. queryInfo = {
      *          tableName : "TEST",
@@ -471,6 +473,61 @@ function AnalyticsClient() {
     this.search = function (queryInfo, callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_SEARCH + "&tableName=" + queryInfo["tableName"],
+                        data: JSON.stringify(queryInfo["searchParams"]),
+                        type: HTTP_POST,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * Returns the search count of records in a given table using lucene queries.
+     * @param queryInfo Query information which contains the table name and search parameters.
+     * e.g.
+     * queryInfo = {
+     * searchParams : {
+            tableName:"TEST",
+            groupByField:"single_valued_facet_field",
+            aggregateFields:[
+            {
+                fieldName:"n",
+                aggregate:"AVG",
+                alias:avg"
+            },
+            {
+                fieldName:"n",
+                aggregate:"MAX",
+                alias:"max"
+            },
+            {
+                fieldName:"n",
+                aggregate:"sum",
+                alias:"sum"
+            },
+            {
+                fieldName:"n",
+                aggregate:"MIN",
+                alias:"min"
+            },
+            {
+                fieldName:"n",
+                aggregate:"COUNT",
+                alias:"count"
+            }
+            ]
+         }
+      }
+     * @param callback The callback function which has one argument containing the number of
+     * matched records
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.searchWithAggregates = function (queryInfo, callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" + queryInfo["tableName"],
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
                         success: function (data) {
@@ -559,6 +616,25 @@ function AnalyticsClient() {
     this.waitForIndexing = function (callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_WAIT_FOR_INDEXING,
+                        type: HTTP_GET,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * Waits till the indexing of a given completes.
+     * @param tableName The tableName
+     * @param callback The callback function which has one argument which contains the response message.
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.waitForIndexing = function (tableName, callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_WAIT_FOR_INDEXING + "&tableName=" + tableName,
                         type: HTTP_GET,
                         success: function (data) {
                             callback(data);

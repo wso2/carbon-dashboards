@@ -1,0 +1,166 @@
+<%
+/*
+ *  Copyright (c) 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+
+/**
+ *  Page which provides user challenge
+ */
+
+var captchaVerificationKey = session.get('confirmation'),
+    recoveryModule = require('account-management').recovery,
+    userName = session.get('username'),
+    log = new Log(),
+    error = null;
+
+var backendMessage = 'Could not retrieve challenges for user:';
+//get the question ids related to the user
+var idDTO = null;
+try {
+    idDTO = recoveryModule.getChallengeQuestionIds(userName, captchaVerificationKey);
+} catch (e) {
+    log.error(backendMessage, e);
+    response.sendRedirect('recovery-failed');
+}
+
+if (idDTO) {
+    var questionIDKey = idDTO.getKey();
+    if (idDTO.getIds()) {
+        var questionId = idDTO.getIds()[0];
+        session.put('question-id', questionId);
+
+        //get the question with the given id
+        var questionDTO = null;
+        try {
+            questionDTO = recoveryModule.getChallengeQuestionOfUser(userName, questionIDKey, questionId);
+        } catch (e) {
+            log.error(backendMessage, e);
+            response.sendRedirect('recovery-failed');
+        }
+        if (questionDTO) {
+            var question = questionDTO.getQuestion();
+            var questionKey = questionDTO.getKey();
+            session.put('confirmation', questionKey);
+        } else {
+            if(log.isDebugEnabled()) {
+                log.debug(backendMessage + userName);
+            }
+            response.sendRedirect('recovery-failed');
+        }
+    } else {
+        if(log.isDebugEnabled()) {
+            log.debug(backendMessage + userName);
+        }
+        response.sendRedirect('recovery-failed');
+    }
+}
+
+
+var themeModule = require('/modules/theme.js');
+%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Password updated | <% include(themeModule.getThemedUrl('includes/title.jag')); %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <% include(themeModule.getThemedUrl('includes/header_file_imports.jag')); %>
+
+  </head>
+
+  <body>
+
+<div class="container col-lg-12 col-md-12 col-sm-12">
+    <% include("includes/header.jag"); %>
+    <div class="row">
+        <div class="col-md-12">
+
+            <!-- content -->
+            <div class="container col-xs-10 col-sm-6 col-md-6 col-lg-4 col-centered wr-content wr-login col-centered">
+                     <h2 class="wr-title uppercase blue-bg padding-double white boarder-bottom-blue margin-none">Challenges</h2>
+
+                     <div class="boarder-all ">
+                        <div class="clear"></div>
+                        <span class="padding-double float-left font-large">Answer the following question to verify that you own your account</span>
+                                                            <div id="challengeFormError" class="alert alert-error" style="display:none"></div>
+
+                        <!-- validation -->
+                        <div class="wr-input-control padding-double">
+                            <div class="clear"></div>
+                            <form id="challengeForm">
+                                <label><%=question%></label>
+                                <input id="answer" name="answer" type="text" class="padding-double required">
+                                <br><br>
+                                <input id="action" name="action" type="hidden" value="verifyChallenge">
+                                <button id="resetPassword"  class="wr-btn grey-bg col-xs-12 col-md-12 col-lg-12 uppercase font-extra-large"
+                                type="button">Continue</button>
+                            </form>
+
+
+                        </div>
+            </div>
+         </div>
+     </div>
+ </div>
+</div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="views/js/jquery-1.11.1.min.js"></script>
+    <script src="views/js/bootstrap.min.js"></script>
+    <script src="views/js/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var ENTER_KEY = 13;
+
+            function verifyChallenge() {
+                var challengeForm = $('#challengeForm');
+
+                if (!challengeForm.valid()) {
+                    return;
+                }
+
+                var formData = challengeForm.serialize();
+
+                // verify challenge answer using challenge endpoint
+                $.post('challenge', formData, function (data) {
+                    var responseData = data.data;
+                    if (!responseData.error) {
+                        $('#challengeFormError').hide();
+                        window.location = 'update-password';
+                    } else {
+                        window.location = 'recovery-failed';
+                    }
+                });
+            }
+
+            $('#resetPassword').bind('click', verifyChallenge);
+
+            $('#challengeForm').find('input').bind('keypress', function (e) {
+                if (e.which == ENTER_KEY) {
+                    verifyChallenge();
+                }
+            });
+
+        });
+    </script>
+  </body>
+</html>

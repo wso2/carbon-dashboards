@@ -25,7 +25,7 @@
             this.drawSingleNumberDiagram(chart);
         } else if (config.chartType == "map") {
             this.drawMap(canvas, config, dataTable);
-        } else if (config.chartType == "table") {
+        } else if (config.chartType == "tabular") {
             this.drawTable(canvas, config, dataTable);
         } else if (config.chartType == "arc") {
             this.drawArc(canvas, config, dataTable);
@@ -267,6 +267,7 @@
             "index":chartConfig.xAxis,
             "schema":dataTable.metadata,
             "name": "x",
+            "zero": false,
             "range": "width",
             "round": true,
             "field": xString
@@ -2825,7 +2826,7 @@
                 this.dataTable.data.push(pointObj);
                 this.table.push(newTable[0]);
 
-                if(this.config.chartType == "table" || this.config.chartType == "singleNumber"){
+                if(this.config.chartType == "tabular" || this.config.chartType == "singleNumber"){
                     this.plot(persistedData,maxValueForUpdate);
                 } else{
                     this.chart.data(this.data).update({"duration":500});
@@ -3079,7 +3080,7 @@
             dataset.push(defaultRow);
             mapSVG = d3.select(this.canvas).datum(dataset).call(mapChart.draw, mapChart);
 
-        } else if(config.chartType == "table"){
+        } else if(config.chartType == "tabular"){
 
             var isColorBasedSet = this.config.colorBasedStyle;
             var isFontBasedSet = this.config.fontBasedStyle;

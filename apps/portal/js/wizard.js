@@ -24,7 +24,8 @@ function formatDS(item) {
         $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
     }
     // var $item = $(
-    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> ' + item.text + '</span>'
+    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> '
+    // + item.text + '</span>'
     //   );
     return $item;
 };
@@ -93,7 +94,8 @@ $("#previewChart").click(function() {
             } else {
                 //TODO DOn't do this! read this from a config file
                 subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
-                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, 'localhost', '9443', 'WEBSOCKET', "SECURED");
+                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
+                    'WEBSOCKET', "SECURED");
                 var source = $("#wizard-zeroevents-hbs").html();;
                 var template = Handlebars.compile(source);
                 $("#chartDiv").empty();
@@ -179,7 +181,7 @@ function onRealTimeEventErrorRecieval(dataError) {
     console.log(dataError);
 };
 
-////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
+////////////////////////////////////////////////// end of event handlers //////////////////////////////////////////////
 
 function getDatasources() {
     $.ajax({
@@ -246,12 +248,12 @@ function getColumns(datasource, datasourceType) {
 };
 
 function checkPaginationSupported(recordStore) {
-    console.log("Checking pagination support on recordstore : " + recordStore); 
+    console.log("Checking pagination support on recordstore : " + recordStore);
     var url = "/portal/apis/analytics?type=18&recordStore=" + recordStore;
     $.getJSON(url, function(data) {
         if (data.status==="success") {
             if(data.message==="true" && datasourceType==="batch") {
-                console.log("Pagination supported for recordstore: " + recordStore); 
+                console.log("Pagination supported for recordstore: " + recordStore);
                 $("#btnPreview").show();
                 isPaginationSupported = true;
             } else {
@@ -334,7 +336,7 @@ function getColumnIndex(columnName) {
     }
 };
 
-/////////////////////////////////////////////////////// data formatting related functions ///////////////////////////////////////////////////////
+///////////////////////////////////// data formatting related functions ///////////////////////////////////////////////
 
 function parseColumns(data) {
     if (data.columns) {
@@ -393,7 +395,7 @@ var chart;
 var counter = 0;
 var globalDataArray = [];
 function drawRealtimeChart(data) {
-    console.log("+++++++++++ drawRealtimeChart "); 
+    console.log("+++++++++++ drawRealtimeChart ");
     $("#chartDiv").empty();
     var chartType = $("#chartType").val();
 
@@ -424,7 +426,7 @@ function drawRealtimeChart(data) {
         }
         if (counter == 0) {
             dataTable = makeMapDataTable(data);
-            console.log(dataTable); 
+            console.log(dataTable);
             chart = igviz.draw("#chartDiv", config, dataTable);
             chart.plot(dataTable.data,null,0);
             counter++;
@@ -452,27 +454,38 @@ function drawRealtimeChart(data) {
                 "height": height,
                 "chartType": chartType
             }
-            if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
-                dataTable.metadata.types[xAxis] = "C";
-            }
-            chart = igviz.setUp("#chartDiv", config, dataTable);
-            chart.setXAxis({
-                "labelAngle": -35,
-                "labelAlign": "right",
-                "labelDy": 0,
-                "labelDx": 0,
-                "titleDy": 25
-            })
-                .setYAxis({
-                    "titleDy": -30
-                })
-                .setDimension({
-                    height: 270
-                })
 
-            globalDataArray.push(dataTable.data[0]);
-            chart.plot(globalDataArray);
-            counter++;
+
+            if(chartType === "tabular" || chartType ==="singleNumber") {
+
+                chart = igviz.draw("#chartDiv",config, dataTable);
+                globalDataArray.push(dataTable.data[0]);
+                chart.plot(globalDataArray);
+
+            } else {
+
+                if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
+                    dataTable.metadata.types[xAxis] = "C";
+                }
+                chart = igviz.setUp("#chartDiv", config, dataTable);
+                chart.setXAxis({
+                    "labelAngle": -35,
+                    "labelAlign": "right",
+                    "labelDy": 0,
+                    "labelDx": 0,
+                    "titleDy": 25
+                })
+                    .setYAxis({
+                        "titleDy": -30
+                    })
+                    .setDimension({
+                        height: 270
+                    })
+
+                globalDataArray.push(dataTable.data[0]);
+                chart.plot(globalDataArray);
+                counter++;
+            }
         } else if (counter == 5) {
             globalDataArray.shift();
             globalDataArray.push(dataTable.data[0]);
@@ -511,6 +524,8 @@ function makeDataTable(data) {
             var type = "N";
             if (column.type == "STRING" || column.type == "string") {
                 type = "C";
+            } else if (column.type == "TIME" || column.type == "time") {
+                type = "T";
             }
             dataTable.addColumn(column.name, type);
         });
