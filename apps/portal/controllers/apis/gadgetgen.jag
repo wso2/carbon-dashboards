@@ -45,9 +45,13 @@
   	};
     
     //copy required gadget template 
-    var gadgetDir = "/store/carbon.super/gadget/";
+    var tenantDir = "/store/" + session.get('user').domain;
+    var gadgetDir =  tenantDir + "/gadget/";
     var templatePath = "/templates/gadgets/igviz";
     var template = new File(templatePath);
+
+    new File(tenantDir).mkdir();
+    new File(gadgetDir).mkdir();
 
     copyDir(template,gadgetDir);
 
