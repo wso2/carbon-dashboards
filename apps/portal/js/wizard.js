@@ -93,7 +93,7 @@ $("#previewChart").click(function() {
                     " Please deploy an adapter to Preview Data.")
             } else {
                 //TODO DOn't do this! read this from a config file
-                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
+                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', window.location.pathname.split('/')[3],
                     onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
                     'WEBSOCKET', "SECURED");
                 var source = $("#wizard-zeroevents-hbs").html();;

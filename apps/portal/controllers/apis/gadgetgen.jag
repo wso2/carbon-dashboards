@@ -40,9 +40,11 @@
   		type : "gadget",
   		thumbnail: "local://store/carbon.super/gadget/usa-business-revenue/index.png",
   		data: {
-  		    url: "local://store/carbon.super/gadget/" + config.id +"/index.xml"
+  		    url: "local://store/" + session.get('user').domain + "/gadget/" + config.id +"/index.xml"
   		}
   	};
+
+    config.domain = session.get('user').domain;
     
     //copy required gadget template 
     var tenantDir = "/store/" + session.get('user').domain;
@@ -52,6 +54,13 @@
 
     new File(tenantDir).mkdir();
     new File(gadgetDir).mkdir();
+
+    var layoutDir =  tenantDir + "/layout/";
+
+    if (!(new File(layoutDir).isExists())) {
+        var layoutPath = "/store/carbon.super/layout";
+        copyDir(new File(layoutPath), tenantDir);
+    }
 
     copyDir(template,gadgetDir);
 
