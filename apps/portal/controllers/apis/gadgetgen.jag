@@ -37,13 +37,14 @@
     var asset = {
   		id: config.id,
   		title: config.title,
-        domain: session.get('user').domain,
   		type : "gadget",
   		thumbnail: "local://store/carbon.super/gadget/usa-business-revenue/index.png",
   		data: {
   		    url: "local://store/" + session.get('user').domain + "/gadget/" + config.id +"/index.xml"
   		}
   	};
+
+    config.domain = session.get('user').domain;
     
     //copy required gadget template 
     var tenantDir = "/store/" + session.get('user').domain;
