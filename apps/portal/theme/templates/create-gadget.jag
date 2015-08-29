@@ -60,17 +60,40 @@
                         <form class="form-horizontal">
                         <fieldset>
 
-                            <!-- Select Basic -->
                             <div class="form-group">
                               <label class="col-md-4 control-label" for="datasource">Analytics Table/Event Stream</label>
                               <div class="col-md-4">
-                                <select id="dsList" name="datasource" class="form-control" style="width: 100%">
-                                </select>
+                                  <select id="dsList" name="datasource" class="form-control" style="width: 100%">
+                                  </select>
                               </div>
+
+                              <!-- <div class="col-md-1">
+                                <div class="dropdown" id="fields">
+                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" 
+                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Fields
+                                    <span class="caret"></span>
+                                  </button>
+                                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="fieldsList">
+                                    <li>
+                                        <a href="#"><input type="checkbox"><span class="lbl"> Tuesday</span></a>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div> -->
+
                               <div class="col-md-1">
                                 <button type="button" id="btnPreview" class="btn btn-success" role="button">
                                     <i class="fa fa-eye"> Preview Data</i>
                                 </button>
+                              </div>
+
+                            </div>
+
+                            <div class="form-group" id="fieldsContainer">
+                              <label class="col-md-4 control-label" for="datasource">Fields</label>
+                              <div class="col-md-4" id="fields">
+
                               </div>
                             </div>
 
@@ -78,6 +101,9 @@
 
                         </fieldset>
                         </form>
+
+                        
+
                     </div>
 
                     <div class="tab-pane" id="tab2">

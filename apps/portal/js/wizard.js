@@ -18,12 +18,15 @@ $('#rootwizard').bootstrapWizard({
             getDatasources();
             $("#btnPreview").hide();
             $("#tblPreview").hide();
+            $("#fieldsContainer").hide();
+
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
         } else if (index == 1) {
             $('#rootwizard').find('.pager .finish').show();
             $("#previewChart").hide();
             done = true;
+            getCheckedColumns();
             if (datasourceType === "batch" && isPaginationSupported) {
                 fetchData();
             }
@@ -57,6 +60,7 @@ $("#dsList").change(function() {
 });
 
 $("#btnPreview").click(function() {
+    getCheckedColumns();
     if ($("dsList").val() != -1) {
         fetchData(renderPreviewPane);
     }
@@ -236,9 +240,41 @@ function getColumns(datasource, datasourceType) {
         $.getJSON(url, function(data) {
             if (data) {
                 columns = parseColumns(JSON.parse(data.message));
+                $("#fields").show();
+                $("#fields").empty();
+                columns.forEach(function(column,i){
+                    var item = $('<div></div>').attr("class","checkbox");
+
+                    var label = $('<label></label>');
+                    var input = $('<input type="checkbox" checked="checked" name="field" />');
+                    input.attr("data-type",column.type)
+                    input.attr("data-name",column.name)
+                    
+                    label.append(input);
+                    label.append(column.name);
+                    item.append(label);
+                    $("#fields").append(item);
+                });
             }
         });
     }
+};
+
+function getCheckedColumns() {
+    columns = [];
+    var filtered = $("#fields input[name=field]:checked");
+    if(filtered.length == 0) {
+        alert("You must have to select");
+        return false;
+    }
+    filtered.each(
+        function(){
+            var column = {};
+            column.name = $(this).attr("data-name");
+            column.type = $(this).attr("data-type");
+            columns.push(column);
+        }
+    );
 };
 
 function checkPaginationSupported(recordStore) {
@@ -248,7 +284,9 @@ function checkPaginationSupported(recordStore) {
         if (data.status==="success") {
             if(data.message==="true" && datasourceType==="batch") {
                 console.log("Pagination supported for recordstore: " + recordStore);
+                //populate fields dropdown list
                 $("#btnPreview").show();
+                $("#fieldsContainer").show();
                 isPaginationSupported = true;
             } else {
                 $("#btnPreview").hide();
