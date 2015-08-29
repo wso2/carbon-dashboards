@@ -49,8 +49,8 @@
                   <div class="navbar-inner">
                     <div class="container">
                 <ul>
-                    <li><a href="#tab1" data-toggle="tab">Select Table/Event Stream</a></li>
-                    <li><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
+                    <li id="step1"><a href="#tab1" data-toggle="tab">Select Table/Event Stream</a></li>
+                    <li id="step2"><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
                 </ul>
                  </div>
                   </div>
@@ -105,7 +105,7 @@
                                         <div class="col-sm-6">
                                             <select class="form-control" id="chartType"
                                                     name="chartType">
-                                                <option value="">--Select--</option>
+                                                <option value="-1">--Select--</option>
                                                 <option value="bar">Bar</option>
                                                 <option value="line">Line</option>
                                                 <option value="area">Area</option>
@@ -259,7 +259,7 @@
                             </div>
                             <!-- /col-md-6 -->
 
-                            <div class="col-md-6">
+                            <div class="col-md-6" id="chartArea">
                                 <h4>Preview</h4>
                                 <div id="chartDiv"></div>
                             </div>
@@ -267,6 +267,7 @@
                         </div>
 
                     </div>
+                    <!-- /tab2-->
                     <ul class="pager wizard">
                         <li class="previous first" style="display:none;"><a href="#">First</a></li>
                         <li class="previous"><a href="#">Previous</a></li>
