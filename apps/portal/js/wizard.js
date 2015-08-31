@@ -19,11 +19,14 @@ $('#rootwizard').bootstrapWizard({
             $("#btnPreview").hide();
             $("#tblPreview").hide();
             $("#fieldsContainer").hide();
-
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
+            $('#next').show();
+            $('#previous').hide();
         } else if (index == 1) {
             $('#rootwizard').find('.pager .finish').show();
+            $('#next').hide();
+            $('#previous').show();
             $("#previewChart").hide();
             done = true;
             getCheckedColumns();
