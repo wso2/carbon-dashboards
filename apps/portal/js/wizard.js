@@ -8,6 +8,7 @@ var isPaginationSupported = true;
 $(document).ready(function() {
   //disable clicking on step2 
   $('#step2').on('click',function() { return false;});
+  $('#next').hide();
 });
 
 $('#rootwizard').bootstrapWizard({
@@ -21,7 +22,6 @@ $('#rootwizard').bootstrapWizard({
             $("#fieldsContainer").hide();
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
-            $('#next').show();
             $('#previous').hide();
         } else if (index == 1) {
             $('#rootwizard').find('.pager .finish').show();
@@ -247,7 +247,6 @@ function getColumns(datasource, datasourceType) {
                 $("#fields").empty();
                 columns.forEach(function(column,i){
                     var item = $('<div></div>').attr("class","checkbox");
-
                     var label = $('<label></label>');
                     var input = $('<input type="checkbox" checked="checked" name="field" />');
                     input.attr("data-type",column.type)
@@ -267,8 +266,8 @@ function getCheckedColumns() {
     columns = [];
     var filtered = $("#fields input[name=field]:checked");
     if(filtered.length == 0) {
-        alert("You must have to select");
-        return false;
+        alert("Please select at leat two fields!");
+        return;
     }
     filtered.each(
         function(){
@@ -288,6 +287,7 @@ function checkPaginationSupported(recordStore) {
             if(data.message==="true" && datasourceType==="batch") {
                 console.log("Pagination supported for recordstore: " + recordStore);
                 //populate fields dropdown list
+                $('#next').show();
                 $("#btnPreview").show();
                 $("#fieldsContainer").show();
                 isPaginationSupported = true;
