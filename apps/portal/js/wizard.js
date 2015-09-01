@@ -367,7 +367,7 @@ function renderPreviewPane(rows) {
         $("#previewPane")
             .append('<table><tr><td style="padding:15px 10px 0px 10px">'
                 +'<img src="../../portal/images/noEvents.png" align="left" style="width:24;height:24"/>'
-                +'</td><td><br/><p>You will not view all records of large data sets here</p></td></tr></table>');
+                +'</td><td><br/><p>Records limited of a large data set</p></td></tr></table>');
     }
 
 };
