@@ -43,6 +43,11 @@ $("#dsList").change(function() {
     if (datasource != "-1") {
         $('#rootwizard').find('.pager .next').removeClass("disabled");
         datasourceType = $("#dsList option:selected").attr("data-type");
+
+        if (datasourceType === "realtime") {
+            $('#next').show();
+        }
+
         getColumns(datasource, datasourceType);
         //check whether the seleced datasource supports pagination as well
         //first, get the recordstore for this table
@@ -263,20 +268,22 @@ function getColumns(datasource, datasourceType) {
 };
 
 function getCheckedColumns() {
-    columns = [];
-    var filtered = $("#fields input[name=field]:checked");
-    if(filtered.length == 0) {
-        alert("Please select at leat two fields!");
-        return;
-    }
-    filtered.each(
-        function(){
-            var column = {};
-            column.name = $(this).attr("data-name");
-            column.type = $(this).attr("data-type");
-            columns.push(column);
+    if (datasourceType != "realtime") {
+        columns = [];
+        var filtered = $("#fields input[name=field]:checked");
+        if (filtered.length == 0) {
+            alert("Please select at leat two fields!");
+            return;
         }
-    );
+        filtered.each(
+            function () {
+                var column = {};
+                column.name = $(this).attr("data-name");
+                column.type = $(this).attr("data-type");
+                columns.push(column);
+            }
+        );
+    }
 };
 
 function checkPaginationSupported(recordStore) {
