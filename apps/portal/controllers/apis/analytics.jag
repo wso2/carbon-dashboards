@@ -55,10 +55,12 @@
     var carbon = require('carbon');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
     var HTTPConstants = Packages.org.apache.axis2.transport.http.HTTPConstants;
-    var AnalyticsWebServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsWebServiceConnector;
+    var AnalyticsCachedWebServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedWebServiceConnector;
+    var AnalyticsCache = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedWebServiceConnector.AnalyticsCache;
     var AnalyticsWebServiceStub = Packages.org.wso2.carbon.analytics.webservice.stub.AnalyticsWebServiceStub;
     var AuthenticationAdminStub = Packages.org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
-
+    var cacheTimeoutSeconds = 5;
+    var cacheSizeBytes = 1024 * 1024 * 1024; // 1GB
 
     var analyticsWSUrl = carbon.server.address(HTTPS_TRANSPORT) + ANALYTICS_SERVICE;
     var authenticationWSUrl = carbon.server.address(HTTPS_TRANSPORT) + AUTHENTICATION_SERVICE;
@@ -95,8 +97,13 @@
         }
     }
 
+    var cache = application.get("AnalyticsWebServiceCache");
+    if (cache == null) {
+        cache = new AnalyticsCache(cacheTimeoutSeconds, cacheSizeBytes);
+        application.put("AnalyticsWebServiceCache", cache);
+    }
 
-    var connector = new AnalyticsWebServiceConnector(analyticsStub);
+    var connector = new AnalyticsCachedWebServiceConnector(analyticsStub, cache);
 
     var type = 0;
     var typeParam = request.getParameter(TYPE);
@@ -325,7 +332,7 @@
             print(finalResult);
         }
     } else {
-        print('{ "status": "Failed", "statusCode": "500", "message": "AnalyticsWebServiceConnector is unavailable" }');
+        print('{ "status": "Failed", "statusCode": "500", "message": "AnalyticsCachedWebServiceConnector is unavailable" }');
     }
 
 }());
