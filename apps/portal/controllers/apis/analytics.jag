@@ -21,7 +21,7 @@
     var JS_MAX_VALUE = "9007199254740992";
     var JS_MIN_VALUE = "-9007199254740992";
     var ZERO_INDEX = "0";
-    var LAST_INDEX = "1000";    //Set the max value to 1000. This is to prevent accidental loading of millions of records.
+    var LAST_INDEX = "5000";    //Set the max value to 5000. This is to prevent accidental loading of millions of records.
     var TYPE_CLEAR_INDEX_DATA = 1;
 //    var TYPE_CREATE_TABLE = 2;
 //    var TYPE_DELETE_BY_ID = 3;
