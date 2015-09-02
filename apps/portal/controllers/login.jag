@@ -23,6 +23,24 @@ var dest;
                 var api = require('/modules/api.js');
                 var authToken = api.authenticate(username, password);
                 session.put('authToken', authToken);
+
+                if (superDomain != user.domain) {
+                    var tenantDir = "/store/" + user.domain;
+
+                    if (!(new File(tenantDir).isExists())) {
+                        new File(tenantDir).mkdir();
+                        log.info("Created a directory for tenant "+ user.domain);
+                    }
+
+                    var layoutDir =  tenantDir + "/layout/";
+
+                    if (!(new File(layoutDir).isExists())) {
+                        var layoutPath = "/store/carbon.super/layout";
+                        copyDir(new File(layoutPath), tenantDir);
+                        log.info("Layouts has been copied for tenant "+ user.domain);
+                    }
+                }
+
                 if (dest) {
                     response.sendRedirect(dest);
                     return;
@@ -31,6 +49,7 @@ var dest;
                     response.sendRedirect(urlPrefix);
                     return;
                 }
+
                 response.sendRedirect(utils.tenantedPrefix(urlPrefix, user.domain));
                 return;
             }
@@ -39,4 +58,41 @@ var dest;
     }
 
     include(utils.resolvePath('templates/login.jag'))
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    function createDir(path) {
+        var file = new File(path);
+        if (file.isExists()) {
+            file.del();
+        }
+        file.mkdir();
+    };
+
+    function copyFile(src, dst) {
+        var stream = src.getStream();
+        dst = dst + '/' + src.getName();
+        var dstf = new File(dst);
+        dstf.open('w');
+        dstf.write(stream);
+        dstf.close();
+    };
+
+    function  copyDir(source,destination) {
+        if(source.isDirectory()) {
+            createDir(destination + "/" + source.getName());
+            destination = destination + "/" + source.getName();
+            var sourceFiles = source.listFiles();
+            for (var i = 0; i < sourceFiles.length; i++) {
+                var inFile = sourceFiles[i];
+                log.info(inFile.getName());
+                copyDir(inFile, destination);
+            }
+        } else {
+            // log.info("** Copying file " + source.getName());
+            copyFile(source,destination);
+        }
+    };
+
 }()); %>

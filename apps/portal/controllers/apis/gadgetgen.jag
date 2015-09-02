@@ -51,16 +51,7 @@
     var gadgetDir =  tenantDir + "/gadget/";
     var templatePath = "/templates/gadgets/igviz";
     var template = new File(templatePath);
-
-    new File(tenantDir).mkdir();
     new File(gadgetDir).mkdir();
-
-    var layoutDir =  tenantDir + "/layout/";
-
-    if (!(new File(layoutDir).isExists())) {
-        var layoutPath = "/store/carbon.super/layout";
-        copyDir(new File(layoutPath), tenantDir);
-    }
 
     copyDir(template,gadgetDir);
 
