@@ -508,7 +508,7 @@ function drawRealtimeChart(data) {
 
                 chart = igviz.draw("#chartDiv",config, dataTable);
                 globalDataArray.push(dataTable.data[0]);
-                chart.plot(globalDataArray);
+                chart.plot(globalDataArray, null, 10);
 
             } else {
 
