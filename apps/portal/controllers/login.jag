@@ -59,9 +59,6 @@ var dest;
 
     include(utils.resolvePath('templates/login.jag'))
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     function createDir(path) {
         var file = new File(path);
         if (file.isExists()) {
