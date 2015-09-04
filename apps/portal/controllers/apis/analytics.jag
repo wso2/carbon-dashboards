@@ -53,6 +53,7 @@
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var log = new Log();
     var carbon = require('carbon');
+    var configs = require('/configs/designer.json');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
     var HTTPConstants = Packages.org.apache.axis2.transport.http.HTTPConstants;
     var AnalyticsCachedWebServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedWebServiceConnector;
@@ -60,7 +61,13 @@
     var AnalyticsWebServiceStub = Packages.org.wso2.carbon.analytics.webservice.stub.AnalyticsWebServiceStub;
     var AuthenticationAdminStub = Packages.org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
     var cacheTimeoutSeconds = 5;
+    if(configs.cacheTimeoutSeconds) {
+        cacheTimeoutSeconds = parseInt(configs.cacheTimeoutSeconds);
+    }
     var cacheSizeBytes = 1024 * 1024 * 1024; // 1GB
+    if(configs.cacheSizeBytes) {
+        cacheSizeBytes = parseInt(configs.cacheSizeBytes);
+    }
 
     var analyticsWSUrl = carbon.server.address(HTTPS_TRANSPORT) + ANALYTICS_SERVICE;
     var authenticationWSUrl = carbon.server.address(HTTPS_TRANSPORT) + AUTHENTICATION_SERVICE;
