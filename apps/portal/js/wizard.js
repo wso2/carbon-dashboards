@@ -497,10 +497,8 @@ function drawRealtimeChart(data) {
             chart.update(data);
         }
     } else if (chartType === "arc") {
-        //WARNING: very ugly code!!!! refactor this immediately
-        var percentage = getColumnIndex($("#percentage").val());
-        var config = { chartType: "arc", percentage: percentage};
-        igviz.draw("#chartDiv",config,createDataTable(data));
+        var config = { chartType: chartType, "height": 240, percentage: getColumnIndex($("#percentage").val())};
+        igviz.draw("#chartDiv", config,makeDataTable(data));
     } else {
         dataTable = makeDataTable(data);
         if (counter == 0) {
