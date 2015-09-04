@@ -131,11 +131,19 @@ $(".pager .finish").click(function() {
     }
     if (done) {
         console.log("*** Posting data for gadget [" + $("#title").val() + "]");
+
+        var defaultMaxValue = 10;
+
         //building the chart config depending on the chart type
         var chartType = $("#chartType").val();
         var config = {
             chartType: $("#chartType").val()
         };
+
+        if (chartType === "area" || chartType === "line" || chartType === "map" || chartType === "scatter") {
+            defaultMaxValue = 0;
+        }
+
         configureChart(config);
         config = chartConfig;
         // console.log(config); 
@@ -146,7 +154,7 @@ $(".pager .finish").click(function() {
             type: $("#dsList option:selected").attr("data-type"),
             filter: $("#txtFilter").val(),
             columns: columns,
-            maxUpdateValue: 10,
+            maxUpdateValue: defaultMaxValue,
             chartConfig: config
 
         };
