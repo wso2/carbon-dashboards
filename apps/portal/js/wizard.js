@@ -30,7 +30,7 @@ $('#rootwizard').bootstrapWizard({
             $("#previewChart").hide();
             done = true;
             getCheckedColumns();
-            if (datasourceType === "batch" && isPaginationSupported) {
+            if (datasourceType === "batch") {
                 fetchData();
             }
             renderChartConfig();
@@ -308,16 +308,16 @@ function checkPaginationSupported(recordStore) {
         if (data.status==="success") {
             if(data.message==="true" && datasourceType==="batch") {
                 console.log("Pagination supported for recordstore: " + recordStore);
-                //populate fields dropdown list
-                $('#next').show();
                 $("#btnPreview").show();
-                $("#fieldsContainer").show();
                 isPaginationSupported = true;
             } else {
                 $("#btnPreview").hide();
                 isPaginationSupported = false;
             }
         }
+        $('#next').show();
+        //populate fields dropdown list
+        $("#fieldsContainer").show();
     });
 };
 
