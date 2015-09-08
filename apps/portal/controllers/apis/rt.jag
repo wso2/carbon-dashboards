@@ -58,8 +58,12 @@
             if (activeEventPublishers) {
                 for (var i = 0; i < activeEventPublishers.length; i++) {
                     var publisherName = activeEventPublishers[i].getEventPublisherName();
-                    var wso2EventMappingDto = eventpublisherStub.getActiveEventPublisherConfiguration(publisherName).getWso2EventOutputMappingDto();
-                    if (wso2EventMappingDto) {
+                    var wso2EventMappingDto = eventpublisherStub.getActiveEventPublisherConfiguration(publisherName)
+                            .getWso2EventOutputMappingDto();
+                    var publisherType = eventpublisherStub.getActiveEventPublisherConfiguration(publisherName)
+                            .getToAdapterConfigurationDto().getEventAdapterType();
+
+                    if (wso2EventMappingDto && publisherType.trim() == "ui") {
                         var streamName = wso2EventMappingDto.getOutputStreamName();
                         var streamVersion = wso2EventMappingDto.getOutputStreamVersion();
                         var StreamId = streamName + ":" + streamVersion;
