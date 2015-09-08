@@ -121,6 +121,24 @@ $("#chartType").change(function() {
     $("#previewChart").show();
     $('#rootwizard').find('.pager .finish').removeClass('disabled');
 
+    //Disable TIMESTAMP for Bar charts X Axis
+    if (chartType === "bar") {
+        $("#xAxis option[value=TIMESTAMP]").hide();
+        $("#xAxis")[0].selectedIndex = 1;
+    } else {
+        $("#xAxis option[value=TIMESTAMP]").show();
+        $("#xAxis")[0].selectedIndex = 0;
+    }
+
+    //Disable TIMESTAMP for Bar and Area charts Y Axis
+    if (chartType === "bar" || chartType === "area" || chartType === "scatter") {
+        $("#yAxis option[value=TIMESTAMP]").hide();
+        $("#yAxis")[0].selectedIndex = 1;
+    } else {
+        $("#yAxis option[value=TIMESTAMP]").show();
+        $("#yAxis")[0].selectedIndex = 0;
+    }
+
 });
 
 $(".pager .finish").click(function() {
