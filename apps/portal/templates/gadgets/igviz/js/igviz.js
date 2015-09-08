@@ -279,7 +279,7 @@
             "schema":dataTable.metadata,
             "name": "y",
             "range": "height",
-            "zero": false,
+            "zero": true,
             "nice": true,
             "field": yString
         }
@@ -885,7 +885,7 @@
             "schema":dataTable.metadata,
             "name": "y",
             "range": "height",
-            "zero": false,
+            "zero": true,
             "field": yStrings
         }
 
@@ -1294,7 +1294,7 @@
             "name": "val",
             "range": "height",
             "dataFrom":"stats",
-            "zero": false,
+            "zero": true,
             "field": "sum",
             "nice":true
         }
