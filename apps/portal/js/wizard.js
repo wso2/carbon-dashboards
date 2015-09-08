@@ -121,6 +121,14 @@ $("#chartType").change(function() {
     $("#previewChart").show();
     $('#rootwizard').find('.pager .finish').removeClass('disabled');
 
+    if (chartType === "bar") {
+        $("#xAxis option[value=TIMESTAMP]").hide();
+        $("#xAxis")[0].selectedIndex = 1;
+    } else {
+        $("#xAxis option[value=TIMESTAMP]").show();
+        $("#xAxis")[0].selectedIndex = 0;
+    }
+
 });
 
 $(".pager .finish").click(function() {
