@@ -57,7 +57,7 @@
         var process = require("process");
         var profile = process.getProperty("profile");
 
-        if(profile==="worker"){
+        if(profile==="worker") {
             print("Creating gadgets in Worker node is prohibited. Please use Manager node to create gadgets.");
         } else {
         try {
