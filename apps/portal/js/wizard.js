@@ -475,11 +475,15 @@ var dataTable;
 var chart;
 var counter = 0;
 var globalDataArray = [];
+
 function drawRealtimeChart(data) {
-    console.log("+++++++++++ drawRealtimeChart ");
     $("#chartDiv").empty();
     var chartType = $("#chartType").val();
+    var defaultMaxValue = 10;
 
+    if (chartType === "area" || chartType === "line" || chartType === "map" || chartType === "scatter") {
+        defaultMaxValue = 0;
+    }
 
     if (chartType == "map") {
         var region = 5;
@@ -509,43 +513,62 @@ function drawRealtimeChart(data) {
             dataTable = makeMapDataTable(data);
             console.log(dataTable);
             chart = igviz.draw("#chartDiv", config, dataTable);
-            chart.plot(dataTable.data,null,0);
+            chart.plot(dataTable.data,null,defaultMaxValue);
             counter++;
         } else {
             chart.update(data);
         }
-    } else if (chartType === "arc") {
+
+
+    } else if(chartType === "arc") {
         var config = { chartType: chartType, "height": 240, percentage: getColumnIndex($("#percentage").val())};
         igviz.draw("#chartDiv", config,makeDataTable(data));
     } else {
         dataTable = makeDataTable(data);
-        if (counter == 0) {
-            var xAxis = getColumnIndex($("#xAxis").val());
-            var yAxis = getColumnIndex($("#yAxis").val());
-            //console.log("X " + xAxis + " Y " + yAxis);
+        var xAxis = getColumnIndex($("#xAxis").val());
+        var yAxis;
 
-            var width = document.getElementById("chartDiv").offsetWidth;
-            var height = 240; //canvas height
-            var config = {
-                "yAxis": yAxis,
-                "xAxis": xAxis,
-                "width": width,
-                "height": height,
-                "chartType": chartType
+        if (chartType == "line") {
+            var yAxis =  [];
+            for (var i = 0; i < $("#yAxises").val().length; i++) {
+                yAxis.push(getColumnIndex($("#yAxises").val()[i]));
             }
+        } else {
+            yAxis = getColumnIndex($("#yAxis").val());
+        }
 
 
-            if(chartType === "tabular" || chartType ==="singleNumber") {
 
-                chart = igviz.draw("#chartDiv",config, dataTable);
-                globalDataArray.push(dataTable.data[0]);
-                chart.plot(globalDataArray, null, 10);
+        var width = document.getElementById("chartDiv").offsetWidth;
+        var height = 240; //canvas height
+        var config = {
+            "yAxis": yAxis,
+            "xAxis": xAxis,
+            "width": width,
+            "height": height,
+            "chartType": chartType
+        }
 
-            } else {
+        if (chartType === "scatter") {
+            config.pointColor  = getColumnIndex($("#pointColor").val());
+            config.pointSize  = getColumnIndex($("#pointSize").val());
+            config.maxColor  = "#ffff00";
+            config.minColor  = "#ff00ff";
+        }
 
-                if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
-                    dataTable.metadata.types[xAxis] = "C";
-                }
+        if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
+            dataTable.metadata.types[xAxis] = "C";
+        }
+
+        if(chartType === "tabular" || chartType ==="singleNumber") {
+
+            chart = igviz.draw("#chartDiv",config, dataTable);
+            globalDataArray.push(dataTable.data[0]);
+            chart.plot(globalDataArray, null, 10);
+
+        } else {
+
+            if (counter == 0) {
                 chart = igviz.setUp("#chartDiv", config, dataTable);
                 chart.setXAxis({
                     "labelAngle": -35,
@@ -557,26 +580,14 @@ function drawRealtimeChart(data) {
                     .setYAxis({
                         "titleDy": -30
                     })
-                    .setDimension({
-                        height: 270
-                    })
 
-                globalDataArray.push(dataTable.data[0]);
-                chart.plot(globalDataArray);
+                chart.plot(dataTable.data, null ,defaultMaxValue);
                 counter++;
+            } else {
+                chart.update(dataTable.data[0]);
             }
-        } else if (counter == 5) {
-            globalDataArray.shift();
-            globalDataArray.push(dataTable.data[0]);
-            chart.update(dataTable.data[0]);
-        } else {
-            globalDataArray.push(dataTable.data[0]);
-            chart.plot(globalDataArray);
-            counter++;
         }
-
     }
-
 };
 
 function makeDataTable(data) {

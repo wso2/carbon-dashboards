@@ -2831,7 +2831,7 @@
                 this.dataTable.data.push(pointObj);
                 this.table.push(newTable[0]);
 
-                if(this.config.chartType == "tabular" || this.config.chartType == "singleNumber"){
+                if(this.config.chartType == "tabular" || this.config.chartType == "singleNumber" || this.config.chartType == "bar"){
                     this.plot(persistedData,maxValueForUpdate);
                 } else{
                     this.chart.data(this.data).update({"duration":500});
