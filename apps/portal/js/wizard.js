@@ -549,6 +549,13 @@ function drawRealtimeChart(data) {
             "chartType": chartType
         }
 
+        if (chartType === "scatter") {
+            config.pointColor  = getColumnIndex($("#pointColor").val());
+            config.pointSize  = getColumnIndex($("#pointSize").val());
+            config.maxColor  = "#ffff00";
+            config.minColor  = "#ff00ff";
+        }
+
         if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
             dataTable.metadata.types[xAxis] = "C";
         }
