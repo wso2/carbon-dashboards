@@ -14,8 +14,7 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
@@ -26,7 +25,7 @@
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>WSO2 Carbon Dashboards</name>
     <url>http://wso2.org</url>
 
@@ -42,7 +41,7 @@
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
-        <carbon.dashboards.version>1.0.1-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>1.0.1</carbon.dashboards.version>
         <carbon.kernel.version>4.4.1</carbon.kernel.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
     </properties>
@@ -51,7 +50,7 @@
         <url>https://github.com/wso2/carbon-dashboards.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-dashboards.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-dashboards.git</connection>
-        <tag>HEAD</tag>
+        <tag>v1.0.1</tag>
     </scm>
 
     <dependencyManagement>
