@@ -25,7 +25,7 @@
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>WSO2 Carbon Dashboards</name>
     <url>http://wso2.org</url>
 
@@ -41,7 +41,7 @@
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
-        <carbon.dashboards.version>1.0.1</carbon.dashboards.version>
+        <carbon.dashboards.version>1.0.2-SNAPSHOT</carbon.dashboards.version>
         <carbon.kernel.version>4.4.1</carbon.kernel.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
     </properties>
@@ -50,7 +50,7 @@
         <url>https://github.com/wso2/carbon-dashboards.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-dashboards.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-dashboards.git</connection>
-        <tag>v1.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>
