@@ -67,6 +67,11 @@
 
         }
 
+        //When there are multiple values for Y axis, it cannot started by minimum value
+        var zeroConfig = false;
+        if (yStrings.length > 1) {
+            zeroConfig = true;
+        }
 
         xScaleConfig={
             "index":chartConfig.xAxis,
@@ -83,7 +88,7 @@
             "schema":dataTable.metadata,
             "name": "y",
             "range": "height",
-            "zero": false,
+            "zero": zeroConfig,
             "nice": true,
             "field": yStrings[0]
         }
