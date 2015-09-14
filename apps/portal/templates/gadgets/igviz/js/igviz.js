@@ -2339,9 +2339,12 @@
             namesArray=schema.names;
             for(j=0;j<namesArray.length;j++){
                 if(schema.types[j]=='T'){
-                    ptObj[createAttributeNames(namesArray[j])]=new Date(dataTableObj[i][j]);
-                }else
-                    ptObj[createAttributeNames(namesArray[j])]=dataTableObj[i][j];
+                    ptObj[createAttributeNames(namesArray[j])] = new Date(dataTableObj[i][j]);
+                }else if (schema.types[j]=='N'){
+                    ptObj[createAttributeNames(namesArray[j])] = parseFloat(dataTableObj[i][j]);
+                } else {
+                    ptObj[createAttributeNames(namesArray[j])] = dataTableObj[i][j];
+                }
             }
 
             table[i] = ptObj;
@@ -3168,7 +3171,7 @@
 
             var colorRows = d3.scale.linear()
                 .domain([2.5, 4])
-                .range(['#F5BFE8', '#E305AF']);
+                .range(['#EFF5FA', '#5D9DC9']);
 
             var fontSize = d3.scale.linear()
                 .domain([0, 100])
