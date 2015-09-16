@@ -49,8 +49,8 @@
                   <div class="navbar-inner">
                     <div class="container">
                 <ul>
-                    <li><a href="#tab1" data-toggle="tab">Select Table/Event Stream</a></li>
-                    <li><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
+                    <li id="step1"><a href="#tab1" data-toggle="tab">Select Table/Event Stream</a></li>
+                    <li id="step2"><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
                 </ul>
                  </div>
                   </div>
@@ -60,24 +60,57 @@
                         <form class="form-horizontal">
                         <fieldset>
 
-                            <!-- Select Basic -->
                             <div class="form-group">
                               <label class="col-md-4 control-label" for="datasource">Analytics Table/Event Stream</label>
                               <div class="col-md-4">
-                                <select id="dsList" name="datasource" class="form-control" style="width: 100%">
-                                </select>
+                                  <select id="dsList" name="datasource" class="form-control" style="width: 100%">
+                                  </select>
                               </div>
+
+                              <!-- <div class="col-md-1">
+                                <div class="dropdown" id="fields">
+                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" 
+                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Fields
+                                    <span class="caret"></span>
+                                  </button>
+                                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="fieldsList">
+                                    <li>
+                                        <a href="#"><input type="checkbox"><span class="lbl"> Tuesday</span></a>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div> -->
+
                               <div class="col-md-1">
                                 <button type="button" id="btnPreview" class="btn btn-success" role="button">
                                     <i class="fa fa-eye"> Preview Data</i>
                                 </button>
                               </div>
+
                             </div>
+
+                            <div class="form-group" id="fieldsContainer">
+                              <label class="col-md-4 control-label" for="datasource">Fields</label>
+                              <div class="col-md-4" id="fields">
+
+                              </div>
+                            </div>
+
+                            <!-- <div class="form-group" id="luceneQuery">
+                              <label class="col-md-4 control-label" for="datasource">Filter (optionl Lucene query)</label>
+                              <div class="col-md-4" id="filter">
+                                    <textarea class="form-control" rows="2" id="comment"></textarea>
+                              </div>
+                            </div> -->
 
                             <div id="previewPane"></div>
 
                         </fieldset>
                         </form>
+
+                        
+
                     </div>
 
                     <div class="tab-pane" id="tab2">
@@ -105,7 +138,7 @@
                                         <div class="col-sm-6">
                                             <select class="form-control" id="chartType"
                                                     name="chartType">
-                                                <option value="">--Select--</option>
+                                                <option value="-1">--Select--</option>
                                                 <option value="bar">Bar</option>
                                                 <option value="line">Line</option>
                                                 <option value="area">Area</option>
@@ -259,7 +292,7 @@
                             </div>
                             <!-- /col-md-6 -->
 
-                            <div class="col-md-6">
+                            <div class="col-md-6" id="chartArea">
                                 <h4>Preview</h4>
                                 <div id="chartDiv"></div>
                             </div>
@@ -267,11 +300,12 @@
                         </div>
 
                     </div>
+                    <!-- /tab2-->
                     <ul class="pager wizard">
                         <li class="previous first" style="display:none;"><a href="#">First</a></li>
-                        <li class="previous"><a href="#">Previous</a></li>
+                        <li id="previous" class="previous"><a href="#">Previous</a></li>
                         <li class="next last" style="display:none;"><a href="#">Last</a></li>
-                        <li class="next"><a href="#">Next</a></li>
+                        <li id="next" class="next"><a href="#">Next</a></li>
                         <li class="next finish" style="display:none;"><a href="#">Add to Gadget Store</a></li>
                     </ul>
                 </div>

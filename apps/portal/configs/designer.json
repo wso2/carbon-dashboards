@@ -23,5 +23,7 @@
     "designers": ["Internal/everyone"],
     "tenantPrefix": "/t",
     "shareStore": false,
-    "theme": "basic"
+    "theme": "basic",
+    "cacheTimeoutSeconds": "5",
+    "cacheSizeBytes": "1073741824"
 }

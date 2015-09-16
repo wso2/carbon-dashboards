@@ -21,7 +21,7 @@
 		    type: AREA_CHART_TYPE,
 		    value: new AreaChart()
 		}, {
-		    name: 'Table',
+		    name: 'Tabular',
 		    type: TABLE_CHART_TYPE,
 		    value: new TableChart()
 		}, {
@@ -202,7 +202,7 @@
 	};
 
 	TableChart.prototype.configure = function(config) {
-		config.chartType = "table";
+		config.chartType = "tabular";
 	    config.xAxis = getColumnIndex($("#column").val());;
 	    var style = $("#tableStyle").val();
 	    if (style === "color") {

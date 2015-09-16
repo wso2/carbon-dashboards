@@ -51,21 +51,48 @@
                    datasources.push({ name : tables[i], type: "batch"});
                 };
             }
-        } 
-        var activeEventPublishers = eventpublisherStub.getAllActiveEventPublisherConfigurations();
-        if(activeEventPublishers){
-            for(var i = 0; i < activeEventPublishers.length; i++){
-                var publisherName = activeEventPublishers[i].getEventPublisherName();
-                var wso2EventMappingDto = eventpublisherStub.getActiveEventPublisherConfiguration(publisherName).getWso2EventOutputMappingDto();
-                if(wso2EventMappingDto) {
-                    var streamName = wso2EventMappingDto.getOutputStreamName();
-                    var streamVersion = wso2EventMappingDto.getOutputStreamVersion();
-                    var StreamId = streamName + ":" + streamVersion;
-                    datasources.push({ name : StreamId, type: "realtime"});
+        }
+
+        //get system properties for distributed mode profile
+        var process = require("process");
+        var profile = process.getProperty("profile");
+
+        if(profile==="worker") {
+            print("Creating gadgets in Worker node is prohibited. Please use Manager node to create gadgets.");
+        } else {
+        try {
+            var activeEventPublishers = eventpublisherStub.getAllActiveEventPublisherConfigurations();
+            if (activeEventPublishers) {
+                for (var i = 0; i < activeEventPublishers.length; i++) {
+                    var publisherName = activeEventPublishers[i].getEventPublisherName();
+                    var wso2EventMappingDto = eventpublisherStub.getActiveEventPublisherConfiguration(publisherName)
+                            .getWso2EventOutputMappingDto();
+                    var publisherType = eventpublisherStub.getActiveEventPublisherConfiguration(publisherName)
+                            .getToAdapterConfigurationDto().getEventAdapterType();
+
+                    if (wso2EventMappingDto && publisherType.trim() == "ui") {
+                        var streamName = wso2EventMappingDto.getOutputStreamName();
+                        var streamVersion = wso2EventMappingDto.getOutputStreamVersion();
+                        var StreamId = streamName + ":" + streamVersion;
+                        datasources.push({ name: StreamId, type: "realtime"});
+                    }
+                }
+            }
+        } catch(e) {
+            if(e.javaException instanceof org.apache.axis2.AxisFault){
+                //If Unauthorized Java exception occurred.
+                //User will be logged out and Unauthorized 401 HTTP code will be sent
+                if (e.message.split(":")[3].trim() == "Unauthorized") {
+                    log.error(e.message);
+                    var usr = require('/modules/user.js');
+                    usr.logout();
+                    response.sendError(401);
                 }
             }
         }
+
         print(datasources);
+        }
     } else if(action === "publisherIsExist") {
         var streamId = request.getParameter("streamId");
         var activePublisher = eventpublisherStub.getAllStreamSpecificActiveEventPublisherConfigurations(streamId);
@@ -86,49 +113,63 @@
             var payloadDataLength = 0;
             var counter = 0;
 
-            var eventStreamDefinitionDto
-                    = eventStreamStub.getStreamDefinitionDto(datasource);
+            try {
 
-            var metaData = eventStreamDefinitionDto.getMetaData();
-            var correlationData = eventStreamDefinitionDto.getCorrelationData();
-            var payloadData = eventStreamDefinitionDto.getPayloadData();
+                var eventStreamDefinitionDto
+                        = eventStreamStub.getStreamDefinitionDto(datasource);
 
-            if(metaData != null){
-                metaDataLength = metaData.length;
-            }
-            if(correlationData != null){
-                correlationDataLength = correlationData.length;
-            }
-            if(payloadData != null){
-                payloadDataLength = payloadData.length;
-            }
+                var metaData = eventStreamDefinitionDto.getMetaData();
+                var correlationData = eventStreamDefinitionDto.getCorrelationData();
+                var payloadData = eventStreamDefinitionDto.getPayloadData();
 
-            output.push({
-                name : "TIMESTAMP",
-                type : "time"
-            });
+                if (metaData != null) {
+                    metaDataLength = metaData.length;
+                }
+                if (correlationData != null) {
+                    correlationDataLength = correlationData.length;
+                }
+                if (payloadData != null) {
+                    payloadDataLength = payloadData.length;
+                }
 
-            var allDataLength = metaDataLength + correlationDataLength + payloadDataLength;
-            for(var i=0;i<metaDataLength;i++){
                 output.push({
-                    name : metaData[i].getAttributeName(),
-                    type : metaData[i].getAttributeType()
+                    name: "TIMESTAMP",
+                    type: "time"
                 });
-                counter++;
-            }
-            for(var i=0;i<correlationDataLength;i++){
-                output.push({
-                    name : correlationData[i].getAttributeName(),
-                    type : correlationData[i].getAttributeType()
-                });
-                counter++;
-            }
-            for(var i=0;i<payloadDataLength;i++){
-                output.push({
-                    name : payloadData[i].getAttributeName(),
-                    type : payloadData[i].getAttributeType()
-                });
-                counter++;
+
+                var allDataLength = metaDataLength + correlationDataLength + payloadDataLength;
+                for (var i = 0; i < metaDataLength; i++) {
+                    output.push({
+                        name: metaData[i].getAttributeName(),
+                        type: metaData[i].getAttributeType()
+                    });
+                    counter++;
+                }
+                for (var i = 0; i < correlationDataLength; i++) {
+                    output.push({
+                        name: correlationData[i].getAttributeName(),
+                        type: correlationData[i].getAttributeType()
+                    });
+                    counter++;
+                }
+                for (var i = 0; i < payloadDataLength; i++) {
+                    output.push({
+                        name: payloadData[i].getAttributeName(),
+                        type: payloadData[i].getAttributeType()
+                    });
+                    counter++;
+                }
+            } catch (e) {
+                //If Unauthorized Java exception occurred.
+                //User will be logged out and Unauthorized 401 HTTP code will be sent
+                if(e.javaException instanceof org.apache.axis2.AxisFault){
+                    if (e.message.split(":")[3].trim() == "Unauthorized") {
+                        log.error(e.message);
+                        var usr = require('/modules/user.js');
+                        usr.logout();
+                        response.sendError(401);
+                    }
+                }
             }
         } else {
             var schema = analyticsStub.getTableSchema(tableName);

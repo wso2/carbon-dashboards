@@ -1081,6 +1081,9 @@ $(function () {
     };
 
     var initDesignerMenu = function () {
+
+        $("#ues-workspace-designer").show();
+
         var menu = $('#ues-workspace-designer').find('.ues-context-menu');
 
         menu.find('.ues-page-add').on('click', function () {

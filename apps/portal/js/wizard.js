@@ -6,44 +6,31 @@ var isPaginationSupported = true;
 
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 $(document).ready(function() {
-    // $("#dsList").select2({
-    //     placeholder: "Select a datasource",
-    //     templateResult: formatDS
-    // });
+  //disable clicking on step2 
+  $('#step2').on('click',function() { return false;});
+  $('#next').hide();
 });
-
-function formatDS(item) {
-    if (!item.id) {
-        return item.text;
-    }
-    var type = $(item.element).data("type");
-    var $item;
-    if (type === "realtime") {
-        $item = $('<div><i class="fa fa-bolt"> </i> ' + item.text + '</div>');
-    } else {
-        $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
-    }
-    // var $item = $(
-    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> '
-    // + item.text + '</span>'
-    //   );
-    return $item;
-};
 
 $('#rootwizard').bootstrapWizard({
     onTabShow: function(tab, navigation, index) {
-        //console.log("** Index : " + index);
+        console.log("** Index : " + index);
         done = false;
         if (index == 0) {
             getDatasources();
             $("#btnPreview").hide();
+            $("#tblPreview").hide();
+            $("#fieldsContainer").hide();
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
+            $('#previous').hide();
         } else if (index == 1) {
             $('#rootwizard').find('.pager .finish').show();
+            $('#next').hide();
+            $('#previous').show();
             $("#previewChart").hide();
             done = true;
-            if (datasourceType === "batch" && isPaginationSupported) {
+            getCheckedColumns();
+            if (datasourceType === "batch") {
                 fetchData();
             }
             renderChartConfig();
@@ -56,8 +43,12 @@ $("#dsList").change(function() {
     if (datasource != "-1") {
         $('#rootwizard').find('.pager .next').removeClass("disabled");
         datasourceType = $("#dsList option:selected").attr("data-type");
-        getColumns(datasource, datasourceType);
 
+        if (datasourceType === "realtime") {
+            $('#next').show();
+        }
+
+        getColumns(datasource, datasourceType);
         //check whether the seleced datasource supports pagination as well
         //first, get the recordstore for this table
         var recordStore;
@@ -71,13 +62,13 @@ $("#dsList").change(function() {
                 checkPaginationSupported(recordStore);
             }
         });
-
     } else {
         $('#rootwizard').find('.pager .next').addClass("disabled");
     }
 });
 
 $("#btnPreview").click(function() {
+    getCheckedColumns();
     if ($("dsList").val() != -1) {
         fetchData(renderPreviewPane);
     }
@@ -93,11 +84,12 @@ $("#previewChart").click(function() {
                     " Please deploy an adapter to Preview Data.")
             } else {
                 //TODO DOn't do this! read this from a config file
-                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
+                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', window.location.pathname.split('/')[3],
                     onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
                     'WEBSOCKET', "SECURED");
                 var source = $("#wizard-zeroevents-hbs").html();;
                 var template = Handlebars.compile(source);
+                $("#chartArea").show();
                 $("#chartDiv").empty();
                 $("#chartDiv").append(template());
             }
@@ -105,10 +97,10 @@ $("#previewChart").click(function() {
     } else {
         var dataTable = makeDataTable(previewData);
         var chartType = $("#chartType").val();
-        var width = document.getElementById("chartDiv").offsetWidth;
-        var height = 240; //canvas height
+        $("#chartArea").show();
         $("#chartDiv").empty(); //clean up the chart canvas
-
+        var height = 240; //canvas height
+        var width = document.getElementById("chartDiv").offsetWidth;
         var config = {
             "yAxis": yAxis,
             "xAxis": xAxis,
@@ -129,6 +121,24 @@ $("#chartType").change(function() {
     $("#previewChart").show();
     $('#rootwizard').find('.pager .finish').removeClass('disabled');
 
+    //Disable TIMESTAMP for Bar charts X Axis
+    if (chartType === "bar") {
+        $("#xAxis option[value=TIMESTAMP]").hide();
+        $("#xAxis")[0].selectedIndex = 1;
+    } else {
+        $("#xAxis option[value=TIMESTAMP]").show();
+        $("#xAxis")[0].selectedIndex = 0;
+    }
+
+    //Disable TIMESTAMP for Bar and Area charts Y Axis
+    if (chartType === "bar" || chartType === "area" || chartType === "scatter") {
+        $("#yAxis option[value=TIMESTAMP]").hide();
+        $("#yAxis")[0].selectedIndex = 1;
+    } else {
+        $("#yAxis option[value=TIMESTAMP]").show();
+        $("#yAxis")[0].selectedIndex = 0;
+    }
+
 });
 
 $(".pager .finish").click(function() {
@@ -139,11 +149,19 @@ $(".pager .finish").click(function() {
     }
     if (done) {
         console.log("*** Posting data for gadget [" + $("#title").val() + "]");
+
+        var defaultMaxValue = 10;
+
         //building the chart config depending on the chart type
         var chartType = $("#chartType").val();
         var config = {
             chartType: $("#chartType").val()
         };
+
+        if (chartType === "area" || chartType === "line" || chartType === "map" || chartType === "scatter") {
+            defaultMaxValue = 0;
+        }
+
         configureChart(config);
         config = chartConfig;
         // console.log(config); 
@@ -154,7 +172,7 @@ $(".pager .finish").click(function() {
             type: $("#dsList option:selected").attr("data-type"),
             filter: $("#txtFilter").val(),
             columns: columns,
-            maxUpdateValue: 10,
+            maxUpdateValue: defaultMaxValue,
             chartConfig: config
 
         };
@@ -217,6 +235,13 @@ function getDatasources() {
             });
         },
         error: function(xhr,message,errorObj) {
+
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
+            }
+
             var source = $("#wizard-error-hbs").html();;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
@@ -225,6 +250,20 @@ function getDatasources() {
             }));
         }
     });
+};
+
+function formatDS(item) {
+    if (!item.id) {
+        return item.text;
+    }
+    var type = $(item.element).data("type");
+    var $item;
+    if (type === "realtime") {
+        $item = $('<div><i class="fa fa-bolt"> </i> ' + item.text + '</div>');
+    } else {
+        $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
+    }
+    return $item;
 };
 
 function getColumns(datasource, datasourceType) {
@@ -242,18 +281,51 @@ function getColumns(datasource, datasourceType) {
         $.getJSON(url, function(data) {
             if (data) {
                 columns = parseColumns(JSON.parse(data.message));
+                $("#fields").show();
+                $("#fields").empty();
+                columns.forEach(function(column,i){
+                    var item = $('<div></div>').attr("class","checkbox");
+                    var label = $('<label></label>');
+                    var input = $('<input type="checkbox" checked="checked" name="field" />');
+                    input.attr("data-type",column.type)
+                    input.attr("data-name",column.name)
+                    
+                    label.append(input);
+                    label.append(column.name);
+                    item.append(label);
+                    $("#fields").append(item);
+                });
             }
         });
     }
 };
 
+function getCheckedColumns() {
+    if (datasourceType != "realtime") {
+        columns = [];
+        var filtered = $("#fields input[name=field]:checked");
+        if (filtered.length == 0) {
+            alert("Please select at leat two fields!");
+            return;
+        }
+        filtered.each(
+            function () {
+                var column = {};
+                column.name = $(this).attr("data-name");
+                column.type = $(this).attr("data-type");
+                columns.push(column);
+            }
+        );
+    }
+};
+
 function checkPaginationSupported(recordStore) {
-    console.log("Checking pagination support on recordstore : " + recordStore); 
+    console.log("Checking pagination support on recordstore : " + recordStore);
     var url = "/portal/apis/analytics?type=18&recordStore=" + recordStore;
     $.getJSON(url, function(data) {
         if (data.status==="success") {
             if(data.message==="true" && datasourceType==="batch") {
-                console.log("Pagination supported for recordstore: " + recordStore); 
+                console.log("Pagination supported for recordstore: " + recordStore);
                 $("#btnPreview").show();
                 isPaginationSupported = true;
             } else {
@@ -261,6 +333,9 @@ function checkPaginationSupported(recordStore) {
                 isPaginationSupported = false;
             }
         }
+        $('#next').show();
+        //populate fields dropdown list
+        $("#fieldsContainer").show();
     });
 };
 
@@ -320,12 +395,22 @@ function renderPreviewPane(rows) {
         tr.appendTo(table);
 
     });
+
+    if (datasourceType === "batch"){
+        $("#previewPane")
+            .append('<table><tr><td style="padding:15px 10px 0px 10px">'
+                +'<img src="../../portal/images/noEvents.png" align="left" style="width:24;height:24"/>'
+                +'</td><td><br/><p>Records limited of a large data set</p></td></tr></table>');
+    }
+
 };
 
 function renderChartConfig() {
-    //hide all chart controls
-    $(".attr").hide();
-    initCharts(columns);
+    //cleaning up the chart config area
+    $("#chartArea").hide();
+    $("#chartType").val("-1"); //reset to "--select"
+    $(".attr").hide(); //hide all chart controls
+    initCharts(columns);    //let the games begin!
 };
 
 function getColumnIndex(columnName) {
@@ -364,10 +449,6 @@ function makeRows(data) {
     return rows;
 };
 
-
-
-
-
 function makeMapDataTable(data) {
     var dataTable = new igviz.DataTable();
     if (columns.length > 0) {
@@ -394,11 +475,15 @@ var dataTable;
 var chart;
 var counter = 0;
 var globalDataArray = [];
+
 function drawRealtimeChart(data) {
-    console.log("+++++++++++ drawRealtimeChart "); 
     $("#chartDiv").empty();
     var chartType = $("#chartType").val();
+    var defaultMaxValue = 10;
 
+    if (chartType === "area" || chartType === "line" || chartType === "map" || chartType === "scatter") {
+        defaultMaxValue = 0;
+    }
 
     if (chartType == "map") {
         var region = 5;
@@ -426,85 +511,84 @@ function drawRealtimeChart(data) {
         }
         if (counter == 0) {
             dataTable = makeMapDataTable(data);
-            console.log(dataTable); 
+            console.log(dataTable);
             chart = igviz.draw("#chartDiv", config, dataTable);
-            chart.plot(dataTable.data,null,0);
+            chart.plot(dataTable.data,null,defaultMaxValue);
             counter++;
         } else {
             chart.update(data);
         }
-    } else if (chartType === "arc") {
-        //WARNING: very ugly code!!!! refactor this immediately
-        var percentage = getColumnIndex($("#percentage").val());
-        var config = { chartType: "arc", percentage: percentage};
-        igviz.draw("#chartDiv",config,createDataTable(data));
+
+
+    } else if(chartType === "arc") {
+        var config = { chartType: chartType, "height": 240, percentage: getColumnIndex($("#percentage").val())};
+        igviz.draw("#chartDiv", config,makeDataTable(data));
     } else {
         dataTable = makeDataTable(data);
-        if (counter == 0) {
-            var xAxis = getColumnIndex($("#xAxis").val());
-            var yAxis = getColumnIndex($("#yAxis").val());
-            //console.log("X " + xAxis + " Y " + yAxis);
+        var xAxis = getColumnIndex($("#xAxis").val());
+        var yAxis;
 
-            var width = document.getElementById("chartDiv").offsetWidth;
-            var height = 240; //canvas height
-            var config = {
-                "yAxis": yAxis,
-                "xAxis": xAxis,
-                "width": width,
-                "height": height,
-                "chartType": chartType
+        if (chartType == "line") {
+            var yAxis =  [];
+            for (var i = 0; i < $("#yAxises").val().length; i++) {
+                yAxis.push(getColumnIndex($("#yAxises").val()[i]));
             }
-            if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
-                dataTable.metadata.types[xAxis] = "C";
-            }
-            chart = igviz.setUp("#chartDiv", config, dataTable);
-            chart.setXAxis({
-                "labelAngle": -35,
-                "labelAlign": "right",
-                "labelDy": 0,
-                "labelDx": 0,
-                "titleDy": 25
-            })
-                .setYAxis({
-                    "titleDy": -30
-                })
-                .setDimension({
-                    height: 270
-                })
-
-            globalDataArray.push(dataTable.data[0]);
-            chart.plot(globalDataArray);
-            counter++;
-        } else if (counter == 5) {
-            globalDataArray.shift();
-            globalDataArray.push(dataTable.data[0]);
-            chart.update(dataTable.data[0]);
         } else {
-            globalDataArray.push(dataTable.data[0]);
-            chart.plot(globalDataArray);
-            counter++;
+            yAxis = getColumnIndex($("#yAxis").val());
         }
 
+
+
+        var width = document.getElementById("chartDiv").offsetWidth;
+        var height = 240; //canvas height
+        var config = {
+            "yAxis": yAxis,
+            "xAxis": xAxis,
+            "width": width,
+            "height": height,
+            "chartType": chartType
+        }
+
+        if (chartType === "scatter") {
+            config.pointColor  = getColumnIndex($("#pointColor").val());
+            config.pointSize  = getColumnIndex($("#pointSize").val());
+            config.maxColor  = "#ffff00";
+            config.minColor  = "#ff00ff";
+        }
+
+        if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
+            dataTable.metadata.types[xAxis] = "C";
+        }
+
+        if(chartType === "tabular" || chartType ==="singleNumber") {
+
+            chart = igviz.draw("#chartDiv",config, dataTable);
+            globalDataArray.push(dataTable.data[0]);
+            chart.plot(globalDataArray, null, 10);
+
+        } else {
+
+            if (counter == 0) {
+                chart = igviz.setUp("#chartDiv", config, dataTable);
+                chart.setXAxis({
+                    "labelAngle": -35,
+                    "labelAlign": "right",
+                    "labelDy": 0,
+                    "labelDx": 0,
+                    "titleDy": 25
+                })
+                    .setYAxis({
+                        "titleDy": -30
+                    })
+
+                chart.plot(dataTable.data, null ,defaultMaxValue);
+                counter++;
+            } else {
+                chart.update(dataTable.data[0]);
+            }
+        }
     }
-
 };
-
-// function createDataTable(data) {
-//     var realTimeData = new igviz.DataTable();
-//     if (columns.length > 0) {
-//         columns.forEach(function(column, i) {
-//             var type = "N";
-//             if (column.type == "STRING" || column.type == "string") {
-//                 type = "C";
-//             }
-//             realTimeData.addColumn(column.name, type);
-//         });
-//     }
-//     for (var i = 0; i < data.length; i++) {
-//         realTimeData.addRow(data[i]);
-//     }
-//     return realTimeData;
-// };
 
 function makeDataTable(data) {
     var dataTable = new igviz.DataTable();
@@ -513,6 +597,8 @@ function makeDataTable(data) {
             var type = "N";
             if (column.type == "STRING" || column.type == "string") {
                 type = "C";
+            } else if (column.type == "TIME" || column.type == "time") {
+                type = "T";
             }
             dataTable.addColumn(column.name, type);
         });
