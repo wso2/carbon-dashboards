@@ -7,7 +7,8 @@
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
-<div id="ues-workspace-designer" class="ues-workspace">
+
+<div id="ues-workspace-designer" class="ues-workspace" style="display:none">
     <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -28,6 +29,11 @@
                             <i class="fw fw-add fw-stack-1x"></i>
                         </span> Add Page</a>
                     </li>
+                    <li><a href="<%=tenantedUrlPrefix%>create-gadget">
+                    <span class="fw-stack">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-add fw-stack-1x"></i>
+                    </span> Create Gadget</a></li>
                     <li><a href="#" class="ues-dashboard-preview">
                         <span class="fw-stack">
                             <i class="fw fw-ring fw-stack-2x"></i>

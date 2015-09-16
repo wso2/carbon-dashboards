@@ -2,7 +2,7 @@
     "id": "date-picker",
     "title": "Date Picker",
     "type": "gadget",
-    "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "thumbnail": "local://images/gadgetIcon.png",
     "data": {
         "url": "store://widget/date-picker/index.xml"
     },

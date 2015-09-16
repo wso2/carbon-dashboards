@@ -38,16 +38,20 @@
   		id: config.id,
   		title: config.title,
   		type : "gadget",
-  		thumbnail: "local://store/carbon.super/gadget/usa-business-revenue/index.png",
+  		thumbnail: "local://images/gadgetIcon.png",
   		data: {
-  		    url: "local://store/carbon.super/gadget/" + config.id +"/index.xml"
+  		    url: "local://store/" + session.get('user').domain + "/gadget/" + config.id +"/index.xml"
   		}
   	};
+
+    config.domain = session.get('user').domain;
     
     //copy required gadget template 
-    var gadgetDir = "/store/carbon.super/gadget/";
+    var tenantDir = "/store/" + session.get('user').domain;
+    var gadgetDir =  tenantDir + "/gadget/";
     var templatePath = "/templates/gadgets/igviz";
     var template = new File(templatePath);
+    new File(gadgetDir).mkdir();
 
     copyDir(template,gadgetDir);
 
