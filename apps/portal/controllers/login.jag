@@ -57,4 +57,36 @@ var dest;
         }
         message = 'The username or password you entered is incorrect.';
     }
+    function createDir(path) {
+        var file = new File(path);
+        if (file.isExists()) {
+            file.del();
+        }
+        file.mkdir();
+    };
+
+    function copyFile(src, dst) {
+        var stream = src.getStream();
+        dst = dst + '/' + src.getName();
+        var dstf = new File(dst);
+        dstf.open('w');
+        dstf.write(stream);
+        dstf.close();
+    };
+
+    function  copyDir(source,destination) {
+        if(source.isDirectory()) {
+            createDir(destination + "/" + source.getName());
+            destination = destination + "/" + source.getName();
+            var sourceFiles = source.listFiles();
+            for (var i = 0; i < sourceFiles.length; i++) {
+                var inFile = sourceFiles[i];
+                log.info(inFile.getName());
+                copyDir(inFile, destination);
+            }
+        } else {
+            // log.info("** Copying file " + source.getName());
+            copyFile(source,destination);
+        }
+    };
 }()); %>
