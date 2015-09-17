@@ -3,14 +3,14 @@
         "type": "fs"
     },
     "authentication": {
-    	"activeMethod" : "sso",
+    	"activeMethod" : "basic",
     	"methods": {
             "sso": {
                 "attributes": {
                     "issuer": "portal",
-                    "identityProviderURL": "https://localhost:9443/samlsso",
-                    "responseSigningEnabled": "true",
-                    "acs": "%https.host%/portal/acs",
+                    "identityProviderURL": "https://localhost:9444/samlsso",
+                    "responseSigningEnabled": "false",
+                    "acs": "https://localhost:9443/portal/acs",
                     "identityAlias": "wso2carbon",
                     "useTenantKey": false
                 }

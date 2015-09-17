@@ -57,12 +57,4 @@ var dest;
         }
         message = 'The username or password you entered is incorrect.';
     }
-//include this if basic auth enabled
-    if(configs.authentication.activeMethod === 'sso'){
-        include('sso-login.jag');
-    }else{
-       include(utils.resolvePath('templates/login.jag')); 
-    }
-    
-//else include sso-login
 }()); %>
