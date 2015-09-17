@@ -53,6 +53,13 @@
             }
         }
 
+        //get system properties for distributed mode profile
+        var process = require("process");
+        var profile = process.getProperty("profile");
+
+        if(profile==="worker") {
+            print("Creating gadgets in Worker node is prohibited. Please use Manager node to create gadgets.");
+        } else {
         try {
             var activeEventPublishers = eventpublisherStub.getAllActiveEventPublisherConfigurations();
             if (activeEventPublishers) {
@@ -85,6 +92,7 @@
         }
 
         print(datasources);
+        }
     } else if(action === "publisherIsExist") {
         var streamId = request.getParameter("streamId");
         var activePublisher = eventpublisherStub.getAllStreamSpecificActiveEventPublisherConfigurations(streamId);

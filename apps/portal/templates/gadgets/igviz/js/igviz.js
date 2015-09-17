@@ -67,6 +67,11 @@
 
         }
 
+        //When there are multiple values for Y axis, it cannot started by minimum value
+        var zeroConfig = false;
+        if (yStrings.length > 1) {
+            zeroConfig = true;
+        }
 
         xScaleConfig={
             "index":chartConfig.xAxis,
@@ -83,7 +88,7 @@
             "schema":dataTable.metadata,
             "name": "y",
             "range": "height",
-            "zero": false,
+            "zero": zeroConfig,
             "nice": true,
             "field": yStrings[0]
         }
@@ -2334,9 +2339,12 @@
             namesArray=schema.names;
             for(j=0;j<namesArray.length;j++){
                 if(schema.types[j]=='T'){
-                    ptObj[createAttributeNames(namesArray[j])]=new Date(dataTableObj[i][j]);
-                }else
-                    ptObj[createAttributeNames(namesArray[j])]=dataTableObj[i][j];
+                    ptObj[createAttributeNames(namesArray[j])] = new Date(dataTableObj[i][j]);
+                }else if (schema.types[j]=='N'){
+                    ptObj[createAttributeNames(namesArray[j])] = parseFloat(dataTableObj[i][j]);
+                } else {
+                    ptObj[createAttributeNames(namesArray[j])] = dataTableObj[i][j];
+                }
             }
 
             table[i] = ptObj;
@@ -2831,7 +2839,7 @@
                 this.dataTable.data.push(pointObj);
                 this.table.push(newTable[0]);
 
-                if(this.config.chartType == "tabular" || this.config.chartType == "singleNumber"){
+                if(this.config.chartType == "tabular" || this.config.chartType == "singleNumber" || this.config.chartType == "bar"){
                     this.plot(persistedData,maxValueForUpdate);
                 } else{
                     this.chart.data(this.data).update({"duration":500});
@@ -3163,7 +3171,7 @@
 
             var colorRows = d3.scale.linear()
                 .domain([2.5, 4])
-                .range(['#F5BFE8', '#E305AF']);
+                .range(['#EFF5FA', '#5D9DC9']);
 
             var fontSize = d3.scale.linear()
                 .domain([0, 100])
