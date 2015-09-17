@@ -21,6 +21,8 @@ var fresh;
 
     var dashboards;
     var editor;
+    var isCustomize;
+    var toReset;
     var method = request.getMethod();
 
     if (method === 'GET') {
@@ -31,6 +33,22 @@ var fresh;
 
         if (!dashboard) {
             response.sendError(404, 'requested dashboard cannot be found');
+            return;
+        }
+
+        isCustomize = request.getParameter('custom');
+
+        if(isCustomize){
+            dashboards.copy(dashboard);
+            response.sendRedirect(tenantedUrlPrefix +'dashboards/' + dashboardId+ '?editor=true');
+            return;
+        }
+
+        toReset = request.getParameter('reset');
+
+        if(toReset){
+            dashboards.reset(dashboard.id);
+            response.sendRedirect(tenantedUrlPrefix +'dashboards/' + dashboardId);
             return;
         }
 
@@ -45,7 +63,7 @@ var fresh;
             title: request.getParameter('title'),
             description: request.getParameter('description'),
             permissions: {
-                viewers: [],
+                viewers: ['Internal/everyone'],
                 editors: ['Internal/everyone']
             },
             pages: []
