@@ -73,7 +73,7 @@ pages.forEach(function (p) {
                                         <i class="fw fw-ring fw-stack-2x"></i>
                                         <i class="fw fw-settings fw-stack-1x"></i>
                                     </span>
-                                     Customize
+                                     Personalize
                                 </a>
                             </li>
                         <% } %>
