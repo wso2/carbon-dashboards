@@ -59,7 +59,8 @@
             return;
         }
         if (method === 'PUT') {
-            if (!user || !utils.allowed(user.roles, configs.designers) || !utils.allowed(user.roles, editors)) {
+            if ((!user || !utils.allowed(user.roles, configs.designers) || !utils.allowed(user.roles,
+                    editors)) && !(utils.allowed(user.roles, viewers) && dashboard.isUserCustom)) {
                 response.sendError(401, JSON.stringify({
                     error: 'unauthorized to access the dashboard'
                 }));
