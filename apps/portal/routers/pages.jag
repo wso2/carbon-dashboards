@@ -13,7 +13,7 @@ var dest;
     sendLogin = function () {
         var query = request.getQueryString();
         var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
-        response.sendRedirect(urlPrefix + 'login?destination=' + dest);
+        response.sendRedirect(urlPrefix + 'login-controller?destination=' + dest);
     };
 
     var page = request.getRequestURI();
