@@ -106,7 +106,7 @@
 <script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-shared-role-hbs" type="text/x-handlebars-template">
-    <button type="button" class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <i class="fw fw-uncheck remove-button"></i></button>
+    <div class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
 </script>
 </body>
 </html>
