@@ -74,14 +74,14 @@
     </nav>
     <nav id="ues-store-menu" class="navbar-default navbar" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
+        <div class="navbar-header" style="padding-right: 2px">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#ues-store-menu-actions">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <span class="visible-xs navbar-brand">Designer Menu</span>
+            <!--<span class="visible-xs navbar-brand">Designer Menu</span>-->
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -224,7 +224,8 @@
 <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-md-12 title-section">
-            <h3 class="ues-title">{{title}}</h3>
+            <span> <h3 class="ues-title">{{title}}</span> <i class="close-db-settings fw fw-remove
+            pull-right"></i></li>
         </div>
     </div>
     <div class="row">
@@ -372,7 +373,8 @@
 <script id="ues-page-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-md-12 title-section">
-            <h3 class="ues-page-title">{{title}}</h3>
+            <span> <h3 class="ues-page-title">{{title}}</span> <i class="close-db-settings fw fw-remove
+            pull-right"></i></li>
         </div>
     </div>
     <div class="row">

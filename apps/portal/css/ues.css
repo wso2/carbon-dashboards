@@ -235,15 +235,37 @@ background-color: rgb(229, 229, 229);
 }
 
 .app-logo {
-    height: 50px;
-    padding: 12px 10px;
-    width: 35%;
+    display: block;
+    padding-top:10px;
+    white-space: nowrap;
 }
-.app-logo img {
+.app-logo h2, .app-logo img {
     float: left;
-    margin-right: 10px;
 }
+.app-logo h2{
+    text-indent: 10px;
+    overflow: hidden;
+}
+.logged-in i{display: none}
+@media all and (max-width: 430px) {
+    div.app-logo h2.app-title{font-size: 10px}
 
+    .navbar-nav > li > a.logged-in{
+        font-size: 10px;
+        padding-right: 0;
+        padding-top: 0;
+        text-align: right;
+    }
+    .logged-in i{
+        display: inline-block;
+    }
+    .logged-in span.logged-in-username{
+        display: none;
+    }
+}
+#ues-store-menu .navbar-toggle{
+    margin-right: 0px;
+}
 h2.app-title {
     font-weight: 500;
     font-size: 17px;

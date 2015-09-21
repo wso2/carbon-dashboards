@@ -529,6 +529,14 @@ $(function () {
     };
 
     /**
+     * initializes the ues properties
+     */
+    var initUESProperties = function () {
+        $('body').on('click', '.close-db-settings', function () {
+                hideProperties();
+        });
+    };
+    /**
      * renders the component toolbar of a given component
      * @param component
      */
@@ -1181,6 +1189,7 @@ $(function () {
         initStore();
         initComponentToolbar();
         initComponents();
+        initUESProperties();
     };
 
     /**

@@ -97,7 +97,7 @@
  */
 #ues-store-menu {
     position: fixed;
-    width: 74px;
+    width: 48px;
     height: 100%;
     background: #e4e4e4;
 }
@@ -133,7 +133,7 @@
 #ues-store-menu .nav-tabs > li > a {
     border-radius: 0;
     margin: 0;
-    padding: 18px 0;
+    padding: 8px 0;
     text-align: center;
 
 }
@@ -191,7 +191,7 @@
  */
 @media (min-width: 768px) {
     #ues-store-menu {
-        width: 74px;
+        width: 48px;
         float: left;
         height: 100%;
         position: fixed;
