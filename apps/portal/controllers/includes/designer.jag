@@ -12,13 +12,13 @@
 
     var configs = require('/configs/designer.json');
 
-    if (!utils.allowed(user.roles, configs.designers)) {
+    if (!utils.allowed(user.roles, configs.designers) && !dashboard.isUserCustom) {
         response.sendError(401, 'designer access not authorized');
         return;
     }
 
     var permissions = dashboard.permissions;
-    if (!utils.allowed(user.roles, permissions.editors)) {
+    if (!utils.allowed(user.roles, permissions.editors) && !dashboard.isUserCustom) {
         response.sendError(401, 'dashboard editing not authorized');
         return;
     }

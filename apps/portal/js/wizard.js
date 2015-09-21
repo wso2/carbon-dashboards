@@ -235,18 +235,19 @@ function getDatasources() {
             });
         },
         error: function(xhr,message,errorObj) {
-
+            var errorMessage = errorObj;
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
+            } else if(xhr.status == 500) {
+                errorMessage = "Logged in user can not perform the attempted operation due to lack of permissions.";
             }
-
             var source = $("#wizard-error-hbs").html();;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
-                error: xhr.responseText
+                error: errorMessage
             }));
         }
     });
