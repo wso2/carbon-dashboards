@@ -23,33 +23,36 @@
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Dashboard Design</a></li>
-                    <li><a href="#" class="ues-page-add">
-                        <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-add fw-stack-1x"></i>
-                        </span> Add Page</a>
-                    </li>
-                    <li><a href="<%=tenantedUrlPrefix%>create-gadget">
-                    <span class="fw-stack">
-                        <i class="fw fw-ring fw-stack-2x"></i>
-                        <i class="fw fw-add fw-stack-1x"></i>
-                    </span> Create Gadget</a></li>
-                    <li><a href="#" class="ues-dashboard-preview">
-                        <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-view fw-stack-1x"></i>
-                        </span> Preview</a></li>
-                    <li><a href="#" class="ues-dashboard-export">
-                     <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
-                        </span> Export</a></li>
-                    <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
-                     <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-settings fw-stack-1x"></i>
-                        </span> Settings</a></li>
-                </ul>
+                    <% if (!dashboard.isUserCustom) { %>
+                            <li><a href="#" class="ues-page-add">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-add fw-stack-1x"></i>
+                                </span> Add Page</a>
+                            </li>
+                            <li><a href="<%=tenantedUrlPrefix%>create-gadget">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-add fw-stack-1x"></i>
+                                </span> Create Gadget</a></li>
+                            <li><a href="#" class="ues-dashboard-export">
+                                 <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
+                                 </span> Export</a></li>
+                            <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
+                             <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-settings fw-stack-1x"></i>
+                                </span> Settings</a></li>
+
+                              <%}%>
+                             <li><a href="#" class="ues-dashboard-preview">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-view fw-stack-1x"></i>
+                             </span> View</a></li>
+                        </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a href="#" class="ues-page-switcher dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pages <span class="caret"></span></a>
