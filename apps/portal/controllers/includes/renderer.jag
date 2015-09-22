@@ -27,9 +27,14 @@ var dest;
             response.sendError(401, unauthorizedError);
             return;
         }
+        if (utils.allowed(user.roles, permissions.editors)) {
+            user.isEditor = true;
+        }else{
+            user.isEditor = false;
+        }
     }
 
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
-
+    var isCustomDB = dashboard.isUserCustom;
     include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>

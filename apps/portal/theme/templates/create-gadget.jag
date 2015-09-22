@@ -334,7 +334,7 @@
 
 <script id="wizard-error-hbs" type="text/x-handlebars-template">
     <div class="alert alert-danger" role="alert">
-        <strong>Something went wrong while initiating Gadget generation wizard. Please see the detailed error message below.
+        <strong>Something went wrong while initiating Gadget generation wizard. Reason is:
         </strong></br><br/> {{error}}
     </div>
 </script>

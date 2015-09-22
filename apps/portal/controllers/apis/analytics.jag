@@ -75,7 +75,9 @@
     try {
         analyticsStub = new AnalyticsWebServiceStub(analyticsWSUrl);
     } catch(e) {
-        log.warn("Unable to instantiate AnalyticsWebServiceStub instance. This could be a CEP server. Returning");
+        if (log.isDebugEnabled()) {
+            log.debug("Unable to instantiate AnalyticsWebServiceStub instance. This could be a CEP server. Returning");
+        }
         return;
     }
     var serviceClient = analyticsStub._getServiceClient();

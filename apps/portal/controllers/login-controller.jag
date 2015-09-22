@@ -1,0 +1,15 @@
+<%
+var message;
+var dest;
+(function() {
+    var log = new Log();
+    var configs = require('/configs/portal.js').config();
+    
+    //include this if sso enabled
+    if(configs.authentication.activeMethod === 'sso'){
+        include('sso-login.jag');
+    }else{
+        dest = request.getParameter('destination');
+        include(utils.resolvePath('templates/login.jag')); 
+    }
+}()); %>
