@@ -1,8 +1,0 @@
-{
-    "id": "layout-1",
-    "title": "Layout 1",
-    "description": "This is a sample grid",
-    "thumbnail": "store://layout/layout-1/index.jpg",
-    "url": "store://layout/layout-1/index.hbs"
-}
-
