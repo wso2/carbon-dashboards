@@ -4,7 +4,7 @@
 #ues-designer {
     position: fixed;
     height: calc(100% - 100px);
-    margin-left: 74px;
+    margin-left: 48px;
     width: calc(100% - 74px);
     overflow: scroll;
 }
