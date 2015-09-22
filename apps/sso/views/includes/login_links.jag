@@ -1,3 +1,0 @@
-<% if( canRegister ){ %>
-    <a id="registerLink" href="register_new_user?relyingParty=<%=relyingParty%>" class="font-large">Create an account</a>
-<% } %>
