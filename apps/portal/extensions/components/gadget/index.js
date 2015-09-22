@@ -100,13 +100,17 @@
             var cid = containerId(comp.id);
             var gid = gadgetId(comp.id);
             var panel = createPanel(styles);
-            var container = $('<div id="' + cid + '"></div>');
+            var compHeight = $(document).height() - 200;
+            var height = (comp.viewOption ? compHeight : '');
+            cid = (comp.viewOption ? cid : cid+"_full");
+            var container = $('<div id="' + cid + '" style="height:' + height + 'px;"></div>');
             container.appendTo(panel.find('.panel-body'));
             panel.appendTo(sandbox);
             var renderParams = {};
             if (styles.height) {
                 renderParams[osapi.container.RenderParam.HEIGHT] = parseInt(styles.height, 10) - DEFAULT_PADDING;
             }
+            renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
                 component: comp,

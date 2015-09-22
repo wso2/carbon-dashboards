@@ -97,6 +97,8 @@ $(function () {
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
+    var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
+
     /**
      * generates a random id
      * @returns {string}
@@ -251,6 +253,18 @@ $(function () {
         showProperties();
     };
 
+    /**
+     * Render maximized view for a gadget
+     * @param component
+     * @param componentContainer
+     */
+    var renderMaxView = function (component, componentContainer) {
+        ues.components.create(componentContainer, component, function (err, block) {
+            if (err) {
+                throw err;
+            }
+        });
+    };
     /**
      * find an asset of the given type from the store cache
      * @param type
@@ -498,6 +512,35 @@ $(function () {
      */
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
+        designer.on('click', 'a.ues-component-full-handle', function () {
+            var id = $(this).closest('.ues-component').attr('id');
+            var component = findComponent(id);
+            var fullViewPopped = $('.modal-body > .ues-component');
+            var componentContainer;
+            if(component.fullViewPoped){
+                $('#componentFull').modal('show');
+                fullViewPopped.hide();
+                $('#' + id + '_full').show();
+            } else {
+                if(fullViewPopped.length > 0){
+                    fullViewPopped.hide();
+                    $('#' + id + '_full').show();
+                    $('#componentFull').modal('show');
+                    componentContainer = $('.modal-body');
+                }else{
+                    var fullView = $('body').append(componentMaxViewHbs({}));
+                    fullView.find('#componentFull').modal('show');
+                    componentContainer = fullView.find('.modal-body');
+                }
+                component.viewOption = 'full';
+                renderMaxView(component, componentContainer);
+                component.fullViewPoped = true;
+            }
+        });
+        $('body').on('click','.modal-footer button',function(){
+            $('#componentFull').modal('hide');
+
+        });
         designer.on('click', '.ues-component .ues-toolbar .ues-properties-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));

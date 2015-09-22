@@ -264,3 +264,6 @@ h4.ues-page-title {
 .ues-title, .ues-page-title{
     font-weight: 400;
 }
+.modal-fullscreen{
+    z-index: 1201;
+}

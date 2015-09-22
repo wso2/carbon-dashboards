@@ -8,10 +8,12 @@
         return plugin;
     };
 
+
     var createComponent = function (container, component, done) {
         var type = component.content.type;
         var plugin = findPlugin(type);
-        var sandbox = $('<div id="' + component.id + '" class="ues-component"></div>');
+        var sandboxId = (component.viewOption? component.id+"_full" : component.id );
+        var sandbox = $('<div id="' + sandboxId + '" data-component-id="' + component.id + '" class="ues-component"></div>');
         sandbox.appendTo(container);
         plugin.create(sandbox, component, ues.hub, done);
     };
