@@ -86,7 +86,7 @@ pages.forEach(function (p) {
                     </ul>
                 </li>
             <% } else { %>
-                <li><a href="<%=urlPrefix%>login?destination=<%=dest%>">Login</a></li>
+                <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">Login</a></li>
                 <% } %>
             </ul>
         </div>

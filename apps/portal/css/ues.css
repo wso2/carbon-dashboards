@@ -263,9 +263,24 @@ background-color: rgb(229, 229, 229);
         display: none;
     }
 }
+
+@media all and (min-width: 767px) {
+    .close-db-settings{
+        display: none;
+    }
+}
 #ues-store-menu .navbar-toggle{
     margin-right: 0px;
 }
+
+.close-db-settings{
+    margin-top: -8px;
+}
+
+#ues-properties .ues-title {
+    margin-top: 10px;
+}
+
 h2.app-title {
     font-weight: 500;
     font-size: 17px;

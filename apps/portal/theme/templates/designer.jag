@@ -223,8 +223,8 @@
 </script>
 <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
-        <div class="col-md-12 title-section">
-            <span> <h3 class="ues-title">{{title}}</span> <i class="close-db-settings fw fw-remove
+        <div class="col-md-12 col-sm-12 col-xs-12 title-section">
+            <span> <h3 class="ues-title">{{title}}</span> <i class="close-db-settings fw fw-uncheck
             pull-right"></i></li>
         </div>
     </div>
@@ -372,8 +372,8 @@
 </script>
 <script id="ues-page-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
-        <div class="col-md-12 title-section">
-            <span> <h3 class="ues-page-title">{{title}}</span> <i class="close-db-settings fw fw-remove
+        <div class="col-md-12 col-sm-12 col-xs-12 title-section">
+            <span> <h3 class="ues-page-title">{{title}}</span> <i class="close-db-settings fw fw-uncheck
             pull-right"></i></li>
         </div>
     </div>
