@@ -24,33 +24,36 @@
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Dashboard Design</a></li>
-                    <li><a href="#" class="ues-page-add">
-                        <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-add fw-stack-1x"></i>
-                        </span> Add Page</a>
-                    </li>
-                    <li><a href="<%=tenantedUrlPrefix%>create-gadget">
-                    <span class="fw-stack">
-                        <i class="fw fw-ring fw-stack-2x"></i>
-                        <i class="fw fw-add fw-stack-1x"></i>
-                    </span> Create Gadget</a></li>
-                    <li><a href="#" class="ues-dashboard-preview">
-                        <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-view fw-stack-1x"></i>
-                        </span> Preview</a></li>
-                    <li><a href="#" class="ues-dashboard-export">
-                     <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
-                        </span> Export</a></li>
-                    <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
-                     <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-settings fw-stack-1x"></i>
-                        </span> Settings</a></li>
-                </ul>
+                    <% if (!dashboard.isUserCustom) { %>
+                            <li><a href="#" class="ues-page-add">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-add fw-stack-1x"></i>
+                                </span> Add Page</a>
+                            </li>
+                            <li><a href="<%=tenantedUrlPrefix%>create-gadget">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-add fw-stack-1x"></i>
+                                </span> Create Gadget</a></li>
+                            <li><a href="#" class="ues-dashboard-export">
+                                 <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
+                                 </span> Export</a></li>
+                            <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
+                             <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-settings fw-stack-1x"></i>
+                                </span> Settings</a></li>
+
+                              <%}%>
+                             <li><a href="#" class="ues-dashboard-preview">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-view fw-stack-1x"></i>
+                             </span> View</a></li>
+                        </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a href="#" class="ues-page-switcher dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pages <span class="caret"></span></a>
@@ -72,14 +75,14 @@
     </nav>
     <nav id="ues-store-menu" class="navbar-default navbar" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
+        <div class="navbar-header" style="padding-right: 2px">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#ues-store-menu-actions">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <span class="visible-xs navbar-brand">Designer Menu</span>
+            <!--<span class="visible-xs navbar-brand">Designer Menu</span>-->
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -223,8 +226,9 @@
 </script>
 <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
-        <div class="col-md-12 title-section">
-            <h3 class="ues-title">{{title}}</h3>
+        <div class="col-md-12 col-sm-12 col-xs-12 title-section">
+            <span> <h3 class="ues-title">{{title}}</span> <i class="close-db-settings fw fw-uncheck
+            pull-right"></i></li>
         </div>
     </div>
     <div class="row">
@@ -371,8 +375,9 @@
 </script>
 <script id="ues-page-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
-        <div class="col-md-12 title-section">
-            <h3 class="ues-page-title">{{title}}</h3>
+        <div class="col-md-12 col-sm-12 col-xs-12 title-section">
+            <span> <h3 class="ues-page-title">{{title}}</span> <i class="close-db-settings fw fw-uncheck
+            pull-right"></i></li>
         </div>
     </div>
     <div class="row">

@@ -22,16 +22,14 @@ var findOne = function (id) {
     });
     var usr = require('/modules/user.js');
     var user = usr.current();
-    if(!user){
-        return;
-        //throw 'User is not logged in ';
-    }
+    var path = registryPath(id);
     var isCustom = false;
-    var path = registryUserPath(id, user.username);
-    if (!registry.exists(path)) {
-        path = registryPath(id);
-    }else{
-        isCustom = true;
+    if(user){
+        var userDBPath = registryUserPath(id, user.username);
+        if (registry.exists(userDBPath)) {
+            path = userDBPath;
+            isCustom = true;
+        }
     }
     var content = registry.content(path);
     var dashboard = JSON.parse(content)
