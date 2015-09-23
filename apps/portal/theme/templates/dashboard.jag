@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
     <% include('/controllers/includes/theme-dashboard-styles.jag'); %>
+    <script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
     <title>Dashboards</title>
 </head>
 <body>
@@ -86,7 +88,7 @@ pages.forEach(function (p) {
                     </ul>
                 </li>
             <% } else { %>
-                <li><a href="<%=urlPrefix%>login?destination=<%=dest%>">Login</a></li>
+                <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">Login</a></li>
                 <% } %>
             </ul>
         </div>
@@ -94,6 +96,26 @@ pages.forEach(function (p) {
      </div>
 </div>
 <div id="wrapper"></div>
+<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
+    <div class="ues-toolbar">
+        <ul class="list-inline pull-right">
+            <li><a href="#" class="ues-component-full-handle"><i class="fw fw-laptop"></i></a></li>
+        </ul>
+    </div>
+</script>
+<script id="ues-component-full-hbs" type="text/x-handlebars-template">
+    <div class="modal fade modal-fullscreen force-fullscreen" id="componentFull" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>
 <!--<iframe id="sandbox" src="preview.jag"></iframe>-->
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
@@ -109,9 +131,12 @@ pages.forEach(function (p) {
 <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap-modal-carousel.min.js"></script>
 <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 <script>
-    ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page);
+    if(!ues.global.renderFromExtension){
+        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page);
+    }
 </script>
 </body>
 </html>

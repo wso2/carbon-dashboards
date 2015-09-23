@@ -1,6 +1,16 @@
 <%
-var usr = require('/modules/user.js');
+
 var dest = request.getParameter('destination');
-usr.logout();
-response.sendRedirect(dest || tenantedUrlPrefix);
+var configs = require('/configs/portal.js').config();
+
+	if(configs.authentication.activeMethod === 'sso'){
+		include('sso-logout.jag');
+	}else{
+		var usr = require('/modules/user.js');
+		usr.logout();
+		response.sendRedirect(dest || tenantedUrlPrefix);
+	}
+
+
+
 %>
