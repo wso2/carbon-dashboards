@@ -1,4 +1,6 @@
 var findOne, find, create, update, remove;
+var utils = require('/modules/utils.js');
+
 (function () {
     var log = new Log();
 
@@ -11,27 +13,6 @@ var findOne, find, create, update, remove;
         var config = require('/configs/designer.json');
         var domain = config.shareStore ? carbon.server.superTenant.domain : ctx.domain;
         return dir + domain + '/' + type + '/';
-    };
-
-    var allowed = function (roles, allowed) {
-        var hasRole = function (role, roles) {
-            var i;
-            var length = roles.length;
-            for (i = 0; i < length; i++) {
-                if (roles[i] == role) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        var i;
-        var length = allowed.length;
-        for (i = 0; i < length; i++) {
-            if (hasRole(allowed[i], roles)) {
-                return true;
-            }
-        }
-        return false;
     };
 
     var registryPath = function (id) {
@@ -67,7 +48,7 @@ var findOne, find, create, update, remove;
         var userDashboards = [];
         allDashboards.forEach(function (dashboard) {
             var permissions = dashboard.permissions;
-            if (allowed(userRoles, permissions.editors)) {
+            if (utils.allowed(userRoles, permissions.editors)) {
                 userDashboards.push({
                     id: dashboard.id,
                     title: dashboard.title,
@@ -76,7 +57,7 @@ var findOne, find, create, update, remove;
                 });
                 return;
             }
-            if (allowed(userRoles, permissions.viewers)) {
+            if (utils.allowed(userRoles, permissions.viewers)) {
                 userDashboards.push({
                     id: dashboard.id,
                     title: dashboard.title,

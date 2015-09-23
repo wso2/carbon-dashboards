@@ -32,7 +32,7 @@ var findOne = function (id) {
         }
     }
     var content = registry.content(path);
-    var dashboard = JSON.parse(content)
+    var dashboard = JSON.parse(content);
     if(dashboard){
         dashboard.isUserCustom = isCustom;
     }
