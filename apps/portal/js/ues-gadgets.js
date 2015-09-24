@@ -44,7 +44,6 @@
     var render = function (sandbox, url, prefs, params, done) {
         var options = {};
         options[osapi.container.RenderParam.WIDTH] = '100%';
-        options[osapi.container.RenderParam.VIEW] = 'home';
         options[osapi.container.RenderParam.USER_PREFS] = prefs;
         options[osapi.container.RenderParam.HEIGHT] = sandbox.height();
         extend(options, params);

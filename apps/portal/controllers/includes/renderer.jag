@@ -10,6 +10,13 @@ var dest;
     var permissions = dashboard.permissions;
     var anonymous = permissions.viewers.indexOf(anonRole) !== -1;
 
+    if(user){
+        if (utils.allowed(user.roles, permissions.editors)) {
+            user.isEditor = true;
+        }else{
+            user.isEditor = false;
+        }
+    }
     if (!anonymous) {
         if (!user) {
             sendLogin();
@@ -27,13 +34,7 @@ var dest;
             response.sendError(401, unauthorizedError);
             return;
         }
-        if (utils.allowed(user.roles, permissions.editors)) {
-            user.isEditor = true;
-        }else{
-            user.isEditor = false;
-        }
     }
-
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
     include(utils.resolvePath('templates/dashboard.jag'));
