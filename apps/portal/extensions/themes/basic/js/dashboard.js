@@ -36,9 +36,9 @@ $(function(){
         $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
-            componentContainer = $(this).closest('.ues-component');
+            componentContainer = $('#gadget-' + id + '_full');
             component.viewOption = 'settings';
-            ues.components.update(componentContainer, component, function (err, block) {
+            ues.components.update(component, function (err, block) {
                 if (err) {
                     throw err;
                 }
