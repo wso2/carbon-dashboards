@@ -32,6 +32,18 @@ $(function(){
                 component.fullViewPoped = true;
             }
         });
+
+        $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
+            var id = $(this).closest('.ues-component').attr('id');
+            var component = findComponent(id);
+            componentContainer = $(this).closest('.ues-component');
+            component.viewOption = 'settings';
+            ues.components.update(componentContainer, component, function (err, block) {
+                if (err) {
+                    throw err;
+                }
+            });
+        });
     };
     /**
      * Render maximized view for a gadget
