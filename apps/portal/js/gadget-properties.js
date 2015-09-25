@@ -203,30 +203,12 @@ var propertiesVisible = function () {
  * @param sandbox
  */
 var updateComponentProperties = function (sandbox, component) {
-    var notifiers = {};
     var options = {};
-    var settings = {};
-    var styles = {};
-    var id = id;
 
     saveOptions(sandbox, options);
-    console.log("sandbox");
-    console.log(sandbox);
-    console.log("options");
-    console.log(options);
-    console.log("dashboard");
-    console.log(dashboard);
-    console.log("component");
-    console.log(component);
-//        saveSettings(sandbox, settings);
-//        saveStyles(sandbox, styles);
-//        saveNotifiers(sandbox, notifiers);
 
     saveComponentProperties(component, {
         options: options
-//            settings: settings,
-//            styles: styles,
-//            notifiers: notifiers
     });
 };
 
@@ -235,17 +217,9 @@ var updateComponentProperties = function (sandbox, component) {
  * @param component
  */
 var renderComponentProperties = function (component) {
-//    console.log(component);
     var el = $('.ues-gadget-options').on('change', 'input, select, textarea', function () {
         updateComponentProperties($(this).closest('.ues-sandbox'), component);
     });
-//    $('[data-toggle="tooltip"]', el).tooltip();
-//    var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
-//        .find('.ues-context-menu-actions')
-//        .find('.ues-component-properties-toggle');
-//    var parent = toggle.parent();
-//    parent.siblings().removeClass('active');
-//    parent.addClass('active').show();
     showProperties();
 };
 
@@ -317,9 +291,6 @@ var saveComponentProperties = function (component, data) {
     var block = component;
     var content = block.content;
 
-    console.log("saveComponentProperties");
-    console.log(data);
-    console.log(component);
     //save options
     var options = content.options;
     var opts = data.options;
@@ -330,13 +301,6 @@ var saveComponentProperties = function (component, data) {
         }
     }
 
-    //save settings
-//        content.settings = data.settings;
-
-    //save styles
-//        content.styles = data.styles;
-
-    //save wiring
     var event;
     var listener;
     var notifiers = data.notifiers;
@@ -347,11 +311,9 @@ var saveComponentProperties = function (component, data) {
             listener.on = notifiers[event];
         }
     }
-    console.log(component.id);
-    console.log(dashboard);
-//    ues.dashboards.rewire(page);
     updateComponent(component);
     saveDashboard(component);
+    ues.dashboards.rewire(page);
 };
 
 /**
@@ -485,8 +447,6 @@ var exportDashboard = function () {
  * saves the dashboard content
  */
 var saveDashboard = function (component) {
-    console.log(dashboard);
-    console.log("================================================");
     url = dashboardsApi + '/' + dashboard.id;
     $.ajax({
         url: url,

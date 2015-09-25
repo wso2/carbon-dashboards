@@ -43,14 +43,10 @@ $(function(){
             console.log(component);
             if (optionsLength > 0) {
                 componentContainer = $('#gadget-' + id + '_full');
-//                console.log(component.content.options);
-                //component.viewOption = 'settings';
                 var settings = gadgetSettingsViewHbs(component.content);
                 //body.append(settings);
                 componentContainer.append(settings);
                 renderComponentProperties(component);
-
-               // componentContainer.remove(settings);
 
 //            ues.components.destroy(component, function (err, block) {
 //                if (err) {
