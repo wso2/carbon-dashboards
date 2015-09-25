@@ -295,7 +295,7 @@ $(function () {
         var area;
         var component;
         var components;
-        var content = page.content;
+        var content = page.content.default;
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
@@ -366,7 +366,7 @@ $(function () {
             }
             var container = $('#' + component.id);
             var area = container.closest('.ues-component-box').attr('id');
-            var content = page.content;
+            var content = page.content.default;
             area = content[area];
             var index = area.indexOf(component);
             area.splice(index, 1);
@@ -427,7 +427,7 @@ $(function () {
      */
     var destroyPage = function (page, done) {
         var area;
-        var content = page.content;
+        var content = page.content.default;
         var tasks = [];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -611,7 +611,7 @@ $(function () {
         var id = randomId();
         //TODO: remove hardcoded gadget
         var area = container.attr('id');
-        var content = page.content;
+        var content = page.content.default;
         content = content[area] || (content[area] = []);
         updateStyles(asset);
         var component = {
@@ -637,7 +637,7 @@ $(function () {
     var moveComponent = function (container, id) {
         var component = findComponent(id);
         var area = container.attr('id');
-        var content = page.content;
+        var content = page.content.default;
         content = content[area] || (content[area] = []);
         content.push(component);
         removeComponent(component, function (err) {
@@ -722,7 +722,7 @@ $(function () {
     var pageNotifiers = function (component, page) {
         var area;
         var notifiers = {};
-        var content = page.content;
+        var content = page.content.default;
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 areaNotifiers(notifiers, component, content[area]);
@@ -1309,7 +1309,11 @@ $(function () {
                 id: id,
                 title: options.title,
                 layout: layout,
-                content: {}
+                isanon: false,
+                content: {
+                    default: {},
+                    anon: {}
+                }
             };
             dashboard.landing = dashboard.landing || id;
             dashboard.pages.push(page);

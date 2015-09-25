@@ -50,7 +50,7 @@
     };
 
     var wires = function (page) {
-        var content = page.content;
+        var content = page.content.default;
         var area;
         var blocks;
         var wirez = {};
@@ -99,7 +99,7 @@
         var container;
         var area;
         var layout = $(page.layout.content);
-        var content = page.content;
+        var content = page.content.default;
         element.html(layout);
         for (area in content) {
             if (content.hasOwnProperty(area)) {
