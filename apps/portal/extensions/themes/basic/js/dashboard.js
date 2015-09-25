@@ -1,4 +1,4 @@
-$(function(){
+$(function () {
     var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
@@ -13,17 +13,17 @@ $(function(){
             var component = findComponent(id);
             var fullViewPopped = $('.modal-body > .ues-component');
             var componentContainer;
-            if(component.fullViewPoped){
+            if (component.fullViewPoped) {
                 $('#componentFull').modal('show');
                 fullViewPopped.hide();
                 $('#' + id + '_full').show();
             } else {
-                if(fullViewPopped.length > 0){
+                if (fullViewPopped.length > 0) {
                     fullViewPopped.hide();
                     $('#' + id + '_full').show();
                     $('#componentFull').modal('show');
                     componentContainer = $('.modal-body');
-                }else{
+                } else {
                     var fullView = $('body').append(componentMaxViewHbs({}));
                     fullView.find('#componentFull').modal('show');
                     componentContainer = fullView.find('.modal-body');
@@ -36,42 +36,19 @@ $(function(){
 
         $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
-            var body = $(this).closest('.panel-body');
+//            var body = $(this).closest('.panel-body');
             var component = findComponent(id);
-            var optionsLength = Object.keys(component.content.options).length;
-            console.log("onclick componenet");
-            console.log(component);
-            if (optionsLength > 0) {
-                componentContainer = $('#gadget-' + id + '_full');
-                var settings = gadgetSettingsViewHbs(component.content);
-                //body.append(settings);
-                componentContainer.append(settings);
-                renderComponentProperties(component);
-
-//            ues.components.destroy(component, function (err, block) {
-//                if (err) {
-//                    throw err;
-//                }
-//            });
-//            ues.components.update(component, function (err, block) {
-//                if (err) {
-//                    throw err;
-//                }
-//            });
+            componentContainer = $('#gadget-' + id + '_full');
+            var settings = gadgetSettingsViewHbs(component.content);
+            if (componentContainer.hasClass('ues-userprep-visible')) {
+                componentContainer.removeClass('ues-userprep-visible');
+                componentContainer.find('.ues-sandbox').remove();
+                return;
             }
+            componentContainer.addClass('ues-userprep-visible');
+            componentContainer.append(settings);
+            renderComponentProperties(component);
         });
-
-//        $('#wrapper').on('click', 'ues-component-properties-toggle', function () {
-//            console.log("--------------------------------999990000000000");
-//            var thiz = $(this);
-//            var parent = thiz.parent();
-//            if (parent.hasClass('active')) {
-//                //parent.removeClass('active');
-//                hideProperties();
-//                return;
-//            }
-//            renderComponentProperties(activeComponent);
-//        });
     };
 
     Handlebars.registerHelper('equals', function (left, right, options) {
@@ -132,8 +109,8 @@ $(function(){
     /**
      * This is the call back function for dashboard drawing
      */
-    var dashboardDone = function(){
-        $('.ues-component-box div.ues-component').each(function(){
+    var dashboardDone = function () {
+        $('.ues-component-box div.ues-component').each(function () {
             var component = findComponent($(this).attr('id'));
             renderComponentToolbar(component);
         });
@@ -141,21 +118,21 @@ $(function(){
     /**
      * This is the initial call from the dashboard.js
      */
-    var initDashboard = function(){
+    var initDashboard = function () {
         var allPages = ues.global.dashboard.pages;
-        if(allPages.length>0){
-            page = (ues.global.page?ues.global.page:allPages[0]);
+        if (allPages.length > 0) {
+            page = (ues.global.page ? ues.global.page : allPages[0]);
         }
-        for(var i = 0; i< allPages.length; i++){
-            if(ues.global.page == allPages[i].id){
+        for (var i = 0; i < allPages.length; i++) {
+            if (ues.global.page == allPages[i].id) {
                 page = allPages[i];
             }
         }
-        $('body').on('click','.modal-footer button',function(){
+        $('body').on('click', '.modal-footer button', function () {
             $('#componentFull').modal('hide');
 
         });
-        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page,dashboardDone);
+        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, dashboardDone);
 
     };
     initDashboard();

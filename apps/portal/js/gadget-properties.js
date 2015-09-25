@@ -1,7 +1,6 @@
 //$(function () {
 //TODO: cleanup this
 
-var COMPONENTS_PAGE_SIZE = 20;
 
 var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
 
@@ -15,15 +14,7 @@ var dashboard;
 
 var page;
 
-var activeComponent;
-
 var freshDashboard = true;
-
-var storeCache = {
-    gadget: [],
-    widget: [],
-    layout: []
-};
 
 var clone = function (o) {
     return JSON.parse(JSON.stringify(o));
@@ -88,66 +79,6 @@ var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html() || 
 var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html() || '');
 
 var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
-
-/**
- * generates a random id
- * @returns {string}
- */
-var randomId = function () {
-    return Math.random().toString(36).slice(2);
-};
-
-/**
- * switches workspaces in the designer
- * @param name
- */
-var showWorkspace = function (name) {
-    $('.ues-workspace').hide();
-    $('#ues-workspace-' + name).show();
-};
-
-/**
- * show the store of a given type
- * @param type
- */
-var showStore = function (type) {
-    var store = $('#ues-store').removeClass('ues-hidden');
-    store.find('.ues-store-assets').addClass('ues-hidden');
-    store.find('#ues-store-' + type).removeClass('ues-hidden');
-
-    var designer = $('#ues-designer');
-    if (designer.hasClass('ues-storeprop-visible') || designer.hasClass('ues-store-visible')) {
-        return;
-    }
-    if (designer.hasClass('ues-properties-visible')) {
-        designer.removeClass('ues-properties-visible').addClass('ues-storeprop-visible');
-        return;
-    }
-    designer.addClass('ues-store-visible');
-};
-
-/**
- * hide the store
- */
-var hideStore = function () {
-    $('#ues-store').addClass('ues-hidden');
-
-    var designer = $('#ues-designer');
-    if (designer.hasClass('ues-storeprop-visible')) {
-        designer.removeClass('ues-storeprop-visible').addClass('ues-properties-visible');
-        return;
-    }
-    designer.removeClass('ues-store-visible');
-
-};
-
-/**
- * check whether store is visible
- * @returns {boolean}
- */
-var storeVisible = function () {
-    return !$('#ues-store').hasClass('ues-hidden');
-};
 
 /**
  * shows properties panel
@@ -235,24 +166,6 @@ var renderMaxView = function (component, componentContainer) {
         }
     });
 };
-/**
- * find an asset of the given type from the store cache
- * @param type
- * @param id
- * @returns {*}
- */
-var findStoreCache = function (type, id) {
-    var i;
-    var item;
-    var items = storeCache[type];
-    var length = items.length;
-    for (i = 0; i < length; i++) {
-        item = items[i];
-        if (item.id === id) {
-            return clone(item);
-        }
-    }
-};
 
 /**
  * find a given component in the current page
@@ -314,35 +227,6 @@ var saveComponentProperties = function (component, data) {
     updateComponent(component);
     saveDashboard(component);
     ues.dashboards.rewire(page);
-};
-
-/**
- * removes and destroys the given component from the page
- * @param component
- * @param done
- */
-var removeComponent = function (component, done) {
-    destroyComponent(component, function (err) {
-        if (err) {
-            return done(err);
-        }
-        var container = $('#' + component.id);
-        var area = container.closest('.ues-component-box').attr('id');
-        var content = page.content;
-        area = content[area];
-        var index = area.indexOf(component);
-        area.splice(index, 1);
-        container.remove();
-
-        var properties = $('#ues-properties').find('.ues-content');
-        var compId = properties.find('.ues-sandbox').data('component');
-        if (compId !== component.id) {
-            return done();
-        }
-        properties.empty();
-        hideProperties();
-        done();
-    });
 };
 
 /**
@@ -494,69 +378,6 @@ var replaceComponent = function (obj, key, val, component) {
     console.log("none -------------------------------");
     return objects;
 }
-/**
- * initializes the component toolbar
- */
-var initComponentToolbar = function () {
-    var designer = $('#ues-designer');
-    designer.on('click', 'a.ues-component-full-handle', function () {
-        var id = $(this).closest('.ues-component').attr('id');
-        var component = findComponent(id);
-        var fullViewPopped = $('.modal-body > .ues-component');
-        var componentContainer;
-        if (component.fullViewPoped) {
-            $('#componentFull').modal('show');
-            fullViewPopped.hide();
-            $('#' + id + '_full').show();
-        } else {
-            if (fullViewPopped.length > 0) {
-                fullViewPopped.hide();
-                $('#' + id + '_full').show();
-                $('#componentFull').modal('show');
-                componentContainer = $('.modal-body');
-            } else {
-                var fullView = $('body').append(componentMaxViewHbs({}));
-                fullView.find('#componentFull').modal('show');
-                componentContainer = fullView.find('.modal-body');
-            }
-            component.viewOption = 'full';
-            renderMaxView(component, componentContainer);
-            component.fullViewPoped = true;
-        }
-    });
-    $('body').on('click', '.modal-footer button', function () {
-        $('#componentFull').modal('hide');
-
-    });
-    designer.on('click', '.ues-component .ues-toolbar .ues-properties-handle', function () {
-        var id = $(this).closest('.ues-component').attr('id');
-        renderComponentProperties(findComponent(id));
-    });
-    designer.on('click', '.ues-component .ues-toolbar .ues-trash-handle', function () {
-        var id = $(this).closest('.ues-component').attr('id');
-        removeComponent(findComponent(id), function (err) {
-            if (err) {
-                console.error(err);
-            }
-            saveDashboard();
-        });
-    });
-    designer.on('mouseenter', '.ues-component .ues-toolbar .ues-move-handle', function () {
-        $(this).draggable({
-            cancel: false,
-            appendTo: 'body',
-            helper: 'clone',
-            start: function (event, ui) {
-                console.log('dragging');
-            },
-            stop: function () {
-                //$('#left a[href="#components"]').tab('show');
-            }
-        });
-    }).on('mouseleave', '.ues-component .ues-toolbar .ues-move-handle', function () {
-        $(this).draggable('destroy');
-    });
-};
 
 /**
  * initializes the ues properties
@@ -564,81 +385,6 @@ var initComponentToolbar = function () {
 var initUESProperties = function () {
     $('body').on('click', '.close-db-settings', function () {
         hideProperties();
-    });
-};
-/**
- * renders the component toolbar of a given component
- * @param component
- */
-var renderComponentToolbar = function (component) {
-    var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
-    $('[data-toggle="tooltip"]', el).tooltip();
-};
-
-/**
- * updates the styles of a given store asset
- * @param asset
- */
-var updateStyles = function (asset) {
-    var styles = asset.styles || (asset.styles = {
-        title: true,
-        borders: true
-    });
-    if (styles.title && typeof styles.title === 'boolean') {
-        styles.title = asset.title;
-    }
-};
-
-/**
- * creates a component in the given container
- * @param container
- * @param asset
- */
-var createComponent = function (container, asset) {
-    var id = randomId();
-    //TODO: remove hardcoded gadget
-    var area = container.attr('id');
-    var content = page.content;
-    content = content[area] || (content[area] = []);
-    updateStyles(asset);
-    var component = {
-        id: id,
-        content: asset
-    };
-    content.push(component);
-    ues.components.create(container, component, function (err, block) {
-        if (err) {
-            throw err;
-        }
-        renderComponentToolbar(component);
-        renderComponentProperties(component);
-        saveDashboard();
-    });
-};
-
-/**
- * move given component into the given container
- * @param container
- * @param id
- */
-var moveComponent = function (container, id) {
-    var component = findComponent(id);
-    var area = container.attr('id');
-    var content = page.content;
-    content = content[area] || (content[area] = []);
-    content.push(component);
-    removeComponent(component, function (err) {
-        if (err) {
-            throw err;
-        }
-        ues.components.create(container, component, function (err, block) {
-            if (err) {
-                throw err;
-            }
-            renderComponentToolbar(component);
-            renderComponentProperties(component);
-            saveDashboard();
-        });
     });
 };
 
@@ -922,50 +668,6 @@ var saveSettings = function (sandbox, settings) {
 };
 
 /**
- * save styles of the component
- * @param sandbox
- * @param styles
- */
-var saveStyles = function (sandbox, styles) {
-    $('.ues-styles input', sandbox).each(function () {
-        var el = $(this);
-        var type = el.attr('type');
-        var name = el.attr('name');
-        if (type === 'text') {
-            styles[name] = el.val();
-            return;
-        }
-        if (type === 'checkbox') {
-            styles[name] = el.is(':checked');
-        }
-    });
-
-    styles.titlePosition = $('.ues-styles .ues-title-position', sandbox).val();
-};
-
-/**
- * save notifiers of the component
- * @param sandbox
- * @param notifiers
- */
-var saveNotifiers = function (sandbox, notifiers) {
-    $('.ues-notifiers .notifier', sandbox).each(function () {
-        var el = $(this);
-        var from = el.data('from');
-        var event = el.data('event');
-        var listener = el.closest('.listener').data('event');
-        var events = notifiers[listener] || (notifiers[listener] = []);
-        if (!el.is(':checked')) {
-            return;
-        }
-        events.push({
-            from: from,
-            event: event
-        });
-    });
-};
-
-/**
  * holds the store paging history for infinite scroll
  * @type {{}}
  */
@@ -990,27 +692,6 @@ var initComponents = function () {
         });
     }).on('mouseleave', '.ues-thumbnail', function () {
         $(this).draggable('destroy');
-    });
-};
-
-/**
- * initializes the designer
- */
-var initDesigner = function () {
-    $('#ues-store-menu-actions').find('.ues-store-toggle').click(function () {
-        var thiz = $(this);
-        var parent = thiz.parent();
-        var type = thiz.data('type');
-        parent.siblings().addBack().removeClass('active');
-
-        var store = $('#ues-store');
-        var assets = $('#ues-store-' + type);
-        if (store.hasClass('ues-hidden') || assets.hasClass('ues-hidden')) {
-            parent.addClass('active');
-            showStore(type);
-            return;
-        }
-        hideStore();
     });
 };
 
@@ -1105,8 +786,6 @@ var initContextMenus = function () {
  */
 var initUI = function () {
     initContextMenus();
-    initDesigner();
-    initComponentToolbar();
     initComponents();
     initUESProperties();
 };
@@ -1114,8 +793,6 @@ var initUI = function () {
 var initDashboard = function (db, page, fresh) {
     freshDashboard = fresh;
     dashboard = (ues.global.dashboard = db);
-    console.log("dashboard------------------------------");
-    console.log(dashboard);
     if (fresh) {
         initFirstPage();
         return;
