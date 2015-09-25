@@ -23,6 +23,8 @@ a, a:focus {
     left: 0;
     opacity: 0.9;
     padding: 8px;
+    overflow: scroll;
+    height: 100%;
 }
 .panel-default .panel-body{
     position: relative;
