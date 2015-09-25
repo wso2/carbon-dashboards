@@ -110,7 +110,6 @@
             if (styles.height) {
                 renderParams[osapi.container.RenderParam.HEIGHT] = parseInt(styles.height, 10) - DEFAULT_PADDING;
             }
-
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
@@ -122,6 +121,7 @@
     };
 
     component.update = function (sandbox, comp, hub, done) {
+        console.log("8----------------------------------------");
         component.destroy(sandbox, comp, hub, function (err) {
             if (err) {
                 throw err;

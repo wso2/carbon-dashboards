@@ -1,6 +1,7 @@
 $(function(){
     var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
+    var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
     var page;
 
     /**
@@ -35,16 +36,56 @@ $(function(){
 
         $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
+            var body = $(this).closest('.panel-body');
             var component = findComponent(id);
-            componentContainer = $(this).closest('.ues-component');
-            component.viewOption = 'settings';
-            ues.components.update(componentContainer, component, function (err, block) {
-                if (err) {
-                    throw err;
-                }
-            });
+            var optionsLength = Object.keys(component.content.options).length;
+            console.log("onclick componenet");
+            console.log(component);
+            if (optionsLength > 0) {
+                componentContainer = $('#gadget-' + id + '_full');
+//                console.log(component.content.options);
+                //component.viewOption = 'settings';
+                var settings = gadgetSettingsViewHbs(component.content);
+                //body.append(settings);
+                componentContainer.append(settings);
+                renderComponentProperties(component);
+
+               // componentContainer.remove(settings);
+
+//            ues.components.destroy(component, function (err, block) {
+//                if (err) {
+//                    throw err;
+//                }
+//            });
+//            ues.components.update(component, function (err, block) {
+//                if (err) {
+//                    throw err;
+//                }
+//            });
+            }
         });
+
+//        $('#wrapper').on('click', 'ues-component-properties-toggle', function () {
+//            console.log("--------------------------------999990000000000");
+//            var thiz = $(this);
+//            var parent = thiz.parent();
+//            if (parent.hasClass('active')) {
+//                //parent.removeClass('active');
+//                hideProperties();
+//                return;
+//            }
+//            renderComponentProperties(activeComponent);
+//        });
     };
+
+    Handlebars.registerHelper('equals', function (left, right, options) {
+        if (left === right) {
+            return options.fn(this);
+        }
+        return options.inverse(this);
+    });
+
+
     /**
      * Render maximized view for a gadget
      * @param component

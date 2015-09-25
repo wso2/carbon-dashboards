@@ -83,19 +83,19 @@ $(function () {
      */
     var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html() || '');
 
-    var layoutHbs = Handlebars.compile($("#ues-layout-hbs").html());
+    var layoutHbs = Handlebars.compile($("#ues-layout-hbs").html() || '');
 
-    var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html());
+    var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html() || '');
 
-    var noComponentsHbs = Handlebars.compile($("#ues-no-components-hbs").html());
+    var noComponentsHbs = Handlebars.compile($("#ues-no-components-hbs").html() || '');
 
-    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
+    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
 
-    var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html());
+    var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html() || '');
 
     var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html() || '');
 
-    var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
+    var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html() || '');
 
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
 
@@ -1132,7 +1132,7 @@ $(function () {
     };
 
     var initDesignerMenu = function () {
-
+        console.log("///////////--------------------------------999990000000000");
         $("#ues-workspace-designer").show();
 
         var menu = $('#ues-workspace-designer').find('.ues-context-menu');
@@ -1154,6 +1154,7 @@ $(function () {
         var actions = menu.find('.ues-context-menu-actions');
 
         actions.find('.ues-component-properties-toggle').click(function () {
+            console.log("--------------------------------999990000000000");
             var thiz = $(this);
             var parent = thiz.parent();
             if (parent.hasClass('active')) {

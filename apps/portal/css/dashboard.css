@@ -15,3 +15,15 @@ a, a:focus {
 .ues-component-box iframe {
     transition: height 0.4s;
 }
+.gadget-setting{
+    position: absolute;
+    width: 100%;
+    background: #ffffff;
+    top: 0;
+    left: 0;
+    opacity: 0.9;
+    padding: 8px;
+}
+.panel-default .panel-body{
+    position: relative;
+}
