@@ -240,13 +240,25 @@
                             <h4>Options</h4>
                             {{#each options}}
                                 <div class="form-group">
-                                    <label>{{title}}
-                                        {{#equals type "text"}}
-                                        <textarea name="{{@key}}" class="form-control" rows="4">{{value}}</textarea>
-                                        {{else}}
-                                        <input type="text" class="form-control" name="{{@key}}" placeholder="{{title}}" value="{{value}}">
-                                        {{/equals}}
-                                    </label>
+                                    {{#equals type "STRING"}}
+                                        <label>{{title}}
+                                            <input type="text" class="form-control" name="{{@key}}" placeholder="{{title}}" value="{{value}}">
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "BOOL"}}
+                                        <label>
+                                            <input type="checkbox" name="{{title}}"{{#equals value true}} checked="checked"{{/equals}}> {{title}}
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "ENUM"}}
+                                        <label>{{title}}
+                                            <select id={{title}} name={{title}} class="form-control ues-title-position">
+                                                 {{#each options}}
+                                                    <option value={{value}}{{#equals value ../value}} selected="selected"{{/equals}}>{{displayValue}}</option>
+                                                 {{/each}}
+                                            </select>
+                                        </label>
+                                    {{/equals}}
                                 </div>
                             {{/each}}
                         </div>
