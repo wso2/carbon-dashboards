@@ -38,16 +38,39 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id');
 //            var body = $(this).closest('.panel-body');
             var component = findComponent(id);
+            console.log("====================");
+            console.log(component);
             componentContainer = $('#gadget-' + id + '_full');
+
+            if(component.hasCustomUserPrefView){
+                if(component.viewOption == "settings"){
+                    console.log("==================== swtit to default");
+                    switchComponentView(component, "default");
+                }else{
+                    console.log("==================== swtit to settings");
+                    switchComponentView(component, "settings");
+                }
+                return;
+            }
+
             var settings = gadgetSettingsViewHbs(component.content);
             if (componentContainer.hasClass('ues-userprep-visible')) {
                 componentContainer.removeClass('ues-userprep-visible');
                 componentContainer.find('.ues-sandbox').remove();
                 return;
             }
-            componentContainer.addClass('ues-userprep-visible');
             componentContainer.append(settings);
+            componentContainer.addClass('ues-userprep-visible');
             renderComponentProperties(component);
+        });
+    };
+
+    var switchComponentView = function(component, view){
+        component.viewOption = view;
+        ues.components.update(component, function (err, block) {
+            if (err) {
+                throw err;
+            }
         });
     };
 

@@ -72,13 +72,8 @@ Handlebars.registerHelper('resolveURI', function (path) {
 /**
  * Precompiling Handlebar templates
  */
-var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
 
 var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html() || '');
-
-var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html() || '');
-
-var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
 
 /**
  * shows properties panel
@@ -638,6 +633,22 @@ var renderPageProperties = function (page) {
  */
 var saveOptions = function (sandbox, options) {
     $('.ues-options input', sandbox).each(function () {
+        var el = $(this);
+        var type = el.attr('type');
+        var name = el.attr('name');
+        if (type === 'text') {
+            options[name] = el.val();
+            return;
+        }
+        if (type === 'checkbox') {
+            options[name] = el.is(':checked');
+        }
+        if (type === 'enum') {
+            options[name] = el.val();
+            return;
+        }
+    });
+    $('.ues-options select', sandbox).each(function () {
         var el = $(this);
         options[el.attr('name')] = el.val();
     });
