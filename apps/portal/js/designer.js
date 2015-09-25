@@ -1148,7 +1148,6 @@ $(function () {
     };
 
     var initDesignerMenu = function () {
-        console.log("///////////--------------------------------999990000000000");
         $("#ues-workspace-designer").show();
 
         var menu = $('#ues-workspace-designer').find('.ues-context-menu');
@@ -1170,7 +1169,6 @@ $(function () {
         var actions = menu.find('.ues-context-menu-actions');
 
         actions.find('.ues-component-properties-toggle').click(function () {
-            console.log("--------------------------------999990000000000");
             var thiz = $(this);
             var parent = thiz.parent();
             if (parent.hasClass('active')) {

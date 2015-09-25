@@ -110,21 +110,6 @@ var hideProperties = function () {
 };
 
 /**
- * removes properties panel
- */
-var removeProperties = function () {
-    $('#ues-properties').empty();
-};
-
-/**
- * checks whether properties panel is visible
- * @returns {boolean}
- */
-var propertiesVisible = function () {
-    return !$('#ues-properties').hasClass('ues-hidden');
-};
-
-/**
  * update component properties panel and save
  * @param sandbox
  */
@@ -339,40 +324,19 @@ var saveDashboard = function (component) {
     });
 };
 
-var saveDashBoardResource = function (dashboard) {
-    url = dashboardsApi + '/' + dashboard.id;
-    $.ajax({
-        url: url,
-        method: 'PUT',
-        data: JSON.stringify(dashboard),
-        contentType: 'application/json'
-    }).success(function (data) {
-        console.log('dashboard saved successfully');
-    }).error(function () {
-        console.log('error saving dashboard');
-    });
-};
-
-var replaceComponent = function (obj, key, val, component) {
-    var objects = [];
-    for (var i in obj) {
-        if (!obj.hasOwnProperty(i)) continue;
-        if (typeof obj[i] == 'object') {
-            console.log("recursive -------------------------------");
-            objects = objects.concat(replaceComponent(obj[i], key, val, component));
-        } else if (i == key && obj[key] == val) {
-            console.log("found -------------------------------");
-            console.log("obje before -------------------------------");
-            console.log(obj);
-            obj = component;
-            console.log("obje after -------------------------------");
-            console.log(obj);
-            objects.push(obj);
-        }
-    }
-    console.log("none -------------------------------");
-    return objects;
-}
+//var saveDashBoardResource = function (dashboard) {
+//    url = dashboardsApi + '/' + dashboard.id;
+//    $.ajax({
+//        url: url,
+//        method: 'PUT',
+//        data: JSON.stringify(dashboard),
+//        contentType: 'application/json'
+//    }).success(function (data) {
+//        console.log('dashboard saved successfully');
+//    }).error(function () {
+//        console.log('error saving dashboard');
+//    });
+//};
 
 /**
  * initializes the ues properties
@@ -388,8 +352,6 @@ var initUESProperties = function () {
  * @param id
  */
 var updateComponent = function (component) {
-    console.log("updateComponent");
-    console.log(component);
     ues.components.update(component, function (err) {
         if (err) {
             throw err;
@@ -711,7 +673,6 @@ var toggleProperties = function () {
 };
 
 var initDesignerMenu = function () {
-    console.log("///////////--------------------------------999990000000000");
     $("#ues-workspace-designer").show();
 
     var menu = $('#ues-workspace-designer').find('.ues-context-menu');
@@ -731,18 +692,6 @@ var initDesignerMenu = function () {
     });
 
     var actions = menu.find('.ues-context-menu-actions');
-
-//    actions.find('.ues-component-properties-toggle').click(function () {
-//        console.log(".ues-component-properties-toggle--------------------------------999990000000000");
-//        var thiz = $(this);
-//        var parent = thiz.parent();
-//        if (parent.hasClass('active')) {
-//            //parent.removeClass('active');
-//            hideProperties();
-//            return;
-//        }
-//        renderComponentProperties(activeComponent);
-//    });
 
     actions.find('.ues-page-properties-toggle').click(function () {
         var thiz = $(this);
