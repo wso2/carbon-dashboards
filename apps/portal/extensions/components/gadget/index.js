@@ -128,7 +128,6 @@
     };
 
     component.update = function (sandbox, comp, hub, done) {
-        console.log("8----------------------------------------");
         component.destroy(sandbox, comp, hub, function (err) {
             if (err) {
                 throw err;

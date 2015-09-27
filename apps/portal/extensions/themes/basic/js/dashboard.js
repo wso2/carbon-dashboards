@@ -38,16 +38,12 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id');
 //            var body = $(this).closest('.panel-body');
             var component = findComponent(id);
-            console.log("====================");
-            console.log(component);
             componentContainer = $('#gadget-' + id + '_full');
 
             if(component.hasCustomUserPrefView){
                 if(component.viewOption == "settings"){
-                    console.log("==================== swtit to default");
                     switchComponentView(component, "default");
                 }else{
-                    console.log("==================== swtit to settings");
                     switchComponentView(component, "settings");
                 }
                 return;
