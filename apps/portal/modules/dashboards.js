@@ -76,7 +76,7 @@ var update = function (dashboard) {
     });
 
     var path = registryUserPath(dashboard.id, user.username);
-    if (!registry.exists(path)) {
+    if (!registry.exists(path) && !dashboard.isUserCustom) {
         path = registryPath(dashboard.id);
         if (!registry.exists(path)) {
             throw 'a dashboard cannot be found with the id ' + dashboard.id;

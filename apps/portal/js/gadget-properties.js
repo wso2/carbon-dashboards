@@ -311,7 +311,7 @@ var exportDashboard = function () {
  * saves the dashboard content
  */
 var saveDashboard = function (component) {
-    url = dashboardsApi + '/' + dashboard.id;
+    url = dashboardsApi + '/' + dashboard.id +'?personalize=true';
     $.ajax({
         url: url,
         method: 'PUT',
