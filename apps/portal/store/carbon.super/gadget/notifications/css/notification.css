@@ -1,0 +1,27 @@
+.section-left {
+    width:350px;
+    float:left;
+    padding:10px;
+}
+#section-right {
+    width:350px;
+    float:right;
+    padding:10px;
+}
+#section-centre {
+    width:350px;
+    float:inherit;
+    padding:10px;
+    vertical-align: middle;
+}
+.highlight {
+    font-weight: bold;
+}
+.news-section {
+    background-color: #3A3939;
+    min-height: 30px;
+    max-width: 100%;
+    border-color: #484144;
+    border-width: 1px;
+    border-style: solid;
+}

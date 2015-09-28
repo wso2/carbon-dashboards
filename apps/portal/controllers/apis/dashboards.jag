@@ -59,14 +59,20 @@
             return;
         }
         if (method === 'PUT') {
+            var personalize = request.getParameter('personalize');
+            var dashboard = request.getContent();
+
+            if(personalize && !utils.allowed(user.roles, editors)){
+                dashboard.isUserCustom = true;
+            }
+
             if ((!user || !utils.allowed(user.roles, configs.designers) || !utils.allowed(user.roles,
-                    editors)) && !(utils.allowed(user.roles, viewers) && dashboard.isUserCustom)) {
+            editors)) && !(utils.allowed(user.roles, viewers) && dashboard.isUserCustom)) {
                 response.sendError(401, JSON.stringify({
-                    error: 'unauthorized to access the dashboard'
-                }));
+                error: 'unauthorized to access the dashboard'
+            }));
                 return;
             }
-            dashboard = request.getContent();
             utils.sandbox(context, function () {
                 dashboards.update(dashboard);
             });

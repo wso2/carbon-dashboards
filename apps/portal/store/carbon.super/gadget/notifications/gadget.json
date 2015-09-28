@@ -1,0 +1,30 @@
+{
+    "id": "notifications",
+    "title": "Notifications",
+    "type": "gadget",
+    "thumbnail": "store://gadget/notifications/index.png",
+    "options": {
+        "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Username to be used for service invocation"
+        }
+    },
+    "settings": {
+        "personalize": true
+    },
+    "data": {
+        "url": "store://gadget/notifications/index.xml"
+    },
+    "description": "Show notifications",
+    "notify": {
+        "select": {
+            "type": "address",
+            "description": "This notifies selected state"
+        },
+        "cancel": {
+            "type": "boolean",
+            "description": "This notifies cancellation of state selection"
+        }
+    }
+}
