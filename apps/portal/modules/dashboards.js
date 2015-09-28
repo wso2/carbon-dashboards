@@ -32,7 +32,7 @@ var findOne = function (id) {
         }
     }
     var content = registry.content(path);
-    var dashboard = JSON.parse(content)
+    var dashboard = JSON.parse(content);
     if(dashboard){
         dashboard.isUserCustom = isCustom;
     }
@@ -57,6 +57,7 @@ var create = function (dashboard) {
     var registry = new carbon.registry.Registry(server, {
         system: true
     });
+    var userManager = new carbon.user.UserManager(server);
     var path = registryPath(dashboard.id);
     if (registry.exists(path)) {
         throw 'a dashboard exists with the same id ' + dashboard.id;
@@ -65,6 +66,7 @@ var create = function (dashboard) {
         content: JSON.stringify(dashboard),
         mediaType: 'application/json'
     });
+    userManager.denyRole('internal/everyone', path, 'read');
 };
 
 var update = function (dashboard) {
