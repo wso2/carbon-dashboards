@@ -38,7 +38,7 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id');
 //            var body = $(this).closest('.panel-body');
             var component = findComponent(id);
-            componentContainer = $('#gadget-' + id + '_full');
+            componentContainer = $('#gadget-' + id);
 
             if(component.hasCustomUserPrefView){
                 if(component.viewOption == "settings"){
