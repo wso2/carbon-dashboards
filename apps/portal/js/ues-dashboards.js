@@ -49,6 +49,17 @@
         });
     };
 
+    //overriding publish method
+    var publish = ues.hub.publish;
+    ues.hub.publish = function (topic, data){
+        $(".container").find('.ues-component').each(function () {
+            var id = $(this).attr('id');
+            var channel = id + "." + topic;
+            console.log(channel);
+            publish.apply(ues.hub, [channel, data]);
+        });
+    };
+
     var wires = function (page) {
         var content = page.content;
         var area;

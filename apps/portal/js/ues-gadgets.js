@@ -80,6 +80,7 @@
     //Initializing OpenAjax ManagedHub
     var hub = new OpenAjax.hub.ManagedHub({
         onSubscribe: function (topic, container) {
+            ues.hub.publish("token-channel", "Sample data");
             var fn = configs(ues.configs, ['hub', 'subscribe']);
             return fn ? fn(topic, container) : true;
         },
