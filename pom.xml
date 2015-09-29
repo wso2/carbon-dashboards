@@ -36,6 +36,7 @@
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>features/org.wso2.carbon.dashboards.deployment.feature</module>
         <module>features/org.wso2.carbon.dashboards.sso.feature</module>
+        <module>features/org.wso2.carbon.dashboards.config.feature</module>
     </modules>
 
     <properties>

@@ -2,8 +2,8 @@
 (function () {
     var log = new Log();
 
-    var configs = require('/configs/designer.json');
     var utils = require('/modules/utils.js');
+    var configs = utils.getConfig('designer.json');
     var dashboards = require('/modules/dashboards.js');
 
     response.contentType = 'application/json';

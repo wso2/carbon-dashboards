@@ -10,7 +10,8 @@
         return;
     }
 
-    var configs = require('/configs/designer.json');
+    var utils = require('/modules/utils.js');
+    var configs = utils.getConfig('designer.json');
 
     if (!utils.allowed(user.roles, configs.designers)) {
         response.sendError(401, 'designer access not authorized');

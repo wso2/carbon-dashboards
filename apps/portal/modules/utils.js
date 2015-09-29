@@ -15,7 +15,7 @@ var tenantedPrefix = function (prefix, domain) {
     if (!domain) {
         return prefix;
     }
-    var configs = require('/configs/designer.json');
+    var configs = getConfig('designer.json');
     return prefix + configs.tenantPrefix.replace(/^\//, '') + '/' + domain + '/';
 };
 
@@ -132,14 +132,14 @@ var handlers = function (name) {
 };
 
 var store = function () {
-    var config = require('/configs/designer.json');
+    var config = getConfig('designer.json');
     var storeType = config.store.type;
     var storePath = '/extensions/stores/' + storeType + '/index.js';
     return require(storePath);
 };
 
 var dashboardStyles = function () {
-    var config = require('/configs/designer.json');
+    var config = getConfig('designer.json');
     var theme = config.theme;
     var path = 'extensions/themes/' + theme + '/css/dashboard.css';
     var file = new File('/' + path);
@@ -147,7 +147,7 @@ var dashboardStyles = function () {
 };
 
 var dashboardScripts = function () {
-    var config = require('/configs/designer.json');
+    var config = getConfig('designer.json');
     var theme = config.theme;
     var path = 'extensions/themes/' + theme + '/js/dashboard.js';
     var file = new File('/' + path);
@@ -155,7 +155,7 @@ var dashboardScripts = function () {
 };
 
 var portalStyles = function () {
-    var config = require('/configs/designer.json');
+    var config = getConfig('designer.json');
     var theme = config.theme;
     var path = 'extensions/themes/' + theme + '/css/portal.css';
     var file = new File('/' + path);
@@ -163,7 +163,7 @@ var portalStyles = function () {
 };
 
 var portalScripts = function () {
-    var config = require('/configs/designer.json');
+    var config = getConfig('designer.json');
     var theme = config.theme;
     var path = 'extensions/themes/' + theme + '/js/portal.js';
     var file = new File('/' + path);
@@ -171,7 +171,7 @@ var portalScripts = function () {
 };
 
 var resolvePath = function (path) {
-    var config = require('/configs/designer.json');
+    var config = getConfig('designer.json');
     var theme = config.theme;
     var extendedPath = '/extensions/themes/' + theme + '/' + path;
     var file = new File(extendedPath);
@@ -179,9 +179,20 @@ var resolvePath = function (path) {
 };
 
 var resolveUrl = function (path) {
-    var config = require('/configs/designer.json');
+    var config = getConfig('designer.json');
     var theme = config.theme;
     var extendedPath = 'extensions/themes/' + theme + '/' + path;
     var file = new File('/' + extendedPath);
     return file.isExists() ? extendedPath : 'theme/' + path;
+};
+
+var getConfig = function (conf) {
+    var path = '/_system/config/repository/components/org.wso2.carbon.governance/configuration/portal/' + conf;
+    var carbon = require('carbon');
+    var server = new carbon.server.Server();
+    var registry = new carbon.registry.Registry(server, {
+        system: true
+    });
+    var configContent = registry.content(path);
+    return JSON.parse(configContent);
 };

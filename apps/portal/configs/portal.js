@@ -3,7 +3,8 @@ var config;
     config = function () {
         var log = new Log(),
             pinch = require('/modules/pinch.min.js').pinch,
-            config = require('/configs/designer.json'),
+            utils = require('/modules/utils.js'),
+            config = utils.getConfig('designer.json'),
             process = require('process'),
             localIP = process.getProperty('server.host'),
             httpPort = process.getProperty('http.port'),

@@ -10,7 +10,7 @@ var utils = require('/modules/utils.js');
 
     var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
-        var config = require('/configs/designer.json');
+        var config = utils.getConfig('designer.json');
         var domain = config.shareStore ? carbon.server.superTenant.domain : ctx.domain;
         return dir + domain + '/' + type + '/';
     };

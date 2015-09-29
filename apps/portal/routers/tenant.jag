@@ -14,11 +14,11 @@ var originalURI;
     var matcher;
     var log = new Log();
     var carbon = require('carbon');
-    var configs = require('/configs/designer.json');
     var usr = require('/modules/user.js');
 
     utils = require('/modules/utils.js');
 
+    var configs = utils.getConfig('designer.json');
     superDomain = String(carbon.server.superTenant.domain);
     user = usr.current();
     tenantPrefix = configs.tenantPrefix;

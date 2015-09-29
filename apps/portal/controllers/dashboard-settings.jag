@@ -8,6 +8,7 @@ var dashboardId;
         sendLogin();
         return;
     }
+    var utils = require('/modules/utils.js');
 
     if (userDomain !== (urlDomain || superDomain)) {
         response.sendRedirect(utils.tenantedPrefix(urlPrefix, userDomain));
@@ -39,7 +40,7 @@ var dashboardId;
         return;
     }
 
-    var configs = require('/configs/designer.json');
+    var configs = utils.getConfig('designer.json');
 
     if (!utils.allowed(user.roles, configs.designers)) {
         response.sendError(401, 'settings access not authorized');
