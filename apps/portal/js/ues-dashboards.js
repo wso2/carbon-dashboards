@@ -12,7 +12,8 @@
     var createComponent = function (container, component, done) {
         var type = component.content.type;
         var plugin = findPlugin(type);
-        var sandboxId = (component.viewOption? component.id+"_full" : component.id );
+        var sandboxId = component.id;
+        //(component.viewOption? component.id+"_full" : component.id );
         var sandbox = $('<div id="' + sandboxId + '" data-component-id="' + component.id + '" class="ues-component"></div>');
         sandbox.appendTo(container);
         plugin.create(sandbox, component, ues.hub, done);

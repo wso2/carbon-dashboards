@@ -74,6 +74,12 @@
         if(metadata.views.hasOwnProperty('settings')){
             comp.hasCustomUserPrefView= true;
         }
+    };
+
+    var hasCustomFullView = function (metadata, comp) {
+        if(metadata.views.hasOwnProperty('full')){
+            comp.hasCustomFullView= true;
+        }
     }
 
     component.create = function (sandbox, comp, hub, done) {
@@ -108,10 +114,11 @@
             var panel = createPanel(styles);
             var compHeight = $(document).height() - 200;
             var height = (comp.viewOption ? compHeight : '');
-            if(comp.viewOption){
-                cid = cid + "_full";
-            }
-            hasCustomUserPrefView(metadata, comp)
+//            if(comp.viewOption){
+//                cid = cid + "_full";
+//            }
+            hasCustomUserPrefView(metadata, comp);
+            hasCustomFullView(metadata, comp);
             var container = $('<div id="' + cid + '" style="height:' + height + 'px;"></div>');
             container.appendTo(panel.find('.panel-body'));
             panel.appendTo(sandbox);
