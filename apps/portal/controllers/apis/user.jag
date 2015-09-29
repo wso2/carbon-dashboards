@@ -1,0 +1,16 @@
+<%
+(function () {
+
+    if (!user) {
+        response.sendError(401, 'unauthorized to access');
+        return;
+    }
+
+    var matcher = new URIMatcher(request.getRequestURI());
+    if (matcher.match('/user')) {
+        print(user);
+        return;
+    }
+
+}());
+%>
