@@ -40,6 +40,10 @@ var sandbox = function (context, fn) {
 };
 
 var allowed = function (roles, allowed) {
+    var carbon = require('carbon');
+    var server = new carbon.server.Server();
+    var userManager = new carbon.user.UserManager(server);
+    var adminRole = userManager.getAdminRoleName();
     var hasRole = function (role, roles) {
         var i;
         var length = roles.length;
@@ -50,6 +54,9 @@ var allowed = function (roles, allowed) {
         }
         return false;
     };
+    if(hasRole(adminRole, roles)){
+        return true;
+    }
     var i;
     var length = allowed.length;
     for (i = 0; i < length; i++) {

@@ -69,6 +69,12 @@
         html += '</div>';
         return $(html);
     };
+    
+    var hasCustomUserPrefView = function (metadata, comp) {
+        if(metadata.views.hasOwnProperty('settings')){
+            comp.hasCustomUserPrefView= true;
+        }
+    }
 
     component.create = function (sandbox, comp, hub, done) {
         var content = comp.content;
@@ -102,7 +108,10 @@
             var panel = createPanel(styles);
             var compHeight = $(document).height() - 200;
             var height = (comp.viewOption ? compHeight : '');
-            cid = (comp.viewOption ? cid : cid+"_full");
+            if(comp.viewOption){
+                cid = cid + "_full";
+            }
+            hasCustomUserPrefView(metadata, comp)
             var container = $('<div id="' + cid + '" style="height:' + height + 'px;"></div>');
             container.appendTo(panel.find('.panel-body'));
             panel.appendTo(sandbox);
