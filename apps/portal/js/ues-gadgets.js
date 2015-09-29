@@ -1,5 +1,6 @@
 (function () {
     var registry = {};
+    var username = null;
     //search overridden configs through ues.configs object
     var configs = function (configs, args) {
         var find = function (o, args) {
@@ -80,6 +81,26 @@
     //Initializing OpenAjax ManagedHub
     var hub = new OpenAjax.hub.ManagedHub({
         onSubscribe: function (topic, container) {
+
+        if(topic.indexOf("token-channel") !=-1){
+            if(username){
+                ues.hub.publish("token-channel", username);
+            }else{
+
+                jQuery.ajax({
+                    url: '/portal/apis/user',
+                    type: 'get',
+                    dataType: "json",
+                    success: function (data) {
+                        username = data.username;
+                        ues.hub.publish("token-channel", username);
+                    },
+                    error: function (msg) {
+                        ues.hub.publish("token-channel", null);
+                    }
+                });
+            }
+        }
             var fn = configs(ues.configs, ['hub', 'subscribe']);
             return fn ? fn(topic, container) : true;
         },

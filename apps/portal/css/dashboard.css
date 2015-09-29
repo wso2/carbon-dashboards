@@ -12,6 +12,12 @@ a, a:focus {
 
 }
 
+.ues-toolbar{
+    position: relative;
+    z-index: 10;
+    float: right;
+}
+
 .ues-component-box iframe {
     transition: height 0.4s;
 }

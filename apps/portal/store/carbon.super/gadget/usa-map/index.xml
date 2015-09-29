@@ -125,7 +125,7 @@ yyyyyyyyyyyyyyyyy(full view)
     ]]>
     </Content>
 
- <Content type="html" view="setting">
+ <Content type="html" view="settings">
        <![CDATA[
 		This is settings
   	]]>
