@@ -12,7 +12,8 @@
     var createComponent = function (container, component, done) {
         var type = component.content.type;
         var plugin = findPlugin(type);
-        var sandboxId = (component.viewOption? component.id+"_full" : component.id );
+        var sandboxId = component.id;
+        //(component.viewOption? component.id+"_full" : component.id );
         var sandbox = $('<div id="' + sandboxId + '" data-component-id="' + component.id + '" class="ues-component"></div>');
         sandbox.appendTo(container);
         plugin.create(sandbox, component, ues.hub, done);
@@ -46,6 +47,17 @@
         }
         channels.forEach(function (channel) {
             publishForClient.apply(ues.hub, [container, channel, data]);
+        });
+    };
+
+    //overriding publish method
+    var publish = ues.hub.publish;
+    ues.hub.publish = function (topic, data){
+        $(".container").find('.ues-component').each(function () {
+            var id = $(this).attr('id');
+            var channel = id + "." + topic;
+            console.log(channel);
+            publish.apply(ues.hub, [channel, data]);
         });
     };
 

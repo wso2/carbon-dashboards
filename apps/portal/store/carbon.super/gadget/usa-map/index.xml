@@ -26,7 +26,7 @@
 </style>
 </head>
 <body>
-xxxxx(home view)
+xxxxxddd(home view)
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -124,4 +124,10 @@ yyyyyyyyyyyyyyyyy(full view)
 </html>
     ]]>
     </Content>
+
+ <Content type="html" view="settings">
+       <![CDATA[
+		This is settings
+  	]]>
+  </Content>
 </Module>
