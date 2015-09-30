@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
+        <version>1.0.5-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboards.config</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
+            <version>${carbon.dashboards.version}</version>
         </dependency>
     </dependencies>
 
@@ -55,12 +55,6 @@
                             <bundles>
                                 <bundleDef>org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.config</bundleDef>
                             </bundles>
-                            <!--<adviceFile>
-                                <properties>
-                                    <propertyDef>org.wso2.carbon.p2.category.type:composite</propertyDef>
-                                    <propertyDef>org.eclipse.equinox.p2.type.group:false</propertyDef>
-                                </properties>
-                            </adviceFile>-->
                         </configuration>
                     </execution>
                 </executions>
