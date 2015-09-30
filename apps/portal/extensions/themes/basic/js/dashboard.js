@@ -99,7 +99,7 @@ $(function () {
      * @param component
      */
     var renderComponentToolbar = function (component) {
-        var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
+        var el = $('#' + component.id).prepend($(componentToolbarHbs(component.content)));
         $('[data-toggle="tooltip"]', el).tooltip();
     };
     /**

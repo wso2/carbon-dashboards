@@ -102,9 +102,11 @@ pages.forEach(function (p) {
         <ul class="list-inline pull-right">
             <li><a href="#" class="ues-component-full-handle"><i class="fw fw-laptop"></i></a></li>
         </ul>
+        {{#has options}}
         <ul class="list-inline pull-right">
             <li><a href="#" class="ues-component-settings-handle"><i class="fw fw-settings ues-component-properties-toggle"></i></a></li>
         </ul>
+        {{/has}}
     </div>
 </script>
 <script id="ues-component-full-hbs" type="text/x-handlebars-template">
