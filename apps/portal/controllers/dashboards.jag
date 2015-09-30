@@ -32,8 +32,15 @@ var fresh;
         });
 
         if (!dashboard) {
-            response.sendError(404, 'requested dashboard cannot be found');
-            return;
+            var usr = require('/modules/user.js');
+            var user = usr.current();
+            if(!user) {
+                response.sendRedirect(tenantedUrlPrefix + 'login?destination=' + dest);
+                return;
+            } else {
+                response.sendError(404, 'requested dashboard cannot be found' + dashboardId);
+                return;
+            }
         }
 
         isCustomize = request.getParameter('custom');
