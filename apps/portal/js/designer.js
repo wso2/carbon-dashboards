@@ -523,19 +523,16 @@ $(function () {
             if(component.fullViewPoped){
                 view = 'default';
                 renderMaxView(component, view);
-                componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.css('width','auto');
-                componentContainer.find('.panel-body').css('height','auto');
                 //minimize logic
+                componentContainer.removeClass('ues-fullview-visible');
+                componentContainer.find('.panel-body').css('height','auto');
                 component.fullViewPoped = false;
             } else {
                 view = 'full';
                 renderMaxView(component, view);
+                //maximize logic
                 componentContainer.addClass('ues-fullview-visible');
                 var height = $(window).height();
-                var width = $(document).width();
-
-                componentContainer.css('width','100%');
                 componentContainer.find('.panel-body').css('height',height + 'px');
                 component.fullViewPoped = true;
             }

@@ -150,6 +150,11 @@ pages.forEach(function (p) {
                                             </select>
                                         </label>
                                     {{/equals}}
+                                    {{#equals type "text"}}
+                                        <label>{{title}}
+                                            <textarea name="{{@key}}" class="form-control" rows="4">{{value}}</textarea>
+                                        </label>
+                                    {{/equals}}
                                 </div>
                             {{/each}}
                         </div>
