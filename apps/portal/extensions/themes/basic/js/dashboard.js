@@ -12,12 +12,14 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
+            var htmlBody = $('body');
             var view = 'default';
             if(component.fullViewPoped){
                 view = 'default';
                 renderMaxView(component, view);
                 componentContainer.removeClass('ues-fullview-visible');
                 componentContainer.find('.panel-body').css('height','auto');
+                htmlBody.css('overflow-y','auto');
                 //minimize logic
                 component.fullViewPoped = false;
             } else {
@@ -26,6 +28,7 @@ $(function () {
                 componentContainer.addClass('ues-fullview-visible');
                 var height = $(window).height();
                 componentContainer.find('.panel-body').css('height',height + 'px');
+                htmlBody.css('overflow-y','hidden');
                 //maximize logic
                 component.fullViewPoped = true;
             }
