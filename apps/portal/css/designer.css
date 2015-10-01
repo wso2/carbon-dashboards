@@ -267,3 +267,11 @@ h4.ues-page-title {
 .modal-fullscreen{
     z-index: 1201;
 }
+
+.ues-page-top {
+    position: relative;
+}
+
+.toggle-design-view {
+    float: right;
+}

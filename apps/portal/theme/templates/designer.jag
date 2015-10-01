@@ -204,11 +204,16 @@
         <div class="row">
             <div class="col-md-12">
                 <h4 class="ues-page-title">{{current.title}}</h4>
+                <span class="ues-page-id hide">{{current.id}}</span>
+                <ul class="nav navbar-nav toggle-design-view">
+                    <li class="active"> <a class="ues-design-default-view" href="#" > Default view </a> </li>
+                    <li> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>
+                </ul>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="ues-layout container-fluid"></div>
+                <div class="default-ues-layout container-fluid"></div>
             </div>
         </div>
     </div>
@@ -410,6 +415,9 @@
                     <div class="checkbox">
                         <label>
                             <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> Use as Landing
+                        </label>
+                        <label>
+                            <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}}> Make Anonymous
                         </label>
                     </div>
                 </form>
