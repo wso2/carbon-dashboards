@@ -93,13 +93,13 @@
         document.title = dashboard.title + ' | ' + page.title;
     };
 
-    var renderPage = function (element, dashboard, page, done) {
+    var renderPage = function (element, dashboard, page, pageType, done) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page);
         var container;
         var area;
         var layout = $(page.layout.content);
-        var content = page.content.default;
+        var content = page.content[pageType];
         element.html(layout);
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -132,13 +132,13 @@
         }
     };
 
-    var renderDashboard = function (element, dashboard, name, done) {
+    var renderDashboard = function (element, dashboard, name, pageType, done) {
         name = name || dashboard.landing;
         var page = findPage(dashboard, name);
         if (!page) {
             throw 'requested page : ' + name + ' cannot be found';
         }
-        renderPage(element, dashboard, page, done);
+        renderPage(element, dashboard, page, pageType, done);
     };
 
     var rewireDashboard = function (page) {

@@ -15,7 +15,11 @@ $(function () {
 
     var page;
 
+    var pageType;
+
     var activeComponent;
+
+    var pageSelect = 'default'; //this is to store switch between default/anon view
 
     var freshDashboard = true;
 
@@ -295,7 +299,8 @@ $(function () {
         var area;
         var component;
         var components;
-        var content = page.content.default;
+        pageType = pageType ? pageType : 'default';
+        var content = page.content[pageType];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
@@ -366,7 +371,8 @@ $(function () {
             }
             var container = $('#' + component.id);
             var area = container.closest('.ues-component-box').attr('id');
-            var content = page.content.default;
+            pageType = pageType ? pageType : 'default';
+            var content = page.content[pageType];
             area = content[area];
             var index = area.indexOf(component);
             area.splice(index, 1);
@@ -425,9 +431,16 @@ $(function () {
      * @param page
      * @param done
      */
-    var destroyPage = function (page, done) {
+    var destroyPage = function (page, pageType, done) {
+
         var area;
-        var content = page.content.default;
+        pageType = pageType ? pageType : 'default';
+        if(pageType === 'default' && ues.global.anon){
+            pageType = 'anon';
+        }else{
+            pageType = 'default';
+        }
+        var content = page.content[pageType];
         var tasks = [];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -454,7 +467,7 @@ $(function () {
      * @param pid
      * @param done
      */
-    var removePage = function (pid, done) {
+    var removePage = function (pid, type, done) {
         var p = findPage(dashboard, pid);
         var pages = dashboard.pages;
         var index = pages.indexOf(p);
@@ -463,7 +476,7 @@ $(function () {
         if (page.id !== pid) {
             return done(false);
         }
-        destroyPage(p, done);
+        destroyPage(p, type, done);
     };
 
     /**
@@ -520,11 +533,11 @@ $(function () {
             if(component.fullViewPoped){
                 $('#componentFull').modal('show');
                 fullViewPopped.hide();
-                $('#' + id + '_full').show();
+                $('#' + id ).show();
             } else {
                 if(fullViewPopped.length > 0){
                     fullViewPopped.hide();
-                    $('#' + id + '_full').show();
+                    $('#' + id ).show();
                     $('#componentFull').modal('show');
                     componentContainer = $('.modal-body');
                 }else{
@@ -554,6 +567,19 @@ $(function () {
                 saveDashboard();
             });
         });
+        designer.on('click', '.ues-design-default-view', function () {
+            //default
+            pageType = 'default'; 
+            ues.global.type = 'default'; 
+            switchPage(getPageId(), pageType);   
+        });
+        designer.on('click', '.ues-design-anon-view', function () {
+            //anon
+           pageType = 'anon';
+           ues.global.type = 'anon';
+           ues.global.anon = true;
+           switchPage(getPageId(), pageType); 
+        });
         designer.on('mouseenter', '.ues-component .ues-toolbar .ues-move-handle', function () {
             $(this).draggable({
                 cancel: false,
@@ -569,7 +595,14 @@ $(function () {
         }).on('mouseleave', '.ues-component .ues-toolbar .ues-move-handle', function () {
             $(this).draggable('destroy');
         });
+
     };
+    /**
+     * return page id from DOM
+     */
+    var getPageId = function(){
+        return $('.ues-page-id').text();
+    }
 
     /**
      * initializes the ues properties
@@ -611,7 +644,8 @@ $(function () {
         var id = randomId();
         //TODO: remove hardcoded gadget
         var area = container.attr('id');
-        var content = page.content.default;
+        pageType = pageType ? pageType : 'default';
+        var content = page.content[pageType];
         content = content[area] || (content[area] = []);
         updateStyles(asset);
         var component = {
@@ -637,7 +671,8 @@ $(function () {
     var moveComponent = function (container, id) {
         var component = findComponent(id);
         var area = container.attr('id');
-        var content = page.content.default;
+        pageType = pageType ? pageType : 'default';
+        var content = page.content[pageType];
         content = content[area] || (content[area] = []);
         content.push(component);
         removeComponent(component, function (err) {
@@ -722,7 +757,8 @@ $(function () {
     var pageNotifiers = function (component, page) {
         var area;
         var notifiers = {};
-        var content = page.content.default;
+        pageType = pageType ? pageType : 'default';
+        var content = page.content[pageType];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 areaNotifiers(notifiers, component, content[area]);
@@ -865,10 +901,19 @@ $(function () {
         var id = $('.id', sandbox).val();
         var title = $('.title', sandbox).val();
         var landing = $('.landing', sandbox);
+        var anon = $('.anon', sandbox);
         page.id = id;
         page.title = title;
         if (landing.is(':checked')) {
             dashboard.landing = id;
+        }
+        if (anon.is(':checked')) {
+            dashboard.isanon = true;
+            $(".toggle-design-view").removeClass("hide");
+            //TODO switch to anon dashboard
+        } else{
+            dashboard.isanon = false;
+            $(".toggle-design-view").addClass("hide");
         }
         $('#ues-designer').find('.ues-page-title').text(title);
         $('#ues-properties').find('.ues-page-title').text(title);
@@ -1194,14 +1239,14 @@ $(function () {
         actions.find('.ues-pages-list').on('click', 'li a', function () {
             var thiz = $(this);
             var pid = thiz.data('id');
-            switchPage(pid);
+            switchPage(pid, 'default');
         });
 
         actions.find('.ues-pages-list').on('click', 'li a .ues-trash', function (e) {
             e.stopPropagation();
             var thiz = $(this);
             var pid = thiz.parent().data('id');
-            removePage(pid, function (err) {
+            removePage(pid, 'default', function (err) {
                 var pages = dashboard.pages;
                 updatePagesList(pages);
                 if (!pages.length) {
@@ -1284,7 +1329,7 @@ $(function () {
         return $('#ues-designer').html(layoutHbs({
             pages: dashboard.pages,
             current: page
-        })).find('.ues-layout');
+        })).find('.default-ues-layout');
     };
 
     var updatePagesList = function () {
@@ -1336,11 +1381,11 @@ $(function () {
      * switches the given page
      * @param pid
      */
-    var switchPage = function (pid) {
+    var switchPage = function (pid, pageType) {
         if (!page) {
             return renderPage(pid);
         }
-        destroyPage(page, function (err) {
+        destroyPage(page, pageType,  function (err) {
             if (err) {
                 throw err;
             }
@@ -1361,9 +1406,10 @@ $(function () {
         if (propertiesVisible()) {
             renderPageProperties(page);
         }
+        pageType = pageType ? pageType : 'default';
         $('.ues-context-menu .ues-component-properties-toggle').parent().hide();
-        var container = layoutContainer();
-        ues.dashboards.render(container, dashboard, pid, function (err) {
+        var default_container = layoutContainer();
+        ues.dashboards.render(default_container, dashboard, pid, pageType ,function (err) {
             $('#ues-designer').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
