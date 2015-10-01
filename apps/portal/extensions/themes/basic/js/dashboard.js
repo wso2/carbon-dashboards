@@ -48,12 +48,13 @@ $(function () {
             var settings = gadgetSettingsViewHbs(component.content);
             if (componentContainer.hasClass('ues-userprep-visible')) {
                 componentContainer.removeClass('ues-userprep-visible');
+                updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
                 componentContainer.find('.ues-sandbox').remove();
                 return;
             }
             componentContainer.append(settings);
             componentContainer.addClass('ues-userprep-visible');
-            renderComponentProperties(component);
+//            renderComponentProperties(component);
         });
     };
 
