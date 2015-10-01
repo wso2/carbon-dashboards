@@ -31,10 +31,13 @@
         </div>
         <div class="collapse navbar-collapse horizontal-bar">
             <ul class="nav navbar-nav">
+                <% if(dashboard.pages.length >= 2){  %>
                 <li<% if(dashboard.landing === pageId) { %> class="active"<% } %>>
                     <a href="<%=dbRoot%>">Home</a>
                 </li>
                 <%
+}
+
 var pages = dashboard.pages;
 pages.forEach(function (p) {
     if (dashboard.landing !== p.id) {
