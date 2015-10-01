@@ -114,7 +114,7 @@ $(function () {
         var component;
         var components;
 
-        var content = page.content;
+        var content = page.content.default;
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
@@ -154,7 +154,7 @@ $(function () {
             $('#componentFull').modal('hide');
 
         });
-        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, dashboardDone);
+        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, 'default', dashboardDone);
 
     };
     initDashboard();
