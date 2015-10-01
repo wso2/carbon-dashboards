@@ -24,3 +24,15 @@
 .ues-component .panel-heading .ues-title-right {
     text-align: right;
 }
+
+.ues-fullview-visible{
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    overflow:hidden;
+    position: absolute;
+    z-index: 2000;
+    min-height: 100%;
+    width: 100%;
+}

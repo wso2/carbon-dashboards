@@ -83,19 +83,19 @@ $(function () {
      */
     var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html() || '');
 
-    var layoutHbs = Handlebars.compile($("#ues-layout-hbs").html());
+    var layoutHbs = Handlebars.compile($("#ues-layout-hbs").html() || '');
 
-    var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html());
+    var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html() || '');
 
-    var noComponentsHbs = Handlebars.compile($("#ues-no-components-hbs").html());
+    var noComponentsHbs = Handlebars.compile($("#ues-no-components-hbs").html() || '');
 
-    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
+    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
 
-    var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html());
+    var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html() || '');
 
     var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html() || '');
 
-    var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
+    var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html() || '');
 
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
 
@@ -258,12 +258,15 @@ $(function () {
      * @param component
      * @param componentContainer
      */
-    var renderMaxView = function (component, componentContainer) {
-        ues.components.create(componentContainer, component, function (err, block) {
-            if (err) {
-                throw err;
-            }
-        });
+    var renderMaxView = function (component, view) {
+        if(component.hasCustomFullView){
+            component.viewOption = view;
+            ues.components.update(component, function (err, block) {
+                if (err) {
+                    throw err;
+                }
+            });
+        }
     };
     /**
      * find an asset of the given type from the store cache
@@ -515,28 +518,26 @@ $(function () {
         designer.on('click', 'a.ues-component-full-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
-            var fullViewPopped = $('.modal-body > .ues-component');
-            var componentContainer;
+            var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
+            var view = 'default';
             if(component.fullViewPoped){
-                $('#componentFull').modal('show');
-                fullViewPopped.hide();
-                $('#' + id + '_full').show();
+                view = 'default';
+                renderMaxView(component, view);
+                //minimize logic
+                componentContainer.removeClass('ues-fullview-visible');
+                componentContainer.find('.panel-body').css('height','auto');
+                component.fullViewPoped = false;
             } else {
-                if(fullViewPopped.length > 0){
-                    fullViewPopped.hide();
-                    $('#' + id + '_full').show();
-                    $('#componentFull').modal('show');
-                    componentContainer = $('.modal-body');
-                }else{
-                    var fullView = $('body').append(componentMaxViewHbs({}));
-                    fullView.find('#componentFull').modal('show');
-                    componentContainer = fullView.find('.modal-body');
-                }
-                component.viewOption = 'full';
-                renderMaxView(component, componentContainer);
+                view = 'full';
+                renderMaxView(component, view);
+                //maximize logic
+                componentContainer.addClass('ues-fullview-visible');
+                var height = $(window).height();
+                componentContainer.find('.panel-body').css('height',height + 'px');
                 component.fullViewPoped = true;
             }
         });
+
         $('body').on('click','.modal-footer button',function(){
             $('#componentFull').modal('hide');
 
@@ -1148,7 +1149,6 @@ $(function () {
     };
 
     var initDesignerMenu = function () {
-
         $("#ues-workspace-designer").show();
 
         var menu = $('#ues-workspace-designer').find('.ues-context-menu');
