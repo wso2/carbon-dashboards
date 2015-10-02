@@ -523,19 +523,16 @@ $(function () {
             if(component.fullViewPoped){
                 view = 'default';
                 renderMaxView(component, view);
-                componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.css('width','auto');
-                componentContainer.find('.panel-body').css('height','auto');
                 //minimize logic
+                componentContainer.removeClass('ues-fullview-visible');
+                componentContainer.find('.panel-body').css('height','auto');
                 component.fullViewPoped = false;
             } else {
                 view = 'full';
                 renderMaxView(component, view);
+                //maximize logic
                 componentContainer.addClass('ues-fullview-visible');
                 var height = $(window).height();
-                var width = $(document).width();
-
-                componentContainer.css('width','100%');
                 componentContainer.find('.panel-body').css('height',height + 'px');
                 component.fullViewPoped = true;
             }
@@ -564,7 +561,7 @@ $(function () {
                 appendTo: 'body',
                 helper: 'clone',
                 start: function (event, ui) {
-                    console.log('dragging');
+                    //console.log('dragging');
                 },
                 stop: function () {
                     //$('#left a[href="#components"]').tab('show');
@@ -1270,13 +1267,26 @@ $(function () {
                 var el = $(this);
                 switch (action) {
                     case 'move':
-                        moveComponent(el, id);
+                        if(!hasComponents($(this))) {
+                            moveComponent(el, id);
+                        }
                         break;
                     default:
-                        createComponent(el, findStoreCache(type, id));
+                        if(!hasComponents($(this))){
+                            createComponent(el, findStoreCache(type, id));
+                        }
                 }
             }
         });
+    };
+
+
+    var hasComponents = function(container){
+        var components = container.find('.ues-component').length;
+        if(components > 0){
+            return true;
+        }
+        return false;
     };
 
     /**

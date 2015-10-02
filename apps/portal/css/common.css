@@ -34,4 +34,5 @@
     position: absolute;
     z-index: 2000;
     min-height: 100%;
+    width: 100%;
 }

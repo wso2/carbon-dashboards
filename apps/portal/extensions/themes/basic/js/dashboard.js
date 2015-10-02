@@ -17,7 +17,6 @@ $(function () {
                 view = 'default';
                 renderMaxView(component, view);
                 componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.css('width','auto');
                 componentContainer.find('.panel-body').css('height','auto');
                 //minimize logic
                 component.fullViewPoped = false;
@@ -26,9 +25,6 @@ $(function () {
                 renderMaxView(component, view);
                 componentContainer.addClass('ues-fullview-visible');
                 var height = $(window).height();
-                var width = $(window).width();
-
-                componentContainer.css('width','100%');
                 componentContainer.find('.panel-body').css('height',height + 'px');
                 //maximize logic
                 component.fullViewPoped = true;
@@ -37,7 +33,6 @@ $(function () {
 
         $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
-//            var body = $(this).closest('.panel-body');
             var component = findComponent(id);
             componentContainer = $('#gadget-' + id);
 
@@ -53,12 +48,13 @@ $(function () {
             var settings = gadgetSettingsViewHbs(component.content);
             if (componentContainer.hasClass('ues-userprep-visible')) {
                 componentContainer.removeClass('ues-userprep-visible');
+                updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
                 componentContainer.find('.ues-sandbox').remove();
                 return;
             }
             componentContainer.append(settings);
             componentContainer.addClass('ues-userprep-visible');
-            renderComponentProperties(component);
+//            renderComponentProperties(component);
         });
     };
 
@@ -99,7 +95,7 @@ $(function () {
      * @param component
      */
     var renderComponentToolbar = function (component) {
-        var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
+        var el = $('#' + component.id).prepend($(componentToolbarHbs(component.content)));
         $('[data-toggle="tooltip"]', el).tooltip();
     };
     /**
