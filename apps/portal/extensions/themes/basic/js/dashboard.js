@@ -14,6 +14,7 @@ $(function () {
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
             var htmlBody = $('body');
             var view = 'default';
+            var jQueryId = $('#' + id);
             if(component.fullViewPoped){
                 view = 'default';
                 renderMaxView(component, view);
@@ -31,6 +32,7 @@ $(function () {
                 htmlBody.css('overflow-y','hidden');
                 //maximize logic
                 component.fullViewPoped = true;
+                renderComponentMaxView(jQueryId);
             }
         });
 
@@ -93,6 +95,18 @@ $(function () {
             });
         }
     };
+
+    /**
+     * Render maximized view for a gadget
+     * @param component jQuery resresentative id
+     */
+    var renderComponentMaxView = function (jQueryId) {
+        jQueryId.css('width','100%');
+        jQueryId.css('position','inherit');
+        jQueryId.css('left','inherit');
+    };
+
+
     /**
      * renders the component toolbar of a given component
      * @param component
