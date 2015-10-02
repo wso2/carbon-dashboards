@@ -1246,6 +1246,8 @@ $(function () {
     * pref.set() method this will be executed.
     */
     var registerRpc = function () {
+        //Load the rpc library.
+        $.getScript('portal/js/rpc.js');
         gadgets.rpc.register('set_pref', function(token, name, value) {
 
             //Store the gadget id in a variable
