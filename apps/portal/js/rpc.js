@@ -175,7 +175,8 @@ if (!window.gadgets["config"]) {
                         for (var n in m) {
                             if (m.hasOwnProperty(n)) {
                                 if (!m[n](o[n])) {
-                                    throw new Error('Invalid config value "' + o[n] + '" for parameter "' + n + '" in component "' + q + '"')
+                                    throw new Error('Invalid config value "' + o[n] +
+                                        '" for parameter "' + n + '" in component "' + q + '"')
                                 }
                             }
                         }
@@ -635,7 +636,8 @@ gapi.util.getOrigin = function(a) {
     var b = a.substring(a.indexOf("://") + 3),
         c = b.indexOf("/"); - 1 != c && (b = b.substring(0, c));
     a = a.substring(0, a.indexOf("://"));
-    if ("http" !== a && "https" !== a && "chrome-extension" !== a && "file" !== a) throw Error("Invalid URI scheme in origin");
+    if ("http" !== a && "https" !== a && "chrome-extension" !== a && "file" !== a) throw Error(
+        "Invalid URI scheme in origin");
     var c = "",
         d = b.indexOf(":");
     if (-1 != d) {
@@ -692,7 +694,9 @@ if (!(window.JSON && window.JSON.parse && window.JSON.stringify)) {
             return n < 10 ? "0" + n : n
         }
         Date.prototype.toJSON = function() {
-            return [this.getUTCFullYear(), "-", f(this.getUTCMonth() + 1), "-", f(this.getUTCDate()), "T", f(this.getUTCHours()), ":", f(this.getUTCMinutes()), ":", f(this.getUTCSeconds()), "Z"].join("")
+            return [this.getUTCFullYear(), "-", f(this.getUTCMonth() + 1), "-", f(this.getUTCDate()), "T", f(
+                this.getUTCHours()), ":", f(this.getUTCMinutes()), ":", f(this.getUTCSeconds()), "Z"].join(
+                "")
         };
         var m = {
             "\b": "\\b",
@@ -754,7 +758,9 @@ if (!(window.JSON && window.JSON.parse && window.JSON.stringify)) {
         return {
             stringify: stringify,
             parse: function(text) {
-                if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/b-u]/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
+                if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/b-u]/g, "@").replace(
+                        /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(
+                        /(?:^|:|,)(?:\s*\[)+/g, ""))) {
                     return eval("(" + text + ")")
                 }
                 return false
@@ -888,7 +894,9 @@ if (!gadgets.rpctx.wpm) {
                     }, 0)
                 } else {
                     if (h != "..") {
-                        gadgets.error("No relay set (used as window.postMessage targetOrigin), cannot send cross-domain message")
+                        gadgets.error(
+                            "No relay set (used as window.postMessage targetOrigin), cannot send cross-domain message"
+                        )
                     }
                 }
                 return true
@@ -961,7 +969,11 @@ if (!window.gadgets || !window.gadgets["rpc"]) {
             if (d.rpctx == "rmr") {
                 return gadgets.rpctx.rmr
             }
-            var ae = typeof window.postMessage === "function" ? gadgets.rpctx.wpm : typeof window.postMessage === "object" ? gadgets.rpctx.wpm : window.ActiveXObject ? (gadgets.rpctx.flash ? gadgets.rpctx.flash : (gadgets.rpctx.nix ? gadgets.rpctx.nix : gadgets.rpctx.ifpc)) : navigator.userAgent.indexOf("WebKit") > 0 ? gadgets.rpctx.rmr : navigator.product === "Gecko" ? gadgets.rpctx.frameElement : gadgets.rpctx.ifpc;
+            var ae = typeof window.postMessage === "function" ? gadgets.rpctx.wpm : typeof window.postMessage ===
+                "object" ? gadgets.rpctx.wpm : window.ActiveXObject ? (gadgets.rpctx.flash ? gadgets.rpctx.flash :
+                    (gadgets.rpctx.nix ? gadgets.rpctx.nix : gadgets.rpctx.ifpc)) : navigator.userAgent.indexOf(
+                    "WebKit") > 0 ? gadgets.rpctx.rmr : navigator.product === "Gecko" ? gadgets.rpctx.frameElement :
+                gadgets.rpctx.ifpc;
             if (!ae) {
                 ae = R
             }
