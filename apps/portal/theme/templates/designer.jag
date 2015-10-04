@@ -439,7 +439,7 @@
 </script>
 <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
     {{#each pages}}
-    <li{{#equals id ../current.id}} class="active"{{/equals}}>
+    <li{{#equals id ../current.id}} class="active disabled"{{/equals}}>
         <a href="#" data-id="{{id}}">{{title}} <i class="fw fw-delete pull-right ues-trash"></i></a>
     </li>
     {{/each}}
