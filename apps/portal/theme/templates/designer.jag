@@ -218,8 +218,8 @@
                 <h4 class="ues-page-title">{{current.title}}</h4>
                 <span class="ues-page-id hide">{{current.id}}</span>
                     <ul class="nav navbar-nav toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">
-                        <li class="active"> <a class="ues-design-default-view" href="#" > Default view </a> </li>
-                        <li> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>
+                        <li class="toggle-design-view-default disabled"> <a class="ues-design-default-view active" href="#" > Default view </a> </li>
+                        <li class="toggle-design-view-anon"> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>
                     </ul>
             </div>
         </div>

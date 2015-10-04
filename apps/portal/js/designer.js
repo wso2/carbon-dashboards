@@ -29,6 +29,12 @@ $(function () {
         layout: []
     };
 
+    $(document).ready(function() {
+       $(".nav li.disabled a").click(function() {
+         return false;
+       });
+    });
+
     var clone = function (o) {
         return JSON.parse(JSON.stringify(o));
     };
@@ -572,7 +578,9 @@ $(function () {
             //default
             pageType = 'default'; 
             ues.global.type = 'default'; 
-            switchPage(getPageId(), pageType);   
+            switchPage(getPageId(), pageType);
+            $('.toggle-design-view-anon').removeClass('disabled');
+            $('.toggle-design-view-default').addClass('disabled');   
         });
         designer.on('click', '.ues-design-anon-view', function () {
             //anon
@@ -580,6 +588,8 @@ $(function () {
            ues.global.type = 'anon';
            ues.global.anon = true;
            switchPage(getPageId(), pageType); 
+           $('.toggle-design-view-default').removeClass('disabled');
+           $('.toggle-design-view-anon').addClass('disabled');
         });
         designer.on('mouseenter', '.ues-component .ues-toolbar .ues-move-handle', function () {
             $(this).draggable({
