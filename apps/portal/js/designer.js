@@ -545,7 +545,7 @@ $(function () {
                 renderMaxView(component, view);
                 //maximize logic
                 componentContainer.addClass('ues-fullview-visible');
-                var height = $(window).height();
+                var height = $('.ues-layout').height();
                 componentContainer.find('.panel-body').css('height',height + 'px');
                 component.fullViewPoped = true;
             }
