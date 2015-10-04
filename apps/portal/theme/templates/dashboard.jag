@@ -50,17 +50,6 @@ pages.forEach(function (p) {
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
-                 if (dashboard.isUserCustom) { %>
-                    <li>
-                        <a class="ues-copy" href="<%=dbRoot%>?reset=true">
-                            <span class="fw-stack">
-                                <i class="fw fw-ring fw-stack-2x"></i>
-                                <i class="fw-refresh fw-stack-1x"></i>
-                            </span>
-                             Reset
-                        </a>
-                    </li>
-                    <% }
                     if (user.isEditor) { %>
                         <li>
                             <a class="ues-copy" href="<%=dbRoot%>?editor=true">
