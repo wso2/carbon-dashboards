@@ -1332,7 +1332,8 @@ $(function () {
     var layoutContainer = function () {
         return $('#ues-designer').html(layoutHbs({
             pages: dashboard.pages,
-            current: page
+            current: page,
+            isanon: page.isanon
         })).find('.default-ues-layout');
     };
 

@@ -205,10 +205,10 @@
             <div class="col-md-12">
                 <h4 class="ues-page-title">{{current.title}}</h4>
                 <span class="ues-page-id hide">{{current.id}}</span>
-                <ul class="nav navbar-nav toggle-design-view">
-                    <li class="active"> <a class="ues-design-default-view" href="#" > Default view </a> </li>
-                    <li> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>
-                </ul>
+                    <ul class="nav navbar-nav toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">
+                        <li class="active"> <a class="ues-design-default-view" href="#" > Default view </a> </li>
+                        <li> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>
+                    </ul>
             </div>
         </div>
         <div class="row">
