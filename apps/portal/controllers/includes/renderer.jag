@@ -18,9 +18,7 @@ var dest;
         }
     }
     if (!anonymous) {
-        if(!user && dashboard.isanon){
-            var isAnonDB = dashboard.isanon;
-        } else if(!user) {
+        if(!user && !dashboard.isanon){
             sendLogin();
             return;
         }
