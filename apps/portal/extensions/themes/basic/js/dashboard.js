@@ -154,7 +154,7 @@ $(function () {
             $('#componentFull').modal('hide');
 
         });
-        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, 'default', dashboardDone);
+        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, ues.global.dbType, dashboardDone);
 
     };
     initDashboard();

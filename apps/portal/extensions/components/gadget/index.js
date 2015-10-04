@@ -117,8 +117,10 @@
 //            if(comp.viewOption){
 //                cid = cid + "_full";
 //            }
-            hasCustomUserPrefView(metadata, comp);
-            hasCustomFullView(metadata, comp);
+            if (ues.global.dbType === 'default'){
+                hasCustomUserPrefView(metadata, comp);
+                hasCustomFullView(metadata, comp);
+            }
             var container = $('<div id="' + cid + '" style="height:' + height + 'px;"></div>');
             container.appendTo(panel.find('.panel-body'));
             panel.appendTo(sandbox);

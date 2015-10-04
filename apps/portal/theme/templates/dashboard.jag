@@ -85,13 +85,22 @@ pages.forEach(function (p) {
                         <% } %>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                               <%=user.username%> <span class="caret"></span>
+                               <%= user? user.username : anon %> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
                     </ul>
                 </li>
             <% } else { %>
+                <li>
+                    <a class="ues-copy" href="<%=dbRoot%>?anon=true">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-settings fw-stack-1x"></i>
+                        </span>
+                        Anonymous View
+                    </a>
+                </li>
                 <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">Login</a></li>
                 <% } %>
             </ul>

@@ -61,8 +61,8 @@
         });
     };
 
-    var wires = function (page) {
-        var content = page.content.default;
+    var wires = function (page, pageType) {
+        var content = page.content[pageType];
         var area;
         var blocks;
         var wirez = {};
@@ -107,7 +107,7 @@
 
     var renderPage = function (element, dashboard, page, pageType, done) {
         setDocumentTitle(dashboard, page);
-        wirings = wires(page);
+        wirings = wires(page, pageType);
         var container;
         var area;
         var layout = $(page.layout.content);
@@ -153,8 +153,8 @@
         renderPage(element, dashboard, page, pageType, done);
     };
 
-    var rewireDashboard = function (page) {
-        wirings = wires(page);
+    var rewireDashboard = function (page, pageType) {
+        wirings = wires(page, pageType);
     };
 
     var resolveURI = function (uri) {

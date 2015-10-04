@@ -1362,6 +1362,7 @@ $(function () {
                 }
             };
             dashboard.landing = dashboard.landing || id;
+            dashboard.isanon = false;
             dashboard.pages.push(page);
             saveDashboard();
             hideProperties();
