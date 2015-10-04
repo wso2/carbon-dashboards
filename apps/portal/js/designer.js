@@ -909,12 +909,15 @@ $(function () {
             dashboard.landing = id;
         }
         if (anon.is(':checked')) {
+            ues.global.dbType = 'anon';
             dashboard.isanon = true;
             page.isanon = true;
             $(".toggle-design-view").removeClass("hide");
             //TODO switch to anon dashboard
         } else{
-            dashboard.isanon = false;
+            if(ues.global.dbType != 'anon'){
+                dashboard.isanon = false;
+            }
             page.isanon = false;
             $(".toggle-design-view").addClass("hide");
         }
