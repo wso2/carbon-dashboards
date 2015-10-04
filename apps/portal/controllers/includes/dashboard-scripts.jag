@@ -2,11 +2,17 @@
 (function() {
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
+    var type = 'anon';
+    if(user){
+    	type = 'default';
+    }
 %>
 <script>
 ues.global.fresh = <%=fresh%>;
 ues.global.dashboard = <%=dashboard%>;
 ues.global.page = <%=JSON.stringify(pageId)%>;
 ues.global.anonRole = <%=JSON.stringify(anonRole)%>;
+ues.global.dbType = <%=JSON.stringify(type)%>;
+
 </script>
 <% }()); %>

@@ -9,6 +9,8 @@ var httpsPort = process.getProperty('mgt.transport.https.port');
 ues.global.userDomain = <%=JSON.stringify(userDomain)%>;
 ues.global.urlDomain = <%=JSON.stringify(urlDomain)%>;
 ues.global.tenantPrefix = <%=JSON.stringify(tenantPrefix)%>;
+ues.global.type = 'default';
+ues.global.anon = false;
 
 ues.global.context = <%=JSON.stringify(request.getContextPath())%>;
 ues.global.server = {

@@ -12,13 +12,14 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
+            var htmlBody = $('body');
             var view = 'default';
             if(component.fullViewPoped){
                 view = 'default';
                 renderMaxView(component, view);
                 componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.css('width','auto');
                 componentContainer.find('.panel-body').css('height','auto');
+                htmlBody.css('overflow-y','auto');
                 //minimize logic
                 component.fullViewPoped = false;
             } else {
@@ -26,10 +27,8 @@ $(function () {
                 renderMaxView(component, view);
                 componentContainer.addClass('ues-fullview-visible');
                 var height = $(window).height();
-                var width = $(window).width();
-
-                componentContainer.css('width','100%');
                 componentContainer.find('.panel-body').css('height',height + 'px');
+                htmlBody.css('overflow-y','hidden');
                 //maximize logic
                 component.fullViewPoped = true;
             }
@@ -37,7 +36,6 @@ $(function () {
 
         $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
-//            var body = $(this).closest('.panel-body');
             var component = findComponent(id);
             componentContainer = $('#gadget-' + id);
 
@@ -53,12 +51,13 @@ $(function () {
             var settings = gadgetSettingsViewHbs(component.content);
             if (componentContainer.hasClass('ues-userprep-visible')) {
                 componentContainer.removeClass('ues-userprep-visible');
+                updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
                 componentContainer.find('.ues-sandbox').remove();
                 return;
             }
             componentContainer.append(settings);
             componentContainer.addClass('ues-userprep-visible');
-            renderComponentProperties(component);
+//            renderComponentProperties(component);
         });
     };
 
@@ -99,7 +98,7 @@ $(function () {
      * @param component
      */
     var renderComponentToolbar = function (component) {
-        var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
+        var el = $('#' + component.id).prepend($(componentToolbarHbs(component.content)));
         $('[data-toggle="tooltip"]', el).tooltip();
     };
     /**
@@ -115,7 +114,7 @@ $(function () {
         var component;
         var components;
 
-        var content = page.content;
+        var content = page.content.default;
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
@@ -155,7 +154,7 @@ $(function () {
             $('#componentFull').modal('hide');
 
         });
-        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, dashboardDone);
+        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, ues.global.dbType, dashboardDone);
 
     };
     initDashboard();

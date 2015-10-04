@@ -31,10 +31,13 @@
         </div>
         <div class="collapse navbar-collapse horizontal-bar">
             <ul class="nav navbar-nav">
+                <% if(dashboard.pages.length >= 2){  %>
                 <li<% if(dashboard.landing === pageId) { %> class="active"<% } %>>
                     <a href="<%=dbRoot%>">Home</a>
                 </li>
                 <%
+}
+
 var pages = dashboard.pages;
 pages.forEach(function (p) {
     if (dashboard.landing !== p.id) {
@@ -47,17 +50,6 @@ pages.forEach(function (p) {
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
-                 if (dashboard.isUserCustom) { %>
-                    <li>
-                        <a class="ues-copy" href="<%=dbRoot%>?reset=true">
-                            <span class="fw-stack">
-                                <i class="fw fw-ring fw-stack-2x"></i>
-                                <i class="fw-refresh fw-stack-1x"></i>
-                            </span>
-                             Reset
-                        </a>
-                    </li>
-                    <% }
                     if (user.isEditor) { %>
                         <li>
                             <a class="ues-copy" href="<%=dbRoot%>?editor=true">
@@ -82,13 +74,22 @@ pages.forEach(function (p) {
                         <% } %>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                               <%=user.username%> <span class="caret"></span>
+                               <%= user? user.username : "anon" %> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
                     </ul>
                 </li>
             <% } else { %>
+                <li>
+                    <a class="ues-copy" href="<%=dbRoot%>?anon=true">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-settings fw-stack-1x"></i>
+                        </span>
+                        Anonymous View
+                    </a>
+                </li>
                 <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">Login</a></li>
                 <% } %>
             </ul>
@@ -102,9 +103,11 @@ pages.forEach(function (p) {
         <ul class="list-inline pull-right">
             <li><a href="#" class="ues-component-full-handle"><i class="fw fw-laptop"></i></a></li>
         </ul>
+        {{#has options}}
         <ul class="list-inline pull-right">
             <li><a href="#" class="ues-component-settings-handle"><i class="fw fw-settings ues-component-properties-toggle"></i></a></li>
         </ul>
+        {{/has}}
     </div>
 </script>
 <script id="ues-component-full-hbs" type="text/x-handlebars-template">
@@ -146,6 +149,11 @@ pages.forEach(function (p) {
                                                     <option value={{value}}{{#equals value ../value}} selected="selected"{{/equals}}>{{displayValue}}</option>
                                                  {{/each}}
                                             </select>
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "text"}}
+                                        <label>{{title}}
+                                            <textarea name="{{@key}}" class="form-control" rows="4">{{value}}</textarea>
                                         </label>
                                     {{/equals}}
                                 </div>

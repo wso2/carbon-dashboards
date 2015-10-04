@@ -18,19 +18,19 @@ var dest;
         }
     }
     if (!anonymous) {
-        if (!user) {
+        if(!user && !dashboard.isanon){
             sendLogin();
             return;
         }
 
         unauthorizedError = 'dashboard access not authorized';
 
-        if (userDomain !== (urlDomain || superDomain)) {
+        if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
             response.sendError(401, unauthorizedError);
             return;
         }
 
-        if (!utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
+        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
             response.sendError(401, unauthorizedError);
             return;
         }
