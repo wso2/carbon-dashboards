@@ -575,7 +575,8 @@ var updatePageProperties = function (sandbox) {
 var renderPageProperties = function (page) {
     $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
         id: page.id,
-        title: page.title
+        title: page.title,
+        isanon : page.isanon
     })).find('.ues-sandbox').on('change', 'input', function () {
         updatePageProperties($(this).closest('.ues-sandbox'));
     });

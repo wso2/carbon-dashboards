@@ -910,10 +910,12 @@ $(function () {
         }
         if (anon.is(':checked')) {
             dashboard.isanon = true;
+            page.isanon = true;
             $(".toggle-design-view").removeClass("hide");
             //TODO switch to anon dashboard
         } else{
             dashboard.isanon = false;
+            page.isanon = false;
             $(".toggle-design-view").addClass("hide");
         }
         $('#ues-designer').find('.ues-page-title').text(title);
@@ -929,7 +931,8 @@ $(function () {
     var renderPageProperties = function (page) {
         $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
             id: page.id,
-            title: page.title
+            title: page.title,
+            isanon: page.isanon
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });

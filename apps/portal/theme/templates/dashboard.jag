@@ -85,7 +85,7 @@ pages.forEach(function (p) {
                         <% } %>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                               <%= user? user.username : anon %> <span class="caret"></span>
+                               <%= user? user.username : "anon" %> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
