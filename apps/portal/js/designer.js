@@ -1295,8 +1295,6 @@ $(function () {
     * pref.set() method this will be executed.
     */
     var registerRpc = function () {
-        //Load the rpc library.
-        $.getScript('portal/js/rpc.js');
         gadgets.rpc.register('set_pref', function(token, name, value) {
 
             //Store the gadget id in a variable
@@ -1305,7 +1303,7 @@ $(function () {
             var pages = dashboard.pages;
             var numberOfPages = pages.length;
             for (var i = 0; i < numberOfPages; i++){
-                var pageContent = pages[i].content;
+                var pageContent = pages[i].content.default;
                 var zones = Object.keys(pageContent);
                 var numberOfZones = zones.length;
                 for (var j = 0; j < numberOfZones; j++){
