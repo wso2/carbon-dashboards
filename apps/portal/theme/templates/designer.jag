@@ -216,11 +216,16 @@
         <div class="row">
             <div class="col-md-12">
                 <h4 class="ues-page-title">{{current.title}}</h4>
+                <span class="ues-page-id hide">{{current.id}}</span>
+                    <ul class="nav navbar-nav toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">
+                        <li class="toggle-design-view-default disabled"> <a class="ues-design-default-view active" href="#" > Default view </a> </li>
+                        <li class="toggle-design-view-anon"> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>
+                    </ul>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="ues-layout container-fluid"></div>
+                <div class="default-ues-layout container-fluid"></div>
             </div>
         </div>
     </div>
@@ -423,6 +428,9 @@
                         <label>
                             <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> Use as Landing
                         </label>
+                        <label>
+                            <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}}> Make Anonymous
+                        </label>
                     </div>
                 </form>
             </div>
@@ -431,7 +439,7 @@
 </script>
 <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
     {{#each pages}}
-    <li{{#equals id ../current.id}} class="active"{{/equals}}>
+    <li{{#equals id ../current.id}} class="active disabled"{{/equals}}>
         <a href="#" data-id="{{id}}">{{title}} <i class="fw fw-delete pull-right ues-trash"></i></a>
     </li>
     {{/each}}
