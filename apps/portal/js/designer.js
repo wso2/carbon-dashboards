@@ -597,7 +597,7 @@ $(function () {
                 appendTo: 'body',
                 helper: 'clone',
                 start: function (event, ui) {
-                    console.log('dragging');
+                    //console.log('dragging');
                 },
                 stop: function () {
                     //$('#left a[href="#components"]').tab('show');
@@ -1329,13 +1329,26 @@ $(function () {
                 var el = $(this);
                 switch (action) {
                     case 'move':
-                        moveComponent(el, id);
+                        if(!hasComponents($(this))) {
+                            moveComponent(el, id);
+                        }
                         break;
                     default:
-                        createComponent(el, findStoreCache(type, id));
+                        if(!hasComponents($(this))){
+                            createComponent(el, findStoreCache(type, id));
+                        }
                 }
             }
         });
+    };
+
+
+    var hasComponents = function(container){
+        var components = container.find('.ues-component').length;
+        if(components > 0){
+            return true;
+        }
+        return false;
     };
 
     /**
