@@ -4,6 +4,10 @@ var process = require('process');
 //TODO: fix carbon module and use it
 var httpPort = process.getProperty('mgt.transport.http.port');
 var httpsPort = process.getProperty('mgt.transport.https.port');
+if(!urlDomain && !userDomain){
+    urlDomain = 'carbon.super';
+}
+
 %>
 <script>
 ues.global.userDomain = <%=JSON.stringify(userDomain)%>;
