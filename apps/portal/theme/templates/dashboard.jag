@@ -41,19 +41,19 @@
                 <% } %>
 
                 <%
-                var pages = dashboard.pages;
                 var usr = require('/modules/user.js');
                 var user = usr.current();
+                var pages = dashboard.pages;
+                var isAnonView = JSON.parse(request.getParameter('isAnonView'));
 
                 pages.forEach(function (p) {
-                    if(user) {
-                        renderPageLink(p);
-                    } else {
-                        // Logged user not found.
+                    if(isAnonView || !user) {
                         if (p.isanon) {
-                            // Anonymous view is allowed. So render only anonymous pages links.
+                            // Anonymous viewing. So render only anonymous pages links.
                             renderPageLink(p);
                         }
+                    } else {
+                        renderPageLink(p);
                     }
                 });
 
