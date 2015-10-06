@@ -172,6 +172,7 @@ pages.forEach(function (p) {
 <!--<iframe id="sandbox" src="preview.jag"></iframe>-->
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -191,6 +192,19 @@ pages.forEach(function (p) {
     if(!ues.global.renderFromExtension){
         ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page);
     }
+                      
+    $(document).ready(function() {        
+        var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
+        var banner = ues.global.dashboard.banner;
+        $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
+    });
 </script>
+
+<script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
+    {{#if isBannerExists}}
+    <img src="<%=urlPrefix%>banners/<%=dashboard.id%>" />
+    {{/if}}
+</script>
+     
 </body>
 </html>
