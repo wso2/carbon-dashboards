@@ -31,22 +31,42 @@
         </div>
         <div class="collapse navbar-collapse horizontal-bar">
             <ul class="nav navbar-nav">
-                <% if(dashboard.pages.length >= 2){  %>
-                <li<% if(dashboard.landing === pageId) { %> class="active"<% } %>>
-                    <a href="<%=dbRoot%>">Home</a>
-                </li>
-                <%
-}
+                <% if(dashboard.pages.length >= 2) { %>
+                    <li
+                        <% if(dashboard.landing === pageId) { %>
+                            class="active"
+                        <% } %>>
+                            <a href="<%=dbRoot%>">Home</a>
+                    </li>
+                <% } %>
 
-var pages = dashboard.pages;
-pages.forEach(function (p) {
-    if (dashboard.landing !== p.id) {
-        %>
-                <li<%if (p.id === pageId) { %> class="active"<% } %>>
-                            <a href="<%=dbRoot%><%=p.id%>"><%=p.title%></a>
+                <%
+                var pages = dashboard.pages;
+                var usr = require('/modules/user.js');
+                var user = usr.current();
+
+                pages.forEach(function (p) {
+                    if(user) {
+                        renderPageLink(p);
+                    } else {
+                        // Logged user not found.
+                        if (p.isanon) {
+                            // Anonymous view is allowed. So render only anonymous pages links.
+                            renderPageLink(p);
+                        }
+                    }
+                });
+
+                function renderPageLink(p) {
+                    if (dashboard.landing !== p.id) { %>
+                        <li
+                            <% if (p.id === pageId) { %>
+                                class="active"
+                            <% } %>>
+                            <a href="<%=dbRoot%><%=p.id%>"> <%=p.title%></a>
                         </li>
-                    <% } %>
-                <% }); %>
+                    <% }
+                };%>
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
