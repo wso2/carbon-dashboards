@@ -8,7 +8,7 @@
 <script>
     <%
         isAnonView = JSON.parse(request.getParameter('isAnonView'));
-        if(isAnonView) {
+        if(isAnonView || !user) {
             viewType = 'anon';
         } else {
             viewType = 'default';
