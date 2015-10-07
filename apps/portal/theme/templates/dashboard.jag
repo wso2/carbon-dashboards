@@ -25,6 +25,10 @@
     var isAnonView = JSON.parse(request.getParameter('isAnonView'));
     if(!user) {
         isAnonView = true;
+    } else {
+        if(!isAnonView) {
+            isAnonView = false;
+        }
     }
 %>
 <div id="navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top">
