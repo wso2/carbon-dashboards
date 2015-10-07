@@ -22,13 +22,14 @@
     var usr = require('/modules/user.js');
     var user = usr.current();
     var pages = dashboard.pages;
-    var isAnonView = JSON.parse(request.getParameter('isAnonView'));
+    var isAnonView = request.getParameter('isAnonView');
     if(!user) {
-        isAnonView = true;
-    } else {
-        if(!isAnonView) {
-            isAnonView = false;
+        if(isAnonView){
+            response.sendRedirect(request.getRequestURL());
         }
+        isAnonView = true;
+    } else{
+        isAnonView = JSON.parse(isAnonView);
     }
 %>
 <div id="navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top">

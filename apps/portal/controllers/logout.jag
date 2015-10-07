@@ -8,12 +8,13 @@ var configs = require('/configs/portal.js').config();
 	}else{
 		var usr = require('/modules/user.js');
 		usr.logout();
-		var index = dest.indexOf('?isAnonView');
-		var newDestination = dest;
-		if (index > 1) {
-			newDestination = dest.substr(0, index);
-		}
-		response.sendRedirect(newDestination || tenantedUrlPrefix);
+        response.sendRedirect(dest || tenantedUrlPrefix);
+		//var index = dest.indexOf('?isAnonView');
+		//var newDestination = dest;
+		//if (index > 1) {
+		//	newDestination = dest.substr(0, index);
+		//}
+		//response.sendRedirect(newDestination || tenantedUrlPrefix);
 	}
 
 
