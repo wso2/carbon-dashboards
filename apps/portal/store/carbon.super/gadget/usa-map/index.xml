@@ -26,7 +26,7 @@
 </style>
 </head>
 <body>
-xxxxxddd(home view)
+USA MAP (This is default view)
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -85,7 +85,7 @@ xxxxxddd(home view)
 </style>
 </head>
 <body>
-yyyyyyyyyyyyyyyyy(full view)
+USA MAP(this is full screen view)
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>

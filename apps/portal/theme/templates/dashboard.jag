@@ -18,6 +18,20 @@
     <title>Dashboards</title>
 </head>
 <body>
+<%
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var pages = dashboard.pages;
+    var isAnonView = request.getParameter('isAnonView');
+    if(!user) {
+        if(isAnonView){
+            response.sendRedirect(request.getRequestURL());
+        }
+        isAnonView = true;
+    } else{
+        isAnonView = JSON.parse(isAnonView);
+    }
+%>
 <div id="navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -27,26 +41,42 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<%=dbRoot%>" class="navbar-brand"><%=dashboard.title%></a>
+            <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>" class="navbar-brand"><%=dashboard.title%></a>
         </div>
         <div class="collapse navbar-collapse horizontal-bar">
             <ul class="nav navbar-nav">
-                <% if(dashboard.pages.length >= 2){  %>
-                <li<% if(dashboard.landing === pageId) { %> class="active"<% } %>>
-                    <a href="<%=dbRoot%>">Home</a>
-                </li>
-                <%
-}
 
-var pages = dashboard.pages;
-pages.forEach(function (p) {
-    if (dashboard.landing !== p.id) {
-        %>
-                <li<%if (p.id === pageId) { %> class="active"<% } %>>
-                            <a href="<%=dbRoot%><%=p.id%>"><%=p.title%></a>
+                <% if(dashboard.pages.length >= 2) { %>
+                    <li
+                        <% if(dashboard.landing === pageId) { %>
+                            class="active"
+                        <% } %>>
+                            <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>">Home</a>
+                    </li>
+                <% } %>
+
+                <%
+                pages.forEach(function (page) {
+                    if(isAnonView || !user) {
+                        if (page.isanon) {
+                            // Anonymous viewing. So render only anonymous pages links.
+                            renderPageLink(page);
+                        }
+                    } else {
+                        renderPageLink(page);
+                    }
+                });
+
+                function renderPageLink(page) {
+                    if (dashboard.landing !== page.id) { %>
+                        <li
+                            <% if (page.id === pageId) { %>
+                                class="active"
+                            <% } %>>
+                            <a href="<%=dbRoot%><%=page.id%>?isAnonView=<%=isAnonView%>"> <%=page.title%></a>
                         </li>
-                    <% } %>
-                <% }); %>
+                    <% }
+                };%>
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
@@ -81,15 +111,6 @@ pages.forEach(function (p) {
                     </ul>
                 </li>
             <% } else { %>
-                <li>
-                    <a class="ues-copy" href="<%=dbRoot%>?anon=true">
-                        <span class="fw-stack">
-                            <i class="fw fw-ring fw-stack-2x"></i>
-                            <i class="fw fw-settings fw-stack-1x"></i>
-                        </span>
-                        Anonymous View
-                    </a>
-                </li>
                 <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">Login</a></li>
                 <% } %>
             </ul>
