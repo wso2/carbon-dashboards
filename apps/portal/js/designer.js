@@ -947,7 +947,8 @@ $(function () {
         $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
             id: page.id,
             title: page.title,
-            isanon: page.isanon
+            isanon: page.isanon,
+            isUserCustom : dashboard.isUserCustom,
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
@@ -1395,7 +1396,7 @@ $(function () {
         return $('#ues-designer').html(layoutHbs({
             pages: dashboard.pages,
             current: page,
-            isanon: page.isanon
+            isanon: (page.isanon && !dashboard.isUserCustom)
         })).find('.default-ues-layout');
     };
 
