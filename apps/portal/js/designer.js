@@ -11,6 +11,9 @@ $(function () {
 
     var findPage = ues.dashboards.findPage;
 
+    var DEFAULT_DASHBOARD_VIEW = 'default';
+    var ANONYMOUS_DASHBOARD_VIEW = 'anon';
+
     var dashboard;
 
     var page;
@@ -19,7 +22,7 @@ $(function () {
 
     var activeComponent;
 
-    var pageSelect = 'default'; //this is to store switch between default/anon view
+    var pageSelect = DEFAULT_DASHBOARD_VIEW; //this is to store switch between default/anon view
 
     var freshDashboard = true;
 
@@ -308,7 +311,7 @@ $(function () {
         var area;
         var component;
         var components;
-        pageType = pageType ? pageType : 'default';
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -380,7 +383,7 @@ $(function () {
             }
             var container = $('#' + component.id);
             var area = container.closest('.ues-component-box').attr('id');
-            pageType = pageType ? pageType : 'default';
+            pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
             var content = page.content[pageType];
             area = content[area];
             var index = area.indexOf(component);
@@ -444,11 +447,11 @@ $(function () {
     var destroyPage = function (page, pageType, done) {
         var checked = $('#toggle-dashboard-view').prop('checked');
         var area;
-        pageType = pageType ? pageType : 'default';
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         if(((checked && !ues.global.isSwitchToNewPage) || (!checked && ues.global.isSwitchToNewPage) && ues.global.anon)){
-            pageType = 'anon';
+            pageType = ANONYMOUS_DASHBOARD_VIEW;
         }else{
-            pageType = 'default';
+            pageType = DEFAULT_DASHBOARD_VIEW;
         }
         var content = page.content[pageType];
         var tasks = [];
@@ -494,7 +497,7 @@ $(function () {
      * @param page
      */
     var previewDashboard = function (page) {
-        var isAnonView = ues.global.type.toString().localeCompare('anon') == 0 ? 'true' : 'false';
+        var isAnonView = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? 'true' : 'false';
         var url = dashboardsUrl + '/' + dashboard.id + '/' + page.id + '?isAnonView=' + isAnonView;
         window.open(url, '_blank');
     };
@@ -541,9 +544,9 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
-            var view = 'default';
+            var view = DEFAULT_DASHBOARD_VIEW;
             if(component.fullViewPoped){
-                view = 'default';
+                view = DEFAULT_DASHBOARD_VIEW;
                 renderMaxView(component, view);
                 //minimize logic
                 componentContainer.removeClass('ues-fullview-visible');
@@ -579,8 +582,8 @@ $(function () {
         });
         designer.on('click', '.ues-design-default-view', function () {
             //default
-            pageType = 'default'; 
-            ues.global.type = 'default'; 
+            pageType = DEFAULT_DASHBOARD_VIEW;
+            ues.global.type = DEFAULT_DASHBOARD_VIEW;
             switchPage(getPageId(), pageType);
             $('.toggle-design-view-anon').removeClass('disabled');
             $('.toggle-design-view-default').addClass('disabled');   
@@ -590,13 +593,13 @@ $(function () {
             var state = 'on';
 
             if(checked){
-                pageType = 'default';
-                ues.global.type = 'default';
+                pageType = DEFAULT_DASHBOARD_VIEW;
+                ues.global.type = DEFAULT_DASHBOARD_VIEW;
                 state = 'on';
 
             }else{
-                pageType = 'anon';
-                ues.global.type = 'anon';
+                pageType = ANONYMOUS_DASHBOARD_VIEW;
+                ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.anon = true;
                 state = 'off';
             }
@@ -606,8 +609,8 @@ $(function () {
         });
         designer.on('click', '.ues-design-anon-view', function () {
             //anon
-           pageType = 'anon';
-           ues.global.type = 'anon';
+           pageType = ANONYMOUS_DASHBOARD_VIEW;
+           ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
            ues.global.anon = true;
            switchPage(getPageId(), pageType); 
            $('.toggle-design-view-default').removeClass('disabled');
@@ -684,7 +687,7 @@ $(function () {
         var id = randomId();
         //TODO: remove hardcoded gadget
         var area = container.attr('id');
-        pageType = pageType ? pageType : 'default';
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
         content = content[area] || (content[area] = []);
         updateStyles(asset);
@@ -711,7 +714,7 @@ $(function () {
     var moveComponent = function (container, id) {
         var component = findComponent(id);
         var area = container.attr('id');
-        pageType = pageType ? pageType : 'default';
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
         content = content[area] || (content[area] = []);
         content.push(component);
@@ -797,7 +800,7 @@ $(function () {
     var pageNotifiers = function (component, page) {
         var area;
         var notifiers = {};
-        pageType = pageType ? pageType : 'default';
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -948,13 +951,13 @@ $(function () {
             dashboard.landing = id;
         }
         if (anon.is(':checked')) {
-            ues.global.dbType = 'anon';
+            ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
             dashboard.isanon = true;
             page.isanon = true;
             $(".toggle-design-view").removeClass("hide");
             //TODO switch to anon dashboard
         } else{
-            if(ues.global.dbType != 'anon'){
+            if(ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW){
                 dashboard.isanon = false;
             }
             page.isanon = false;
@@ -1287,7 +1290,7 @@ $(function () {
             var thiz = $(this);
             var pid = thiz.data('id');
             ues.global.isSwitchToNewPage = true;
-            switchPage(pid, 'default');
+            switchPage(pid, DEFAULT_DASHBOARD_VIEW);
             ues.global.isSwitchToNewPage = false;
         });
 
@@ -1295,7 +1298,7 @@ $(function () {
             e.stopPropagation();
             var thiz = $(this);
             var pid = thiz.parent().data('id');
-            removePage(pid, 'default', function (err) {
+            removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                 var pages = dashboard.pages;
                 updatePagesList(pages);
                 if (!pages.length) {
@@ -1505,10 +1508,10 @@ $(function () {
         if (propertiesVisible()) {
             renderPageProperties(page);
         }
-        pageType = pageType ? pageType : 'default';
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         if(ues.global.isSwitchToNewPage){
-            pageType = 'default';
-            ues.global.type = 'default';
+            pageType = DEFAULT_DASHBOARD_VIEW;
+            ues.global.type = DEFAULT_DASHBOARD_VIEW;
         }
         $('.ues-context-menu .ues-component-properties-toggle').parent().hide();
         var default_container = layoutContainer();
