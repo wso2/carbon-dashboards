@@ -404,6 +404,7 @@ $(function () {
      * @param done
      */
     var destroyComponent = function (component, done) {
+
         ues.components.destroy(component, function (err) {
             if (err) {
                 return err;
@@ -441,10 +442,10 @@ $(function () {
      * @param done
      */
     var destroyPage = function (page, pageType, done) {
-
+        var checked = $('#toggle-dashboard-view').prop('checked');
         var area;
         pageType = pageType ? pageType : 'default';
-        if(pageType === 'default' && ues.global.anon){
+        if(((checked && !ues.global.isSwitchToNewPage) || (!checked && ues.global.isSwitchToNewPage) && ues.global.anon)){
             pageType = 'anon';
         }else{
             pageType = 'default';
@@ -584,6 +585,25 @@ $(function () {
             $('.toggle-design-view-anon').removeClass('disabled');
             $('.toggle-design-view-default').addClass('disabled');   
         });
+        designer.on('#toggle-dashboard-view').change(function() {
+            var checked = $('#toggle-dashboard-view').prop('checked');
+            var state = 'on';
+
+            if(checked){
+                pageType = 'default';
+                ues.global.type = 'default';
+                state = 'on';
+
+            }else{
+                pageType = 'anon';
+                ues.global.type = 'anon';
+                ues.global.anon = true;
+                state = 'off';
+            }
+            switchPage(getPageId(), pageType);
+            $('#toggle-dashboard-view').bootstrapToggle(state);
+
+        });
         designer.on('click', '.ues-design-anon-view', function () {
             //anon
            pageType = 'anon';
@@ -624,6 +644,13 @@ $(function () {
         $('body').on('click', '.close-db-settings', function () {
                 hideProperties();
         });
+    };
+
+    /**
+     * initializes the toggle for dashboard view switching
+     */
+    var initToggleView = function () {
+        $(function() { $('#toggle-dashboard-view').bootstrapToggle(); })
     };
     /**
      * renders the component toolbar of a given component
@@ -1259,7 +1286,9 @@ $(function () {
         actions.find('.ues-pages-list').on('click', 'li a', function () {
             var thiz = $(this);
             var pid = thiz.data('id');
+            ues.global.isSwitchToNewPage = true;
             switchPage(pid, 'default');
+            ues.global.isSwitchToNewPage = false;
         });
 
         actions.find('.ues-pages-list').on('click', 'li a .ues-trash', function (e) {
@@ -1348,6 +1377,7 @@ $(function () {
         initComponentToolbar();
         initComponents();
         initUESProperties();
+        initToggleView();
     };
 
     /**
@@ -1476,6 +1506,10 @@ $(function () {
             renderPageProperties(page);
         }
         pageType = pageType ? pageType : 'default';
+        if(ues.global.isSwitchToNewPage){
+            pageType = 'default';
+            ues.global.type = 'default';
+        }
         $('.ues-context-menu .ues-component-properties-toggle').parent().hide();
         var default_container = layoutContainer();
         ues.dashboards.render(default_container, dashboard, pid, pageType ,function (err) {
@@ -1490,6 +1524,7 @@ $(function () {
             done(err);
         });
         updatePagesList();
+        initToggleView();
     };
 
     /**
