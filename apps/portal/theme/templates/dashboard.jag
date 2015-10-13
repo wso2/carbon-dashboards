@@ -17,7 +17,7 @@
 
     <title>Dashboards</title>
 </head>
-<body>
+<body class="lang_<%=request.getLocale()%>">
 <%
     var usr = require('/modules/user.js');
     var user = usr.current();

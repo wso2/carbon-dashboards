@@ -7,7 +7,7 @@
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title>WSO2 UES - Dashboard Designer</title>
 </head>
-<body>
+<body class="<%=locale%>">
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 
 <div id="ues-workspace-designer" class="ues-workspace" style="display:none">

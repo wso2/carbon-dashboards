@@ -14,6 +14,7 @@
  <%
 var i18n = require("i18n");
 i18n.init(request);
+var locale = 'lang_' + request.getLocale();
 %>
 </head>
 
