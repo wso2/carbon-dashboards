@@ -168,7 +168,7 @@
                         <span class="fw-stack">
                             <i class="fw fw-ring fw-stack-2x"></i>
                             <i class="fw fw-left-arrow fw-stack-1x"></i>
-                        </span> Go Back</a>
+                        </span> <%= i18n.localize("go.back")%></a>
                     </li>
                 </ul>
             </div>
