@@ -55,7 +55,7 @@ var dest;
                 return;
             }
         }
-        message = 'The username or password you entered is incorrect.';
+        message = 'incorrect.login.message';
         include(utils.resolvePath('templates/login.jag'));
     }
     function createDir(path) {

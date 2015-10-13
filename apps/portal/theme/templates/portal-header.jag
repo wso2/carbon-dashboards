@@ -11,3 +11,10 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
+ <%
+var i18n = require("i18n");
+i18n.init(request);
+%>
+</head>
+
+
