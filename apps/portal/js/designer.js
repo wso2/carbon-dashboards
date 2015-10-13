@@ -955,18 +955,21 @@ $(function () {
             dashboard.isanon = true;
             page.isanon = true;
             $(".toggle-design-view").removeClass("hide");
-            //TODO switch to anon dashboard
+            $('#toggle-dashboard-view').bootstrapToggle('on');
         } else{
+            //TODO switch to anon dashboard
             if(ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW){
                 dashboard.isanon = false;
             }
             page.isanon = false;
             $(".toggle-design-view").addClass("hide");
+            $('#toggle-dashboard-view').bootstrapToggle('off');
         }
         $('#ues-designer').find('.ues-page-title').text(title);
         $('#ues-properties').find('.ues-page-title').text(title);
         updatePagesList();
         saveDashboard();
+        initToggleView();
     };
 
     /**

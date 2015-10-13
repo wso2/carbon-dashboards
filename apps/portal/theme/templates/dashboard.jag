@@ -53,7 +53,7 @@
                         <% if(dashboard.landing === pageId) { %>
                             class="active"
                         <% } %>>
-                            <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>">Home</a>
+                            <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>"><%= i18n.localize("home")%></a>
                     </li>
                 <% } %>
 
