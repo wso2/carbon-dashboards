@@ -499,7 +499,9 @@ $(function () {
      * @param page
      */
     var previewDashboard = function (page) {
-        window.open(dashboardsUrl + '/' + dashboard.id + '/' + page.id, '_blank');
+        var isAnonView = ues.global.type.toString().localeCompare('anon') == 0 ? 'true' : 'false';
+        var url = dashboardsUrl + '/' + dashboard.id + '/' + page.id + '?isAnonView=' + isAnonView;
+        window.open(url, '_blank');
     };
 
     /**
@@ -951,7 +953,8 @@ $(function () {
         $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
             id: page.id,
             title: page.title,
-            isanon: page.isanon
+            isanon: page.isanon,
+            isUserCustom : dashboard.isUserCustom,
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
@@ -1308,9 +1311,43 @@ $(function () {
     };
 
     /**
+    * Register the "set_pref" rpc function. When user set the user preferences using
+    * pref.set() method this will be executed.
+    */
+    var registerRpc = function () {
+        gadgets.rpc.register('set_pref', function(token, name, value) {
+
+            //Store the gadget id in a variable
+            var id = this.f.split("-")[2];
+
+            var pages = dashboard.pages;
+            var numberOfPages = pages.length;
+            for (var i = 0; i < numberOfPages; i++){
+                var pageContent = pages[i].content.default;
+                var zones = Object.keys(pageContent);
+                var numberOfZones = zones.length;
+                for (var j = 0; j < numberOfZones; j++){
+                    var zone = zones[j];
+                    var gadgets = pageContent[zone];
+                    var numberOfGadgets = gadgets.length;
+                    for (var k = 0; k < numberOfGadgets; k++){
+                        var gadget = gadgets[k];
+                        if (gadgets[k].id == id) {
+                            var gadgetOption = gadget.content.options;
+                            gadgetOption[name].value = value;
+                        }
+                    }
+                }
+            }
+            saveDashboard();
+        });
+    };
+
+    /**
      * initializes the UI
      */
     var initUI = function () {
+        registerRpc();
         initContextMenus();
         initLayoutWorkspace();
         initDesigner();
@@ -1366,7 +1403,7 @@ $(function () {
         return $('#ues-designer').html(layoutHbs({
             pages: dashboard.pages,
             current: page,
-            isanon: page.isanon
+            isanon: (page.isanon && !dashboard.isUserCustom)
         })).find('.default-ues-layout');
     };
 

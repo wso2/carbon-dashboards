@@ -431,8 +431,8 @@
                         <label>
                             <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> Use as Landing
                         </label>
-                        <label>
-                            <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}}> Make Anonymous
+                        <label class="{{#if isUserCustom}}hide{{/if}}">
+                            <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}} > Make Anonymous
                         </label>
                     </div>
                 </form>
