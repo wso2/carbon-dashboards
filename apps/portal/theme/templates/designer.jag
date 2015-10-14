@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-toggle.min.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title><%= i18n.localize("wso2.dashboard.editor")%></title>
+    <title>WSO2 UES - Dashboard Designer</title>
 </head>
 <body class="<%=locale%>">
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -312,7 +312,8 @@
                             <h4><%= i18n.localize("styles") %></h4>
                             <div class="form-group">
                                 <label><%= i18n.localize("title") %>
-                                    <input type="text" class="form-control" name="title" placeholder="<%= i18n
+                                    <input type="text" class="form-control ues-localized-title" name="title"
+                                    placeholder="<%= i18n
                                         .localize("title") %>" value="{{#if styles.title}}{{styles.title}}{{/if}}">
                                 </label>
                             </div>

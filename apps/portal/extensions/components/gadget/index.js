@@ -81,6 +81,12 @@
             comp.hasCustomFullView= true;
         }
     }
+    var loadLocalizedTitle = function (styles, comp) {
+        var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+        var locale_titles = comp.content.locale_titles || {};
+        styles.title = locale_titles[userLang] || comp.content.title;
+        comp.content.locale_titles = locale_titles || {};
+    }
 
     component.create = function (sandbox, comp, hub, done) {
         var content = comp.content;
@@ -109,6 +115,7 @@
                     params[name] = option.value;
                 }
             }
+            loadLocalizedTitle(styles, comp);
             var cid = containerId(comp.id);
             var gid = gadgetId(comp.id);
             var panel = createPanel(styles);

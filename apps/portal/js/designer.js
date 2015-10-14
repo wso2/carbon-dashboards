@@ -234,7 +234,7 @@ $(function () {
 
         saveOptions(sandbox, options);
         saveSettings(sandbox, settings);
-        saveStyles(sandbox, styles);
+        saveStyles(sandbox, styles, id);
         saveNotifiers(sandbox, notifiers);
 
         saveComponentProperties(id, {
@@ -1051,12 +1051,12 @@ $(function () {
      * @param sandbox
      * @param styles
      */
-    var saveStyles = function (sandbox, styles) {
+    var saveStyles = function (sandbox, styles, id) {
         $('.ues-styles input', sandbox).each(function () {
             var el = $(this);
             var type = el.attr('type');
             var name = el.attr('name');
-            if (type === 'text') {
+            if (type === 'text' && name != 'title') {
                 styles[name] = el.val();
                 return;
             }
@@ -1064,8 +1064,11 @@ $(function () {
                 styles[name] = el.is(':checked');
             }
         });
-
         styles.titlePosition = $('.ues-styles .ues-title-position', sandbox).val();
+        var compLocale = findComponent(id).content.locale_titles || {};
+        var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+        compLocale[lang] = $('.ues-styles .ues-localized-title', sandbox).val();
+
     };
 
     /**
