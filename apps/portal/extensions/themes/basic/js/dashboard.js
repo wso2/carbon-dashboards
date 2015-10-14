@@ -1,4 +1,6 @@
 $(function () {
+    var DEFAULT_DASHBOARD_VIEW = 'default';
+
     var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
@@ -13,10 +15,10 @@ $(function () {
             var component = findComponent(id);
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
             var htmlBody = $('body');
-            var view = 'default';
+            var view = DEFAULT_DASHBOARD_VIEW;
             var jQueryId = $('#' + id);
             if(component.fullViewPoped){
-                view = 'default';
+                view = DEFAULT_DASHBOARD_VIEW;
                 renderMaxView(component, view);
                 componentContainer.removeClass('ues-fullview-visible');
                 componentContainer.find('.panel-body').css('height','auto');
