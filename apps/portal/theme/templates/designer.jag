@@ -43,7 +43,8 @@
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
                                  </span> Export</a></li>
-                            <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
+                            <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard
+        .id%>" id="settings-link">
                              <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-settings fw-stack-1x"></i>

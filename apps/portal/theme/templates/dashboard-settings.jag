@@ -24,7 +24,8 @@
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-left-arrow fw-stack-1x"></i>
                     </span> Go Back</a></li>
-                <li><a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>?editor=true">
+                <li><a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>?editor=true"
+                id="ues-designer-link">
                 <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-edit fw-stack-1x"></i>
