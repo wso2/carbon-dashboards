@@ -1,7 +1,7 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>Dashboard Settings</title>
+    <title><%= i18n.localize("dashboard.settings")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>

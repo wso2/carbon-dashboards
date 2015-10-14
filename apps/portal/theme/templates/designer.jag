@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-toggle.min.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>WSO2 UES - Dashboard Designer</title>
+    <title><%= i18n.localize("wso2.dashboard.editor")%></title>
 </head>
 <body class="<%=locale%>">
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -300,7 +300,8 @@
                             <h4><%= i18n.localize("settings") %></h4>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" name="personalize"{{#if settings.personalize}} checked="checked"{{/if}}> Personalizable
+                                    <input type="checkbox" name="personalize"{{#if settings.personalize}}
+                                    checked="checked"{{/if}}> <%= i18n.localize("personalizable") %>
                                 </label>
                             </div>
                         </div>
@@ -318,15 +319,18 @@
                             <div class="form-group">
                                 <label><%= i18n.localize("title.position") %>
                                     <select class="form-control ues-title-position">
-                                        <option value="left"{{#equals "left" styles.titlePosition}} selected="selected"{{/equals}}>Left</option>
-                                        <option value="center"{{#equals "center" styles.titlePosition}} selected="selected"{{/equals}}>Center</option>
-                                        <option value="right"{{#equals "right" styles.titlePosition}} selected="selected"{{/equals}}>Right</option>
+                                        <option value="left"{{#equals "left" styles.titlePosition}}
+                                        selected="selected"{{/equals}}><%= i18n.localize("left")%></option>
+                                        <option value="center"{{#equals "center" styles.titlePosition}}
+                                        selected="selected"{{/equals}}><%= i18n.localize("center")%></option>
+                                        <option value="right"{{#equals "right" styles.titlePosition}}
+                                        selected="selected"{{/equals}}><%= i18n.localize("right")%></option>
                                     </select>
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label><%= i18n.localize("height") %>
-                                    <input type="text" class="form-control" name="height" placeholder="Height" value="{{#if styles.height}}{{styles.height}}{{/if}}">
+                                    <input type="text" class="form-control" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
                                 </label>
                             </div>
                             <div class="checkbox">

@@ -1,7 +1,7 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>Dashboards</title>
+    <title><%= i18n.localize("dashboards.lable")%></title>
 </head>
 <body>
 <div role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
