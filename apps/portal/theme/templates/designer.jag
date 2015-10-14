@@ -391,7 +391,7 @@
                 <img src="{{resolveURI thumbnail}}"/>
 
                 <div class="ues-toolbar">
-                    <button type="button" class="btn btn-default ues-add" data-id="{{id}}">Select</button>
+                    <button type="button" class="btn btn-default ues-add" id={{id}} data-id="{{id}}">Select</button>
                 </div>
             </div>
         </div>
