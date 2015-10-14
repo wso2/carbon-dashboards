@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
     <% include('/controllers/includes/theme-dashboard-styles.jag'); %>
     <script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
-
+    <%var i18n = require("i18n");
+    i18n.init(request);%>
     <title><%= i18n.localize("dashboard.lable")%></title>
 </head>
 <body class="lang_<%=request.getLocale()%>">
@@ -31,8 +32,6 @@
     } else{
         isAnonView = JSON.parse(isAnonView);
     }
-    var i18n = require("i18n");
-    i18n.init(request);
 %>
 <div id="navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
