@@ -1,6 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <%
+        var i18n = require("i18n");
+        i18n.init(request);
+        var locale = 'lang_' + request.getLocale();
+    %>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
@@ -11,11 +16,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/ues.css">
- <%
-var i18n = require("i18n");
-i18n.init(request);
-var locale = 'lang_' + request.getLocale();
-%>
+
 </head>
 
 
