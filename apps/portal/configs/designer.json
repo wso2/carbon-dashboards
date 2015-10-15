@@ -25,5 +25,15 @@
     "shareStore": false,
     "theme": "basic",
     "cacheTimeoutSeconds": "5",
-    "cacheSizeBytes": "1073741824"
+    "cacheSizeBytes": "1073741824",
+    "oauth": {
+        "enable": true,
+        "version": 2,
+        "authorizationUrl": "https://localhost:9443/oauth2/authorize",
+        "accessTokenUrl": "https://localhost:9443/oauth2/token",
+        "requestTokenUrl": "https://localhost:9443/oauth2/token",
+        "callbackUrl": "https://localhost:9444/portal",
+        "apiKey": "JQAGQfMR19ExSdG9TabJxgTzyZMa",
+        "apiSecret": "khP8q1cb5npLriqGUu4C9kWomfIa"
+    }
 }

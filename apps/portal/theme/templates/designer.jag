@@ -214,6 +214,7 @@
 <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
 <script src="<%=urlPrefix%>js/designer.js"></script>
+<script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-layout-hbs" type="text/x-handlebars-template">
     <div class="container-fluid">

@@ -1,0 +1,30 @@
+<%
+function getSamlAccessToken() {
+    var oauth = require("oauth");
+    var config = require('/configs/designer.json');
+    var oauthSettings = config.oauth;
+    var oauthEnable = oauthSettings.enable ? true : false;
+    
+    if (oauthEnable) {
+        var provider = {
+            "oauth_version": "2",
+            "authorization_url": oauthSettings.authorizationUrl,
+            "access_token_url": oauthSettings.accessTokenUrl,
+            "request_token_url": oauthSettings.requestTokenUrl,
+            "callback_url": oauthSettings.callbackUrl,
+            "api_key": oauthSettings.apiKey,
+            "api_secret": oauthSettings.apiSecret
+        }
+        var wso2is = new oauth.OAuthProvider(provider);
+        var samlResp = session.get("samlResponse");
+        var accessTokenResponse = wso2is.getTokenResponse(samlResp);
+
+        return {"accessToken": accessTokenResponse.getAccessToken()};
+    } else {
+        return {"accessToken": "Not enabled"};
+    }
+
+}
+print(getSamlAccessToken());
+
+%>
