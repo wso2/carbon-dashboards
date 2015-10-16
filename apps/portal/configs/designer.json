@@ -29,9 +29,9 @@
     "oauth": {
         "enable": true,
         "version": 2,
-        "authorizationUrl": "https://localhost:9443/oauth2/authorize",
+        "authorizationUrl": "",
         "accessTokenUrl": "https://localhost:9443/oauth2/token",
-        "requestTokenUrl": "https://localhost:9443/oauth2/token",
+        "requestTokenUrl": "",
         "callbackUrl": "https://localhost:9444/portal",
         "apiKey": "JQAGQfMR19ExSdG9TabJxgTzyZMa",
         "apiSecret": "khP8q1cb5npLriqGUu4C9kWomfIa"
