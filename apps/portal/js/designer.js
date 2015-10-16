@@ -445,7 +445,6 @@ $(function () {
      * @param done
      */
     var destroyPage = function (page, pageType, done) {
-        debugger;
         var checked = $('#toggle-dashboard-view').prop('checked');
         var area;
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
@@ -455,20 +454,6 @@ $(function () {
         }else if (!page.isanon && !checked){
             pageType = ANONYMOUS_DASHBOARD_VIEW;
         }
-
-        //if((page.isanon && !checked) || ues.global.isSwitchToNewPage ){
-        //    pageType = DEFAULT_DASHBOARD_VIEW;
-        //}else{
-        //    pageType = ANONYMOUS_DASHBOARD_VIEW;
-        //}
-
-        //if(((checked && !ues.global.isSwitchToNewPage)|| (!checked && ues.global.isSwitchToNewPage) && ues.global.anon)){
-        //    pageType = DEFAULT_DASHBOARD_VIEW;
-        //    //pageType = ANONYMOUS_DASHBOARD_VIEW;
-        //}else {//if(ues.global.anon && (!checked && ues.global.isSwitchToNewPage)){
-        //    pageType = ANONYMOUS_DASHBOARD_VIEW;
-        //    //pageType = DEFAULT_DASHBOARD_VIEW;
-        //}
 
         var content = page.content[pageType];
         var tasks = [];
@@ -613,7 +598,6 @@ $(function () {
             if(checked){
                 pageType = DEFAULT_DASHBOARD_VIEW;
                 ues.global.type = DEFAULT_DASHBOARD_VIEW;
-                //ues.global.anon = false;
                 state = 'on';
 
                 switchPage(getPageId(), ANONYMOUS_DASHBOARD_VIEW);
@@ -626,9 +610,6 @@ $(function () {
 
                 switchPage(getPageId(), DEFAULT_DASHBOARD_VIEW);
             }
-
-            //switchPage(getPageId(), pageType);
-            //$('#toggle-dashboard-view').bootstrapToggle(state);
 
         });
         designer.on('click', '.ues-design-anon-view', function () {
@@ -981,7 +962,6 @@ $(function () {
             page.isanon = true;
             $(".toggle-design-view").removeClass("hide");
 
-            debugger;
             $('#toggle-dashboard-view').bootstrapToggle('off');
         } else{
             //TODO switch to anon dashboard
@@ -1002,11 +982,8 @@ $(function () {
             page.content.anon = {};
         }
 
-        //$('#ues-designer').find('.ues-page-title').text(title);
-        //$('#ues-properties').find('.ues-page-title').text(title);
         updatePagesList();
         saveDashboard();
-        //initToggleView();
     };
 
     /**
@@ -1333,7 +1310,6 @@ $(function () {
             var thiz = $(this);
             var pid = thiz.data('id');
             ues.global.isSwitchToNewPage = true;
-            //switchPage(pid, DEFAULT_DASHBOARD_VIEW);
             switchPage(pid, pageType);
             ues.global.isSwitchToNewPage = false;
         });
@@ -1510,7 +1486,6 @@ $(function () {
             dashboard.pages.push(page);
             saveDashboard();
             hideProperties();
-            debugger;
 
             if(ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
@@ -1562,7 +1537,6 @@ $(function () {
             renderPageProperties(page);
         }
 
-        debugger;
 
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         if(ues.global.isSwitchToNewPage || !page.isanon) {
@@ -1590,7 +1564,6 @@ $(function () {
         updatePagesList();
         initToggleView();
 
-        debugger;
         if(pageType != DEFAULT_DASHBOARD_VIEW ){
             $("#toggle-dashboard-view").parent().addClass("off");
             $(".toggle-group").find(".active").removeClass("active");
