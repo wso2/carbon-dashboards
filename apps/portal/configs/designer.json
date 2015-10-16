@@ -27,7 +27,7 @@
     "cacheTimeoutSeconds": "5",
     "cacheSizeBytes": "1073741824",
     "oauth": {
-        "enable": true,
+        "enable": false,
         "version": 2,
         "authorizationUrl": "",
         "accessTokenUrl": "https://localhost:9443/oauth2/token",
