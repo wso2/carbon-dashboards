@@ -450,11 +450,13 @@ $(function () {
         var checked = $('#toggle-dashboard-view').prop('checked');
         var area;
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        if(((checked && !ues.global.isSwitchToNewPage) || (!checked && ues.global.isSwitchToNewPage) && ues.global.anon)){
-            pageType = ANONYMOUS_DASHBOARD_VIEW;
-        }else{
+
+        if(!page.isanon && checked){
             pageType = DEFAULT_DASHBOARD_VIEW;
+        }else if (!page.isanon && !checked){
+            pageType = ANONYMOUS_DASHBOARD_VIEW;
         }
+
         var content = page.content[pageType];
         var tasks = [];
         for (area in content) {
@@ -473,6 +475,7 @@ $(function () {
             if (!done) {
                 return;
             }
+
             done(err);
         });
     };
@@ -599,14 +602,16 @@ $(function () {
                 ues.global.type = DEFAULT_DASHBOARD_VIEW;
                 state = 'on';
 
+                switchPage(getPageId(), ANONYMOUS_DASHBOARD_VIEW);
+
             }else{
                 pageType = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.anon = true;
                 state = 'off';
+
+                switchPage(getPageId(), DEFAULT_DASHBOARD_VIEW);
             }
-            switchPage(getPageId(), pageType);
-            $('#toggle-dashboard-view').bootstrapToggle(state);
 
         });
         designer.on('click', '.ues-design-anon-view', function () {
@@ -952,26 +957,35 @@ $(function () {
         if (landing.is(':checked')) {
             dashboard.landing = id;
         }
+
         if (anon.is(':checked')) {
             ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
             dashboard.isanon = true;
             page.isanon = true;
             $(".toggle-design-view").removeClass("hide");
-            $('#toggle-dashboard-view').bootstrapToggle('on');
+
+            $('#toggle-dashboard-view').bootstrapToggle('off');
         } else{
             //TODO switch to anon dashboard
             if(ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW){
                 dashboard.isanon = false;
             }
+
             page.isanon = false;
+
             $(".toggle-design-view").addClass("hide");
-            $('#toggle-dashboard-view').bootstrapToggle('off');
+
+            if($('#toggle-dashboard-view').prop("checked")){
+                $('#toggle-dashboard-view').bootstrapToggle('on');
+            }else {
+                $('#toggle-dashboard-view').bootstrapToggle('off');
+            }
+
+            page.content.anon = {};
         }
-        $('#ues-designer').find('.ues-page-title').text(title);
-        $('#ues-properties').find('.ues-page-title').text(title);
+
         updatePagesList();
         saveDashboard();
-        initToggleView();
     };
 
     /**
@@ -1299,7 +1313,7 @@ $(function () {
             var thiz = $(this);
             var pid = thiz.data('id');
             ues.global.isSwitchToNewPage = true;
-            switchPage(pid, DEFAULT_DASHBOARD_VIEW);
+            switchPage(pid, pageType);
             ues.global.isSwitchToNewPage = false;
         });
 
@@ -1475,7 +1489,15 @@ $(function () {
             dashboard.pages.push(page);
             saveDashboard();
             hideProperties();
-            renderPage(id, done);
+
+            if(ues.global.page) {
+                currentPage(findPage(dashboard, ues.global.page.id));
+                switchPage(id, pageType);
+                done();
+            }else{
+                renderPage(id, done);
+            }
+
         }, 'html');
     };
 
@@ -1517,11 +1539,17 @@ $(function () {
         if (propertiesVisible()) {
             renderPageProperties(page);
         }
+
+
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        if(ues.global.isSwitchToNewPage){
+        if(ues.global.isSwitchToNewPage || !page.isanon) {
             pageType = DEFAULT_DASHBOARD_VIEW;
             ues.global.type = DEFAULT_DASHBOARD_VIEW;
+        }else if(!($("#toggle-dashboard-view").prop("checked")) && $("#toggle-dashboard-view").length > 0){
+            pageType = ANONYMOUS_DASHBOARD_VIEW;
+            ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
         }
+
         $('.ues-context-menu .ues-component-properties-toggle').parent().hide();
         var default_container = layoutContainer();
         ues.dashboards.render(default_container, dashboard, pid, pageType ,function (err) {
@@ -1535,8 +1563,16 @@ $(function () {
             }
             done(err);
         });
+
         updatePagesList();
         initToggleView();
+
+        if(pageType != DEFAULT_DASHBOARD_VIEW ){
+            $("#toggle-dashboard-view").parent().addClass("off");
+            $(".toggle-group").find(".active").removeClass("active");
+            $(".toggle-group").find(".toggle-off").addClass("active");
+            $("#toggle-dashboard-view").prop("checked",false);
+        }
     };
 
     /**

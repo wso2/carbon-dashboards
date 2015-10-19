@@ -224,7 +224,7 @@
                 <span class="col-md-2 pull-right toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">
                         <input id ="toggle-dashboard-view" class="toggle-view" checked data-toggle="toggle"
                         data-on="<%= i18n.localize("default.view")%> "  data-off="<%= i18n.localize("anon.view") %>"
-                        data-onstyle="primary" data-offstyle="primary" type="checkbox"/>
+                        data-onstyle="primary" data-offstyle="primary" type="checkbox" data-width="150"/>
                 </span>
                 <div class="clearfix"></div>
                 </h4>
