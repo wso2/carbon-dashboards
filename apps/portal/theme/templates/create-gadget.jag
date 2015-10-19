@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/d3.geomap.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>Create Gadget</title>
+    <title><%= i18n.localize("create.gadget.lable")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>

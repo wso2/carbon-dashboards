@@ -47,6 +47,7 @@
     "dashboards.manage.description": "* View, Modify and Delete dashboards",
     "no.dashboards.found.description": "No dashboards found. Please create dashboards by visiting",
     "create.a.dashboard": "Create a Dashboard",
+    "create.gadget.lable": "Create Gadget",
     "name.of.your.dashboard": "Name of your Dashboard",
     "e.g.sales.statistics": "E.g. Sales Statistics",
     "e.g.monthly.sales.statistics": "E.g. Monthly Sales Statistics",

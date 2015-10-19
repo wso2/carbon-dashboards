@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>Dashboards</title>
+    <title><%= i18n.localize("dashboard.lable")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
