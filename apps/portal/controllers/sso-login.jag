@@ -23,11 +23,13 @@
             sessionId = session.getId(),
             requestedPage = request.getParameter("requestedPage"),
             attr = configs.authentication.methods.sso.attributes,
-            referer = request.getHeader("referer"),
+            destination = request.getParameter("destination"),
+            referer =  request.getHeader("referer"),
             ignoreReferer = request.getParameter("ignoreReferer");
 
-    if (referer)
-    {
+    if(destination){
+        referer = destination;
+    }else if (referer)  {
         //var host = request.getHeader("Host");
         var host = referer.split('/')[2];
         referer = referer.split(host)[1];

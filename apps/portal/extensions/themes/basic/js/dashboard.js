@@ -1,4 +1,6 @@
 $(function () {
+    var DEFAULT_DASHBOARD_VIEW = 'default';
+
     var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
@@ -13,9 +15,10 @@ $(function () {
             var component = findComponent(id);
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
             var htmlBody = $('body');
-            var view = 'default';
+            var view = DEFAULT_DASHBOARD_VIEW;
+            var jQueryId = $('#' + id);
             if(component.fullViewPoped){
-                view = 'default';
+                view = DEFAULT_DASHBOARD_VIEW;
                 renderMaxView(component, view);
                 componentContainer.removeClass('ues-fullview-visible');
                 componentContainer.find('.panel-body').css('height','auto');
@@ -31,6 +34,7 @@ $(function () {
                 htmlBody.css('overflow-y','hidden');
                 //maximize logic
                 component.fullViewPoped = true;
+                renderComponentMaxView(jQueryId);
             }
         });
 
@@ -93,6 +97,18 @@ $(function () {
             });
         }
     };
+
+    /**
+     * Render maximized view for a gadget
+     * @param component jQuery resresentative id
+     */
+    var renderComponentMaxView = function (jQueryId) {
+        jQueryId.css('width','100%');
+        jQueryId.css('position','inherit');
+        jQueryId.css('left','inherit');
+    };
+
+
     /**
      * renders the component toolbar of a given component
      * @param component
@@ -114,7 +130,7 @@ $(function () {
         var component;
         var components;
 
-        var content = page.content;
+        var content = page.content.default;
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
@@ -154,7 +170,7 @@ $(function () {
             $('#componentFull').modal('hide');
 
         });
-        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, dashboardDone);
+        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, ues.global.dbType, dashboardDone);
 
     };
     initDashboard();

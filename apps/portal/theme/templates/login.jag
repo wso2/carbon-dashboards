@@ -1,14 +1,14 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>Dashboards</title>
+    <title><%= i18n.localize("dashboards.lable")%></title>
 </head>
 <body>
 <div role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
     <div class="container">
         <div class="navbar-header app-logo">
             <a href="<%=urlPrefix%>">
-                <img src="<%=urlPrefix%><%=utils.resolveUrl('images/logo.png')%>"/> <h2 class="app-title">Dashboard Designer</h2>
+                <img src="<%=urlPrefix%><%=utils.resolveUrl('images/logo.png')%>"/> <h2 class="app-title"><%= i18n.localize("dashboard.designer")%></h2>
             </a>
         </div>
         <div class="collapse navbar-collapse ues-global-navigation-bar">
@@ -23,14 +23,14 @@
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <form class="ues-signin-form" action="<%=tenantedUrlPrefix%>login" method="post">
-                <h2 class="ues-signin-heading">Login</h2>
+                <h2 class="ues-signin-heading"><%= i18n.localize("login.lable")%></h2>
                 <div class="form-group">
-                    <label for="ues-username" class="sr-only">Username</label>
-                    <input type="text" name="username" class="form-control ues-username" placeholder="Username" required autofocus>
+                    <label for="ues-username" class="sr-only"><%= i18n.localize("username")%></label>
+                    <input type="text" name="username" class="form-control ues-username" placeholder="<%= i18n.localize("username")%>" required autofocus>
                 </div>
                 <div class="form-group">
-                    <label for="ues-password" class="sr-only">Password</label>
-                    <input type="password" name="password" class="form-control ues-password" placeholder="Password" required>
+                    <label for="ues-password" class="sr-only"><%= i18n.localize("password")%></label>
+                    <input type="password" name="password" class="form-control ues-password" placeholder="<%= i18n.localize("password")%>" required>
                 </div>
                 <!--div class="checkbox">
                     <label>
@@ -40,10 +40,11 @@
                 <% if (dest) { %>
                 <input type="hidden" name="destination" value="<%=dest%>">
                 <% } %>
-                <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">Login</button>
+                <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">
+                    <%= i18n.localize("login.lable")%></button>
             </form>
             <% if (message) { %>
-            <div class="alert alert-danger" role="alert"><%=message%></div>
+            <div class="alert alert-danger" role="alert"><%= i18n.localize(message)%></div>
             <% } %>
         </div>
     </div>

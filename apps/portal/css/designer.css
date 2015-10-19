@@ -41,6 +41,7 @@
 
 #ues-properties .ues-page-title {
     margin-top: 10px;
+    position: relative;
 }
 
 #ues-properties .panel-body {
@@ -224,9 +225,8 @@
 }
 
 h4.ues-page-title {
-    margin: 20px 0px;
     background-color: rgb(228, 228, 228);
-    padding: 13px;
+    padding: 15px;
 }
 
 .page-sub-title {
@@ -266,4 +266,14 @@ h4.ues-page-title {
 }
 .modal-fullscreen{
     z-index: 1201;
+}
+
+.ues-page-top {
+    position: relative;
+}
+
+.toggle-design-view {
+    position: absolute;
+    top: 18px;
+    right: 6px;
 }

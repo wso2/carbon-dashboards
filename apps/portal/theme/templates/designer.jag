@@ -3,10 +3,11 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/designer.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-toggle.min.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title>WSO2 UES - Dashboard Designer</title>
 </head>
-<body>
+<body class="<%=locale%>">
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 
 <div id="ues-workspace-designer" class="ues-workspace" style="display:none">
@@ -23,40 +24,52 @@
             </div>
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Dashboard Design</a></li>
+                    <li class="active"><a href="#"><%= i18n.localize("dashboard.design") %> </a></li>
                     <% if (!dashboard.isUserCustom) { %>
                             <li><a href="#" class="ues-page-add">
                                 <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
-                                </span> Add Page</a>
+                                </span> <%= i18n.localize("add.page.lable")%> </a>
                             </li>
-                            <li><a href="<%=tenantedUrlPrefix%>create-gadget">
-                                <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
-                                    <i class="fw fw-add fw-stack-1x"></i>
-                                </span> Create Gadget</a></li>
+                            <!--<li><a href="<%=tenantedUrlPrefix%>create-gadget">-->
+                                <!--<span class="fw-stack">-->
+                                    <!--<i class="fw fw-ring fw-stack-2x"></i>-->
+                                    <!--<i class="fw fw-add fw-stack-1x"></i>-->
+                                <!--</span> <%= i18n.localize("create.gadget.lable")%> </a></li>-->
                             <li><a href="#" class="ues-dashboard-export">
                                  <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
-                                 </span> Export</a></li>
+                                 </span> <%= i18n.localize("export")%> </a></li>
                             <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
                              <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-settings fw-stack-1x"></i>
-                                </span> Settings</a></li>
+                                </span> <%= i18n.localize("settings")%> </a></li>
 
-                              <%}%>
+                              <%}
+                             if (dashboard.isUserCustom) { %>
+                                <li>
+                                    <a class="ues-copy" href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard
+                                     .id%>?reset=true">
+                                        <span class="fw-stack">
+                                            <i class="fw fw-ring fw-stack-2x"></i>
+                                            <i class="fw-refresh fw-stack-1x"></i>
+                                        </span> <%= i18n.localize("reset")%>
+                                    </a>
+                                </li>
+                             <% }%>
                              <li><a href="#" class="ues-dashboard-preview">
                                 <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-view fw-stack-1x"></i>
-                             </span> View</a></li>
+                             </span> <%= i18n.localize("view")%> </a></li>
                         </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="#" class="ues-page-switcher dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pages <span class="caret"></span></a>
+                        <a href="#" class="ues-page-switcher dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false"> <%= i18n.localize("pages.lable")%> <span class="caret"></span></a>
                         <ul class="dropdown-menu ues-pages-list" role="menu"></ul>
                     </li>
                     <li class="ues-hidden"><a href="#" class="ues-component-properties-toggle"><i class="fw fw-settings"></i></a></li>
@@ -68,7 +81,7 @@
         <div class="ues-tiles-menu">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> <%= i18n.localize("dashboards.lable")%> </a></li>
                 </ul>
             </div>
         </div>
@@ -100,13 +113,14 @@
                     <div class="col-md-12">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Search">
+                                <input type="text" class="form-control" placeholder=<%print(i18n.localize("search" +
+                ".lable"));%>...>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="row ues-help">
-                    <div class="col-md-12">* Drag and drop Gadgets to the design view</div>
+                    <div class="col-md-12"><%= i18n.localize("gadget.drop.lable")%> </div>
                 </div>
                 <div class="row ues-thumbnails"></div>
             </div>
@@ -117,13 +131,14 @@
                     <div class="col-md-12">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Search">
+                                <input type="text" class="form-control" placeholder=<%= i18n.localize("search" +
+                ".lable")%>...>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="row ues-help">
-                    <div class="col-md-12">* Drag and drop Widgets to the design view</div>
+                    <div class="col-md-12"><%= i18n.localize("widget.drop.lable")%> </div>
                 </div>
                 <div class="row ues-thumbnails"></div>
             </div>
@@ -148,12 +163,12 @@
             </div>
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Dashboard Design</a></li>
+                    <li class="active"><a href="#"><%= i18n.localize("dashboard.design.lable")%> </a></li>
                     <li><a href="#" class="ues-go-back">
                         <span class="fw-stack">
                             <i class="fw fw-ring fw-stack-2x"></i>
                             <i class="fw fw-left-arrow fw-stack-1x"></i>
-                        </span> Go Back</a>
+                        </span> <%= i18n.localize("go.back")%></a>
                     </li>
                 </ul>
             </div>
@@ -162,7 +177,7 @@
         <div class="ues-tiles-menu">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+                    <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i><%= i18n.localize("dashboards.lable")%> </a></li>
                 </ul>
             </div>
         </div>
@@ -170,7 +185,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="page-sub-title">Please select a layout</h1>
+                <h1 class="page-sub-title"><%= i18n.localize("layout.select.lable")%> </h1>
             </div>
         </div>
         <div class="row">
@@ -193,6 +208,7 @@
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
 <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap-modal-carousel.min.js"></script>
+<script src="<%=urlPrefix%>js/bootstrap-toggle.min.js"></script>
 <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
 <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
@@ -203,12 +219,27 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h4 class="ues-page-title">{{current.title}}</h4>
+                <h4 class="ues-page-title">
+                <span class="col-md-9">{{current.title}}</span>
+                <span class="col-md-2 pull-right toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">
+                        <input id ="toggle-dashboard-view" class="toggle-view" checked data-toggle="toggle"
+                        data-on="<%= i18n.localize("default.view")%> "  data-off="<%= i18n.localize("anon.view") %>"
+                        data-onstyle="primary" data-offstyle="primary" type="checkbox" data-width="150"/>
+                </span>
+                <div class="clearfix"></div>
+                </h4>
+                <span class="ues-page-id hide">{{current.id}}</span>
+
+
+                    <!--<ul class="nav navbar-nav toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">-->
+                        <!--<li class="toggle-design-view-default disabled"> <a class="ues-design-default-view active" href="#" > Default view </a> </li>-->
+                        <!--<li class="toggle-design-view-anon"> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>-->
+                    <!--</ul>-->
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="ues-layout container-fluid"></div>
+                <div class="default-ues-layout container-fluid"></div>
             </div>
         </div>
     </div>
@@ -237,7 +268,7 @@
                 <form class="ues-component-properties">
                     {{#has options}}
                         <div class="ues-options ues-properties">
-                            <h4>Options</h4>
+                            <h4><%= i18n.localize("options") %></h4>
                             {{#each options}}
                                 <div class="form-group">
                                     {{#equals type "STRING"}}
@@ -266,10 +297,11 @@
                     {{/has}}
                     {{#has settings}}
                         <div class="ues-settings ues-properties">
-                            <h4>Settings</h4>
+                            <h4><%= i18n.localize("settings") %></h4>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" name="personalize"{{#if settings.personalize}} checked="checked"{{/if}}> Personalizable
+                                    <input type="checkbox" name="personalize"{{#if settings.personalize}}
+                                    checked="checked"{{/if}}> <%= i18n.localize("personalizable") %>
                                 </label>
                             </div>
                         </div>
@@ -277,29 +309,35 @@
                     {{/has}}
                     {{#has styles}}
                         <div class="ues-styles ues-properties">
-                            <h4>Styles</h4>
+                            <h4><%= i18n.localize("styles") %></h4>
                             <div class="form-group">
-                                <label>Title
-                                    <input type="text" class="form-control" name="title" placeholder="Title" value="{{#if styles.title}}{{styles.title}}{{/if}}">
+                                <label><%= i18n.localize("title") %>
+                                    <input type="text" class="form-control ues-localized-title" name="title"
+                                    placeholder="<%= i18n
+                                        .localize("title") %>" value="{{#if styles.title}}{{styles.title}}{{/if}}">
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label>Title Position
+                                <label><%= i18n.localize("title.position") %>
                                     <select class="form-control ues-title-position">
-                                        <option value="left"{{#equals "left" styles.titlePosition}} selected="selected"{{/equals}}>Left</option>
-                                        <option value="center"{{#equals "center" styles.titlePosition}} selected="selected"{{/equals}}>Center</option>
-                                        <option value="right"{{#equals "right" styles.titlePosition}} selected="selected"{{/equals}}>Right</option>
+                                        <option value="left"{{#equals "left" styles.titlePosition}}
+                                        selected="selected"{{/equals}}><%= i18n.localize("left")%></option>
+                                        <option value="center"{{#equals "center" styles.titlePosition}}
+                                        selected="selected"{{/equals}}><%= i18n.localize("center")%></option>
+                                        <option value="right"{{#equals "right" styles.titlePosition}}
+                                        selected="selected"{{/equals}}><%= i18n.localize("right")%></option>
                                     </select>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label>Height
-                                    <input type="text" class="form-control" name="height" placeholder="Height" value="{{#if styles.height}}{{styles.height}}{{/if}}">
+                                <label><%= i18n.localize("height") %>
+                                    <input type="text" class="form-control" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
                                 </label>
                             </div>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" name="borders"{{#if styles.borders}} checked="checked"{{/if}}> Borders
+                                    <input type="checkbox" name="borders"{{#if styles.borders}}
+                                    checked="checked"{{/if}}> <%= i18n.localize("borders") %>
                                 </label>
                             </div>
                         </div>
@@ -307,7 +345,7 @@
                     {{/has}}
                     {{#has listeners}}
                         <div class="panel-group ues-notifiers ues-properties" id="accordion-events" role="tablist" aria-multiselectable="true">
-                            <h4>Events</h4>
+                            <h4><%= i18n.localize("events") %></h4>
                             {{#each listeners}}
                               <div class="panel panel-default listener" data-event="{{event}}">
                                 <div class="panel-heading" role="tab" id="heading-{{event}}" data-event="{{event}}">
@@ -339,7 +377,7 @@
                     {{/has}}
                     {{#has options listeners settings styles}}
                     {{else}}
-                        No properties to configure.
+                        <%= i18n.localize("no.properties.to.configure") %>
                     {{/has}}
                 </form>
             </div>
@@ -357,7 +395,7 @@
     {{/each}}
 </script>
 <script id="ues-no-components-hbs" type="text/x-handlebars-template">
-    <div class="col-md-12">No items found.</div>
+    <div class="col-md-12"><%= i18n.localize("no.items.found") %></div>
 </script>
 <script id="ues-layouts-list-hbs" type="text/x-handlebars-template">
     <div class="row thumbnails">
@@ -379,7 +417,7 @@
         {{else}}
         <div class="col-md-12">
             <div class="caption">
-                <h4>No layouts found.</h4>
+                <h4><%= i18n.localize("no.layout.found")%></h4>
             </div>
         </div>
         {{/if}}
@@ -396,20 +434,26 @@
         <div class="col-md-12">
             <div class="ues-sandbox">
                 <form>
-                    <h4>Properties</h4>
+                    <h4><%= i18n.localize("properties.lable") %></h4>
                     <div class="form-group">
-                        <label>Title
-                            <input type="text" class="form-control title" name="title" placeholder="Page Title" value="{{title}}">
+                        <label><%= i18n.localize("title") %>
+                            <input type="text" class="form-control title" name="title" placeholder="<%= i18n.localize
+                                ("page.tilte.lable") %>" value="{{title}}">
                         </label>
                     </div>
                     <div class="form-group">
-                        <label>URL
+                        <label><%= i18n.localize("url") %>
                             <input type="text" class="form-control id" name="id" placeholder="URL" value="{{id}}">
                         </label>
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> Use as Landing
+                            <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> <%= i18n
+                                .localize("use.as.landing") %>
+                        </label>
+                        <label class="{{#if isUserCustom}}hide{{/if}}">
+                            <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}} > <%= i18n
+                                .localize("make.anonymous") %>
                         </label>
                     </div>
                 </form>
@@ -419,7 +463,7 @@
 </script>
 <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
     {{#each pages}}
-    <li{{#equals id ../current.id}} class="active"{{/equals}}>
+    <li{{#equals id ../current.id}} class="active disabled"{{/equals}}>
         <a href="#" data-id="{{id}}">{{title}} <i class="fw fw-delete pull-right ues-trash"></i></a>
     </li>
     {{/each}}

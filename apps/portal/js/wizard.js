@@ -51,17 +51,19 @@ $("#dsList").change(function() {
         getColumns(datasource, datasourceType);
         //check whether the seleced datasource supports pagination as well
         //first, get the recordstore for this table
-        var recordStore;
-        var tableName = datasource;
-        var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
-        $.getJSON(url, function(data) {
-            if (data.status==="success") {
-                recordStore = data.message;
-                //then check for pagination support on this recordstore
-                recordStore = recordStore.replace(/"/g,"");
-                checkPaginationSupported(recordStore);
-            }
-        });
+        if (datasourceType === "batch") {
+            var recordStore;
+            var tableName = datasource;
+            var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
+            $.getJSON(url, function (data) {
+                if (data.status === "success") {
+                    recordStore = data.message;
+                    //then check for pagination support on this recordstore
+                    recordStore = recordStore.replace(/"/g, "");
+                    checkPaginationSupported(recordStore);
+                }
+            });
+        }
     } else {
         $('#rootwizard').find('.pager .next').addClass("disabled");
     }
