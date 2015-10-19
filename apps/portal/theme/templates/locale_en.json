@@ -43,7 +43,7 @@
     "delete.dashboard.confirm": "Do you want to delete",
     "no.layout.found": "No layouts found.",
     "select": "Select",
-    "here": "here",
+    "here.lable": "here",
     "dashboards.manage.description": "* View, Modify and Delete dashboards",
     "no.dashboards.found.description": "No dashboards found. Please create dashboards by visiting",
     "create.a.dashboard": "Create a Dashboard",
@@ -86,5 +86,6 @@
     "preferences": "Preferences",
     "gadget.Height": "Gadget Height",
     "sign.Up": "Sign Up",
+    "ds.dashboard.designer": "WSO2 DS - Dashboard Designer",
 
 }

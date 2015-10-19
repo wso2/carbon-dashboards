@@ -14,6 +14,8 @@ $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
 
+    var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage ;
+
     var dashboard;
 
     var page;
@@ -1066,7 +1068,6 @@ $(function () {
         });
         styles.titlePosition = $('.ues-styles .ues-title-position', sandbox).val();
         var compLocale = findComponent(id).content.locale_titles || {};
-        var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
         compLocale[lang] = $('.ues-styles .ues-localized-title', sandbox).val();
 
     };
@@ -1141,14 +1142,16 @@ $(function () {
             if (!fresh) {
                 assets.append(componentsListHbs({
                     type: type,
-                    assets: data
+                    assets: data,
+                    lang : lang
                 }));
                 return;
             }
             if (data.length) {
                 assets.html(componentsListHbs({
                     type: type,
-                    assets: data
+                    assets: data,
+                    lang : lang
                 }));
                 return;
             }
