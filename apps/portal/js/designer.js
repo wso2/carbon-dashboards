@@ -32,10 +32,10 @@ $(function () {
         layout: []
     };
 
-    $(document).ready(function() {
-       $(".nav li.disabled a").click(function() {
-         return false;
-       });
+    $(document).ready(function () {
+        $(".nav li.disabled a").click(function () {
+            return false;
+        });
     });
 
     var clone = function (o) {
@@ -272,7 +272,7 @@ $(function () {
      * @param componentContainer
      */
     var renderMaxView = function (component, view) {
-        if(component.hasCustomFullView){
+        if (component.hasCustomFullView) {
             component.viewOption = view;
             ues.components.update(component, function (err, block) {
                 if (err) {
@@ -449,9 +449,9 @@ $(function () {
         var area;
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
 
-        if(!page.isanon && checked){
+        if (!page.isanon && checked) {
             pageType = DEFAULT_DASHBOARD_VIEW;
-        }else if (!page.isanon && !checked){
+        } else if (!page.isanon && !checked) {
             pageType = ANONYMOUS_DASHBOARD_VIEW;
         }
 
@@ -548,12 +548,12 @@ $(function () {
             var component = findComponent(id);
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
             var view = DEFAULT_DASHBOARD_VIEW;
-            if(component.fullViewPoped){
+            if (component.fullViewPoped) {
                 view = DEFAULT_DASHBOARD_VIEW;
                 renderMaxView(component, view);
                 //minimize logic
                 componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.find('.panel-body').css('height','auto');
+                componentContainer.find('.panel-body').css('height', 'auto');
                 component.fullViewPoped = false;
             } else {
                 view = 'full';
@@ -561,12 +561,12 @@ $(function () {
                 //maximize logic
                 componentContainer.addClass('ues-fullview-visible');
                 var height = $('.ues-layout').height();
-                componentContainer.find('.panel-body').css('height',height + 'px');
+                componentContainer.find('.panel-body').css('height', height + 'px');
                 component.fullViewPoped = true;
             }
         });
 
-        $('body').on('click','.modal-footer button',function(){
+        $('body').on('click', '.modal-footer button', function () {
             $('#componentFull').modal('hide');
 
         });
@@ -589,20 +589,20 @@ $(function () {
             ues.global.type = DEFAULT_DASHBOARD_VIEW;
             switchPage(getPageId(), pageType);
             $('.toggle-design-view-anon').removeClass('disabled');
-            $('.toggle-design-view-default').addClass('disabled');   
+            $('.toggle-design-view-default').addClass('disabled');
         });
-        designer.on('#toggle-dashboard-view').change(function() {
+        designer.on('#toggle-dashboard-view').change(function () {
             var checked = $('#toggle-dashboard-view').prop('checked');
             var state = 'on';
 
-            if(checked){
+            if (checked) {
                 pageType = DEFAULT_DASHBOARD_VIEW;
                 ues.global.type = DEFAULT_DASHBOARD_VIEW;
                 state = 'on';
 
                 switchPage(getPageId(), ANONYMOUS_DASHBOARD_VIEW);
 
-            }else{
+            } else {
                 pageType = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.anon = true;
@@ -614,12 +614,12 @@ $(function () {
         });
         designer.on('click', '.ues-design-anon-view', function () {
             //anon
-           pageType = ANONYMOUS_DASHBOARD_VIEW;
-           ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
-           ues.global.anon = true;
-           switchPage(getPageId(), pageType); 
-           $('.toggle-design-view-default').removeClass('disabled');
-           $('.toggle-design-view-anon').addClass('disabled');
+            pageType = ANONYMOUS_DASHBOARD_VIEW;
+            ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
+            ues.global.anon = true;
+            switchPage(getPageId(), pageType);
+            $('.toggle-design-view-default').removeClass('disabled');
+            $('.toggle-design-view-anon').addClass('disabled');
         });
         designer.on('mouseenter', '.ues-component .ues-toolbar .ues-move-handle', function () {
             $(this).draggable({
@@ -641,7 +641,7 @@ $(function () {
     /**
      * return page id from DOM
      */
-    var getPageId = function(){
+    var getPageId = function () {
         return $('.ues-page-id').text();
     }
 
@@ -650,7 +650,7 @@ $(function () {
      */
     var initUESProperties = function () {
         $('body').on('click', '.close-db-settings', function () {
-                hideProperties();
+            hideProperties();
         });
     };
 
@@ -658,7 +658,9 @@ $(function () {
      * initializes the toggle for dashboard view switching
      */
     var initToggleView = function () {
-        $(function() { $('#toggle-dashboard-view').bootstrapToggle(); })
+        $(function () {
+            $('#toggle-dashboard-view').bootstrapToggle();
+        })
     };
     /**
      * renders the component toolbar of a given component
@@ -942,6 +944,34 @@ $(function () {
     };
 
     /**
+     * Check whether current landing page is anonymous or not.
+     * @return boolean
+     * */
+    var checkForAnonLandingPage = function (landing) {
+        var isLandingAnon = false;
+        for (var availablePage in dashboard.pages) {
+            if (dashboard.pages[availablePage].id == landing) {
+                isLandingAnon = dashboard.pages[availablePage].isanon;
+                break;
+            }
+        }
+
+        return isLandingAnon;
+    };
+
+    var checkForAnonPages = function(pageId){
+        var isAnonPagesAvailable = false;
+        for(var availablePage in dashboard.pages){
+            if(dashboard.pages[availablePage].id != pageId && dashboard.pages[availablePage].isanon){
+                isAnonPagesAvailable = dashboard.pages[availablePage].isanon;
+                break;
+            }
+        }
+
+        return isAnonPagesAvailable;
+    };
+
+    /**
      * update page options
      * @param sandbox
      */
@@ -952,34 +982,64 @@ $(function () {
         var anon = $('.anon', sandbox);
         page.id = id;
         page.title = title;
-        if (landing.is(':checked')) {
-            dashboard.landing = id;
+
+        if (sandbox.context.className == "landing") {
+            if (landing.is(':checked')) {
+                if(checkForAnonPages(id) && !page.isanon) {
+                    $(landing).prop("checked",false);
+                    console.log("Please Make this page anon to make it landing page");
+                    alert("Please Make this page anon to make it landing page");
+                }else{
+                    dashboard.landing = id;
+                }
+            }
         }
 
-        if (anon.is(':checked')) {
-            ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
-            dashboard.isanon = true;
-            page.isanon = true;
-            $(".toggle-design-view").removeClass("hide");
+        if (sandbox.context.className == "anon") {
 
-            $('#toggle-dashboard-view').bootstrapToggle('off');
-        } else{
-            //TODO switch to anon dashboard
-            if(ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW){
-                dashboard.isanon = false;
+            if (anon.is(':checked')) {
+                if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == id) {
+                    ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
+                    dashboard.isanon = true;
+                    page.isanon = true;
+                    $(".toggle-design-view").removeClass("hide");
+
+                    $('#toggle-dashboard-view').bootstrapToggle('off');
+                } else {
+                    $(anon).prop("checked",false);
+                    console.log("Please Make the landing page anon");
+                    alert("Please Make the landing page anon");
+                }
             }
+            else {
+                if (checkForAnonPages(dashboard.landing) && dashboard.landing == id) {
+                    $(anon).prop("checked",true);
+                    console.log("There are existing pages which are anonymous");
+                    alert("There are existing pages which are anonymous");
+                } else {
+                    //TODO switch to anon dashboard
+                    if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
+                        dashboard.isanon = false;
+                    }
 
-            page.isanon = false;
+                    page.isanon = false;
 
-            $(".toggle-design-view").addClass("hide");
+                    $(".toggle-design-view").addClass("hide");
 
-            if($('#toggle-dashboard-view').prop("checked")){
-                $('#toggle-dashboard-view').bootstrapToggle('on');
-            }else {
-                $('#toggle-dashboard-view').bootstrapToggle('off');
+                    if ($('#toggle-dashboard-view').prop("checked")) {
+                        $('#toggle-dashboard-view').bootstrapToggle('on');
+                    } else {
+                        $('#toggle-dashboard-view').bootstrapToggle('off');
+                    }
+
+                    page.content.anon = {};
+                }
             }
+        }
 
-            page.content.anon = {};
+        if (sandbox.context.className == "form-control title") {
+            $('#ues-designer').find('.ues-page-title').find(".page-title").text(title);
+            $('#ues-properties').find('.ues-page-title').text(title);
         }
 
         updatePagesList();
@@ -994,8 +1054,9 @@ $(function () {
         $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
             id: page.id,
             title: page.title,
+            landing: (dashboard.landing == page.id),
             isanon: page.isanon,
-            isUserCustom : dashboard.isUserCustom,
+            isUserCustom: dashboard.isUserCustom
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
@@ -1356,26 +1417,26 @@ $(function () {
     };
 
     /**
-    * Register the "set_pref" rpc function. When user set the user preferences using
-    * pref.set() method this will be executed.
-    */
+     * Register the "set_pref" rpc function. When user set the user preferences using
+     * pref.set() method this will be executed.
+     */
     var registerRpc = function () {
-        gadgets.rpc.register('set_pref', function(token, name, value) {
+        gadgets.rpc.register('set_pref', function (token, name, value) {
 
             //Store the gadget id in a variable
             var id = this.f.split("-")[2];
 
             var pages = dashboard.pages;
             var numberOfPages = pages.length;
-            for (var i = 0; i < numberOfPages; i++){
+            for (var i = 0; i < numberOfPages; i++) {
                 var pageContent = pages[i].content.default;
                 var zones = Object.keys(pageContent);
                 var numberOfZones = zones.length;
-                for (var j = 0; j < numberOfZones; j++){
+                for (var j = 0; j < numberOfZones; j++) {
                     var zone = zones[j];
                     var gadgets = pageContent[zone];
                     var numberOfGadgets = gadgets.length;
-                    for (var k = 0; k < numberOfGadgets; k++){
+                    for (var k = 0; k < numberOfGadgets; k++) {
                         var gadget = gadgets[k];
                         if (gadgets[k].id == id) {
                             var gadgetOption = gadget.content.options;
@@ -1419,12 +1480,12 @@ $(function () {
                 var el = $(this);
                 switch (action) {
                     case 'move':
-                        if(!hasComponents($(this))) {
+                        if (!hasComponents($(this))) {
                             moveComponent(el, id);
                         }
                         break;
                     default:
-                        if(!hasComponents($(this))){
+                        if (!hasComponents($(this))) {
                             createComponent(el, findStoreCache(type, id));
                         }
                 }
@@ -1433,9 +1494,9 @@ $(function () {
     };
 
 
-    var hasComponents = function(container){
+    var hasComponents = function (container) {
         var components = container.find('.ues-component').length;
-        if(components > 0){
+        if (components > 0) {
             return true;
         }
         return false;
@@ -1487,11 +1548,11 @@ $(function () {
             saveDashboard();
             hideProperties();
 
-            if(ues.global.page) {
+            if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
                 switchPage(id, pageType);
                 done();
-            }else{
+            } else {
                 renderPage(id, done);
             }
 
@@ -1515,7 +1576,7 @@ $(function () {
         if (!page) {
             return renderPage(pid);
         }
-        destroyPage(page, pageType,  function (err) {
+        destroyPage(page, pageType, function (err) {
             if (err) {
                 throw err;
             }
@@ -1539,17 +1600,19 @@ $(function () {
 
 
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        if(ues.global.isSwitchToNewPage || !page.isanon) {
+        if (ues.global.isSwitchToNewPage || !page.isanon) {
             pageType = DEFAULT_DASHBOARD_VIEW;
             ues.global.type = DEFAULT_DASHBOARD_VIEW;
-        }else if(!($("#toggle-dashboard-view").prop("checked")) && $("#toggle-dashboard-view").length > 0){
+        } else if (!($("#toggle-dashboard-view").prop("checked")) && $("#toggle-dashboard-view").length > 0) {
             pageType = ANONYMOUS_DASHBOARD_VIEW;
             ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
         }
 
+        // TODO: Disable the properties if no gadgets available in the view.
         $('.ues-context-menu .ues-component-properties-toggle').parent().hide();
+
         var default_container = layoutContainer();
-        ues.dashboards.render(default_container, dashboard, pid, pageType ,function (err) {
+        ues.dashboards.render(default_container, dashboard, pid, pageType, function (err) {
             $('#ues-designer').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
@@ -1564,11 +1627,11 @@ $(function () {
         updatePagesList();
         initToggleView();
 
-        if(pageType != DEFAULT_DASHBOARD_VIEW ){
+        if (pageType != DEFAULT_DASHBOARD_VIEW) {
             $("#toggle-dashboard-view").parent().addClass("off");
             $(".toggle-group").find(".active").removeClass("active");
             $(".toggle-group").find(".toggle-off").addClass("active");
-            $("#toggle-dashboard-view").prop("checked",false);
+            $("#toggle-dashboard-view").prop("checked", false);
         }
     };
 
@@ -1649,4 +1712,5 @@ $(function () {
 
     ues.dashboards.save = saveDashboard;
 
-});
+})
+;

@@ -220,7 +220,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h4 class="ues-page-title">
-                <span class="col-md-9">{{current.title}}</span>
+                <span class="col-md-9 page-title">{{current.title}}</span>
                 <span class="col-md-2 pull-right toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">
                         <input id ="toggle-dashboard-view" class="toggle-view" checked data-toggle="toggle"
                         data-on="<%= i18n.localize("default.view")%> "  data-off="<%= i18n.localize("anon.view") %>"
