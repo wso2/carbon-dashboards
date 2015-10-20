@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>Dashboards</title>
+    <title><%= i18n.localize("dashboard.lable")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -54,7 +54,7 @@
 </div>
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
-<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/spin.min.js"></script>
 <script src="<%=urlPrefix%>js/ladda.min.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -75,7 +75,7 @@
     <div class="col-md-12">
         <div class="caption">
             <h4><%= i18n.localize("no.dashboards.found.description") %>
-            <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here") %></a>.
+            <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.lable") %></a>.
             </h4>
         </div>
     </div>
