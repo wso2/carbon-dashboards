@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-toggle.min.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>WSO2 UES - Dashboard Designer</title>
+    <title><%= i18n.localize("ds.dashboard.designer") %></title>
 </head>
 <body class="<%=locale%>">
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -197,7 +197,7 @@
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery-ui.js"></script>
-<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -389,7 +389,8 @@
     <div class="col-md-12">
         <div class="ues-thumbnail" data-id="{{id}}" data-type="{{../type}}">
             <img src="{{resolveURI thumbnail}}"/>
-            <h4 class="ues-title">{{title}}</h4>
+            <h4 class="ues-title">{{#if (lookup locale_titles ../lang)}}{{lookup locale_titles ../lang}}{{else}}{{title}}{{/if}}
+    </h4>
         </div>
     </div>
     {{/each}}
