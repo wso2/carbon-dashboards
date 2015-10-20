@@ -366,7 +366,7 @@ $(function () {
             }
         }
 
-        ues.dashboards.rewire(page);
+        ues.dashboards.rewire(page,pageType);
         updateComponent(id);
         saveDashboard();
     };
@@ -959,6 +959,10 @@ $(function () {
         return isLandingAnon;
     };
 
+    /**
+     * Check whether there are any anonymous pages.
+     * @return boolean
+     * */
     var checkForAnonPages = function(pageId){
         var isAnonPagesAvailable = false;
         for(var availablePage in dashboard.pages){
