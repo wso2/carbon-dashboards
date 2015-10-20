@@ -366,7 +366,7 @@ $(function () {
             }
         }
 
-        ues.dashboards.rewire(page,pageType);
+        ues.dashboards.rewire(page, pageType);
         updateComponent(id);
         saveDashboard();
     };
@@ -638,12 +638,13 @@ $(function () {
         });
 
     };
+
     /**
      * return page id from DOM
      */
     var getPageId = function () {
         return $('.ues-page-id').text();
-    }
+    };
 
     /**
      * initializes the ues properties
@@ -945,6 +946,7 @@ $(function () {
 
     /**
      * Check whether current landing page is anonymous or not.
+     * @param landing
      * @return boolean
      * */
     var checkForAnonLandingPage = function (landing) {
@@ -961,18 +963,36 @@ $(function () {
 
     /**
      * Check whether there are any anonymous pages.
+     * @param pageId
      * @return boolean
      * */
-    var checkForAnonPages = function(pageId){
+    var checkForAnonPages = function (pageId) {
         var isAnonPagesAvailable = false;
-        for(var availablePage in dashboard.pages){
-            if(dashboard.pages[availablePage].id != pageId && dashboard.pages[availablePage].isanon){
+        for (var availablePage in dashboard.pages) {
+            if (dashboard.pages[availablePage].id != pageId && dashboard.pages[availablePage].isanon) {
                 isAnonPagesAvailable = dashboard.pages[availablePage].isanon;
                 break;
             }
         }
 
         return isAnonPagesAvailable;
+    };
+
+    /**
+     * Check whether there are any pages which has given id.
+     * @param pageId
+     * @return boolean
+     * */
+    var checkForPagesById = function (pageId) {
+        var isPageAvailable = false;
+        for (var availablePage in dashboard.pages) {
+            if (dashboard.pages[availablePage].id == pageId) {
+                isPageAvailable = true;
+                break;
+            }
+        }
+
+        return isPageAvailable;
     };
 
     /**
@@ -984,40 +1004,44 @@ $(function () {
         var title = $('.title', sandbox).val();
         var landing = $('.landing', sandbox);
         var anon = $('.anon', sandbox);
-        page.id = id;
+
+        if (checkForPagesById(id) && page.id != id) {
+            console.log("Page URL already exist");
+            alert("Page URL already exist");
+            $('.id', sandbox).val(page.id);
+        } else {
+            page.id = id;
+        }
+
         page.title = title;
 
-        if (sandbox.context.className == "landing") {
-            if (landing.is(':checked')) {
-                if(checkForAnonPages(id) && !page.isanon) {
-                    $(landing).prop("checked",false);
-                    console.log("Please Make this page anon to make it landing page");
-                    alert("Please Make this page anon to make it landing page");
-                }else{
-                    dashboard.landing = id;
-                }
+        if (sandbox.context.className == "landing" && landing.is(':checked')) {
+            if (checkForAnonPages(id) && !page.isanon) {
+                $(landing).prop("checked", false);
+                console.log("Please Make this page anon to make it landing page");
+                alert("Please Make this page anon to make it landing page");
+            } else {
+                dashboard.landing = id;
             }
         }
 
         if (sandbox.context.className == "anon") {
-
             if (anon.is(':checked')) {
                 if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == id) {
                     ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
                     dashboard.isanon = true;
                     page.isanon = true;
                     $(".toggle-design-view").removeClass("hide");
-
                     $('#toggle-dashboard-view').bootstrapToggle('off');
                 } else {
-                    $(anon).prop("checked",false);
+                    $(anon).prop("checked", false);
                     console.log("Please Make the landing page anon");
                     alert("Please Make the landing page anon");
                 }
             }
             else {
                 if (checkForAnonPages(dashboard.landing) && dashboard.landing == id) {
-                    $(anon).prop("checked",true);
+                    $(anon).prop("checked", true);
                     console.log("There are existing pages which are anonymous");
                     alert("There are existing pages which are anonymous");
                 } else {
