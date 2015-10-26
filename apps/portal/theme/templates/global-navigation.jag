@@ -13,7 +13,7 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
             <!--</button>-->
             <a href="<%=tenantedUrlPrefix%>./" >
                 <img src="<%=urlPrefix%><%=utils.resolveUrl('images/logo.png')%>" class="img-responsive"/> <h2
-                class="app-title">Dashboard Designer</h2>
+                class="app-title"><%= i18n.localize("dashboard.designer")%></h2>
             </a>
         </div>
         <div class="col-sm-6 col-xs-3">
@@ -26,12 +26,12 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
                         <span class="logged-in-username"><%=user.username%></span> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
+                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%= i18n.localize("logout.lable")%></a></li>
                     </ul>
                 </li>
                 </li>
                 <% } else { %>
-                <li><a href="<%=urlPrefix%>login?destination=<%=dest%>">Login</a></li>
+                <li><a href="<%=urlPrefix%>login?destination=<%=dest%>"><%= i18n.localize("login.lable")%></a></li>
                 <% } %>
             </ul>
         </div>
