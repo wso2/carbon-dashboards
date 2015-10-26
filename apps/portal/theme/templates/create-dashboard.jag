@@ -41,15 +41,25 @@
         <div class="col-md-8 col-md-offset-2">
             <form action="<%=tenantedUrlPrefix%>dashboards" method="post" id="ues-dashboard-form">
                 <h1 class="page-sub-title"><%= i18n.localize("create.a.dashboard")%></h1>
-                <div class="form-group">
-                    <label for="dashboard-title"><%= i18n.localize("name.of.your.dashboard")%></label>
+                <div class="form-group has-feedback">
+                    <label for="dashboard-title">
+                        <%= i18n.localize("name.of.your.dashboard")%>
+                        <span class="required">*</span>
+                    </label>
                     <input type="text" name="title" class="form-control" id="ues-dashboard-title"
                         placeholder="<%=i18n.localize("e.g.sales.statistics")%>">
+                    <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
+                    <label id="title-error" class="required-error hide" for="title">This field is required.</label>
                 </div>
-                <div class="form-group">
-                    <label for="dashboard-id"><%=i18n.localize("url")%></label>
+                <div class="form-group has-feedback">
+                    <label for="dashboard-id">
+                        <%=i18n.localize("url")%>
+                        <span class="required">*</span>
+                    </label>
                     <input type="text" name="id" class="form-control" id="ues-dashboard-id"
                         placeholder="<%=i18n.localize("e.g.sales-stats")%>">
+                    <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
+                    <label id="id-error" class="required-error hide" for="title">This field is required.</label>
                 </div>
                 <div class="form-group">
                     <label for="dashboard-description"><%=i18n.localize("description")%></label>
@@ -63,30 +73,12 @@
 </div>
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+<script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
 <script src="<%=urlPrefix%>js/create.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
-<script type="text/javascript">
-    $("#ues-dashboard-create").on('click',function() {
-        var url = "/portal/dashboards/" + $("#ues-dashboard-title").val();
-        console.log("[Sending AJAX request to " + url); 
-        $.ajax({
-            url: url,
-            method: "GET",
-            contentType: "application/json",
-            success: function(data) {
-                alert("A dashboard with same name already exists. Please select a different dashboard name.");
-            },
-            error: function(xhr,message,errorObj) {
-                if (xhr.status == 404) {
-                    //There's no dashboard exists with same id. We are good to go.   
-                    $("#ues-dashboard-form").submit();
-                } 
-            }
-        });
-    });
-</script>
 </body>
 </html>

@@ -14,7 +14,7 @@ $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
 
-    var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage ;
+    var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
 
     var dashboard;
 
@@ -998,6 +998,32 @@ $(function () {
     };
 
     /**
+     * Generate message box according to the type.
+     * @param1 type
+     * @param2 text
+     * @private
+     * */
+    var generateMessage = function (type, text) {
+        return noty({
+            text: text,
+            type: type,
+            closeWith: ['button', 'click'],
+            layout: 'topCenter',
+            theme: 'wso2',
+            timeout: '3500',
+            dismissQueue: true,
+            killer: true,
+            maxVisible: 1,
+            animation: {
+                open: {height: 'toggle'}, // jQuery animate function property object
+                close: {height: 'toggle'}, // jQuery animate function property object
+                easing: 'swing', // easing
+                speed: 500 // opening & closing animation speed
+            }
+        });
+    };
+
+    /**
      * update page options
      * @param sandbox
      */
@@ -1009,7 +1035,7 @@ $(function () {
 
         if (checkForPagesById(id) && page.id != id) {
             console.log("Page URL already exist");
-            alert("Page URL already exist");
+            generateMessage("error", "Page URL already exist");
             $('.id', sandbox).val(page.id);
         } else {
             page.id = id;
@@ -1021,7 +1047,7 @@ $(function () {
             if (checkForAnonPages(id) && !page.isanon) {
                 $(landing).prop("checked", false);
                 console.log("Please Make this page anon to make it landing page");
-                alert("Please Make this page anon to make it landing page");
+                generateMessage("error", "Please Make this page anon to make it landing page");
             } else {
                 dashboard.landing = id;
             }
@@ -1038,14 +1064,14 @@ $(function () {
                 } else {
                     $(anon).prop("checked", false);
                     console.log("Please Make the landing page anon");
-                    alert("Please Make the landing page anon");
+                    generateMessage("error", "Please Make the landing page anon");
                 }
             }
             else {
                 if (checkForAnonPages(dashboard.landing) && dashboard.landing == id) {
                     $(anon).prop("checked", true);
                     console.log("There are existing pages which are anonymous");
-                    alert("There are existing pages which are anonymous");
+                    generateMessage("error", "There are existing pages which are anonymous");
                 } else {
                     //TODO switch to anon dashboard
                     if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
@@ -1246,7 +1272,7 @@ $(function () {
                 assets.append(componentsListHbs({
                     type: type,
                     assets: data,
-                    lang : lang
+                    lang: lang
                 }));
                 return;
             }
@@ -1254,7 +1280,7 @@ $(function () {
                 assets.html(componentsListHbs({
                     type: type,
                     assets: data,
-                    lang : lang
+                    lang: lang
                 }));
                 return;
             }

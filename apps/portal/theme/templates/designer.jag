@@ -198,6 +198,7 @@
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery-ui.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
+<script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -213,6 +214,7 @@
 <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
+<script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/designer.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-layout-hbs" type="text/x-handlebars-template">
