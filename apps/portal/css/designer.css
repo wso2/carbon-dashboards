@@ -235,7 +235,7 @@ h4.ues-page-title {
     font-size: 24px;
 }
 
-.layout-slection{
+.layout-slection {
     background: #11375B;
     color: #fff;
     padding: 10px 15px;
@@ -243,28 +243,33 @@ h4.ues-page-title {
     margin-bottom: 20px;
 }
 
-.caption h3{
+.caption h3 {
     margin-top: 3px;
 }
-.ues-toolbar{
+
+.ues-toolbar {
     float: right;
 }
-.thumbnail .caption h3{
+
+.thumbnail .caption h3 {
     font-weight: 200;
     color: #fff;
 }
+
 .title-section {
     box-shadow: 6px 0px 4px 4px #464646;
     background-color: rgb(38, 41, 51);
 }
 
-.ues-properties h4, .ues-properties label, .ues-sandbox label,  .ues-sandbox h4{
+.ues-properties h4, .ues-properties label, .ues-sandbox label, .ues-sandbox h4 {
     font-weight: 200;
 }
-.ues-title, .ues-page-title{
+
+.ues-title, .ues-page-title {
     font-weight: 400;
 }
-.modal-fullscreen{
+
+.modal-fullscreen {
     z-index: 1201;
 }
 
@@ -276,4 +281,24 @@ h4.ues-page-title {
     position: absolute;
     top: 18px;
     right: 6px;
+}
+
+.required {
+    color: #E74C3C;
+    font-weight: 400;
+}
+
+.required-error {
+    line-height: 1.5em;
+    color: rgb(255, 255, 255);
+    background-color: #e74c3c;
+    width: 100%;
+    padding: 5px 10px;
+    border-left: 5px solid #942F25;
+}
+
+.has-error {
+    border-color: #a94442;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }

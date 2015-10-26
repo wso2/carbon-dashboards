@@ -1024,21 +1024,67 @@ $(function () {
     };
 
     /**
+     * Show error style for given element
+     * @param1 element
+     * @param2 errorElement
+     * @private
+     * */
+    var showInlineError = function (element, errorElement) {
+        element.parent().addClass("has-error");
+        element.addClass("has-error");
+        element.parent().find("span.glyphicon").removeClass("hide");
+        element.parent().find("span.glyphicon").addClass("show");
+        errorElement.removeClass("hide");
+        errorElement.addClass("show");
+    };
+
+    /**
+     * Hide error style for given element
+     * @param1 element
+     * @param2 errorElement
+     * @private
+     * */
+    var hideInlineError = function (element, errorElement) {
+        element.parent().removeClass("has-error");
+        element.removeClass("has-error");
+        element.parent().find("span.glyphicon").removeClass("show");
+        element.parent().find("span.glyphicon").addClass("hide");
+        errorElement.removeClass("show");
+        errorElement.addClass("hide");
+    };
+
+    /**
      * update page options
      * @param sandbox
+     * @private
      */
     var updatePageProperties = function (sandbox) {
-        var id = $('.id', sandbox).val();
-        var title = $('.title', sandbox).val();
-        var landing = $('.landing', sandbox);
-        var anon = $('.anon', sandbox);
+        var titleError = $("#title-error"),
+            idError = $("#id-error"),
+            id = $('.id', sandbox).val(),
+            title = $('.title', sandbox).val(),
+            landing = $('.landing', sandbox),
+            toggleView = $('#toggle-dashboard-view'),
+            anon = $('.anon', sandbox);
 
-        if (checkForPagesById(id) && page.id != id) {
-            console.log("Page URL already exist");
-            generateMessage("error", "Page URL already exist");
-            $('.id', sandbox).val(page.id);
-        } else {
-            page.id = id;
+        hideInlineError($('.title', sandbox), titleError);
+        hideInlineError($('.id', sandbox), idError);
+
+        if (!title || !id) {
+            !title ? showInlineError($('.title', sandbox), titleError) : showInlineError($(".id", sandbox), idError);
+            return;
+        }
+
+        if (sandbox.context.className == "form-control id") {
+            if (checkForPagesById(id) && page.id != id) {
+                generateMessage("error", "A page with entered URL already exists. Please select a different URL");
+                $('.id', sandbox).val(page.id);
+            } else {
+                page.id = id;
+                if (landing.is(":checked")) {
+                    dashboard.landing = id;
+                }
+            }
         }
 
         page.title = title;
@@ -1046,8 +1092,7 @@ $(function () {
         if (sandbox.context.className == "landing" && landing.is(':checked')) {
             if (checkForAnonPages(id) && !page.isanon) {
                 $(landing).prop("checked", false);
-                console.log("Please Make this page anon to make it landing page");
-                generateMessage("error", "Please Make this page anon to make it landing page");
+                generateMessage("error", "Please add an anonymous view to this page before select it as the landing page");
             } else {
                 dashboard.landing = id;
             }
@@ -1060,18 +1105,16 @@ $(function () {
                     dashboard.isanon = true;
                     page.isanon = true;
                     $(".toggle-design-view").removeClass("hide");
-                    $('#toggle-dashboard-view').bootstrapToggle('off');
+                    toggleView.bootstrapToggle('off');
                 } else {
                     $(anon).prop("checked", false);
-                    console.log("Please Make the landing page anon");
-                    generateMessage("error", "Please Make the landing page anon");
+                    generateMessage("error", "Please add an anonymous view to the landing page in order to make this page anonymous");
                 }
             }
             else {
                 if (checkForAnonPages(dashboard.landing) && dashboard.landing == id) {
                     $(anon).prop("checked", true);
-                    console.log("There are existing pages which are anonymous");
-                    generateMessage("error", "There are existing pages which are anonymous");
+                    generateMessage("error", "There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page");
                 } else {
                     //TODO switch to anon dashboard
                     if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
@@ -1082,10 +1125,10 @@ $(function () {
 
                     $(".toggle-design-view").addClass("hide");
 
-                    if ($('#toggle-dashboard-view').prop("checked")) {
-                        $('#toggle-dashboard-view').bootstrapToggle('on');
+                    if (toggleView.prop("checked")) {
+                        toggleView.bootstrapToggle('on');
                     } else {
-                        $('#toggle-dashboard-view').bootstrapToggle('off');
+                        toggleView.bootstrapToggle('off');
                     }
 
                     page.content.anon = {};
@@ -1654,7 +1697,6 @@ $(function () {
         if (propertiesVisible()) {
             renderPageProperties(page);
         }
-
 
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         if (ues.global.isSwitchToNewPage || !page.isanon) {

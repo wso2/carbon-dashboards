@@ -45,10 +45,10 @@ $(function () {
             killer: true,
             maxVisible: 1,
             animation: {
-                open: {height: 'toggle'}, // jQuery animate function property object
-                close: {height: 'toggle'}, // jQuery animate function property object
-                easing: 'swing', // easing
-                speed: 500 // opening & closing animation speed
+                open: {height: 'toggle'},
+                close: {height: 'toggle'},
+                easing: 'swing',
+                speed: 500
             }
         });
     };
@@ -56,36 +56,36 @@ $(function () {
     /**
      * Show error style for given element
      * @param1 element
-     * @param2 error_element
+     * @param2 errorElement
      * @private
      * */
-    var showError = function (element, error_element) {
+    var showInlineError = function (element, errorElement) {
         element.parent().addClass("has-error");
         element.addClass("has-error");
         element.parent().find("span.glyphicon").removeClass("hide");
         element.parent().find("span.glyphicon").addClass("show");
-        error_element.removeClass("hide");
-        error_element.addClass("show");
+        errorElement.removeClass("hide");
+        errorElement.addClass("show");
     };
 
     /**
      * Hide error style for given element
      * @param1 element
-     * @param2 error_element
+     * @param2 errorElement
      * @private
      * */
-    var hideError = function (element, error_element) {
+    var hideInlineError = function (element, errorElement) {
         element.parent().removeClass("has-error");
         element.removeClass("has-error");
         element.parent().find("span.glyphicon").removeClass("show");
         element.parent().find("span.glyphicon").addClass("hide");
-        error_element.removeClass("show");
-        error_element.addClass("hide");
+        errorElement.removeClass("show");
+        errorElement.addClass("hide");
     };
 
     $('#ues-dashboard-title').on('keyup', function () {
         if ($(this).val()) {
-            hideError($(this), $("#title-error"));
+            hideInlineError($(this), $("#title-error"));
         }
         updateUrl();
     }).on('change', function () {
@@ -95,7 +95,7 @@ $(function () {
     $('#ues-dashboard-id').on('keyup', function () {
         overridden = overridden || true;
         if ($(this).val()) {
-            hideError($(this), $("#id-error"));
+            hideInlineError($(this), $("#id-error"));
         }
     });
 
@@ -105,11 +105,11 @@ $(function () {
             url = "/portal/dashboards/" + id.val(),
             form = $('#ues-dashboard-form'),
             action = form.attr('action'),
-            title_error = $("#title-error"),
-            id_error = $("#id-error");
+            titleError = $("#title-error"),
+            idError = $("#id-error");
 
         if (!title.val() || !id.val()) {
-            !title.val() ? showError(title, title_error) : showError(id, id_error);
+            !title.val() ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
             form.attr('action', action + '/' + id.val());
             console.log("[Sending AJAX request to " + url);
