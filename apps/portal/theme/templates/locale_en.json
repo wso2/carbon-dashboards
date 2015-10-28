@@ -43,10 +43,11 @@
     "delete.dashboard.confirm": "Do you want to delete",
     "no.layout.found": "No layouts found.",
     "select": "Select",
-    "here": "here",
+    "here.lable": "here",
     "dashboards.manage.description": "* View, Modify and Delete dashboards",
     "no.dashboards.found.description": "No dashboards found. Please create dashboards by visiting",
     "create.a.dashboard": "Create a Dashboard",
+    "create.gadget.lable": "Create Gadget",
     "name.of.your.dashboard": "Name of your Dashboard",
     "e.g.sales.statistics": "E.g. Sales Statistics",
     "e.g.monthly.sales.statistics": "E.g. Monthly Sales Statistics",
@@ -86,5 +87,6 @@
     "preferences": "Preferences",
     "gadget.Height": "Gadget Height",
     "sign.Up": "Sign Up",
+    "ds.dashboard.designer": "WSO2 DS - Dashboard Designer",
 
 }
