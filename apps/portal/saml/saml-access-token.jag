@@ -1,30 +1,34 @@
 <%
+include('/modules/dashboards.js');
 function getSamlAccessToken() {
     var oauth = require("oauth");
-    var config = require('/configs/designer.json');
-    var oauthSettings = config.oauth;
-    var oauthEnable = oauthSettings.enable ? true : false;
+    var dashboardId = request.getParameter("id");
+    var dashboard = findOne(dashboardId);
+    var oauthEnabled = dashboard.enableOauth ? true : false;
     
-    if (oauthEnable) {
+    if (oauthEnabled) {
         var provider = {
             "oauth_version": "2",
-            "authorization_url": oauthSettings.authorizationUrl,
-            "access_token_url": oauthSettings.accessTokenUrl,
-            "request_token_url": oauthSettings.requestTokenUrl,
-            "callback_url": oauthSettings.callbackUrl,
-            "api_key": oauthSettings.apiKey,
-            "api_secret": oauthSettings.apiSecret
+            "authorization_url": "",
+            "access_token_url": dashboard.accessTokenUrl,
+            "request_token_url": "",
+            "callback_url": "",
+            "api_key": dashboard.apiKey,
+            "api_secret": dashboard.apiSecret
         }
         var wso2is = new oauth.OAuthProvider(provider);
         var samlResp = session.get("samlResponse");
-        var accessTokenResponse = wso2is.getTokenResponse(samlResp);
-
-        return {"accessToken": accessTokenResponse.getAccessToken()};
+        
+        try {
+            var accessTokenResponse = wso2is.getTokenResponse(samlResp);
+            return {"accessToken": accessTokenResponse.getAccessToken()};
+        } catch (err) {
+            return {"accessToken": "Access token not available. " + err.message};
+        }
     } else {
-        return {"accessToken": "Not enabled"};
+        return {"accessToken": ""};
     }
 
 }
 print(getSamlAccessToken());
-
 %>

@@ -1,10 +1,14 @@
 function fetchAccessToken() {
-    var url =  "../saml/saml-access-token.jag";
+    var dashboard = ues.global.dashboard;
+    var url = "/portal/saml/saml-access-token.jag";
 
     $.ajax({
         url: url,
         type: "GET",
         dataType: "json",
+        data: {
+            id: dashboard.id
+        },
         success: onAccessTokenReceived
     });
 }
@@ -15,5 +19,7 @@ function onAccessTokenReceived(data) {
 }
 
 function publishAccessToken(samlAccessToken) {
-    ues.hub.publish("token-channel", samlAccessToken);
+    if (samlAccessToken != null && samlAccessToken != "") {
+        ues.hub.publish("token-channel", samlAccessToken);
+    }
 }

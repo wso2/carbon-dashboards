@@ -157,6 +157,26 @@ $(function () {
             saveDashboard();
         });
 
+        $('#ues-enable-oauth').on('click', function () {
+            dashboard.enableOauth = $(this).is(":checked");
+            saveDashboard();
+        });
+
+        $('#ues-access-token-url').on('change', function () {
+            dashboard.accessTokenUrl = $(this).val();
+            saveDashboard();
+        });
+
+        $('#ues-api-key').on('change', function () {
+            dashboard.apiKey = $(this).val();
+            saveDashboard();
+        });
+
+        $('#ues-api-secret').on('change', function () {
+            dashboard.apiSecret = $(this).val();
+            saveDashboard();
+        });
+
         var menu = $('.ues-context-menu');
         menu.find('.ues-tiles-menu-toggle').click(function () {
             menu.find('.ues-tiles-menu').slideToggle();
