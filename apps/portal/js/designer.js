@@ -258,6 +258,19 @@ $(function () {
             .find('.ues-sandbox').on('change', 'input, select, textarea', function () {
                 updateComponentProperties($(this).closest('.ues-sandbox'));
             });
+
+        $(".form-control.ues-localized-title").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+        }).on('change',function(e){
+            if($.trim($(this).val()) == ''){
+                $(this).val('');
+            }
+        });
+
+        $(".form-control.ues-localized-height").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^0-9]/gim);
+        });
+
         $('[data-toggle="tooltip"]', el).tooltip();
         var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
             .find('.ues-context-menu-actions')
@@ -283,6 +296,7 @@ $(function () {
             });
         }
     };
+
     /**
      * find an asset of the given type from the store cache
      * @param type
@@ -665,6 +679,7 @@ $(function () {
             $('#toggle-dashboard-view').bootstrapToggle();
         })
     };
+
     /**
      * renders the component toolbar of a given component
      * @param component
@@ -1030,6 +1045,7 @@ $(function () {
      * @private
      * */
     var showInlineError = function (element, errorElement) {
+        element.val('');
         element.parent().addClass("has-error");
         element.addClass("has-error");
         element.parent().find("span.glyphicon").removeClass("hide");
@@ -1061,8 +1077,8 @@ $(function () {
     var updatePageProperties = function (sandbox) {
         var titleError = $("#title-error"),
             idError = $("#id-error"),
-            id = $('.id', sandbox).val(),
-            title = $('.title', sandbox).val(),
+            id = $.trim($('.id', sandbox).val()),
+            title = $.trim($('.title', sandbox).val()),
             landing = $('.landing', sandbox),
             toggleView = $('#toggle-dashboard-view'),
             anon = $('.anon', sandbox);
@@ -1146,6 +1162,29 @@ $(function () {
     };
 
     /**
+     * Sanitize the given event's key code.
+     * @param1 event
+     * @param1 regEx
+     * @return boolean
+     * @private
+     * */
+    var sanitizeOnKeyPress = function (element, event, regEx) {
+        var code;
+        if (event.keyCode) {
+            code = event.keyCode;
+        } else if (event.which) {
+            code = event.which;
+        }
+
+        var character = String.fromCharCode(code);
+        if (character.match(regEx)) {
+            return false;
+        } else {
+            return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
+        }
+    };
+
+    /**
      * renders page options
      * @param page
      */
@@ -1159,6 +1198,18 @@ $(function () {
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
+
+        $(".form-control.title").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+        });
+
+        $(".form-control.id").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+        }).on("keyup", function (e) {
+            var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
+            $(this).val(sanitizedInput);
+        });
+
         var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
             .find('.ues-context-menu-actions')
             .find('.ues-page-properties-toggle');
@@ -1373,6 +1424,10 @@ $(function () {
         });
     };
 
+    /**
+     * Load the layouts for workspace.
+     * @private
+     * */
     var loadLayouts = function () {
         ues.store.assets('layout', {
             start: 0,
@@ -1383,6 +1438,10 @@ $(function () {
         });
     };
 
+    /**
+     * Initialize the layout for the workspace
+     * @private
+     * */
     var initLayoutWorkspace = function () {
         $('#ues-workspace-layout').find('.ues-content').on('click', '.thumbnail .ues-add', function () {
             createPage(pageOptions(), $(this).data('id'), function (err) {
@@ -1592,7 +1651,6 @@ $(function () {
             }
         });
     };
-
 
     var hasComponents = function (container) {
         var components = container.find('.ues-component').length;

@@ -28,6 +28,38 @@ $(function () {
     };
 
     /**
+     * Sanitize the given input of a user input controller.
+     * @param input
+     * @return string
+     * @private
+     * */
+    var sanitizeInput = function (input) {
+        return input.replace(/[^a-z0-9-\s]/gim, "");
+    };
+
+    /**
+     * Sanitize the given event's key code.
+     * @param event
+     * @return boolean
+     * @private
+     * */
+    var sanitizeOnKeyPress = function (element, event) {
+        var code;
+        if (event.keyCode) {
+            code = event.keyCode;
+        } else if (event.which) {
+            code = event.which;
+        }
+
+        var character = String.fromCharCode(code);
+        if (character.match(/[^a-z0-9-\s]/gim)) {
+            return false;
+        } else {
+            return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
+        }
+    };
+
+    /**
      * Generate message box according to the type.
      * @param1 type
      * @param2 text
@@ -60,6 +92,7 @@ $(function () {
      * @private
      * */
     var showInlineError = function (element, errorElement) {
+        element.val('');
         element.parent().addClass("has-error");
         element.addClass("has-error");
         element.parent().find("span.glyphicon").removeClass("hide");
@@ -83,20 +116,33 @@ $(function () {
         errorElement.addClass("hide");
     };
 
-    $('#ues-dashboard-title').on('keyup', function () {
+    $('#ues-dashboard-title').on("keypress", function (e) {
+        return sanitizeOnKeyPress(this, e);
+    }).on('keyup', function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#title-error"));
         }
+
         updateUrl();
     }).on('change', function () {
+        var sanitizedInput = sanitizeInput($(this).val());
+        $(this).val(sanitizedInput);
         updateUrl();
     });
 
-    $('#ues-dashboard-id').on('keyup', function () {
+    $('#ues-dashboard-id').on("keypress", function (e) {
+        return sanitizeOnKeyPress(this, e);
+    }).on('keyup', function () {
         overridden = overridden || true;
         if ($(this).val()) {
             hideInlineError($(this), $("#id-error"));
         }
+
+        $(this).val(generateUrl($(this).val()));
+    });
+
+    $('#ues-dashboard-description').on("keypress", function (e) {
+        return sanitizeOnKeyPress(this, e);
     });
 
     $('#ues-dashboard-create').on('click', function () {
@@ -108,8 +154,8 @@ $(function () {
             titleError = $("#title-error"),
             idError = $("#id-error");
 
-        if (!title.val() || !id.val()) {
-            !title.val() ? showInlineError(title, titleError) : showInlineError(id, idError);
+        if (!$.trim(title.val()) || !$.trim(id.val())) {
+            !$.trim(title.val()) ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
             form.attr('action', action + '/' + id.val());
             console.log("[Sending AJAX request to " + url);

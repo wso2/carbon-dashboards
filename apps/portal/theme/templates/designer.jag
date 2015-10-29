@@ -331,7 +331,7 @@
                             </div>
                             <div class="form-group">
                                 <label><%= i18n.localize("height") %>
-                                    <input type="text" class="form-control" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
+                                    <input type="text" class="form-control ues-localized-height" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
                                 </label>
                             </div>
                             <div class="checkbox">
