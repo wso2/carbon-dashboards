@@ -75,6 +75,11 @@ var update = function (dashboard) {
         system: true
     });
 
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    if(!user){
+        throw 'User is not logged in ';
+    }
     var path = registryUserPath(dashboard.id, user.username);
     if (!registry.exists(path) && !dashboard.isUserCustom) {
         path = registryPath(dashboard.id);
