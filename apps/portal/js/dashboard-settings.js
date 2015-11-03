@@ -27,6 +27,36 @@ $(function () {
         });
     };
 
+    var saveDashboardWithOauth = function () {
+        $.ajax({
+            url: url,
+            method: 'PUT',
+            data: JSON.stringify(dashboard),
+            contentType: 'application/json'
+        }).success(function (data) {
+            getOauthSettings();
+        }).error(function () {
+            console.log('error saving dashboard with oauth');
+        });
+    }
+
+    var getOauthSettings = function () {
+        $.ajax({
+            url: "/portal/saml/saml-at-settings.jag",
+            type: "GET",
+            dataType: "json",
+            data: {
+                id: dashboard.id
+            }
+        }).success(function (data) {
+            $("#ues-access-token-url").val(data.accessTokenUrl);
+            $("#ues-api-key").val(data.key);
+            $("#ues-api-secret").val(data.secret);
+        }).error(function () {
+            console.log('error saving dashboard');
+        });
+    };
+
     var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
 
     var viewer = function (el, role) {
@@ -160,21 +190,16 @@ $(function () {
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");
             saveDashboard();
+            if (dashboard.enableOauth) {
+                $('#ues-is-url').removeAttr("disabled");
+            } else {
+                $("#ues-is-url").attr("disabled", "disabled");
+            }
         });
 
-        $('#ues-access-token-url').on('change', function () {
-            dashboard.accessTokenUrl = $(this).val();
-            saveDashboard();
-        });
-
-        $('#ues-api-key').on('change', function () {
-            dashboard.apiKey = $(this).val();
-            saveDashboard();
-        });
-
-        $('#ues-api-secret').on('change', function () {
-            dashboard.apiSecret = $(this).val();
-            saveDashboard();
+        $('#ues-is-url').on('change', function () {
+            dashboard.identityServerUrl = $(this).val();
+            saveDashboardWithOauth();
         });
 
         var menu = $('.ues-context-menu');

@@ -94,5 +94,6 @@
     "api.key": "API Key",
     "key": "Key",
     "api.secret": "API Secret",
-    "secret": "Secret"
+    "secret": "Secret",
+    "identity.server.url": "Identity Server URL"
 }
