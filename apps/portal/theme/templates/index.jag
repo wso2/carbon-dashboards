@@ -82,7 +82,7 @@
 </script>
 <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
     <h2>{{title}}</h2>
-    <p><a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">dashboards/{{id}}</a></p>
+    <p class="ues-description">Public URL: <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">dashboards/{{id}}</a></p>
     <p class="ues-description">{{description}}</p>
     <div class="ues-actions">
         <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
