@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
     <% include('/controllers/includes/theme-dashboard-styles.jag'); %>
-    <script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
-
-    <title>Dashboards</title>
+    <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
+    <%var i18n = require("i18n");
+    i18n.init(request);%>
+    <title><%= i18n.localize("dashboard.lable")%></title>
 </head>
-<body>
+<body class="lang_<%=request.getLocale()%>">
 <%
     var usr = require('/modules/user.js');
     var user = usr.current();
@@ -51,7 +52,7 @@
                         <% if(dashboard.landing === pageId) { %>
                             class="active"
                         <% } %>>
-                            <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>">Home</a>
+                            <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>"><%= i18n.localize("home")%></a>
                     </li>
                 <% } %>
 
@@ -87,7 +88,7 @@
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-settings fw-stack-1x"></i>
                                 </span>
-                                 Edit
+                                 <%= i18n.localize("edit.button")%>
                             </a>
                         </li>
                     <% } else
@@ -98,7 +99,7 @@
                                         <i class="fw fw-ring fw-stack-2x"></i>
                                         <i class="fw fw-settings fw-stack-1x"></i>
                                     </span>
-                                     Personalize
+                                     <%= i18n.localize("personalize")%>
                                 </a>
                             </li>
                         <% } %>
@@ -107,11 +108,15 @@
                                <%= user? user.username : "anon" %> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
+                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">
+                                <%= i18n.localize("logout.lable")%>
+                            </a></li>
                     </ul>
                 </li>
             <% } else { %>
-                <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">Login</a></li>
+                <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">
+                            <%= i18n.localize("login.lable")%>
+                        </a></li>
                 <% } %>
             </ul>
         </div>

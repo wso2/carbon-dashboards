@@ -37,7 +37,9 @@
                 //postUrl = "https://" + process.getProperty('carbon.local.ip') + ":" + process.getProperty('https.port');
                 postUrl = attr.identityProviderURL;
         var log = new Log();
-        log.info("store session index : " + sso_sessions[session.getId()] + "postURL: " +postUrl);
+        if(log.isDebugEnabled()){
+            log.debug("store session index : " + sso_sessions[session.getId()] + " postURL: " +postUrl);
+        }
         session.invalidate();
         %>
         <div>

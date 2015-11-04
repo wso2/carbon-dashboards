@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title>Dashboards</title>
+    <title><%= i18n.localize("dashboard.lable")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -19,17 +19,17 @@
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
+                <li class="active"><a href="<%=tenantedUrlPrefix%>./"><%= i18n.localize("dashboards.lable") %></a></li>
                 <li><a href="<%=tenantedUrlPrefix%>create-dashboard">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-add fw-stack-1x"></i>
-                    </span> Create Dashboard</a></li>
+                    </span> <%= i18n.localize("create.dashboard")%> </a></li>
                 <li><a href="<%=tenantedUrlPrefix%>create-gadget">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-add fw-stack-1x"></i>
-                    </span> Create Gadget</a></li>
+                    </span> <%= i18n.localize("create.gadget.lable")%></a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->
@@ -37,7 +37,8 @@
     <div class="ues-tiles-menu">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i>
+                <%= i18n.localize("dashboards.lable") %> </a></li>
             </ul>
         </div>
     </div>
@@ -45,15 +46,15 @@
 <div id="ues-portal" class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="page-sub-title">Dashboards</h1>
-            <p class="page-description">* View, Modify and Delete dashboards</p>
+            <h1 class="page-sub-title"><%= i18n.localize("dashboards.lable") %></h1>
+            <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
         </div>
     </div>
     <div class="row thumbnails ues-dashboards"></div>
 </div>
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
-<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/spin.min.js"></script>
 <script src="<%=urlPrefix%>js/ladda.min.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -73,14 +74,15 @@
 <script id="ues-dashboards-empty-hbs" type="text/x-handlebars-template">
     <div class="col-md-12">
         <div class="caption">
-            <h4>No dashboards found. Please create dashboards by visiting
-            <a href="<%=tenantedUrlPrefix%>create-dashboard">here</a>.
+            <h4><%= i18n.localize("no.dashboards.found.description") %>
+            <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.lable") %></a>.
             </h4>
         </div>
     </div>
 </script>
 <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
     <h2>{{title}}</h2>
+    <p class="ues-description">Public URL: <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">dashboards/{{id}}</a></p>
     <p class="ues-description">{{description}}</p>
     <div class="ues-actions">
         <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
@@ -88,38 +90,39 @@
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-view fw-stack-1x"></i>
             </span>
-         View</a>
+             <%= i18n.localize("view") %></a>
         {{#if editable}}
         <a class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-edit fw-stack-1x"></i>
             </span>
-            Design
+            <%= i18n.localize("design") %>
         </a>
         <a class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-settings fw-stack-1x"></i>
             </span>
-             Settings
+             <%= i18n.localize("settings") %>
         </a>
         {{/if}}
     </div>
     {{#if editable}}
     <a href="#" class="ues-dashboard-trash-handle">
-        <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="Delete Dashboard"></i>
+        <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left"
+        title="<%= i18n.localize("delete.dashboard")%>"></i>
     </a>
     {{/if}}
 </script>
 <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
-    <h2>Do you want to delete {{title}}?</h2>
+    <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
     <div class="ues-trash-actions">
         <a href="#" class="btn btn-danger ladda-button ues-dashboard-trash-confirm"
             role="button" data-style="expand-left" data-size="l">
-            <span class="ladda-label">Delete</span>
+            <span class="ladda-label"><%= i18n.localize("delete")%></span>
         </a>
-        <a href="#" class="btn btn-default ues-dashboard-trash-cancel" role="button" >Cancel</a>
+        <a href="#" class="btn btn-default ues-dashboard-trash-cancel" role="button" ><%= i18n.localize("cancel")%></a>
     </div>
 </script>
 </body>
