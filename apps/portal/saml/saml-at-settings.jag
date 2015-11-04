@@ -4,10 +4,11 @@ function getApplicationKeyAndSecret(){
     var log = new Log();
     var ws = require('ws');
     var dashboardId = request.getParameter("id");
+    var isUrl = request.getParameter("isUrl");
     var dashboard = findOne(dashboardId);
     var applicationName = dashboard.id;
-    var isUrl = dashboard.identityServerUrl;
     isUrl = endsWith(isUrl, "/") ? isUrl : isUrl + "/";
+    dashboard.identityServerUrl = isUrl;
 
     var ids = new ws.WSRequest();
     var options = new Array();

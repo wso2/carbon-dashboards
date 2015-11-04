@@ -27,26 +27,14 @@ $(function () {
         });
     };
 
-    var saveDashboardWithOauth = function () {
-        $.ajax({
-            url: url,
-            method: 'PUT',
-            data: JSON.stringify(dashboard),
-            contentType: 'application/json'
-        }).success(function (data) {
-            getOauthSettings();
-        }).error(function () {
-            console.log('error saving dashboard with oauth');
-        });
-    }
-
     var getOauthSettings = function () {
         $.ajax({
             url: "/portal/saml/saml-at-settings.jag",
             type: "GET",
             dataType: "json",
             data: {
-                id: dashboard.id
+                id: dashboard.id,
+                isUrl: dashboard.identityServerUrl
             }
         }).success(function (data) {
             $("#ues-access-token-url").val(data.accessTokenUrl);
@@ -199,7 +187,7 @@ $(function () {
 
         $('#ues-is-url').on('change', function () {
             dashboard.identityServerUrl = $(this).val();
-            saveDashboardWithOauth();
+            getOauthSettings();
         });
 
         var menu = $('.ues-context-menu');
