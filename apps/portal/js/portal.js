@@ -20,6 +20,12 @@ $(function () {
 
     var hasMore = true;
 
+    /**
+     * Find the dashboard using dashboard id.
+     * @param id
+     * @return {object}
+     * @private
+     * */
     var findDashboard = function (id) {
         var i;
         var dashboard;
@@ -32,6 +38,11 @@ $(function () {
         }
     };
 
+    /**
+     * Delete the selected dashboard
+     * @param el:-selected dashboard element
+     * @private
+     * */
     var deleteDashboard = function (el) {
         var button = Ladda.create(el[0]);
         button.start();
@@ -49,6 +60,26 @@ $(function () {
         });
     };
 
+    /**
+     * Shrink the description for the dashboard if it is more than 50 characters.
+     * @param data
+     * @return [object]
+     * @private
+     * */
+    var shrinkDashboardDescription = function (data) {
+        for (var i = 0; i < data.length; i++) {
+            if(data[i].description.length > 50){
+                data[i].description = data[i].description.substring(0,50)+"...";
+            }
+        }
+
+        return data;
+    };
+
+    /**
+     * Load the list of dashboards available.
+     * @private
+     * */
     var loadDashboards = function () {
         if (!hasMore) {
             return;
@@ -64,6 +95,8 @@ $(function () {
                 return;
             }
 
+            data = shrinkDashboardDescription(data);
+
             nextStart += PAGE_COUNT;
             dashboards = dashboards.concat(data);
             dashboardsEl.append(dashboardsListHbs(data));
@@ -77,6 +110,10 @@ $(function () {
         });
     };
 
+    /**
+     * Initialize the UI functionality such as binding events.
+     * @private
+     * */
     var initUI = function () {
         var portal = $('#ues-portal');
         portal.on('click', '.ues-dashboards .ues-dashboard-trash-handle', function () {

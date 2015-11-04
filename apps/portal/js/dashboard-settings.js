@@ -47,6 +47,60 @@ $(function () {
         el.typeahead('val', '');
     };
 
+    /**
+     * Sanitize the given event's key code.
+     * @param1 event
+     * @param1 regEx
+     * @return boolean
+     * @private
+     * */
+    var sanitizeOnKeyPress = function (element, event, regEx) {
+        var code;
+        if (event.keyCode) {
+            code = event.keyCode;
+        } else if (event.which) {
+            code = event.which;
+        }
+
+        var character = String.fromCharCode(code);
+        if (character.match(regEx)) {
+            return false;
+        } else {
+            return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
+        }
+    };
+
+    /**
+     * Show error style for given element
+     * @param1 element
+     * @param2 errorElement
+     * @private
+     * */
+    var showInlineError = function (element, errorElement) {
+        element.val('');
+        element.parent().addClass("has-error");
+        element.addClass("has-error");
+        element.parent().find("span.glyphicon").removeClass("hide");
+        element.parent().find("span.glyphicon").addClass("show");
+        errorElement.removeClass("hide");
+        errorElement.addClass("show");
+    };
+
+    /**
+     * Hide error style for given element
+     * @param1 element
+     * @param2 errorElement
+     * @private
+     * */
+    var hideInlineError = function (element, errorElement) {
+        element.parent().removeClass("has-error");
+        element.removeClass("has-error");
+        element.parent().find("span.glyphicon").removeClass("show");
+        element.parent().find("span.glyphicon").addClass("hide");
+        errorElement.removeClass("show");
+        errorElement.addClass("hide");
+    };
+
     var initExistingRoles = function () {
         var i;
         var role;
@@ -147,12 +201,21 @@ $(function () {
             el.remove();
         });
 
-        $('#ues-dashboard-title').on('change', function () {
-            dashboard.title = $(this).val();
-            saveDashboard();
+        $('#ues-dashboard-title').on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim)
+        }).on('change', function () {
+            if ($.trim($(this).val()) == '') {
+                showInlineError($(this), $("#title-error"));
+            } else {
+                hideInlineError($(this), $("#title-error"));
+                dashboard.title = $(this).val();
+                saveDashboard();
+            }
         });
 
-        $('#ues-dashboard-description').on('change', function () {
+        $('#ues-dashboard-description').on('keypress', function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+        }).on('change', function () {
             dashboard.description = $(this).val();
             saveDashboard();
         });
