@@ -14,7 +14,7 @@ $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
 
-    var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage ;
+    var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
 
     var dashboard;
 
@@ -34,10 +34,10 @@ $(function () {
         layout: []
     };
 
-    $(document).ready(function() {
-       $(".nav li.disabled a").click(function() {
-         return false;
-       });
+    $(document).ready(function () {
+        $(".nav li.disabled a").click(function () {
+            return false;
+        });
     });
 
     var clone = function (o) {
@@ -113,10 +113,13 @@ $(function () {
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html() || '');
 
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
+    
+    var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html() || '');
 
     /**
      * generates a random id
      * @returns {string}
+     * @private
      */
     var randomId = function () {
         return Math.random().toString(36).slice(2);
@@ -125,15 +128,21 @@ $(function () {
     /**
      * switches workspaces in the designer
      * @param name
+     * @private
      */
     var showWorkspace = function (name) {
         $('.ues-workspace').hide();
         $('#ues-workspace-' + name).show();
+        
+        if(name === 'designer') {
+            initBanner();
+        }
     };
 
     /**
      * show the store of a given type
      * @param type
+     * @private
      */
     var showStore = function (type) {
         var store = $('#ues-store').removeClass('ues-hidden');
@@ -153,6 +162,7 @@ $(function () {
 
     /**
      * hide the store
+     * @private
      */
     var hideStore = function () {
         $('#ues-store').addClass('ues-hidden');
@@ -169,6 +179,7 @@ $(function () {
     /**
      * check whether store is visible
      * @returns {boolean}
+     * @private
      */
     var storeVisible = function () {
         return !$('#ues-store').hasClass('ues-hidden');
@@ -176,6 +187,7 @@ $(function () {
 
     /**
      * shows properties panel
+     * @private
      */
     var showProperties = function () {
         $('#ues-properties').removeClass('ues-hidden');
@@ -192,6 +204,7 @@ $(function () {
 
     /**
      * hides properties panel
+     * @private
      */
     var hideProperties = function () {
         $('#ues-properties').addClass('ues-hidden');
@@ -210,6 +223,7 @@ $(function () {
 
     /**
      * removes properties panel
+     * @private
      */
     var removeProperties = function () {
         $('#ues-properties').empty();
@@ -218,6 +232,7 @@ $(function () {
     /**
      * checks whether properties panel is visible
      * @returns {boolean}
+     * @private
      */
     var propertiesVisible = function () {
         return !$('#ues-properties').hasClass('ues-hidden');
@@ -226,6 +241,7 @@ $(function () {
     /**
      * update component properties panel and save
      * @param sandbox
+     * @private
      */
     var updateComponentProperties = function (sandbox) {
         var notifiers = {};
@@ -250,6 +266,7 @@ $(function () {
     /**
      * renders the component properties panel
      * @param component
+     * @private
      */
     var renderComponentProperties = function (component) {
         activeComponent = component;
@@ -258,6 +275,19 @@ $(function () {
             .find('.ues-sandbox').on('change', 'input, select, textarea', function () {
                 updateComponentProperties($(this).closest('.ues-sandbox'));
             });
+
+        $(".form-control.ues-localized-title").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+        }).on('change', function (e) {
+            if ($.trim($(this).val()) == '') {
+                $(this).val('');
+            }
+        });
+
+        $(".form-control.ues-localized-height").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^0-9]/gim);
+        });
+
         $('[data-toggle="tooltip"]', el).tooltip();
         var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
             .find('.ues-context-menu-actions')
@@ -272,9 +302,10 @@ $(function () {
      * Render maximized view for a gadget
      * @param component
      * @param componentContainer
+     * @private
      */
     var renderMaxView = function (component, view) {
-        if(component.hasCustomFullView){
+        if (component.hasCustomFullView) {
             component.viewOption = view;
             ues.components.update(component, function (err, block) {
                 if (err) {
@@ -283,11 +314,13 @@ $(function () {
             });
         }
     };
+
     /**
      * find an asset of the given type from the store cache
      * @param type
      * @param id
      * @returns {*}
+     * @private
      */
     var findStoreCache = function (type, id) {
         var i;
@@ -306,6 +339,7 @@ $(function () {
      * find a given component in the current page
      * @param id
      * @returns {*}
+     * @private
      */
     var findComponent = function (id) {
         var i;
@@ -333,6 +367,7 @@ $(function () {
      * save component properties
      * @param id
      * @param data
+     * @private
      */
     var saveComponentProperties = function (id, data) {
         var o;
@@ -368,7 +403,7 @@ $(function () {
             }
         }
 
-        ues.dashboards.rewire(page);
+        ues.dashboards.rewire(page, pageType);
         updateComponent(id);
         saveDashboard();
     };
@@ -377,6 +412,7 @@ $(function () {
      * removes and destroys the given component from the page
      * @param component
      * @param done
+     * @private
      */
     var removeComponent = function (component, done) {
         destroyComponent(component, function (err) {
@@ -407,6 +443,7 @@ $(function () {
      * destroys the given component
      * @param component
      * @param done
+     * @private
      */
     var destroyComponent = function (component, done) {
 
@@ -422,6 +459,7 @@ $(function () {
      * destroys a given list of components of an area
      * @param components
      * @param done
+     * @private
      */
     var destroyArea = function (components, done) {
         var i;
@@ -445,15 +483,16 @@ $(function () {
      * destroys all areas in a given page
      * @param page
      * @param done
+     * @private
      */
     var destroyPage = function (page, pageType, done) {
         var checked = $('#toggle-dashboard-view').prop('checked');
         var area;
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
 
-        if(!page.isanon && checked){
+        if (!page.isanon && checked) {
             pageType = DEFAULT_DASHBOARD_VIEW;
-        }else if (!page.isanon && !checked){
+        } else if (!page.isanon && !checked) {
             pageType = ANONYMOUS_DASHBOARD_VIEW;
         }
 
@@ -484,6 +523,7 @@ $(function () {
      * remove and destroys a given page
      * @param pid
      * @param done
+     * @private
      */
     var removePage = function (pid, type, done) {
         var p = findPage(dashboard, pid);
@@ -500,6 +540,7 @@ $(function () {
     /**
      * pops up the preview dashboard page
      * @param page
+     * @private
      */
     var previewDashboard = function (page) {
         var isAnonView = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? 'true' : 'false';
@@ -509,6 +550,7 @@ $(function () {
 
     /**
      * pops up the export dashboard page
+     * @private
      */
     var exportDashboard = function () {
         window.open(dashboardsApi + '/' + dashboard.id, '_blank');
@@ -516,6 +558,7 @@ $(function () {
 
     /**
      * saves the dashboard content
+     * @private
      */
     var saveDashboard = function () {
         var method;
@@ -542,6 +585,7 @@ $(function () {
 
     /**
      * initializes the component toolbar
+     * @private
      */
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
@@ -550,12 +594,12 @@ $(function () {
             var component = findComponent(id);
             var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
             var view = DEFAULT_DASHBOARD_VIEW;
-            if(component.fullViewPoped){
+            if (component.fullViewPoped) {
                 view = DEFAULT_DASHBOARD_VIEW;
                 renderMaxView(component, view);
                 //minimize logic
                 componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.find('.panel-body').css('height','auto');
+                componentContainer.find('.panel-body').css('height', 'auto');
                 component.fullViewPoped = false;
             } else {
                 view = 'full';
@@ -563,12 +607,12 @@ $(function () {
                 //maximize logic
                 componentContainer.addClass('ues-fullview-visible');
                 var height = $('.ues-layout').height();
-                componentContainer.find('.panel-body').css('height',height + 'px');
+                componentContainer.find('.panel-body').css('height', height + 'px');
                 component.fullViewPoped = true;
             }
         });
 
-        $('body').on('click','.modal-footer button',function(){
+        $('body').on('click', '.modal-footer button', function () {
             $('#componentFull').modal('hide');
 
         });
@@ -591,20 +635,20 @@ $(function () {
             ues.global.type = DEFAULT_DASHBOARD_VIEW;
             switchPage(getPageId(), pageType);
             $('.toggle-design-view-anon').removeClass('disabled');
-            $('.toggle-design-view-default').addClass('disabled');   
+            $('.toggle-design-view-default').addClass('disabled');
         });
-        designer.on('#toggle-dashboard-view').change(function() {
+        designer.on('#toggle-dashboard-view').change(function () {
             var checked = $('#toggle-dashboard-view').prop('checked');
             var state = 'on';
 
-            if(checked){
+            if (checked) {
                 pageType = DEFAULT_DASHBOARD_VIEW;
                 ues.global.type = DEFAULT_DASHBOARD_VIEW;
                 state = 'on';
 
                 switchPage(getPageId(), ANONYMOUS_DASHBOARD_VIEW);
 
-            }else{
+            } else {
                 pageType = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.anon = true;
@@ -616,12 +660,12 @@ $(function () {
         });
         designer.on('click', '.ues-design-anon-view', function () {
             //anon
-           pageType = ANONYMOUS_DASHBOARD_VIEW;
-           ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
-           ues.global.anon = true;
-           switchPage(getPageId(), pageType); 
-           $('.toggle-design-view-default').removeClass('disabled');
-           $('.toggle-design-view-anon').addClass('disabled');
+            pageType = ANONYMOUS_DASHBOARD_VIEW;
+            ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
+            ues.global.anon = true;
+            switchPage(getPageId(), pageType);
+            $('.toggle-design-view-default').removeClass('disabled');
+            $('.toggle-design-view-anon').addClass('disabled');
         });
         designer.on('mouseenter', '.ues-component .ues-toolbar .ues-move-handle', function () {
             $(this).draggable({
@@ -640,31 +684,39 @@ $(function () {
         });
 
     };
+
     /**
      * return page id from DOM
+     * @private
      */
-    var getPageId = function(){
+    var getPageId = function () {
         return $('.ues-page-id').text();
-    }
+    };
 
     /**
      * initializes the ues properties
+     * @private
      */
     var initUESProperties = function () {
         $('body').on('click', '.close-db-settings', function () {
-                hideProperties();
+            hideProperties();
         });
     };
 
     /**
      * initializes the toggle for dashboard view switching
+     * @private
      */
     var initToggleView = function () {
-        $(function() { $('#toggle-dashboard-view').bootstrapToggle(); })
+        $(function () {
+            $('#toggle-dashboard-view').bootstrapToggle();
+        })
     };
+
     /**
      * renders the component toolbar of a given component
      * @param component
+     * @private
      */
     var renderComponentToolbar = function (component) {
         var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
@@ -674,6 +726,7 @@ $(function () {
     /**
      * updates the styles of a given store asset
      * @param asset
+     * @private
      */
     var updateStyles = function (asset) {
         var styles = asset.styles || (asset.styles = {
@@ -689,6 +742,7 @@ $(function () {
      * creates a component in the given container
      * @param container
      * @param asset
+     * @private
      */
     var createComponent = function (container, asset) {
         var id = randomId();
@@ -717,6 +771,7 @@ $(function () {
      * move given component into the given container
      * @param container
      * @param id
+     * @private
      */
     var moveComponent = function (container, id) {
         var component = findComponent(id);
@@ -743,6 +798,7 @@ $(function () {
     /**
      * triggers update hook of a given component
      * @param id
+     * @private
      */
     var updateComponent = function (id) {
         ues.components.update(findComponent(id), function (err) {
@@ -757,6 +813,7 @@ $(function () {
      * @param notifiers
      * @param current
      * @param component
+     * @private
      */
     var componentNotifiers = function (notifiers, current, component) {
         if (current.id === component.id) {
@@ -789,6 +846,7 @@ $(function () {
      * @param notifiers
      * @param component
      * @param components
+     * @private
      */
     var areaNotifiers = function (notifiers, component, components) {
         var i;
@@ -803,6 +861,7 @@ $(function () {
      * @param component
      * @param page
      * @returns {{}}
+     * @private
      */
     var pageNotifiers = function (component, page) {
         var area;
@@ -822,6 +881,7 @@ $(function () {
      * @param component
      * @param page
      * @returns {Array}
+     * @private
      */
     var findNotifiers = function (component, page) {
         var event, listener, notifiers;
@@ -853,6 +913,7 @@ $(function () {
      * @param event
      * @param notifiers
      * @returns {*}
+     * @private
      */
     var wiredNotifier = function (from, event, notifiers) {
         var i, notifier;
@@ -869,6 +930,7 @@ $(function () {
      * wire an event
      * @param on
      * @param notifiers
+     * @private
      */
     var wireEvent = function (on, notifiers) {
         var i, notifier;
@@ -888,6 +950,7 @@ $(function () {
      * @param event
      * @param notifiers
      * @returns {notifiers|*}
+     * @private
      */
     var eventNotifiers = function (event, notifiers) {
         var i, events;
@@ -905,6 +968,7 @@ $(function () {
      * @param component
      * @param notifiers
      * @returns {*}
+     * @private
      */
     var wireEvents = function (component, notifiers) {
         var listen = component.content.listen;
@@ -929,6 +993,7 @@ $(function () {
      * @param component
      * @param page
      * @returns {{id: (*|component.id), title: *, options: *, styles: (styles|*|buildPropertiesContext.styles), settings: *, listeners: *}}
+     * @private
      */
     var buildPropertiesContext = function (component, page) {
         var notifiers = findNotifiers(component, page);
@@ -944,44 +1009,228 @@ $(function () {
     };
 
     /**
-     * update page options
-     * @param sandbox
-     */
-    var updatePageProperties = function (sandbox) {
-        var id = $('.id', sandbox).val();
-        var title = $('.title', sandbox).val();
-        var landing = $('.landing', sandbox);
-        var anon = $('.anon', sandbox);
-        page.id = id;
-        page.title = title;
-        if (landing.is(':checked')) {
-            dashboard.landing = id;
+     * Check whether current landing page is anonymous or not.
+     * @param landing
+     * @return boolean
+     * @private
+     * */
+    var checkForAnonLandingPage = function (landing) {
+        var isLandingAnon = false;
+        for (var availablePage in dashboard.pages) {
+            if (dashboard.pages[availablePage].id == landing) {
+                isLandingAnon = dashboard.pages[availablePage].isanon;
+                break;
+            }
         }
 
-        if (anon.is(':checked')) {
-            ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
-            dashboard.isanon = true;
-            page.isanon = true;
-            $(".toggle-design-view").removeClass("hide");
+        return isLandingAnon;
+    };
 
-            $('#toggle-dashboard-view').bootstrapToggle('off');
-        } else{
-            //TODO switch to anon dashboard
-            if(ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW){
-                dashboard.isanon = false;
+    /**
+     * Check whether there are any anonymous pages.
+     * @param pageId
+     * @return boolean
+     * @private
+     * */
+    var checkForAnonPages = function (pageId) {
+        var isAnonPagesAvailable = false;
+        for (var availablePage in dashboard.pages) {
+            if (dashboard.pages[availablePage].id != pageId && dashboard.pages[availablePage].isanon) {
+                isAnonPagesAvailable = dashboard.pages[availablePage].isanon;
+                break;
             }
+        }
 
-            page.isanon = false;
+        return isAnonPagesAvailable;
+    };
 
-            $(".toggle-design-view").addClass("hide");
-
-            if($('#toggle-dashboard-view').prop("checked")){
-                $('#toggle-dashboard-view').bootstrapToggle('on');
-            }else {
-                $('#toggle-dashboard-view').bootstrapToggle('off');
+    /**
+     * Check whether there are any pages which has given id.
+     * @param pageId
+     * @return boolean
+     * @private
+     * */
+    var checkForPagesById = function (pageId) {
+        var isPageAvailable = false;
+        for (var availablePage in dashboard.pages) {
+            if (dashboard.pages[availablePage].id == pageId) {
+                isPageAvailable = true;
+                break;
             }
+        }
 
-            page.content.anon = {};
+        return isPageAvailable;
+    };
+
+    /**
+     * Check whether there are any page which has the given title.
+     * @param pageTitle
+     * @return boolean
+     * @private
+     * */
+    var checkForPagesByTitle = function(pageTitle){
+        var isPageAvailable = false;
+        for(var availablePage in dashboard.pages){
+            if(dashboard.pages[availablePage].title == pageTitle){
+                isPageAvailable = true;
+                break;
+            }
+        }
+
+        return isPageAvailable;
+    };
+
+    /**
+     * Generate message box according to the type.
+     * @param1 type
+     * @param2 text
+     * @private
+     * */
+    var generateMessage = function (type, text) {
+        return noty({
+            text: text,
+            type: type,
+            closeWith: ['button', 'click'],
+            layout: 'topCenter',
+            theme: 'wso2',
+            timeout: '3500',
+            dismissQueue: true,
+            killer: true,
+            maxVisible: 1,
+            animation: {
+                open: {height: 'toggle'}, // jQuery animate function property object
+                close: {height: 'toggle'}, // jQuery animate function property object
+                easing: 'swing', // easing
+                speed: 500 // opening & closing animation speed
+            }
+        });
+    };
+
+    /**
+     * Show error style for given element
+     * @param1 element
+     * @param2 errorElement
+     * @private
+     * */
+    var showInlineError = function (element, errorElement) {
+        element.val('');
+        element.parent().addClass("has-error");
+        element.addClass("has-error");
+        element.parent().find("span.glyphicon").removeClass("hide");
+        element.parent().find("span.glyphicon").addClass("show");
+        errorElement.removeClass("hide");
+        errorElement.addClass("show");
+    };
+
+    /**
+     * Hide error style for given element
+     * @param1 element
+     * @param2 errorElement
+     * @private
+     * */
+    var hideInlineError = function (element, errorElement) {
+        element.parent().removeClass("has-error");
+        element.removeClass("has-error");
+        element.parent().find("span.glyphicon").removeClass("show");
+        element.parent().find("span.glyphicon").addClass("hide");
+        errorElement.removeClass("show");
+        errorElement.addClass("hide");
+    };
+
+    /**
+     * update page options
+     * @param sandbox
+     * @private
+     */
+    var updatePageProperties = function (sandbox) {
+        var titleError = $("#title-error"),
+            idError = $("#id-error"),
+            id = $.trim($('.id', sandbox).val()),
+            title = $.trim($('.title', sandbox).val()),
+            landing = $('.landing', sandbox),
+            toggleView = $('#toggle-dashboard-view'),
+            anon = $('.anon', sandbox);
+
+        hideInlineError($('.title', sandbox), titleError);
+        hideInlineError($('.id', sandbox), idError);
+
+        if (!title || !id) {
+            !title ? showInlineError($('.title', sandbox), titleError) : showInlineError($(".id", sandbox), idError);
+            return;
+        }
+
+        if (sandbox.context.className == "form-control id") {
+            if (checkForPagesById(id) && page.id != id) {
+                generateMessage("error", "A page with entered URL already exists. Please select a different URL");
+                $('.id', sandbox).val(page.id);
+            } else {
+                page.id = id;
+                if (landing.is(":checked")) {
+                    dashboard.landing = id;
+                }
+            }
+        }
+
+        if(sandbox.context.className == "form-control title"){
+            if(checkForPagesByTitle(title) && page.title != title){
+                generateMessage("error","A page with entered title already exists. Please select a different title");
+                $('.title',sandbox).val(page.title);
+                title = page.title;
+            }else{
+                page.title = title;
+            }
+        }
+
+        if (sandbox.context.className == "landing" && landing.is(':checked')) {
+            if (checkForAnonPages(id) && !page.isanon) {
+                $(landing).prop("checked", false);
+                generateMessage("error", "Please add an anonymous view to this page before select it as the landing page");
+            } else {
+                dashboard.landing = id;
+            }
+        }
+
+        if (sandbox.context.className == "anon") {
+            if (anon.is(':checked')) {
+                if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == id) {
+                    ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
+                    dashboard.isanon = true;
+                    page.isanon = true;
+                    $(".toggle-design-view").removeClass("hide");
+                    toggleView.bootstrapToggle('off');
+                } else {
+                    $(anon).prop("checked", false);
+                    generateMessage("error", "Please add an anonymous view to the landing page in order to make this page anonymous");
+                }
+            }
+            else {
+                if (checkForAnonPages(dashboard.landing) && dashboard.landing == id) {
+                    $(anon).prop("checked", true);
+                    generateMessage("error", "There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page");
+                } else {
+                    //TODO switch to anon dashboard
+                    if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
+                        dashboard.isanon = false;
+                    }
+
+                    page.isanon = false;
+
+                    $(".toggle-design-view").addClass("hide");
+
+                    if (toggleView.prop("checked")) {
+                        toggleView.bootstrapToggle('on');
+                    } else {
+                        toggleView.bootstrapToggle('off');
+                    }
+
+                    page.content.anon = {};
+                }
+            }
+        }
+
+        if (sandbox.context.className == "form-control title") {
+            $('#ues-designer').find('.ues-page-title').find(".page-title").text(title);
+            $('#ues-properties').find('.ues-page-title').text(title);
         }
 
         updatePagesList();
@@ -989,18 +1238,55 @@ $(function () {
     };
 
     /**
+     * Sanitize the given event's key code.
+     * @param1 event
+     * @param1 regEx
+     * @return boolean
+     * @private
+     * */
+    var sanitizeOnKeyPress = function (element, event, regEx) {
+        var code;
+        if (event.keyCode) {
+            code = event.keyCode;
+        } else if (event.which) {
+            code = event.which;
+        }
+
+        var character = String.fromCharCode(code);
+        if (character.match(regEx)) {
+            return false;
+        } else {
+            return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
+        }
+    };
+
+    /**
      * renders page options
      * @param page
+     * @private
      */
     var renderPageProperties = function (page) {
         $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
             id: page.id,
             title: page.title,
+            landing: (dashboard.landing == page.id),
             isanon: page.isanon,
-            isUserCustom : dashboard.isUserCustom,
+            isUserCustom: dashboard.isUserCustom
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
+
+        $(".form-control.title").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+        });
+
+        $(".form-control.id").on("keypress", function (e) {
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+        }).on("keyup", function (e) {
+            var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
+            $(this).val(sanitizedInput);
+        });
+
         var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
             .find('.ues-context-menu-actions')
             .find('.ues-page-properties-toggle');
@@ -1014,6 +1300,7 @@ $(function () {
      * saves page options of the component
      * @param sandbox
      * @param options
+     * @private
      */
     var saveOptions = function (sandbox, options) {
         $('.ues-options input', sandbox).each(function () {
@@ -1046,6 +1333,7 @@ $(function () {
      * save settings of the component
      * @param sandbox
      * @param settings
+     * @private
      */
     var saveSettings = function (sandbox, settings) {
         $('.ues-settings input', sandbox).each(function () {
@@ -1066,6 +1354,7 @@ $(function () {
      * save styles of the component
      * @param sandbox
      * @param styles
+     * @private
      */
     var saveStyles = function (sandbox, styles, id) {
         $('.ues-styles input', sandbox).each(function () {
@@ -1090,6 +1379,7 @@ $(function () {
      * save notifiers of the component
      * @param sandbox
      * @param notifiers
+     * @private
      */
     var saveNotifiers = function (sandbox, notifiers) {
         $('.ues-notifiers .notifier', sandbox).each(function () {
@@ -1111,6 +1401,7 @@ $(function () {
     /**
      * holds the store paging history for infinite scroll
      * @type {{}}
+     * @private
      */
     var pagingHistory = {};
 
@@ -1118,6 +1409,7 @@ $(function () {
      * loads given type of assets matching the query
      * @param type
      * @param query
+     * @private
      */
     var loadAssets = function (type, query) {
         var paging = pagingHistory[type] || (pagingHistory[type] = {
@@ -1157,7 +1449,7 @@ $(function () {
                 assets.append(componentsListHbs({
                     type: type,
                     assets: data,
-                    lang : lang
+                    lang: lang
                 }));
                 return;
             }
@@ -1165,7 +1457,7 @@ $(function () {
                 assets.html(componentsListHbs({
                     type: type,
                     assets: data,
-                    lang : lang
+                    lang: lang
                 }));
                 return;
             }
@@ -1175,6 +1467,7 @@ $(function () {
 
     /**
      * initializes the components
+     * @private
      */
     var initComponents = function () {
         $('#ues-store').on('mouseenter', '.ues-thumbnail', function () {
@@ -1196,6 +1489,7 @@ $(function () {
 
     /**
      * initializes the designer
+     * @private
      */
     var initDesigner = function () {
         $('#ues-store-menu-actions').find('.ues-store-toggle').click(function () {
@@ -1215,6 +1509,10 @@ $(function () {
         });
     };
 
+    /**
+     * Load the layouts for workspace.
+     * @private
+     * */
     var loadLayouts = function () {
         ues.store.assets('layout', {
             start: 0,
@@ -1225,6 +1523,10 @@ $(function () {
         });
     };
 
+    /**
+     * Initialize the layout for the workspace
+     * @private
+     * */
     var initLayoutWorkspace = function () {
         $('#ues-workspace-layout').find('.ues-content').on('click', '.thumbnail .ues-add', function () {
             createPage(pageOptions(), $(this).data('id'), function (err) {
@@ -1236,6 +1538,7 @@ $(function () {
 
     /**
      * initializes the store
+     * @private
      */
     var initStore = function () {
         loadAssets('gadget');
@@ -1312,9 +1615,12 @@ $(function () {
         actions.find('.ues-pages-list').on('click', 'li a', function () {
             var thiz = $(this);
             var pid = thiz.data('id');
+            
             ues.global.isSwitchToNewPage = true;
             switchPage(pid, pageType);
             ues.global.isSwitchToNewPage = false;
+            
+            initBanner();
         });
 
         actions.find('.ues-pages-list').on('click', 'li a .ues-trash', function (e) {
@@ -1359,26 +1665,27 @@ $(function () {
     };
 
     /**
-    * Register the "set_pref" rpc function. When user set the user preferences using
-    * pref.set() method this will be executed.
-    */
+     * Register the "set_pref" rpc function. When user set the user preferences using
+     * pref.set() method this will be executed.
+     * @private
+     */
     var registerRpc = function () {
-        gadgets.rpc.register('set_pref', function(token, name, value) {
+        gadgets.rpc.register('set_pref', function (token, name, value) {
 
             //Store the gadget id in a variable
             var id = this.f.split("-")[2];
 
             var pages = dashboard.pages;
             var numberOfPages = pages.length;
-            for (var i = 0; i < numberOfPages; i++){
+            for (var i = 0; i < numberOfPages; i++) {
                 var pageContent = pages[i].content.default;
                 var zones = Object.keys(pageContent);
                 var numberOfZones = zones.length;
-                for (var j = 0; j < numberOfZones; j++){
+                for (var j = 0; j < numberOfZones; j++) {
                     var zone = zones[j];
                     var gadgets = pageContent[zone];
                     var numberOfGadgets = gadgets.length;
-                    for (var k = 0; k < numberOfGadgets; k++){
+                    for (var k = 0; k < numberOfGadgets; k++) {
                         var gadget = gadgets[k];
                         if (gadgets[k].id == id) {
                             var gadgetOption = gadget.content.options;
@@ -1393,6 +1700,7 @@ $(function () {
 
     /**
      * initializes the UI
+     * @private
      */
     var initUI = function () {
         registerRpc();
@@ -1408,6 +1716,7 @@ $(function () {
 
     /**
      * initializes the layout listeners
+     * @private
      */
     var listenLayout = function () {
         $('#ues-designer').find('.ues-component-box').droppable({
@@ -1422,12 +1731,12 @@ $(function () {
                 var el = $(this);
                 switch (action) {
                     case 'move':
-                        if(!hasComponents($(this))) {
+                        if (!hasComponents($(this))) {
                             moveComponent(el, id);
                         }
                         break;
                     default:
-                        if(!hasComponents($(this))){
+                        if (!hasComponents($(this))) {
                             createComponent(el, findStoreCache(type, id));
                         }
                 }
@@ -1435,10 +1744,9 @@ $(function () {
         });
     };
 
-
-    var hasComponents = function(container){
+    var hasComponents = function (container) {
         var components = container.find('.ues-component').length;
-        if(components > 0){
+        if (components > 0) {
             return true;
         }
         return false;
@@ -1447,6 +1755,7 @@ $(function () {
     /**
      * get the container for layouts
      * @returns {*|jQuery}
+     * @private
      */
     var layoutContainer = function () {
         return $('#ues-designer').html(layoutHbs({
@@ -1468,6 +1777,7 @@ $(function () {
      * @param options
      * @param lid
      * @param done
+     * @private
      */
     var createPage = function (options, lid, done) {
         var layout = findStoreCache('layout', lid);
@@ -1490,11 +1800,11 @@ $(function () {
             saveDashboard();
             hideProperties();
 
-            if(ues.global.page) {
+            if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
                 switchPage(id, pageType);
                 done();
-            }else{
+            } else {
                 renderPage(id, done);
             }
 
@@ -1505,6 +1815,7 @@ $(function () {
      * returns the current page
      * @param p
      * @returns {*}
+     * @private
      */
     var currentPage = function (p) {
         return page = (ues.global.page = p);
@@ -1513,12 +1824,13 @@ $(function () {
     /**
      * switches the given page
      * @param pid
+     * @private
      */
     var switchPage = function (pid, pageType) {
         if (!page) {
             return renderPage(pid);
         }
-        destroyPage(page, pageType,  function (err) {
+        destroyPage(page, pageType, function (err) {
             if (err) {
                 throw err;
             }
@@ -1530,6 +1842,7 @@ $(function () {
      * renders the given page
      * @param pid
      * @param done
+     * @private
      */
     var renderPage = function (pid, done) {
         currentPage(findPage(dashboard, pid));
@@ -1540,19 +1853,20 @@ $(function () {
             renderPageProperties(page);
         }
 
-
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        if(ues.global.isSwitchToNewPage || !page.isanon) {
+        if (ues.global.isSwitchToNewPage || !page.isanon) {
             pageType = DEFAULT_DASHBOARD_VIEW;
             ues.global.type = DEFAULT_DASHBOARD_VIEW;
-        }else if(!($("#toggle-dashboard-view").prop("checked")) && $("#toggle-dashboard-view").length > 0){
+        } else if (!($("#toggle-dashboard-view").prop("checked")) && $("#toggle-dashboard-view").length > 0) {
             pageType = ANONYMOUS_DASHBOARD_VIEW;
             ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
         }
 
+        // TODO: Disable the properties if no gadgets available in the view.
         $('.ues-context-menu .ues-component-properties-toggle').parent().hide();
+
         var default_container = layoutContainer();
-        ues.dashboards.render(default_container, dashboard, pid, pageType ,function (err) {
+        ues.dashboards.render(default_container, dashboard, pid, pageType, function (err) {
             $('#ues-designer').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
@@ -1567,11 +1881,11 @@ $(function () {
         updatePagesList();
         initToggleView();
 
-        if(pageType != DEFAULT_DASHBOARD_VIEW ){
+        if (pageType != DEFAULT_DASHBOARD_VIEW) {
             $("#toggle-dashboard-view").parent().addClass("off");
             $(".toggle-group").find(".active").removeClass("active");
             $(".toggle-group").find(".toggle-off").addClass("active");
-            $("#toggle-dashboard-view").prop("checked",false);
+            $("#toggle-dashboard-view").prop("checked", false);
         }
     };
 
@@ -1579,6 +1893,7 @@ $(function () {
      * build up the page options for the given type of page
      * @param type
      * @returns {{id: string, title: string}}
+     * @private
      */
     var pageOptions = function (type) {
         var pages = dashboard.pages;
@@ -1621,6 +1936,7 @@ $(function () {
 
     /**
      * initializes the given type of page
+     * @private
      */
     var initFirstPage = function () {
         layoutWorkspace();
@@ -1631,6 +1947,7 @@ $(function () {
      * @param db
      * @param page
      * @param fresh
+     * @private
      */
     var initDashboard = function (db, page, fresh) {
         freshDashboard = fresh;
@@ -1646,10 +1963,165 @@ $(function () {
         }
         renderPage(page || db.landing || pages[0].id);
     };
+    
+    /**
+     * load the content within the banner placeholder
+     */
+    var loadBanner = function() {        
+        
+        ues.global.dashboard.banner = ues.global.dashboard.banner || { globalBannerExists: false, customBannerExists: false };
+        
+        var $placeholder = $('.ues-banner-placeholder'),
+            customDashboard = ues.global.dashboard.isUserCustom || false,
+            banner = ues.global.dashboard.banner;
+        
+        var bannerExists = banner.globalBannerExists || banner.customBannerExists;
+        
+        // create the view model to be passed to handlebar
+        var data = { 
+            isAdd: !bannerExists && !banner.cropMode,
+            isEdit: bannerExists && !banner.cropMode,
+            isCrop: banner.cropMode,
+            isCustomBanner: customDashboard && banner.customBannerExists,
+            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard
+        };
+        $placeholder.html(bannerHbs(data));
+        
+        // display the image 
+        var img = $placeholder.find('#img-banner');
+        if (bannerExists) {            
+            img.attr('src', img.data('src') + '?rand=' + Math.floor(Math.random() * 100000)).show();
+        } else {
+            img.hide();
+        }
+    }
+    
+    /**
+     * initialize the banner
+     */ 
+    var initBanner = function() {
+        
+        loadBanner();
+        
+        // bind a handler to the change event of the file element
+        document.getElementById('file-banner').addEventListener('change', function (e) { 
+            var file = e.target.files[0];
+            if (file.size == 0) {
+                return;
+            }
+            
+            if (!new RegExp('^image/', 'i').test(file.type)) {
+                return;
+            }
+            
+            // since a valid image is selected, render the banner in crop mode
+            ues.global.dashboard.banner.cropMode = true;
+            loadBanner();
+
+            var srcCanvas = document.getElementById('src-canvas'),
+                $srcCanvas = $(srcCanvas),
+                img = new Image(),
+                width = 1170,
+                height = 300;
+
+            // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
+            $srcCanvas.cropper('destroy');
+
+            // draw the selected image in the source canvas and initialize cropping
+            var srcCtx = srcCanvas.getContext('2d'),
+                objectUrl = URL.createObjectURL(file);
+
+            img.onload = function() {
+                // draw the uploaded image on the canvas
+                srcCanvas.width = img.width;
+                srcCanvas.height = img.height;
+
+                srcCtx.drawImage(img, 0, 0);
+
+                // bind the cropper
+                $srcCanvas.cropper({
+                    aspectRatio: width / height,
+                    autoCropArea: 1,
+                    strict: true,
+                    guides: true,
+                    highlight: true,
+                    dragCrop: false,
+                    cropBoxMovable: false,
+                    cropBoxResizable: true,
+
+                    crop: function(e) {
+                        // draw the cropped image part in the dest. canvas and get the base64 encoded string
+                        var cropData = $srcCanvas.cropper('getData'), 
+                            destCanvas = document.getElementById('dest-canvas'), 
+                            destCtx = destCanvas.getContext('2d');
+
+                        destCanvas.width = width; 
+                        destCanvas.height = height; 
+
+                        destCtx.drawImage (img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
+                        
+                        var dataUrl = destCanvas.toDataURL('image/jpeg');
+                        $('#banner-data').val(dataUrl);
+                    }
+                });
+            }
+            img.src = objectUrl;
+        }, false);
+        
+        // event handler for the banner edit button
+        $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function(e) {
+            $('#file-banner').click();
+        });
+        
+        // event handler for the banner save button
+        $('.ues-banner-placeholder').on('click', '#btn-save-banner', function(e) {
+            var $form = $('#ues-dashboard-upload-banner-form');
+            var cropData = $form.find('#banner-data').val();
+
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                data: { 'data': cropData },
+            }).success(function (d) {
+
+                if (ues.global.dashboard.isUserCustom) {
+                    ues.global.dashboard.banner.customBannerExists = true;
+                } else {
+                    ues.global.dashboard.banner.globalBannerExists = true;
+                }
+                ues.global.dashboard.banner.cropMode = false;
+                loadBanner();
+            });
+        });
+        
+        // event handler for the banner cancel button
+        $('.ues-banner-placeholder').on('click', '#btn-cancel-banner', function(e) {
+            ues.global.dashboard.banner.cropMode = false;
+            $('#file-banner').val('');
+            loadBanner();
+        });
+        
+        // event handler for the banner remove button
+        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function(e) {
+            $.ajax({
+                url: $('#ues-dashboard-upload-banner-form').attr('action'),
+                type: 'DELETE',
+            }).success(function (d) {                
+
+                if (ues.global.dashboard.isUserCustom) {
+                    ues.global.dashboard.banner.customBannerExists = false;
+                } else {
+                    ues.global.dashboard.banner.globalBannerExists = false; 
+                }
+                ues.global.dashboard.banner.cropMode = false;
+                loadBanner();
+            }); 
+        });
+    }
 
     initUI();
     initDashboard(ues.global.dashboard, ues.global.page, ues.global.fresh);
+    initBanner();
 
     ues.dashboards.save = saveDashboard;
-
 });

@@ -65,7 +65,7 @@
 <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
     {{#each .}}
     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="thumbnail ues-dashboard" data-id="{{id}}">
+        <div class="thumbnail ues-dashboard" id="{{id}}" data-id="{{id}}">
             {{>ues-dashboard-thumbnail-hbs}}
         </div>
     </div>
@@ -82,6 +82,7 @@
 </script>
 <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
     <h2>{{title}}</h2>
+    <p class="ues-description">Public URL: <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">dashboards/{{id}}</a></p>
     <p class="ues-description">{{description}}</p>
     <div class="ues-actions">
         <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
