@@ -165,7 +165,7 @@ $(function () {
                 method: "GET",
                 contentType: "application/json",
                 success: function (data) {
-                    generateMessage('error', "A dashboard with same name already exists. Please select a different dashboard name.");
+                    generateMessage('error', "A dashboard with same URL already exists. Please select a different dashboard URL.");
                 },
                 error: function (xhr) {
                     if (xhr.status == 404) {

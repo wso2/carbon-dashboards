@@ -117,6 +117,7 @@ $(function () {
     /**
      * generates a random id
      * @returns {string}
+     * @private
      */
     var randomId = function () {
         return Math.random().toString(36).slice(2);
@@ -125,6 +126,7 @@ $(function () {
     /**
      * switches workspaces in the designer
      * @param name
+     * @private
      */
     var showWorkspace = function (name) {
         $('.ues-workspace').hide();
@@ -134,6 +136,7 @@ $(function () {
     /**
      * show the store of a given type
      * @param type
+     * @private
      */
     var showStore = function (type) {
         var store = $('#ues-store').removeClass('ues-hidden');
@@ -153,6 +156,7 @@ $(function () {
 
     /**
      * hide the store
+     * @private
      */
     var hideStore = function () {
         $('#ues-store').addClass('ues-hidden');
@@ -169,6 +173,7 @@ $(function () {
     /**
      * check whether store is visible
      * @returns {boolean}
+     * @private
      */
     var storeVisible = function () {
         return !$('#ues-store').hasClass('ues-hidden');
@@ -176,6 +181,7 @@ $(function () {
 
     /**
      * shows properties panel
+     * @private
      */
     var showProperties = function () {
         $('#ues-properties').removeClass('ues-hidden');
@@ -192,6 +198,7 @@ $(function () {
 
     /**
      * hides properties panel
+     * @private
      */
     var hideProperties = function () {
         $('#ues-properties').addClass('ues-hidden');
@@ -210,6 +217,7 @@ $(function () {
 
     /**
      * removes properties panel
+     * @private
      */
     var removeProperties = function () {
         $('#ues-properties').empty();
@@ -218,6 +226,7 @@ $(function () {
     /**
      * checks whether properties panel is visible
      * @returns {boolean}
+     * @private
      */
     var propertiesVisible = function () {
         return !$('#ues-properties').hasClass('ues-hidden');
@@ -226,6 +235,7 @@ $(function () {
     /**
      * update component properties panel and save
      * @param sandbox
+     * @private
      */
     var updateComponentProperties = function (sandbox) {
         var notifiers = {};
@@ -250,6 +260,7 @@ $(function () {
     /**
      * renders the component properties panel
      * @param component
+     * @private
      */
     var renderComponentProperties = function (component) {
         activeComponent = component;
@@ -261,8 +272,8 @@ $(function () {
 
         $(".form-control.ues-localized-title").on("keypress", function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
-        }).on('change',function(e){
-            if($.trim($(this).val()) == ''){
+        }).on('change', function (e) {
+            if ($.trim($(this).val()) == '') {
                 $(this).val('');
             }
         });
@@ -285,6 +296,7 @@ $(function () {
      * Render maximized view for a gadget
      * @param component
      * @param componentContainer
+     * @private
      */
     var renderMaxView = function (component, view) {
         if (component.hasCustomFullView) {
@@ -302,6 +314,7 @@ $(function () {
      * @param type
      * @param id
      * @returns {*}
+     * @private
      */
     var findStoreCache = function (type, id) {
         var i;
@@ -320,6 +333,7 @@ $(function () {
      * find a given component in the current page
      * @param id
      * @returns {*}
+     * @private
      */
     var findComponent = function (id) {
         var i;
@@ -347,6 +361,7 @@ $(function () {
      * save component properties
      * @param id
      * @param data
+     * @private
      */
     var saveComponentProperties = function (id, data) {
         var o;
@@ -391,6 +406,7 @@ $(function () {
      * removes and destroys the given component from the page
      * @param component
      * @param done
+     * @private
      */
     var removeComponent = function (component, done) {
         destroyComponent(component, function (err) {
@@ -421,6 +437,7 @@ $(function () {
      * destroys the given component
      * @param component
      * @param done
+     * @private
      */
     var destroyComponent = function (component, done) {
 
@@ -436,6 +453,7 @@ $(function () {
      * destroys a given list of components of an area
      * @param components
      * @param done
+     * @private
      */
     var destroyArea = function (components, done) {
         var i;
@@ -459,6 +477,7 @@ $(function () {
      * destroys all areas in a given page
      * @param page
      * @param done
+     * @private
      */
     var destroyPage = function (page, pageType, done) {
         var checked = $('#toggle-dashboard-view').prop('checked');
@@ -498,6 +517,7 @@ $(function () {
      * remove and destroys a given page
      * @param pid
      * @param done
+     * @private
      */
     var removePage = function (pid, type, done) {
         var p = findPage(dashboard, pid);
@@ -514,6 +534,7 @@ $(function () {
     /**
      * pops up the preview dashboard page
      * @param page
+     * @private
      */
     var previewDashboard = function (page) {
         var isAnonView = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? 'true' : 'false';
@@ -523,6 +544,7 @@ $(function () {
 
     /**
      * pops up the export dashboard page
+     * @private
      */
     var exportDashboard = function () {
         window.open(dashboardsApi + '/' + dashboard.id, '_blank');
@@ -530,6 +552,7 @@ $(function () {
 
     /**
      * saves the dashboard content
+     * @private
      */
     var saveDashboard = function () {
         var method;
@@ -556,6 +579,7 @@ $(function () {
 
     /**
      * initializes the component toolbar
+     * @private
      */
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
@@ -657,6 +681,7 @@ $(function () {
 
     /**
      * return page id from DOM
+     * @private
      */
     var getPageId = function () {
         return $('.ues-page-id').text();
@@ -664,6 +689,7 @@ $(function () {
 
     /**
      * initializes the ues properties
+     * @private
      */
     var initUESProperties = function () {
         $('body').on('click', '.close-db-settings', function () {
@@ -673,6 +699,7 @@ $(function () {
 
     /**
      * initializes the toggle for dashboard view switching
+     * @private
      */
     var initToggleView = function () {
         $(function () {
@@ -683,6 +710,7 @@ $(function () {
     /**
      * renders the component toolbar of a given component
      * @param component
+     * @private
      */
     var renderComponentToolbar = function (component) {
         var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
@@ -692,6 +720,7 @@ $(function () {
     /**
      * updates the styles of a given store asset
      * @param asset
+     * @private
      */
     var updateStyles = function (asset) {
         var styles = asset.styles || (asset.styles = {
@@ -707,6 +736,7 @@ $(function () {
      * creates a component in the given container
      * @param container
      * @param asset
+     * @private
      */
     var createComponent = function (container, asset) {
         var id = randomId();
@@ -735,6 +765,7 @@ $(function () {
      * move given component into the given container
      * @param container
      * @param id
+     * @private
      */
     var moveComponent = function (container, id) {
         var component = findComponent(id);
@@ -761,6 +792,7 @@ $(function () {
     /**
      * triggers update hook of a given component
      * @param id
+     * @private
      */
     var updateComponent = function (id) {
         ues.components.update(findComponent(id), function (err) {
@@ -775,6 +807,7 @@ $(function () {
      * @param notifiers
      * @param current
      * @param component
+     * @private
      */
     var componentNotifiers = function (notifiers, current, component) {
         if (current.id === component.id) {
@@ -807,6 +840,7 @@ $(function () {
      * @param notifiers
      * @param component
      * @param components
+     * @private
      */
     var areaNotifiers = function (notifiers, component, components) {
         var i;
@@ -821,6 +855,7 @@ $(function () {
      * @param component
      * @param page
      * @returns {{}}
+     * @private
      */
     var pageNotifiers = function (component, page) {
         var area;
@@ -840,6 +875,7 @@ $(function () {
      * @param component
      * @param page
      * @returns {Array}
+     * @private
      */
     var findNotifiers = function (component, page) {
         var event, listener, notifiers;
@@ -871,6 +907,7 @@ $(function () {
      * @param event
      * @param notifiers
      * @returns {*}
+     * @private
      */
     var wiredNotifier = function (from, event, notifiers) {
         var i, notifier;
@@ -887,6 +924,7 @@ $(function () {
      * wire an event
      * @param on
      * @param notifiers
+     * @private
      */
     var wireEvent = function (on, notifiers) {
         var i, notifier;
@@ -906,6 +944,7 @@ $(function () {
      * @param event
      * @param notifiers
      * @returns {notifiers|*}
+     * @private
      */
     var eventNotifiers = function (event, notifiers) {
         var i, events;
@@ -923,6 +962,7 @@ $(function () {
      * @param component
      * @param notifiers
      * @returns {*}
+     * @private
      */
     var wireEvents = function (component, notifiers) {
         var listen = component.content.listen;
@@ -947,6 +987,7 @@ $(function () {
      * @param component
      * @param page
      * @returns {{id: (*|component.id), title: *, options: *, styles: (styles|*|buildPropertiesContext.styles), settings: *, listeners: *}}
+     * @private
      */
     var buildPropertiesContext = function (component, page) {
         var notifiers = findNotifiers(component, page);
@@ -965,6 +1006,7 @@ $(function () {
      * Check whether current landing page is anonymous or not.
      * @param landing
      * @return boolean
+     * @private
      * */
     var checkForAnonLandingPage = function (landing) {
         var isLandingAnon = false;
@@ -982,6 +1024,7 @@ $(function () {
      * Check whether there are any anonymous pages.
      * @param pageId
      * @return boolean
+     * @private
      * */
     var checkForAnonPages = function (pageId) {
         var isAnonPagesAvailable = false;
@@ -999,11 +1042,30 @@ $(function () {
      * Check whether there are any pages which has given id.
      * @param pageId
      * @return boolean
+     * @private
      * */
     var checkForPagesById = function (pageId) {
         var isPageAvailable = false;
         for (var availablePage in dashboard.pages) {
             if (dashboard.pages[availablePage].id == pageId) {
+                isPageAvailable = true;
+                break;
+            }
+        }
+
+        return isPageAvailable;
+    };
+
+    /**
+     * Check whether there are any page which has the given title.
+     * @param pageTitle
+     * @return boolean
+     * @private
+     * */
+    var checkForPagesByTitle = function(pageTitle){
+        var isPageAvailable = false;
+        for(var availablePage in dashboard.pages){
+            if(dashboard.pages[availablePage].title == pageTitle){
                 isPageAvailable = true;
                 break;
             }
@@ -1103,7 +1165,15 @@ $(function () {
             }
         }
 
-        page.title = title;
+        if(sandbox.context.className == "form-control title"){
+            if(checkForPagesByTitle(title) && page.title != title){
+                generateMessage("error","A page with entered title already exists. Please select a different title");
+                $('.title',sandbox).val(page.title);
+                title = page.title;
+            }else{
+                page.title = title;
+            }
+        }
 
         if (sandbox.context.className == "landing" && landing.is(':checked')) {
             if (checkForAnonPages(id) && !page.isanon) {
@@ -1187,6 +1257,7 @@ $(function () {
     /**
      * renders page options
      * @param page
+     * @private
      */
     var renderPageProperties = function (page) {
         $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
@@ -1223,6 +1294,7 @@ $(function () {
      * saves page options of the component
      * @param sandbox
      * @param options
+     * @private
      */
     var saveOptions = function (sandbox, options) {
         $('.ues-options input', sandbox).each(function () {
@@ -1255,6 +1327,7 @@ $(function () {
      * save settings of the component
      * @param sandbox
      * @param settings
+     * @private
      */
     var saveSettings = function (sandbox, settings) {
         $('.ues-settings input', sandbox).each(function () {
@@ -1275,6 +1348,7 @@ $(function () {
      * save styles of the component
      * @param sandbox
      * @param styles
+     * @private
      */
     var saveStyles = function (sandbox, styles, id) {
         $('.ues-styles input', sandbox).each(function () {
@@ -1299,6 +1373,7 @@ $(function () {
      * save notifiers of the component
      * @param sandbox
      * @param notifiers
+     * @private
      */
     var saveNotifiers = function (sandbox, notifiers) {
         $('.ues-notifiers .notifier', sandbox).each(function () {
@@ -1320,6 +1395,7 @@ $(function () {
     /**
      * holds the store paging history for infinite scroll
      * @type {{}}
+     * @private
      */
     var pagingHistory = {};
 
@@ -1327,6 +1403,7 @@ $(function () {
      * loads given type of assets matching the query
      * @param type
      * @param query
+     * @private
      */
     var loadAssets = function (type, query) {
         var paging = pagingHistory[type] || (pagingHistory[type] = {
@@ -1384,6 +1461,7 @@ $(function () {
 
     /**
      * initializes the components
+     * @private
      */
     var initComponents = function () {
         $('#ues-store').on('mouseenter', '.ues-thumbnail', function () {
@@ -1405,6 +1483,7 @@ $(function () {
 
     /**
      * initializes the designer
+     * @private
      */
     var initDesigner = function () {
         $('#ues-store-menu-actions').find('.ues-store-toggle').click(function () {
@@ -1453,6 +1532,7 @@ $(function () {
 
     /**
      * initializes the store
+     * @private
      */
     var initStore = function () {
         loadAssets('gadget');
@@ -1578,6 +1658,7 @@ $(function () {
     /**
      * Register the "set_pref" rpc function. When user set the user preferences using
      * pref.set() method this will be executed.
+     * @private
      */
     var registerRpc = function () {
         gadgets.rpc.register('set_pref', function (token, name, value) {
@@ -1610,6 +1691,7 @@ $(function () {
 
     /**
      * initializes the UI
+     * @private
      */
     var initUI = function () {
         registerRpc();
@@ -1625,6 +1707,7 @@ $(function () {
 
     /**
      * initializes the layout listeners
+     * @private
      */
     var listenLayout = function () {
         $('#ues-designer').find('.ues-component-box').droppable({
@@ -1663,6 +1746,7 @@ $(function () {
     /**
      * get the container for layouts
      * @returns {*|jQuery}
+     * @private
      */
     var layoutContainer = function () {
         return $('#ues-designer').html(layoutHbs({
@@ -1684,6 +1768,7 @@ $(function () {
      * @param options
      * @param lid
      * @param done
+     * @private
      */
     var createPage = function (options, lid, done) {
         var layout = findStoreCache('layout', lid);
@@ -1721,6 +1806,7 @@ $(function () {
      * returns the current page
      * @param p
      * @returns {*}
+     * @private
      */
     var currentPage = function (p) {
         return page = (ues.global.page = p);
@@ -1729,6 +1815,7 @@ $(function () {
     /**
      * switches the given page
      * @param pid
+     * @private
      */
     var switchPage = function (pid, pageType) {
         if (!page) {
@@ -1746,6 +1833,7 @@ $(function () {
      * renders the given page
      * @param pid
      * @param done
+     * @private
      */
     var renderPage = function (pid, done) {
         currentPage(findPage(dashboard, pid));
@@ -1796,6 +1884,7 @@ $(function () {
      * build up the page options for the given type of page
      * @param type
      * @returns {{id: string, title: string}}
+     * @private
      */
     var pageOptions = function (type) {
         var pages = dashboard.pages;
@@ -1838,6 +1927,7 @@ $(function () {
 
     /**
      * initializes the given type of page
+     * @private
      */
     var initFirstPage = function () {
         layoutWorkspace();
@@ -1848,6 +1938,7 @@ $(function () {
      * @param db
      * @param page
      * @param fresh
+     * @private
      */
     var initDashboard = function (db, page, fresh) {
         freshDashboard = fresh;
@@ -1868,6 +1959,4 @@ $(function () {
     initDashboard(ues.global.dashboard, ues.global.page, ues.global.fresh);
 
     ues.dashboards.save = saveDashboard;
-
-})
-;
+});

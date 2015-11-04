@@ -197,6 +197,7 @@
 <script src="<%=urlPrefix%>js/jquery-ui.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+<script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
