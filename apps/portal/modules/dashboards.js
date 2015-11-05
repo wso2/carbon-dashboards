@@ -3,6 +3,16 @@ var log = new Log();
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
 
+/**
+ * get registry reference 
+ */
+var getRegistry = function() {
+    var server = new carbon.server.Server();
+    return new carbon.registry.Registry(server, {
+        system: true
+    });
+}
+
 //TODO: what happen when the context is changed or mapped via reverse proxy
 var registryPath = function (id) {
     var path = '/_system/config/ues/dashboards';
@@ -16,10 +26,7 @@ var registryUserPath = function (id, username) {
 
 
 var findOne = function (id) {
-    var server = new carbon.server.Server();
-    var registry = new carbon.registry.Registry(server, {
-        system: true
-    });
+    var registry = getRegistry();
     var usr = require('/modules/user.js');
     var user = usr.current();
     var path = registryPath(id);
@@ -35,15 +42,18 @@ var findOne = function (id) {
     var dashboard = JSON.parse(content);
     if(dashboard){
         dashboard.isUserCustom = isCustom;
+        
+        var banner = getBanner(id, (user ? user.username : null));
+        dashboard.banner = { 
+            globalBannerExists: banner.globalBannerExists,
+            customBannerExists: banner.customBannerExists
+        };
     }
     return dashboard;
 };
 
 var find = function (paging) {
-    var server = new carbon.server.Server();
-    var registry = new carbon.registry.Registry(server, {
-        system: true
-    });
+    var registry = getRegistry();
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
     dashboards.forEach(function (dashboard) {
@@ -54,9 +64,7 @@ var find = function (paging) {
 
 var create = function (dashboard) {
     var server = new carbon.server.Server();
-    var registry = new carbon.registry.Registry(server, {
-        system: true
-    });
+    var registry = getRegistry();
     var userManager = new carbon.user.UserManager(server);
     var path = registryPath(dashboard.id);
     if (registry.exists(path)) {
@@ -70,10 +78,14 @@ var create = function (dashboard) {
 };
 
 var update = function (dashboard) {
-    var server = new carbon.server.Server();
-    var registry = new carbon.registry.Registry(server, {
-        system: true
-    });
+    
+    var registry = getRegistry();
+
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    if(!user){
+        throw 'User is not logged in ';
+    }
 
     var path = registryUserPath(dashboard.id, user.username);
     if (!registry.exists(path) && !dashboard.isUserCustom) {
@@ -89,10 +101,7 @@ var update = function (dashboard) {
 };
 
 var copy = function (dashboard) {
-    var server = new carbon.server.Server();
-    var registry = new carbon.registry.Registry(server, {
-        system: true
-    });
+    var registry = getRegistry();
     var usr = require('/modules/user.js');
     var user = usr.current();
     if(!user){
@@ -109,10 +118,7 @@ var copy = function (dashboard) {
 };
 
 var reset = function (id) {
-    var server = new carbon.server.Server();
-    var registry = new carbon.registry.Registry(server, {
-        system: true
-    });
+    var registry = getRegistry();
     var usr = require('/modules/user.js');
     var user = usr.current();
     if(!user){
@@ -123,13 +129,11 @@ var reset = function (id) {
         registry.remove(path);
     }
 
+    deleteBanner(id, user.username);
 };
 
 var remove = function (id) {
-    var server = new carbon.server.Server();
-    var registry = new carbon.registry.Registry(server, {
-        system: true
-    });
+    var registry = getRegistry();
     var path = registryPath(id);
     if (registry.exists(path)) {
         registry.remove(path);
@@ -146,4 +150,114 @@ var allowed = function (dashboard, permission) {
     if (permission.view) {
         return utils.allowed(user.roles, permissions.viewers);
     }
+};
+
+/**
+ * save banner in the registry
+ * @param {String} dashboardId   id of the dashboard
+ * @param {String} username      user's username
+ * @param {String} filename      name of the file
+ * @param {String} mime mime     type of the file
+ * @param {Object} stream        byte stream of the file
+ */
+var saveBanner = function(dashboardId, username, filename, mime, stream) {
+    var uuid = require('uuid');
+    var registry = getRegistry();
+    
+    var path = registryBannerPath(dashboardId, username);
+    var resource = {
+        content: stream,
+        uuid: uuid.generate(),
+        mediaType: mime,
+        name: filename,
+        properties: { }
+    };
+
+    registry.put(path, resource);
+};
+
+/**
+ * delete dashboard banner (if the username is empty, then the default banner will be removed, 
+ * otherwise the custom banner for the user will be removed)
+ * @param {String} dashboardId   id of the dashboard
+ * @param {String} username      user's username
+ */
+var deleteBanner = function (dashboardId, username) {
+    getRegistry().remove(registryBannerPath(dashboardId, username));
+};
+
+/**
+ * render banner
+ * @param {String} dashboardId id of the dashboard
+ * @param {String} username    user's username
+ */
+var renderBanner = function(dashboardId, username) {    
+    var registry = getRegistry();
+    var FILE_NOT_FOUND_ERROR = 'requested file cannot be found';
+    
+    var banner = getBanner(dashboardId, username);
+    if (!banner) {
+        response.sendError(404, FILE_NOT_FOUND_ERROR);
+        return;
+    }
+
+    var r = registry.get(banner.path);        
+    if (r == null || r.content == null) {
+        response.sendError(404, FILE_NOT_FOUND_ERROR);
+        return;
+    }
+
+    response.contentType = r.mediaType;
+    print(r.content);
+    return;        
+};
+
+/**
+ * path to customizations directory in registry
+ * @returns {String}
+ */
+var registryCustomizationsPath = function() {
+    return '/_system/config/ues/customizations';
+}
+
+/**
+ * get saved registry path for a banner
+ * @param   {String} dashboardId id of the dashboard
+ * @param   {String} username    current user's username
+ * @returns {String}
+ */
+var registryBannerPath = function(dashboardId, username) {
+    return registryCustomizationsPath() + '/' + dashboardId + (username ? '/' + username : '') 
+        + '/banner';
+};
+
+/**
+ * get banner details (banner type and the registry path)
+ * @param   {String} dashboardId id of the dashboard
+ * @param   {String} username    user's username
+ * @returns {Object}
+ */
+var getBanner = function(dashboardId, username) {       
+    var registry = getRegistry();
+    
+    var path;
+    var result = { isCustomBanner: false, isGlobalBanner: false, path: null };
+    
+    // check to see whether the custom banner exists
+    path = registryBannerPath(dashboardId, username);
+    if (registry.exists(path)) {
+        
+        result.customBannerExists = true;
+        result.path = path;
+    }
+    
+    // check to see if there is any global banner
+    path = registryBannerPath(dashboardId, null);
+    if (registry.exists(path)) {
+    
+        result.globalBannerExists = true;
+        result.path = result.path || path;
+    }
+    
+    return result;
 };
