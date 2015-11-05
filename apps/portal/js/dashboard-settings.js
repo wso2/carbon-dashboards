@@ -27,6 +27,24 @@ $(function () {
         });
     };
 
+    var getOauthSettings = function () {
+        $.ajax({
+            url: "/portal/saml/saml-at-settings.jag",
+            type: "GET",
+            dataType: "json",
+            data: {
+                id: dashboard.id,
+                isUrl: dashboard.identityServerUrl
+            }
+        }).success(function (data) {
+            $("#ues-access-token-url").val(data.accessTokenUrl);
+            $("#ues-api-key").val(data.key);
+            $("#ues-api-secret").val(data.secret);
+        }).error(function () {
+            console.log('error saving dashboard');
+        });
+    };
+
     var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
 
     var viewer = function (el, role) {
@@ -218,6 +236,21 @@ $(function () {
         }).on('change', function () {
             dashboard.description = $(this).val();
             saveDashboard();
+        });
+
+        $('#ues-enable-oauth').on('click', function () {
+            dashboard.enableOauth = $(this).is(":checked");
+            saveDashboard();
+            if (dashboard.enableOauth) {
+                $('#ues-is-url').removeAttr("disabled");
+            } else {
+                $("#ues-is-url").attr("disabled", "disabled");
+            }
+        });
+
+        $('#ues-is-url').on('change', function () {
+            dashboard.identityServerUrl = $(this).val();
+            getOauthSettings();
         });
 
         var menu = $('.ues-context-menu');

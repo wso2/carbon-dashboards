@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-toggle.min.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/cropper.css" />
+    
     <title><%= i18n.localize("ds.dashboard.designer") %></title>
 </head>
 <body class="<%=locale%>">
@@ -42,11 +44,12 @@
                                         <i class="fw fw-ring fw-stack-2x"></i>
                                         <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
                                      </span> <%=i18n.localize("export")%> </a></li>
-                                <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>">
-                                 <span class="fw-stack">
+                                     
+                                <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>"  id="settings-link">
+                                     <span class="fw-stack">
                                         <i class="fw fw-ring fw-stack-2x"></i>
                                         <i class="fw fw-settings fw-stack-1x"></i>
-                                    </span> <%=i18n.localize("settings")%> </a></li>
+                                     </span> <%=i18n.localize("settings")%> </a></li>
 
                                   <%}
                         if (dashboard.isUserCustom) {%>
@@ -195,6 +198,7 @@
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery-ui.js"></script>
+<script src="<%=urlPrefix%>js/cropper.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
@@ -215,6 +219,7 @@
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
 <script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/designer.js"></script>
+<script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-layout-hbs" type="text/x-handlebars-template">
     <div class="container-fluid">
@@ -411,8 +416,7 @@
                 <img src="{{resolveURI thumbnail}}"/>
 
                 <div class="ues-toolbar">
-                    <button type="button" class="btn btn-default ues-add" data-id="{{id}}">
-                    <%= i18n.localize("select")%></button>
+                    <button type="button" class="btn btn-default ues-add" id={{id}} data-id="{{id}}"><%= i18n.localize("select")%></button>
                 </div>
             </div>
         </div>
@@ -490,5 +494,43 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 </script>
+
+<script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
+    
+    <canvas id="src-canvas" class="hidden"></canvas>    
+    <canvas id="dest-canvas" class="hidden"></canvas>
+    
+    {{#if isEdit}}
+    <img src="" id="img-banner" data-src="<%=urlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
+    {{/if}}
+       
+    <div class="button-panel">
+    
+        {{#if isAdd}}
+        <button type="button" id="btn-edit-banner" class="btn btn-primary">Add</button>
+        {{/if}}
+
+        {{#if isEdit}}
+        <button type="button" id="btn-edit-banner" class="btn btn-primary">Edit</button>
+        {{#if showRemove}}
+        <button type="button" id="btn-remove-banner" class="btn btn-danger">{{#if isCustomBanner}}Reset{{else}}Remove{{/if}}</button>
+        {{/if}}
+        {{/if}}
+
+        {{#if isCrop}}
+        <button type="button" id="btn-save-banner" class="btn btn-primary">Save</button>
+        <button type="button" id="btn-cancel-banner" class="btn btn-danger">Cancel</button>
+        {{/if}}
+    
+    </div>
+    
+</script> <!--/#ues-dashboard-banner-hbs -->
+    
+<form method="post" id="ues-dashboard-upload-banner-form" action="<%=urlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
+    <input type="file" id="file-banner" name="banner" accept="image/*" />
+    <input type="hidden" id="banner-data" name="data" />
+    <button type="submit">Submit</button>
+</form><!-- /#ues-dashboard-upload-banner-form -->
+
 </body>
 </html>
