@@ -214,7 +214,7 @@ $(function () {
         });
 
         $('#ues-dashboard-description').on('keypress', function (e) {
-            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+            return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
         }).on('change', function () {
             dashboard.description = $(this).val();
             saveDashboard();
