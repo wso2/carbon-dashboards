@@ -12,6 +12,8 @@
     <title><%= i18n.localize("dashboards.lable")%></title>
     <link rel="icon" href="<%=urlPrefix%><%=utils.resolveUrl('images/favicon.png')%>" type="image/x-icon" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/buttons.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/animate.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
