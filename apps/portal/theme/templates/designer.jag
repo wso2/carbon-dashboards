@@ -387,7 +387,7 @@
 <script id="ues-components-list-hbs" type="text/x-handlebars-template">
     {{#each assets}}
     <div class="col-md-12">
-        <div class="ues-thumbnail" data-id="{{id}}" data-type="{{../type}}">
+        <div class="ues-thumbnail" id="{{id}}" data-id="{{id}}" data-type="{{../type}}">
             <img src="{{resolveURI thumbnail}}"/>
             <h4 class="ues-title">{{#if (lookup locale_titles ../lang)}}{{lookup locale_titles ../lang}}{{else}}{{title}}{{/if}}
     </h4>
