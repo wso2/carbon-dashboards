@@ -1,0 +1,34 @@
+<%
+include('/modules/dashboards.js');
+function getSamlAccessToken() {
+    var oauth = require("oauth");
+    var dashboardId = request.getParameter("id");
+    var dashboard = findOne(dashboardId);
+    var oauthEnabled = dashboard.enableOauth ? true : false;
+    
+    if (oauthEnabled) {
+        var provider = {
+            "oauth_version": "2",
+            "authorization_url": "",
+            "access_token_url": dashboard.accessTokenUrl,
+            "request_token_url": "",
+            "callback_url": "",
+            "api_key": dashboard.apiKey,
+            "api_secret": dashboard.apiSecret
+        }
+        var wso2is = new oauth.OAuthProvider(provider);
+        var samlResp = session.get("samlResponse");
+        
+        try {
+            var accessTokenResponse = wso2is.getTokenResponse(samlResp);
+            return {"accessToken": accessTokenResponse.getAccessToken()};
+        } catch (err) {
+            return {"accessToken": "Access token not available. " + err.message};
+        }
+    } else {
+        return {"accessToken": ""};
+    }
+
+}
+print(getSamlAccessToken());
+%>
