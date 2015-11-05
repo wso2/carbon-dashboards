@@ -32,36 +32,35 @@
                                 <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
-                                </span> <%= i18n.localize("add.page.lable")%> </a>
-                            </li>
-                            <li><a href="<%=tenantedUrlPrefix%>create-gadget">
-                                <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
-                                    <i class="fw fw-add fw-stack-1x"></i>
-                                </span> <%= i18n.localize("create.gadget.lable")%> </a></li>
-                            <li><a href="#" class="ues-dashboard-export">
-                                 <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
-                                    <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
-                                 </span> <%= i18n.localize("export")%> </a></li>
-                            <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="settings-link">
-                             <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
-                                    <i class="fw fw-settings fw-stack-1x"></i>
-                                </span> <%= i18n.localize("settings")%> </a></li>
+                                </span> <%=i18n.localize("add.page.lable")%> </a></li>
+                                <li><a href="<%=tenantedUrlPrefix%>create-gadget">
+                                    <span class="fw-stack">
+                                        <i class="fw fw-ring fw-stack-2x"></i>
+                                        <i class="fw fw-add fw-stack-1x"></i>
+                                    </span> <%=i18n.localize("create.gadget.lable")%> </a></li>
+                                <li><a href="#" class="ues-dashboard-export">
+                                     <span class="fw-stack">
+                                        <i class="fw fw-ring fw-stack-2x"></i>
+                                        <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
+                                     </span> <%=i18n.localize("export")%> </a></li>
+                                     
+                                <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>"  id="settings-link">
+                                     <span class="fw-stack">
+                                        <i class="fw fw-ring fw-stack-2x"></i>
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                     </span> <%=i18n.localize("settings")%> </a></li>
 
-                              <%}
-                             if (dashboard.isUserCustom) { %>
-                                <li>
-                                    <a class="ues-copy" href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard
-                                     .id%>?reset=true">
-                                        <span class="fw-stack">
-                                            <i class="fw fw-ring fw-stack-2x"></i>
-                                            <i class="fw-refresh fw-stack-1x"></i>
-                                        </span> <%= i18n.localize("reset")%>
-                                    </a>
-                                </li>
-                             <% }%>
+                                  <%}
+                        if (dashboard.isUserCustom) {%>
+                                   <li>
+                                       <a class="ues-copy" href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard.id%>?reset=true">
+                                            <span class="fw-stack">
+                                                <i class="fw fw-ring fw-stack-2x"></i>
+                                                <i class="fw-refresh fw-stack-1x"></i>
+                                            </span> <%=i18n.localize("reset")%>
+                                        </a>
+                                    </li>
+                                 <%}%>
                              <li><a href="#" class="ues-dashboard-preview">
                                 <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
@@ -133,8 +132,7 @@
                     <div class="col-md-12">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder=<%= i18n.localize("search" +
-                ".lable")%>...>
+                                <input type="text" class="form-control" placeholder=<%= i18n.localize("search" +".lable")%>...>
                             </div>
                         </form>
                     </div>
@@ -199,8 +197,10 @@
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery-ui.js"></script>
-<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/cropper.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
+<script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+<script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -216,6 +216,7 @@
 <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
+<script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/designer.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-layout-hbs" type="text/x-handlebars-template">
@@ -223,7 +224,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h4 class="ues-page-title">
-                <span class="col-md-9">{{current.title}}</span>
+                <span class="col-md-9 page-title">{{current.title}}</span>
                 <span class="col-md-2 pull-right toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">
                         <input id ="toggle-dashboard-view" class="toggle-view" checked data-toggle="toggle"
                         data-on="<%= i18n.localize("default.view")%> "  data-off="<%= i18n.localize("anon.view") %>"
@@ -317,7 +318,7 @@
                                 <label><%= i18n.localize("title") %>
                                     <input type="text" class="form-control ues-localized-title" name="title"
                                     placeholder="<%= i18n
-                                        .localize("title") %>" value="{{#if styles.title}}{{styles.title}}{{/if}}">
+        .localize("title") %>" value="{{#if styles.title}}{{styles.title}}{{/if}}">
                                 </label>
                             </div>
                             <div class="form-group">
@@ -334,7 +335,7 @@
                             </div>
                             <div class="form-group">
                                 <label><%= i18n.localize("height") %>
-                                    <input type="text" class="form-control" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
+                                    <input type="text" class="form-control ues-localized-height" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
                                 </label>
                             </div>
                             <div class="checkbox">
@@ -439,25 +440,31 @@
             <div class="ues-sandbox">
                 <form>
                     <h4><%= i18n.localize("properties.lable") %></h4>
-                    <div class="form-group">
+                    <div class="form-group has-feedback">
                         <label><%= i18n.localize("title") %>
-                            <input type="text" class="form-control title" name="title" placeholder="<%= i18n.localize
-                                ("page.tilte.lable") %>" value="{{title}}">
+                            <span class="required">*</span>
                         </label>
+                        <input type="text" class="form-control title" name="title" placeholder="<%= i18n.localize
+("page.tilte.lable") %>" value="{{title}}">
+                        <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
+                        <label id="title-error" class="required-error hide" for="title">This is required.</label>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group has-feedback">
                         <label><%= i18n.localize("url") %>
-                            <input type="text" class="form-control id" name="id" placeholder="URL" value="{{id}}">
+                            <span class="required">*</span>
                         </label>
+                        <input type="text" class="form-control id" name="id" placeholder="URL" value="{{id}}">
+                        <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
+                        <label id="id-error" class="required-error hide" for="id">This is required.</label>
                     </div>
                     <div class="checkbox">
                         <label>
                             <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> <%= i18n
-                                .localize("use.as.landing") %>
+        .localize("use.as.landing") %>
                         </label>
                         <label class="{{#if isUserCustom}}hide{{/if}}">
                             <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}} > <%= i18n
-                                .localize("make.anonymous") %>
+        .localize("make.anonymous") %>
                         </label>
                     </div>
                 </form>
