@@ -77,14 +77,14 @@
                             <span class="fw-stack">
                                 <i class="fw fw-ring fw-stack-2x"></i>
                                 <i class="fw fw-add fw-stack-1x"></i>
-                            </span> Add Block <span class="caret"></span>
+                            </span> <%= i18n.localize("add.block.label")%> <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" id="ues-add-block-menu" role="menu">
                             <li>
                                 
                                 <div id="ues-add-block-container">
                                     
-                                    <h5>Define gadget size in grid</h5>
+                                    <h5><%= i18n.localize("add.block.description")%></h5>
                                     
                                     <div id="dummy-gadget-wrapper">
                                         <div id="dummy-gadget-container" class="ui-widget-content">
@@ -95,7 +95,7 @@
                                     </div>
                                     
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-primary" id="ues-add-block-btn">Add Block</button> 
+                                        <button type="button" class="btn btn-primary" id="ues-add-block-btn"><%= i18n.localize("add.block.button.text")%></button> 
                                     </div>
                                     
                                 </div>
@@ -581,7 +581,7 @@
                 <ul class="list-inline pull-right">
                     <li>
                         <a href="#" class="ues-component-box-remove-handle">
-                            <i class="fw fw-delete" title="{{id}}"></i>
+                            <i class="fw fw-cancel" title="<%=i18n.localize('remove.block.label')%>"></i>
                         </a>
                     </li>
                 </ul>
@@ -600,7 +600,7 @@
             <ul class="list-inline pull-right">
                 <li>
                     <a href="#" class="ues-component-box-remove-handle">
-                        <i class="fw fw-delete" title="{{id}}"></i>
+                        <i class="fw fw-cancel" title="<%=i18n.localize('remove.block.label')%>"></i>
                     </a>
                 </li>
             </ul>

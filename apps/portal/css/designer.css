@@ -391,3 +391,6 @@ h4.ues-page-title {
     background-image: url("../theme/images/ui-icons_222222_256x240.png");
 }
 
+.ues-component-box-remove-handle {
+    font-size: 10px;
+}

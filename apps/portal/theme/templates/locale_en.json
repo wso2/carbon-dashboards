@@ -88,5 +88,8 @@
     "gadget.Height": "Gadget Height",
     "sign.Up": "Sign Up",
     "ds.dashboard.designer": "WSO2 DS - Dashboard Designer",
-
+    "remove.block.label": "Remove Block",
+    "add.block.label": "Add Block",
+    "add.block.description": "Define Gadget Size in Grid",
+    "add.block.button.text": "Add Block"
 }
