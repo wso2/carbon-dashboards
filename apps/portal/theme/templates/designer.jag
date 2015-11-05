@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-toggle.min.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/cropper.css" />
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/jquery.gridster.css" />
 
     <title><%= i18n.localize("ds.dashboard.designer") %></title>
 </head>
@@ -67,7 +68,42 @@
                                     <i class="fw fw-view fw-stack-1x"></i>
                              </span> <%= i18n.localize("view")%> </a></li>
                         </ul>
+                        
                 <ul class="nav navbar-nav navbar-right">
+                   
+                   
+                    <li id="ues-add-block-menu-item">
+                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="fw-stack">
+                                <i class="fw fw-ring fw-stack-2x"></i>
+                                <i class="fw fw-add fw-stack-1x"></i>
+                            </span> Add Block <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" id="ues-add-block-menu" role="menu">
+                            <li>
+                                
+                                <div id="ues-add-block-container">
+                                    
+                                    <h5>Define gadget size in grid</h5>
+                                    
+                                    <div id="dummy-gadget-wrapper">
+                                        <div id="dummy-gadget-container" class="ui-widget-content">
+                                            <div id="dummy-gadget" class="ui-widget-content">
+                                                <div id="dummy-size" data-w="1" data-h="1">1x1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" id="ues-add-block-btn">Add Block</button> 
+                                    </div>
+                                    
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    
                     <li>
                         <a href="#" class="ues-page-switcher dropdown-toggle" data-toggle="dropdown"
                         aria-expanded="false"> <%= i18n.localize("pages.lable")%> <span class="caret"></span></a>
@@ -76,6 +112,8 @@
                     <li class="ues-hidden"><a href="#" class="ues-component-properties-toggle"><i class="fw fw-settings"></i></a></li>
                     <li><a href="#" class="ues-page-properties-toggle"><i class="fw fw-register2"></i></a></li>
                 </ul>
+                
+                
             </div>
             <!--/.nav-collapse -->
         </div>
@@ -201,6 +239,7 @@
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
+<script src="<%=urlPrefix%>js/jquery.gridster.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -219,6 +258,7 @@
 <script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/designer.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
+
 <script id="ues-layout-hbs" type="text/x-handlebars-template">
     <div class="container-fluid">
         <div class="row">
@@ -243,7 +283,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="default-ues-layout container-fluid"></div>
+                <div class="default-ues-layout container-fluid gridster"></div>
             </div>
         </div>
     </div>
@@ -529,6 +569,45 @@
     <input type="hidden" id="banner-data" name="data" />
     <button type="submit">Submit</button>
 </form><!-- /#ues-dashboard-upload-banner-form -->
+
+<script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
+    
+    <ul class="container">
+        {{#each blocks}}                                        
+        <li class="ues-component-box" id="{{id}}" data-col="{{left}}" data-row="{{top}}" data-sizex="{{width}}" data-sizey="{{height}}">
+           <!-- this part should be moved into a partial -->
+           <div class="ues-component-box-header">
+                <span class="drag-handle">:::</span>
+                <ul class="list-inline pull-right">
+                    <li>
+                        <a href="#" class="ues-component-box-remove-handle">
+                            <i class="fw fw-delete" title="{{id}}"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    
+</script>
+
+<script id="ues-component-box-hbs" type="text/x-handlebars-template">
+   
+    <li class="ues-component-box" id="{{id}}">
+        <div class="ues-component-box-header ues-component-box-drag-handle">
+            <span class="drag-handle">:::</span>
+            <ul class="list-inline pull-right">
+                <li>
+                    <a href="#" class="ues-component-box-remove-handle">
+                        <i class="fw fw-delete" title="{{id}}"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    
+</script>
 
 </body>
 </html>

@@ -203,7 +203,7 @@
  *  component styles
  */
 .ues-component-box {
-    min-height: 300px;
+/*    min-height: 300px;*/
     border: 1px dashed #cccccc;
 }
 
@@ -326,3 +326,68 @@ h4.ues-page-title {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
+
+.gridster {
+    width: 1170px;
+}
+
+.gridster > ul.container > li {
+    list-style: none;
+    border: 1px dashed #000;
+}
+
+.ues-component-box-header {
+    background-color: #eee;   
+    padding: 5px;
+}
+
+#ues-add-block-container {
+    width: 400px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#dummy-gadget-wrapper {
+    width: 382px; 
+    height: 382px; 
+    margin: 0 auto; 
+    border: 1px solid #ccc; 
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+#dummy-gadget-container {
+    width: 360px; 
+    height: 360px; 
+    margin: 0 auto;
+    box-sizing: border-box;
+    border: none;
+    background: url('../theme/images/grid.png') -10px -10px
+}
+
+#dummy-gadget {
+    width: 30px; 
+    height: 30px; 
+    position: relative; 
+    background: #eee;
+    border: none;
+}
+
+#dummy-size {
+    font-size: 12px;
+    line-height: 24px;
+    text-align: center;
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -12px;
+    margin-left: -27px;
+    width: 54px;
+    height: 24px;
+}
+
+.ui-icon, .ui-widget-content .ui-icon {
+    background-image: url("../theme/images/ui-icons_222222_256x240.png");
+}
+

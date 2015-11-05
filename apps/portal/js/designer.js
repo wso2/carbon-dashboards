@@ -33,6 +33,8 @@ $(function () {
         widget: [],
         layout: []
     };
+    
+    var gridster;
 
     $(document).ready(function () {
         $(".nav li.disabled a").click(function () {
@@ -1699,6 +1701,56 @@ $(function () {
     };
 
     /**
+     * initialized adding block function
+     */
+    var initAddBlock = function() {
+
+        // add block handler
+        $('#ues-add-block-btn').on('click', function() {
+
+            var width = parseInt($('#dummy-size').attr('data-w')) || 0;
+            var height = parseInt($('#dummy-size').attr('data-h')) || 0;
+
+            if (width == 0 || height == 0) {
+                return;
+            }
+
+            var hbs = Handlebars.compile($("#ues-component-box-hbs").html() || '');
+
+            gridster.add_widget(hbs({ id: guid() }), width, height, 1, 1);
+            updateLayout();
+
+            $('#ues-add-block-menu-item').removeClass('open');
+        });
+
+        // remove block handler
+        $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
+            var item = $(this).closest('.ues-component-box');
+            gridster.remove_widget(item, function() {
+                updateLayout();
+            });
+        });
+
+        var dummyGadgetWidth = 30;
+
+        $('#dummy-gadget').resizable({
+            grid : dummyGadgetWidth,
+            containment : "#dummy-gadget-container",
+            resize : function(event, ui) {
+
+                var h = Math.round($(this).height() / dummyGadgetWidth);
+                var w = Math.round($(this).width() / dummyGadgetWidth);
+                var display = w + "x" + h;
+
+                $(this).find('#dummy-size').html(display).attr({
+                    'data-w' : w,
+                    'data-h' : h
+                });
+            }
+        });
+    }
+
+    /**
      * initializes the UI
      * @private
      */
@@ -1712,6 +1764,7 @@ $(function () {
         initComponents();
         initUESProperties();
         initToggleView();
+        initAddBlock();
     };
 
     /**
@@ -1780,14 +1833,15 @@ $(function () {
      * @private
      */
     var createPage = function (options, lid, done) {
-        var layout = findStoreCache('layout', lid);
+        var layout = findStoreCache('layout', lid);        
         $.get(resolveURI(layout.url), function (data) {
-            layout.content = data;
             var id = options.id;
             var page = {
                 id: id,
                 title: options.title,
-                layout: layout,
+                layout: { 
+                    content: JSON.parse(data)
+                },
                 isanon: false,
                 content: {
                     default: {},
@@ -1839,6 +1893,69 @@ $(function () {
     };
 
     /**
+     * convert gridster layout to JSON
+     * @param ul
+     * @returns {{blocks: Array}}
+     */
+    var convertToJsonLayout = function(ul) {
+        
+        var blocks = [];        
+        ul.children('li').each(function() {
+            
+            var li = $(this);
+            if (li.attr('id')) {
+                blocks.push({ 
+                    "id": li.attr('id'),
+                    "top": li.attr('data-row') - 1,
+                    "left": li.attr('data-col') - 1,
+                    "width": parseInt(li.attr('data-sizex')),
+                    "height": parseInt(li.attr('data-sizey'))
+                });
+            }
+        });
+        
+        return { "blocks": blocks };
+    }
+
+    /**
+     * update the layout after modification
+     */
+    var updateLayout = function() {
+        
+        // extract the layout from the designer (gridster) and save it
+        var jsonLayout = convertToJsonLayout($('.gridster > ul.container'));
+        
+        var id;
+        
+        // find the current page index
+        for(var i = 0; i < ues.global.dashboard.pages.length; i++) {
+            if (ues.global.dashboard.pages[i].id === page.id) {
+                id = i;
+            }
+        }
+        
+        if (typeof id === 'undefined') 
+        	throw 'specified page : ' + page.id + ' cannot be found';
+        
+        // todo pages[0] need to be changed appropriately
+        ues.global.dashboard.pages[id].layout.content = jsonLayout;
+        saveDashboard();
+    }
+
+    /**
+     * generate GUID
+     * @returns {*}
+     */
+    function guid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
+    }
+
+    /**
      * renders the given page
      * @param pid
      * @param done
@@ -1872,12 +1989,46 @@ $(function () {
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
+            
+            var gridsterContainer = $('.gridster ul.container');
+            
+            // bind the gridster
+            gridster = gridsterContainer.gridster({
+                widget_margins: [5, 5],
+                widget_base_dimensions: [82, 330],      // todo this need to be changed appropriately
+                draggable: {
+                    handle: '.ues-component-box-header',
+                    stop: function() {
+                        updateLayout();
+                    }
+                },
+                resize: {
+                    enabled: true,
+                    stop: function() {
+                        updateLayout();
+                    }
+                }
+            }).data('gridster');
+            
+            // remove block handler
+            $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
+                var item = $(this).closest('.ues-component-box');
+                gridster.remove_widget(item, function() {
+                    updateLayout(); 
+                });
+            });
+            
             if (!done) {
                 return;
             }
             done(err);
+        }, true);
+        
+        // stop closing the add block dropdown on clicking
+        $('#ues-add-block-menu').on('click', function(e) {
+            e.stopPropagation();
         });
-
+        
         updatePagesList();
         initToggleView();
 
@@ -2021,7 +2172,7 @@ $(function () {
             var srcCanvas = document.getElementById('src-canvas'),
                 $srcCanvas = $(srcCanvas),
                 img = new Image(),
-                width = 1170,
+                width = 1092,
                 height = 300;
 
             // remove previous cropper bindings to the canvas (this will remove all the created controls as well)

@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
     <link rel="icon" href="<%=urlPrefix%><%=utils.resolveUrl('images/favicon.png')%>" type="image/x-icon" />
-    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2.css" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/fontwso2-extend.css" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/OpenSans.css" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css" />
+    
     <% include('/controllers/includes/theme-dashboard-styles.jag'); %>
-    <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
+    
     <%var i18n = require("i18n");
     i18n.init(request);%>
     <title><%= i18n.localize("dashboard.lable")%></title>
@@ -198,7 +199,8 @@
 <!--<iframe id="sandbox" src="preview.jag"></iframe>-->
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
-<script src="<%=urlPrefix%>js/handlebars-v1.3.0.js"></script>
+<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
+<script src="<%=urlPrefix%>js/jsonToBootstrap.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -224,6 +226,10 @@
         var banner = ues.global.dashboard.banner;
         $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
     });
+    
+    
+    console.log(JSON.stringify(ues.global.dashboard));
+    
 </script>
 
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">

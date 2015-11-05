@@ -8,7 +8,6 @@
         return plugin;
     };
 
-
     var createComponent = function (container, component, done) {
         var type = component.content.type;
         var plugin = findPlugin(type);
@@ -105,17 +104,56 @@
         document.title = dashboard.title + ' | ' + page.title;
     };
 
-    var renderPage = function (element, dashboard, page, pageType, done) {
+    /**
+     * convert JSON layout to gridster
+     * @param json
+     * @returns {*}
+     */
+    var convertToDesignerLayout = function(json) {
+        
+        var copy = { 'blocks': [] }; 
+        json.blocks.forEach(function(d) {
+            copy.blocks.push({ 
+                'id': d.id, 
+                'top': d.top + 1, 
+                'left': d.left + 1, 
+                'width': d.width, 
+                'height': d.height });
+        });
+    
+        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || '');
+        return componentBoxListHbs(copy);
+    }
+
+    /**
+     * convert JSON layout to Bootstrap
+     * @param json
+     * @returns {*|jQuery}
+     */
+    var convertToBootstrapLayout = function(json) {
+        var container = $('<div />').addClass('container');
+        
+        JSONToBootstrap.convert(json.blocks, container);
+        
+        return container;
+    }
+
+    var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
         var container;
         var area;
         var layout = $(page.layout.content);
         var content = page.content[pageType];
-        element.html(layout);
+        if (isDesigner) {
+            element.html(convertToDesignerLayout(layout[0]));
+        } else {
+            element.html(convertToBootstrapLayout(layout[0]));
+        }
+        
         for (area in content) {
-            if (content.hasOwnProperty(area)) {
-                container = $('#' + area, layout);
+            if (content.hasOwnProperty(area)) {          
+                container = $('#' + area, element);
                 content[area].forEach(function (options) {
                     createComponent(container, options, function (err) {
                         if (err) {
@@ -144,13 +182,16 @@
         }
     };
 
-    var renderDashboard = function (element, dashboard, name, pageType, done) {
+    var renderDashboard = function (element, dashboard, name, pageType, done, isDesigner) {
+        
+        isDesigner = isDesigner || false;
+        
         name = name || dashboard.landing;
         var page = findPage(dashboard, name);
         if (!page) {
             throw 'requested page : ' + name + ' cannot be found';
         }
-        renderPage(element, dashboard, page, pageType, done);
+        renderPage(element, dashboard, page, pageType, done, isDesigner);
     };
 
     var rewireDashboard = function (page, pageType) {
