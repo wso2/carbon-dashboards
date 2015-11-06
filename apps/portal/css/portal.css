@@ -24,6 +24,14 @@
     height: 20px;
 }
 
+#ues-portal .ues-dashboard .ues-url-link{
+    font-size: 13px;
+}
+
+#ues-portal .ues-dashboard .ues-dashboard-url{
+    font-size: 13px;
+}
+
 #ues-portal .ues-dashboard .ues-dashboard-trash-handle {
     position: absolute;
     top: 4px;

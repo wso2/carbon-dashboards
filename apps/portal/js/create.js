@@ -43,7 +43,7 @@ $(function () {
      * @return boolean
      * @private
      * */
-    var sanitizeOnKeyPress = function (element, event) {
+    var sanitizeOnKeyPress = function (element, event,regEx) {
         var code;
         if (event.keyCode) {
             code = event.keyCode;
@@ -52,7 +52,7 @@ $(function () {
         }
 
         var character = String.fromCharCode(code);
-        if (character.match(/[^a-z0-9-\s]/gim)) {
+        if (character.match(regEx)) {
             return false;
         } else {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
@@ -117,7 +117,7 @@ $(function () {
     };
 
     $('#ues-dashboard-title').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e);
+        return sanitizeOnKeyPress(this, e,/[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#title-error"));
@@ -131,7 +131,7 @@ $(function () {
     });
 
     $('#ues-dashboard-id').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e);
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         overridden = overridden || true;
         if ($(this).val()) {
@@ -142,7 +142,7 @@ $(function () {
     });
 
     $('#ues-dashboard-description').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e);
+        return sanitizeOnKeyPress(this, e,/[^a-z0-9-.\s]/gim);
     });
 
     $('#ues-dashboard-create').on('click', function () {
