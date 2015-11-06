@@ -81,9 +81,9 @@
     </div>
 </script>
 <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-    <h2>{{title}}</h2>
-    <p class="ues-url">URL: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
-    <p class="ues-description">{{description}}</p>
+    <h2 id="ues-dashboard-title">{{title}}</h2>
+    <p id="ues-dashboard-url" class="ues-dashboard-url">URL: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
+    <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
     <div class="ues-actions">
         <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
             <span class="fw-stack">
