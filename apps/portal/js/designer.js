@@ -1071,7 +1071,7 @@ $(function () {
     var checkForPagesByTitle = function(pageTitle){
         var isPageAvailable = false;
         for(var availablePage in dashboard.pages){
-            if(dashboard.pages[availablePage].title == pageTitle){
+            if(dashboard.pages[availablePage].title.toUpperCase() == pageTitle.toUpperCase()){
                 isPageAvailable = true;
                 break;
             }
@@ -1172,7 +1172,7 @@ $(function () {
         }
 
         if(sandbox.context.className == "form-control title"){
-            if(checkForPagesByTitle(title) && page.title != title){
+            if(checkForPagesByTitle(title) && page.title.toUpperCase() != title.toUpperCase()){
                 generateMessage("error","A page with entered title already exists. Please select a different title");
                 $('.title',sandbox).val(page.title);
                 title = page.title;
