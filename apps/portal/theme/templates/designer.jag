@@ -219,6 +219,7 @@
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
 <script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/designer.js"></script>
+<script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-layout-hbs" type="text/x-handlebars-template">
@@ -481,20 +482,6 @@
     </li>
     {{/each}}
 </script>
-<script id="ues-component-full-hbs" type="text/x-handlebars-template">
-    <div class="modal fade modal-fullscreen force-fullscreen" id="componentFull" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default">Close</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-</script>
-
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     
     <canvas id="src-canvas" class="hidden"></canvas>    

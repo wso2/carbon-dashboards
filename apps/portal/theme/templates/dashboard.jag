@@ -136,19 +136,6 @@
         {{/has}}
     </div>
 </script>
-<script id="ues-component-full-hbs" type="text/x-handlebars-template">
-    <div class="modal fade modal-fullscreen force-fullscreen" id="componentFull" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default">Close</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-</script>
 <script id="ues-gadget-setting-hbs" type="text/x-handlebars-template">
     <div class="ues-sandbox" data-component="{{id}}">
         <div id="ues-gadget-options" class="ues-gadget-options ues-gadget-properties gadget-setting">
@@ -213,6 +200,7 @@
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap-modal-carousel.min.js"></script>
 <script src="<%=urlPrefix%>js/gadget-properties.js"></script>
+<script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
 <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 <script>

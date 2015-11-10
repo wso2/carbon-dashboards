@@ -2,7 +2,6 @@ $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
 
     var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
-    var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
     var page;
 
