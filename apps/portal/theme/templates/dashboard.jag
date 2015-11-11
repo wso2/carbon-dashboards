@@ -215,6 +215,7 @@
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap-modal-carousel.min.js"></script>
 <script src="<%=urlPrefix%>js/gadget-properties.js"></script>
+<script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
 <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 <script>
     if(!ues.global.renderFromExtension){

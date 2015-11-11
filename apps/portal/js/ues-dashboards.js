@@ -55,7 +55,6 @@
         $(".container").find('.ues-component').each(function () {
             var id = $(this).attr('id');
             var channel = id + "." + topic;
-            console.log(channel);
             publish.apply(ues.hub, [channel, data]);
         });
     };

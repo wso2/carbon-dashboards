@@ -91,5 +91,13 @@
     "remove.block.label": "Remove Block",
     "add.block.label": "Add Block",
     "add.block.description": "Define Gadget Size in Grid",
-    "add.block.button.text": "Add Block"
+    "add.block.button.text": "Add Block",
+    "oauth.settings": "OAuth Settings",
+    "enable": "Enable",
+    "access.token.url": "Access Token URL",
+    "api.key": "API Key",
+    "key": "Key",
+    "api.secret": "API Secret",
+    "secret": "Secret",
+    "identity.server.url": "Identity Server URL"
 }
