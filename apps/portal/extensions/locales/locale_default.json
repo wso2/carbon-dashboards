@@ -88,5 +88,12 @@
     "gadget.Height": "Gadget Height",
     "sign.Up": "Sign Up",
     "ds.dashboard.designer": "WSO2 DS - Dashboard Designer",
-
+    "oauth.settings": "OAuth Settings",
+    "enable": "Enable",
+    "access.token.url": "Access Token URL",
+    "api.key": "API Key",
+    "key": "Key",
+    "api.secret": "API Secret",
+    "secret": "Secret",
+    "identity.server.url": "Identity Server URL"
 }
