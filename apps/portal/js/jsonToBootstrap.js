@@ -1,7 +1,7 @@
 ;(function(root) {
 
         var me = root.JSONToBootstrap = { };
-        var bitmap, debugFn;
+        var bitmap, debugFn, errFn;
 
         /**
          * Process the data object and build the grid
@@ -215,6 +215,7 @@
 
                         // iterate through all the column, identify the start and end columns 
                         // and process the sub-grid recursively
+                        
                         for(x = sx; x <= ex; x++) {
 
                             if (columnStatus[x] || x == ex) {
@@ -229,7 +230,14 @@
 
                                 child = $('<div />').addClass('col-md-' + width).appendTo(row);
 
-                                process(grid, child, startCol, startRow, endCol, endRow, width);
+                                if (startCol == sx && endCol == ex) {
+                                    throw {
+                                        name: 'UnsupportedLayoutException',
+                                        message: 'Unable to render the layout using Bootstrap'
+                                    };
+                                } else {
+                                    process(grid, child, startCol, startRow, endCol, endRow, width);   
+                                }
 
                                 startCol = endCol + 1;
                             }                            
@@ -267,18 +275,25 @@
         /**
          * Convert gridster JSON layout into 
          */
-        me.convert = function(data, target, debug) {
+        me.convert = function(data, target, err, debug) {
 
             debugFn = debug;
+            errFn = err;
 
-            var grid = initGrid(data);
-            process(grid, target);
+            try {
+                var grid = initGrid(data);
+                process(grid, target);
+            } catch (e) {
+                if (errFn) {
+                    errFn(e.message);
+                }
+            }
         }
 
 //            me.test = function(data, debug) {
 //                
 //                debugFn = debug;
-//                var grid = initGrid(data);
+//                var grid = initGrid(data);,
 //                
 //            }
 

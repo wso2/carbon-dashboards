@@ -584,6 +584,9 @@ $(function () {
             console.log('error saving dashboard');
         });
     };
+    
+    var gridsterUlDimension = { };
+    var designerScrollTop = 0;
 
     /**
      * initializes the component toolbar
@@ -592,24 +595,55 @@ $(function () {
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
         designer.on('click', 'a.ues-component-full-handle', function () {
-            var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
-            var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
-            var view = DEFAULT_DASHBOARD_VIEW;
+            
+            var id = $(this).closest('.ues-component').attr('id'),
+                component = findComponent(id),
+                componentContainer = $(this).closest('.ues-component-box'),
+                componentContainerId = componentContainer.attr('id'),
+                gridsterUl = $('.gridster > ul');
+            
             if (component.fullViewPoped) {
-                view = DEFAULT_DASHBOARD_VIEW;
-                renderMaxView(component, view);
+                // rendering normal view
+                
+                gridster.enable().enable_resize();
+                
+                // restore the size of the gridster ul
+                gridsterUl.width(gridsterUlDimension.width).height(gridsterUlDimension.height);
+                
+                $('.ues-component-box').show();
+                
                 //minimize logic
-                componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.find('.panel-body').css('height', 'auto');
+                componentContainer
+                    .removeClass('ues-fullview-visible')
+                    .css('height', '');
+                
+                // restore the scroll position
+                designer.scrollTop(designerScrollTop);
+                
+                renderMaxView(component, DEFAULT_DASHBOARD_VIEW);
+                
                 component.fullViewPoped = false;
             } else {
-                view = 'full';
-                renderMaxView(component, view);
+                // rendering full view
+                
+                // backup the scroll position
+                designerScrollTop = designer.scrollTop();
+                
+                gridster.disable().disable_resize();
+                
+                // backup the size of the gridster ul and reset element size
+                gridsterUlDimension = { width: gridsterUl.width(), height: gridsterUl.height() };
+                gridsterUl.width('auto').height('auto');
+                
+                $('.ues-component-box:not(#' + componentContainerId + ')').hide();
+                
                 //maximize logic
-                componentContainer.addClass('ues-fullview-visible');
-                var height = $('.ues-layout').height();
-                componentContainer.find('.panel-body').css('height', height + 'px');
+                componentContainer
+                    .addClass('ues-fullview-visible')
+                    .css('height', (designer.height() - 100) + 'px');
+                
+                renderMaxView(component, 'full');
+                
                 component.fullViewPoped = true;
             }
         });
@@ -1151,7 +1185,8 @@ $(function () {
             title = $.trim($('.title', sandbox).val()),
             landing = $('.landing', sandbox),
             toggleView = $('#toggle-dashboard-view'),
-            anon = $('.anon', sandbox);
+            anon = $('.anon', sandbox),
+            fluidLayout = $('input[name=fluidLayout]', sandbox);
 
         hideInlineError($('.title', sandbox), titleError);
         hideInlineError($('.id', sandbox), idError);
@@ -1229,6 +1264,12 @@ $(function () {
                 }
             }
         }
+        
+        // FIXME Here I used the name of the control instead of the CSS class name value as it 
+        // is used in other places.
+        if (sandbox.context.name == 'fluidLayout') {
+            page.fluidLayout = fluidLayout.is(':checked');
+        }
 
         if (sandbox.context.className == "form-control title") {
             $('#ues-designer').find('.ues-page-title').find(".page-title").text(title);
@@ -1273,7 +1314,8 @@ $(function () {
             title: page.title,
             landing: (dashboard.landing == page.id),
             isanon: page.isanon,
-            isUserCustom: dashboard.isUserCustom
+            isUserCustom: dashboard.isUserCustom,
+            fluidLayout: page.fluidLayout || false      // FIXME
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
@@ -1721,14 +1763,8 @@ $(function () {
             updateLayout();
 
             $('#ues-add-block-menu-item').removeClass('open');
-        });
-
-        // remove block handler
-        $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
-            var item = $(this).closest('.ues-component-box');
-            gridster.remove_widget(item, function() {
-                updateLayout();
-            });
+            
+            listenLayout();
         });
 
         var dummyGadgetWidth = 30;
@@ -1923,7 +1959,7 @@ $(function () {
     var updateLayout = function() {
         
         // extract the layout from the designer (gridster) and save it
-        var jsonLayout = convertToJsonLayout($('.gridster > ul.container'));
+        var jsonLayout = convertToJsonLayout($('.gridster > ul'));
         
         var id;
         
@@ -1990,12 +2026,15 @@ $(function () {
             });
             listenLayout();
             
-            var gridsterContainer = $('.gridster ul.container');
+            var gridsterContainer = $('.gridster > ul');
+            
+            var w = Math.ceil($('.gridster').width() / 12) - 10;
             
             // bind the gridster
             gridster = gridsterContainer.gridster({
                 widget_margins: [5, 5],
-                widget_base_dimensions: [82, 330],      // todo this need to be changed appropriately
+                widget_base_dimensions: [w, 330],      // todo this need to be changed appropriately
+                min_cols: 12,
                 draggable: {
                     handle: '.ues-component-box-header',
                     stop: function() {
@@ -2012,8 +2051,20 @@ $(function () {
             
             // remove block handler
             $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
-                var item = $(this).closest('.ues-component-box');
-                gridster.remove_widget(item, function() {
+                var componentBox = $(this).closest('.ues-component-box');
+                
+                componentBox.find('.ues-component').each(function(i, component) {
+                    var componentId = $(component).attr('id');
+                    
+                    removeComponent(findComponent(componentId), function (err) {
+                        if (err) {
+                            console.error(err);
+                        }
+                        saveDashboard();
+                    });
+                });
+                
+                gridster.remove_widget(componentBox, function() {
                     updateLayout(); 
                 });
             });

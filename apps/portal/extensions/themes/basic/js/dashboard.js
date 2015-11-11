@@ -1,3 +1,5 @@
+"use strict"
+
 $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
 
@@ -11,30 +13,42 @@ $(function () {
      */
     var initComponentToolbar = function () {
         $('#wrapper').on('click', 'a.ues-component-full-handle', function () {
-            var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
-            var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
-            var htmlBody = $('body');
-            var view = DEFAULT_DASHBOARD_VIEW;
-            var jQueryId = $('#' + id);
-            if(component.fullViewPoped){
-                view = DEFAULT_DASHBOARD_VIEW;
-                renderMaxView(component, view);
-                componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.find('.panel-body').css('height','auto');
-                htmlBody.css('overflow-y','auto');
+            
+            var uesComponent = $(this).closest('.ues-component'), 
+                component = findComponent(uesComponent.attr('id')), 
+                componentContainer = $(this).closest('.ues-component-box'), 
+                htmlBody = $('body');
+            
+            if (component.fullViewPoped) {
+                
+                // render normal view
+                
+                renderMaxView(component, DEFAULT_DASHBOARD_VIEW);
+                
+                componentContainer.removeClass('ues-dashboard-fullview-visible');
+                componentContainer.find('.panel-body').css('height', '');
+                componentContainer.find('.panel-body iframe').css('height', '');
+                htmlBody.css('overflow-y', '');
+                
                 //minimize logic
                 component.fullViewPoped = false;
             } else {
-                view = 'full';
-                renderMaxView(component, view);
-                componentContainer.addClass('ues-fullview-visible');
-                var height = $(window).height();
-                componentContainer.find('.panel-body').css('height',height + 'px');
-                htmlBody.css('overflow-y','hidden');
+                
+                // render max view
+                
+                renderMaxView(component, 'full');
+                
+                componentContainer.addClass('ues-dashboard-fullview-visible');
+                var height = $(window).height() - 40;
+                
+                componentContainer.find('.panel-body').css('height', height + 'px');
+                componentContainer.find('.panel-body iframe').css('height', (height) + 'px');
+                htmlBody.css('overflow-y', 'hidden');
+                
                 //maximize logic
                 component.fullViewPoped = true;
-                renderComponentMaxView(jQueryId);
+                
+                renderComponentMaxView(uesComponent);
             }
         });
 

@@ -15,12 +15,18 @@
     
     <% include('/controllers/includes/theme-dashboard-styles.jag'); %>
     
-    <%var i18n = require("i18n");
-    i18n.init(request);%>
+    <%
+       var i18n = require("i18n");
+       i18n.init(request);
+    %>
     <title><%= i18n.localize("dashboard.lable")%></title>
 </head>
+        
 <body class="lang_<%=request.getLocale()%>">
+    
 <%
+   
+    var log = new Log();
     var usr = require('/modules/user.js');
     var user = usr.current();
     var pages = dashboard.pages;
@@ -33,52 +39,60 @@
     } else{
         isAnonView = JSON.parse(isAnonView);
     }
+   
+    // Check whether the layout is fluid
+    var isFluid = false;
+    pages.forEach(function(page) {
+        if(page.id == pageId) {     
+            isFluid = page.fluidLayout;
+        }
+    });
 %>
+    
 <div id="navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
+    <div class="<%= isFluid ? 'container-fluid': 'container'%>">
         <div class="navbar-header">
             <button data-target=".horizontal-bar" data-toggle="collapse" class="navbar-toggle" type="button">
                 <span class="sr-only">Toggle navigation</span>
+                <!-- todo this can be replaced with fw-menu -->
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
             <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>" class="navbar-brand"><%=dashboard.title%></a>
         </div>
+            
         <div class="collapse navbar-collapse horizontal-bar">
             <ul class="nav navbar-nav">
 
+                <!-- render home page link -->
                 <% if(dashboard.pages.length >= 2) { %>
                     <li
-                        <% if(dashboard.landing === pageId) { %>
-                            class="active"
-                        <% } %>>
-                            <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>"><%= i18n.localize("home")%></a>
+                        <% if (dashboard.landing === pageId) { %> class="active"<% } %>>
+                        <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>"><%= i18n.localize("home")%></a>
                     </li>
                 <% } %>
 
-                <%
-                pages.forEach(function (page) {
-                    if(isAnonView || !user) {
-                        if (page.isanon) {
-                            // Anonymous viewing. So render only anonymous pages links.
+                <!-- render links to other pages -->
+                <% pages.forEach(function (page) {
+                        if(isAnonView || !user) {
+                            if (page.isanon) {
+                                // Anonymous viewing. So render only anonymous pages links.
+                                renderPageLink(page);
+                            }
+                        } else {
                             renderPageLink(page);
                         }
-                    } else {
-                        renderPageLink(page);
-                    }
-                });
+                    });
 
-                function renderPageLink(page) {
-                    if (dashboard.landing !== page.id) { %>
-                        <li
-                            <% if (page.id === pageId) { %>
-                                class="active"
-                            <% } %>>
-                            <a href="<%=dbRoot%><%=page.id%>?isAnonView=<%=isAnonView%>"> <%=page.title%></a>
-                        </li>
-                    <% }
-                };%>
+                    function renderPageLink(page) {
+                        if (dashboard.landing !== page.id) { %>
+                            <li
+                                <% if (page.id === pageId) { %> class="active"<% } %>>
+                                <a href="<%=dbRoot%><%=page.id%>?isAnonView=<%=isAnonView%>"><%=page.title%></a>
+                            </li>
+                        <% }
+                    };%>
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
@@ -89,42 +103,46 @@
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-settings fw-stack-1x"></i>
                                 </span>
-                                 <%= i18n.localize("edit.button")%>
+                                <%= i18n.localize("edit.button")%>
                             </a>
                         </li>
-                    <% } else
-                        {%>
+                    <% } else {%>
                             <li>
                                 <a class="ues-copy" href="<%=dbRoot%>?custom=true">
                                     <span class="fw-stack">
                                         <i class="fw fw-ring fw-stack-2x"></i>
                                         <i class="fw fw-settings fw-stack-1x"></i>
                                     </span>
-                                     <%= i18n.localize("personalize")%>
+                                    <%= i18n.localize("personalize")%>
                                 </a>
                             </li>
-                        <% } %>
+                    <% } %>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                               <%= user? user.username : "anon" %> <span class="caret"></span>
+                               <%= user ? user.username : "anon" %> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">
+                        <li>
+                            <a href="<%=urlPrefix%>logout?destination=<%=dest%>">
                                 <%= i18n.localize("logout.lable")%>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             <% } else { %>
-                <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">
-                            <%= i18n.localize("login.lable")%>
-                        </a></li>
-                <% } %>
+                <li>
+                    <a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">
+                        <%= i18n.localize("login.lable")%>
+                    </a>
+                </li>
+            <% } %>
             </ul>
-        </div>
-           <!--/.nav-collapse -->
+        </div> <!--/.nav-collapse -->
      </div>
 </div>
+
 <div id="wrapper"></div>
+                            
 <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
     <div class="ues-toolbar">
         <ul class="list-inline pull-right">
@@ -196,7 +214,12 @@
             </div>
     </div>
 </script>
-<!--<iframe id="sandbox" src="preview.jag"></iframe>-->
+<script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
+    {{#if isBannerExists}}
+    <img src="<%=urlPrefix%>banners/<%=dashboard.id%>" />
+    {{/if}}
+</script>
+                            
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
@@ -217,6 +240,7 @@
 <script src="<%=urlPrefix%>js/gadget-properties.js"></script>
 <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
 <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
+    
 <script>
     if(!ues.global.renderFromExtension){
         ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page);
@@ -228,16 +252,7 @@
         $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
     });
     
-    
-    console.log(JSON.stringify(ues.global.dashboard));
-    
 </script>
-
-<script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
-    {{#if isBannerExists}}
-    <img src="<%=urlPrefix%>banners/<%=dashboard.id%>" />
-    {{/if}}
-</script>
-     
+    
 </body>
 </html>

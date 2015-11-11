@@ -99,5 +99,8 @@
     "key": "Key",
     "api.secret": "API Secret",
     "secret": "Secret",
-    "identity.server.url": "Identity Server URL"
+    "identity.server.url": "Identity Server URL",
+    "remove": "Remove",
+    "save": "Save",
+    "fluid.layout": "Fluid Layout"
 }

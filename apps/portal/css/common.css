@@ -25,7 +25,15 @@
     text-align: right;
 }
 
-.ues-fullview-visible{
+.ues-fullview-visible { /* for the designer only */
+    position: absolute !important;
+    top: 5px !important;
+    left: 5px !important;
+    right: 5px !important;
+    width: auto !important;
+}
+
+.ues-dashboard-fullview-visible { /* for the dashboard only */
     top:0;
     bottom:0;
     right:0;

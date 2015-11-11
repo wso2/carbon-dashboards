@@ -284,7 +284,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div class="default-ues-layout container-fluid gridster"></div>
+                <div class="default-ues-layout container gridster"></div>
             </div>
         </div>
     </div>
@@ -293,10 +293,10 @@
     <div class="ues-toolbar">
         <ul class="list-inline pull-right">
             <li><a href="#" data-toggle="tooltip" title="{{id}}"> <i class="fw fw-info"> </i></a></li>
-            <li><a href="#" class="ues-move-handle" data-id="{{id}}" data-action="move"><i class="fw fw-endpoint"></i></a></li>
-            <li><a href="#" class="ues-properties-handle"><i class="fw fw-settings"></i></a></li>
-            <li><a href="#" class="ues-component-full-handle"><i class="fw fw-laptop"></i></a></li>
-            <li><a href="#" class="ues-trash-handle"><i class="fw fw-delete"></i></a></li>
+            <li><a href="#" class="ues-move-handle" title="Move" data-id="{{id}}" data-action="move"><i class="fw fw-endpoint"></i></a></li>
+            <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
+            <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
+            <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
         </ul>
     </div>
 </script>
@@ -500,12 +500,19 @@
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}}> <%= i18n
+                            <input type="checkbox" class="landing"{{#if landing}} checked="checked"{{/if}} /> <%= i18n
         .localize("use.as.landing") %>
                         </label>
+                    </div>
+                    <div class="checkbox">
                         <label class="{{#if isUserCustom}}hide{{/if}}">
-                            <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}} > <%= i18n
+                            <input type="checkbox" class="anon"{{#if isanon}} checked="checked"{{/if}} /> <%= i18n
         .localize("make.anonymous") %>
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" class="fluidlayout" name="fluidLayout"{{#if fluidLayout}} checked="checked"{{/if}}/> <%= i18n.localize('fluid.layout') %>
                         </label>
                     </div>
                 </form>
@@ -546,19 +553,19 @@
     <div class="button-panel">
     
         {{#if isAdd}}
-        <button type="button" id="btn-edit-banner" class="btn btn-primary">Add</button>
+        <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('add')%></button>
         {{/if}}
 
         {{#if isEdit}}
-        <button type="button" id="btn-edit-banner" class="btn btn-primary">Edit</button>
+        <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('edit.button')%></button>
         {{#if showRemove}}
-        <button type="button" id="btn-remove-banner" class="btn btn-danger">{{#if isCustomBanner}}Reset{{else}}Remove{{/if}}</button>
+        <button type="button" id="btn-remove-banner" class="btn btn-danger">{{#if isCustomBanner}}<%=i18n.localize('reset')%>{{else}}<%=i18n.localize('remove')%>{{/if}}</button>
         {{/if}}
         {{/if}}
 
         {{#if isCrop}}
-        <button type="button" id="btn-save-banner" class="btn btn-primary">Save</button>
-        <button type="button" id="btn-cancel-banner" class="btn btn-danger">Cancel</button>
+        <button type="button" id="btn-save-banner" class="btn btn-primary"><%=i18n.localize('save')%></button>
+        <button type="button" id="btn-cancel-banner" class="btn btn-danger"><%=i18n.localize('cancel')%></button>
         {{/if}}
     
     </div>
@@ -573,7 +580,7 @@
 
 <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
     
-    <ul class="container">
+    <ul>
         {{#each blocks}}                                        
         <li class="ues-component-box" id="{{id}}" data-col="{{left}}" data-row="{{top}}" data-sizex="{{width}}" data-sizey="{{height}}">
            <!-- this part should be moved into a partial -->
@@ -591,6 +598,7 @@
         {{/each}}
     </ul>
     
+    <div style="clear: both;"></div>
 </script>
 
 <script id="ues-component-box-hbs" type="text/x-handlebars-template">

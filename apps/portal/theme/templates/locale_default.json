@@ -91,5 +91,8 @@
     "remove.block.label": "Remove Block",
     "add.block.label": "Add Block",
     "add.block.description": "Define Gadget Size in Grid",
-    "add.block.button.text": "Add Block"
+    "add.block.button.text": "Add Block",
+    "remove": "Remove",
+    "save": "Save",
+    "fluid.layout": "Fluid Layout"
 }

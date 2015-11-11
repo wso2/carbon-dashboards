@@ -129,10 +129,12 @@
      * @param json
      * @returns {*|jQuery}
      */
-    var convertToBootstrapLayout = function(json) {
-        var container = $('<div />').addClass('container');
+    var convertToBootstrapLayout = function(json, isFluid) {
+        var container = $('<div />').addClass(isFluid ? 'container-fluid' : 'container');
         
-        JSONToBootstrap.convert(json.blocks, container);
+        JSONToBootstrap.convert(json.blocks, container, function(err) {
+            alert(err);
+        });
         
         return container;
     }
@@ -147,7 +149,7 @@
         if (isDesigner) {
             element.html(convertToDesignerLayout(layout[0]));
         } else {
-            element.html(convertToBootstrapLayout(layout[0]));
+            element.html(convertToBootstrapLayout(layout[0], page.fluidLayout));
         }
         
         for (area in content) {
