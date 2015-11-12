@@ -29,11 +29,13 @@ try {
             var file = files[index];
             var dashboardJson = require(file.getPath());
 
-            log.info("Deleting existing dashboard by same id: " + dashboardJson.id);
-            dashboard.remove(dashboardJson.id);
+            if(dashboardJson.id) {
+                log.info("Deleting existing dashboard by same id: " + dashboardJson.id);
+                dashboard.remove(dashboardJson.id);
 
-            log.info("Deploying the dashboard: " + dashboardJson.title);
-            dashboard.create(dashboardJson);
+                log.info("Deploying the dashboard: " + dashboardJson.title);
+                dashboard.create(dashboardJson);
+            }
         }
     }
 } catch (Exception) {
