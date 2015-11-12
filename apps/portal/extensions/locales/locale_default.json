@@ -95,5 +95,7 @@
     "key": "Key",
     "api.secret": "API Secret",
     "secret": "Secret",
-    "identity.server.url": "Identity Server URL"
+    "identity.server.url": "Identity Server URL",
+    "placeholder.item.list": "item1 | item2 | item3",
+    "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'"
 }

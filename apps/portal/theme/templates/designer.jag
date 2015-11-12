@@ -275,7 +275,7 @@
                 <form class="ues-component-properties">
                     {{#has options}}
                         <div class="ues-options ues-properties">
-                            <h4><%= i18n.localize("options") %></h4>
+                            <h4><%= i18n.localize("options")%></h4>
                             {{#each options}}
                                 <div class="form-group">
                                     {{#equals type "STRING"}}
@@ -295,6 +295,17 @@
                                                     <option value={{value}}{{#equals value ../value}} selected="selected"{{/equals}}>{{displayValue}}</option>
                                                  {{/each}}
                                             </select>
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "LIST"}}
+                                        <label>{{title}}
+                                            <textarea name="{{@key}}" class="form-control" rows="4" placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
+                                            <label><%= i18n.localize("enter.your.list.entries.lable")%></label>
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "text"}}
+                                        <label>{{title}}
+                                            <textarea name="{{@key}}" class="form-control" rows="4">{{value}}</textarea>
                                         </label>
                                     {{/equals}}
                                 </div>
