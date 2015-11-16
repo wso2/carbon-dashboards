@@ -149,7 +149,7 @@ var dashboardStyles = function () {
 var dashboardScripts = function () {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + '/js/dashboard.js';
+    var path = 'extensions/themes/' + theme + '/js/dashboard-extensions.js';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -184,4 +184,8 @@ var resolveUrl = function (path) {
     var extendedPath = 'extensions/themes/' + theme + '/' + path;
     var file = new File('/' + extendedPath);
     return file.isExists() ? extendedPath : 'theme/' + path;
+};
+
+var getLocaleResourcePath = function () {
+    return '/extensions/locales/';
 };
