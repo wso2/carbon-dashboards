@@ -3,7 +3,7 @@
 <head>
     <%
         var i18n = require("i18n");
-        i18n.init(request);
+        i18n.init(request, utils.getLocaleResourcePath());
         var locale = 'lang_' + request.getLocale();
     %>
     <meta charset="utf-8">
