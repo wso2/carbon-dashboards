@@ -29,7 +29,7 @@ try {
             var file = files[index];
             var dashboardJson = require(file.getPath());
 
-            if(dashboardJson.id) {
+            if (dashboardJson.id) {
                 log.info("Deleting existing dashboard by same id: " + dashboardJson.id);
                 dashboard.remove(dashboardJson.id);
 
