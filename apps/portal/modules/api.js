@@ -5,7 +5,19 @@ var authenticate = function (username, password) {
     var AuthStub = Packages.org.wso2.carbon.authenticator.stub.AuthenticationAdminStub;
     var carbon = require("carbon");
     var AUTH_SERVICE = "/services/AuthenticationAdmin";
-    var authUrl = carbon.server.address("https") + AUTH_SERVICE;
+    var authUrl;
+    var carbonServerAddress = carbon.server.address("https");
+    var carbonUrlArrayed = carbonServerAddress.split(":");
+    var authUrlProtocol = carbonUrlArrayed[0];
+    var authUrlPort = carbonUrlArrayed[2];
+    var serverConfigService = carbon.server.osgiService('org.wso2.carbon.base.api.ServerConfigurationService');
+    hostName = serverConfigService.getFirstProperty("HostName");
+    if ( hostName == null || hostName === '' || hostName === 'null' || hostName.length <= 0 ){
+        authUrl = carbon.server.address("https") + AUTH_SERVICE;
+    } else {
+        authUrl = authUrlProtocol + "://" + hostName + ":" + authUrlPort + AUTH_SERVICE;
+    }
+
     var authAdminClient = new AuthStub(authUrl);
 
     if (authAdminClient.login(username, password, "localhost")) {
