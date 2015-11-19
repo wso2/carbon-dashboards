@@ -1,8 +1,0 @@
-{
-    "id": "fluid",
-    "title": "Balanced Fluid Grid",
-    "description": "This is a sample fluid grid",
-    "thumbnail": "store://layout/fluid/index.png",
-    "url": "store://layout/fluid/index.hbs"
-}
-

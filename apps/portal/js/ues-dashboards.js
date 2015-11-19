@@ -95,7 +95,6 @@
                 });
             }
         }
-        console.log(wirez);
         return wirez;
     };
 
@@ -109,32 +108,11 @@
      * @returns {*}
      */
     var convertToDesignerLayout = function(json) {
-        
-        var copy = { 'blocks': [] }; 
-        json.blocks.forEach(function(d) {
-            copy.blocks.push({ 
-                'id': d.id, 
-                'top': d.top + 1, 
-                'left': d.left + 1, 
-                'width': d.width, 
-                'height': d.height });
-        });
     
-        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || '');
-        return componentBoxListHbs(copy);
-    }
-
-    /**
-     * convert JSON layout to Bootstrap
-     * @param json
-     * @returns {*|jQuery}
-     */
-    var convertToBootstrapLayout = function(json, isFluid) {
-        var container = $('<div />').addClass(isFluid ? 'container-fluid' : 'container');
+        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''), 
+            container = $('<ul />');
         
-        JSONToBootstrap.convert(json.blocks, container, function(err) {
-            alert(err);
-        });
+        $(componentBoxListHbs(json)).appendTo(container).html();
         
         return container;
     }
@@ -144,12 +122,13 @@
         wirings = wires(page, pageType);
         var container;
         var area;
-        var layout = $(page.layout.content);
+        
+        var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn));
         var content = page.content[pageType];
-        if (isDesigner) {
+        
+        // this is to be rendered only in the designer. in the view mode, the template is rendered in the server side.
+        if (isDesigner) { 
             element.html(convertToDesignerLayout(layout[0]));
-        } else {
-            element.html(convertToBootstrapLayout(layout[0], page.fluidLayout));
         }
         
         for (area in content) {

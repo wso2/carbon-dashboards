@@ -117,6 +117,8 @@ $(function () {
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
     
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html() || '');
+    
+    var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || '');
 
     /**
      * generates a random id
@@ -1175,109 +1177,135 @@ $(function () {
 
     /**
      * update page options
-     * @param sandbox
+     * @param e
      * @private
      */
-    var updatePageProperties = function (sandbox) {
+    var updatePageProperties = function (e) {
+        
         var titleError = $("#title-error"),
             idError = $("#id-error"),
-            id = $.trim($('.id', sandbox).val()),
-            title = $.trim($('.title', sandbox).val()),
-            landing = $('.landing', sandbox),
-            toggleView = $('#toggle-dashboard-view'),
-            anon = $('.anon', sandbox),
-            fluidLayout = $('input[name=fluidLayout]', sandbox);
-
-        hideInlineError($('.title', sandbox), titleError);
-        hideInlineError($('.id', sandbox), idError);
-
-        if (!title || !id) {
-            !title ? showInlineError($('.title', sandbox), titleError) : showInlineError($(".id", sandbox), idError);
-            return;
-        }
-
-        if (sandbox.context.className == "form-control id") {
-            if (checkForPagesById(id) && page.id != id) {
-                generateMessage("error", "A page with entered URL already exists. Please select a different URL");
-                $('.id', sandbox).val(page.id);
-            } else {
-                page.id = id;
-                if (landing.is(":checked")) {
-                    dashboard.landing = id;
-                }
-            }
-        }
-
-        if(sandbox.context.className == "form-control title"){
-            if(checkForPagesByTitle(title) && page.title.toUpperCase() != title.toUpperCase()){
-                generateMessage("error","A page with entered title already exists. Please select a different title");
-                $('.title',sandbox).val(page.title);
-                title = page.title;
-            }else{
-                page.title = title;
-            }
-        }
-
-        if (sandbox.context.className == "landing" && landing.is(':checked')) {
-            if (checkForAnonPages(id) && !page.isanon) {
-                $(landing).prop("checked", false);
-                generateMessage("error", "Please add an anonymous view to this page before select it as the landing page");
-            } else {
-                dashboard.landing = id;
-            }
-        }
-
-        if (sandbox.context.className == "anon") {
-            if (anon.is(':checked')) {
-                if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == id) {
-                    ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
-                    dashboard.isanon = true;
-                    page.isanon = true;
-                    $(".toggle-design-view").removeClass("hide");
-                    toggleView.bootstrapToggle('off');
-                } else {
-                    $(anon).prop("checked", false);
-                    generateMessage("error", "Please add an anonymous view to the landing page in order to make this page anonymous");
-                }
-            }
-            else {
-                if (checkForAnonPages(dashboard.landing) && dashboard.landing == id) {
-                    $(anon).prop("checked", true);
-                    generateMessage("error", "There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page");
-                } else {
-                    //TODO switch to anon dashboard
-                    if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
-                        dashboard.isanon = false;
-                    }
-
-                    page.isanon = false;
-
-                    $(".toggle-design-view").addClass("hide");
-
-                    if (toggleView.prop("checked")) {
-                        toggleView.bootstrapToggle('on');
-                    } else {
-                        toggleView.bootstrapToggle('off');
-                    }
-
-                    page.content.anon = {};
-                }
-            }
+            hasError = false,
+            id = $('input[name=id]', e),
+            title = $('input[name=title]', e),
+            idVal = $.trim(id.val()),
+            titleVal = $.trim(title.val());
+        
+        // validate inputs
+        hideInlineError(id, idError);
+        hideInlineError(title, titleError);
+        
+        if (!idVal) {
+            showInlineError(id, idError);
+            hasError = true;
         }
         
-        // FIXME Here I used the name of the control instead of the CSS class name value as it 
-        // is used in other places.
-        if (sandbox.context.name == 'fluidLayout') {
-            page.fluidLayout = fluidLayout.is(':checked');
+        if(!titleVal) {
+            showInlineError(title, titleError);
+            hasError = true;
         }
-
-        if (sandbox.context.className == "form-control title") {
-            $('#ues-designer').find('.ues-page-title').find(".page-title").text(title);
-            $('#ues-properties').find('.ues-page-title').text(title);
+        
+        if (hasError) {
+            return;
         }
+        
+        var landing = $('input[name=landing]', e),
+            toggleView = $('#toggle-dashboard-view'),
+            anon = $('input[name=anon]', e),
+            fluidLayout = $('input[name=fluidLayout]', e), 
+            hasAnonPages = checkForAnonPages(idVal);
+        
+        var fn = { 
+            id: function() {
+                
+                if (checkForPagesById(idVal) && page.id != idVal) {
+                    generateMessage("error", "A page with entered URL already exists. Please select a different URL");
+                    id.val(page.id);
+                } else {
+                    page.id = idVal;
+                    if (landing.is(":checked")) {
+                        dashboard.landing = idVal;
+                    }
+                }
+                
+            }, 
+            title: function() {
+                
+                if (checkForPagesByTitle(titleVal) && page.title.toUpperCase() != titleVal.toUpperCase()){
+                    generateMessage("error", "A page with entered title already exists. Please select a different title");
+                    title.val(page.title);
+                    titleVal = page.title;
+                } else {
+                    page.title = titleVal;
+                }
+               
+                $('#ues-designer .ues-page-title .page-title').text(titleVal);
+                $('#ues-properties .ues-page-title').find().text(titleVal);
+                
+            }, 
+            landing: function() {
+                
+                if (landing.is(':checked')) {
+                    if (hasAnonPages && !page.isanon) {
+                        landing.prop("checked", false);
+                        generateMessage("error", "Please add an anonymous view to this page before select it as the landing page");
+                    } else {
+                        dashboard.landing = idVal;
+                    }
+                }
+                
+            }, 
+            anon: function() {
+                
+                if (anon.is(':checked')) {
+                    if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == idVal) {
+                        ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
+                        dashboard.isanon = true;
+                        page.isanon = true;
+                        // create the template if there is no content create before
+                        page.layout.content.anon = page.layout.content.anon ||  page.layout.content.loggedIn;
+                        $(".toggle-design-view").removeClass("hide");
+                        toggleView.bootstrapToggle('off');
+                    } else {
+                        $(anon).prop("checked", false);
+                        generateMessage("error", "Please add an anonymous view to the landing page in order to make this page anonymous");
+                    }
+                } else {
+                    if (hasAnonPages && dashboard.landing == idVal) {
+                        $(anon).prop("checked", true);
+                        generateMessage("error", "There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page");
+                    } else {
+                        // switch to anon dashboard
+                        if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
+                            dashboard.isanon = false;
+                        }
 
-        updatePagesList();
-        saveDashboard();
+                        page.isanon = false;
+                        
+                        // the anon layout should not be deleted since the gadgets in this layout is already there in the content
+
+                        $(".toggle-design-view").addClass("hide");
+
+                        toggleView.bootstrapToggle(toggleView.prop("checked") ? 'on' : 'off');
+
+                        page.content.anon = { };
+                    }
+                }
+                
+            },
+            fluidLayout: function() {
+                page.layout.fluidLayout = fluidLayout.is(':checked');
+            }
+        };
+        
+        if (typeof fn[e.context.name] === 'function') {
+            fn[e.context.name]();
+            
+            updatePagesList();
+            saveDashboard();
+            
+        } else {
+            console.error('function not implemented')
+        }
     };
 
     /**
@@ -1315,7 +1343,7 @@ $(function () {
             landing: (dashboard.landing == page.id),
             isanon: page.isanon,
             isUserCustom: dashboard.isUserCustom,
-            fluidLayout: page.fluidLayout || false      // FIXME
+            fluidLayout: page.layout.fluidLayout || false
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
@@ -1750,16 +1778,14 @@ $(function () {
         // add block handler
         $('#ues-add-block-btn').on('click', function() {
 
-            var width = parseInt($('#dummy-size').attr('data-w')) || 0;
-            var height = parseInt($('#dummy-size').attr('data-h')) || 0;
+            var width = parseInt($('#dummy-size').attr('data-w')) || 0, 
+                height = parseInt($('#dummy-size').attr('data-h')) || 0;
 
             if (width == 0 || height == 0) {
                 return;
             }
 
-            var hbs = Handlebars.compile($("#ues-component-box-hbs").html() || '');
-
-            gridster.add_widget(hbs({ id: guid() }), width, height, 1, 1);
+            gridster.add_widget(componentBoxListHbs({ blocks: [{ id: guid() }] }), width, height, 1, 1);
             updateLayout();
 
             $('#ues-add-block-menu-item').removeClass('open');
@@ -1774,9 +1800,9 @@ $(function () {
             containment : "#dummy-gadget-container",
             resize : function(event, ui) {
 
-                var h = Math.round($(this).height() / dummyGadgetWidth);
-                var w = Math.round($(this).width() / dummyGadgetWidth);
-                var display = w + "x" + h;
+                var h = Math.round($(this).height() / dummyGadgetWidth), 
+                    w = Math.round($(this).width() / dummyGadgetWidth), 
+                    display = w + "x" + h;
 
                 $(this).find('#dummy-size').html(display).attr({
                     'data-w' : w,
@@ -1871,12 +1897,16 @@ $(function () {
     var createPage = function (options, lid, done) {
         var layout = findStoreCache('layout', lid);        
         $.get(resolveURI(layout.url), function (data) {
+            
             var id = options.id;
             var page = {
                 id: id,
                 title: options.title,
                 layout: { 
-                    content: JSON.parse(data)
+                    content: {
+                        loggedIn: JSON.parse(data),
+                    },
+                    fluidLayout: false
                 },
                 isanon: false,
                 content: {
@@ -1884,6 +1914,7 @@ $(function () {
                     anon: {}
                 }
             };
+            
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = false;
             dashboard.pages.push(page);
@@ -1929,52 +1960,31 @@ $(function () {
     };
 
     /**
-     * convert gridster layout to JSON
-     * @param ul
-     * @returns {{blocks: Array}}
-     */
-    var convertToJsonLayout = function(ul) {
-        
-        var blocks = [];        
-        ul.children('li').each(function() {
-            
-            var li = $(this);
-            if (li.attr('id')) {
-                blocks.push({ 
-                    "id": li.attr('id'),
-                    "top": li.attr('data-row') - 1,
-                    "left": li.attr('data-col') - 1,
-                    "width": parseInt(li.attr('data-sizex')),
-                    "height": parseInt(li.attr('data-sizey'))
-                });
-            }
-        });
-        
-        return { "blocks": blocks };
-    }
-
-    /**
      * update the layout after modification
      */
-    var updateLayout = function() {
+    var updateLayout = function() { 
         
         // extract the layout from the designer (gridster) and save it
-        var jsonLayout = convertToJsonLayout($('.gridster > ul'));
-        
-        var id;
+        var json = { blocks: gridster.serialize() }, 
+            id, i;
         
         // find the current page index
-        for(var i = 0; i < ues.global.dashboard.pages.length; i++) {
+        for(i = 0; i < ues.global.dashboard.pages.length; i++) {
             if (ues.global.dashboard.pages[i].id === page.id) {
                 id = i;
             }
         }
         
-        if (typeof id === 'undefined') 
+        if (typeof id === 'undefined') {
         	throw 'specified page : ' + page.id + ' cannot be found';
+        }
         
-        // todo pages[0] need to be changed appropriately
-        ues.global.dashboard.pages[id].layout.content = jsonLayout;
+        if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
+            ues.global.dashboard.pages[id].layout.content.anon = json;
+        } else {
+            ues.global.dashboard.pages[id].layout.content.loggedIn = json;
+        }
+    
         saveDashboard();
     }
 
@@ -2026,15 +2036,24 @@ $(function () {
             });
             listenLayout();
             
-            var gridsterContainer = $('.gridster > ul');
-            
-            var w = Math.ceil($('.gridster').width() / 12) - 10;
+            var gridsterContainer = $('.gridster > ul'), 
+                minBlockWidth = Math.ceil($('.gridster').width() / 12) - 10,
+                minBlockHeight = minBlockWidth + 30;
             
             // bind the gridster
             gridster = gridsterContainer.gridster({
                 widget_margins: [5, 5],
-                widget_base_dimensions: [w, 330],      // todo this need to be changed appropriately
+                widget_base_dimensions: [minBlockWidth, minBlockHeight],
                 min_cols: 12,
+                serialize_params: function (el, coords) {
+                    return {
+                        id: el.prop('id'),
+                        col: coords.col,
+                        row: coords.row,
+                        size_x: coords.size_x,
+                        size_y: coords.size_y,
+                    };
+                },
                 draggable: {
                     handle: '.ues-component-box-header',
                     stop: function() {
@@ -2043,6 +2062,7 @@ $(function () {
                 },
                 resize: {
                     enabled: true,
+                    max_size: [12, 12],
                     stop: function() {
                         updateLayout();
                     }

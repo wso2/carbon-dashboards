@@ -337,6 +337,11 @@ h4.ues-page-title {
     height: 30px;
     cursor: move;
     color: #aaa;
+    padding-left: 15px;
+}
+
+.ues-component-box-header > ul {
+    padding-right: 5px;
 }
 
 #ues-add-block-container {

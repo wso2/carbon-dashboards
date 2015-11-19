@@ -1,11 +1,9 @@
-"use strict"
-
 $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
 
-    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
-    var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
-    var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
+    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
+    var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html() || '');
+    var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html() || '');
     var page;
 
     /**
@@ -25,9 +23,12 @@ $(function () {
                 
                 renderMaxView(component, DEFAULT_DASHBOARD_VIEW);
                 
-                componentContainer.removeClass('ues-dashboard-fullview-visible');
-                componentContainer.find('.panel-body').css('height', '');
-                componentContainer.find('.panel-body iframe').css('height', '');
+                componentContainer
+                    .removeClass('ues-dashboard-fullview-visible')
+                    .css('height', componentContainer.attr('data-height'))  // restore original height
+                    .removeAttr('data-height');                             // remove temp attribute
+                
+                componentContainer.find('.panel-body, .panel-body iframe').css('height', '');
                 htmlBody.css('overflow-y', '');
                 
                 //minimize logic
@@ -38,11 +39,14 @@ $(function () {
                 
                 renderMaxView(component, 'full');
                 
-                componentContainer.addClass('ues-dashboard-fullview-visible');
-                var height = $(window).height() - 40;
+                var height = $(window).height();
                 
-                componentContainer.find('.panel-body').css('height', height + 'px');
-                componentContainer.find('.panel-body iframe').css('height', (height) + 'px');
+                componentContainer
+                    .attr('data-height', componentContainer.css('height')) // backup original height
+                    .addClass('ues-dashboard-fullview-visible')
+                    .css('height', height + 'px');
+                
+                componentContainer.find('.panel-body, .panel-body iframe').css('height', (height - 40) + 'px');
                 htmlBody.css('overflow-y', 'hidden');
                 
                 //maximize logic
@@ -95,7 +99,6 @@ $(function () {
         return options.inverse(this);
     });
 
-
     /**
      * Render maximized view for a gadget
      * @param component
@@ -122,15 +125,19 @@ $(function () {
         jQueryId.css('left','inherit');
     };
 
-
     /**
      * renders the component toolbar of a given component
      * @param component
      */
-    var renderComponentToolbar = function (component) {
+    var renderComponentToolbar = function (component) {        
         var el = $('#' + component.id).prepend($(componentToolbarHbs(component.content)));
+        // hide the settings button from the anon view
+        if (ues.global.dbType === 'anon') {
+            $('a.ues-component-settings-handle', el).hide();
+        }
         $('[data-toggle="tooltip"]', el).tooltip();
     };
+    
     /**
      * find a given component in the current page
      * @param id
@@ -144,7 +151,7 @@ $(function () {
         var component;
         var components;
 
-        var content = page.content.default;
+        var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
@@ -158,6 +165,7 @@ $(function () {
             }
         }
     };
+    
     /**
      * This is the call back function for dashboard drawing
      */
@@ -167,6 +175,7 @@ $(function () {
             renderComponentToolbar(component);
         });
     };
+    
     /**
      * This is the initial call from the dashboard.js
      */
@@ -182,14 +191,14 @@ $(function () {
         }
         $('body').on('click', '.modal-footer button', function () {
             $('#componentFull').modal('hide');
-
         });
         ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, ues.global.dbType, dashboardDone);
-
     };
+    
     initDashboard();
     initComponentToolbar();
 });
+
 /**
  * We make this true so that the dashboard.jag files inline ues.dashboards.render method is not triggered.
  * @type {boolean}

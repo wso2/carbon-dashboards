@@ -25,8 +25,6 @@
 <body class="lang_<%=request.getLocale()%>">
     
 <%
-   
-    var log = new Log();
     var usr = require('/modules/user.js');
     var user = usr.current();
     var pages = dashboard.pages;
@@ -44,7 +42,7 @@
     var isFluid = false;
     pages.forEach(function(page) {
         if(page.id == pageId) {     
-            isFluid = page.fluidLayout;
+            isFluid = page.layout.fluidLayout;
         }
     });
 %>
@@ -54,7 +52,6 @@
         <div class="navbar-header">
             <button data-target=".horizontal-bar" data-toggle="collapse" class="navbar-toggle" type="button">
                 <span class="sr-only">Toggle navigation</span>
-                <!-- todo this can be replaced with fw-menu -->
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -141,7 +138,7 @@
      </div>
 </div>
 
-<div id="wrapper"></div>
+<div id="wrapper"><%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%></div>
                             
 <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
     <div class="ues-toolbar">
@@ -203,7 +200,7 @@
                                     {{/equals}}
                                 </div>
                             {{/each}}
-                        </div>
+                        </div> 
                         <hr/>
                     {{/has}}
                     {{#has options}}
@@ -223,10 +220,9 @@
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
-<script src="<%=urlPrefix%>js/jsonToBootstrap.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
-<script src="<%=urlPrefix%>js/ues.js"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>    
 <script src="<%=urlPrefix%>js/ues-prefs.js"></script>
 <% include('/controllers/includes/common-scripts.jag'); %>
 <% include('/controllers/includes/dashboard-scripts.jag'); %>
@@ -250,9 +246,25 @@
         var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
         var banner = ues.global.dashboard.banner;
         $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
+        
+        resizeComponents();
     });
     
-</script>
+    $(window).resize(function() {
+        resizeComponents();
+    });
     
+    function resizeComponents() {
+        
+        var containerWidth = $('#wrapper > div').width(), 
+            unitHeight = (containerWidth > 720) ? Math.floor(containerWidth / 12) : 120;
+        
+        $('#wrapper .ues-component-box').each(function(i, o) {
+            var height = $(this).attr('data-height') * unitHeight;
+            $(this).css('height', height + 'px');
+        });
+    }
+    
+</script>   
 </body>
 </html>
