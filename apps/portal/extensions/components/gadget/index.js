@@ -80,13 +80,14 @@
         if(metadata.views.hasOwnProperty('full')){
             comp.hasCustomFullView= true;
         }
-    }
+    };
+
     var loadLocalizedTitle = function (styles, comp) {
-        var userLang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+        var userLang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
         var locale_titles = comp.content.locale_titles || {};
         styles.title = locale_titles[userLang] || comp.content.title;
         comp.content.locale_titles = locale_titles || {};
-    }
+    };
 
     component.create = function (sandbox, comp, hub, done) {
         var content = comp.content;
@@ -120,7 +121,7 @@
             var gid = gadgetId(comp.id);
             var panel = createPanel(styles);
             
-            var compHeight = $('#ues-designer').height() - 220; //$(document).height() - 200;
+            var compHeight = $('#ues-designer').height() - 220;
             var height = (comp.viewOption && comp.viewOption == 'full' ? compHeight : '');
             
             if (ues.global.dbType === 'default'){

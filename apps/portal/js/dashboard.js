@@ -1,5 +1,8 @@
 $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
+    var DASHBOARD_FULL_SCEEN_VIEW = 'full';
+    var DASHBOARD_SETTINGS_VIEW = 'settings';
+    var containerPrefix = 'gadget-';
 
     var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
     var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html() || '');
@@ -37,7 +40,7 @@ $(function () {
                 
                 // render max view
                 
-                renderMaxView(component, 'full');
+                renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
                 
                 var height = $(window).height();
                 
@@ -59,13 +62,13 @@ $(function () {
         $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
-            componentContainer = $('#gadget-' + id);
+            componentContainer = $('#'+containerPrefix + id);
 
             if(component.hasCustomUserPrefView){
-                if(component.viewOption == "settings"){
-                    switchComponentView(component, "default");
+                if(component.viewOption == DASHBOARD_SETTINGS_VIEW){
+                    switchComponentView(component, DEFAULT_DASHBOARD_VIEW);
                 }else{
-                    switchComponentView(component, "settings");
+                    switchComponentView(component, DASHBOARD_SETTINGS_VIEW);
                 }
                 return;
             }
@@ -79,7 +82,6 @@ $(function () {
             }
             componentContainer.append(settings);
             componentContainer.addClass('ues-userprep-visible');
-//            renderComponentProperties(component);
         });
     };
 

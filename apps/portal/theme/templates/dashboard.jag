@@ -14,10 +14,9 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css" />
     
     <% include('/controllers/includes/theme-dashboard-styles.jag'); %>
-    
     <%
-       var i18n = require("i18n");
-       i18n.init(request);
+        var i18n = require("i18n");
+        i18n.init(request, utils.getLocaleResourcePath());
     %>
     <title><%= i18n.localize("dashboard.lable")%></title>
 </head>
@@ -152,26 +151,13 @@
         {{/has}}
     </div>
 </script>
-<script id="ues-component-full-hbs" type="text/x-handlebars-template">
-    <div class="modal fade modal-fullscreen force-fullscreen" id="componentFull" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default">Close</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-</script>
 <script id="ues-gadget-setting-hbs" type="text/x-handlebars-template">
     <div class="ues-sandbox" data-component="{{id}}">
         <div id="ues-gadget-options" class="ues-gadget-options ues-gadget-properties gadget-setting">
                 <form class="ues-component-properties">
                     {{#has options}}
                         <div class="ues-options ues-properties">
-                            <h4>Options</h4>
+                            <h4><%= i18n.localize("options") %></h4>
                             {{#each options}}
                                 <div class="form-group">
                                     {{#equals type "STRING"}}
@@ -191,6 +177,12 @@
                                                     <option value={{value}}{{#equals value ../value}} selected="selected"{{/equals}}>{{displayValue}}</option>
                                                  {{/each}}
                                             </select>
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "LIST"}}
+                                        <label>{{title}}
+                                            <textarea name="{{@key}}" class="form-control" rows="4" placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
+                                            <label><%= i18n.localize("enter.your.list.entries.lable")%></label>
                                         </label>
                                     {{/equals}}
                                     {{#equals type "text"}}
@@ -234,7 +226,9 @@
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap-modal-carousel.min.js"></script>
 <script src="<%=urlPrefix%>js/gadget-properties.js"></script>
+<script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
+<script src="<%=urlPrefix%>js/dashboard.js"></script>
 <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
     
 <script>

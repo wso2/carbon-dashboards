@@ -231,6 +231,7 @@
         </div>
     </div>
 </div>
+    
 <script src="<%=urlPrefix%>js/async.js"></script>
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
@@ -256,6 +257,7 @@
 <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
 <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
 <script src="<%=urlPrefix%>js/wso2-theme.js"></script>
+<script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 <script src="<%=urlPrefix%>js/designer.js"></script>
 <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
@@ -312,7 +314,7 @@
                 <form class="ues-component-properties">
                     {{#has options}}
                         <div class="ues-options ues-properties">
-                            <h4><%= i18n.localize("options") %></h4>
+                            <h4><%= i18n.localize("options")%></h4>
                             {{#each options}}
                                 <div class="form-group">
                                     {{#equals type "STRING"}}
@@ -332,6 +334,17 @@
                                                     <option value={{value}}{{#equals value ../value}} selected="selected"{{/equals}}>{{displayValue}}</option>
                                                  {{/each}}
                                             </select>
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "LIST"}}
+                                        <label>{{title}}
+                                            <textarea name="{{@key}}" class="form-control" rows="4" placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
+                                            <label><%= i18n.localize("enter.your.list.entries.lable")%></label>
+                                        </label>
+                                    {{/equals}}
+                                    {{#equals type "text"}}
+                                        <label>{{title}}
+                                            <textarea name="{{@key}}" class="form-control" rows="4">{{value}}</textarea>
                                         </label>
                                     {{/equals}}
                                 </div>
@@ -523,20 +536,6 @@
     </li>
     {{/each}}
 </script>
-<script id="ues-component-full-hbs" type="text/x-handlebars-template">
-    <div class="modal fade modal-fullscreen force-fullscreen" id="componentFull" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default">Close</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-</script>
-
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     
     <canvas id="src-canvas" class="hidden"></canvas>    
@@ -567,13 +566,6 @@
     </div>
     
 </script> <!--/#ues-dashboard-banner-hbs -->
-    
-<form method="post" id="ues-dashboard-upload-banner-form" action="<%=urlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
-    <input type="file" id="file-banner" name="banner" accept="image/*" />
-    <input type="hidden" id="banner-data" name="data" />
-    <button type="submit">Submit</button>
-</form><!-- /#ues-dashboard-upload-banner-form -->
-
 <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
     
         {{#each blocks}}                                        
@@ -591,6 +583,11 @@
         </li>
         {{/each}}
 </script>
-
+    
+<form method="post" id="ues-dashboard-upload-banner-form" action="<%=urlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
+    <input type="file" id="file-banner" name="banner" accept="image/*" />
+    <input type="hidden" id="banner-data" name="data" />
+    <button type="submit">Submit</button>
+</form><!-- /#ues-dashboard-upload-banner-form -->
 </body>
 </html>
