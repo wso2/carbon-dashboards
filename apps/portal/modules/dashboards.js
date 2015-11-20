@@ -284,7 +284,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
             if (typeof grid[d.row - 1] === 'undefined') 
                 grid[d.row - 1] = [];
             
-            grid[d.row - 1][d.col - 1] = { "id": d.id, "width": d.size_x, "height": d.size_y };
+            grid[d.row - 1][d.col - 1] = { "id": d.id, "width": d.size_x, "height": d.size_y, "banner": d.banner || false };
         });
 
         return grid;
@@ -362,7 +362,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
             left = Math.ceil((x - sx) * 12) / (12 - sx);
             width = Math.ceil((el.width * 12) / parentWidth);
 
-            processedRow[left] = { id: el.id, height: el.height, width: width, left: left };
+            processedRow[left] = { id: el.id, height: el.height, width: width, left: left, banner: el.banner };
         }
 
         // draw the bootstrap columns
@@ -371,6 +371,10 @@ var getBootstrapLayout = function(pageId, isAnon) {
             
             height = unitHeight * processedRow[x].height;
             classes = 'col-md-' + processedRow[x].width + ' ues-component-box';
+            
+            if (processedRow[x].banner) {
+                classes += ' ues-banner-placeholder';
+            }
 
             offset = x - previousEndPoint;
             if (offset > 0) 

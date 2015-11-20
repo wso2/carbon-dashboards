@@ -239,7 +239,7 @@
     $(document).ready(function() {        
         var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
         var banner = ues.global.dashboard.banner;
-        $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
+        $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));       
         
         resizeComponents();
     });
@@ -257,6 +257,18 @@
             var height = $(this).attr('data-height') * unitHeight;
             $(this).css('height', height + 'px');
         });
+        
+        var placeholder = $('.ues-banner-placeholder'), 
+            bannerImg = placeholder.find('img');
+        if (bannerImg.length > 0) {
+            var img = new Image();
+            img.onload = function() {
+                placeholder.css('min-height', this.height).css('height', '');
+            }
+            img.src = bannerImg.attr('src');
+        } else {
+            placeholder.css('height', '');
+        }
     }
     
 </script>   

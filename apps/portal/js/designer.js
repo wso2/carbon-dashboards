@@ -1783,7 +1783,7 @@ $(function () {
      * @private
      */
     var listenLayout = function () {
-        $('#ues-designer').find('.ues-component-box').droppable({
+        $('#ues-designer').find('.ues-component-box:not([data-banner=true])').droppable({
             //activeClass: 'ui-state-default',
             hoverClass: 'ui-state-hover',
             //accept: ':not(.ui-sortable-helper)',
@@ -2001,6 +2001,7 @@ $(function () {
                         row: coords.row,
                         size_x: coords.size_x,
                         size_y: coords.size_y,
+                        banner: el.attr('data-banner') == 'true'
                     };
                 },
                 draggable: {
@@ -2017,6 +2018,9 @@ $(function () {
                     }
                 }
             }).data('gridster');
+            
+            // stop resizing banner placeholder
+            $('.gridster [data-banner=true] .gs-resize-handle').remove();
             
             // remove block handler
             $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
@@ -2188,12 +2192,13 @@ $(function () {
             // since a valid image is selected, render the banner in crop mode
             ues.global.dashboard.banner.cropMode = true;
             loadBanner();
-
-            var srcCanvas = document.getElementById('src-canvas'),
+            
+            var $placeholder = $('.ues-banner-placeholder'),
+                srcCanvas = document.getElementById('src-canvas'),
                 $srcCanvas = $(srcCanvas),
                 img = new Image(),
-                width = 1092,
-                height = 300;
+                width = $placeholder.width(),
+                height = $placeholder.height();
 
             // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
             $srcCanvas.cropper('destroy');

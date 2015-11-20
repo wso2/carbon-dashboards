@@ -38,3 +38,8 @@ a, a:focus {
 .panel-default .panel-body{
     position: relative;
 }
+
+.ues-banner-placeholder {
+    overflow: hidden;
+    text-align: center;
+}

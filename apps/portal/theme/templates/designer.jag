@@ -568,8 +568,8 @@
 </script> <!--/#ues-dashboard-banner-hbs -->
 <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
     
-        {{#each blocks}}                                        
-        <li class="ues-component-box" id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}">
+        {{#each blocks}}   
+        <li class="ues-component-box" id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}">
             <div class="ues-component-box-header">
                 <span class="drag-handle">:::</span>
                 <ul class="list-inline pull-right">
@@ -580,6 +580,10 @@
                     </li>
                 </ul>
             </div>
+            {{#if banner}}
+            <div class="ues-banner-placeholder"></div>
+            {{/if}}
+            
         </li>
         {{/each}}
 </script>
