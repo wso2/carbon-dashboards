@@ -4,7 +4,10 @@ var logout;
 var authorized;
 var roles;
 
+
+
 (function () {
+
     var log = new Log();
 
     current = function () {
@@ -17,21 +20,26 @@ var roles;
     };
 
     login = function (username, password) {
+
+        user_name = username;
         var carbon = require('carbon');
         var server = new carbon.server.Server();
         if (!server.authenticate(username, password)) {
             return false;
         }
         var user = carbon.server.tenantUser(username);
+
         var utils = require('/modules/utils.js');
-        var um = new carbon.user.UserManager(server);
+        var um = new carbon.user.UserManager(server, user.tenantId);
         user.roles = um.getRoleListOfUser(user.username);
+
         try {
             utils.handlers('login', user);
         } catch (e) {
             log.error(e);
             return false;
         }
+
         session.put('user', user);
         return true;
     };
@@ -52,10 +60,12 @@ var roles;
         return true;
     };
 
+
     roles = function () {
         var carbon = require('carbon');
         var server = new carbon.server.Server();
-        var um = new carbon.user.UserManager(server);
+        var user = session.get('user');
+        var um = new carbon.user.UserManager(server, user.tenantId);
         return um.allRoles();
     };
 

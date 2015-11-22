@@ -3,6 +3,7 @@ $(function () {
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
 
     var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
+    console.log("rolesApi is -----> "+rolesApi);
 
     var dashboard = ues.global.dashboard;
 
@@ -28,6 +29,8 @@ $(function () {
     };
 
     var getOauthSettings = function () {
+
+        console.log("getOauthSettings -- ");
         $.ajax({
             url: "/portal/saml/saml-at-settings.jag",
             type: "GET",
@@ -48,6 +51,7 @@ $(function () {
     var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
 
     var viewer = function (el, role) {
+
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
         viewers.push(role);
@@ -120,6 +124,9 @@ $(function () {
     };
 
     var initExistingRoles = function () {
+
+        console.log("init existing roles")
+
         var i;
         var role;
 
@@ -142,6 +149,7 @@ $(function () {
         settings.find('.ues-shared-edit').append(html);
     };
 
+    //edit here
     var initUI = function () {
         var viewerRoles = new Bloodhound({
             name: 'roles',
@@ -149,6 +157,7 @@ $(function () {
             prefetch: {
                 url: rolesApi,
                 filter: function (roles) {
+                    console.log("filter function ----- " + roles);
                     roles.push(ues.global.anonRole);
                     return $.map(roles, function (role) {
                         return {name: role};
@@ -157,6 +166,7 @@ $(function () {
                 ttl: 60
             },
             datumTokenizer: function (d) {
+                console.log("datumTokenizer -- " + JSON.stringify(d));
                 return d.name.split(/[\s\/.]+/) || [];
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace
