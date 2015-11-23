@@ -202,7 +202,7 @@
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#"><%= i18n.localize("dashboard.design.lable")%> </a></li>
-                    <li><a href="#" class="ues-go-back">
+                    <li><a href="#" class="ues-go-back" id="ues-go-back">
                         <span class="fw-stack">
                             <i class="fw fw-ring fw-stack-2x"></i>
                             <i class="fw fw-left-arrow fw-stack-1x"></i>
