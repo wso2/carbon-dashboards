@@ -30,7 +30,7 @@ var utils = require('/modules/utils.js');
         var registry = new carbon.registry.Registry(server, {
             system: true
         });
-        var um = new carbon.user.UserManager(server);
+        var um = new carbon.user.UserManager(server, ctx.tenantId);
         var userRoles = um.getRoleListOfUser(ctx.username);
 
         var dashboards = registry.content(registryPath(), {
