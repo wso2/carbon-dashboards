@@ -4,14 +4,14 @@ var carbon = require('carbon');
 var utils = require('/modules/utils.js');
 
 /**
- * get registry reference 
+ * get registry reference
  */
-var getRegistry = function() {
+var getRegistry = function () {
     var server = new carbon.server.Server();
     return new carbon.registry.Registry(server, {
         system: true
     });
-}
+};
 
 //TODO: what happen when the context is changed or mapped via reverse proxy
 var registryPath = function (id) {
@@ -20,10 +20,9 @@ var registryPath = function (id) {
 };
 
 var registryUserPath = function (id, username) {
-    var path = '/_system/config/ues/'+ username + '/dashboards';
+    var path = '/_system/config/ues/' + username + '/dashboards';
     return id ? path + '/' + id : path;
 };
-
 
 var findOne = function (id) {
     var registry = getRegistry();
@@ -31,7 +30,7 @@ var findOne = function (id) {
     var user = usr.current();
     var path = registryPath(id);
     var isCustom = false;
-    if(user){
+    if (user) {
         var userDBPath = registryUserPath(id, user.username);
         if (registry.exists(userDBPath)) {
             path = userDBPath;
@@ -40,11 +39,11 @@ var findOne = function (id) {
     }
     var content = registry.content(path);
     var dashboard = JSON.parse(content);
-    if(dashboard){
+    if (dashboard) {
         dashboard.isUserCustom = isCustom;
-        
+
         var banner = getBanner(id, (user ? user.username : null));
-        dashboard.banner = { 
+        dashboard.banner = {
             globalBannerExists: banner.globalBannerExists,
             customBannerExists: banner.customBannerExists
         };
@@ -78,12 +77,12 @@ var create = function (dashboard) {
 };
 
 var update = function (dashboard) {
-    
+
     var registry = getRegistry();
 
     var usr = require('/modules/user.js');
     var user = usr.current();
-    if(!user){
+    if (!user) {
         throw 'User is not logged in ';
     }
 
@@ -104,7 +103,7 @@ var copy = function (dashboard) {
     var registry = getRegistry();
     var usr = require('/modules/user.js');
     var user = usr.current();
-    if(!user){
+    if (!user) {
         throw 'User is not logged in ';
     }
     var path = registryUserPath(dashboard.id, user.username);
@@ -121,7 +120,7 @@ var reset = function (id) {
     var registry = getRegistry();
     var usr = require('/modules/user.js');
     var user = usr.current();
-    if(!user){
+    if (!user) {
         throw 'User is not logged in ';
     }
     var path = registryUserPath(id, user.username);
@@ -160,24 +159,24 @@ var allowed = function (dashboard, permission) {
  * @param {String} mime mime     type of the file
  * @param {Object} stream        byte stream of the file
  */
-var saveBanner = function(dashboardId, username, filename, mime, stream) {
+var saveBanner = function (dashboardId, username, filename, mime, stream) {
     var uuid = require('uuid');
     var registry = getRegistry();
-    
+
     var path = registryBannerPath(dashboardId, username);
     var resource = {
         content: stream,
         uuid: uuid.generate(),
         mediaType: mime,
         name: filename,
-        properties: { }
+        properties: {}
     };
 
     registry.put(path, resource);
 };
 
 /**
- * delete dashboard banner (if the username is empty, then the default banner will be removed, 
+ * delete dashboard banner (if the username is empty, then the default banner will be removed,
  * otherwise the custom banner for the user will be removed)
  * @param {String} dashboardId   id of the dashboard
  * @param {String} username      user's username
@@ -191,17 +190,17 @@ var deleteBanner = function (dashboardId, username) {
  * @param {String} dashboardId id of the dashboard
  * @param {String} username    user's username
  */
-var renderBanner = function(dashboardId, username) {    
+var renderBanner = function (dashboardId, username) {
     var registry = getRegistry();
     var FILE_NOT_FOUND_ERROR = 'requested file cannot be found';
-    
+
     var banner = getBanner(dashboardId, username);
     if (!banner) {
         response.sendError(404, FILE_NOT_FOUND_ERROR);
         return;
     }
 
-    var r = registry.get(banner.path);        
+    var r = registry.get(banner.path);
     if (r == null || r.content == null) {
         response.sendError(404, FILE_NOT_FOUND_ERROR);
         return;
@@ -209,16 +208,16 @@ var renderBanner = function(dashboardId, username) {
 
     response.contentType = r.mediaType;
     print(r.content);
-    return;        
+    return;
 };
 
 /**
  * path to customizations directory in registry
  * @returns {String}
  */
-var registryCustomizationsPath = function() {
+var registryCustomizationsPath = function () {
     return '/_system/config/ues/customizations';
-}
+};
 
 /**
  * get saved registry path for a banner
@@ -226,8 +225,8 @@ var registryCustomizationsPath = function() {
  * @param   {String} username    current user's username
  * @returns {String}
  */
-var registryBannerPath = function(dashboardId, username) {
-    return registryCustomizationsPath() + '/' + dashboardId + (username ? '/' + username : '') 
+var registryBannerPath = function (dashboardId, username) {
+    return registryCustomizationsPath() + '/' + dashboardId + (username ? '/' + username : '')
         + '/banner';
 };
 
@@ -237,27 +236,27 @@ var registryBannerPath = function(dashboardId, username) {
  * @param   {String} username    user's username
  * @returns {Object}
  */
-var getBanner = function(dashboardId, username) {       
+var getBanner = function (dashboardId, username) {
     var registry = getRegistry();
-    
+
     var path;
-    var result = { isCustomBanner: false, isGlobalBanner: false, path: null };
-    
+    var result = {isCustomBanner: false, isGlobalBanner: false, path: null};
+
     // check to see whether the custom banner exists
     path = registryBannerPath(dashboardId, username);
     if (registry.exists(path)) {
-        
+
         result.customBannerExists = true;
         result.path = path;
     }
-    
+
     // check to see if there is any global banner
     path = registryBannerPath(dashboardId, null);
     if (registry.exists(path)) {
-    
+
         result.globalBannerExists = true;
         result.path = result.path || path;
     }
-    
+
     return result;
 };

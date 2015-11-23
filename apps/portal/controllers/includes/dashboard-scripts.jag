@@ -11,7 +11,11 @@
         if(isAnonView || !user) {
             viewType = 'anon';
         } else {
-            viewType = 'default';
+            if(user && user.domain != urlDomain){
+                viewType = 'anon';
+            }else {
+                viewType = 'default';
+            }
         }
     %>
     ues.global.fresh = <%=fresh%>;

@@ -8,6 +8,7 @@ var dest;
     var log = new Log();
 
     urlPrefix = utils.relativePrefix(originalURI);
+
     tenantedUrlPrefix = utils.tenantedPrefix(urlPrefix, urlDomain);
 
     sendLogin = function () {
@@ -27,6 +28,7 @@ var dest;
     }
 
     var path = utils.findJag(controller);
+
     if (!path) {
         response.sendError(404, 'requested page cannot be found');
         return;
