@@ -14,7 +14,7 @@ $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
 
-    var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+    var lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
 
     var dashboard;
 
@@ -45,55 +45,6 @@ $(function () {
     };
 
     /**
-     * Handlebars helpers
-     */
-    Handlebars.registerHelper('has', function () {
-        var has = function (o) {
-            if (!o) {
-                return false;
-            }
-            if (o instanceof Array && !o.length) {
-                return false;
-            }
-            var key;
-            for (key in o) {
-                if (o.hasOwnProperty(key)) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        var args = Array.prototype.slice.call(arguments);
-        var options = args.pop();
-        var length = args.length;
-        if (!length) {
-            return new Handlebars.SafeString(options.inverse(this));
-        }
-        var i;
-        for (i = 0; i < length; i++) {
-            if (has(args[i])) {
-                return new Handlebars.SafeString(options.fn(this));
-            }
-        }
-        return new Handlebars.SafeString(options.inverse(this));
-    });
-
-    Handlebars.registerHelper('equals', function (left, right, options) {
-        if (left === right) {
-            return options.fn(this);
-        }
-        return options.inverse(this);
-    });
-
-    Handlebars.registerHelper('dump', function (o) {
-        return JSON.stringify(o);
-    });
-
-    Handlebars.registerHelper('resolveURI', function (path) {
-        return ues.dashboards.resolveURI(path);
-    });
-
-    /**
      * Precompiling Handlebar templates
      */
     var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html() || '');
@@ -112,8 +63,6 @@ $(function () {
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html() || '');
 
-    var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html());
-    
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html() || '');
 
     /**
@@ -1372,7 +1321,6 @@ $(function () {
         styles.titlePosition = $('.ues-styles .ues-title-position', sandbox).val();
         var compLocale = findComponent(id).content.locale_titles || {};
         compLocale[lang] = $('.ues-styles .ues-localized-title', sandbox).val();
-
     };
 
     /**
