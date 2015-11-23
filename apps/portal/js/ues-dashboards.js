@@ -8,7 +8,6 @@
         return plugin;
     };
 
-
     var createComponent = function (container, component, done) {
         var type = component.content.type;
         var plugin = findPlugin(type);
@@ -96,7 +95,6 @@
                 });
             }
         }
-        console.log(wirez);
         return wirez;
     };
 
@@ -104,17 +102,38 @@
         document.title = dashboard.title + ' | ' + page.title;
     };
 
-    var renderPage = function (element, dashboard, page, pageType, done) {
+    /**
+     * convert JSON layout to gridster
+     * @param json
+     * @returns {*}
+     */
+    var convertToDesignerLayout = function(json) {
+    
+        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''), 
+            container = $('<ul />');
+        
+        $(componentBoxListHbs(json)).appendTo(container).html();
+        
+        return container;
+    }
+
+    var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
         var container;
         var area;
-        var layout = $(page.layout.content);
+        
+        var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn));
         var content = page.content[pageType];
-        element.html(layout);
+        
+        // this is to be rendered only in the designer. in the view mode, the template is rendered in the server side.
+        if (isDesigner) { 
+            element.html(convertToDesignerLayout(layout[0]));
+        }
+        
         for (area in content) {
-            if (content.hasOwnProperty(area)) {
-                container = $('#' + area, layout);
+            if (content.hasOwnProperty(area)) {          
+                container = $('#' + area, element);
                 content[area].forEach(function (options) {
                     createComponent(container, options, function (err) {
                         if (err) {
@@ -143,13 +162,16 @@
         }
     };
 
-    var renderDashboard = function (element, dashboard, name, pageType, done) {
+    var renderDashboard = function (element, dashboard, name, pageType, done, isDesigner) {
+        
+        isDesigner = isDesigner || false;
+        
         name = name || dashboard.landing;
         var page = findPage(dashboard, name);
         if (!page) {
             throw 'requested page : ' + name + ' cannot be found';
         }
-        renderPage(element, dashboard, page, pageType, done);
+        renderPage(element, dashboard, page, pageType, done, isDesigner);
     };
 
     var rewireDashboard = function (page, pageType) {

@@ -42,7 +42,8 @@ var sandbox = function (context, fn) {
 var allowed = function (roles, allowed) {
     var carbon = require('carbon');
     var server = new carbon.server.Server();
-    var userManager = new carbon.user.UserManager(server);
+    var tenantId = carbon.server.tenantId();
+    var userManager = new carbon.user.UserManager(server, tenantId);
     var adminRole = userManager.getAdminRoleName();
     var hasRole = function (role, roles) {
         var i;

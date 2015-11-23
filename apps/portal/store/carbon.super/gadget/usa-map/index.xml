@@ -26,7 +26,8 @@
 </style>
 </head>
 <body>
-USA MAP (This is default view)
+<div>
+<label id="defaultViewLabel">USA MAP (This is default view)</label>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -60,8 +61,8 @@ USA MAP (This is default view)
 	    gadgets.window.adjustHeight();
 	});
 </script>
-
-</body>view
+</div>
+</body>
 </html>
     ]]>
     </Content>
@@ -85,7 +86,8 @@ USA MAP (This is default view)
 </style>
 </head>
 <body>
-USA MAP(this is full screen view)
+<div>
+<label id="fullViewLabel">USA MAP(this is full screen view)</lael>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -119,7 +121,7 @@ USA MAP(this is full screen view)
 	    gadgets.window.adjustHeight();
 	});
 </script>
-
+</div>
 </body>
 </html>
     ]]>
