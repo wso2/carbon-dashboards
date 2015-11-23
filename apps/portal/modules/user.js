@@ -24,7 +24,7 @@ var roles;
         }
         var user = carbon.server.tenantUser(username);
         var utils = require('/modules/utils.js');
-        var um = new carbon.user.UserManager(server);
+        var um = new carbon.user.UserManager(server, user.tenantId);
         user.roles = um.getRoleListOfUser(user.username);
         try {
             utils.handlers('login', user);
@@ -55,7 +55,8 @@ var roles;
     roles = function () {
         var carbon = require('carbon');
         var server = new carbon.server.Server();
-        var um = new carbon.user.UserManager(server);
+        var user = session.get('user');
+        var um = new carbon.user.UserManager(server, user.tenantId);
         return um.allRoles();
     };
 
