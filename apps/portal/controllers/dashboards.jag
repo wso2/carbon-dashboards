@@ -21,6 +21,11 @@ var fresh;
             return;
         }
 
+        if (userDomain !== (urlDomain || superDomain)) {
+            response.sendError(401, 'designer access not authorized of this tenant');
+            return;
+        }
+
         include(utils.resolvePath("templates/index.jag"));
         return;
     }
