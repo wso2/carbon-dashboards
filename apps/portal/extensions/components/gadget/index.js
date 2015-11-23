@@ -123,7 +123,7 @@
             
             var compHeight = $('#ues-designer').height() - 220;
             var height = (comp.viewOption && comp.viewOption == 'full' ? compHeight : '');
-            
+
             if (ues.global.dbType === 'default'){
                 hasCustomUserPrefView(metadata, comp);
                 hasCustomFullView(metadata, comp);

@@ -1,7 +1,7 @@
 <%
 var message;
 var dest;
-(function() {
+(function () {
     var usr;
     var user;
     var username;
@@ -11,6 +11,7 @@ var dest;
     var method = request.getMethod();
     var configs = require('/configs/portal.js').config();
     dest = request.getParameter('destination');
+
     if (method === 'POST') {
         carbon = require('carbon');
         username = request.getParameter('username');
@@ -30,15 +31,15 @@ var dest;
 
                     if (!(new File(tenantDir).isExists())) {
                         new File(tenantDir).mkdir();
-                        log.info("Created a directory for tenant "+ user.domain);
+                        log.info("Created a directory for tenant " + user.domain);
                     }
 
-                    var layoutDir =  tenantDir + "/layout/";
+                    var layoutDir = tenantDir + "/layout/";
 
                     if (!(new File(layoutDir).isExists())) {
                         var layoutPath = "/store/carbon.super/layout";
                         copyDir(new File(layoutPath), tenantDir);
-                        log.info("Layouts has been copied for tenant "+ user.domain);
+                        log.info("Layouts has been copied for tenant " + user.domain);
                     }
                 }
 
@@ -75,8 +76,8 @@ var dest;
         dstf.close();
     };
 
-    function  copyDir(source,destination) {
-        if(source.isDirectory()) {
+    function copyDir(source, destination) {
+        if (source.isDirectory()) {
             createDir(destination + "/" + source.getName());
             destination = destination + "/" + source.getName();
             var sourceFiles = source.listFiles();
@@ -87,7 +88,7 @@ var dest;
             }
         } else {
             // log.info("** Copying file " + source.getName());
-            copyFile(source,destination);
+            copyFile(source, destination);
         }
     };
 }()); %>

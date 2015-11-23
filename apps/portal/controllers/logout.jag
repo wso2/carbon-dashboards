@@ -1,22 +1,18 @@
 <%
-
 var dest = request.getParameter('destination');
 var configs = require('/configs/portal.js').config();
 
-	if(configs.authentication.activeMethod === 'sso'){
-		include('sso-logout.jag');
-	}else{
-		var usr = require('/modules/user.js');
-		usr.logout();
-        response.sendRedirect(dest || tenantedUrlPrefix);
-		//var index = dest.indexOf('?isAnonView');
-		//var newDestination = dest;
-		//if (index > 1) {
-		//	newDestination = dest.substr(0, index);
-		//}
-		//response.sendRedirect(newDestination || tenantedUrlPrefix);
-	}
-
-
-
+if (configs.authentication.activeMethod === 'sso') {
+    include('sso-logout.jag');
+} else {
+    var usr = require('/modules/user.js');
+    usr.logout();
+    response.sendRedirect(dest || tenantedUrlPrefix);
+    //var index = dest.indexOf('?isAnonView');
+    //var newDestination = dest;
+    //if (index > 1) {
+    //	newDestination = dest.substr(0, index);
+    //}
+    //response.sendRedirect(newDestination || tenantedUrlPrefix);
+}
 %>

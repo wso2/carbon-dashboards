@@ -86,8 +86,8 @@ $(function () {
     var showWorkspace = function (name) {
         $('.ues-workspace').hide();
         $('#ues-workspace-' + name).show();
-        
-        if(name === 'designer') {
+
+        if (name === 'designer') {
             initBanner();
         }
     };
@@ -514,12 +514,15 @@ $(function () {
      * @private
      */
     var saveDashboard = function () {
-        var method;
-        var url;
+        var method,
+            url,
+            isRedirect = false;
+
         if (freshDashboard) {
             freshDashboard = false;
             method = 'POST';
             url = dashboardsApi;
+            isRedirect = true;
         } else {
             method = 'PUT';
             url = dashboardsApi + '/' + dashboard.id;
@@ -531,6 +534,10 @@ $(function () {
             contentType: 'application/json'
         }).success(function (data) {
             console.log('dashboard saved successfully');
+            if (isRedirect) {
+                isRedirect = false;
+                window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
+            }
         }).error(function () {
             console.log('error saving dashboard');
         });
@@ -1039,7 +1046,7 @@ $(function () {
      * */
     var checkForPagesById = function (pageId) {
         var isPageAvailable = false;
-        for (var availablePage in dashboard.pages) {
+        for (var availablePage = 0; availablePage < dashboard.pages.length; availablePage++) {
             if (dashboard.pages[availablePage].id == pageId) {
                 isPageAvailable = true;
                 break;
@@ -1055,10 +1062,10 @@ $(function () {
      * @return boolean
      * @private
      * */
-    var checkForPagesByTitle = function(pageTitle){
+    var checkForPagesByTitle = function (pageTitle) {
         var isPageAvailable = false;
-        for(var availablePage in dashboard.pages){
-            if(dashboard.pages[availablePage].title.toUpperCase() == pageTitle.toUpperCase()){
+        for (var availablePage = 0; availablePage < dashboard.pages.length; availablePage++) {
+            if (dashboard.pages[availablePage].title.toUpperCase() == pageTitle.toUpperCase()) {
                 isPageAvailable = true;
                 break;
             }
@@ -1393,7 +1400,6 @@ $(function () {
         styles.titlePosition = $('.ues-styles .ues-title-position', sandbox).val();
         var compLocale = findComponent(id).content.locale_titles || {};
         compLocale[lang] = $('.ues-styles .ues-localized-title', sandbox).val();
-
     };
 
     /**
@@ -1640,7 +1646,7 @@ $(function () {
             ues.global.isSwitchToNewPage = true;
             switchPage(pid, pageType);
             ues.global.isSwitchToNewPage = false;
-            
+
             initBanner();
         });
 
@@ -1715,6 +1721,7 @@ $(function () {
                     }
                 }
             }
+
             saveDashboard();
         });
     };
@@ -2138,22 +2145,25 @@ $(function () {
         }
         renderPage(page || db.landing || pages[0].id);
     };
-    
+
     /**
      * load the content within the banner placeholder
      */
-    var loadBanner = function() {        
-        
-        ues.global.dashboard.banner = ues.global.dashboard.banner || { globalBannerExists: false, customBannerExists: false };
-        
+    var loadBanner = function () {
+
+        ues.global.dashboard.banner = ues.global.dashboard.banner || {
+                globalBannerExists: false,
+                customBannerExists: false
+            };
+
         var $placeholder = $('.ues-banner-placeholder'),
             customDashboard = ues.global.dashboard.isUserCustom || false,
             banner = ues.global.dashboard.banner;
-        
+
         var bannerExists = banner.globalBannerExists || banner.customBannerExists;
-        
+
         // create the view model to be passed to handlebar
-        var data = { 
+        var data = {
             isAdd: !bannerExists && !banner.cropMode,
             isEdit: bannerExists && !banner.cropMode,
             isCrop: banner.cropMode,
@@ -2161,34 +2171,34 @@ $(function () {
             showRemove: (customDashboard && banner.customBannerExists) || !customDashboard
         };
         $placeholder.html(bannerHbs(data));
-        
+
         // display the image 
         var img = $placeholder.find('#img-banner');
-        if (bannerExists) {            
+        if (bannerExists) {
             img.attr('src', img.data('src') + '?rand=' + Math.floor(Math.random() * 100000)).show();
         } else {
             img.hide();
         }
     }
-    
+
     /**
      * initialize the banner
-     */ 
-    var initBanner = function() {
-        
+     */
+    var initBanner = function () {
+
         loadBanner();
-        
+
         // bind a handler to the change event of the file element
-        document.getElementById('file-banner').addEventListener('change', function (e) { 
+        document.getElementById('file-banner').addEventListener('change', function (e) {
             var file = e.target.files[0];
             if (file.size == 0) {
                 return;
             }
-            
+
             if (!new RegExp('^image/', 'i').test(file.type)) {
                 return;
             }
-            
+
             // since a valid image is selected, render the banner in crop mode
             ues.global.dashboard.banner.cropMode = true;
             loadBanner();
@@ -2207,7 +2217,7 @@ $(function () {
             var srcCtx = srcCanvas.getContext('2d'),
                 objectUrl = URL.createObjectURL(file);
 
-            img.onload = function() {
+            img.onload = function () {
                 // draw the uploaded image on the canvas
                 srcCanvas.width = img.width;
                 srcCanvas.height = img.height;
@@ -2225,17 +2235,17 @@ $(function () {
                     cropBoxMovable: false,
                     cropBoxResizable: true,
 
-                    crop: function(e) {
+                    crop: function (e) {
                         // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                        var cropData = $srcCanvas.cropper('getData'), 
-                            destCanvas = document.getElementById('dest-canvas'), 
+                        var cropData = $srcCanvas.cropper('getData'),
+                            destCanvas = document.getElementById('dest-canvas'),
                             destCtx = destCanvas.getContext('2d');
 
-                        destCanvas.width = width; 
-                        destCanvas.height = height; 
+                        destCanvas.width = width;
+                        destCanvas.height = height;
 
-                        destCtx.drawImage (img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
-                        
+                        destCtx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
+
                         var dataUrl = destCanvas.toDataURL('image/jpeg');
                         $('#banner-data').val(dataUrl);
                     }
@@ -2243,21 +2253,21 @@ $(function () {
             }
             img.src = objectUrl;
         }, false);
-        
+
         // event handler for the banner edit button
-        $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
             $('#file-banner').click();
         });
-        
+
         // event handler for the banner save button
-        $('.ues-banner-placeholder').on('click', '#btn-save-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-save-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
             var cropData = $form.find('#banner-data').val();
 
             $.ajax({
                 url: $form.attr('action'),
                 type: $form.attr('method'),
-                data: { 'data': cropData },
+                data: {'data': cropData},
             }).success(function (d) {
 
                 if (ues.global.dashboard.isUserCustom) {
@@ -2269,29 +2279,29 @@ $(function () {
                 loadBanner();
             });
         });
-        
+
         // event handler for the banner cancel button
-        $('.ues-banner-placeholder').on('click', '#btn-cancel-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-cancel-banner', function (e) {
             ues.global.dashboard.banner.cropMode = false;
             $('#file-banner').val('');
             loadBanner();
         });
-        
+
         // event handler for the banner remove button
-        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             $.ajax({
                 url: $('#ues-dashboard-upload-banner-form').attr('action'),
                 type: 'DELETE',
-            }).success(function (d) {                
+            }).success(function (d) {
 
                 if (ues.global.dashboard.isUserCustom) {
                     ues.global.dashboard.banner.customBannerExists = false;
                 } else {
-                    ues.global.dashboard.banner.globalBannerExists = false; 
+                    ues.global.dashboard.banner.globalBannerExists = false;
                 }
                 ues.global.dashboard.banner.cropMode = false;
                 loadBanner();
-            }); 
+            });
         });
     }
 

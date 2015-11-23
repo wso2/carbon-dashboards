@@ -5,7 +5,6 @@ $(function () {
     var containerPrefix = 'gadget-';
 
     var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
-    var componentMaxViewHbs = Handlebars.compile($("#ues-component-full-hbs").html() || '');
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html() || '');
     var page;
 
@@ -41,7 +40,7 @@ $(function () {
                 // render max view
                 
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
-                
+
                 var height = $(window).height();
                 
                 componentContainer
