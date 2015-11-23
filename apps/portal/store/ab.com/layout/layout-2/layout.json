@@ -1,0 +1,8 @@
+{
+    "id": "layout-2",
+    "title": "Right Grid",
+    "description": "This is a sample grid",
+    "thumbnail": "store://layout/layout-2/index.png",
+    "url": "store://layout/layout-2/index.hbs"
+}
+
