@@ -1,0 +1,8 @@
+{
+    "id": "balanced",
+    "title": "Balanced layout",
+    "description": "This is a balanced layout",
+    "thumbnail": "store://layout/balanced/index.png",
+    "url": "store://layout/balanced/index.hbs"
+}
+

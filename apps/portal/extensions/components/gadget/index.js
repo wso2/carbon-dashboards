@@ -120,13 +120,20 @@
             var cid = containerId(comp.id);
             var gid = gadgetId(comp.id);
             var panel = createPanel(styles);
-            var compHeight = $(document).height() - 200;
-            var height = (comp.viewOption ? compHeight : '');
+
+            
+            var compHeight = $('#ues-designer').height() - 220;
+            var height = (comp.viewOption && comp.viewOption == 'full' ? compHeight : '');
+            
             if (ues.global.dbType === 'default'){
                 hasCustomUserPrefView(metadata, comp);
                 hasCustomFullView(metadata, comp);
             }
-            var container = $('<div id="' + cid + '" style="height:' + height + 'px;"></div>');
+            
+            var container = $('<div />').attr('id', cid);
+            if (height) {
+                container.css('height', height + 'px');
+            }
             container.appendTo(panel.find('.panel-body'));
             panel.appendTo(sandbox);
             var renderParams = {};

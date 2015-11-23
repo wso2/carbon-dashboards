@@ -1,8 +1,0 @@
-{
-    "id": "layout-banner",
-    "title": "Balanced Grid With Banner",
-    "description": "This is a sample grid",
-    "thumbnail": "store://layout/layout-banner/index.png",
-    "url": "store://layout/layout-banner/index.hbs"
-}
-
