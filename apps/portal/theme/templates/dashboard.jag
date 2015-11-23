@@ -36,6 +36,9 @@
         isAnonView = true;
     } else{
         isAnonView = JSON.parse(isAnonView);
+        if(user.domain != urlDomain){
+            isAnonView = true;
+        }
     }
    
     // Check whether the layout is fluid
@@ -93,6 +96,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
+                 if(urlDomain == user.domain){
                     if (user.isEditor) { %>
                         <li>
                             <a class="ues-copy" href="<%=dbRoot%>?editor=true">
@@ -113,7 +117,8 @@
                                     <%= i18n.localize("personalize")%>
                                 </a>
                             </li>
-                    <% } %>
+
+                        <% }}%>
                 <li>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                <%= user ? user.username : "anon" %> <span class="caret"></span>

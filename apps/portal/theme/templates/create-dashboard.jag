@@ -18,8 +18,8 @@
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./"><%= i18n.localize("dashboards.lable")%></a></li>
-                <li><a href="<%=tenantedUrlPrefix%>./">
+                <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable")%></a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./dashboards">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-cancel fw-stack-1x"></i>
@@ -31,7 +31,7 @@
     <div class="ues-tiles-menu">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> <%= i18n.localize("dashboards.lable")%></a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i> <%= i18n.localize("dashboards.lable")%></a></li>
             </ul>
         </div>
     </div>
