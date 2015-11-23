@@ -43,7 +43,7 @@ $(function () {
      * @return boolean
      * @private
      * */
-    var sanitizeOnKeyPress = function (element, event,regEx) {
+    var sanitizeOnKeyPress = function (element, event, regEx) {
         var code;
         if (event.keyCode) {
             code = event.keyCode;
@@ -117,7 +117,7 @@ $(function () {
     };
 
     $('#ues-dashboard-title').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e,/[^a-z0-9-\s]/gim);
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#title-error"));
@@ -142,15 +142,15 @@ $(function () {
     });
 
     $('#ues-dashboard-description').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e,/[^a-z0-9-.\s]/gim);
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
     });
 
     $('#ues-dashboard-create').on('click', function () {
         var title = $("#ues-dashboard-title"),
             id = $("#ues-dashboard-id"),
-            url = "/portal/dashboards/" + id.val(),
             form = $('#ues-dashboard-form'),
             action = form.attr('action'),
+            url = action + "/" + id.val(),
             titleError = $("#title-error"),
             idError = $("#id-error");
 

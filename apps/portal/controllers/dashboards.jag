@@ -63,6 +63,11 @@ var fresh;
             return;
         }
 
+        if (user && !urlDomain && user.domain != superDomain) {
+            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain)+ "dashboards/" + dashboardId);
+            return;
+        }
+
         editor = request.getParameter('editor');
         editor ? include('includes/designer.jag') : include('includes/renderer.jag');
         return;

@@ -32,7 +32,7 @@
         isAnonView = true;
     } else{
         isAnonView = JSON.parse(isAnonView);
-        if(user.domain != urlDomain){
+        if(user.domain != urlDomain && urlDomain){
             isAnonView = true;
         }
     }
