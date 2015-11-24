@@ -3,7 +3,7 @@
         "type": "fs"
     },
     "authentication": {
-    	"activeMethod" : "sso",
+    	"activeMethod" : "basic",
     	"methods": {
             "sso": {
                 "attributes": {
