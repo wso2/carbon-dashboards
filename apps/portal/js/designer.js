@@ -14,7 +14,7 @@ $(function () {
     var DEFAULT_DASHBOARD_VIEW = 'default';
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
 
-    var lang = navigator.language || navigator.userLanguage || navigator.browserLanguage;
+    var lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
 
     var dashboard;
 
@@ -33,6 +33,8 @@ $(function () {
         widget: [],
         layout: []
     };
+    
+    var gridster;
 
     $(document).ready(function () {
         $(".nav li.disabled a").click(function () {
@@ -64,6 +66,8 @@ $(function () {
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html() || '');
 
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html() || '');
+    
+    var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || '');
 
     /**
      * generates a random id
@@ -82,8 +86,8 @@ $(function () {
     var showWorkspace = function (name) {
         $('.ues-workspace').hide();
         $('#ues-workspace-' + name).show();
-        
-        if(name === 'designer') {
+
+        if (name === 'designer') {
             initBanner();
         }
     };
@@ -510,12 +514,15 @@ $(function () {
      * @private
      */
     var saveDashboard = function () {
-        var method;
-        var url;
+        var method,
+            url,
+            isRedirect = false;
+
         if (freshDashboard) {
             freshDashboard = false;
             method = 'POST';
             url = dashboardsApi;
+            isRedirect = true;
         } else {
             method = 'PUT';
             url = dashboardsApi + '/' + dashboard.id;
@@ -527,10 +534,17 @@ $(function () {
             contentType: 'application/json'
         }).success(function (data) {
             console.log('dashboard saved successfully');
+            if (isRedirect) {
+                isRedirect = false;
+                window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
+            }
         }).error(function () {
             console.log('error saving dashboard');
         });
     };
+    
+    var gridsterUlDimension = { };
+    var designerScrollTop = 0;
 
     /**
      * initializes the component toolbar
@@ -539,24 +553,55 @@ $(function () {
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
         designer.on('click', 'a.ues-component-full-handle', function () {
-            var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
-            var componentContainer = $('#' + $(this).closest('.ues-component-box').attr('id'));
-            var view = DEFAULT_DASHBOARD_VIEW;
+            
+            var id = $(this).closest('.ues-component').attr('id'),
+                component = findComponent(id),
+                componentContainer = $(this).closest('.ues-component-box'),
+                componentContainerId = componentContainer.attr('id'),
+                gridsterUl = $('.gridster > ul');
+            
             if (component.fullViewPoped) {
-                view = DEFAULT_DASHBOARD_VIEW;
-                renderMaxView(component, view);
+                // rendering normal view
+                
+                gridster.enable().enable_resize();
+                
+                // restore the size of the gridster ul
+                gridsterUl.width(gridsterUlDimension.width).height(gridsterUlDimension.height);
+                
+                $('.ues-component-box').show();
+                
                 //minimize logic
-                componentContainer.removeClass('ues-fullview-visible');
-                componentContainer.find('.panel-body').css('height', 'auto');
+                componentContainer
+                    .removeClass('ues-fullview-visible')
+                    .css('height', '');
+                
+                // restore the scroll position
+                designer.scrollTop(designerScrollTop);
+                
+                renderMaxView(component, DEFAULT_DASHBOARD_VIEW);
+                
                 component.fullViewPoped = false;
             } else {
-                view = 'full';
-                renderMaxView(component, view);
+                // rendering full view
+                
+                // backup the scroll position
+                designerScrollTop = designer.scrollTop();
+                
+                gridster.disable().disable_resize();
+                
+                // backup the size of the gridster ul and reset element size
+                gridsterUlDimension = { width: gridsterUl.width(), height: gridsterUl.height() };
+                gridsterUl.width('auto').height('auto');
+                
+                $('.ues-component-box:not(#' + componentContainerId + ')').hide();
+                
                 //maximize logic
-                componentContainer.addClass('ues-fullview-visible');
-                var height = $('.ues-layout').height();
-                componentContainer.find('.panel-body').css('height', height + 'px');
+                componentContainer
+                    .addClass('ues-fullview-visible')
+                    .css('height', (designer.height() - 100) + 'px');
+                
+                renderMaxView(component, 'full');
+                
                 component.fullViewPoped = true;
             }
         });
@@ -1001,7 +1046,7 @@ $(function () {
      * */
     var checkForPagesById = function (pageId) {
         var isPageAvailable = false;
-        for (var availablePage in dashboard.pages) {
+        for (var availablePage = 0; availablePage < dashboard.pages.length; availablePage++) {
             if (dashboard.pages[availablePage].id == pageId) {
                 isPageAvailable = true;
                 break;
@@ -1017,10 +1062,10 @@ $(function () {
      * @return boolean
      * @private
      * */
-    var checkForPagesByTitle = function(pageTitle){
+    var checkForPagesByTitle = function (pageTitle) {
         var isPageAvailable = false;
-        for(var availablePage in dashboard.pages){
-            if(dashboard.pages[availablePage].title.toUpperCase() == pageTitle.toUpperCase()){
+        for (var availablePage = 0; availablePage < dashboard.pages.length; availablePage++) {
+            if (dashboard.pages[availablePage].title.toUpperCase() == pageTitle.toUpperCase()) {
                 isPageAvailable = true;
                 break;
             }
@@ -1088,102 +1133,135 @@ $(function () {
 
     /**
      * update page options
-     * @param sandbox
+     * @param e
      * @private
      */
-    var updatePageProperties = function (sandbox) {
+    var updatePageProperties = function (e) {
+        
         var titleError = $("#title-error"),
             idError = $("#id-error"),
-            id = $.trim($('.id', sandbox).val()),
-            title = $.trim($('.title', sandbox).val()),
-            landing = $('.landing', sandbox),
-            toggleView = $('#toggle-dashboard-view'),
-            anon = $('.anon', sandbox);
-
-        hideInlineError($('.title', sandbox), titleError);
-        hideInlineError($('.id', sandbox), idError);
-
-        if (!title || !id) {
-            !title ? showInlineError($('.title', sandbox), titleError) : showInlineError($(".id", sandbox), idError);
+            hasError = false,
+            id = $('input[name=id]', e),
+            title = $('input[name=title]', e),
+            idVal = $.trim(id.val()),
+            titleVal = $.trim(title.val());
+        
+        // validate inputs
+        hideInlineError(id, idError);
+        hideInlineError(title, titleError);
+        
+        if (!idVal) {
+            showInlineError(id, idError);
+            hasError = true;
+        }
+        
+        if(!titleVal) {
+            showInlineError(title, titleError);
+            hasError = true;
+        }
+        
+        if (hasError) {
             return;
         }
-
-        if (sandbox.context.className == "form-control id") {
-            if (checkForPagesById(id) && page.id != id) {
-                generateMessage("error", "A page with entered URL already exists. Please select a different URL");
-                $('.id', sandbox).val(page.id);
-            } else {
-                page.id = id;
-                if (landing.is(":checked")) {
-                    dashboard.landing = id;
-                }
-            }
-        }
-
-        if(sandbox.context.className == "form-control title"){
-            if(checkForPagesByTitle(title) && page.title.toUpperCase() != title.toUpperCase()){
-                generateMessage("error","A page with entered title already exists. Please select a different title");
-                $('.title',sandbox).val(page.title);
-                title = page.title;
-            }else{
-                page.title = title;
-            }
-        }
-
-        if (sandbox.context.className == "landing" && landing.is(':checked')) {
-            if (checkForAnonPages(id) && !page.isanon) {
-                $(landing).prop("checked", false);
-                generateMessage("error", "Please add an anonymous view to this page before select it as the landing page");
-            } else {
-                dashboard.landing = id;
-            }
-        }
-
-        if (sandbox.context.className == "anon") {
-            if (anon.is(':checked')) {
-                if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == id) {
-                    ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
-                    dashboard.isanon = true;
-                    page.isanon = true;
-                    $(".toggle-design-view").removeClass("hide");
-                    toggleView.bootstrapToggle('off');
+        
+        var landing = $('input[name=landing]', e),
+            toggleView = $('#toggle-dashboard-view'),
+            anon = $('input[name=anon]', e),
+            fluidLayout = $('input[name=fluidLayout]', e), 
+            hasAnonPages = checkForAnonPages(idVal);
+        
+        var fn = { 
+            id: function() {
+                
+                if (checkForPagesById(idVal) && page.id != idVal) {
+                    generateMessage("error", "A page with entered URL already exists. Please select a different URL");
+                    id.val(page.id);
                 } else {
-                    $(anon).prop("checked", false);
-                    generateMessage("error", "Please add an anonymous view to the landing page in order to make this page anonymous");
-                }
-            }
-            else {
-                if (checkForAnonPages(dashboard.landing) && dashboard.landing == id) {
-                    $(anon).prop("checked", true);
-                    generateMessage("error", "There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page");
-                } else {
-                    //TODO switch to anon dashboard
-                    if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
-                        dashboard.isanon = false;
+                    page.id = idVal;
+                    if (landing.is(":checked")) {
+                        dashboard.landing = idVal;
                     }
-
-                    page.isanon = false;
-
-                    $(".toggle-design-view").addClass("hide");
-
-                    if (toggleView.prop("checked")) {
-                        toggleView.bootstrapToggle('on');
+                }
+                
+            }, 
+            title: function() {
+                
+                if (checkForPagesByTitle(titleVal) && page.title.toUpperCase() != titleVal.toUpperCase()){
+                    generateMessage("error", "A page with entered title already exists. Please select a different title");
+                    title.val(page.title);
+                    titleVal = page.title;
+                } else {
+                    page.title = titleVal;
+                }
+               
+                $('#ues-designer .ues-page-title .page-title').text(titleVal);
+                $('#ues-properties .ues-page-title').find().text(titleVal);
+                
+            }, 
+            landing: function() {
+                
+                if (landing.is(':checked')) {
+                    if (hasAnonPages && !page.isanon) {
+                        landing.prop("checked", false);
+                        generateMessage("error", "Please add an anonymous view to this page before select it as the landing page");
                     } else {
-                        toggleView.bootstrapToggle('off');
+                        dashboard.landing = idVal;
                     }
-
-                    page.content.anon = {};
                 }
+                
+            }, 
+            anon: function() {
+                
+                if (anon.is(':checked')) {
+                    if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == idVal) {
+                        ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
+                        dashboard.isanon = true;
+                        page.isanon = true;
+                        // create the template if there is no content create before
+                        page.layout.content.anon = page.layout.content.anon ||  page.layout.content.loggedIn;
+                        $(".toggle-design-view").removeClass("hide");
+                        toggleView.bootstrapToggle('off');
+                    } else {
+                        $(anon).prop("checked", false);
+                        generateMessage("error", "Please add an anonymous view to the landing page in order to make this page anonymous");
+                    }
+                } else {
+                    if (hasAnonPages && dashboard.landing == idVal) {
+                        $(anon).prop("checked", true);
+                        generateMessage("error", "There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page");
+                    } else {
+                        // switch to anon dashboard
+                        if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
+                            dashboard.isanon = false;
+                        }
+
+                        page.isanon = false;
+                        
+                        // the anon layout should not be deleted since the gadgets in this layout is already there in the content
+
+                        $(".toggle-design-view").addClass("hide");
+
+                        toggleView.bootstrapToggle(toggleView.prop("checked") ? 'on' : 'off');
+
+                        page.content.anon = { };
+                    }
+                }
+                
+            },
+            fluidLayout: function() {
+                page.layout.fluidLayout = fluidLayout.is(':checked');
             }
+        };
+        
+        if (typeof fn[e.context.name] === 'function') {
+            fn[e.context.name]();
+            
+            updatePagesList();
+            saveDashboard();
+            
+        } else {
+            console.error('function not implemented')
         }
-
-        if (sandbox.context.className == "form-control title") {
-            $('#ues-designer').find('.ues-page-title').find(".page-title").text(title);
-            $('#ues-properties').find('.ues-page-title').text(title);
-        }
-
-        updatePagesList();
-        saveDashboard();
     };
 
     /**
@@ -1220,7 +1298,8 @@ $(function () {
             title: page.title,
             landing: (dashboard.landing == page.id),
             isanon: page.isanon,
-            isUserCustom: dashboard.isUserCustom
+            isUserCustom: dashboard.isUserCustom,
+            fluidLayout: page.layout.fluidLayout || false
         })).find('.ues-sandbox').on('change', 'input', function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
@@ -1321,7 +1400,6 @@ $(function () {
         styles.titlePosition = $('.ues-styles .ues-title-position', sandbox).val();
         var compLocale = findComponent(id).content.locale_titles || {};
         compLocale[lang] = $('.ues-styles .ues-localized-title', sandbox).val();
-
     };
 
     /**
@@ -1564,11 +1642,11 @@ $(function () {
         actions.find('.ues-pages-list').on('click', 'li a', function () {
             var thiz = $(this);
             var pid = thiz.data('id');
-            
+
             ues.global.isSwitchToNewPage = true;
             switchPage(pid, pageType);
             ues.global.isSwitchToNewPage = false;
-            
+
             initBanner();
         });
 
@@ -1643,9 +1721,52 @@ $(function () {
                     }
                 }
             }
+
             saveDashboard();
         });
     };
+
+    /**
+     * initialized adding block function
+     */
+    var initAddBlock = function() {
+
+        // add block handler
+        $('#ues-add-block-btn').on('click', function() {
+
+            var width = parseInt($('#dummy-size').attr('data-w')) || 0, 
+                height = parseInt($('#dummy-size').attr('data-h')) || 0;
+
+            if (width == 0 || height == 0) {
+                return;
+            }
+
+            gridster.add_widget(componentBoxListHbs({ blocks: [{ id: guid() }] }), width, height, 1, 1);
+            updateLayout();
+
+            $('#ues-add-block-menu-item').removeClass('open');
+            
+            listenLayout();
+        });
+
+        var dummyGadgetWidth = 30;
+
+        $('#dummy-gadget').resizable({
+            grid : dummyGadgetWidth,
+            containment : "#dummy-gadget-container",
+            resize : function(event, ui) {
+
+                var h = Math.round($(this).height() / dummyGadgetWidth), 
+                    w = Math.round($(this).width() / dummyGadgetWidth), 
+                    display = w + "x" + h;
+
+                $(this).find('#dummy-size').html(display).attr({
+                    'data-w' : w,
+                    'data-h' : h
+                });
+            }
+        });
+    }
 
     /**
      * initializes the UI
@@ -1661,6 +1782,7 @@ $(function () {
         initComponents();
         initUESProperties();
         initToggleView();
+        initAddBlock();
     };
 
     /**
@@ -1668,7 +1790,7 @@ $(function () {
      * @private
      */
     var listenLayout = function () {
-        $('#ues-designer').find('.ues-component-box').droppable({
+        $('#ues-designer').find('.ues-component-box:not([data-banner=true])').droppable({
             //activeClass: 'ui-state-default',
             hoverClass: 'ui-state-hover',
             //accept: ':not(.ui-sortable-helper)',
@@ -1729,20 +1851,26 @@ $(function () {
      * @private
      */
     var createPage = function (options, lid, done) {
-        var layout = findStoreCache('layout', lid);
+        var layout = findStoreCache('layout', lid);        
         $.get(resolveURI(layout.url), function (data) {
-            layout.content = data;
+            
             var id = options.id;
             var page = {
                 id: id,
                 title: options.title,
-                layout: layout,
+                layout: { 
+                    content: {
+                        loggedIn: JSON.parse(data),
+                    },
+                    fluidLayout: false
+                },
                 isanon: false,
                 content: {
                     default: {},
                     anon: {}
                 }
             };
+            
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = false;
             dashboard.pages.push(page);
@@ -1788,6 +1916,48 @@ $(function () {
     };
 
     /**
+     * update the layout after modification
+     */
+    var updateLayout = function() { 
+        
+        // extract the layout from the designer (gridster) and save it
+        var json = { blocks: gridster.serialize() }, 
+            id, i;
+        
+        // find the current page index
+        for(i = 0; i < ues.global.dashboard.pages.length; i++) {
+            if (ues.global.dashboard.pages[i].id === page.id) {
+                id = i;
+            }
+        }
+        
+        if (typeof id === 'undefined') {
+        	throw 'specified page : ' + page.id + ' cannot be found';
+        }
+        
+        if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
+            ues.global.dashboard.pages[id].layout.content.anon = json;
+        } else {
+            ues.global.dashboard.pages[id].layout.content.loggedIn = json;
+        }
+    
+        saveDashboard();
+    }
+
+    /**
+     * generate GUID
+     * @returns {*}
+     */
+    function guid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
+    }
+
+    /**
      * renders the given page
      * @param pid
      * @param done
@@ -1821,12 +1991,75 @@ $(function () {
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
+            
+            var gridsterContainer = $('.gridster > ul'), 
+                minBlockWidth = Math.ceil($('.gridster').width() / 12) - 10,
+                minBlockHeight = minBlockWidth + 30;
+            
+            // bind the gridster
+            gridster = gridsterContainer.gridster({
+                widget_margins: [5, 5],
+                widget_base_dimensions: [minBlockWidth, minBlockHeight],
+                min_cols: 12,
+                serialize_params: function (el, coords) {
+                    return {
+                        id: el.prop('id'),
+                        col: coords.col,
+                        row: coords.row,
+                        size_x: coords.size_x,
+                        size_y: coords.size_y,
+                        banner: el.attr('data-banner') == 'true'
+                    };
+                },
+                draggable: {
+                    handle: '.ues-component-box-header',
+                    stop: function() {
+                        updateLayout();
+                    }
+                },
+                resize: {
+                    enabled: true,
+                    max_size: [12, 12],
+                    stop: function() {
+                        updateLayout();
+                    }
+                }
+            }).data('gridster');
+            
+            // stop resizing banner placeholder
+            $('.gridster [data-banner=true] .gs-resize-handle').remove();
+            
+            // remove block handler
+            $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
+                var componentBox = $(this).closest('.ues-component-box');
+                
+                componentBox.find('.ues-component').each(function(i, component) {
+                    var componentId = $(component).attr('id');
+                    
+                    removeComponent(findComponent(componentId), function (err) {
+                        if (err) {
+                            console.error(err);
+                        }
+                        saveDashboard();
+                    });
+                });
+                
+                gridster.remove_widget(componentBox, function() {
+                    updateLayout(); 
+                });
+            });
+            
             if (!done) {
                 return;
             }
             done(err);
+        }, true);
+        
+        // stop closing the add block dropdown on clicking
+        $('#ues-add-block-menu').on('click', function(e) {
+            e.stopPropagation();
         });
-
+        
         updatePagesList();
         initToggleView();
 
@@ -1912,22 +2145,25 @@ $(function () {
         }
         renderPage(page || db.landing || pages[0].id);
     };
-    
+
     /**
      * load the content within the banner placeholder
      */
-    var loadBanner = function() {        
-        
-        ues.global.dashboard.banner = ues.global.dashboard.banner || { globalBannerExists: false, customBannerExists: false };
-        
+    var loadBanner = function () {
+
+        ues.global.dashboard.banner = ues.global.dashboard.banner || {
+                globalBannerExists: false,
+                customBannerExists: false
+            };
+
         var $placeholder = $('.ues-banner-placeholder'),
             customDashboard = ues.global.dashboard.isUserCustom || false,
             banner = ues.global.dashboard.banner;
-        
+
         var bannerExists = banner.globalBannerExists || banner.customBannerExists;
-        
+
         // create the view model to be passed to handlebar
-        var data = { 
+        var data = {
             isAdd: !bannerExists && !banner.cropMode,
             isEdit: bannerExists && !banner.cropMode,
             isCrop: banner.cropMode,
@@ -1935,43 +2171,44 @@ $(function () {
             showRemove: (customDashboard && banner.customBannerExists) || !customDashboard
         };
         $placeholder.html(bannerHbs(data));
-        
+
         // display the image 
         var img = $placeholder.find('#img-banner');
-        if (bannerExists) {            
+        if (bannerExists) {
             img.attr('src', img.data('src') + '?rand=' + Math.floor(Math.random() * 100000)).show();
         } else {
             img.hide();
         }
     }
-    
+
     /**
      * initialize the banner
-     */ 
-    var initBanner = function() {
-        
+     */
+    var initBanner = function () {
+
         loadBanner();
-        
+
         // bind a handler to the change event of the file element
-        document.getElementById('file-banner').addEventListener('change', function (e) { 
+        document.getElementById('file-banner').addEventListener('change', function (e) {
             var file = e.target.files[0];
             if (file.size == 0) {
                 return;
             }
-            
+
             if (!new RegExp('^image/', 'i').test(file.type)) {
                 return;
             }
-            
+
             // since a valid image is selected, render the banner in crop mode
             ues.global.dashboard.banner.cropMode = true;
             loadBanner();
-
-            var srcCanvas = document.getElementById('src-canvas'),
+            
+            var $placeholder = $('.ues-banner-placeholder'),
+                srcCanvas = document.getElementById('src-canvas'),
                 $srcCanvas = $(srcCanvas),
                 img = new Image(),
-                width = 1170,
-                height = 300;
+                width = $placeholder.width(),
+                height = $placeholder.height();
 
             // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
             $srcCanvas.cropper('destroy');
@@ -1980,7 +2217,7 @@ $(function () {
             var srcCtx = srcCanvas.getContext('2d'),
                 objectUrl = URL.createObjectURL(file);
 
-            img.onload = function() {
+            img.onload = function () {
                 // draw the uploaded image on the canvas
                 srcCanvas.width = img.width;
                 srcCanvas.height = img.height;
@@ -1998,17 +2235,17 @@ $(function () {
                     cropBoxMovable: false,
                     cropBoxResizable: true,
 
-                    crop: function(e) {
+                    crop: function (e) {
                         // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                        var cropData = $srcCanvas.cropper('getData'), 
-                            destCanvas = document.getElementById('dest-canvas'), 
+                        var cropData = $srcCanvas.cropper('getData'),
+                            destCanvas = document.getElementById('dest-canvas'),
                             destCtx = destCanvas.getContext('2d');
 
-                        destCanvas.width = width; 
-                        destCanvas.height = height; 
+                        destCanvas.width = width;
+                        destCanvas.height = height;
 
-                        destCtx.drawImage (img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
-                        
+                        destCtx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
+
                         var dataUrl = destCanvas.toDataURL('image/jpeg');
                         $('#banner-data').val(dataUrl);
                     }
@@ -2016,21 +2253,21 @@ $(function () {
             }
             img.src = objectUrl;
         }, false);
-        
+
         // event handler for the banner edit button
-        $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
             $('#file-banner').click();
         });
-        
+
         // event handler for the banner save button
-        $('.ues-banner-placeholder').on('click', '#btn-save-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-save-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
             var cropData = $form.find('#banner-data').val();
 
             $.ajax({
                 url: $form.attr('action'),
                 type: $form.attr('method'),
-                data: { 'data': cropData },
+                data: {'data': cropData},
             }).success(function (d) {
 
                 if (ues.global.dashboard.isUserCustom) {
@@ -2042,29 +2279,29 @@ $(function () {
                 loadBanner();
             });
         });
-        
+
         // event handler for the banner cancel button
-        $('.ues-banner-placeholder').on('click', '#btn-cancel-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-cancel-banner', function (e) {
             ues.global.dashboard.banner.cropMode = false;
             $('#file-banner').val('');
             loadBanner();
         });
-        
+
         // event handler for the banner remove button
-        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function(e) {
+        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             $.ajax({
                 url: $('#ues-dashboard-upload-banner-form').attr('action'),
                 type: 'DELETE',
-            }).success(function (d) {                
+            }).success(function (d) {
 
                 if (ues.global.dashboard.isUserCustom) {
                     ues.global.dashboard.banner.customBannerExists = false;
                 } else {
-                    ues.global.dashboard.banner.globalBannerExists = false; 
+                    ues.global.dashboard.banner.globalBannerExists = false;
                 }
                 ues.global.dashboard.banner.cropMode = false;
                 loadBanner();
-            }); 
+            });
         });
     }
 

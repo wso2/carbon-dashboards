@@ -14,8 +14,19 @@ var fresh;
         pageId = vars.page;
     }
 
+    // If User request for portal/dashboards, redirect user to dashboard list.
     if (!dashboardId) {
-        response.sendRedirect(tenantedUrlPrefix + 'create-dashboard');
+        if (!user) {
+            sendLogin();
+            return;
+        }
+
+        if (userDomain !== (urlDomain || superDomain)) {
+            response.sendError(401, 'designer access not authorized of this tenant');
+            return;
+        }
+
+        include(utils.resolvePath("templates/index.jag"));
         return;
     }
 
@@ -38,17 +49,22 @@ var fresh;
 
         isCustomize = request.getParameter('custom');
 
-        if(isCustomize){
+        if (isCustomize) {
             dashboards.copy(dashboard);
-            response.sendRedirect(tenantedUrlPrefix +'dashboards/' + dashboardId+ '?editor=true');
+            response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
             return;
         }
 
         toReset = request.getParameter('reset');
 
-        if(toReset){
+        if (toReset) {
             dashboards.reset(dashboard.id);
-            response.sendRedirect(tenantedUrlPrefix +'dashboards/' + dashboardId);
+            response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId);
+            return;
+        }
+
+        if (user && !urlDomain && user.domain != superDomain) {
+            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain)+ "dashboards/" + dashboardId);
             return;
         }
 
