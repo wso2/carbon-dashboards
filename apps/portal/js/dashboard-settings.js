@@ -37,12 +37,30 @@ $(function () {
                 isUrl: dashboard.identityServerUrl
             }
         }).success(function (data) {
-            $("#ues-access-token-url").val(data.accessTokenUrl);
-            $("#ues-api-key").val(data.key);
-            $("#ues-api-secret").val(data.secret);
+            if ($.trim(data.accessTokenUrl) == '' || $.trim(data.key) == '' || $.trim(data.secret) == '') {
+                showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "Entered URL is not pointed to a valid Identity Server.");
+                setOAuthSettingsFields('', '', '');
+            } else {
+                hideInlineError($("#ues-is-url"), $("#is-url-error"));
+                setOAuthSettingsFields(data.accessTokenUrl, data.key, data.secret);
+            }
         }).error(function () {
+            showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "Error occured in server.");
             console.log('error saving dashboard');
         });
+    };
+
+    /**
+     * Set field values for OAuth settings
+     * @param1 access token url
+     * @param2 api key
+     * @param3 api secret
+     * @private
+     * */
+    var setOAuthSettingsFields = function (aturl, ak, as) {
+        $("#ues-access-token-url").val(aturl);
+        $("#ues-api-key").val(ak);
+        $("#ues-api-secret").val(as);
     };
 
     var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
@@ -117,6 +135,24 @@ $(function () {
         element.parent().find("span.glyphicon").addClass("hide");
         errorElement.removeClass("show");
         errorElement.addClass("hide");
+    };
+
+    /**
+     * Show error style for oauth element
+     * @param1 element
+     * @param2 errorElement
+     * @param3 error message
+     * @private
+     * */
+    var showOAuthInlineError = function (element, errorElement, errorMessage) {
+        //element.val('');
+        element.parent().addClass("has-error");
+        element.addClass("has-error");
+        element.parent().find("span.glyphicon").removeClass("hide");
+        element.parent().find("span.glyphicon").addClass("show");
+        errorElement.removeClass("hide");
+        errorElement.addClass("show");
+        errorElement.html(errorMessage);
     };
 
     var initExistingRoles = function () {
@@ -245,12 +281,19 @@ $(function () {
                 $('#ues-is-url').removeAttr("disabled");
             } else {
                 $("#ues-is-url").attr("disabled", "disabled");
+                hideInlineError($("#ues-is-url"), $("#is-url-error"));
             }
         });
 
         $('#ues-is-url').on('change', function () {
-            dashboard.identityServerUrl = $(this).val();
-            getOauthSettings();
+            if ($.trim($(this).val()) == '') {
+                showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "This field is required.");
+                setOAuthSettingsFields('', '', '');
+            } else {
+                hideInlineError($("#ues-is-url"), $("#is-url-error"));
+                dashboard.identityServerUrl = $(this).val();
+                getOauthSettings();
+            }
         });
 
         var menu = $('.ues-context-menu');
