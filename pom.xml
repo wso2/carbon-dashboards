@@ -42,7 +42,7 @@
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
         <carbon.dashboards.version>1.0.9-SNAPSHOT</carbon.dashboards.version>
-        <carbon.kernel.version>4.4.1</carbon.kernel.version>
+        <carbon.kernel.version>4.4.2</carbon.kernel.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
     </properties>
 
