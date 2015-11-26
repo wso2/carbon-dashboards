@@ -33,7 +33,7 @@ $(function () {
         widget: [],
         layout: []
     };
-    
+
     var gridster;
 
     $(document).ready(function () {
@@ -66,7 +66,7 @@ $(function () {
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html() || '');
 
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html() || '');
-    
+
     var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || '');
 
     /**
@@ -542,8 +542,8 @@ $(function () {
             console.log('error saving dashboard');
         });
     };
-    
-    var gridsterUlDimension = { };
+
+    var gridsterUlDimension = {};
     var designerScrollTop = 0;
 
     /**
@@ -553,55 +553,55 @@ $(function () {
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
         designer.on('click', 'a.ues-component-full-handle', function () {
-            
+
             var id = $(this).closest('.ues-component').attr('id'),
                 component = findComponent(id),
                 componentContainer = $(this).closest('.ues-component-box'),
                 componentContainerId = componentContainer.attr('id'),
                 gridsterUl = $('.gridster > ul');
-            
+
             if (component.fullViewPoped) {
                 // rendering normal view
-                
+
                 gridster.enable().enable_resize();
-                
+
                 // restore the size of the gridster ul
                 gridsterUl.width(gridsterUlDimension.width).height(gridsterUlDimension.height);
-                
+
                 $('.ues-component-box').show();
-                
+
                 //minimize logic
                 componentContainer
                     .removeClass('ues-fullview-visible')
                     .css('height', '');
-                
+
                 // restore the scroll position
                 designer.scrollTop(designerScrollTop);
-                
+
                 renderMaxView(component, DEFAULT_DASHBOARD_VIEW);
-                
+
                 component.fullViewPoped = false;
             } else {
                 // rendering full view
-                
+
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
-                
+
                 gridster.disable().disable_resize();
-                
+
                 // backup the size of the gridster ul and reset element size
-                gridsterUlDimension = { width: gridsterUl.width(), height: gridsterUl.height() };
+                gridsterUlDimension = {width: gridsterUl.width(), height: gridsterUl.height()};
                 gridsterUl.width('auto').height('auto');
-                
+
                 $('.ues-component-box:not(#' + componentContainerId + ')').hide();
-                
+
                 //maximize logic
                 componentContainer
                     .addClass('ues-fullview-visible')
                     .css('height', (designer.height() - 100) + 'px');
-                
+
                 renderMaxView(component, 'full');
-                
+
                 component.fullViewPoped = true;
             }
         });
@@ -1137,7 +1137,7 @@ $(function () {
      * @private
      */
     var updatePageProperties = function (e) {
-        
+
         var titleError = $("#title-error"),
             idError = $("#id-error"),
             hasError = false,
@@ -1145,34 +1145,34 @@ $(function () {
             title = $('input[name=title]', e),
             idVal = $.trim(id.val()),
             titleVal = $.trim(title.val());
-        
+
         // validate inputs
         hideInlineError(id, idError);
         hideInlineError(title, titleError);
-        
+
         if (!idVal) {
             showInlineError(id, idError);
             hasError = true;
         }
-        
-        if(!titleVal) {
+
+        if (!titleVal) {
             showInlineError(title, titleError);
             hasError = true;
         }
-        
+
         if (hasError) {
             return;
         }
-        
+
         var landing = $('input[name=landing]', e),
             toggleView = $('#toggle-dashboard-view'),
             anon = $('input[name=anon]', e),
-            fluidLayout = $('input[name=fluidLayout]', e), 
+            fluidLayout = $('input[name=fluidLayout]', e),
             hasAnonPages = checkForAnonPages(idVal);
-        
-        var fn = { 
-            id: function() {
-                
+
+        var fn = {
+            id: function () {
+
                 if (checkForPagesById(idVal) && page.id != idVal) {
                     generateMessage("error", "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
@@ -1182,24 +1182,24 @@ $(function () {
                         dashboard.landing = idVal;
                     }
                 }
-                
-            }, 
-            title: function() {
-                
-                if (checkForPagesByTitle(titleVal) && page.title.toUpperCase() != titleVal.toUpperCase()){
+
+            },
+            title: function () {
+
+                if (checkForPagesByTitle(titleVal) && page.title.toUpperCase() != titleVal.toUpperCase()) {
                     generateMessage("error", "A page with entered title already exists. Please select a different title");
                     title.val(page.title);
                     titleVal = page.title;
                 } else {
                     page.title = titleVal;
                 }
-               
+
                 $('#ues-designer .ues-page-title .page-title').text(titleVal);
                 $('#ues-properties .ues-page-title').find().text(titleVal);
-                
-            }, 
-            landing: function() {
-                
+
+            },
+            landing: function () {
+
                 if (landing.is(':checked')) {
                     if (hasAnonPages && !page.isanon) {
                         landing.prop("checked", false);
@@ -1208,17 +1208,17 @@ $(function () {
                         dashboard.landing = idVal;
                     }
                 }
-                
-            }, 
-            anon: function() {
-                
+
+            },
+            anon: function () {
+
                 if (anon.is(':checked')) {
                     if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == idVal) {
                         ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
                         dashboard.isanon = true;
                         page.isanon = true;
                         // create the template if there is no content create before
-                        page.layout.content.anon = page.layout.content.anon ||  page.layout.content.loggedIn;
+                        page.layout.content.anon = page.layout.content.anon || page.layout.content.loggedIn;
                         $(".toggle-design-view").removeClass("hide");
                         toggleView.bootstrapToggle('off');
                     } else {
@@ -1236,29 +1236,29 @@ $(function () {
                         }
 
                         page.isanon = false;
-                        
+
                         // the anon layout should not be deleted since the gadgets in this layout is already there in the content
 
                         $(".toggle-design-view").addClass("hide");
 
                         toggleView.bootstrapToggle(toggleView.prop("checked") ? 'on' : 'off');
 
-                        page.content.anon = { };
+                        page.content.anon = {};
                     }
                 }
-                
+
             },
-            fluidLayout: function() {
+            fluidLayout: function () {
                 page.layout.fluidLayout = fluidLayout.is(':checked');
             }
         };
-        
+
         if (typeof fn[e.context.name] === 'function') {
             fn[e.context.name]();
-            
+
             updatePagesList();
             saveDashboard();
-            
+
         } else {
             console.error('function not implemented')
         }
@@ -1280,7 +1280,7 @@ $(function () {
         }
 
         var character = String.fromCharCode(code);
-        if (character.match(regEx)) {
+        if (character.match(regEx) && code != 8 && code != 46) {
             return false;
         } else {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
@@ -1304,11 +1304,11 @@ $(function () {
             updatePageProperties($(this).closest('.ues-sandbox'));
         });
 
-        $(".form-control.title").on("keypress", function (e) {
+        $("#page-title").on("keypress", function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
         });
 
-        $(".form-control.id").on("keypress", function (e) {
+        $("#page-url").on("keypress", function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
         }).on("keyup", function (e) {
             var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
@@ -1729,40 +1729,40 @@ $(function () {
     /**
      * initialized adding block function
      */
-    var initAddBlock = function() {
+    var initAddBlock = function () {
 
         // add block handler
-        $('#ues-add-block-btn').on('click', function() {
+        $('#ues-add-block-btn').on('click', function () {
 
-            var width = parseInt($('#dummy-size').attr('data-w')) || 0, 
+            var width = parseInt($('#dummy-size').attr('data-w')) || 0,
                 height = parseInt($('#dummy-size').attr('data-h')) || 0;
 
             if (width == 0 || height == 0) {
                 return;
             }
 
-            gridster.add_widget(componentBoxListHbs({ blocks: [{ id: guid() }] }), width, height, 1, 1);
+            gridster.add_widget(componentBoxListHbs({blocks: [{id: guid()}]}), width, height, 1, 1);
             updateLayout();
 
             $('#ues-add-block-menu-item').removeClass('open');
-            
+
             listenLayout();
         });
 
         var dummyGadgetWidth = 30;
 
         $('#dummy-gadget').resizable({
-            grid : dummyGadgetWidth,
-            containment : "#dummy-gadget-container",
-            resize : function(event, ui) {
+            grid: dummyGadgetWidth,
+            containment: "#dummy-gadget-container",
+            resize: function (event, ui) {
 
-                var h = Math.round($(this).height() / dummyGadgetWidth), 
-                    w = Math.round($(this).width() / dummyGadgetWidth), 
+                var h = Math.round($(this).height() / dummyGadgetWidth),
+                    w = Math.round($(this).width() / dummyGadgetWidth),
                     display = w + "x" + h;
 
                 $(this).find('#dummy-size').html(display).attr({
-                    'data-w' : w,
-                    'data-h' : h
+                    'data-w': w,
+                    'data-h': h
                 });
             }
         });
@@ -1851,14 +1851,14 @@ $(function () {
      * @private
      */
     var createPage = function (options, lid, done) {
-        var layout = findStoreCache('layout', lid);        
+        var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
-            
+
             var id = options.id;
             var page = {
                 id: id,
                 title: options.title,
-                layout: { 
+                layout: {
                     content: {
                         loggedIn: JSON.parse(data),
                     },
@@ -1870,7 +1870,7 @@ $(function () {
                     anon: {}
                 }
             };
-            
+
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = false;
             dashboard.pages.push(page);
@@ -1918,29 +1918,29 @@ $(function () {
     /**
      * update the layout after modification
      */
-    var updateLayout = function() { 
-        
+    var updateLayout = function () {
+
         // extract the layout from the designer (gridster) and save it
-        var json = { blocks: gridster.serialize() }, 
+        var json = {blocks: gridster.serialize()},
             id, i;
-        
+
         // find the current page index
-        for(i = 0; i < ues.global.dashboard.pages.length; i++) {
+        for (i = 0; i < ues.global.dashboard.pages.length; i++) {
             if (ues.global.dashboard.pages[i].id === page.id) {
                 id = i;
             }
         }
-        
+
         if (typeof id === 'undefined') {
-        	throw 'specified page : ' + page.id + ' cannot be found';
+            throw 'specified page : ' + page.id + ' cannot be found';
         }
-        
+
         if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
             ues.global.dashboard.pages[id].layout.content.anon = json;
         } else {
             ues.global.dashboard.pages[id].layout.content.loggedIn = json;
         }
-    
+
         saveDashboard();
     }
 
@@ -1954,6 +1954,7 @@ $(function () {
                 .toString(16)
                 .substring(1);
         }
+
         return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
     }
 
@@ -1991,11 +1992,11 @@ $(function () {
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
-            
-            var gridsterContainer = $('.gridster > ul'), 
+
+            var gridsterContainer = $('.gridster > ul'),
                 minBlockWidth = Math.ceil($('.gridster').width() / 12) - 10,
                 minBlockHeight = minBlockWidth + 30;
-            
+
             // bind the gridster
             gridster = gridsterContainer.gridster({
                 widget_margins: [5, 5],
@@ -2013,29 +2014,29 @@ $(function () {
                 },
                 draggable: {
                     handle: '.ues-component-box-header',
-                    stop: function() {
+                    stop: function () {
                         updateLayout();
                     }
                 },
                 resize: {
                     enabled: true,
                     max_size: [12, 12],
-                    stop: function() {
+                    stop: function () {
                         updateLayout();
                     }
                 }
             }).data('gridster');
-            
+
             // stop resizing banner placeholder
             $('.gridster [data-banner=true] .gs-resize-handle').remove();
-            
+
             // remove block handler
-            $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
+            $('.gridster').on('click', '.ues-component-box-remove-handle', function () {
                 var componentBox = $(this).closest('.ues-component-box');
-                
-                componentBox.find('.ues-component').each(function(i, component) {
+
+                componentBox.find('.ues-component').each(function (i, component) {
                     var componentId = $(component).attr('id');
-                    
+
                     removeComponent(findComponent(componentId), function (err) {
                         if (err) {
                             console.error(err);
@@ -2043,23 +2044,23 @@ $(function () {
                         saveDashboard();
                     });
                 });
-                
-                gridster.remove_widget(componentBox, function() {
-                    updateLayout(); 
+
+                gridster.remove_widget(componentBox, function () {
+                    updateLayout();
                 });
             });
-            
+
             if (!done) {
                 return;
             }
             done(err);
         }, true);
-        
+
         // stop closing the add block dropdown on clicking
-        $('#ues-add-block-menu').on('click', function(e) {
+        $('#ues-add-block-menu').on('click', function (e) {
             e.stopPropagation();
         });
-        
+
         updatePagesList();
         initToggleView();
 
@@ -2202,7 +2203,7 @@ $(function () {
             // since a valid image is selected, render the banner in crop mode
             ues.global.dashboard.banner.cropMode = true;
             loadBanner();
-            
+
             var $placeholder = $('.ues-banner-placeholder'),
                 srcCanvas = document.getElementById('src-canvas'),
                 $srcCanvas = $(srcCanvas),

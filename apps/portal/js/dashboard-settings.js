@@ -99,7 +99,7 @@ $(function () {
         }
 
         var character = String.fromCharCode(code);
-        if (character.match(regEx)) {
+        if (character.match(regEx) && code != 8 && code != 46) {
             return false;
         } else {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
