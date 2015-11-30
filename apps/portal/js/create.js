@@ -149,15 +149,14 @@ $(function () {
         var title = $("#ues-dashboard-title"),
             id = $("#ues-dashboard-id"),
             form = $('#ues-dashboard-form'),
-            action = form.attr('action'),
-            url = action + "/" + id.val(),
+            url = $("#create-dashboard-url").val() + "/" + id.val(),
             titleError = $("#title-error"),
             idError = $("#id-error");
 
         if (!$.trim(title.val()) || !$.trim(id.val())) {
             !$.trim(title.val()) ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
-            form.attr('action', action + '/' + id.val());
+            form.attr('action', url);
             console.log("[Sending AJAX request to " + url);
 
             $.ajax({

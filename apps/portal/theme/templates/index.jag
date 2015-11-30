@@ -85,21 +85,21 @@
     <p id="ues-dashboard-url" class="ues-dashboard-url">URL: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
     <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
     <div class="ues-actions">
-        <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
+        <a id="ues-view" class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-view fw-stack-1x"></i>
             </span>
              <%= i18n.localize("view") %></a>
         {{#if editable}}
-        <a class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
+        <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-edit fw-stack-1x"></i>
             </span>
             <%= i18n.localize("design") %>
         </a>
-        <a class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+        <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-settings fw-stack-1x"></i>

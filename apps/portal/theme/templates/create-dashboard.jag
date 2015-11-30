@@ -39,6 +39,7 @@
 <div class="container-fluid">
     <div class="row thumbnails ues-dashboard">
         <div class="col-md-8 col-md-offset-2">
+            <input id="create-dashboard-url" type="hidden" value="<%=tenantedUrlPrefix%>dashboards">
             <form action="<%=tenantedUrlPrefix%>dashboards" method="post" id="ues-dashboard-form">
                 <h1 class="page-sub-title"><%= i18n.localize("create.a.dashboard")%></h1>
                 <div class="form-group has-feedback">
