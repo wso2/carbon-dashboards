@@ -276,7 +276,7 @@ $(function () {
 
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");
-            saveDashboard();    
+            saveDashboard();
             if (dashboard.enableOauth) {
                 $("#ues-oauth-settings-inputs").show();
             } else {
