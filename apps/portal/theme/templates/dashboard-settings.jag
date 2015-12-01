@@ -113,30 +113,32 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group has-feedback">
-                    <label for="ues-is-url" class="col-sm-3 control-label"><%= i18n.localize("identity.server.url")%><span class="required">*</span></label>
-                    <div class="col-sm-9">
-                        <input id="ues-is-url" type="text" class="form-control" placeholder="<%= i18n.localize("url")%>" value="<%=dashboard.identityServerUrl%>" <% if (!dashboard.enableOauth) {print("disabled");} %> >
-                        <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
-                        <label id="is-url-error" class="required-error hide" for="isurl">This field is required.</label>
+                <div id="ues-oauth-settings-inputs" style="display:<% if (!dashboard.enableOauth) {print("none");} else {print("block");} %>" >
+                    <div class="form-group has-feedback">
+                        <label for="ues-is-url" class="col-sm-3 control-label"><%= i18n.localize("identity.server.url")%><span class="required">*</span></label>
+                        <div class="col-sm-9">
+                            <input id="ues-is-url" type="text" class="form-control" placeholder="<%= i18n.localize("url")%>" value="<%=dashboard.identityServerUrl%>" >
+                            <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
+                            <label id="is-url-error" class="required-error hide" for="isurl">This field is required.</label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="ues-access-token-url" class="col-sm-3 control-label"><%= i18n.localize("access.token.url")%></label>
-                    <div class="col-sm-9">
-                        <input id="ues-access-token-url" type="url" class="form-control" placeholder="<%= i18n.localize("url")%>" value="<%=dashboard.accessTokenUrl%>" disabled>
+                    <div class="form-group">
+                        <label for="ues-access-token-url" class="col-sm-3 control-label"><%= i18n.localize("access.token.url")%></label>
+                        <div class="col-sm-9">
+                            <input id="ues-access-token-url" type="url" class="form-control" placeholder="<%= i18n.localize("url")%>" value="<%=dashboard.accessTokenUrl%>" disabled>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="ues-api-key" class="col-sm-3 control-label"><%= i18n.localize("api.key")%></label>
-                    <div class="col-sm-9">
-                        <input id="ues-api-key" type="text" class="form-control" placeholder="<%= i18n.localize("key")%>" value="<%=dashboard.apiKey%>" disabled>
+                    <div class="form-group">
+                        <label for="ues-api-key" class="col-sm-3 control-label"><%= i18n.localize("api.key")%></label>
+                        <div class="col-sm-9">
+                            <input id="ues-api-key" type="text" class="form-control" placeholder="<%= i18n.localize("key")%>" value="<%=dashboard.apiKey%>" disabled>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="ues-api-secret" class="col-sm-3 control-label"><%= i18n.localize("api.secret")%></label>
-                    <div class="col-sm-9">
-                        <input id="ues-api-secret" type="text" class="form-control" placeholder="<%= i18n.localize("secret")%>" value="<%=dashboard.apiSecret%>" disabled>
+                    <div class="form-group">
+                        <label for="ues-api-secret" class="col-sm-3 control-label"><%= i18n.localize("api.secret")%></label>
+                        <div class="col-sm-9">
+                            <input id="ues-api-secret" type="text" class="form-control" placeholder="<%= i18n.localize("secret")%>" value="<%=dashboard.apiSecret%>" disabled>
+                        </div>
                     </div>
                 </div>
             </form>

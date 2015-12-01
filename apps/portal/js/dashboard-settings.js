@@ -276,11 +276,13 @@ $(function () {
 
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");
-            saveDashboard();
+            saveDashboard();    
             if (dashboard.enableOauth) {
-                $('#ues-is-url').removeAttr("disabled");
+                //$('#ues-is-url').removeAttr("disabled");
+                $("#ues-oauth-settings-inputs").show();
             } else {
-                $("#ues-is-url").attr("disabled", "disabled");
+                //$("#ues-is-url").attr("disabled", "disabled");
+                $("#ues-oauth-settings-inputs").hide();
                 hideInlineError($("#ues-is-url"), $("#is-url-error"));
             }
         });
