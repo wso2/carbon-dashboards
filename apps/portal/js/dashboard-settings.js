@@ -14,6 +14,41 @@ $(function () {
 
     var url = dashboardsApi + '/' + dashboard.id;
 
+    var generateConfirmMessage = function (text, ok, cancel) {
+        return noty({
+            text: text,
+            buttons: [
+                {
+                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                    $noty.close();
+                    if (ok) {
+                        ok();
+                    }
+                }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                    $noty.close();
+                    if (cancel) {
+                        cancel();
+                    }
+                }
+                }
+            ],
+            layout: 'topCenter',
+            theme: 'wso2',
+            dismissQueue: true,
+            killer: true,
+            maxVisible: 1,
+            animation: {
+                open: {height: 'toggle'},
+                close: {height: 'toggle'},
+                easing: 'swing',
+                speed: 500
+            }
+        });
+    };
+
     var saveDashboard = function () {
         $.ajax({
             url: url,
@@ -244,15 +279,35 @@ $(function () {
         $('#ues-dashboard-settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
             var el = $(this).closest('.ues-shared-role');
             var role = el.data('role');
-            editors.splice(editors.indexOf(role), 1);
-            saveDashboard();
-            el.remove();
+            var removePermission = function () {
+                editors.splice(editors.indexOf(role), 1);
+                saveDashboard();
+                el.remove();
+            };
+
+            if (editors.length == 1) {
+                generateConfirmMessage("Only admin user will be able to edit this dashboard." +
+                    " Do you want to continue?", removePermission, null);
+            }
+            else {
+                removePermission();
+            }
         }).end().find('.ues-shared-view').on('click', '.remove-button', function () {
             var el = $(this).closest('.ues-shared-role');
             var role = el.data('role');
-            viewers.splice(viewers.indexOf(role), 1);
-            saveDashboard();
-            el.remove();
+            var removePermission = function () {
+                viewers.splice(viewers.indexOf(role), 1);
+                saveDashboard();
+                el.remove();
+            };
+
+            if (viewers.length == 1) {
+                generateConfirmMessage("Only admin user will be able to view this dashboard." +
+                    " Do you want to continue?", removePermission, null);
+            }
+            else {
+                removePermission();
+            }
         });
 
         $('#ues-dashboard-title').on("keypress", function (e) {
