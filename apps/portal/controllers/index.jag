@@ -28,7 +28,9 @@
 
             assetsForPortal = store.getDashboardsFromRegistry(0, 10);
             dashboardCountPerUser += assetsForUser.length;
-            dashboardCountPerPortal += assetsForPortal.length;
+            if (assetsForPortal) {
+                dashboardCountPerPortal += assetsForPortal.length;
+            }
         });
 
         if ((dashboardCountPerPortal > 0 && dashboardCountPerUser <= 0) || dashboardCountPerUser > 1) {

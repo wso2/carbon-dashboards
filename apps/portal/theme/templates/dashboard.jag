@@ -35,7 +35,10 @@
         isAnonView = true;
     } else{
         isAnonView = JSON.parse(isAnonView);
-        if(user.domain != urlDomain && urlDomain){
+
+        if((user.domain != urlDomain && urlDomain) ||
+                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) &&
+                !utils.allowed(user.roles, dashboard.permissions.viewers))){
             isAnonView = true;
         }
     }
@@ -95,7 +98,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
-                 if(urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain))){
+                 if(!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))){
                     if (user.isEditor) { %>
                         <li>
                             <a class="ues-copy" href="<%=dbRoot%>?editor=true">
