@@ -496,8 +496,8 @@ $(function () {
      * @private
      */
     var previewDashboard = function (page) {
-        var isAnonView = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? 'true' : 'false';
-        var url = dashboardsUrl + '/' + dashboard.id + '/' + page.id + '?isAnonView=' + isAnonView;
+        var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? '?isAnonView=true' : '';
+        var url = dashboardsUrl + '/' + dashboard.id + '/' + page.id + addingParam;
         window.open(url, '_blank');
     };
 

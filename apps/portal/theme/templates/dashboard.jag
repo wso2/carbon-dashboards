@@ -71,7 +71,8 @@
                 <% if(dashboard.pages.length >= 2) { %>
                     <li
                         <% if (dashboard.landing === pageId) { %> class="active"<% } %>>
-                        <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>"><%= i18n.localize("home")%></a>
+                        <% var addingParam = isAnonView?'?isAnonView=true':'';%>
+                        <a href="<%=dbRoot%><%=addingParam%>"><%= i18n.localize("home")%></a>
                     </li>
                 <% } %>
 
@@ -91,7 +92,8 @@
                         if (dashboard.landing !== page.id) { %>
                             <li
                                 <% if (page.id === pageId) { %> class="active"<% } %>>
-                                <a href="<%=dbRoot%><%=page.id%>?isAnonView=<%=isAnonView%>"><%=page.title%></a>
+                                <% var addingParam = isAnonView?'?isAnonView=true':''; %>
+                                <a href="<%=dbRoot%><%=page.id%><%=addingParam%>"><%=page.title%></a>
                             </li>
                         <% }
                     };%>
