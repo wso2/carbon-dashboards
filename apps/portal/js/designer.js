@@ -497,7 +497,8 @@ $(function () {
      */
     var previewDashboard = function (page) {
         var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? '?isAnonView=true' : '';
-        var url = dashboardsUrl + '/' + dashboard.id + '/' + page.id + addingParam;
+        var pageURL = dashboard.landing !== page.id ? page.id : '';
+        var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
     };
 
