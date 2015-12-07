@@ -2048,6 +2048,8 @@ $(function () {
                     updateLayout(); 
                 });
             });
+
+            initBanner();
             
             if (!done) {
                 return;
@@ -2307,7 +2309,7 @@ $(function () {
 
     initUI();
     initDashboard(ues.global.dashboard, ues.global.page, ues.global.fresh);
-    initBanner();
+    //initBanner();
 
     ues.dashboards.save = saveDashboard;
 });
