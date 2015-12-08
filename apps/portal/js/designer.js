@@ -36,6 +36,8 @@ $(function () {
 
     var gridster;
 
+    var breadcrumbs = [];
+
     $(document).ready(function () {
         $(".nav li.disabled a").click(function () {
             return false;
@@ -1040,6 +1042,23 @@ $(function () {
     };
 
     /**
+     * Check whether dashboard is anon or not based on whether there are anon
+     * pages available or not.
+     * @return isDashboardAnon{Boolean}: true if there are any page with anon view.
+     * */
+    var checkWhetherDashboardIsAnon = function () {
+        var isDashboardAnon = false;
+        for (var availablePage in dashboard.pages) {
+            if (dashboard.pages[availablePage].isanon) {
+                isDashboardAnon = true;
+                break;
+            }
+        }
+
+        return isDashboardAnon;
+    };
+
+    /**
      * Check whether there are any pages which has given id.
      * @param pageId
      * @return boolean
@@ -1231,12 +1250,13 @@ $(function () {
                         $(anon).prop("checked", true);
                         generateMessage("error", "There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page");
                     } else {
-                        // switch to anon dashboard
-                        if (ues.global.dbType != ANONYMOUS_DASHBOARD_VIEW) {
-                            dashboard.isanon = false;
-                        }
-
                         page.isanon = false;
+
+                        // Check if the dashboard is no longer anonymous.
+                        if (!checkWhetherDashboardIsAnon()) {
+                            dashboard.isanon = false;
+                            ues.global.dbType = DEFAULT_DASHBOARD_VIEW;
+                        }
 
                         // the anon layout should not be deleted since the gadgets in this layout is already there in the content
 
@@ -1596,6 +1616,59 @@ $(function () {
 
     };
 
+    var addBreadcrumbsParents = function (pageName, url) {
+        var isExist = false;
+        for (var i = 0; i < breadcrumbs.length; i++) {
+            if (breadcrumbs[i] == pageName) {
+                isExist = true;
+                break;
+            }
+        }
+
+        if (!isExist) {
+            breadcrumbs.push(pageName);
+            $('#ues-breadcrumbs').append("<li><a href='" + url + "'>" + pageName + "</a></li>");
+
+        }
+    };
+
+    var addBreadcrumbsCurrent = function (pageName) {
+        var isExist = false;
+        for (var i = 0; i < breadcrumbs.length; i++) {
+            if (breadcrumbs[i] == pageName) {
+                isExist = true;
+                break;
+            }
+        }
+
+        if (isExist) {
+            if ($('#ues-breadcrumbs').find(".active").text() != pageName) {
+                removeBreadcrumbsCurrent();
+                removeBreadcrumbsElement(pageName, "a", "li");
+
+            }
+        }
+
+        breadcrumbs.push(pageName);
+        $("#ues-breadcrumbs").append("<li class='active'>" + pageName + "</li>");
+    };
+
+    var removeBreadcrumbsCurrent = function () {
+        $("#ues-breadcrumbs").find(".active").remove();
+        breadcrumbs.pop();
+    };
+
+    var removeBreadcrumbsElement = function (text, element, parent) {
+        var anchors = $("#ues-breadcrumbs").find(element);
+        for (var i = 0; i < anchors.length; i++) {
+            if ($(anchors[i]).text() == text) {
+                parent ? $(anchors[i]).parent(parent).remove() : $(anchors[i]).remove();
+                breadcrumbs.splice((i - 1), 1);
+                break;
+            }
+        }
+    };
+
     var initDesignerMenu = function () {
 
         $("#ues-workspace-designer").show();
@@ -1604,6 +1677,9 @@ $(function () {
 
         menu.find('.ues-page-add').on('click', function () {
             layoutWorkspace();
+            removeBreadcrumbsCurrent();
+            addBreadcrumbsParents(dashboard.title, ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true");
+            addBreadcrumbsCurrent("Add Page");
         });
         menu.find('.ues-dashboard-preview').on('click', function () {
             previewDashboard(page);
@@ -1680,6 +1756,9 @@ $(function () {
     var initLayoutMenu = function () {
         var menu = $('#ues-workspace-layout').find('.ues-context-menu');
         menu.find('.ues-go-back').on('click', function () {
+            removeBreadcrumbsCurrent();
+            removeBreadcrumbsElement(dashboard.title, "a", "li");
+            addBreadcrumbsCurrent(dashboard.title);
             showWorkspace('designer');
         });
         menu.find('.ues-tiles-menu-toggle').click(function () {
@@ -1784,6 +1863,8 @@ $(function () {
         initUESProperties();
         initToggleView();
         initAddBlock();
+
+        addBreadcrumbsParents("Dashboards", ues.utils.tenantPrefix() + "./dashboards")
     };
 
     /**
@@ -1873,7 +1954,7 @@ $(function () {
             };
 
             dashboard.landing = dashboard.landing || id;
-            dashboard.isanon = false;
+            dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
             saveDashboard();
             hideProperties();
@@ -1885,7 +1966,7 @@ $(function () {
             } else {
                 renderPage(id, done);
             }
-
+            addBreadcrumbsCurrent(dashboard.title);
         }, 'html');
     };
 
@@ -2146,6 +2227,7 @@ $(function () {
             return;
         }
         renderPage(page || db.landing || pages[0].id);
+        addBreadcrumbsCurrent(dashboard.title);
     };
 
     /**
