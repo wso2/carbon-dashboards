@@ -187,6 +187,25 @@ var resolveUrl = function (path) {
     return file.isExists() ? extendedPath : 'theme/' + path;
 };
 
+var getCarbonServerAddress = function (trans){
+    var carbon = require('carbon');
+    var url;
+    var carbonServerAddress = carbon.server.address(trans);
+    var carbonUrlArrayed = carbonServerAddress.split(":");
+    var authUrlProtocol = carbonUrlArrayed[0];
+    var authUrlPort = carbonUrlArrayed[2];
+    var serverConfigService = carbon.server.osgiService('org.wso2.carbon.base.api.ServerConfigurationService');
+    hostName = serverConfigService.getFirstProperty("HostName");
+    if ( hostName == null || hostName === '' || hostName === 'null' || hostName.length <= 0 ){
+        url = carbonServerAddress;
+    } else {
+        url = authUrlProtocol + "://" + hostName + ":" + authUrlPort;
+    }
+
+    return url;
+};
+
+
 var getLocaleResourcePath = function () {
     return '/extensions/locales/';
 };
