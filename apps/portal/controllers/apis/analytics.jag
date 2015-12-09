@@ -54,6 +54,7 @@
     var log = new Log();
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
+    var utils = require('/modules/utils.js');
     var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
     var HTTPConstants = Packages.org.apache.axis2.transport.http.HTTPConstants;
     var AnalyticsCachedWebServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedWebServiceConnector;
@@ -69,8 +70,8 @@
         cacheSizeBytes = parseInt(configs.cacheSizeBytes);
     }
 
-    var analyticsWSUrl = carbon.server.address(HTTPS_TRANSPORT) + ANALYTICS_SERVICE;
-    var authenticationWSUrl = carbon.server.address(HTTPS_TRANSPORT) + AUTHENTICATION_SERVICE;
+    var analyticsWSUrl = utils.carbon.server.address(HTTPS_TRANSPORT) + ANALYTICS_SERVICE;
+    var authenticationWSUrl = utils.carbon.server.address(HTTPS_TRANSPORT) + AUTHENTICATION_SERVICE;
     var analyticsStub;
     try {
         analyticsStub = new AnalyticsWebServiceStub(analyticsWSUrl);
