@@ -543,7 +543,7 @@
     <canvas id="dest-canvas" class="hidden"></canvas>
     
     {{#if isEdit}}
-    <img src="" id="img-banner" data-src="<%=urlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
+    <img src="" id="img-banner" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
     {{/if}}
        
     <div class="button-panel">
@@ -589,7 +589,7 @@
         {{/each}}
 </script>
     
-<form method="post" id="ues-dashboard-upload-banner-form" action="<%=urlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
+<form method="post" id="ues-dashboard-upload-banner-form" action="<%=tenantedUrlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
     <input type="file" id="file-banner" name="banner" accept="image/*" />
     <input type="hidden" id="banner-data" name="data" />
     <button type="submit">Submit</button>

@@ -650,7 +650,6 @@ $(function () {
 
                 switchPage(getPageId(), DEFAULT_DASHBOARD_VIEW);
             }
-
         });
         designer.on('click', '.ues-design-anon-view', function () {
             //anon
@@ -1246,7 +1245,7 @@ $(function () {
                         page.content.anon = { };
                     }
                 }
-                
+
             },
             fluidLayout: function() {
                 page.layout.fluidLayout = fluidLayout.is(':checked');
@@ -1646,8 +1645,6 @@ $(function () {
             ues.global.isSwitchToNewPage = true;
             switchPage(pid, pageType);
             ues.global.isSwitchToNewPage = false;
-
-            initBanner();
         });
 
         actions.find('.ues-pages-list').on('click', 'li a .ues-trash', function (e) {
@@ -2069,6 +2066,8 @@ $(function () {
             $(".toggle-group").find(".toggle-off").addClass("active");
             $("#toggle-dashboard-view").prop("checked", false);
         }
+        
+        initBanner();
     };
 
     /**
@@ -2307,7 +2306,6 @@ $(function () {
 
     initUI();
     initDashboard(ues.global.dashboard, ues.global.page, ues.global.fresh);
-    initBanner();
 
     ues.dashboards.save = saveDashboard;
 });

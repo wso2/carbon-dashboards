@@ -209,7 +209,7 @@
 </script>
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     {{#if isBannerExists}}
-    <img src="<%=urlPrefix%>banners/<%=dashboard.id%>" />
+    <img src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" />
     {{/if}}
 </script>
                             
