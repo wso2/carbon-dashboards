@@ -1,5 +1,6 @@
 <%
     var log = new Log();
+    var utils = require('/modules/utils.js');
     var carbon = require("carbon");
     var HTTPS_TRANSPORT = "https";
     var ANALYTICS_SERVICE = "/services/AnalyticsWebService";
@@ -10,8 +11,8 @@
     var EventStreamAdminServiceStub =  Packages.org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub;
     var EventPublisherAdminServiceStub = Packages.org.wso2.carbon.event.publisher.stub.EventPublisherAdminServiceStub
 
-    var eventStreamAdminServiceWSUrl = carbon.server.address(HTTPS_TRANSPORT) + EVENT_STREAM_SERVICE;
-    var eventPublisherAdminServiceWSUrl = carbon.server.address(HTTPS_TRANSPORT) + EVENT_PUBLISHER_SERVICE;
+    var eventStreamAdminServiceWSUrl = utils.getCarbonServerAddress(HTTPS_TRANSPORT) + EVENT_STREAM_SERVICE;
+    var eventPublisherAdminServiceWSUrl = utils.getCarbonServerAddress(HTTPS_TRANSPORT) + EVENT_PUBLISHER_SERVICE;
     var eventStreamStub = new EventStreamAdminServiceStub(eventStreamAdminServiceWSUrl);
     var eventpublisherStub = new EventPublisherAdminServiceStub(eventPublisherAdminServiceWSUrl);
     var eventsStreamServiceClient =  eventStreamStub._getServiceClient();
@@ -29,7 +30,7 @@
     try {
         var AnalyticsWebServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsWebServiceConnector;
         var AnalyticsWebServiceStub = Packages.org.wso2.carbon.analytics.webservice.stub.AnalyticsWebServiceStub;
-        var analyticsWSUrl = carbon.server.address(HTTPS_TRANSPORT) + ANALYTICS_SERVICE;
+        var analyticsWSUrl = utils.getCarbonServerAddress(HTTPS_TRANSPORT) + ANALYTICS_SERVICE;
         analyticsStub = new AnalyticsWebServiceStub(analyticsWSUrl);
         var analyticsClient = analyticsStub._getServiceClient();
         var options = analyticsClient.getOptions();
@@ -183,6 +184,6 @@
             };
         }
         print(output);
-    } 
+    }
 
 %>
