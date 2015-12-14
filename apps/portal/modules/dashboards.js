@@ -268,7 +268,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
     var bitmap, 
         err = [], 
         content = '', 
-        unitHeight = 100; // todo 115px  
+        unitHeight = 115;
     
     /**
      * Process the data object and build the grid

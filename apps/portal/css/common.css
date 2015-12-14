@@ -31,16 +31,17 @@
     left: 5px !important;
     right: 5px !important;
     width: auto !important;
+    height: auto !important;
 }
 
 .ues-dashboard-fullview-visible { /* for the dashboard only */
+    position: absolute;
     top:0;
     bottom:0;
     right:0;
     left:0;
     overflow:hidden;
-    position: absolute;
     z-index: 2000;
-    min-height: 100%;
     width: 100%;
+    padding: 0;
 }

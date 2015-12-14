@@ -1,7 +1,5 @@
 (function () {
 
-    var DEFAULT_PADDING = 35;
-
     var gadgetPrefix = (osapi.container.GadgetHolder.IFRAME_ID_PREFIX_ = 'sandbox-');
 
     var containerPrefix = 'gadget-';
@@ -120,9 +118,6 @@
             var cid = containerId(comp.id);
             var gid = gadgetId(comp.id);
             var panel = createPanel(styles);
-            
-            var compHeight = $('#ues-designer').height() - 220;
-            var height = (comp.viewOption && comp.viewOption == 'full' ? compHeight : '');
 
             if (ues.global.dbType === 'default'){
                 hasCustomUserPrefView(metadata, comp);
@@ -130,16 +125,24 @@
             }
             
             var container = $('<div />').attr('id', cid);
-            if (height) {
-                container.css('height', height + 'px');
-            }
             container.appendTo(panel.find('.panel-body'));
             panel.appendTo(sandbox);
+            
             var renderParams = {};
-            if (styles.height) {
-                renderParams[osapi.container.RenderParam.HEIGHT] = parseInt(styles.height, 10) - DEFAULT_PADDING;
+            var isFullView = (comp.viewOption && comp.viewOption == 'full');
+            var isDesigner = $('#ues-designer').length > 0;
+            
+            // check for the designer view
+            if (isFullView) {
+                renderParams[osapi.container.RenderParam.HEIGHT] = isDesigner ? 
+                    $('#ues-designer').height() - 240 : $(window).height() - 100;                
+            } else {
+                renderParams[osapi.container.RenderParam.HEIGHT] = isDesigner ? 
+                    sandbox.closest('.ues-component-box').height() - 120 : sandbox.closest('.ues-component-box').height() - 85;
             }
+            
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
+            
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
                 component: comp,

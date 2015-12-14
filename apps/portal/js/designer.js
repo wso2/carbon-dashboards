@@ -13,6 +13,9 @@ $(function () {
 
     var DEFAULT_DASHBOARD_VIEW = 'default';
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
+    
+    var DEFAULT_COMPONENT_VIEW = 'default';
+    var FULL_COMPONENT_VIEW = 'full';
 
     var lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
 
@@ -258,14 +261,12 @@ $(function () {
      * @private
      */
     var renderMaxView = function (component, view) {
-        if (component.hasCustomFullView) {
-            component.viewOption = view;
-            ues.components.update(component, function (err, block) {
-                if (err) {
-                    throw err;
-                }
-            });
-        }
+        component.viewOption = view;
+        ues.components.update(component, function (err, block) {
+            if (err) {
+                throw err;
+            }
+        });
     };
 
     /**
@@ -552,6 +553,7 @@ $(function () {
      */
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
+        
         designer.on('click', 'a.ues-component-full-handle', function () {
             
             var id = $(this).closest('.ues-component').attr('id'),
@@ -571,14 +573,12 @@ $(function () {
                 $('.ues-component-box').show();
                 
                 //minimize logic
-                componentContainer
-                    .removeClass('ues-fullview-visible')
-                    .css('height', '');
+                componentContainer.removeClass('ues-fullview-visible');
                 
                 // restore the scroll position
                 designer.scrollTop(designerScrollTop);
                 
-                renderMaxView(component, DEFAULT_DASHBOARD_VIEW);
+                renderMaxView(component, DEFAULT_COMPONENT_VIEW);
                 
                 component.fullViewPoped = false;
             } else {
@@ -596,11 +596,9 @@ $(function () {
                 $('.ues-component-box:not(#' + componentContainerId + ')').hide();
                 
                 //maximize logic
-                componentContainer
-                    .addClass('ues-fullview-visible')
-                    .css('height', (designer.height() - 100) + 'px');
+                componentContainer.addClass('ues-fullview-visible');
                 
-                renderMaxView(component, 'full');
+                renderMaxView(component, FULL_COMPONENT_VIEW);
                 
                 component.fullViewPoped = true;
             }
@@ -610,10 +608,12 @@ $(function () {
             $('#componentFull').modal('hide');
 
         });
+        
         designer.on('click', '.ues-component .ues-toolbar .ues-properties-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
         });
+        
         designer.on('click', '.ues-component .ues-toolbar .ues-trash-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             removeComponent(findComponent(id), function (err) {
@@ -623,6 +623,7 @@ $(function () {
                 saveDashboard();
             });
         });
+        
         designer.on('click', '.ues-design-default-view', function () {
             //default
             pageType = DEFAULT_DASHBOARD_VIEW;
@@ -631,6 +632,7 @@ $(function () {
             $('.toggle-design-view-anon').removeClass('disabled');
             $('.toggle-design-view-default').addClass('disabled');
         });
+        
         designer.on('#toggle-dashboard-view').change(function () {
             var checked = $('#toggle-dashboard-view').prop('checked');
             var state = 'on';
@@ -651,6 +653,7 @@ $(function () {
                 switchPage(getPageId(), DEFAULT_DASHBOARD_VIEW);
             }
         });
+        
         designer.on('click', '.ues-design-anon-view', function () {
             //anon
             pageType = ANONYMOUS_DASHBOARD_VIEW;
@@ -660,6 +663,7 @@ $(function () {
             $('.toggle-design-view-default').removeClass('disabled');
             $('.toggle-design-view-anon').addClass('disabled');
         });
+        
         designer.on('mouseenter', '.ues-component .ues-toolbar .ues-move-handle', function () {
             $(this).draggable({
                 cancel: false,
@@ -2017,6 +2021,12 @@ $(function () {
                 resize: {
                     enabled: true,
                     max_size: [12, 12],
+                    resize: function(e, ui, widget) {
+                        var comp = widget.find('.ues-component');
+                        if (comp) {
+                            updateComponent(comp.attr('id'));
+                        }
+                    },
                     stop: function() {
                         updateLayout();
                     }

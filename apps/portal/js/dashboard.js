@@ -1,5 +1,5 @@
 $(function () {
-    var DEFAULT_DASHBOARD_VIEW = 'default';
+    var DASHBOARD_DEFAULT_VIEW = 'default';
     var DASHBOARD_FULL_SCEEN_VIEW = 'full';
     var DASHBOARD_SETTINGS_VIEW = 'settings';
     var containerPrefix = 'gadget-';
@@ -12,61 +12,50 @@ $(function () {
      * initializes the component toolbar
      */
     var initComponentToolbar = function () {
+        
         $('#wrapper').on('click', 'a.ues-component-full-handle', function () {
             
-            var uesComponent = $(this).closest('.ues-component'), 
-                component = findComponent(uesComponent.attr('id')), 
-                componentContainer = $(this).closest('.ues-component-box'), 
-                htmlBody = $('body');
+            var id = $(this).closest('.ues-component').attr('id'), 
+                component = findComponent(id), 
+                componentBox = $(this).closest('.ues-component-box');
             
             if (component.fullViewPoped) {
                 
                 // render normal view
-                
-                renderMaxView(component, DEFAULT_DASHBOARD_VIEW);
-                
-                componentContainer
+                // restore the normal view (remove the css class, restore the original height and remove the temporary attribute)
+                componentBox
                     .removeClass('ues-dashboard-fullview-visible')
-                    .css('height', componentContainer.attr('data-height'))  // restore original height
-                    .removeAttr('data-height');                             // remove temp attribute
+                    .css('height', componentBox.attr('data-height'))
+                    .removeAttr('data-height');
                 
-                componentContainer.find('.panel-body, .panel-body iframe').css('height', '');
-                htmlBody.css('overflow-y', '');
+                renderMaxView(component, DASHBOARD_DEFAULT_VIEW);
                 
-                //minimize logic
                 component.fullViewPoped = false;
             } else {
                 
                 // render max view
+                // change the container height for the max view (including backing up the original height for restoration later)
+                componentBox
+                    .attr('data-height', componentBox.css('height'))
+                    .addClass('ues-dashboard-fullview-visible')
+                    .css('height', $(window).height() + 'px');
                 
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
-
-                var height = $(window).height();
                 
-                componentContainer
-                    .attr('data-height', componentContainer.css('height')) // backup original height
-                    .addClass('ues-dashboard-fullview-visible')
-                    .css('height', height + 'px');
-                
-                componentContainer.find('.panel-body, .panel-body iframe').css('height', (height - 40) + 'px');
-                htmlBody.css('overflow-y', 'hidden');
-                
-                //maximize logic
                 component.fullViewPoped = true;
-                
-                renderComponentMaxView(uesComponent);
             }
         });
 
         $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
-            var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
-            componentContainer = $('#'+containerPrefix + id);
+            var id = $(this).closest('.ues-component').attr('id'),
+                component = findComponent(id), 
+                componentContainer = $('#' + containerPrefix + id);
 
-            if(component.hasCustomUserPrefView){
-                if(component.viewOption == DASHBOARD_SETTINGS_VIEW){
-                    switchComponentView(component, DEFAULT_DASHBOARD_VIEW);
-                }else{
+            // toggle the component settings view if exists
+            if (component.hasCustomUserPrefView) {
+                if (component.viewOption == DASHBOARD_SETTINGS_VIEW) {
+                    switchComponentView(component, DASHBOARD_DEFAULT_VIEW);
+                } else {
                     switchComponentView(component, DASHBOARD_SETTINGS_VIEW);
                 }
                 return;
@@ -79,8 +68,8 @@ $(function () {
                 componentContainer.find('.ues-sandbox').remove();
                 return;
             }
-            componentContainer.append(settings);
-            componentContainer.addClass('ues-userprep-visible');
+            componentContainer.append(settings)
+                .addClass('ues-userprep-visible');
         });
     };
 
@@ -106,26 +95,14 @@ $(function () {
      * @param componentContainer
      */
     var renderMaxView = function (component, view) {
-        if(component.hasCustomFullView){
-            component.viewOption = view;
-            ues.components.update(component, function (err, block) {
-                if (err) {
-                    throw err;
-                }
-            });
-        }
+        component.viewOption = view;
+        ues.components.update(component, function (err, block) {
+            if (err) {
+                throw err;
+            }
+        });
     };
-
-    /**
-     * Render maximized view for a gadget
-     * @param component jQuery resresentative id
-     */
-    var renderComponentMaxView = function (jQueryId) {
-        jQueryId.css('width','100%');
-        jQueryId.css('position','inherit');
-        jQueryId.css('left','inherit');
-    };
-
+    
     /**
      * renders the component toolbar of a given component
      * @param component
