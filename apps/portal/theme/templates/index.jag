@@ -9,13 +9,11 @@
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+        </div>
+        <div id="ues-breadcrumbs-container">
+            <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
+                <li><a href="<%=tenantedUrlPrefix%>./">Home</a></li>
+            </ol>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">

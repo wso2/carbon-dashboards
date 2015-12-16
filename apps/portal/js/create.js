@@ -180,4 +180,8 @@ $(function () {
     menu.find('.ues-tiles-menu-toggle').click(function () {
         menu.find('.ues-tiles-menu').slideToggle();
     });
+
+    var breadcrumbs = $("#ues-breadcrumbs");
+    breadcrumbs.append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
+    breadcrumbs.append("<li class='active'>Create Dashboard</li>");
 });

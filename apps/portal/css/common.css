@@ -25,7 +25,8 @@
     text-align: right;
 }
 
-.ues-fullview-visible { /* for the designer only */
+.ues-fullview-visible {
+    /* for the designer only */
     position: absolute !important;
     top: 5px !important;
     left: 5px !important;
@@ -33,12 +34,13 @@
     width: auto !important;
 }
 
-.ues-dashboard-fullview-visible { /* for the dashboard only */
-    top:0;
-    bottom:0;
-    right:0;
-    left:0;
-    overflow:hidden;
+.ues-dashboard-fullview-visible {
+    /* for the dashboard only */
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    overflow: hidden;
     position: absolute;
     z-index: 2000;
     min-height: 100%;

@@ -14,10 +14,22 @@ $(function () {
 
     var url = dashboardsApi + '/' + dashboard.id;
 
-    var generateConfirmMessage = function (text, ok, cancel) {
-        return noty({
-            text: text,
-            buttons: [
+    /**
+     * Generate Noty Messages as to the content given using parameters.
+     * @param1 text {String}
+     * @param2 ok {Object}
+     * @param3 cancel {Object}
+     * @param4 type {String}
+     * @param5 layout {String}
+     * @param6 timeout {Number}
+     * @return {Object}
+     * @private
+     * */
+    var generateMessage = function (text, ok, cancel, type, layout, timeout) {
+        var properties = {};
+        properties.text = text;
+        if (ok || cancel) {
+            properties.buttons = [
                 {
                     addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
                     $noty.close();
@@ -34,30 +46,44 @@ $(function () {
                     }
                 }
                 }
-            ],
-            layout: 'topCenter',
-            theme: 'wso2',
-            dismissQueue: true,
-            killer: true,
-            maxVisible: 1,
-            animation: {
-                open: {height: 'toggle'},
-                close: {height: 'toggle'},
-                easing: 'swing',
-                speed: 500
-            }
-        });
+            ];
+        }
+
+        if (timeout) {
+            properties.timeout = timeout;
+        }
+
+        properties.layout = layout;
+        properties.theme = 'wso2';
+        properties.type = type;
+        properties.dismissQueue = true;
+        properties.killer = true;
+        properties.maxVisible = 1;
+        properties.animation = {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'swing',
+            speed: 500
+        };
+
+        return noty(properties);
     };
 
-    var saveDashboard = function () {
+    var saveDashboard = function (callback) {
         $.ajax({
             url: url,
             method: 'PUT',
             data: JSON.stringify(dashboard),
             contentType: 'application/json'
         }).success(function (data) {
+            generateMessage("Saved Successfully", null, null, "success", "bottom", 2000);
             console.log('dashboard saved successfully');
+
+            if (callback) {
+                callback();
+            }
         }).error(function () {
+            generateMessage("Error Saving Dashboard", null, null, "error", "bottom", 2000);
             console.log('error saving dashboard');
         });
     };
@@ -78,9 +104,11 @@ $(function () {
             } else {
                 hideInlineError($("#ues-is-url"), $("#is-url-error"));
                 setOAuthSettingsFields(data.accessTokenUrl, data.key, data.secret);
+                generateMessage("Saved Successfully", null, null, "success", "bottom", 2000);
             }
         }).error(function () {
             showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "Error occured in server.");
+            generateMessage("Error Saving Dashboard", null, null, "error", "bottom", 2000);
             console.log('error saving dashboard');
         });
     };
@@ -213,7 +241,24 @@ $(function () {
         settings.find('.ues-shared-edit').append(html);
     };
 
+    var addBreadcrumbs = function (pageName) {
+        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
+        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true'>" + dashboard.title + "</a></li>");
+        $("#ues-breadcrumbs").append("<li class='active'>" + pageName + "</li>");
+    };
+
+    /**
+     * pops up the export dashboard page
+     * @private
+     */
+    var exportDashboard = function () {
+        window.open(dashboardsApi + '/' + dashboard.id, '_blank');
+    };
+
     var initUI = function () {
+
+        addBreadcrumbs("Dashboard Settings");
+
         var viewerRoles = new Bloodhound({
             name: 'roles',
             limit: 10,
@@ -281,13 +326,16 @@ $(function () {
             var role = el.data('role');
             var removePermission = function () {
                 editors.splice(editors.indexOf(role), 1);
-                saveDashboard();
-                el.remove();
+                var removeElement = function () {
+                    el.remove();
+                };
+
+                saveDashboard(removeElement);
             };
 
             if (editors.length == 1) {
-                generateConfirmMessage("Only admin user will be able to edit this dashboard." +
-                    " Do you want to continue?", removePermission, null);
+                generateMessage("Only admin user will be able to edit this dashboard." +
+                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
             }
             else {
                 removePermission();
@@ -297,13 +345,15 @@ $(function () {
             var role = el.data('role');
             var removePermission = function () {
                 viewers.splice(viewers.indexOf(role), 1);
-                saveDashboard();
-                el.remove();
+                var removeElement = function () {
+                    el.remove();
+                };
+                saveDashboard(removeElement);
             };
 
             if (viewers.length == 1) {
-                generateConfirmMessage("Only admin user will be able to view this dashboard." +
-                    " Do you want to continue?", removePermission, null);
+                generateMessage("Only admin user will be able to view this dashboard." +
+                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
             }
             else {
                 removePermission();
@@ -354,6 +404,10 @@ $(function () {
         var menu = $('.ues-context-menu');
         menu.find('.ues-tiles-menu-toggle').click(function () {
             menu.find('.ues-tiles-menu').slideToggle();
+        });
+
+        menu.find('.ues-dashboard-export').on('click', function () {
+            exportDashboard();
         });
     };
 

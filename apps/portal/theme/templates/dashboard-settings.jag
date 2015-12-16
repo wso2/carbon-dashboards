@@ -8,13 +8,11 @@
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+        </div>
+        <div id="ues-breadcrumbs-container">
+            <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
+                <li><a href="<%=tenantedUrlPrefix%>./">Home</a></li>
+            </ol>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
@@ -24,11 +22,11 @@
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-left-arrow fw-stack-1x"></i>
                     </span> <%= i18n.localize("go.back")%></a></li>
-                <li><a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>?editor=true" id="ues-designer-link">                    
-                    <span class="fw-stack">
+                 <li><a href="#" class="ues-dashboard-export">
+                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
-                        <i class="fw fw-edit fw-stack-1x"></i>
-                    </span> <%= i18n.localize("design.dashboard")%></a></li>
+                        <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
+                     </span> <%=i18n.localize("export")%> </a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->

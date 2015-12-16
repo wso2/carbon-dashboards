@@ -64,6 +64,11 @@
     height: 100%;
 }
 
+#ues-store .ues-dashboard-pages {
+    overflow: scroll;
+    height: 100%;
+}
+
 #ues-store .ues-thumbnail .ues-title, .ues-store-thumbnail .ues-title {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -195,7 +200,7 @@
         width: 48px;
         float: left;
         height: 100%;
-        position: fixed;
+        position: relative;
     }
 }
 
@@ -203,7 +208,7 @@
  *  component styles
  */
 .ues-component-box {
-/*    min-height: 300px;*/
+    /*    min-height: 300px;*/
     border: 1px dashed #cccccc;
 }
 
@@ -328,6 +333,7 @@ h4.ues-page-title {
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
+
 .gridster > ul > li {
     list-style: none;
     border: 1px dashed #aaa;
@@ -353,17 +359,17 @@ h4.ues-page-title {
 }
 
 #dummy-gadget-wrapper {
-    width: 382px; 
-    height: 382px; 
-    margin: 0 auto; 
-    border: 1px solid #ccc; 
+    width: 382px;
+    height: 382px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
     margin-bottom: 10px;
     padding: 10px;
 }
 
 #dummy-gadget-container {
-    width: 360px; 
-    height: 360px; 
+    width: 360px;
+    height: 360px;
     margin: 0 auto;
     box-sizing: border-box;
     border: none;
@@ -371,9 +377,9 @@ h4.ues-page-title {
 }
 
 #dummy-gadget {
-    width: 30px; 
-    height: 30px; 
-    position: relative; 
+    width: 30px;
+    height: 30px;
+    position: relative;
     background: #eee;
     border: none;
 }
@@ -398,4 +404,17 @@ h4.ues-page-title {
 
 .ues-component-box-remove-handle {
     font-size: 10px;
+}
+
+.ues-designer-breadcrumb {
+    background-color: #36506D;
+    margin: 0;
+}
+
+.ues-designer-breadcrumb li a {
+    color: #FFFFFF;
+}
+
+.ues-designer-breadcrumb li a:hover {
+    color: #5bc0de;
 }
