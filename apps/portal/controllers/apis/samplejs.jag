@@ -1,0 +1,41 @@
+<%
+/*
+ * Copyright 2005-2015 WSO2, Inc. (http://wso2.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var log = new Log();
+try {
+    var username = "admin";
+    var password = "admin";
+    var tableName = request.getParameter("tableName");
+    var query = request.getParameter("query");
+    var url = "https://localhost:9465/analytics/search";
+    var encoderJavaPkg = Packages.javax.xml.bind.DatatypeConverter;
+    var bytes = [];
+    var encodeString = username + ":" + password;
+    for (var i = 0; i < encodeString.length; ++i) {
+        bytes.push(encodeString.charCodeAt(i));
+    }
+    var authHeader = "Basic " + encoderJavaPkg.printBase64Binary(bytes);
+    var result = post(url, stringify({
+        "tableName": tableName,
+        "start": 0,
+        "count": 100,
+        "query": query
+    }), {"Authorization": authHeader, "Content-Type": "application/json"}, "application/json");
+    print(result.data);
+} catch (e) {
+    log.info(e);
+}
+%>
