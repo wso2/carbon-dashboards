@@ -374,14 +374,23 @@ var getBootstrapLayout = function(pageId, isAnon) {
             if (processedRow[x].banner) {
                 classes += ' ues-banner-placeholder';
             }
-
+            
+            var styles;
+            if (!processedRow[x].banner) {
+                styles = 'min-height: ' + height + 'px;';
+            }
+            
             offset = x - previousEndPoint;
             if (offset > 0) 
                 classes += ' col-md-offset-' + offset;   
 
             previousEndPoint += processedRow[x].width + offset;
 
-            content += '<div id="' + processedRow[x].id + '" class="' + classes +'" style="height: ' + height + 'px;" data-height="' + processedRow[x].height + '"></div>';
+            content += '<div id="' + processedRow[x].id + '" class="' + classes +'" '; 
+            if (styles) {
+                content += 'style="' + styles + '" ';
+            }
+            content += 'data-height="' + processedRow[x].height + '"></div>';
         }
 
         return '<div class="row">' + content + '</div>';

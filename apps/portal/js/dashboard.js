@@ -4,7 +4,7 @@ $(function () {
     var DASHBOARD_SETTINGS_VIEW = 'settings';
     var containerPrefix = 'gadget-';
 
-    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
+    var componentToolbarHbs = Handlebars.compile($('#ues-component-toolbar-hbs').html() || '');
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html() || '');
     var page;
 
@@ -13,7 +13,7 @@ $(function () {
      */
     var initComponentToolbar = function () {
         
-        $('#wrapper').on('click', 'a.ues-component-full-handle', function () {
+        $('#wrapper').on('click', 'a.ues-component-full-handle', function (e) {
             
             var id = $(this).closest('.ues-component').attr('id'), 
                 component = findComponent(id), 
@@ -24,7 +24,7 @@ $(function () {
                 // render normal view
                 // restore the normal view (remove the css class, restore the original height and remove the temporary attribute)
                 componentBox
-                    .removeClass('ues-dashboard-fullview-visible')
+                    .removeClass('ues-fullview-visible')
                     .css('height', componentBox.attr('data-height'))
                     .removeAttr('data-height');
                 
@@ -33,11 +33,11 @@ $(function () {
                 component.fullViewPoped = false;
             } else {
                 
-                // render max view
+                // render max view                
                 // change the container height for the max view (including backing up the original height for restoration later)
                 componentBox
                     .attr('data-height', componentBox.css('height'))
-                    .addClass('ues-dashboard-fullview-visible')
+                    .addClass('ues-fullview-visible')
                     .css('height', $(window).height() + 'px');
                 
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
@@ -46,7 +46,10 @@ $(function () {
             }
         });
 
-        $('#wrapper').on('click', 'a.ues-component-settings-handle', function () {
+        $('#wrapper').on('click', 'a.ues-component-settings-handle', function (e) {
+            
+            e.preventDefault();
+            
             var id = $(this).closest('.ues-component').attr('id'),
                 component = findComponent(id), 
                 componentContainer = $('#' + containerPrefix + id);
@@ -73,6 +76,11 @@ $(function () {
         });
     };
 
+    /**
+     * Switch component view mode
+     * @param component
+     * @param view
+     */
     var switchComponentView = function(component, view){
         component.viewOption = view;
         ues.components.update(component, function (err, block) {
@@ -104,20 +112,26 @@ $(function () {
     };
     
     /**
-     * renders the component toolbar of a given component
+     * Renders the component toolbar of a given component
      * @param component
      */
-    var renderComponentToolbar = function (component) {        
-        var el = $('#' + component.id).prepend($(componentToolbarHbs(component.content)));
-        // hide the settings button from the anon view
-        if (ues.global.dbType === 'anon') {
-            $('a.ues-component-settings-handle', el).hide();
+    var renderComponentToolbar = function (component) {
+        
+        if (component) {
+            
+            var container = $('#' + component.id);
+            container.find('.ues-component-toolbar ul').html($(componentToolbarHbs(component.content)));
+            
+            // hide the settings button from the anon view
+            if (ues.global.dbType === 'anon') {
+                $('a.ues-component-settings-handle', container).hide();
+            }
+            $('[data-toggle="tooltip"]', container).tooltip();
         }
-        $('[data-toggle="tooltip"]', el).tooltip();
     };
     
     /**
-     * find a given component in the current page
+     * Find a given component in the current page
      * @param id
      * @returns {*}
      * @param content

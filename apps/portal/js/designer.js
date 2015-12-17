@@ -2,6 +2,8 @@ $(function () {
     //TODO: cleanup this
 
     var COMPONENTS_PAGE_SIZE = 20;
+    
+    var DUMMY_GADGET_SIZE = 30;
 
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
 
@@ -27,8 +29,6 @@ $(function () {
 
     var activeComponent;
 
-    var pageSelect = DEFAULT_DASHBOARD_VIEW; //this is to store switch between default/anon view
-
     var freshDashboard = true;
 
     var storeCache = {
@@ -38,6 +38,10 @@ $(function () {
     };
     
     var gridster;
+    
+    var gridsterUlDimension = { };
+    
+    var designerScrollTop = 0;
 
     $(document).ready(function () {
         $(".nav li.disabled a").click(function () {
@@ -71,6 +75,8 @@ $(function () {
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html() || '');
     
     var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || '');
+    
+    var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
 
     /**
      * generates a random id
@@ -178,14 +184,6 @@ $(function () {
     };
 
     /**
-     * removes properties panel
-     * @private
-     */
-    var removeProperties = function () {
-        $('#ues-properties').empty();
-    };
-
-    /**
      * checks whether properties panel is visible
      * @returns {boolean}
      * @private
@@ -238,10 +236,6 @@ $(function () {
             if ($.trim($(this).val()) == '') {
                 $(this).val('');
             }
-        });
-
-        $(".form-control.ues-localized-height").on("keypress", function (e) {
-            return sanitizeOnKeyPress(this, e, /[^0-9]/gim);
         });
 
         $('[data-toggle="tooltip"]', el).tooltip();
@@ -544,9 +538,6 @@ $(function () {
         });
     };
     
-    var gridsterUlDimension = { };
-    var designerScrollTop = 0;
-
     /**
      * initializes the component toolbar
      * @private
@@ -554,12 +545,13 @@ $(function () {
     var initComponentToolbar = function () {
         var designer = $('#ues-designer');
         
-        designer.on('click', 'a.ues-component-full-handle', function () {
+        designer.on('click', '.ues-component-box .ues-component-toolbar .ues-component-full-handle', function () {
             
             var id = $(this).closest('.ues-component').attr('id'),
                 component = findComponent(id),
                 componentContainer = $(this).closest('.ues-component-box'),
                 componentContainerId = componentContainer.attr('id'),
+                componentBody = componentContainer.find('.ues-component-body'),
                 gridsterUl = $('.gridster > ul');
             
             if (component.fullViewPoped) {
@@ -573,14 +565,18 @@ $(function () {
                 $('.ues-component-box').show();
                 
                 //minimize logic
-                componentContainer.removeClass('ues-fullview-visible');
+                componentContainer
+                    .removeClass('ues-component-fullview')
+                    .css('height', '')
+                    .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function() {
+                            componentBody.fadeIn(300);
+                            designer.scrollTop(designerScrollTop);
+                            renderMaxView(component, DEFAULT_COMPONENT_VIEW);
+                            component.fullViewPoped = false;
+                        });
                 
-                // restore the scroll position
-                designer.scrollTop(designerScrollTop);
+                componentBody.hide();
                 
-                renderMaxView(component, DEFAULT_COMPONENT_VIEW);
-                
-                component.fullViewPoped = false;
             } else {
                 // rendering full view
                 
@@ -596,32 +592,50 @@ $(function () {
                 $('.ues-component-box:not(#' + componentContainerId + ')').hide();
                 
                 //maximize logic
-                componentContainer.addClass('ues-fullview-visible');
+                componentContainer
+                    .addClass('ues-component-fullview')
+                    .css('height', ($('#ues-designer').height() - 100) + 'px')
+                    .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function() {
+                        componentBody.fadeIn(300);
+                        renderMaxView(component, FULL_COMPONENT_VIEW);
+                        component.fullViewPoped = true;
+                    });
                 
-                renderMaxView(component, FULL_COMPONENT_VIEW);
-                
-                component.fullViewPoped = true;
+                componentBody.hide();
             }
         });
-
-        $('body').on('click', '.modal-footer button', function () {
-            $('#componentFull').modal('hide');
-
-        });
         
-        designer.on('click', '.ues-component .ues-toolbar .ues-properties-handle', function () {
+        designer.on('click', '.ues-component-box .ues-component-toolbar .ues-properties-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
         });
         
-        designer.on('click', '.ues-component .ues-toolbar .ues-trash-handle', function () {
-            var id = $(this).closest('.ues-component').attr('id');
-            removeComponent(findComponent(id), function (err) {
-                if (err) {
-                    console.error(err);
-                }
-                saveDashboard();
-            });
+        designer.on('click', '.ues-component-box .ues-component-toolbar .ues-trash-handle', function () {
+            
+            var componentBox = $(this).closest('.ues-component-box'), 
+                id = componentBox.find('.ues-component').attr('id'), 
+                removeBlock = true;
+            
+            if (id) {
+                removeComponent(findComponent(id), function (err) {
+                    if (err) {
+                        removeBlock = false;
+                        console.error(err);
+                    }
+                    saveDashboard();
+                });
+            }
+            
+            if (removeBlock) {
+                gridster.remove_widget(componentBox, function() {
+                    updateLayout(); 
+                });
+            }
+        });
+        
+        $('body').on('click', '.modal-footer button', function () {
+            $('#componentFull').modal('hide');
+
         });
         
         designer.on('click', '.ues-design-default-view', function () {
@@ -631,6 +645,16 @@ $(function () {
             switchPage(getPageId(), pageType);
             $('.toggle-design-view-anon').removeClass('disabled');
             $('.toggle-design-view-default').addClass('disabled');
+        });
+        
+        designer.on('click', '.ues-design-anon-view', function () {
+            //anon
+            pageType = ANONYMOUS_DASHBOARD_VIEW;
+            ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
+            ues.global.anon = true;
+            switchPage(getPageId(), pageType);
+            $('.toggle-design-view-default').removeClass('disabled');
+            $('.toggle-design-view-anon').addClass('disabled');
         });
         
         designer.on('#toggle-dashboard-view').change(function () {
@@ -653,33 +677,6 @@ $(function () {
                 switchPage(getPageId(), DEFAULT_DASHBOARD_VIEW);
             }
         });
-        
-        designer.on('click', '.ues-design-anon-view', function () {
-            //anon
-            pageType = ANONYMOUS_DASHBOARD_VIEW;
-            ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
-            ues.global.anon = true;
-            switchPage(getPageId(), pageType);
-            $('.toggle-design-view-default').removeClass('disabled');
-            $('.toggle-design-view-anon').addClass('disabled');
-        });
-        
-        designer.on('mouseenter', '.ues-component .ues-toolbar .ues-move-handle', function () {
-            $(this).draggable({
-                cancel: false,
-                appendTo: 'body',
-                helper: 'clone',
-                start: function (event, ui) {
-                    //console.log('dragging');
-                },
-                stop: function () {
-                    //$('#left a[href="#components"]').tab('show');
-                }
-            });
-        }).on('mouseleave', '.ues-component .ues-toolbar .ues-move-handle', function () {
-            $(this).draggable('destroy');
-        });
-
     };
 
     /**
@@ -716,8 +713,9 @@ $(function () {
      * @private
      */
     var renderComponentToolbar = function (component) {
-        var el = $('#' + component.id).prepend($(componentToolbarHbs(component)));
-        $('[data-toggle="tooltip"]', el).tooltip();
+        if (component) {
+            $('#' + component.id + ' .ues-component-toolbar ul').html($(componentToolbarHbs(component.content)));
+        }
     };
 
     /**
@@ -761,34 +759,6 @@ $(function () {
             renderComponentToolbar(component);
             renderComponentProperties(component);
             saveDashboard();
-        });
-    };
-
-    /**
-     * move given component into the given container
-     * @param container
-     * @param id
-     * @private
-     */
-    var moveComponent = function (container, id) {
-        var component = findComponent(id);
-        var area = container.attr('id');
-        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        var content = page.content[pageType];
-        content = content[area] || (content[area] = []);
-        content.push(component);
-        removeComponent(component, function (err) {
-            if (err) {
-                throw err;
-            }
-            ues.components.create(container, component, function (err, block) {
-                if (err) {
-                    throw err;
-                }
-                renderComponentToolbar(component);
-                renderComponentProperties(component);
-                saveDashboard();
-            });
         });
     };
 
@@ -1594,10 +1564,6 @@ $(function () {
         })
     };
 
-    var toggleProperties = function () {
-
-    };
-
     var initDesignerMenu = function () {
 
         $("#ues-workspace-designer").show();
@@ -1635,7 +1601,6 @@ $(function () {
             var thiz = $(this);
             var parent = thiz.parent();
             if (parent.hasClass('active')) {
-                //parent.removeClass('active');
                 hideProperties();
                 return;
             }
@@ -1736,34 +1701,34 @@ $(function () {
         $('#ues-add-block-btn').on('click', function() {
 
             var width = parseInt($('#dummy-size').attr('data-w')) || 0, 
-                height = parseInt($('#dummy-size').attr('data-h')) || 0;
+                height = parseInt($('#dummy-size').attr('data-h')) || 0, 
+                id = guid();
 
             if (width == 0 || height == 0) {
                 return;
             }
 
-            gridster.add_widget(componentBoxListHbs({ blocks: [{ id: guid() }] }), width, height, 1, 1);
-            updateLayout();
-
+            gridster.add_widget(componentBoxListHbs({ blocks: [{ id: id }] }), width, height, 1, 1);
+            
+            $('.ues-component-box#' + id).html(componentBoxContentHbs({ appendResizeHandle: true }));
             $('#ues-add-block-menu-item').removeClass('open');
             
+            updateLayout();            
             listenLayout();
-        });
-
-        var dummyGadgetWidth = 30;
+        });        
 
         $('#dummy-gadget').resizable({
-            grid : dummyGadgetWidth,
+            grid : DUMMY_GADGET_SIZE,
             containment : "#dummy-gadget-container",
             resize : function(event, ui) {
 
-                var h = Math.round($(this).height() / dummyGadgetWidth), 
-                    w = Math.round($(this).width() / dummyGadgetWidth), 
-                    display = w + "x" + h;
+                var height = Math.round($(this).height() / DUMMY_GADGET_SIZE), 
+                    width = Math.round($(this).width() / DUMMY_GADGET_SIZE), 
+                    label = width + 'x' + height;
 
-                $(this).find('#dummy-size').html(display).attr({
-                    'data-w' : w,
-                    'data-h' : h
+                $(this).find('#dummy-size').html(label).attr({
+                    'data-w' : width,
+                    'data-h' : height
                 });
             }
         });
@@ -1792,36 +1757,26 @@ $(function () {
      */
     var listenLayout = function () {
         $('#ues-designer').find('.ues-component-box:not([data-banner=true])').droppable({
-            //activeClass: 'ui-state-default',
             hoverClass: 'ui-state-hover',
-            //accept: ':not(.ui-sortable-helper)',
-            drop: function (event, ui) {
-                //$(this).find('.placeholder').remove();
-                var id = ui.helper.data('id');
-                var action = ui.helper.data('action');
-                var type = ui.helper.data('type');
-                var el = $(this);
-                switch (action) {
-                    case 'move':
-                        if (!hasComponents($(this))) {
-                            moveComponent(el, id);
-                        }
-                        break;
-                    default:
-                        if (!hasComponents($(this))) {
-                            createComponent(el, findStoreCache(type, id));
-                        }
+            drop: function (event, ui) {                
+                
+                var id = ui.helper.data('id'), 
+                    type = ui.helper.data('type');
+                
+                if (!hasComponents($(this))) {
+                    createComponent($(this), findStoreCache(type, id));
                 }
             }
         });
     };
 
+    /**
+     * check whether the container has any components
+     * @param container
+     * @returns boolean
+     */
     var hasComponents = function (container) {
-        var components = container.find('.ues-component').length;
-        if (components > 0) {
-            return true;
-        }
-        return false;
+        return (container.find('.ues-component .ues-component-body div').length > 0);
     };
 
     /**
@@ -1959,7 +1914,7 @@ $(function () {
     }
 
     /**
-     * renders the given page
+     * renders the given page in the designer view
      * @param pid
      * @param done
      * @private
@@ -1997,7 +1952,7 @@ $(function () {
                 minBlockWidth = Math.ceil($('.gridster').width() / 12) - 10,
                 minBlockHeight = minBlockWidth + 30;
             
-            // bind the gridster
+            // bind the gridster to the layout
             gridster = gridsterContainer.gridster({
                 widget_margins: [5, 5],
                 widget_base_dimensions: [minBlockWidth, minBlockHeight],
@@ -2013,7 +1968,7 @@ $(function () {
                     };
                 },
                 draggable: {
-                    handle: '.ues-component-box-header',
+                    handle: '.ues-component-header, .ues-component-header .ues-component-title',
                     stop: function() {
                         updateLayout();
                     }
@@ -2021,13 +1976,21 @@ $(function () {
                 resize: {
                     enabled: true,
                     max_size: [12, 12],
-                    resize: function(e, ui, widget) {
-                        var comp = widget.find('.ues-component');
-                        if (comp) {
-                            updateComponent(comp.attr('id'));
+                    start: function(e, ui, widget) {
+                        // hide the component content on start resizing the component
+                        var container = widget.find('.ues-component');
+                        if (container) {
+                            container.find('.ues-component-body').hide();
                         }
                     },
-                    stop: function() {
+                    stop: function(e, ui, widget) {
+                        // re-render component on stop resizing the component
+                        var container = widget.find('.ues-component');
+                        if (container) {
+                            container.find('.ues-component-body').show();
+                            updateComponent(container.attr('id'));
+                        }
+                        
                         updateLayout();
                     }
                 }
@@ -2036,30 +1999,12 @@ $(function () {
             // stop resizing banner placeholder
             $('.gridster [data-banner=true] .gs-resize-handle').remove();
             
-            // remove block handler
-            $('.gridster').on('click', '.ues-component-box-remove-handle', function() {
-                var componentBox = $(this).closest('.ues-component-box');
-                
-                componentBox.find('.ues-component').each(function(i, component) {
-                    var componentId = $(component).attr('id');
-                    
-                    removeComponent(findComponent(componentId), function (err) {
-                        if (err) {
-                            console.error(err);
-                        }
-                        saveDashboard();
-                    });
-                });
-                
-                gridster.remove_widget(componentBox, function() {
-                    updateLayout(); 
-                });
-            });
-            
             if (!done) {
                 return;
             }
+            
             done(err);
+            
         }, true);
         
         // stop closing the add block dropdown on clicking

@@ -142,19 +142,7 @@
 </div>
 
 <div id="wrapper"><%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%></div>
-                            
-<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
-    <div class="ues-toolbar">
-        <ul class="list-inline pull-right">
-            <li><a href="#" class="ues-component-full-handle"><i class="fw fw-laptop"></i></a></li>
-        </ul>
-        {{#has options}}
-        <ul class="list-inline pull-right">
-            <li><a href="#" class="ues-component-settings-handle"><i class="fw fw-settings ues-component-properties-toggle"></i></a></li>
-        </ul>
-        {{/has}}
-    </div>
-</script>
+
 <script id="ues-gadget-setting-hbs" type="text/x-handlebars-template">
     <div class="ues-sandbox" data-component="{{id}}">
         <div id="ues-gadget-options" class="ues-gadget-options ues-gadget-properties gadget-setting">
@@ -212,7 +200,29 @@
     <img src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" />
     {{/if}}
 </script>
-                            
+
+<script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
+    <div class="ues-component panel panel-default">
+        <div class="ues-component-header panel-heading">
+            <h4 class="ues-component-title"></h4>
+
+            <div class="ues-component-toolbar">
+                <ul class="list-inline pull-right">
+                </ul>
+            </div>  
+        </div>
+
+        <div class="ues-component-body panel-body"></div>
+    </div>
+</script>
+
+<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
+    {{#has options}}
+    <li><a href="#" class="ues-component-settings-handle"><i class="fw fw-settings ues-component-properties-toggle"></i></a></li>
+    {{/has}}
+    <li><a href="#" class="ues-component-full-handle"><i class="fw fw-laptop"></i></a></li>
+</script>
+
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
@@ -236,44 +246,15 @@
 <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
     
 <script>
-    if(!ues.global.renderFromExtension){
+    if (!ues.global.renderFromExtension) {
         ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page);
     }
                       
-    $(document).ready(function() {        
+    $(document).ready(function() {
         var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
         var banner = ues.global.dashboard.banner;
-        $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));       
-        
-        resizeComponents();
+        $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
     });
-    
-    $(window).resize(function() {
-        resizeComponents();
-    });
-    
-    function resizeComponents() {
-        
-        var containerWidth = $('#wrapper > div').width(), 
-            unitHeight = (containerWidth > 720) ? Math.floor(containerWidth / 12) : 120;
-        
-        $('#wrapper .ues-component-box').each(function(i, o) {
-            var height = $(this).attr('data-height') * unitHeight;
-            $(this).css('height', height + 'px');
-        });
-        
-        var placeholder = $('.ues-banner-placeholder'), 
-            bannerImg = placeholder.find('img');
-        if (bannerImg.length > 0) {
-            var img = new Image();
-            img.onload = function() {
-                placeholder.css('min-height', this.height).css('height', '');
-            }
-            img.src = bannerImg.attr('src');
-        } else {
-            placeholder.css('height', '');
-        }
-    }
     
 </script>   
 </body>
