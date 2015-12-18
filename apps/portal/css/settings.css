@@ -36,3 +36,12 @@
 .ues-designer-breadcrumb li a:hover {
     color: #5bc0de;
 }
+
+.ues-top-nav {
+    padding: 0;
+}
+
+.tt-menu {
+    max-height: 200px;
+    overflow: auto;
+}

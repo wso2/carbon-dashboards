@@ -60,12 +60,10 @@
 }
 
 #ues-store .ues-store-assets {
-    overflow: scroll;
     height: 100%;
 }
 
 #ues-store .ues-dashboard-pages {
-    overflow: scroll;
     height: 100%;
 }
 
@@ -417,4 +415,8 @@ h4.ues-page-title {
 
 .ues-designer-breadcrumb li a:hover {
     color: #5bc0de;
+}
+
+.ues-top-nav{
+    padding: 0;
 }

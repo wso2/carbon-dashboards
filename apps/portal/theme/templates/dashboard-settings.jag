@@ -6,17 +6,16 @@
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-    <div class="container-fluid">
+    <div class="container-fluid ues-top-nav">
         <div class="navbar-header">
         </div>
         <div id="ues-breadcrumbs-container">
             <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
-                <li><a href="<%=tenantedUrlPrefix%>./">Home</a></li>
             </ol>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable")%></a></li>
+                <!--<li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable")%></a></li>-->
                 <li><a id="ues-back" href="<%=tenantedUrlPrefix%>./dashboards">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
@@ -156,6 +155,11 @@
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-shared-role-hbs" type="text/x-handlebars-template">
     <div class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
+</script>
+<script id="permission-menu-hbs" type="text/x-handlebars-template">
+    <div class="permission-menu-content">
+        {{name}}
+    </div>
 </script>
 </body>
 </html>

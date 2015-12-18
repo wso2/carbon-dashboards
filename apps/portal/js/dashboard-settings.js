@@ -14,6 +14,8 @@ $(function () {
 
     var url = dashboardsApi + '/' + dashboard.id;
 
+    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
+
     /**
      * Generate Noty Messages as to the content given using parameters.
      * @param1 text {String}
@@ -131,18 +133,22 @@ $(function () {
     var viewer = function (el, role) {
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
-        viewers.push(role);
-        saveDashboard();
-        $('#ues-dashboard-settings').find('.ues-shared-view').append(sharedRoleHbs(role));
+        if (!isExistingPermission(viewers, role)) {
+            viewers.push(role);
+            saveDashboard();
+            $('#ues-dashboard-settings').find('.ues-shared-view').append(sharedRoleHbs(role));
+        }
         el.typeahead('val', '');
     };
 
     var editor = function (el, role) {
         var permissions = dashboard.permissions;
         var editors = permissions.editors;
-        editors.push(role);
-        saveDashboard();
-        $('#ues-dashboard-settings').find('.ues-shared-edit').append(sharedRoleHbs(role));
+        if (!isExistingPermission(editors, role)) {
+            editors.push(role);
+            saveDashboard();
+            $('#ues-dashboard-settings').find('.ues-shared-edit').append(sharedRoleHbs(role));
+        }
         el.typeahead('val', '');
     };
 
@@ -255,6 +261,20 @@ $(function () {
         window.open(dashboardsApi + '/' + dashboard.id, '_blank');
     };
 
+    /**
+     *
+     * */
+    var isExistingPermission = function (permissions, role) {
+        var isExist = false;
+        for (var i = 0; i < permissions.length; i++) {
+            if (permissions[i] == role) {
+                isExist = true;
+                break;
+            }
+        }
+        return isExist;
+    };
+
     var initUI = function () {
 
         addBreadcrumbs("Dashboard Settings");
@@ -281,10 +301,23 @@ $(function () {
         viewerRoles.initialize();
 
         //TODO: improve typeahead to use single prefetch for both editors and viewers
-        $('#ues-share-view').typeahead(null, {
+        $('#ues-share-view').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 0
+        }, {
             name: 'roles',
             displayKey: 'name',
-            source: viewerRoles.ttAdapter()
+            limit: 1,
+            source: viewerRoles.ttAdapter(),
+            templates: {
+                empty: [
+                    '<div class="empty-message">',
+                    'No Result Available',
+                    '</div>'
+                ].join('\n'),
+                suggestion: permissionMenuHbs
+            }
         }).on('typeahead:selected', function (e, role, roles) {
             viewer($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
@@ -311,10 +344,24 @@ $(function () {
 
         editorRoles.initialize();
 
-        $('#ues-share-edit').typeahead(null, {
+        $('#ues-share-edit').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 0
+        }, {
             name: 'roles',
             displayKey: 'name',
-            source: editorRoles.ttAdapter()
+            limit: 1,
+            source: editorRoles.ttAdapter(),
+            extraInfo: ues.global.dashboard,
+            templates: {
+                empty: [
+                    '<div class="empty-message">',
+                    'No Result Available',
+                    '</div>'
+                ].join('\n'),
+                suggestion: permissionMenuHbs
+            }
         }).on('typeahead:selected', function (e, role, roles) {
             editor($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {

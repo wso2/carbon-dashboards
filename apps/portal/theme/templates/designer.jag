@@ -7,7 +7,7 @@
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/jquery.gridster.css" />
-
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/nanoscroller.css" />
     <title><%= i18n.localize("ds.dashboard.designer") %></title>
 </head>
 <body class="<%=locale%>">
@@ -15,17 +15,16 @@
 
 <div id="ues-workspace-designer" class="ues-workspace" style="display:none">
     <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-        <div class="container-fluid">
+        <div class="container-fluid ues-top-nav">
             <div class="navbar-header">
             </div>
             <div id="ues-breadcrumbs-container">
                 <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
-                    <li><a href="<%=tenantedUrlPrefix%>./">Home</a></li>
                 </ol>
             </div>
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#"><%= i18n.localize("dashboard.design") %> </a></li>
+                    <!--<li class="active"><a href="#"><%= i18n.localize("dashboard.design") %> </a></li>-->
                     <% if (!dashboard.isUserCustom) { %>
                                 <li><a href="<%=tenantedUrlPrefix%>create-gadget">
                                     <span class="fw-stack">
@@ -124,15 +123,13 @@
                             </li>
                         </ul>
                 </li>
-                <li>
-                    <a href="#" class="ues-page-properties-toggle"><i class="fw fw-register2"></i></a>
-                </li>
             </ul>
         </div>
     </nav>
     <div id="ues-store" class="ues-hidden">
-        <div id="ues-store-gadget" class="ues-store-assets ues-hidden" data-type="gadget">
-            <div class="container-fluid ues-content">
+
+        <div id="ues-store-gadget" class="ues-store-assets ues-hidden nano" data-type="gadget">
+            <div class="container-fluid ues-content nano-content">
                 <div class="row ues-search-box">
                     <div class="col-md-12">
                         <form>
@@ -149,8 +146,8 @@
                 <div class="row ues-thumbnails"></div>
             </div>
         </div>
-        <div id="ues-store-widget" class="ues-store-assets ues-hidden" data-type="widget">
-            <div class="container-fluid ues-content">
+        <div id="ues-store-widget" class="ues-store-assets ues-hidden nano" data-type="widget">
+            <div class="container-fluid ues-content nano-content">
                 <div class="row ues-search-box">
                     <div class="col-md-12">
                         <form>
@@ -166,8 +163,8 @@
                 <div class="row ues-thumbnails"></div>
             </div>
         </div>
-        <div id="ues-dashboard-pages" class="ues-dashboard-pages ues-hidden" data-type="pages">
-            <div class="container-fluid ues-content">
+        <div id="ues-dashboard-pages" class="ues-dashboard-pages ues-hidden nano" data-type="pages">
+            <div class="container-fluid ues-content nano-content">
                 <div class="row ues-search-box">
                     <div class="col-md-12">
                         <form>
@@ -188,7 +185,7 @@
                         </a>
                     </div>
                 </div>
-                <ul class="nav nav-pils nav-stacked ues-pages-list"></ul>
+                <div class="accordion" id="ues-page-properties"></div>
             </div>
         </div>
     </div>
@@ -199,15 +196,13 @@
 </div>
 <div id="ues-workspace-layout" class="ues-workspace ues-hidden">
     <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-        <div class="container-fluid">
+        <div class="container-fluid ues-top-nav">
             <div class="navbar-header">
-                <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+            </div>
+            <div id="ues-breadcrumbs-container">
+                <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
+                    <li><a href=".././dashboards">Dashboards</a></li>
+                </ol>
             </div>
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
@@ -251,6 +246,7 @@
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
 <script src="<%=urlPrefix%>js/jquery.gridster.js"></script>
+<script src="<%=urlPrefix%>js/jquery.nanoscroller.min.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -494,12 +490,6 @@
 </script>
 <script id="ues-page-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12 title-section">
-            <span> <h3 class="ues-page-title">{{title}}</span> <i class="close-db-settings fw fw-uncheck
-            pull-right"></i></li>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-md-12">
             <div class="ues-sandbox">
                 <form>
@@ -541,16 +531,29 @@
     </div>
 </script>
 <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
+<div class="panel-group">
     {{#each pages}}
-    <li{{#equals id ../current.id}} class="active disabled"{{/equals}}>
-        <a href="#" data-id="{{id}}">{{#equals id ../home}}
-            <i class="fw fw-home" style="color:red;"></i>
-        {{/equals}}
-        {{title}}
-        <i class="fw fw-delete pull-right ues-trash"></i></a>
-    </li>
+        <div class="panel panel-default">
+        <div class="panel-heading">
+            <a data-id="{{id}}" class="accordion-toggle" data-toggle="collapse" data-parent="#leftMenu" href="#{{id}}">
+
+                {{title}}
+                <i class="fw fw-delete pull-right ues-trash"></i>
+                {{#equals id ../home}}
+                    <i class="fw fw-home pull-right" style="color:red;"></i>
+                {{/equals}}
+            </a>
+        </div>
+        <div id="{{id}}" class="panel-collapse collapse" style="height: 0px; ">
+            <div class="panel-body">
+
+            </div>
+        </div>
+        </div>
     {{/each}}
+</div>
 </script>
+
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     
     <canvas id="src-canvas" class="hidden"></canvas>    

@@ -6,12 +6,11 @@
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-    <div class="container-fluid">
+    <div class="container-fluid ues-top-nav">
         <div class="navbar-header">
         </div>
         <div id="ues-breadcrumbs-container">
             <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
-                <li><a href="<%=tenantedUrlPrefix%>./">Home</a></li>
             </ol>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">

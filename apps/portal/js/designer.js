@@ -1,49 +1,33 @@
 $(function () {
         //TODO: cleanup this
-
-        var COMPONENTS_PAGE_SIZE = 20;
-
-        var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
-
-        var dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards';
-
-        var resolveURI = ues.dashboards.resolveURI;
-
-        var findPage = ues.dashboards.findPage;
-
-        var nonCategoryKeyWord = "null";
-
-        var DEFAULT_DASHBOARD_VIEW = 'default';
-        var ANONYMOUS_DASHBOARD_VIEW = 'anon';
-
-        var lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
-
-        var dashboard;
-
-        var page;
-
-        var pageType;
-
-        var activeComponent;
-
-        var pageSelect = DEFAULT_DASHBOARD_VIEW; //this is to store switch between default/anon view
-
-        var freshDashboard = true;
-
-        var storeCache = {
-            gadget: [],
-            widget: [],
-            layout: []
-        };
-
-        var gridster;
-
-        var breadcrumbs = [];
+        var dashboard,
+            page,
+            pageType,
+            activeComponent,
+            gridster,
+            breadcrumbs = [],
+            recentlyOpenedPageProperty,
+            storeCache = {
+                gadget: [],
+                widget: [],
+                layout: []
+            },
+            nonCategoryKeyWord = "null",
+            freshDashboard = true,
+            dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
+            dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards',
+            resolveURI = ues.dashboards.resolveURI,
+            findPage = ues.dashboards.findPage,
+            lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage),
+            COMPONENTS_PAGE_SIZE = 20,
+            DEFAULT_DASHBOARD_VIEW = 'default',
+            ANONYMOUS_DASHBOARD_VIEW = 'anon';
 
         $(document).ready(function () {
             $(".nav li.disabled a").click(function () {
                 return false;
             });
+
         });
 
         var clone = function (o) {
@@ -91,6 +75,14 @@ $(function () {
          */
         var randomId = function () {
             return Math.random().toString(36).slice(2);
+        };
+
+        /**
+         * Initialize the nano scroller.
+         * @private
+         * */
+        var initNanoScroller = function () {
+            $(".nano").nanoScroller();
         };
 
         /**
@@ -1325,9 +1317,15 @@ $(function () {
 
                 updatePagesList();
                 saveDashboard();
+                initNanoScroller();
 
             } else {
                 console.error('function not implemented')
+            }
+
+            if (recentlyOpenedPageProperty && !$('#ues-dashboard-pages').find('#ues-page-properties').find("#" + recentlyOpenedPageProperty).hasClass('in')) {
+                $('#ues-dashboard-pages').find('#ues-page-properties').find('a[data-id="' + recentlyOpenedPageProperty + '"]').click();
+                initNanoScroller();
             }
         };
 
@@ -1352,43 +1350,6 @@ $(function () {
             } else {
                 return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
             }
-        };
-
-        /**
-         * renders page options
-         * @param page
-         * @private
-         */
-        var renderPageProperties = function (page) {
-            $('#ues-properties').find('.ues-content').html(pageOptionsHbs({
-                id: page.id,
-                title: page.title,
-                landing: (dashboard.landing == page.id),
-                isanon: page.isanon,
-                isUserCustom: dashboard.isUserCustom,
-                fluidLayout: page.layout.fluidLayout || false
-            })).find('.ues-sandbox').on('change', 'input', function () {
-                updatePageProperties($(this).closest('.ues-sandbox'));
-            });
-
-            $("#page-title").on("keypress", function (e) {
-                return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
-            });
-
-            $("#page-url").on("keypress", function (e) {
-                return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
-            }).on("keyup", function (e) {
-                var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
-                $(this).val(sanitizedInput);
-            });
-
-            var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
-                .find('.ues-context-menu-actions')
-                .find('.ues-page-properties-toggle');
-            var parent = toggle.parent();
-            parent.siblings().removeClass('active');
-            parent.addClass('active');
-            showProperties();
         };
 
         /**
@@ -1596,19 +1557,23 @@ $(function () {
                 paging.start += COMPONENTS_PAGE_SIZE;
                 paging.end = !data.length;
                 if (!fresh) {
+
                     assets.append(componentsListHbs({
                         type: type,
                         assets: data,
                         lang: lang
                     }));
+                    initNanoScroller();
                     return;
                 }
                 if (data.length) {
+
                     assets.html(componentsListHbs({
                         type: type,
                         assets: sortComponentsByCategory(nonCategoryKeyWord, filterComponentByCategories(data)),
                         lang: lang
                     }));
+                    initNanoScroller();
                     return;
                 }
                 assets.html(noComponentsHbs());
@@ -1648,13 +1613,13 @@ $(function () {
                 var parent = thiz.parent();
                 var type = thiz.data('type');
                 parent.siblings().addBack().removeClass('active');
-
                 var store = $('#ues-store');
                 var assets = $('#ues-store-' + type);
                 if (store.hasClass('ues-hidden') || assets.hasClass('ues-hidden')) {
                     parent.addClass('active');
                     assets.siblings().addClass('ues-hidden');
                     showStore(type);
+                    initNanoScroller();
                     return;
                 }
                 hideStore(type);
@@ -1674,6 +1639,7 @@ $(function () {
                     parent.addClass('active');
                     pagesMenu.siblings().addClass('ues-hidden');
                     showPages();
+                    initNanoScroller();
                     return;
                 }
                 parent.removeClass('active');
@@ -1757,6 +1723,7 @@ $(function () {
                 }
                 var query = $('.ues-search-box input', thiz).val();
                 loadAssets(type, query);
+                initNanoScroller();
             }).find('.ues-search-box input').on('keypress', function (e) {
                 if (e.which !== 13) {
                     return;
@@ -1769,87 +1736,53 @@ $(function () {
             })
         };
 
-        var toggleProperties = function () {
-
-        };
-
-        var addBreadcrumbsParents = function (pageName, url) {
-            var isExist = false;
-            for (var i = 0; i < breadcrumbs.length; i++) {
-                if (breadcrumbs[i] == pageName) {
-                    isExist = true;
-                    break;
-                }
-            }
-
-            if (!isExist) {
-                breadcrumbs.push(pageName);
-                $('#ues-breadcrumbs').append("<li><a href='" + url + "'>" + pageName + "</a></li>");
-
-            }
-        };
-
-        var addBreadcrumbsCurrent = function (pageName) {
-            var isExist = false;
-            for (var i = 0; i < breadcrumbs.length; i++) {
-                if (breadcrumbs[i] == pageName) {
-                    isExist = true;
-                    break;
-                }
-            }
-
-            if (isExist) {
-                if ($('#ues-breadcrumbs').find(".active").text() != pageName) {
-                    removeBreadcrumbsCurrent();
-                    removeBreadcrumbsElement(pageName, "a", "li");
-
-                }
-            }
-
+        var addBreadcrumbsParents = function (pageName, url, element) {
+            var breadCrumb = element ? $(element).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
             breadcrumbs.push(pageName);
-            $("#ues-breadcrumbs").append("<li class='active'>" + pageName + "</li>");
+            breadCrumb.append("<li><a href='" + url + "'>" + pageName + "</a></li>");
         };
 
-        var removeBreadcrumbsCurrent = function () {
-            $("#ues-breadcrumbs").find(".active").remove();
+        var addBreadcrumbsCurrent = function (pageName, element) {
+            var breadCrumb = element ? $(element).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
+            if (breadCrumb.find(".active").text() != pageName) {
+                removeBreadcrumbsCurrent();
+                removeBreadcrumbsElement(pageName, "a", "li");
+
+            }
+            breadcrumbs.push(pageName);
+            breadCrumb.append("<li class='active'>" + pageName + "</li>");
+        };
+
+        var removeBreadcrumbsCurrent = function (element) {
+            var breadCrumb = element ? $(element).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
+            breadCrumb.find(".active").remove();
             breadcrumbs.pop();
         };
 
-        var removeBreadcrumbsElement = function (text, element, parent) {
-            var anchors = $("#ues-breadcrumbs").find(element);
+        var removeBreadcrumbsElement = function (text, element, parent, breadCrumbElement) {
+            var breadCrumb = breadCrumbElement ? $(breadCrumbElement).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
+            var anchors = breadCrumb.find(element);
             for (var i = 0; i < anchors.length; i++) {
                 if ($(anchors[i]).text() == text) {
                     parent ? $(anchors[i]).parent(parent).remove() : $(anchors[i]).remove();
-                    breadcrumbs.splice((i - 1), 1);
                     break;
                 }
             }
         };
 
         var initDesignerMenu = function () {
-
             var designer = $("#ues-workspace-designer");
-
             designer.show();
 
             var menu = designer.find('.ues-context-menu');
-
-            menu.find('.ues-page-add').on('click', function () {
-                layoutWorkspace();
-                removeBreadcrumbsCurrent();
-                addBreadcrumbsParents(dashboard.title, ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true");
-                addBreadcrumbsCurrent("Add Page");
-            });
             menu.find('.ues-dashboard-preview').on('click', function () {
                 previewDashboard(page);
             });
-
             menu.find('.ues-tiles-menu-toggle').click(function () {
                 menu.find('.ues-tiles-menu').slideToggle();
             });
 
             var actions = menu.find('.ues-context-menu-actions');
-
             actions.find('.ues-component-properties-toggle').click(function () {
                 var thiz = $(this);
                 var parent = thiz.parent();
@@ -1861,34 +1794,7 @@ $(function () {
                 renderComponentProperties(activeComponent);
             });
 
-            actions.find('.ues-page-properties-toggle').click(function () {
-                var thiz = $(this);
-                var parent = thiz.parent();
-                if (parent.hasClass('active')) {
-                    //parent.removeClass('active');
-                    hideProperties();
-                    return;
-                }
-                renderPageProperties(page);
-            });
-
-            var storeMenuActions = designer.find('#ues-store-menu');
-
-            storeMenuActions.find('.ues-page-properties-toggle').click(function () {
-                var thiz = $(this);
-                var parent = thiz.parent();
-                if (parent.hasClass('active')) {
-                    parent.removeClass('active');
-                    hideProperties();
-                    return;
-                }
-
-                parent.addClass('active');
-                renderPageProperties(page);
-            });
-
             var pagesMenu = $("#ues-dashboard-pages");
-
             pagesMenu.find(".ues-pages-list").on('click', 'li a', function () {
                 var thiz = $(this);
                 var pid = thiz.data('id');
@@ -1898,14 +1804,57 @@ $(function () {
 
                 initBanner();
             });
+            pagesMenu.find("#ues-page-properties").on("click", 'a', function (e) {
+                var thiz = $(this);
+                var pid = thiz.data('id');
+                if ($("#" + pid).hasClass('in')) {
+                    $("#" + pid).removeClass('in');
+                    recentlyOpenedPageProperty = null;
+                    e.stopPropagation();
+                    return;
+                }
+                ues.global.isSwitchToNewPage = true;
+                switchPage(pid, pageType);
+                ues.global.isSwitchToNewPage = false;
 
-            pagesMenu.find(".ues-pages-list").on('click', 'li a .ues-trash', function (e) {
+                $('#' + pid).find('.panel-body').html(pageOptionsHbs({
+                    id: page.id,
+                    title: page.title,
+                    landing: (dashboard.landing == page.id),
+                    isanon: page.isanon,
+                    isUserCustom: dashboard.isUserCustom,
+                    fluidLayout: page.layout.fluidLayout || false
+                })).find('.ues-sandbox').on('change', 'input', function () {
+                    updatePageProperties($(this).closest('.ues-sandbox'));
+                });
+
+                $("#page-title").on("keypress", function (e) {
+                    return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+                });
+
+                $("#page-url").on("keypress", function (e) {
+                    return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+                }).on("keyup", function (e) {
+                    var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
+                    $(this).val(sanitizedInput);
+                });
+
+                initBanner();
+                recentlyOpenedPageProperty = pid;
+            });
+            pagesMenu.find("#ues-page-properties").on("click", 'a .ues-trash', function (e) {
                 e.stopPropagation();
                 var thiz = $(this);
                 var pid = thiz.parent().data('id');
                 removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                     var pages = dashboard.pages;
+
+                    if (recentlyOpenedPageProperty == pid) {
+                        recentlyOpenedPageProperty = null;
+                    }
+
                     updatePagesList(pages);
+                    initNanoScroller();
                     if (!pages.length) {
                         dashboard.landing = null;
                         hideProperties();
@@ -1921,13 +1870,43 @@ $(function () {
                     saveDashboard();
                     if (pid !== page.id) {
                         updatePagesList(pages);
+                        initNanoScroller();
                         return;
                     }
                     hideProperties();
                     renderPage(first.id);
                 });
             });
+            pagesMenu.find(".ues-pages-list").on('click', 'li a .ues-trash', function (e) {
+                e.stopPropagation();
+                var thiz = $(this);
+                var pid = thiz.parent().data('id');
+                removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
+                    var pages = dashboard.pages;
+                    updatePagesList(pages);
+                    initNanoScroller();
+                    if (!pages.length) {
+                        dashboard.landing = null;
+                        hideProperties();
+                        initFirstPage();
+                        return;
+                    }
 
+                    var first = pages[0];
+                    if (pid === dashboard.landing) {
+                        dashboard.landing = first.id;
+                    }
+
+                    saveDashboard();
+                    if (pid !== page.id) {
+                        updatePagesList(pages);
+                        initNanoScroller();
+                        return;
+                    }
+                    hideProperties();
+                    renderPage(first.id);
+                });
+            });
             pagesMenu.find(".ues-search-box input").on("change", function (e) {
                 var searchQuery = "" + $(this).val();
                 var pages = dashboard.pages;
@@ -1938,26 +1917,27 @@ $(function () {
                             resultPages.push(pages[i]);
                         }
                     }
-
                     updatePagesList(page, resultPages, dashboard.landing);
+                    initNanoScroller();
                 } else {
                     updatePagesList();
+                    initNanoScroller();
                 }
             });
-
             pagesMenu.find('.ues-page-add').on('click', function () {
                 layoutWorkspace();
-                removeBreadcrumbsCurrent();
-                addBreadcrumbsParents(dashboard.title, ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true");
-                addBreadcrumbsCurrent("Add Page");
+                removeBreadcrumbsCurrent($('#ues-workspace-layout').find('.ues-context-menu'));
+                removeBreadcrumbsElement(dashboard.title, "a", "li", $('#ues-workspace-layout').find('.ues-context-menu'));
+                addBreadcrumbsParents(dashboard.title, ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true", $('#ues-workspace-layout').find('.ues-context-menu'));
+                addBreadcrumbsCurrent("Add Page", $('#ues-workspace-layout').find('.ues-context-menu'));
             });
         };
 
         var initLayoutMenu = function () {
             var menu = $('#ues-workspace-layout').find('.ues-context-menu');
             menu.find('.ues-go-back').on('click', function () {
-                removeBreadcrumbsCurrent();
-                removeBreadcrumbsElement(dashboard.title, "a", "li");
+                removeBreadcrumbsCurrent($('#ues-workspace-layout').find('.ues-context-menu'));
+                removeBreadcrumbsElement(dashboard.title, "a", "li", $('#ues-workspace-layout').find('.ues-context-menu'));
                 addBreadcrumbsCurrent(dashboard.title);
                 showWorkspace('designer');
             });
@@ -2120,7 +2100,7 @@ $(function () {
         };
 
         var updatePagesList = function (current, pages, landing) {
-            $('#ues-dashboard-pages').find('.ues-pages-list').html(pagesListHbs({
+            $('#ues-dashboard-pages').find('#ues-page-properties').html(pagesListHbs({
                 current: current ? current : page,
                 pages: pages ? pages : dashboard.pages,
                 home: landing ? landing : dashboard.landing
@@ -2167,7 +2147,9 @@ $(function () {
                 } else {
                     renderPage(id, done);
                 }
+
                 addBreadcrumbsCurrent(dashboard.title);
+                initNanoScroller();
             }, 'html');
         };
 
@@ -2251,9 +2233,11 @@ $(function () {
             if (!page) {
                 throw 'specified page : ' + pid + ' cannot be found';
             }
-            if (propertiesVisible()) {
-                renderPageProperties(page);
-            }
+
+            // TODO: Revise the following commented line.
+            //if (propertiesVisible()) {
+            //    renderPageProperties(page);
+            //}
 
             pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
             if (ues.global.isSwitchToNewPage || !page.isanon) {
@@ -2611,7 +2595,6 @@ $(function () {
         initUI();
         initDashboard(ues.global.dashboard, ues.global.page, ues.global.fresh);
         initBanner();
-
         ues.dashboards.save = saveDashboard;
     }
 )

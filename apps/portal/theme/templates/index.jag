@@ -7,17 +7,15 @@
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-    <div class="container-fluid">
+    <div class="container-fluid ues-top-nav">
         <div class="navbar-header">
         </div>
         <div id="ues-breadcrumbs-container">
             <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
-                <li><a href="<%=tenantedUrlPrefix%>./">Home</a></li>
             </ol>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable") %></a></li>
                 <li><a href="<%=tenantedUrlPrefix%>create-dashboard">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>

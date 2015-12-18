@@ -31,3 +31,7 @@
 .ues-designer-breadcrumb li a:hover {
     color: #5bc0de;
 }
+
+.ues-top-nav {
+    padding: 0;
+}
