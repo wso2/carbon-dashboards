@@ -214,6 +214,10 @@
     left: 0;
 }
 
+.ues-component.panel {
+    margin-bottom: 0;
+}
+
 .ues-component-header {
     background: #eee;
     overflow: hidden;
@@ -279,12 +283,16 @@ h4.ues-page-title {
     font-size: 24px;
 }
 
-.layout-slection {
+.layout-selection {
     background: #11375B;
     color: #fff;
     padding: 10px 15px;
     height: 246px;
     margin-bottom: 20px;
+}
+
+.layout-selection:hover {
+    background: #526A84;
 }
 
 .caption h3 {

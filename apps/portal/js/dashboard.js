@@ -25,7 +25,7 @@ $(function () {
                 // restore the normal view (remove the css class, restore the original height and remove the temporary attribute)
                 componentBox
                     .removeClass('ues-fullview-visible')
-                    .css('height', componentBox.attr('data-height'))
+                    .css('height', '')
                     .removeAttr('data-height');
                 
                 renderMaxView(component, DASHBOARD_DEFAULT_VIEW);

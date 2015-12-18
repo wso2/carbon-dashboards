@@ -120,7 +120,7 @@
             }
             
             var container = $('<div />').attr('id', cid);
-            container.appendTo(sandbox.find('.ues-component-body'));
+            sandbox.find('.ues-component-body').html(container);
             
             var renderParams = {};    
             renderParams[osapi.container.RenderParam.HEIGHT] = sandbox.closest('.ues-component-box').height() - 66;

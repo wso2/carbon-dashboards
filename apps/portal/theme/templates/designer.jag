@@ -447,16 +447,12 @@
         {{#if length}}
         {{#each .}}
         <div class="col-md-3 col-sm-4 box">
-            <div class="thumbnail layout-slection">
+            <a class="thumbnail layout-selection" data-id="{{id}}" href="#">
                 <div class="caption">
                     <h3>{{title}}</h3>
                 </div>
                 <img src="{{resolveURI thumbnail}}"/>
-
-                <div class="ues-toolbar">
-                    <button type="button" class="btn btn-default ues-add" id={{id}} data-id="{{id}}"><%= i18n.localize("select")%></button>
-                </div>
-            </div>
+            </a>
         </div>
         {{/each}}
         {{else}}

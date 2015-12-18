@@ -1528,7 +1528,8 @@ $(function () {
      * @private
      * */
     var initLayoutWorkspace = function () {
-        $('#ues-workspace-layout').find('.ues-content').on('click', '.thumbnail .ues-add', function () {
+        $('#ues-workspace-layout').find('.ues-content').on('click', '.layout-selection', function (e) {
+            e.preventDefault();            
             createPage(pageOptions(), $(this).data('id'), function (err) {
                 showWorkspace('designer');
             });
@@ -1949,12 +1950,12 @@ $(function () {
             listenLayout();
             
             var gridsterContainer = $('.gridster > ul'), 
-                minBlockWidth = Math.ceil($('.gridster').width() / 12) - 10,
+                minBlockWidth = Math.ceil($('.gridster').width() / 12) - 30,
                 minBlockHeight = minBlockWidth + 30;
             
             // bind the gridster to the layout
             gridster = gridsterContainer.gridster({
-                widget_margins: [5, 5],
+                widget_margins: [15, 15],
                 widget_base_dimensions: [minBlockWidth, minBlockHeight],
                 min_cols: 12,
                 serialize_params: function (el, coords) {
