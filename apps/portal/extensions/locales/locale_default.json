@@ -104,5 +104,6 @@
     "save": "Save",
     "fluid.layout": "Fluid Layout",
     "placeholder.item.list": "item1 | item2 | item3",
-    "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'"
+    "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'",
+    "dashboard.server.label": "Dashboard Server"
 }

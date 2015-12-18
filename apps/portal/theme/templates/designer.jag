@@ -292,16 +292,7 @@
         </div>
     </div>
 </script>
-<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
-    <div class="ues-toolbar">
-        <ul class="list-inline pull-right">
-            <li><a href="#" class="ues-move-handle" title="Move" data-id="{{id}}" data-action="move"><i class="fw fw-endpoint"></i></a></li>
-            <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
-            <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
-            <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
-        </ul>
-    </div>
-</script>
+
 <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 title-section">
@@ -387,11 +378,6 @@
                                     </select>
                                 </label>
                             </div>
-                            <div class="form-group">
-                                <label><%= i18n.localize("height") %>
-                                    <input type="text" class="form-control ues-localized-height" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
-                                </label>
-                            </div>
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="borders"{{#if styles.borders}}
@@ -461,16 +447,12 @@
         {{#if length}}
         {{#each .}}
         <div class="col-md-3 col-sm-4 box">
-            <div class="thumbnail layout-slection">
+            <a class="thumbnail layout-selection" data-id="{{id}}" href="#">
                 <div class="caption">
                     <h3>{{title}}</h3>
                 </div>
                 <img src="{{resolveURI thumbnail}}"/>
-
-                <div class="ues-toolbar">
-                    <button type="button" class="btn btn-default ues-add" id={{id}} data-id="{{id}}"><%= i18n.localize("select")%></button>
-                </div>
-            </div>
+            </a>
         </div>
         {{/each}}
         {{else}}
@@ -543,7 +525,7 @@
     <canvas id="dest-canvas" class="hidden"></canvas>
     
     {{#if isEdit}}
-    <img src="" id="img-banner" data-src="<%=urlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
+    <img src="" id="img-banner" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
     {{/if}}
        
     <div class="button-panel">
@@ -567,29 +549,40 @@
     </div>
     
 </script> <!--/#ues-dashboard-banner-hbs -->
-<script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
-    
-        {{#each blocks}}   
-        <li class="ues-component-box" id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}">
-            <div class="ues-component-box-header">
-                <span class="drag-handle">:::</span>
+
+<script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
+    <div class="ues-component panel panel-default ues-borderless">
+        <div class="ues-component-header panel-heading">
+            <h4 class="ues-component-title">:::</h4>
+
+            <div class="ues-component-toolbar">
                 <ul class="list-inline pull-right">
-                    <li>
-                        <a href="#" class="ues-component-box-remove-handle">
-                            <i class="fw fw-cancel" title="<%=i18n.localize('remove.block.label')%>"></i>
-                        </a>
-                    </li>
+                    <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
                 </ul>
-            </div>
-            {{#if banner}}
-            <div class="ues-banner-placeholder"></div>
-            {{/if}}
-            
-        </li>
-        {{/each}}
-</script>
+            </div>  
+        </div>
+
+        <div class="ues-component-body panel-body"></div>
+    </div>
     
-<form method="post" id="ues-dashboard-upload-banner-form" action="<%=urlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
+    {{#if appendResizeHandle}}
+    <span class="gs-resize-handle gs-resize-handle-both"></span>
+    {{/if}}
+</script>        
+
+<script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
+    {{#each blocks}}
+    <li class="ues-component-box" id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}"></li>
+    {{/each}}
+</script>
+            
+<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
+    <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
+    <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
+    <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
+</script>
+
+<form method="post" id="ues-dashboard-upload-banner-form" action="<%=tenantedUrlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
     <input type="file" id="file-banner" name="banner" accept="image/*" />
     <input type="hidden" id="banner-data" name="data" />
     <button type="submit">Submit</button>

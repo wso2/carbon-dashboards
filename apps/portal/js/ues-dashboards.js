@@ -1,5 +1,10 @@
 (function () {
 
+    /**
+     * Find a component
+     * @param type
+     * @returns {*}
+     */
     var findPlugin = function (type) {
         var plugin = ues.plugins.components[type];
         if (!plugin) {
@@ -8,34 +13,56 @@
         return plugin;
     };
 
-    var createComponent = function (container, component, done) {
+    /**
+     * Create a component inside a container
+     * @param container
+     * @param component
+     * @param done
+     */
+    var createComponent = function (container, component, done) {        
         var type = component.content.type;
         var plugin = findPlugin(type);
-        var sandboxId = component.id;
-        //(component.viewOption? component.id+"_full" : component.id );
-        var sandbox = $('<div id="' + sandboxId + '" data-component-id="' + component.id + '" class="ues-component"></div>');
-        sandbox.appendTo(container);
+
+        var sandbox = container.find('.ues-component');
+        sandbox.attr('id', component.id).attr('data-component-id', component.id);
+
         plugin.create(sandbox, component, ues.hub, done);
     };
 
+    /**
+     * Update a particular component
+     * @param component
+     * @param done
+     */
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
         plugin.update(container, component, ues.hub, done);
     };
 
+    /**
+     * Destroy a component
+     * @param component
+     * @param done
+     */
     var destroyComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
         plugin.destroy(container, component, ues.hub, done);
     };
 
+    /**
+     * Get a component ID
+     * @param clientId
+     * @returns {T}
+     */
     var componentId = function (clientId) {
         return clientId.split('-').pop();
     };
 
     var wirings;
 
+    // Overriding publish for clients method
     var publishForClient = ues.hub.publishForClient;
     ues.hub.publishForClient = function (container, topic, data) {
         console.log('publishing data container:%s, topic:%s, data:%j', container.getClientID(), topic, data);
@@ -98,6 +125,11 @@
         return wirez;
     };
 
+    /**
+     * Set dashboard document ID in the titlebar
+     * @param dashboard
+     * @param page
+     */
     var setDocumentTitle = function (dashboard, page) {
         document.title = dashboard.title + ' | ' + page.title;
     };
@@ -109,46 +141,75 @@
      */
     var convertToDesignerLayout = function(json) {
     
-        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''), 
+        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''),
             container = $('<ul />');
         
-        $(componentBoxListHbs(json)).appendTo(container).html();
+        $(componentBoxListHbs(json)).appendTo(container)
         
         return container;
     }
-
+    
+    /**
+     * renders a page in the dashboard designer and the view modes
+     * @param element
+     * @param dashboard
+     * @param page
+     * @param pageType
+     * @param done
+     * @param isDesigner
+    */
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
+        
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
-        var container;
-        var area;
         
-        var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn));
-        var content = page.content[pageType];
+        var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn)),
+            content = page.content[pageType], 
+            componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
         
         // this is to be rendered only in the designer. in the view mode, the template is rendered in the server side.
         if (isDesigner) { 
             element.html(convertToDesignerLayout(layout[0]));
         }
         
-        for (area in content) {
-            if (content.hasOwnProperty(area)) {          
-                container = $('#' + area, element);
-                content[area].forEach(function (options) {
-                    createComponent(container, options, function (err) {
-                        if (err) {
-                            console.error(err);
-                        }
-                    });
+        $('.ues-component-box').each(function (i, container) {
+            container = $(container);
+            
+            var id = container.attr('id'),
+                hasComponent = content.hasOwnProperty(id) && content[id][0];
+            
+            // the component box content (the skeleton) should be added only in the designer mode and 
+            // the view mode only if there is a component
+            if (isDesigner || hasComponent) {
+                container.html(componentBoxContentHbs());    
+            }
+            
+            if (container.attr('data-banner') == 'true') {
+                container.find('.ues-component-body').addClass('ues-banner-placeholder');
+            }
+            
+            if (hasComponent) {
+                createComponent(container, content[id][0], function (err) {
+                    if (err) {
+                        console.error(err);
+                    }
                 });
             }
-        }
+        });
+        
         if (!done) {
             return;
         }
+        
         done();
     };
 
+    /**
+     * Find a particular page within a dashboard
+     * @param dashboard
+     * @param id
+     * @returns {*}
+     */
     var findPage = function (dashboard, id) {
         var i;
         var page;
@@ -162,6 +223,15 @@
         }
     };
 
+    /**
+     * Ender entire dashboard
+     * @param element
+     * @param dashboard
+     * @param name
+     * @param pageType
+     * @param done
+     * @param isDesigner
+     */
     var renderDashboard = function (element, dashboard, name, pageType, done, isDesigner) {
         
         isDesigner = isDesigner || false;
@@ -178,6 +248,11 @@
         wirings = wires(page, pageType);
     };
 
+    /**
+     * Resolve URI
+     * @param uri
+     * @returns {*}
+     */
     var resolveURI = function (uri) {
         var index = uri.indexOf('://');
         var scheme = uri.substring(0, index);
@@ -209,5 +284,4 @@
         components: {},
         uris: {}
     };
-
 }());
