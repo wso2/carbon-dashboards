@@ -78,7 +78,18 @@ var saveComponentProperties = function (component, data) {
         }
     }
     updateComponent(component);
+    
+    var prevFullViewPoped = component.fullViewPoped, 
+        prevViewOption = component.viewOption;
+    
+    component.fullViewPoped = false;
+    component.viewOption = DEFAULT_DASHBOARD_VIEW;
+    
     saveDashboard(component);
+    
+    component.fullViewPoped = prevFullViewPoped;
+    component.viewOption = prevViewOption;
+    
     ues.dashboards.rewire(page, pageType);
 };
 
