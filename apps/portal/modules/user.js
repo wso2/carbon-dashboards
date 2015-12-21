@@ -19,9 +19,18 @@ var roles;
     login = function (username, password) {
         var carbon = require('carbon');
         var server = new carbon.server.Server();
-        if (!server.authenticate(username, password)) {
-            return false;
+        try {
+            if (!server.authenticate(username, password)) {
+                return false;
+            }
+        }catch (e){
+            var message = "Invalid Domain Name";
+            if (e.message.toLowerCase().indexOf(message.toLowerCase()) >= 0) {
+                log.error("Invalid Domain Name: " + e.message);
+                return false;
+            }
         }
+
         var user = carbon.server.tenantUser(username);
         var utils = require('/modules/utils.js');
         var um = new carbon.user.UserManager(server, user.tenantId);

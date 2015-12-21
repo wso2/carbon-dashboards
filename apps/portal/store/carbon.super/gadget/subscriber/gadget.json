@@ -1,10 +1,11 @@
 {
-    "id": "g2",
-    "title": "G2",
+    "id": "subscriber",
+    "title": "Subscriber",
     "type": "gadget",
+    "category": "Subscribers",
     "thumbnail": "store://gadget/usa-business-revenue/index.png",
     "data": {
-        "url": "store://gadget/g2/index.xml"
+        "url": "store://gadget/subscriber/index.xml"
     },
     "listen": {
         "state-selected": {

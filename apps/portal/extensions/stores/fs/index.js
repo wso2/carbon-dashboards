@@ -1,4 +1,4 @@
-var findOne, find, create, update, remove;
+var findOne, find, create, update, remove, getDashboardsFromRegistry;
 var utils = require('/modules/utils.js');
 
 (function () {
@@ -20,6 +20,21 @@ var utils = require('/modules/utils.js');
         return id ? path + '/' + id : path;
     };
 
+    getDashboardsFromRegistry = function (start, count) {
+        var carbon = require('carbon');
+        var server = new carbon.server.Server();
+        var registry = new carbon.registry.Registry(server, {
+            system: true
+        });
+
+        var dashboards = registry.content(registryPath(), {
+            start: start,
+            count: count
+        });
+
+        return dashboards;
+    };
+
     var findDashboards = function (ctx, type, query, start, count) {
         if (!ctx.username) {
             return [];
@@ -33,10 +48,7 @@ var utils = require('/modules/utils.js');
         var um = new carbon.user.UserManager(server, ctx.tenantId);
         var userRoles = um.getRoleListOfUser(ctx.username);
 
-        var dashboards = registry.content(registryPath(), {
-            start: start,
-            count: count
-        });
+        var dashboards = getDashboardsFromRegistry(start, count);
         if (!dashboards) {
             return [];
         }

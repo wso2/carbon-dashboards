@@ -60,7 +60,10 @@
 }
 
 #ues-store .ues-store-assets {
-    overflow: scroll;
+    height: 100%;
+}
+
+#ues-store .ues-dashboard-pages {
     height: 100%;
 }
 
@@ -195,7 +198,7 @@
         width: 48px;
         float: left;
         height: 100%;
-        position: fixed;
+        position: relative;
     }
 }
 
@@ -206,7 +209,7 @@
     border: 1px dashed #cccccc;
 }
 
-.ues-component {    
+.ues-component {
     position: absolute;
     top: 0;
     right: 0;
@@ -393,7 +396,7 @@ h4.ues-page-title {
 
 /**
  * add block styles
- */ 
+ */
 #ues-add-block-container {
     width: 400px;
     padding-left: 10px;
@@ -401,17 +404,17 @@ h4.ues-page-title {
 }
 
 #dummy-gadget-wrapper {
-    width: 382px; 
-    height: 382px; 
-    margin: 0 auto; 
-    border: 1px solid #ccc; 
+    width: 382px;
+    height: 382px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
     margin-bottom: 10px;
     padding: 10px;
 }
 
 #dummy-gadget-container {
-    width: 360px; 
-    height: 360px; 
+    width: 360px;
+    height: 360px;
     margin: 0 auto;
     box-sizing: border-box;
     border: none;
@@ -419,9 +422,9 @@ h4.ues-page-title {
 }
 
 #dummy-gadget {
-    width: 30px; 
-    height: 30px; 
-    position: relative; 
+    width: 30px;
+    height: 30px;
+    position: relative;
     background: #eee;
     border: none;
 }
@@ -449,5 +452,22 @@ h4.ues-page-title {
 }
 
 .ues-component-body.ues-banner-placeholder {
+    padding: 0;
+}
+
+.ues-designer-breadcrumb {
+    background-color: #36506D;
+    margin: 0;
+}
+
+.ues-designer-breadcrumb li a {
+    color: #FFFFFF;
+}
+
+.ues-designer-breadcrumb li a:hover {
+    color: #5bc0de;
+}
+
+.ues-top-nav {
     padding: 0;
 }

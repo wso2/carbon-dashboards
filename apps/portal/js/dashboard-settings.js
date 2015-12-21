@@ -14,15 +14,78 @@ $(function () {
 
     var url = dashboardsApi + '/' + dashboard.id;
 
-    var saveDashboard = function () {
+    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
+
+    /**
+     * Generate Noty Messages as to the content given using parameters.
+     * @param1 text {String}
+     * @param2 ok {Object}
+     * @param3 cancel {Object}
+     * @param4 type {String}
+     * @param5 layout {String}
+     * @param6 timeout {Number}
+     * @return {Object}
+     * @private
+     * */
+    var generateMessage = function (text, ok, cancel, type, layout, timeout) {
+        var properties = {};
+        properties.text = text;
+        if (ok || cancel) {
+            properties.buttons = [
+                {
+                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                    $noty.close();
+                    if (ok) {
+                        ok();
+                    }
+                }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                    $noty.close();
+                    if (cancel) {
+                        cancel();
+                    }
+                }
+                }
+            ];
+        }
+
+        if (timeout) {
+            properties.timeout = timeout;
+        }
+
+        properties.layout = layout;
+        properties.theme = 'wso2';
+        properties.type = type;
+        properties.dismissQueue = true;
+        properties.killer = true;
+        properties.maxVisible = 1;
+        properties.animation = {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'swing',
+            speed: 500
+        };
+
+        return noty(properties);
+    };
+
+    var saveDashboard = function (callback) {
         $.ajax({
             url: url,
             method: 'PUT',
             data: JSON.stringify(dashboard),
             contentType: 'application/json'
         }).success(function (data) {
+            generateMessage("Saved Successfully", null, null, "success", "bottom", 2000);
             console.log('dashboard saved successfully');
+
+            if (callback) {
+                callback();
+            }
         }).error(function () {
+            generateMessage("Error Saving Dashboard", null, null, "error", "bottom", 2000);
             console.log('error saving dashboard');
         });
     };
@@ -43,9 +106,11 @@ $(function () {
             } else {
                 hideInlineError($("#ues-is-url"), $("#is-url-error"));
                 setOAuthSettingsFields(data.accessTokenUrl, data.key, data.secret);
+                generateMessage("Saved Successfully", null, null, "success", "bottom", 2000);
             }
         }).error(function () {
             showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "Error occured in server.");
+            generateMessage("Error Saving Dashboard", null, null, "error", "bottom", 2000);
             console.log('error saving dashboard');
         });
     };
@@ -68,18 +133,22 @@ $(function () {
     var viewer = function (el, role) {
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
-        viewers.push(role);
-        saveDashboard();
-        $('#ues-dashboard-settings').find('.ues-shared-view').append(sharedRoleHbs(role));
+        if (!isExistingPermission(viewers, role)) {
+            viewers.push(role);
+            saveDashboard();
+            $('#ues-dashboard-settings').find('.ues-shared-view').append(sharedRoleHbs(role));
+        }
         el.typeahead('val', '');
     };
 
     var editor = function (el, role) {
         var permissions = dashboard.permissions;
         var editors = permissions.editors;
-        editors.push(role);
-        saveDashboard();
-        $('#ues-dashboard-settings').find('.ues-shared-edit').append(sharedRoleHbs(role));
+        if (!isExistingPermission(editors, role)) {
+            editors.push(role);
+            saveDashboard();
+            $('#ues-dashboard-settings').find('.ues-shared-edit').append(sharedRoleHbs(role));
+        }
         el.typeahead('val', '');
     };
 
@@ -99,7 +168,7 @@ $(function () {
         }
 
         var character = String.fromCharCode(code);
-        if (character.match(regEx)) {
+        if (character.match(regEx) && code != 8 && code != 46) {
             return false;
         } else {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
@@ -178,7 +247,38 @@ $(function () {
         settings.find('.ues-shared-edit').append(html);
     };
 
+    var addBreadcrumbs = function (pageName) {
+        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
+        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true'>" + dashboard.title + "</a></li>");
+        $("#ues-breadcrumbs").append("<li class='active'>" + pageName + "</li>");
+    };
+
+    /**
+     * pops up the export dashboard page
+     * @private
+     */
+    var exportDashboard = function () {
+        window.open(dashboardsApi + '/' + dashboard.id, '_blank');
+    };
+
+    /**
+     *
+     * */
+    var isExistingPermission = function (permissions, role) {
+        var isExist = false;
+        for (var i = 0; i < permissions.length; i++) {
+            if (permissions[i] == role) {
+                isExist = true;
+                break;
+            }
+        }
+        return isExist;
+    };
+
     var initUI = function () {
+
+        addBreadcrumbs("Dashboard Settings");
+
         var viewerRoles = new Bloodhound({
             name: 'roles',
             limit: 10,
@@ -201,10 +301,23 @@ $(function () {
         viewerRoles.initialize();
 
         //TODO: improve typeahead to use single prefetch for both editors and viewers
-        $('#ues-share-view').typeahead(null, {
+        $('#ues-share-view').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 0
+        }, {
             name: 'roles',
             displayKey: 'name',
-            source: viewerRoles.ttAdapter()
+            limit: 1,
+            source: viewerRoles.ttAdapter(),
+            templates: {
+                empty: [
+                    '<div class="empty-message">',
+                    'No Result Available',
+                    '</div>'
+                ].join('\n'),
+                suggestion: permissionMenuHbs
+            }
         }).on('typeahead:selected', function (e, role, roles) {
             viewer($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
@@ -231,10 +344,24 @@ $(function () {
 
         editorRoles.initialize();
 
-        $('#ues-share-edit').typeahead(null, {
+        $('#ues-share-edit').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 0
+        }, {
             name: 'roles',
             displayKey: 'name',
-            source: editorRoles.ttAdapter()
+            limit: 1,
+            source: editorRoles.ttAdapter(),
+            extraInfo: ues.global.dashboard,
+            templates: {
+                empty: [
+                    '<div class="empty-message">',
+                    'No Result Available',
+                    '</div>'
+                ].join('\n'),
+                suggestion: permissionMenuHbs
+            }
         }).on('typeahead:selected', function (e, role, roles) {
             editor($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
@@ -244,15 +371,40 @@ $(function () {
         $('#ues-dashboard-settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
             var el = $(this).closest('.ues-shared-role');
             var role = el.data('role');
-            editors.splice(editors.indexOf(role), 1);
-            saveDashboard();
-            el.remove();
+            var removePermission = function () {
+                editors.splice(editors.indexOf(role), 1);
+                var removeElement = function () {
+                    el.remove();
+                };
+
+                saveDashboard(removeElement);
+            };
+
+            if (editors.length == 1) {
+                generateMessage("Only admin user will be able to edit this dashboard." +
+                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
+            }
+            else {
+                removePermission();
+            }
         }).end().find('.ues-shared-view').on('click', '.remove-button', function () {
             var el = $(this).closest('.ues-shared-role');
             var role = el.data('role');
-            viewers.splice(viewers.indexOf(role), 1);
-            saveDashboard();
-            el.remove();
+            var removePermission = function () {
+                viewers.splice(viewers.indexOf(role), 1);
+                var removeElement = function () {
+                    el.remove();
+                };
+                saveDashboard(removeElement);
+            };
+
+            if (viewers.length == 1) {
+                generateMessage("Only admin user will be able to view this dashboard." +
+                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
+            }
+            else {
+                removePermission();
+            }
         });
 
         $('#ues-dashboard-title').on("keypress", function (e) {
@@ -299,6 +451,10 @@ $(function () {
         var menu = $('.ues-context-menu');
         menu.find('.ues-tiles-menu-toggle').click(function () {
             menu.find('.ues-tiles-menu').slideToggle();
+        });
+
+        menu.find('.ues-dashboard-export').on('click', function () {
+            exportDashboard();
         });
     };
 

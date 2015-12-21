@@ -35,7 +35,10 @@
         isAnonView = true;
     } else{
         isAnonView = JSON.parse(isAnonView);
-        if(user.domain != urlDomain && urlDomain){
+
+        if((user.domain != urlDomain && urlDomain) ||
+                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) &&
+                !utils.allowed(user.roles, dashboard.permissions.viewers))){
             isAnonView = true;
         }
     }
@@ -68,7 +71,8 @@
                 <% if(dashboard.pages.length >= 2) { %>
                     <li
                         <% if (dashboard.landing === pageId) { %> class="active"<% } %>>
-                        <a href="<%=dbRoot%>?isAnonView=<%=isAnonView%>"><%= i18n.localize("home")%></a>
+                        <% var addingParam = isAnonView?'?isAnonView=true':'';%>
+                        <a href="<%=dbRoot%><%=addingParam%>"><%= i18n.localize("home")%></a>
                     </li>
                 <% } %>
 
@@ -88,14 +92,15 @@
                         if (dashboard.landing !== page.id) { %>
                             <li
                                 <% if (page.id === pageId) { %> class="active"<% } %>>
-                                <a href="<%=dbRoot%><%=page.id%>?isAnonView=<%=isAnonView%>"><%=page.title%></a>
+                                <% var addingParam = isAnonView?'?isAnonView=true':''; %>
+                                <a href="<%=dbRoot%><%=page.id%><%=addingParam%>"><%=page.title%></a>
                             </li>
                         <% }
                     };%>
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <% if (user) {
-                 if(urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain))){
+                 if(!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))){
                     if (user.isEditor) { %>
                         <li>
                             <a class="ues-copy" href="<%=dbRoot%>?editor=true">
