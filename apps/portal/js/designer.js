@@ -609,7 +609,8 @@ $(function () {
                 componentContainer = $(this).closest('.ues-component-box'),
                 componentContainerId = componentContainer.attr('id'),
                 componentBody = componentContainer.find('.ues-component-body'),
-                gridsterUl = $('.gridster > ul');
+                gridsterUl = $('.gridster > ul'),
+                trashButton = componentContainer.find('.ues-component-toolbar .ues-trash-handle').parent();
 
             if (component.fullViewPoped) {
                 // rendering normal view
@@ -619,6 +620,7 @@ $(function () {
                 // restore the size of the gridster ul
                 gridsterUl.width(gridsterUlDimension.width).height(gridsterUlDimension.height);
 
+                trashButton.show();
                 $('.ues-component-box').show();
 
                 //minimize logic
@@ -646,6 +648,7 @@ $(function () {
                 gridsterUlDimension = {width: gridsterUl.width(), height: gridsterUl.height()};
                 gridsterUl.width('auto').height('auto');
 
+                trashButton.hide();
                 $('.ues-component-box:not(#' + componentContainerId + ')').hide();
 
                 //maximize logic
@@ -2354,9 +2357,17 @@ $(function () {
     };
 
     var layoutWorkspace = function () {
-        var firstPage = !dashboard.pages.length;
-        var back = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-go-back');
-        firstPage ? back.hide() : back.show();
+        var firstPage = !dashboard.pages.length,
+            back = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-go-back'), 
+            cancel = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-cancel');
+        
+        if (firstPage) {
+            back.hide();
+            cancel.show();
+        } else {   
+            back.show();
+            cancel.hide();
+        }
         showWorkspace('layout');
     };
 
