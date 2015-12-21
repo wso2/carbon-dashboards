@@ -5,7 +5,7 @@
     position: fixed;
     height: calc(100% - 100px);
     margin-left: 48px;
-    width: calc(100% - 74px);
+    width: calc(100% - 48px);
     overflow: scroll;
 }
 
@@ -16,7 +16,7 @@
 
 #ues-designer.ues-properties-visible {
     margin-right: 200px;
-    width: calc(100% - 274px);
+    width: calc(100% - 248px);
 }
 
 #ues-designer.ues-storeprop-visible {
@@ -53,9 +53,9 @@
  */
 #ues-store {
     position: fixed;
-    width: 200px;
-    height: calc(100% - 100px);
-    margin-left: 74px;
+    width: 225px;
+    height: calc(100% - 138px);
+    margin-left: 48px; /* 74px */
     border-right: 1px solid #e7e7e7;
 }
 
@@ -79,7 +79,6 @@
     cursor: move;
     border: 1px solid #e7e7e7;
     background: #fff;
-    width: 169px;
 }
 
 #ues-store .ues-thumbnail img, .ues-store-thumbnail img {
@@ -198,7 +197,7 @@
         width: 48px;
         float: left;
         height: 100%;
-        position: relative;
+        position: fixed;
     }
 }
 
@@ -455,19 +454,15 @@ h4.ues-page-title {
     padding: 0;
 }
 
-.ues-designer-breadcrumb {
-    background-color: #36506D;
-    margin: 0;
+.ues-page-add {
+    padding: 10px;
+    width: 100%;
 }
 
-.ues-designer-breadcrumb li a {
-    color: #FFFFFF;
+#ues-page-properties .ues-page-item.active .panel-heading {
+    border: 1px solid #aaa;
 }
 
-.ues-designer-breadcrumb li a:hover {
-    color: #5bc0de;
-}
-
-.ues-top-nav {
-    padding: 0;
+#ues-add-block-menu > li {
+    background: #fff !important;
 }

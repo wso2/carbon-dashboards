@@ -1,5 +1,5 @@
 body {
-    padding-top: 140px;
+    padding-top: 136px;
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
@@ -327,4 +327,30 @@ h2.app-title {
 .fw-stack {
     height: 1.4em;
     margin-top: -6px;
+}
+
+/** 
+ * breadcrumb
+ */
+.ues-designer-breadcrumb {
+    background-color: #041440;
+    margin: 0;
+    border-radius: 0;
+}
+
+.ues-designer-breadcrumb li a {
+    color: #fff;
+}
+
+.ues-designer-breadcrumb li a:hover {
+    color: rgb(228, 228, 228);
+}
+
+.breadcrumb > .active {
+    color: #ccc; /* #5bc0de; */
+}
+
+.ues-context-menu > .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
 }

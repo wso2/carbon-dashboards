@@ -60,7 +60,7 @@
         <div class="ues-tiles-menu">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i> <%= i18n.localize("dashboards.lable")%> </a></li>
+                    <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i> <%= i18n.localize("dashboards.lable")%></a></li>
                 </ul>
             </div>
         </div>
@@ -176,7 +176,7 @@
                 </div>
                 <div class="row ues-help">
                     <div class="col-md-12">
-                        <a href="#" class="ues-page-add">
+                        <a href="#" class="ues-page-add btn btn-danger">
                             <span class="fw-stack">
                                 <i class="fw fw-ring fw-stack-2x"></i>
                                 <i class="fw fw-add fw-stack-1x"></i>
@@ -206,12 +206,17 @@
             </div>
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#"><%= i18n.localize("dashboard.design.lable")%> </a></li>
                     <li><a href="#" class="ues-go-back" id="ues-go-back">
                         <span class="fw-stack">
                             <i class="fw fw-ring fw-stack-2x"></i>
                             <i class="fw fw-left-arrow fw-stack-1x"></i>
                         </span> <%= i18n.localize("go.back")%></a>
+                    </li>
+                    <li><a href="<%=tenantedUrlPrefix%>./dashboards" class="ues-cancel">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-cancel fw-stack-1x"></i>
+                        </span> <%= i18n.localize("cancel")%></a>
                     </li>
                 </ul>
             </div>
@@ -515,22 +520,27 @@
 <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
 <div class="panel-group">
     {{#each pages}}
-        <div class="panel panel-default">
-        <div class="panel-heading">
-            <a data-id="{{id}}" class="accordion-toggle" data-toggle="collapse" data-parent="#leftMenu" href="#{{id}}">
+        <div class="panel panel-default{{#equals ../current/id id}} active{{/equals}} ues-page-item">
+            <div class="panel-heading">
+                <a data-id="{{id}}" class="accordion-toggle" data-toggle="collapse" data-parent="#leftMenu" href="#{{id}}">
 
-                {{title}}
-                <i class="fw fw-delete pull-right ues-trash"></i>
-                {{#equals id ../home}}
-                    <i class="fw fw-home pull-right" style="color:red;"></i>
-                {{/equals}}
-            </a>
-        </div>
-        <div id="{{id}}" class="panel-collapse collapse" style="height: 0px; ">
-            <div class="panel-body">
+                     <span class="fw-stack" style="color: {{#equals id ../home}}#008c00{{else}}#ccc{{/equals}};">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-home fw-stack-1x"></i> 
+                    </span>
 
+                    {{title}} 
+                    <div class="pull-right">
+                        <i class="fw fw-delete ues-trash"></i> 
+                    </div>
+
+                </a>
             </div>
-        </div>
+            <div id="{{id}}" class="panel-collapse collapse" style="height: 0px; ">
+                <div class="panel-body">
+
+                </div>
+            </div>
         </div>
     {{/each}}
 </div>

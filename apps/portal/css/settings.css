@@ -24,23 +24,6 @@
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 
-.ues-designer-breadcrumb {
-    background-color: #36506D;
-    margin: 0;
-}
-
-.ues-designer-breadcrumb li a {
-    color: #FFFFFF;
-}
-
-.ues-designer-breadcrumb li a:hover {
-    color: #5bc0de;
-}
-
-.ues-top-nav {
-    padding: 0;
-}
-
 .tt-menu {
     max-height: 200px;
     overflow: auto;

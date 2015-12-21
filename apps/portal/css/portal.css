@@ -70,20 +70,3 @@
     bottom: 7px;
     position: absolute;
 }
-
-.ues-designer-breadcrumb {
-    background-color: #36506D;
-    margin: 0;
-}
-
-.ues-designer-breadcrumb li a {
-    color: #FFFFFF;
-}
-
-.ues-designer-breadcrumb li a:hover {
-    color: #5bc0de;
-}
-
-.ues-top-nav{
-    padding: 0;
-}
