@@ -1,10 +1,11 @@
 {
-    "id": "g1",
-    "title": "G1",
+    "id": "publisher",
+    "title": "Publisher",
     "type": "gadget",
     "thumbnail": "store://gadget/usa-business-revenue/index.png",
+    "category": "Publishers",
     "data": {
-        "url": "store://gadget/g1/index.xml"
+        "url": "store://gadget/publisher/index.xml"
     },
     "notify": {
         "select": {

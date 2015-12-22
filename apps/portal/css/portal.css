@@ -24,6 +24,14 @@
     height: 20px;
 }
 
+#ues-portal .ues-dashboard .ues-url-link {
+    font-size: 13px;
+}
+
+#ues-portal .ues-dashboard .ues-dashboard-url {
+    font-size: 13px;
+}
+
 #ues-portal .ues-dashboard .ues-dashboard-trash-handle {
     position: absolute;
     top: 4px;
@@ -32,27 +40,32 @@
     font-size: 12px;
     color: #fff;
 }
-.thumbnail{
-    border:none;
-    border-radius:0px;
+
+.thumbnail {
+    border: none;
+    border-radius: 0px;
 }
-.ues-description{
+
+.ues-description {
     font-weight: 200;
 }
-.ues-actions a{
+
+.ues-actions a {
     color: #B4C2D0;
     text-decoration: none;
 }
-.ues-actions a:hover{
+
+.ues-actions a:hover {
     color: #fff;
 }
 
-.page-description{
+.page-description {
     font-weight: 100;
     font-size: 14px;
     color: #555;
 }
-.ues-trash-actions{
+
+.ues-trash-actions {
     right: 8px;
     bottom: 7px;
     position: absolute;

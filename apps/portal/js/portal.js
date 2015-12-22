@@ -68,8 +68,8 @@ $(function () {
      * */
     var shrinkDashboardDescription = function (data) {
         for (var i = 0; i < data.length; i++) {
-            if(data[i].description.length > 50){
-                data[i].description = data[i].description.substring(0,50)+"...";
+            if (data[i].description.length > 50) {
+                data[i].description = data[i].description.substring(0, 50) + "...";
             }
         }
 
@@ -149,6 +149,8 @@ $(function () {
             }
             loadDashboards();
         });
+
+        $("#ues-breadcrumbs").append("<li class='active'>Dashboards</li>");
     };
 
     initUI();

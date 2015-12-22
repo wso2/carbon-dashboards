@@ -5,13 +5,7 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
 <nav id="ues-global-navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
     <div class="container-fluid">
         <div class="app-logo col-sm-6 col-xs-9">
-            <!--<button data-target=".ues-global-navigation-bar" data-toggle="collapse" class="navbar-toggle" type="button">-->
-                <!--<span class="sr-only">Toggle navigation</span>-->
-                <!--<span class="icon-bar"></span>-->
-                <!--<span class="icon-bar"></span>-->
-                <!--<span class="icon-bar"></span>-->
-            <!--</button>-->
-            <a href="<%=tenantedUrlPrefix%>./" >
+            <a href="<%=tenantedUrlPrefix%>./dashboards" >
                 <img src="<%=urlPrefix%><%=utils.resolveUrl('images/logo.png')%>" class="img-responsive"/> <h2
                 class="app-title"><%= i18n.localize("dashboard.designer")%></h2>
             </a>

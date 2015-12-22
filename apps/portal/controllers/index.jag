@@ -1,5 +1,13 @@
 <%
-(function() {
+(function () {
+    var utils = require('/modules/utils.js');
+    var configs = require('/configs/designer.json');
+    var store = utils.store();
+    var dashboardCountPerUser = 0;
+    var dashboardCountPerPortal = 0;
+    var assetsForUser = [];
+    var assetsForPortal = [];
+
     if (!user) {
         sendLogin();
         return;
@@ -10,5 +18,36 @@
         return;
     }
 
-    include(utils.resolvePath('templates/index.jag'));
-} ()); %>
+    if (configs.defaultDashboardRedirect) {
+        // Check the number of dashboards available.
+        utils.sandbox(utils.context(user, urlDomain), function () {
+            assetsForUser = store.find('dashboard', {
+                start: 0,
+                count: 10
+            }, 0, 10);
+
+            assetsForPortal = store.getDashboardsFromRegistry(0, 10);
+            dashboardCountPerUser += assetsForUser.length;
+            if (assetsForPortal) {
+                dashboardCountPerPortal += assetsForPortal.length;
+            }
+        });
+
+        if ((dashboardCountPerPortal > 0 && dashboardCountPerUser <= 0) || dashboardCountPerUser > 1) {
+            response.sendRedirect("dashboards/");
+            return;
+        }
+
+        if (dashboardCountPerUser == 1) {
+            response.sendRedirect("dashboards/" + assetsForUser[0].id);
+            return;
+        }
+
+        if (dashboardCountPerPortal <= 0) {
+            response.sendRedirect("create-dashboard");
+            return;
+        }
+    }
+
+    response.sendRedirect("dashboards/");
+}()); %>

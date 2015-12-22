@@ -1,6 +1,7 @@
 body {
-    padding-top: 100px;
+    padding-top: 136px;
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    overflow: hidden;
 }
 
 h1 {
@@ -146,9 +147,10 @@ a, a:focus {
     margin: 17px;
 }
 
-.ues-context-menu .ues-tiles-menu .nav a:hover{
+.ues-context-menu .ues-tiles-menu .nav a:hover {
     background: #526A84;
 }
+
 .ues-wizard-steps {
     padding-bottom: 20px;
     margin: 20px 0;
@@ -219,10 +221,10 @@ a, a:focus {
     padding: 3px 11px;
     line-height: 24px;
 }
-.tt-suggestion:hover {
-background-color: rgb(229, 229, 229);
-}
 
+.tt-suggestion:hover {
+    background-color: rgb(229, 229, 229);
+}
 
 .tt-suggestion.tt-cursor {
     color: #fff;
@@ -236,44 +238,55 @@ background-color: rgb(229, 229, 229);
 
 .app-logo {
     display: block;
-    padding-top:10px;
+    padding-top: 10px;
     white-space: nowrap;
 }
+
 .app-logo h2, .app-logo img {
     float: left;
 }
-.app-logo h2{
+
+.app-logo h2 {
     text-indent: 10px;
     overflow: hidden;
 }
-.logged-in i{display: none}
-@media all and (max-width: 430px) {
-    div.app-logo h2.app-title{font-size: 10px}
 
-    .navbar-nav > li > a.logged-in{
+.logged-in i {
+    display: none
+}
+
+@media all and (max-width: 430px) {
+    div.app-logo h2.app-title {
+        font-size: 10px
+    }
+
+    .navbar-nav > li > a.logged-in {
         font-size: 10px;
         padding-right: 0;
         padding-top: 0;
         text-align: right;
     }
-    .logged-in i{
+
+    .logged-in i {
         display: inline-block;
     }
-    .logged-in span.logged-in-username{
+
+    .logged-in span.logged-in-username {
         display: none;
     }
 }
 
 @media all and (min-width: 767px) {
-    .close-db-settings{
+    .close-db-settings {
         display: none;
     }
 }
-#ues-store-menu .navbar-toggle{
+
+#ues-store-menu .navbar-toggle {
     margin-right: 0px;
 }
 
-.close-db-settings{
+.close-db-settings {
     margin-top: -8px;
 }
 
@@ -289,18 +302,20 @@ h2.app-title {
     color: #fafafa;
     text-transform: uppercase;
 }
-.form-control{
+
+.form-control {
     border-radius: 0px;
 }
 
-.app-logo a{
+.app-logo a {
     text-decoration: none;
 }
 
-.btn{
+.btn {
     border-radius: 0px;
 }
-.navbar{
+
+.navbar {
     border: none;
 }
 
@@ -309,7 +324,34 @@ h2.app-title {
     text-transform: uppercase;
     font-size: 24px;
 }
-.fw-stack{
+
+.fw-stack {
     height: 1.4em;
     margin-top: -6px;
+}
+
+/** 
+ * breadcrumb
+ */
+.ues-designer-breadcrumb {
+    background-color: #041440;
+    margin: 0;
+    border-radius: 0;
+}
+
+.ues-designer-breadcrumb li a {
+    color: #fff;
+}
+
+.ues-designer-breadcrumb li a:hover {
+    color: rgb(228, 228, 228);
+}
+
+.breadcrumb > .active {
+    color: #ccc; /* #5bc0de; */
+}
+
+.ues-context-menu > .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
 }

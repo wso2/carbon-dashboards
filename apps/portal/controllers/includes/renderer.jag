@@ -1,6 +1,8 @@
 <%
 var dbRoot;
 var dest;
+var renderEngine = { };
+
 (function () {
     var log = new Log();
 
@@ -9,16 +11,17 @@ var dest;
     var anonRole = String(carbon.user.anonRole);
     var permissions = dashboard.permissions;
     var anonymous = permissions.viewers.indexOf(anonRole) !== -1;
+    var db = require('/modules/dashboards.js');
 
-    if(user){
+    if (user) {
         if (utils.allowed(user.roles, permissions.editors)) {
             user.isEditor = true;
-        }else{
+        } else {
             user.isEditor = false;
         }
     }
     if (!anonymous) {
-        if(!user && !dashboard.isanon){
+        if (!user && !dashboard.isanon) {
             sendLogin();
             return;
         }
@@ -37,5 +40,9 @@ var dest;
     }
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
+
+    // global reference to getBootstrapLayout() function
+    renderEngine.getDashboardContent = db.getBootstrapLayout;
+   
     include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>

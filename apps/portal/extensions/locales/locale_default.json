@@ -88,5 +88,22 @@
     "gadget.Height": "Gadget Height",
     "sign.Up": "Sign Up",
     "ds.dashboard.designer": "WSO2 DS - Dashboard Designer",
-
+    "remove.block.label": "Remove Block",
+    "add.block.label": "Add Block",
+    "add.block.description": "Define Gadget Size in Grid",
+    "add.block.button.text": "Add Block",
+    "oauth.settings": "OAuth Settings",
+    "enable": "Enable",
+    "access.token.url": "Access Token URL",
+    "api.key": "API Key",
+    "key": "Key",
+    "api.secret": "API Secret",
+    "secret": "Secret",
+    "identity.server.url": "Identity Server URL",
+    "remove": "Remove",
+    "save": "Save",
+    "fluid.layout": "Fluid Layout",
+    "placeholder.item.list": "item1 | item2 | item3",
+    "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'",
+    "dashboard.server.label": "Dashboard Server"
 }

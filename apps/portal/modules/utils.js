@@ -42,7 +42,8 @@ var sandbox = function (context, fn) {
 var allowed = function (roles, allowed) {
     var carbon = require('carbon');
     var server = new carbon.server.Server();
-    var userManager = new carbon.user.UserManager(server);
+    var tenantId = carbon.server.tenantId();
+    var userManager = new carbon.user.UserManager(server, tenantId);
     var adminRole = userManager.getAdminRoleName();
     var hasRole = function (role, roles) {
         var i;
@@ -149,7 +150,7 @@ var dashboardStyles = function () {
 var dashboardScripts = function () {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + '/js/dashboard.js';
+    var path = 'extensions/themes/' + theme + '/js/dashboard-extensions.js';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -184,4 +185,27 @@ var resolveUrl = function (path) {
     var extendedPath = 'extensions/themes/' + theme + '/' + path;
     var file = new File('/' + extendedPath);
     return file.isExists() ? extendedPath : 'theme/' + path;
+};
+
+var getCarbonServerAddress = function (trans){
+    var carbon = require('carbon');
+    var url;
+    var carbonServerAddress = carbon.server.address(trans);
+    var carbonUrlArrayed = carbonServerAddress.split(":");
+    var authUrlProtocol = carbonUrlArrayed[0];
+    var authUrlPort = carbonUrlArrayed[2];
+    var serverConfigService = carbon.server.osgiService('org.wso2.carbon.base.api.ServerConfigurationService');
+    hostName = serverConfigService.getFirstProperty("HostName");
+    if ( hostName == null || hostName === '' || hostName === 'null' || hostName.length <= 0 ){
+        url = carbonServerAddress;
+    } else {
+        url = authUrlProtocol + "://" + hostName + ":" + authUrlPort;
+    }
+
+    return url;
+};
+
+
+var getLocaleResourcePath = function () {
+    return '/extensions/locales/';
 };

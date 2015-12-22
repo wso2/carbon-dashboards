@@ -43,7 +43,7 @@ $(function () {
      * @return boolean
      * @private
      * */
-    var sanitizeOnKeyPress = function (element, event) {
+    var sanitizeOnKeyPress = function (element, event, regEx) {
         var code;
         if (event.keyCode) {
             code = event.keyCode;
@@ -52,7 +52,7 @@ $(function () {
         }
 
         var character = String.fromCharCode(code);
-        if (character.match(/[^a-z0-9-\s]/gim)) {
+        if (character.match(regEx) && code != 8 && code != 46) {
             return false;
         } else {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
@@ -117,7 +117,7 @@ $(function () {
     };
 
     $('#ues-dashboard-title').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e);
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#title-error"));
@@ -131,7 +131,7 @@ $(function () {
     });
 
     $('#ues-dashboard-id').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e);
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         overridden = overridden || true;
         if ($(this).val()) {
@@ -142,22 +142,21 @@ $(function () {
     });
 
     $('#ues-dashboard-description').on("keypress", function (e) {
-        return sanitizeOnKeyPress(this, e);
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
     });
 
     $('#ues-dashboard-create').on('click', function () {
         var title = $("#ues-dashboard-title"),
             id = $("#ues-dashboard-id"),
-            url = "/portal/dashboards/" + id.val(),
             form = $('#ues-dashboard-form'),
-            action = form.attr('action'),
+            url = $("#create-dashboard-url").val() + "/" + id.val(),
             titleError = $("#title-error"),
             idError = $("#id-error");
 
         if (!$.trim(title.val()) || !$.trim(id.val())) {
             !$.trim(title.val()) ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
-            form.attr('action', action + '/' + id.val());
+            form.attr('action', url);
             console.log("[Sending AJAX request to " + url);
 
             $.ajax({
@@ -181,4 +180,8 @@ $(function () {
     menu.find('.ues-tiles-menu-toggle').click(function () {
         menu.find('.ues-tiles-menu').slideToggle();
     });
+
+    var breadcrumbs = $("#ues-breadcrumbs");
+    breadcrumbs.append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
+    breadcrumbs.append("<li class='active'>Create Dashboard</li>");
 });
