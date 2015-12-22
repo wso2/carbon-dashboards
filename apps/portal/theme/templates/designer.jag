@@ -134,8 +134,7 @@
                     <div class="col-md-12">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder=<%print(i18n.localize("search" +
-                ".lable"));%>...>
+                                <input type="text" class="form-control" placeholder=<%print(i18n.localize("search.lable"));%>...>
                             </div>
                         </form>
                     </div>
@@ -169,7 +168,7 @@
                     <div class="col-md-12">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder=<%= i18n.localize("search" +".lable")%>...>
+                                <input type="text" class="form-control" placeholder=<%= i18n.localize("search.lable")%>...>
                             </div>
                         </form>
                     </div>
