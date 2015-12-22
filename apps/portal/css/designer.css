@@ -468,6 +468,13 @@ h4.ues-page-title {
     border: 1px solid #aaa;
 }
 
+#ues-add-block-menu {
+    position: absolute;
+    top: 0;
+    left: 48px;
+    z-index: 1100;
+}
+
 #ues-add-block-menu > li {
     background: #fff !important;
 }
