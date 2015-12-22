@@ -1835,69 +1835,49 @@ $(function () {
         pagesMenu.find("#ues-page-properties").on("click", 'a .ues-trash', function (e) {
             e.stopPropagation();
             var thiz = $(this);
-            var pid = thiz.parent().data('id');
-            removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
-                var pages = dashboard.pages;
+            var pid = thiz.parent().parent().data('id');
+            var removePageFromDB = function() {
+                removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
+                    var pages = dashboard.pages;
 
-                if (recentlyOpenedPageProperty == pid) {
-                    recentlyOpenedPageProperty = null;
-                }
+                    if (recentlyOpenedPageProperty == pid) {
+                        recentlyOpenedPageProperty = null;
+                    }
 
-                updatePagesList(pages);
-                initNanoScroller();
-                if (!pages.length) {
-                    dashboard.landing = null;
-                    hideProperties();
-                    initFirstPage();
-                    return;
-                }
-
-                var first = pages[0];
-                if (pid === dashboard.landing) {
-                    dashboard.landing = first.id;
-                }
-
-                saveDashboard();
-                if (pid !== page.id) {
                     updatePagesList(pages);
                     initNanoScroller();
-                    return;
-                }
-                hideProperties();
-                renderPage(first.id);
-            });
-        });
-        pagesMenu.find(".ues-pages-list").on('click', 'li a .ues-trash', function (e) {
-            e.stopPropagation();
-            var thiz = $(this);
-            var pid = thiz.parent().data('id');
-            removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
-                var pages = dashboard.pages;
-                updatePagesList(pages);
-                initNanoScroller();
-                if (!pages.length) {
-                    dashboard.landing = null;
+                    if (!pages.length) {
+                        dashboard.landing = null;
+                        hideProperties();
+                        initFirstPage();
+                        return;
+                    }
+
+                    var first = pages[0];
+                    if (pid === dashboard.landing) {
+                        dashboard.landing = first.id;
+                    }
+
+                    saveDashboard();
+                    if (pid !== page.id) {
+                        updatePagesList(pages);
+                        initNanoScroller();
+                        return;
+                    }
                     hideProperties();
-                    initFirstPage();
-                    return;
-                }
+                    renderPage(first.id);
+                });
+            };
 
-                var first = pages[0];
-                if (pid === dashboard.landing) {
-                    dashboard.landing = first.id;
-                }
-
-                saveDashboard();
-                if (pid !== page.id) {
-                    updatePagesList(pages);
-                    initNanoScroller();
-                    return;
-                }
-                hideProperties();
-                renderPage(first.id);
-            });
+            generateMessage("This will remove the page and all its content." +
+                " Do you want to continue?", removePageFromDB, null, "confirm", "topCenter", null);
         });
-        pagesMenu.find(".ues-search-box input").on("change", function (e) {
+
+        pagesMenu.find(".ues-search-box input").on("keypress", function (e) {
+            if (e.which !== 13) {
+                return;
+            }
+            e.preventDefault();
             var searchQuery = "" + $(this).val();
             var pages = dashboard.pages;
             var resultPages = [];
@@ -2373,13 +2353,13 @@ $(function () {
 
     var layoutWorkspace = function () {
         var firstPage = !dashboard.pages.length,
-            back = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-go-back'), 
+            back = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-go-back'),
             cancel = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-cancel');
-        
+
         if (firstPage) {
             back.hide();
             cancel.show();
-        } else {   
+        } else {
             back.show();
             cancel.hide();
         }
