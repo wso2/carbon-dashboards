@@ -18,12 +18,19 @@ function getSamlAccessToken() {
         }
         var wso2is = new oauth.OAuthProvider(provider);
         var samlResp = session.get("samlResponse");
-        
-        try {
-            var accessTokenResponse = wso2is.getTokenResponse(samlResp);
-            return {"accessToken": accessTokenResponse.getAccessToken()};
-        } catch (err) {
-            return {"accessToken": "Access token not available. " + err.message};
+        var accessToken = session.get("accessToken");
+
+        if (accessToken == null || accessToken == "") {
+            try {
+                var accessTokenResponse = wso2is.getTokenResponse(samlResp);
+                accessToken = accessTokenResponse.getAccessToken();
+                session.put("accessToken", accessToken);
+                return {"accessToken": accessToken};
+            } catch (err) {
+                return {"accessToken": "Access token not available. " + err.message};
+            }
+        } else {
+            return {"accessToken": accessToken};
         }
     } else {
         return {"accessToken": ""};
