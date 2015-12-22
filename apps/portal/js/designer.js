@@ -32,7 +32,22 @@ $(function () {
         $(".nav li.disabled a").click(function () {
             return false;
         });
+        alignAddBlock();
     });
+    
+    $(window).resize(function() {
+        alignAddBlock();
+    });
+
+    var alignAddBlock = function() {
+        var el = $('#ues-add-block-menu'),
+            parentTop = 330,
+            elementHeight = el.height(), 
+            windowHeight = $(window).height(), 
+            top = ((parentTop + elementHeight) > windowHeight) ? (windowHeight - (parentTop + elementHeight)) + 'px' : '0';
+        
+        el.css('top', top);
+    }
 
     var clone = function (o) {
         return JSON.parse(JSON.stringify(o));
