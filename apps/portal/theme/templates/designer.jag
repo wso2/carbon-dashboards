@@ -7,7 +7,7 @@
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/jquery.gridster.css" />
-
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/nanoscroller.css" />
     <title><%= i18n.localize("ds.dashboard.designer") %></title>
 </head>
 <body class="<%=locale%>">
@@ -15,36 +15,22 @@
 
 <div id="ues-workspace-designer" class="ues-workspace" style="display:none">
     <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-        <div class="container-fluid">
+        <div class="container-fluid ues-top-nav">
             <div class="navbar-header">
-                <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+            </div>
+            <div id="ues-breadcrumbs-container">
+                <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
+                </ol>
             </div>
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#"><%= i18n.localize("dashboard.design") %> </a></li>
+                    <!--<li class="active"><a href="#"><%= i18n.localize("dashboard.design") %> </a></li>-->
                     <% if (!dashboard.isUserCustom) { %>
-                            <li><a href="#" class="ues-page-add">
-                                <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
-                                    <i class="fw fw-add fw-stack-1x"></i>
-                                </span> <%=i18n.localize("add.page.lable")%> </a></li>
                                 <li><a href="<%=tenantedUrlPrefix%>create-gadget">
                                     <span class="fw-stack">
                                         <i class="fw fw-ring fw-stack-2x"></i>
                                         <i class="fw fw-add fw-stack-1x"></i>
                                     </span> <%=i18n.localize("create.gadget.lable")%> </a></li>
-                                <li><a href="#" class="ues-dashboard-export">
-                                     <span class="fw-stack">
-                                        <i class="fw fw-ring fw-stack-2x"></i>
-                                        <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
-                                     </span> <%=i18n.localize("export")%> </a></li>
-                                     
                                 <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>"  id="settings-link">
                                      <span class="fw-stack">
                                         <i class="fw fw-ring fw-stack-2x"></i>
@@ -68,59 +54,13 @@
                                     <i class="fw fw-view fw-stack-1x"></i>
                              </span> <%= i18n.localize("view")%> </a></li>
                         </ul>
-                        
-                <ul class="nav navbar-nav navbar-right">
-                   
-                   
-                    <li id="ues-add-block-menu-item">
-                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            <span class="fw-stack">
-                                <i class="fw fw-ring fw-stack-2x"></i>
-                                <i class="fw fw-add fw-stack-1x"></i>
-                            </span> <%= i18n.localize("add.block.label")%> <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" id="ues-add-block-menu" role="menu">
-                            <li>
-                                
-                                <div id="ues-add-block-container">
-                                    
-                                    <h5><%= i18n.localize("add.block.description")%></h5>
-                                    
-                                    <div id="dummy-gadget-wrapper">
-                                        <div id="dummy-gadget-container" class="ui-widget-content">
-                                            <div id="dummy-gadget" class="ui-widget-content">
-                                                <div id="dummy-size" data-w="1" data-h="1">1x1</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <button type="button" class="btn btn-primary" id="ues-add-block-btn"><%= i18n.localize("add.block.button.text")%></button> 
-                                    </div>
-                                    
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                    
-                    
-                    <li>
-                        <a href="#" class="ues-page-switcher dropdown-toggle" data-toggle="dropdown"
-                        aria-expanded="false"> <%= i18n.localize("pages.lable")%> <span class="caret"></span></a>
-                        <ul class="dropdown-menu ues-pages-list" role="menu"></ul>
-                    </li>
-                    <li class="ues-hidden"><a href="#" class="ues-component-properties-toggle"><i class="fw fw-settings"></i></a></li>
-                    <li><a href="#" class="ues-page-properties-toggle"><i class="fw fw-register2"></i></a></li>
-                </ul>
-                
-                
             </div>
             <!--/.nav-collapse -->
         </div>
         <div class="ues-tiles-menu">
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i> <%= i18n.localize("dashboards.lable")%> </a></li>
+                    <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i> <%= i18n.localize("dashboards.lable")%></a></li>
                 </ul>
             </div>
         </div>
@@ -140,20 +80,61 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="ues-store-menu-actions" class="collapse navbar-collapse">
             <ul class="nav navbar-nav nav-tabs" role="tablist">
-                <li><a class="ues-store-toggle" data-type="gadget" href="#"><i class="fw fw-pie-chart "></i></a></li>
-                <li><a class="ues-store-toggle" data-type="widget" href="#"><i class="fw fw-applications"></i></a></li>
+                <li>
+                    <a class="ues-store-toggle" data-type="gadget" data-toggle="tooltip" title="GADGETS" href="#">
+                        <i class="fw fw-pie-chart "></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="ues-store-toggle" data-type="widget" data-toggle="tooltip" title="WIDGETS" href="#">
+                        <i class="fw fw-applications"></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="ues-pages-toggle" data-type="pages" data-toggle="tooltip" title="PAGES" href="#">
+                        <i class="fw fw-bpel"></i>
+                    </a>
+                </li>
+                <li id="ues-add-block-menu-item" class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" data-toggle="tooltip" title="ADD BLOCK" data-type="add-block" href="#">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-add"></i>
+                    </a>
+                    <ul class="dropdown-menu" id="ues-add-block-menu" role="menu">
+                            <li>
+
+                                <div id="ues-add-block-container">
+
+                                    <h5><%= i18n.localize("add.block.description")%></h5>
+
+                                    <div id="dummy-gadget-wrapper">
+                                        <div id="dummy-gadget-container" class="ui-widget-content">
+                                            <div id="dummy-gadget" class="ui-widget-content">
+                                                <div id="dummy-size" data-w="1" data-h="1">1x1</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary" id="ues-add-block-btn"><%= i18n.localize("add.block.button.text")%></button>
+                                    </div>
+
+                                </div>
+                            </li>
+                        </ul>
+                </li>
             </ul>
         </div>
     </nav>
     <div id="ues-store" class="ues-hidden">
-        <div id="ues-store-gadget" class="ues-store-assets ues-hidden" data-type="gadget">
-            <div class="container-fluid ues-content">
+
+        <div id="ues-store-gadget" class="ues-store-assets ues-hidden nano" data-type="gadget">
+            <div class="container-fluid ues-content nano-content">
                 <div class="row ues-search-box">
                     <div class="col-md-12">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder=<%print(i18n.localize("search" +
-                ".lable"));%>...>
+                                <input type="text" class="form-control" placeholder=<%print(i18n.localize("search.lable"));%>...>
                             </div>
                         </form>
                     </div>
@@ -164,8 +145,8 @@
                 <div class="row ues-thumbnails"></div>
             </div>
         </div>
-        <div id="ues-store-widget" class="ues-store-assets ues-hidden" data-type="widget">
-            <div class="container-fluid ues-content">
+        <div id="ues-store-widget" class="ues-store-assets ues-hidden nano" data-type="widget">
+            <div class="container-fluid ues-content nano-content">
                 <div class="row ues-search-box">
                     <div class="col-md-12">
                         <form>
@@ -181,6 +162,31 @@
                 <div class="row ues-thumbnails"></div>
             </div>
         </div>
+        <div id="ues-dashboard-pages" class="ues-dashboard-pages ues-hidden nano" data-type="pages">
+            <div class="container-fluid ues-content nano-content">
+                <div class="row ues-search-box">
+                    <div class="col-md-12">
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder=<%= i18n.localize("search.lable")%>...>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row ues-help">
+                    <div class="col-md-12">
+                        <a href="#" class="ues-page-add btn btn-danger">
+                            <span class="fw-stack">
+                                <i class="fw fw-ring fw-stack-2x"></i>
+                                <i class="fw fw-add fw-stack-1x"></i>
+                            </span>
+                            Add Page
+                        </a>
+                    </div>
+                </div>
+                <div class="accordion" id="ues-page-properties"></div>
+            </div>
+        </div>
     </div>
     <div id="ues-properties" class="ues-hidden">
         <div class="container-fluid ues-content"></div>
@@ -189,24 +195,27 @@
 </div>
 <div id="ues-workspace-layout" class="ues-workspace ues-hidden">
     <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-        <div class="container-fluid">
+        <div class="container-fluid ues-top-nav">
             <div class="navbar-header">
-                <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+            </div>
+            <div id="ues-breadcrumbs-container">
+                <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
+                    <li><a href=".././dashboards">Dashboards</a></li>
+                </ol>
             </div>
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#"><%= i18n.localize("dashboard.design.lable")%> </a></li>
                     <li><a href="#" class="ues-go-back" id="ues-go-back">
                         <span class="fw-stack">
                             <i class="fw fw-ring fw-stack-2x"></i>
                             <i class="fw fw-left-arrow fw-stack-1x"></i>
                         </span> <%= i18n.localize("go.back")%></a>
+                    </li>
+                    <li><a href="<%=tenantedUrlPrefix%>./dashboards" class="ues-cancel">
+                        <span class="fw-stack">
+                            <i class="fw fw-ring fw-stack-2x"></i>
+                            <i class="fw fw-cancel fw-stack-1x"></i>
+                        </span> <%= i18n.localize("cancel")%></a>
                     </li>
                 </ul>
             </div>
@@ -241,6 +250,7 @@
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
 <script src="<%=urlPrefix%>js/jquery.gridster.js"></script>
+<script src="<%=urlPrefix%>js/jquery.nanoscroller.min.js"></script>
 <!-- TODO fix shindig url -->
 <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -277,12 +287,6 @@
                 <div class="clearfix"></div>
                 </h4>
                 <span class="ues-page-id hide">{{current.id}}</span>
-
-
-                    <!--<ul class="nav navbar-nav toggle-design-view {{#if isanon}}show{{else}}hide{{/if}}">-->
-                        <!--<li class="toggle-design-view-default disabled"> <a class="ues-design-default-view active" href="#" > Default view </a> </li>-->
-                        <!--<li class="toggle-design-view-anon"> <a class="ues-design-anon-view" href="#" > Anonymous view </a> </li>-->
-                    <!--</ul>-->
             </div>
         </div>
         <div class="row">
@@ -292,16 +296,7 @@
         </div>
     </div>
 </script>
-<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
-    <div class="ues-toolbar">
-        <ul class="list-inline pull-right">
-            <li><a href="#" class="ues-move-handle" title="Move" data-id="{{id}}" data-action="move"><i class="fw fw-endpoint"></i></a></li>
-            <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
-            <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
-            <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
-        </ul>
-    </div>
-</script>
+
 <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 title-section">
@@ -387,11 +382,6 @@
                                     </select>
                                 </label>
                             </div>
-                            <div class="form-group">
-                                <label><%= i18n.localize("height") %>
-                                    <input type="text" class="form-control ues-localized-height" name="height" placeholder="<%= i18n.localize("height") %>" value="{{#if styles.height}}{{styles.height}}{{/if}}">
-                                </label>
-                            </div>
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="borders"{{#if styles.borders}}
@@ -445,11 +435,17 @@
 <script id="ues-components-list-hbs" type="text/x-handlebars-template">
     {{#each assets}}
     <div class="col-md-12">
-        <div class="ues-thumbnail" id="{{id}}" data-id="{{id}}" data-type="{{../type}}">
+        {{#if_neq category "null"}}
+            <hr>
+            <h2>{{category}}</h2>
+        {{/if_neq}}
+        {{#each components}}
+        <div class="ues-thumbnail" id="{{id}}" data-id="{{id}}" data-type="{{../../type}}">
             <img src="{{resolveURI thumbnail}}"/>
-            <h4 class="ues-title">{{#if (lookup locale_titles ../lang)}}{{lookup locale_titles ../lang}}{{else}}{{title}}{{/if}}
-    </h4>
+            <h4 class="ues-title">{{#if (lookup locale_titles ../../lang)}}{{lookup locale_titles ../../lang}}{{else}}{{title}}{{/if}}
+            </h4>
         </div>
+        {{/each}}
     </div>
     {{/each}}
 </script>
@@ -461,16 +457,12 @@
         {{#if length}}
         {{#each .}}
         <div class="col-md-3 col-sm-4 box">
-            <div class="thumbnail layout-slection">
+            <a class="thumbnail layout-selection" data-id="{{id}}" href="#">
                 <div class="caption">
                     <h3>{{title}}</h3>
                 </div>
                 <img src="{{resolveURI thumbnail}}"/>
-
-                <div class="ues-toolbar">
-                    <button type="button" class="btn btn-default ues-add" id={{id}} data-id="{{id}}"><%= i18n.localize("select")%></button>
-                </div>
-            </div>
+            </a>
         </div>
         {{/each}}
         {{else}}
@@ -484,12 +476,6 @@
 </script>
 <script id="ues-page-properties-hbs" type="text/x-handlebars-template">
     <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12 title-section">
-            <span> <h3 class="ues-page-title">{{title}}</span> <i class="close-db-settings fw fw-uncheck
-            pull-right"></i></li>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-md-12">
             <div class="ues-sandbox">
                 <form>
@@ -498,7 +484,7 @@
                         <label><%= i18n.localize("title") %>
                             <span class="required">*</span>
                         </label>
-                        <input type="text" class="form-control" name="title" placeholder="<%= i18n.localize("page.tilte.lable") %>" value="{{title}}">
+                        <input id="page-title" type="text" class="form-control" name="title" placeholder="<%= i18n.localize("page.tilte.lable") %>" value="{{title}}">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="title-error" class="required-error hide" for="title">This is required.</label>
                     </div>
@@ -506,7 +492,7 @@
                         <label><%= i18n.localize("url") %>
                             <span class="required">*</span>
                         </label>
-                        <input type="text" class="form-control" name="id" placeholder="URL" value="{{id}}">
+                        <input id="page-url" type="text" class="form-control" name="id" placeholder="URL" value="{{id}}">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="id-error" class="required-error hide" for="id">This is required.</label>
                     </div>
@@ -531,19 +517,41 @@
     </div>
 </script>
 <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
+<div class="panel-group">
     {{#each pages}}
-    <li{{#equals id ../current.id}} class="active disabled"{{/equals}}>
-        <a href="#" data-id="{{id}}">{{title}} <i class="fw fw-delete pull-right ues-trash"></i></a>
-    </li>
+        <div class="panel panel-default{{#equals ../current/id id}} active{{/equals}} ues-page-item">
+            <div class="panel-heading">
+                <a data-id="{{id}}" class="accordion-toggle" data-toggle="collapse" data-parent="#leftMenu" href="#{{id}}">
+
+                     <span class="fw-stack" style="color: {{#equals id ../home}}#008c00{{else}}#ccc{{/equals}};">
+                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-home fw-stack-1x"></i> 
+                    </span>
+
+                    {{title}} 
+                    <div class="pull-right">
+                        <i class="fw fw-delete ues-trash"></i> 
+                    </div>
+
+                </a>
+            </div>
+            <div id="{{id}}" class="panel-collapse collapse" style="height: 0px; ">
+                <div class="panel-body">
+
+                </div>
+            </div>
+        </div>
     {{/each}}
+</div>
 </script>
+
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     
     <canvas id="src-canvas" class="hidden"></canvas>    
     <canvas id="dest-canvas" class="hidden"></canvas>
     
     {{#if isEdit}}
-    <img src="" id="img-banner" data-src="<%=urlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
+    <img src="" id="img-banner" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
     {{/if}}
        
     <div class="button-panel">
@@ -567,29 +575,40 @@
     </div>
     
 </script> <!--/#ues-dashboard-banner-hbs -->
-<script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
-    
-        {{#each blocks}}   
-        <li class="ues-component-box" id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}">
-            <div class="ues-component-box-header">
-                <span class="drag-handle">:::</span>
+
+<script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
+    <div class="ues-component panel panel-default ues-borderless">
+        <div class="ues-component-header panel-heading">
+            <h4 class="ues-component-title">:::</h4>
+
+            <div class="ues-component-toolbar">
                 <ul class="list-inline pull-right">
-                    <li>
-                        <a href="#" class="ues-component-box-remove-handle">
-                            <i class="fw fw-cancel" title="<%=i18n.localize('remove.block.label')%>"></i>
-                        </a>
-                    </li>
+                    <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
                 </ul>
-            </div>
-            {{#if banner}}
-            <div class="ues-banner-placeholder"></div>
-            {{/if}}
-            
-        </li>
-        {{/each}}
-</script>
+            </div>  
+        </div>
+
+        <div class="ues-component-body panel-body"></div>
+    </div>
     
-<form method="post" id="ues-dashboard-upload-banner-form" action="<%=urlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
+    {{#if appendResizeHandle}}
+    <span class="gs-resize-handle gs-resize-handle-both"></span>
+    {{/if}}
+</script>        
+
+<script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
+    {{#each blocks}}
+    <li class="ues-component-box" id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}"></li>
+    {{/each}}
+</script>
+            
+<script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
+    <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
+    <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
+    <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
+</script>
+
+<form method="post" id="ues-dashboard-upload-banner-form" action="<%=tenantedUrlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">
     <input type="file" id="file-banner" name="banner" accept="image/*" />
     <input type="hidden" id="banner-data" name="data" />
     <button type="submit">Submit</button>

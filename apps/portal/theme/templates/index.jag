@@ -7,19 +7,15 @@
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-    <div class="container-fluid">
+    <div class="container-fluid ues-top-nav">
         <div class="navbar-header">
-            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+        </div>
+        <div id="ues-breadcrumbs-container">
+            <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
+            </ol>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable") %></a></li>
                 <li><a href="<%=tenantedUrlPrefix%>create-dashboard">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
@@ -85,21 +81,21 @@
     <p id="ues-dashboard-url" class="ues-dashboard-url">URL: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
     <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
     <div class="ues-actions">
-        <a class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
+        <a id="ues-view" class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-view fw-stack-1x"></i>
             </span>
              <%= i18n.localize("view") %></a>
         {{#if editable}}
-        <a class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
+        <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-edit fw-stack-1x"></i>
             </span>
             <%= i18n.localize("design") %>
         </a>
-        <a class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+        <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
             <span class="fw-stack">
                 <i class="fw fw-ring fw-stack-2x"></i>
                 <i class="fw fw-settings fw-stack-1x"></i>

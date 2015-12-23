@@ -57,9 +57,9 @@
 		});
 
 	uStates.draw("#map", data, click);
-	gadgets.util.registerOnLoadHandler(function() {
-	    gadgets.window.adjustHeight();
-	});
+	//gadgets.util.registerOnLoadHandler(function() {
+	    //gadgets.window.adjustHeight();
+	//});
 </script>
 </div>
 </body>
@@ -117,9 +117,9 @@
 		});
 
 	uStates.draw("#map", data, click);
-	gadgets.util.registerOnLoadHandler(function() {
-	    gadgets.window.adjustHeight();
-	});
+	//gadgets.util.registerOnLoadHandler(function() {
+	    //gadgets.window.adjustHeight();
+	//});
 </script>
 </div>
 </body>

@@ -1,7 +1,5 @@
 (function () {
 
-    var DEFAULT_PADDING = 35;
-
     var gadgetPrefix = (osapi.container.GadgetHolder.IFRAME_ID_PREFIX_ = 'sandbox-');
 
     var containerPrefix = 'gadget-';
@@ -49,26 +47,6 @@
     };
 
     var component = (ues.plugins.components['gadget'] = {});
-
-    var createPanel = function (styles) {
-        var html = '<div class="panel panel-default ues-component-box-gadget';
-        if (!styles.borders) {
-            html += ' ues-borderless';
-        }
-        html += '"';
-        if (styles.height) {
-            html += ' style="height:' + styles.height + 'px"';
-        }
-        html += '>';
-        if (styles.title) {
-            html += '<div class="panel-heading">';
-            html += '<h3 class="panel-title ues-title-' + (styles.titlePosition) + '">' + styles.title + '</h3>';
-            html += '</div>';
-        }
-        html += '<div class="panel-body"></div>';
-        html += '</div>';
-        return $(html);
-    };
     
     var hasCustomUserPrefView = function (metadata, comp) {
         if(metadata.views.hasOwnProperty('settings')){
@@ -90,17 +68,18 @@
     };
 
     component.create = function (sandbox, comp, hub, done) {
-        var content = comp.content;
-        var url = resolveGadgetURL(content.data.url);
-        var settings = content.settings || {};
-        var styles = content.styles || {};
-        var options = content.options || (content.options = {});
+        var content = comp.content, 
+            url = resolveGadgetURL(content.data.url), 
+            settings = content.settings || {}, 
+            styles = content.styles || {}, 
+            options = content.options || (content.options = {});
         ues.gadgets.preload(url, function (err, metadata) {
-            var pref;
-            var name;
-            var option;
-            var params = {};
-            var prefs = metadata.userPrefs;
+            var pref, 
+                name, 
+                option, 
+                params = {}, 
+                prefs = metadata.userPrefs;
+            
             for (pref in prefs) {
                 if (prefs.hasOwnProperty(pref)) {
                     pref = prefs[pref];
@@ -116,30 +95,37 @@
                     params[name] = option.value;
                 }
             }
-            loadLocalizedTitle(styles, comp);
-            var cid = containerId(comp.id);
-            var gid = gadgetId(comp.id);
-            var panel = createPanel(styles);
             
-            var compHeight = $('#ues-designer').height() - 220;
-            var height = (comp.viewOption && comp.viewOption == 'full' ? compHeight : '');
+            loadLocalizedTitle(styles, comp);
+            var cid = containerId(comp.id), 
+                gid = gadgetId(comp.id);
+            
+            sandbox.find('.ues-component-title').text(styles.title);
+            
+            if (styles.borders) {
+                sandbox.removeClass('ues-borderless');
+            } else {
+                sandbox.addClass('ues-borderless');
+            }
+            
+            var titlePositon = 'ues-component-title-' + (styles.titlePosition || 'left');
+            
+            sandbox.find('.ues-component-header')
+                .removeClass('ues-component-title-left ues-component-title-center ues-component-title-right')
+                .addClass(titlePositon);
 
-            if (ues.global.dbType === 'default'){
+            if (ues.global.dbType === 'default') {
                 hasCustomUserPrefView(metadata, comp);
                 hasCustomFullView(metadata, comp);
             }
             
             var container = $('<div />').attr('id', cid);
-            if (height) {
-                container.css('height', height + 'px');
-            }
-            container.appendTo(panel.find('.panel-body'));
-            panel.appendTo(sandbox);
-            var renderParams = {};
-            if (styles.height) {
-                renderParams[osapi.container.RenderParam.HEIGHT] = parseInt(styles.height, 10) - DEFAULT_PADDING;
-            }
+            sandbox.find('.ues-component-body').html(container);
+            
+            var renderParams = {};    
+            renderParams[osapi.container.RenderParam.HEIGHT] = sandbox.closest('.ues-component-box').height() - 66;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
+            
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
                 component: comp,

@@ -126,3 +126,8 @@
     position: absolute;
     margin-top: -8px;
 }
+
+.tt-menu {
+    max-height: 200px;
+    overflow: auto;
+}

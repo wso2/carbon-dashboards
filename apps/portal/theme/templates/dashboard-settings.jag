@@ -6,29 +6,26 @@
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-    <div class="container-fluid">
+    <div class="container-fluid ues-top-nav">
         <div class="navbar-header">
-            <button data-target=".ues-context-menu-actions" data-toggle="collapse" class="navbar-toggle" type="button">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="#" class="navbar-brand ues-tiles-menu-toggle"><i class="fw fw-tiles"></i></a>
+        </div>
+        <div id="ues-breadcrumbs-container">
+            <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
+            </ol>
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable")%></a></li>
+                <!--<li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable")%></a></li>-->
                 <li><a id="ues-back" href="<%=tenantedUrlPrefix%>./dashboards">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-left-arrow fw-stack-1x"></i>
                     </span> <%= i18n.localize("go.back")%></a></li>
-                <li><a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>?editor=true" id="ues-designer-link">                    
-                    <span class="fw-stack">
+                 <li><a href="#" class="ues-dashboard-export">
+                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
-                        <i class="fw fw-edit fw-stack-1x"></i>
-                    </span> <%= i18n.localize("design.dashboard")%></a></li>
+                        <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
+                     </span> <%=i18n.localize("export")%> </a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->
@@ -36,7 +33,7 @@
     <div class="ues-tiles-menu">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i>
+                <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i>
                 <%= i18n.localize("dashboards.lable")%></a></li>
             </ul>
         </div>
@@ -159,6 +156,8 @@
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/typeahead.bundle.min.js"></script>
+<script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+<script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/spin.min.js"></script>
 <script src="<%=urlPrefix%>js/ladda.min.js"></script>
@@ -169,6 +168,11 @@
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 <script id="ues-shared-role-hbs" type="text/x-handlebars-template">
     <div class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
+</script>
+<script id="permission-menu-hbs" type="text/x-handlebars-template">
+    <div class="permission-menu-content">
+        {{name}}
+    </div>
 </script>
 </body>
 </html>
