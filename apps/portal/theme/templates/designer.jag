@@ -562,9 +562,7 @@
 
         {{#if isEdit}}
         <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('edit.button')%></button>
-        {{#if showRemove}}
         <button type="button" id="btn-remove-banner" class="btn btn-danger">{{#if isCustomBanner}}<%=i18n.localize('reset')%>{{else}}<%=i18n.localize('remove')%>{{/if}}</button>
-        {{/if}}
         {{/if}}
 
         {{#if isCrop}}

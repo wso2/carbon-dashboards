@@ -2539,20 +2539,49 @@ $(function () {
         });
 
         // event handler for the banner remove button
-        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
-            $.ajax({
-                url: $('#ues-dashboard-upload-banner-form').attr('action'),
-                type: 'DELETE'
-            }).success(function (d) {
+        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {            
+            var $form = $('#ues-dashboard-upload-banner-form');
+            
+            if (ues.global.dashboard.isUserCustom && !ues.global.dashboard.banner.customBannerExists) {
+                
+                // in order to remove the global banner from a personalized dashboard, we need to save an empty resource.
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: {data: ''},
+                }).success(function (d) {
 
-                if (ues.global.dashboard.isUserCustom) {
-                    ues.global.dashboard.banner.customBannerExists = false;
-                } else {
+                    // we need to suppress the global banner when removing the global banner from a custom dashboard.
+                    // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
-                }
-                ues.global.dashboard.banner.cropMode = false;
-                loadBanner();
-            });
+                    
+                    if (ues.global.dashboard.isUserCustom) {
+                        ues.global.dashboard.banner.customBannerExists = false;
+                    }
+                    
+                    ues.global.dashboard.banner.cropMode = false;
+                    
+                    loadBanner();
+                });
+                
+            } else {
+                // remove the banner 
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'DELETE',
+                    dataType: 'json'
+                }).success(function (d) {
+                    
+                    if (ues.global.dashboard.isUserCustom) {
+                        ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
+                        ues.global.dashboard.banner.customBannerExists = false;
+                    } else {
+                        ues.global.dashboard.banner.globalBannerExists = false;
+                    }
+                    ues.global.dashboard.banner.cropMode = false;
+                    loadBanner();
+                });
+            }
         });
     };
 
