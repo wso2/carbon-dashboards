@@ -64,7 +64,7 @@ var fresh;
         }
 
         if (user && !urlDomain && user.domain != superDomain) {
-            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain)+ "dashboards/" + dashboardId);
+            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain) + "dashboards/" + dashboardId);
             return;
         }
 
@@ -86,7 +86,12 @@ var fresh;
             identityServerUrl: "",
             accessTokenUrl: "",
             apiKey: "",
-            apiSecret: ""
+            apiSecret: "",
+            theme: {
+                css: "basic",
+                js: null,
+                html: null
+            }
         };
         fresh = true;
         include('includes/designer.jag');

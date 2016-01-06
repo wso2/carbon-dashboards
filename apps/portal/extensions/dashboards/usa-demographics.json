@@ -1,0 +1,302 @@
+{
+  "id": "demographics-of-usa",
+  "title": "Demographics of USA",
+  "description": "Statistical details about Demographics of USA.",
+  "permissions": {
+    "viewers": [
+      "Internal/everyone"
+    ],
+    "editors": [
+      "Internal/everyone"
+    ]
+  },
+  "pages": [
+    {
+      "id": "landing",
+      "title": "Welcome",
+      "layout": {
+        "content": {
+          "loggedIn": {
+            "blocks": [
+              {
+                "id": "b",
+                "col": 1,
+                "row": 1,
+                "size_x": 12,
+                "size_y": 6,
+                "banner": false
+              },
+              {
+                "id": "c",
+                "col": 9,
+                "row": 8,
+                "size_x": 4,
+                "size_y": 4,
+                "banner": false
+              },
+              {
+                "id": "d",
+                "col": 1,
+                "row": 8,
+                "size_x": 4,
+                "size_y": 4,
+                "banner": false
+              },
+              {
+                "id": "e",
+                "col": 5,
+                "row": 8,
+                "size_x": 4,
+                "size_y": 4,
+                "banner": false
+              },
+              {
+                "id": "5112e14a2019deb9525208824a829233",
+                "col": 1,
+                "row": 7,
+                "size_x": 12,
+                "size_y": 1,
+                "banner": false
+              }
+            ]
+          }
+        },
+        "fluidLayout": false
+      },
+      "isanon": false,
+      "content": {
+        "default": {
+          "b": [
+            {
+              "id": "7o9ej0l3vnjc3di",
+              "content": {
+                "id": "usa-states",
+                "title": "Population Density Of USA",
+                "type": "gadget",
+                "thumbnail": "store://gadget/usa-population-density/images/index.png",
+                "options": {},
+                "data": {
+                  "url": "store://gadget/usa-population-density/index.xml"
+                },
+                "notify": {
+                  "state": {
+                    "type": "state",
+                    "description": "This notifies the selected state"
+                  }
+                },
+                "listen": {
+                  "age": {
+                    "type": "number",
+                    "description": "Listen to the age channel",
+                    "on": [
+                      {
+                        "from": "o58pzmczyou323xr",
+                        "event": "age"
+                      }
+                    ]
+                  },
+                  "ethnicity": {
+                    "type": "ethnicity",
+                    "description": "Listen to the ethnicity channel",
+                    "on": [
+                      {
+                        "from": "kj199fnshpk3xr",
+                        "event": "ethnicity"
+                      }
+                    ]
+                  },
+                  "gender": {
+                    "type": "gender",
+                    "description": "Listen to the gender channel",
+                    "on": [
+                      {
+                        "from": "o58pzmczyou323xr",
+                        "event": "gender"
+                      }
+                    ]
+                  },
+                  "history": {
+                    "type": "year",
+                    "description": "Listen to the history channel",
+                    "on": [
+                      {
+                        "from": "cd1uodl772satt9",
+                        "event": "history"
+                      }
+                    ]
+                  }
+                },
+                "styles": {
+                  "height": "",
+                  "borders": true,
+                  "titlePosition": "left",
+                  "title": "Population Density Of USA"
+                },
+                "locale_titles": {
+                  "en-US": "Population Density Of USA"
+                },
+                "settings": {}
+              }
+            }
+          ],
+          "e": [
+            {
+              "id": "kj199fnshpk3xr",
+              "content": {
+                "id": "donutchart",
+                "title": "Population by Ethnicity",
+                "type": "gadget",
+                "thumbnail": "store://gadget/usa-population-by-ethnicity/images/index.png",
+                "options": {},
+                "data": {
+                  "url": "store://gadget/usa-population-by-ethnicity/index.xml"
+                },
+                "notify": {
+                  "ethnicity": {
+                    "type": "ethnicity",
+                    "description": "This notifies the selected state"
+                  }
+                },
+                "listen": {
+                  "age": {
+                    "type": "number",
+                    "description": "Used to filter based on state",
+                    "on": [
+                      {
+                        "from": "o58pzmczyou323xr",
+                        "event": "age"
+                      }
+                    ]
+                  },
+                  "state": {
+                    "type": "state",
+                    "description": "Used to filter based on state",
+                    "on": [
+                      {
+                        "from": "7o9ej0l3vnjc3di",
+                        "event": "state"
+                      }
+                    ]
+                  }
+                },
+                "styles": {
+                  "height": "",
+                  "borders": true,
+                  "titlePosition": "left",
+                  "title": "Population by Ethnicity"
+                },
+                "locale_titles": {
+                  "en-US": "Population by Ethnicity"
+                },
+                "settings": {}
+              }
+            }
+          ],
+          "d": [
+            {
+              "id": "o58pzmczyou323xr",
+              "content": {
+                "id": "barchart",
+                "title": "Population by Age and Gender",
+                "type": "gadget",
+                "thumbnail": "store://gadget/usa-population-by-age-and-gender/images/index.png",
+                "options": {},
+                "data": {
+                  "url": "store://gadget/usa-population-by-age-and-gender/index.xml"
+                },
+                "notify": {
+                  "age": {
+                    "type": "number",
+                    "description": "This notifies the selected Age"
+                  },
+                  "gender": {
+                    "type": "gender",
+                    "description": "This notifies the selected Gender"
+                  }
+                },
+                "listen": {
+                  "state": {
+                    "type": "state",
+                    "description": "Used to listen to state channel",
+                    "on": [
+                      {
+                        "from": "7o9ej0l3vnjc3di",
+                        "event": "state"
+                      }
+                    ]
+                  }
+                },
+                "styles": {
+                  "height": "",
+                  "borders": true,
+                  "titlePosition": "left",
+                  "title": "Population by Age and Gender"
+                },
+                "locale_titles": {
+                  "en-US": "Population by Age and Gender"
+                },
+                "settings": {}
+              }
+            }
+          ],
+          "c": [
+            {
+              "id": "cd1uodl772satt9",
+              "content": {
+                "id": "linechart",
+                "title": "Population History",
+                "type": "gadget",
+                "thumbnail": "store://gadget/usa-population-history/images/index.png",
+                "options": {},
+                "data": {
+                  "url": "store://gadget/usa-population-history/index.xml"
+                },
+                "notify": {
+                  "history": {
+                    "type": "year",
+                    "description": "This notifies the selected year"
+                  }
+                },
+                "listen": {
+                  "state": {
+                    "type": "state",
+                    "description": "Used to filter based on state",
+                    "on": [
+                      {
+                        "from": "7o9ej0l3vnjc3di",
+                        "event": "state"
+                      }
+                    ]
+                  }
+                },
+                "styles": {
+                  "height": "",
+                  "borders": true,
+                  "titlePosition": "left",
+                  "title": "Population History"
+                },
+                "locale_titles": {
+                  "en-US": "Population History"
+                },
+                "settings": {}
+              }
+            }
+          ]
+        },
+        "anon": {}
+      }
+    }
+  ],
+  "identityServerUrl": "",
+  "accessTokenUrl": "",
+  "apiKey": "",
+  "apiSecret": "",
+  "banner": {
+    "globalBannerExists": null,
+    "customBannerExists": null
+  },
+  "landing": "landing",
+  "isanon": false,
+  "isUserCustom": false,
+  "theme": "usa-demographics"
+}
