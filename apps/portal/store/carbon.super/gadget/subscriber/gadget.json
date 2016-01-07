@@ -9,7 +9,7 @@
     },
     "listen": {
         "subscriber": {
-            "type": "address",
+            "type": "message",
             "description": "Used to listen to Any message of type address"
         }
     }

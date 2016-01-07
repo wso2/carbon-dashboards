@@ -9,7 +9,7 @@
     },
     "notify": {
         "publisher": {
-            "type": "address",
+            "type": "message",
             "description": "This notifies message generated in publisher"
         }
     }
