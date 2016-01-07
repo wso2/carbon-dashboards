@@ -105,5 +105,6 @@
     "fluid.layout": "Fluid Layout",
     "placeholder.item.list": "item1 | item2 | item3",
     "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'",
-    "dashboard.server.label": "Dashboard Server"
+    "dashboard.server.label": "Dashboard Server",
+    "banner.loading.msg": "Please wait while the banner is being loaded..."
 }

@@ -364,6 +364,13 @@ h4.ues-page-title {
     left: 0;
 }
 
+.ues-banner-placeholder .ues-dashboard-banner-loading {
+    background: #0074cc;
+    color: #fff;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
 /**
  * validation message styles
  */

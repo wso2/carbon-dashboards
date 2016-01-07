@@ -547,6 +547,7 @@
 
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     
+    <div class="ues-dashboard-banner-loading" style="display: none;"><%= i18n.localize('banner.loading.msg') %></div>
     <canvas id="src-canvas" class="hidden"></canvas>    
     <canvas id="dest-canvas" class="hidden"></canvas>
     
