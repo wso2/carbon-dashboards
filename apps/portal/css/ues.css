@@ -1,6 +1,7 @@
 body {
     padding-top: 136px;
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    /*overflow: hidden; Fixing DAS-348, unable to reach Next button on wizard */
 }
 
 h1 {
