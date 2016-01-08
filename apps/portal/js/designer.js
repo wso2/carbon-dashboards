@@ -114,10 +114,6 @@ $(function () {
     var showWorkspace = function (name) {
         $('.ues-workspace').hide();
         $('#ues-workspace-' + name).show();
-
-        if (name === 'designer') {
-            initBanner();
-        }
     };
 
     /**
@@ -1828,8 +1824,7 @@ $(function () {
                 var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
                 $(this).val(sanitizedInput);
             });
-
-            initBanner();
+            
             recentlyOpenedPageProperty = pid;
         });
         pagesMenu.find("#ues-page-properties").on("click", 'a .ues-trash', function (e) {
@@ -2432,7 +2427,8 @@ $(function () {
             isEdit: bannerExists && !banner.cropMode,
             isCrop: banner.cropMode,
             isCustomBanner: customDashboard && banner.customBannerExists,
-            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard
+            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard,
+            isEditable: (pageType == DEFAULT_DASHBOARD_VIEW)
         };
         $placeholder.html(bannerHbs(data));
 
@@ -2446,77 +2442,91 @@ $(function () {
     };
 
     /**
+     * Change event handler for the banner file control
+     * @oaram e
+     */
+    var bannerChanged = function (e) {
+
+        var file = e.target.files[0];
+        if (file.size == 0) {
+            return;
+        }
+
+        if (!new RegExp('^image/', 'i').test(file.type)) {
+            return;
+        }
+
+        // since a valid image is selected, render the banner in crop mode
+        ues.global.dashboard.banner.cropMode = true;
+        loadBanner();
+        $('.ues-banner-placeholder button').prop('disabled', true);
+        $('.ues-dashboard-banner-loading').show();
+
+        var $placeholder = $('.ues-banner-placeholder'),
+            srcCanvas = document.getElementById('src-canvas'),
+            $srcCanvas = $(srcCanvas),
+            img = new Image(),
+            width = $placeholder.width(),
+            height = $placeholder.height();
+
+        // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
+        $srcCanvas.cropper('destroy');
+
+        // draw the selected image in the source canvas and initialize cropping
+        var srcCtx = srcCanvas.getContext('2d'),
+            objectUrl = URL.createObjectURL(file);
+
+        img.onload = function () {
+            // draw the uploaded image on the canvas
+            srcCanvas.width = img.width;
+            srcCanvas.height = img.height;
+
+            srcCtx.drawImage(img, 0, 0);
+
+            // bind the cropper
+            $srcCanvas.cropper({
+                aspectRatio: width / height,
+                autoCropArea: 1,
+                strict: true,
+                guides: true,
+                highlight: true,
+                dragCrop: false,
+                cropBoxMovable: false,
+                cropBoxResizable: true,
+
+                crop: function (e) {
+                    // draw the cropped image part in the dest. canvas and get the base64 encoded string
+                    var cropData = $srcCanvas.cropper('getData'),
+                        destCanvas = document.getElementById('dest-canvas'),
+                        destCtx = destCanvas.getContext('2d');
+
+                    destCanvas.width = width;
+                    destCanvas.height = height;
+
+                    destCtx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
+
+                    var dataUrl = destCanvas.toDataURL('image/jpeg');
+                    $('#banner-data').val(dataUrl);
+                }
+            });
+            
+            $('.ues-banner-placeholder button').prop('disabled', false);
+            $('.ues-dashboard-banner-loading').hide();
+        };
+        img.src = objectUrl;
+    };
+
+    /**
      * initialize the banner
      */
     var initBanner = function () {
 
         loadBanner();
-
-        // bind a handler to the change event of the file element
-        document.getElementById('file-banner').addEventListener('change', function (e) {
-            var file = e.target.files[0];
-            if (file.size == 0) {
-                return;
-            }
-
-            if (!new RegExp('^image/', 'i').test(file.type)) {
-                return;
-            }
-
-            // since a valid image is selected, render the banner in crop mode
-            ues.global.dashboard.banner.cropMode = true;
-            loadBanner();
-
-            var $placeholder = $('.ues-banner-placeholder'),
-                srcCanvas = document.getElementById('src-canvas'),
-                $srcCanvas = $(srcCanvas),
-                img = new Image(),
-                width = $placeholder.width(),
-                height = $placeholder.height();
-
-            // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
-            $srcCanvas.cropper('destroy');
-
-            // draw the selected image in the source canvas and initialize cropping
-            var srcCtx = srcCanvas.getContext('2d'),
-                objectUrl = URL.createObjectURL(file);
-
-            img.onload = function () {
-                // draw the uploaded image on the canvas
-                srcCanvas.width = img.width;
-                srcCanvas.height = img.height;
-
-                srcCtx.drawImage(img, 0, 0);
-
-                // bind the cropper
-                $srcCanvas.cropper({
-                    aspectRatio: width / height,
-                    autoCropArea: 1,
-                    strict: true,
-                    guides: true,
-                    highlight: true,
-                    dragCrop: false,
-                    cropBoxMovable: false,
-                    cropBoxResizable: true,
-
-                    crop: function (e) {
-                        // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                        var cropData = $srcCanvas.cropper('getData'),
-                            destCanvas = document.getElementById('dest-canvas'),
-                            destCtx = destCanvas.getContext('2d');
-
-                        destCanvas.width = width;
-                        destCanvas.height = height;
-
-                        destCtx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
-
-                        var dataUrl = destCanvas.toDataURL('image/jpeg');
-                        $('#banner-data').val(dataUrl);
-                    }
-                });
-            };
-            img.src = objectUrl;
-        }, false);
+        
+        // bind a handler to the change event of the file element (removing the handler initially to avoid multiple binding to the same handler)
+        var fileBanner = document.getElementById('file-banner');
+        fileBanner.removeEventListener('change', bannerChanged);
+        fileBanner.addEventListener('change', bannerChanged, false);
 
         // event handler for the banner edit button
         $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
@@ -2552,20 +2562,49 @@ $(function () {
         });
 
         // event handler for the banner remove button
-        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
-            $.ajax({
-                url: $('#ues-dashboard-upload-banner-form').attr('action'),
-                type: 'DELETE'
-            }).success(function (d) {
+        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {            
+            var $form = $('#ues-dashboard-upload-banner-form');
+            
+            if (ues.global.dashboard.isUserCustom && !ues.global.dashboard.banner.customBannerExists) {
+                
+                // in order to remove the global banner from a personalized dashboard, we need to save an empty resource.
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: {data: ''},
+                }).success(function (d) {
 
-                if (ues.global.dashboard.isUserCustom) {
-                    ues.global.dashboard.banner.customBannerExists = false;
-                } else {
+                    // we need to suppress the global banner when removing the global banner from a custom dashboard.
+                    // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
-                }
-                ues.global.dashboard.banner.cropMode = false;
-                loadBanner();
-            });
+                    
+                    if (ues.global.dashboard.isUserCustom) {
+                        ues.global.dashboard.banner.customBannerExists = false;
+                    }
+                    
+                    ues.global.dashboard.banner.cropMode = false;
+                    
+                    loadBanner();
+                });
+                
+            } else {
+                // remove the banner 
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'DELETE',
+                    dataType: 'json'
+                }).success(function (d) {
+                    
+                    if (ues.global.dashboard.isUserCustom) {
+                        ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
+                        ues.global.dashboard.banner.customBannerExists = false;
+                    } else {
+                        ues.global.dashboard.banner.globalBannerExists = false;
+                    }
+                    ues.global.dashboard.banner.cropMode = false;
+                    loadBanner();
+                });
+            }
         });
     };
 

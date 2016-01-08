@@ -3,10 +3,11 @@
  */
 #ues-designer {
     position: fixed;
-    height: calc(100% - 100px);
-    margin-left: 48px;
+    height: calc(100% - 137px);
     width: calc(100% - 48px);
-    overflow: scroll;
+    margin-left: 48px;
+    padding-bottom: 40px;
+    overflow-y: scroll;
 }
 
 #ues-designer.ues-store-visible {
@@ -79,6 +80,8 @@
     cursor: move;
     border: 1px solid #e7e7e7;
     background: #fff;
+    width: 192px;
+    z-index: 3;
 }
 
 #ues-store .ues-thumbnail img, .ues-store-thumbnail img {
@@ -360,6 +363,13 @@ h4.ues-page-title {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.ues-banner-placeholder .ues-dashboard-banner-loading {
+    background: #0074cc;
+    color: #fff;
+    padding: 5px 10px;
+    display: inline-block;
 }
 
 /**

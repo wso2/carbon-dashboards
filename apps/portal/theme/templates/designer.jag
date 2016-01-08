@@ -547,6 +547,7 @@
 
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     
+    <div class="ues-dashboard-banner-loading" style="display: none;"><%= i18n.localize('banner.loading.msg') %></div>
     <canvas id="src-canvas" class="hidden"></canvas>    
     <canvas id="dest-canvas" class="hidden"></canvas>
     
@@ -554,6 +555,7 @@
     <img src="" id="img-banner" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
     {{/if}}
        
+    {{#if isEditable}}
     <div class="button-panel">
     
         {{#if isAdd}}
@@ -562,9 +564,7 @@
 
         {{#if isEdit}}
         <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('edit.button')%></button>
-        {{#if showRemove}}
         <button type="button" id="btn-remove-banner" class="btn btn-danger">{{#if isCustomBanner}}<%=i18n.localize('reset')%>{{else}}<%=i18n.localize('remove')%>{{/if}}</button>
-        {{/if}}
         {{/if}}
 
         {{#if isCrop}}
@@ -573,6 +573,7 @@
         {{/if}}
     
     </div>
+    {{/if}}
     
 </script> <!--/#ues-dashboard-banner-hbs -->
 
