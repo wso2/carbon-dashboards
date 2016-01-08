@@ -3,10 +3,11 @@
  */
 #ues-designer {
     position: fixed;
-    height: calc(100% - 100px);
-    margin-left: 48px;
+    height: calc(100% - 137px);
     width: calc(100% - 48px);
-    overflow: scroll;
+    margin-left: 48px;
+    padding-bottom: 40px;
+    overflow-y: scroll;
 }
 
 #ues-designer.ues-store-visible {
