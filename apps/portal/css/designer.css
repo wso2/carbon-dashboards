@@ -199,8 +199,9 @@
     #ues-store-menu {
         width: 48px;
         float: left;
-        height: 100%;
-        position: fixed;
+        height: calc(100% - 136px);
+        position: absolute;
+        margin-bottom: 0;
     }
 }
 
