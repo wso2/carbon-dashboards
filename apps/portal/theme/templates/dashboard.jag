@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/bootstrap-modal-carousel.min.css" />
-    
-    <% include('/controllers/includes/theme-dashboard-styles.jag'); %>
+
+    <link rel="stylesheet" href="<%=urlPrefix%><%=utils.dashboardStyles(dashboard.theme)%>">
     <%
         var i18n = require("i18n");
         i18n.init(request, utils.getLocaleResourcePath());
@@ -207,8 +207,8 @@
 </script>
 
 <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-    <div class="ues-component panel panel-default">
-        <div class="ues-component-header panel-heading">
+    <div class="panel panel-default ues-component">
+        <div class="panel-heading ues-component-header">
             <h4 class="ues-component-title"></h4>
 
             <div class="ues-component-toolbar">
@@ -261,6 +261,6 @@
         $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
     });
     
-</script>   
+</script>
 </body>
 </html>

@@ -199,7 +199,7 @@
         width: 48px;
         float: left;
         height: 100%;
-        position: absolute;
+        position: fixed;
     }
 }
 

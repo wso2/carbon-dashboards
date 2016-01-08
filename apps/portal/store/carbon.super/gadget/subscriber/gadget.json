@@ -8,13 +8,9 @@
         "url": "store://gadget/subscriber/index.xml"
     },
     "listen": {
-        "state-selected": {
-            "type": "address",
-            "description": "Used to filter based on state"
-        },
-        "auto-update": {
-            "type": "boolean",
-            "description": "Used to filter based on state"
+        "subscriber": {
+            "type": "message",
+            "description": "Used to listen to Any message of type address"
         }
     }
 }

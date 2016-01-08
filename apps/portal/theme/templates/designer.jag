@@ -365,7 +365,7 @@
                             <h4><%= i18n.localize("styles") %></h4>
                             <div class="form-group">
                                 <label><%= i18n.localize("title") %>
-                                    <input type="text" class="form-control ues-localized-title" name="title"
+                                    <input type="text" maxlength="200" class="form-control ues-localized-title" name="title"
                                     placeholder="<%= i18n
         .localize("title") %>" value="{{#if styles.title}}{{styles.title}}{{/if}}">
                                 </label>
@@ -484,7 +484,7 @@
                         <label><%= i18n.localize("title") %>
                             <span class="required">*</span>
                         </label>
-                        <input id="page-title" type="text" class="form-control" name="title" placeholder="<%= i18n.localize("page.tilte.lable") %>" value="{{title}}">
+                        <input id="page-title" maxlength="250" type="text" class="form-control" name="title" placeholder="<%= i18n.localize("page.tilte.lable") %>" value="{{title}}">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="title-error" class="required-error hide" for="title">This is required.</label>
                     </div>
@@ -492,7 +492,7 @@
                         <label><%= i18n.localize("url") %>
                             <span class="required">*</span>
                         </label>
-                        <input id="page-url" type="text" class="form-control" name="id" placeholder="URL" value="{{id}}">
+                        <input id="page-url" type="text" maxlength="100" class="form-control" name="id" placeholder="URL" value="{{id}}">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="id-error" class="required-error hide" for="id">This is required.</label>
                     </div>

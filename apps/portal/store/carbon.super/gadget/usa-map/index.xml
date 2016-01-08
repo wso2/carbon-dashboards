@@ -42,7 +42,7 @@
         console.log(name);
         var lang = prefs.getLang();
         console.log(lang);
-        gadgets.Hub.publish('select', address);
+        gadgets.Hub.publish('state', address);
 	};
 
 	var data ={};
@@ -102,7 +102,7 @@
         console.log(name);
         var lang = prefs.getLang();
         console.log(lang);
-        gadgets.Hub.publish('select', address);
+        gadgets.Hub.publish('state', address);
 	};
 
 	var data ={};
