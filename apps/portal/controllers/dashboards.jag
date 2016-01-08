@@ -50,6 +50,10 @@ var fresh;
         isCustomize = request.getParameter('custom');
 
         if (isCustomize) {
+            for (var i = 0; i < dashboard.pages.length; i++) {
+                dashboard.pages[i].isanon = false;
+            }
+
             dashboards.copy(dashboard);
             response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
             return;
