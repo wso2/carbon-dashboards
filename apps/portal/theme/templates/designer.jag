@@ -555,6 +555,7 @@
     <img src="" id="img-banner" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
     {{/if}}
        
+    {{#if isEditable}}
     <div class="button-panel">
     
         {{#if isAdd}}
@@ -572,6 +573,7 @@
         {{/if}}
     
     </div>
+    {{/if}}
     
 </script> <!--/#ues-dashboard-banner-hbs -->
 

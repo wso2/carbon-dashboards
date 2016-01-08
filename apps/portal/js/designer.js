@@ -2427,7 +2427,8 @@ $(function () {
             isEdit: bannerExists && !banner.cropMode,
             isCrop: banner.cropMode,
             isCustomBanner: customDashboard && banner.customBannerExists,
-            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard
+            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard,
+            isEditable: (pageType == DEFAULT_DASHBOARD_VIEW)
         };
         $placeholder.html(bannerHbs(data));
 
