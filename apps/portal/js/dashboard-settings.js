@@ -16,6 +16,8 @@ $(function () {
 
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
 
+    var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
+
     /**
      * Generate Noty Messages as to the content given using parameters.
      * @param1 text {String}
@@ -92,7 +94,7 @@ $(function () {
 
     var getOauthSettings = function () {
         $.ajax({
-            url: "/portal/saml/saml-at-settings.jag",
+            url: tokenUrl,
             type: "GET",
             dataType: "json",
             data: {
