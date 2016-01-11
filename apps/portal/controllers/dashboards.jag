@@ -91,11 +91,7 @@ var fresh;
             accessTokenUrl: "",
             apiKey: "",
             apiSecret: "",
-            theme: {
-                css: "basic",
-                js: null,
-                html: null
-            }
+            theme: ""
         };
         fresh = true;
         include('includes/designer.jag');

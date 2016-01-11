@@ -4,6 +4,8 @@ $(function () {
 
     var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
 
+    var userApi = ues.utils.relativePrefix() + 'apis/user';
+
     var dashboard = ues.global.dashboard;
 
     var permissions = dashboard.permissions;
@@ -15,6 +17,8 @@ $(function () {
     var url = dashboardsApi + '/' + dashboard.id;
 
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
+
+    var user = null;
 
     /**
      * Generate Noty Messages as to the content given using parameters.
@@ -275,10 +279,45 @@ $(function () {
         return isExist;
     };
 
+    /**
+     * Get the user details.
+     * @private
+     * */
+    var getUser = function () {
+        $.ajax({
+            url: userApi,
+            type: "GET",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data) {
+                    user = data;
+                    console.log(user);
+                }
+            }
+        });
+    };
+
+    /**
+     * Get number of user roles in the dashboard permissions.
+     * @param permission {String}
+     * @return number
+     * */
+    var getNumberOfUserRolesInDashboard = function (permission) {
+        var userRoles = 0;
+        for (var i = 0; i < user.roles.length; i++) {
+            for (var j = 0; j < permission.length; j++) {
+                if (user.roles[i] == permission[j]) {
+                    userRoles += 1;
+                }
+            }
+        }
+        return userRoles;
+    };
+
     var initUI = function () {
-
         addBreadcrumbs("Dashboard Settings");
-
+        getUser();
         var viewerRoles = new Bloodhound({
             name: 'roles',
             limit: 10,
@@ -380,11 +419,10 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if (editors.length == 1) {
-                generateMessage("Only admin user will be able to edit this dashboard." +
+            if ((editors.length == 1 || getNumberOfUserRolesInDashboard(editors) == 1) && !user.isAdmin) {
+                generateMessage("After this permission removal only administrator will be able to edit this dashboard." +
                     " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
-            }
-            else {
+            } else {
                 removePermission();
             }
         }).end().find('.ues-shared-view').on('click', '.remove-button', function () {
@@ -398,11 +436,10 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if (viewers.length == 1) {
-                generateMessage("Only admin user will be able to view this dashboard." +
+            if ((viewers.length == 1 || getNumberOfUserRolesInDashboard(viewers) == 1) && !user.isAdmin) {
+                generateMessage("After this permission removal only administrator will be able to view this dashboard." +
                     " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
-            }
-            else {
+            } else {
                 removePermission();
             }
         });
