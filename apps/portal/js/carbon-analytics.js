@@ -53,6 +53,7 @@ function AnalyticsClient() {
     var TYPE_GET_RECORDSTORE_BY_TABLE = 27;
     var TYPE_WAIT_FOR_INDEXING_FOR_TABLE = 28;
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
+    var TYPE_REINDEX = 30;
     var HTTP_GET = "GET";
     var HTTP_POST = "POST";
     var RESPONSE_ELEMENT = "responseJSON";
@@ -530,6 +531,26 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" + queryInfo["tableName"],
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * Re-index the records of a given table within a given range of timestamps.
+     * @param rangeInfo The table name
+     * @param callback The callback function which has one argument containing the response message.
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.reIndex = function (rangeInfo, callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_REINDEX + "&tableName=" + rangeInfo["tableName"] +
+                             "&timeFrom=" + rangeInfo["timeFrom"] + "&timeTo=" + rangeInfo["timeTo"],
+                        type: HTTP_GET,
                         success: function (data) {
                             callback(data);
                         },
