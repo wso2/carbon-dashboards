@@ -51,6 +51,7 @@
     var TYPE_GET_RECORDSTORE_BY_TABLE = 27;
     var TYPE_WAIT_FOR_INDEXING_FOR_TABLE = 28;
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
+    var TYPE_REINDEX = 30;
     var log = new Log();
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
@@ -321,6 +322,15 @@
             case TYPE_SEARCH_WITH_AGGREGATES:
             {
                 result = connector.searchWithAggregates(contentAsString);
+                break;
+            }
+            case TYPE_REINDEX:
+            {
+                var from = request.getParameter(TIME_FROM);
+                if (from == 'undefined') from = JS_MIN_VALUE;
+                var to = request.getParameter(TIME_TO);
+                if (to == 'undefined') to = JS_MAX_VALUE;
+                result = connector.reIndex(tableName, from, to);
                 break;
             }
             default:

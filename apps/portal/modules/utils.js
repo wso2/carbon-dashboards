@@ -55,7 +55,7 @@ var allowed = function (roles, allowed) {
         }
         return false;
     };
-    if(hasRole(adminRole, roles)){
+    if (hasRole(adminRole, roles)) {
         return true;
     }
     var i;
@@ -139,12 +139,24 @@ var store = function () {
     return require(storePath);
 };
 
-var dashboardStyles = function () {
+var dashboardStyles = function (theme) {
     var config = require('/configs/designer.json');
-    var theme = config.theme;
+    if (!theme) {
+        theme = config.theme;
+    }
+
     var path = 'extensions/themes/' + theme + '/css/dashboard.css';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
+};
+
+var dashboardLayouts = function () {
+    var path = 'extensions/themes/';
+    var folder = new File('/' + path);
+    var list = folder.listFiles();
+    list.forEach(function(file){
+
+    });
 };
 
 var dashboardScripts = function () {
@@ -187,7 +199,7 @@ var resolveUrl = function (path) {
     return file.isExists() ? extendedPath : 'theme/' + path;
 };
 
-var getCarbonServerAddress = function (trans){
+var getCarbonServerAddress = function (trans) {
     var carbon = require('carbon');
     var url;
     var carbonServerAddress = carbon.server.address(trans);
@@ -196,7 +208,7 @@ var getCarbonServerAddress = function (trans){
     var authUrlPort = carbonUrlArrayed[2];
     var serverConfigService = carbon.server.osgiService('org.wso2.carbon.base.api.ServerConfigurationService');
     hostName = serverConfigService.getFirstProperty("HostName");
-    if ( hostName == null || hostName === '' || hostName === 'null' || hostName.length <= 0 ){
+    if (hostName == null || hostName === '' || hostName === 'null' || hostName.length <= 0) {
         url = carbonServerAddress;
     } else {
         url = authUrlProtocol + "://" + hostName + ":" + authUrlPort;

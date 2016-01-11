@@ -18,12 +18,13 @@
 (function() {
     var log = new Log();
     
-    var carbon = require('carbon');
-    var usr = require('/modules/user.js');
-    var dashboards = require('/modules/dashboards.js');
-    var utils = require('/modules/utils.js');
+    var carbon = require('carbon'), 
+        usr = require('/modules/user.js'), 
+        dashboards = require('/modules/dashboards.js'), 
+        utils = require('/modules/utils.js');
     
-    var UNAUTHORIZED_ERROR = 'unauthorized to access banners';
+    var UNAUTHORIZED_ERROR = 'unauthorized to access banners',
+        BASE64_MARKER = ';base64,';
 
     // check whether the user is logged in
     var user = usr.current();
@@ -56,21 +57,30 @@
         
         // add/edit banners
         if (method === 'POST') {
-            
-            var dataUrl = request.getParameter('data');
-
-            // extract the base64 string out of the data url
-            var BASE64_MARKER = ';base64,';
-            var base64Index = dataUrl.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-            var encodedData = dataUrl.substring(base64Index);
-
+        
             try {
                 
-                // decode the base64 string
-                var decodedData = Packages.javax.xml.bind.DatatypeConverter.parseBase64Binary(encodedData);
+                var dataUrl = request.getParameter('data');
+                if (dataUrl.length > 0) {
 
-                // save the buffer in the registry
-                dashboards.saveBanner(dashboardId, username, 'banner', 'image/jpg', decodedData); 
+                    // save the image
+                    // extract the base64 string out of the data url
+                    var base64Index = dataUrl.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+                    var encodedData = dataUrl.substring(base64Index);
+                    
+                    // decode the base64 string
+                    var decodedData = Packages.javax.xml.bind.DatatypeConverter.parseBase64Binary(encodedData);
+
+                    // save the buffer in the registry
+                    dashboards.saveBanner(dashboardId, username, 'banner', 'image/jpg', decodedData); 
+
+                } else {
+                    
+					// when a viewer removes the original banner which is available globally, a empty resource is saved as 
+					// the personalized banner in order to suppress the original banner
+                    dashboards.saveBanner(dashboardId, username, 'banner', 'image/jpg', ''); 
+                
+                }
                 
             } catch(e) {
                 log.error('Error occurred while saving the banner');
@@ -82,6 +92,11 @@
         // delete banners
         if (method === 'DELETE') {
             dashboards.deleteBanner(dashboardId, username);
+            
+			// return the status of the banner (as JSON data)
+            var banner = dashboards.getBanner(dashboardId, username);
+			var bannerStatus = { globalBannerExists: banner.globalBannerExists, customBannerExists: banner.customBannerExists };
+            print(bannerStatus);
         }    
     }
 })(); %>

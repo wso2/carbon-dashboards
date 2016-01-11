@@ -12,6 +12,7 @@ $(function () {
      * @private
      * */
     var generateUrl = function (title) {
+        title = title.substring(0,100);
         return title.replace(/[^\w]/g, '-').toLowerCase();
     };
 
