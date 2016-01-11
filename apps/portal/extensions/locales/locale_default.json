@@ -90,7 +90,7 @@
     "ds.dashboard.designer": "WSO2 DS - Dashboard Designer",
     "remove.block.label": "Remove Block",
     "add.block.label": "Add Block",
-    "add.block.description": "Define Gadget Size in Grid",
+    "add.block.description": "Define the block size in the grid",
     "add.block.button.text": "Add Block",
     "oauth.settings": "OAuth Settings",
     "enable": "Enable",
