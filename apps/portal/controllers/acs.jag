@@ -87,7 +87,7 @@
                         var utils = require('/modules/utils.js');
                         var server = new carbon.server.Server();
                         var um = new carbon.user.UserManager(server);
-                        user.roles = um.getRoleListOfUser(username);
+                        user.roles = um.getRoleListOfUser(user.username);
                         session.put('user', user);
                         session.put("samlResponse", samlResponse);
                         response.sendRedirect(relayState);
