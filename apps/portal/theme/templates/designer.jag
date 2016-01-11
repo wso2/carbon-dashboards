@@ -605,7 +605,8 @@
             
 <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
     <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
-    <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
+    <li><a href="#" class="ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" 
+            data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>"><i class="fw fw-laptop"></i></a></li>
     <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
 </script>
 

@@ -644,6 +644,8 @@ $(function () {
                         renderMaxView(component, DEFAULT_COMPONENT_VIEW);
                         component.fullViewPoped = false;
                     });
+                
+                $(this).attr('title', $(this).data('maximize-title'));
 
                 componentBody.hide();
 
@@ -671,6 +673,8 @@ $(function () {
                         renderMaxView(component, FULL_COMPONENT_VIEW);
                         component.fullViewPoped = true;
                     });
+                
+                $(this).attr('title', $(this).data('minimize-title'));
 
                 componentBody.hide();
             }

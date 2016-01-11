@@ -106,5 +106,7 @@
     "placeholder.item.list": "item1 | item2 | item3",
     "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'",
     "dashboard.server.label": "Dashboard Server",
-    "banner.loading.msg": "Please wait while the banner is being loaded..."
+    "banner.loading.msg": "Please wait while the banner is being loaded...",
+    "maximize.label": "Maximize",
+    "minimize.label": "Minimize"
 }
