@@ -1803,9 +1803,13 @@ $(function () {
                 e.stopPropagation();
                 return;
             }
-            ues.global.isSwitchToNewPage = true;
-            switchPage(pid, pageType);
-            ues.global.isSwitchToNewPage = false;
+            
+            // do not re-render if the user clicks on the current page name
+            if (pid != page.id) {
+				ues.global.isSwitchToNewPage = true;
+				switchPage(pid, pageType);
+				ues.global.isSwitchToNewPage = false;
+            }
 
             $('#' + pid).find('.panel-body').html(pageOptionsHbs({
                 id: page.id,
