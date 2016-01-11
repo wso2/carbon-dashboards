@@ -86,7 +86,7 @@
                         var user = carbon.server.tenantUser(username);
                         var utils = require('/modules/utils.js');
                         var server = new carbon.server.Server();
-                        var um = new carbon.user.UserManager(server);
+                        var um = new carbon.user.UserManager(server, user.tenantId);
                         user.roles = um.getRoleListOfUser(user.username);
                         session.put('user', user);
                         session.put("samlResponse", samlResponse);
