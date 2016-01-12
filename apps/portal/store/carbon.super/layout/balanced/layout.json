@@ -1,7 +1,7 @@
 {
     "id": "balanced",
-    "title": "Balanced layout",
-    "description": "This is a balanced layout",
+    "title": "Balanced Grid",
+    "description": "This is a balanced grid layout",
     "thumbnail": "store://layout/balanced/index.png",
     "url": "store://layout/balanced/index.hbs"
 }
