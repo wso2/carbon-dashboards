@@ -2268,8 +2268,10 @@ $(function () {
                         // re-render component on stop resizing the component
                         var container = widget.find('.ues-component');
                         if (container) {
-                            container.find('.ues-component-body').show();
-                            updateComponent(container.attr('id'));
+                            container.find('.ues-component-body').show();   
+                            if (container.attr('id')) {
+                                updateComponent(container.attr('id'));
+                            }
                         }
 
                         updateLayout();
