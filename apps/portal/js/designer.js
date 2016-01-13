@@ -1274,7 +1274,7 @@ $(function () {
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        generateMessage("There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        generateMessage("Cannot remove the anonymous view of landing page when there are pages with anonymous views", null, null, "error", "topCenter", 3500, ['button', 'click']);
                     } else {
                         page.isanon = false;
 
