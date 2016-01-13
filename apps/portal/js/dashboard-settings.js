@@ -292,7 +292,6 @@ $(function () {
             success: function (data) {
                 if (data) {
                     user = data;
-                    console.log(user);
                 }
             }
         });
