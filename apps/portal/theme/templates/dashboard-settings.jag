@@ -15,12 +15,6 @@
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <!--<li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable")%></a></li>-->
-                <li><a id="ues-back" href="<%=tenantedUrlPrefix%>./dashboards">
-                    <span class="fw-stack">
-                        <i class="fw fw-ring fw-stack-2x"></i>
-                        <i class="fw fw-left-arrow fw-stack-1x"></i>
-                    </span> <%= i18n.localize("go.back")%></a></li>
                  <li><a href="#" class="ues-dashboard-export">
                      <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
