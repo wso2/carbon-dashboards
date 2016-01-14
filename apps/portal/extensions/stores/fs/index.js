@@ -112,22 +112,25 @@ var utils = require('/modules/utils.js');
                 return;
             }
             file = new File(file.getPath() + '/' + type + '.json');
-            file.open('r');
-            var asset = JSON.parse(file.readAll());
-            if (!query) {
+            if (file.isExists()) {
+                file.open('r');
+                var asset = JSON.parse(file.readAll());
+                if (!query) {
+                    assets.push(asset);
+                    file.close();
+                    return;
+                }
+                var title = asset.title || '';
+                var description = asset.description || '';
+                if (!query.test(title) && !query.test(description)) {
+                    file.close();
+                    return;
+                }
                 assets.push(asset);
                 file.close();
-                return;
             }
-            var title = asset.title || '';
-            var description = asset.description || '';
-            if (!query.test(title) && !query.test(description)) {
-                file.close();
-                return;
-            }
-            assets.push(asset);
-            file.close();
         });
+
         var end = start + count;
         end = end > assets.length ? assets.length : end;
         assets = assets.slice(start, end);
