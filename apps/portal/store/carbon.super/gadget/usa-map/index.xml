@@ -5,7 +5,6 @@
         <Require feature="setprefs"/>
         <Require feature="pubsub-2"/>
     </ModulePrefs>
-    <UserPref name="username" default_value="ruchira@wso2.com"/>
     <Content type="html" view="home">
         <![CDATA[
 <html>
@@ -27,7 +26,6 @@
 </head>
 <body>
 <div>
-<label id="defaultViewLabel">USA MAP (This is default view)</label>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -36,12 +34,6 @@
 
 	var click = function(state) {
 	    var address = { country: 'US', state: state.id };
-	    var prefs = new gadgets.Prefs();
-	    prefs.set('username1', 'ruchirawageesha@gmail.com');
-        var name = prefs.getString('username');
-        console.log(name);
-        var lang = prefs.getLang();
-        console.log(lang);
         gadgets.Hub.publish('state', address);
 	};
 
@@ -87,7 +79,6 @@
 </head>
 <body>
 <div>
-<label id="fullViewLabel">USA MAP(this is full screen view)</label>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -96,12 +87,6 @@
 
 	var click = function(state) {
 	    var address = { country: 'US', state: state.id };
-	    var prefs = new gadgets.Prefs();
-	    prefs.set('username1', 'ruchirawageesha@gmail.com');
-        var name = prefs.getString('username');
-        console.log(name);
-        var lang = prefs.getLang();
-        console.log(lang);
         gadgets.Hub.publish('state', address);
 	};
 
@@ -126,10 +111,4 @@
 </html>
     ]]>
     </Content>
-
- <Content type="html" view="settings">
-       <![CDATA[
-		This is settings
-  	]]>
-  </Content>
 </Module>

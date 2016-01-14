@@ -3,13 +3,7 @@
     "title": "USA Business Revenue",
     "type": "gadget",
     "thumbnail": "store://gadget/usa-business-revenue/index.png",
-    "options": {
-        "username": {
-            "type": "string",
-            "title": "Username",
-            "description": "Username to be used for service invocation"
-        }
-    },
+    "options": {},
     "data": {
         "url": "store://gadget/usa-business-revenue/index.xml"
     },

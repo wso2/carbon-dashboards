@@ -4,13 +4,9 @@
         <Require feature="pubsub-2">
             <Param name="topics"/>
         </Require>
+        <Require feature="setprefs"/>
     </ModulePrefs>
-    <UserPref name="min"
-              display_name="Minimum"
-              default_value="100"/>
-    <UserPref name="max"
-              display_name="Maximum"
-              default_value="200"/>
+    <UserPref name="gadget-status" default_value="not-wired" datatype="hidden" />
     <Content type="html">
         <![CDATA[
 <html>
@@ -46,7 +42,8 @@
 </style>
 </head>
 <body>
-<svg id="chart" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid"></svg>
+<p id="init-text" style="font-size: 12px;">This gadget is a subscriber gadget to the USA Map gadget. Based on the selected state on the US map, corresponding business revenue graph will be displayed. Hence please add the US Map gadget and wire with it.</p>
+<svg id="chart"></svg>
 <script src="js/d3.v3.min.js"></script>
 <script src="js/revenue.js"></script>
 </body>

@@ -1,4 +1,7 @@
 var cache = {};
+var prefs = new gadgets.Prefs();
+var initText = document.getElementById("init-text");
+
 var stateData = function (state) {
     if (cache[state]) {
         return cache[state];
@@ -17,8 +20,8 @@ var draw = function (o) {
     var state = o.state.toLowerCase();
     document.getElementById("chart").innerHTML = "";
     var margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = 400 - margin.left - margin.right,
-        height = 280 - margin.top - margin.bottom;
+        width = window.document.body.scrollWidth - margin.left - margin.right,
+        height = window.document.body.scrollHeight - margin.top - margin.bottom;
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);
@@ -87,9 +90,20 @@ function type(d) {
     return d;
 }
 
-
 gadgets.HubSettings.onConnect = function () {
     gadgets.Hub.subscribe('state', function (topic, data, subscriberData) {
+        initText.style.display = 'none';
         draw(data);
+        prefs.set("gadget-status", "wired");
     });
 };
+
+(function () {
+    var currentStatus = prefs.getString("gadget-status").toLowerCase();
+    if (currentStatus == "not-wired") {
+        initText.style.display = 'block';
+    } else {
+        initText.style.display = 'none';
+    }
+    draw({"country": "US", "state": "usa"});
+}());
