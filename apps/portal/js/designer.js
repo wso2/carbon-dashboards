@@ -694,21 +694,26 @@ $(function () {
                 id = componentBox.find('.ues-component').attr('id'),
                 removeBlock = true;
 
-            if (id) {
-                removeComponent(findComponent(id), function (err) {
-                    if (err) {
-                        removeBlock = false;
-                        console.error(err);
-                    }
-                    saveDashboard();
-                });
-            }
+            var removeGadgetBlock = function () {
+                if (id) {
+                    removeComponent(findComponent(id), function (err) {
+                        if (err) {
+                            removeBlock = false;
+                            console.error(err);
+                        }
+                        saveDashboard();
+                    });
+                }
 
-            if (removeBlock) {
-                gridster.remove_widget(componentBox, function () {
-                    updateLayout();
-                });
-            }
+                if (removeBlock) {
+                    gridster.remove_widget(componentBox, function () {
+                        updateLayout();
+                    });
+                }
+            };
+
+            generateMessage("This will remove the whole block and its content. Do you want to continue?",
+                removeGadgetBlock, null, "confirm", "topCenter", null, ["button"]);
         });
 
         $('body').on('click', '.modal-footer button', function () {
