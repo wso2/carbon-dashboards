@@ -1701,27 +1701,29 @@ $(function () {
      */
     var initStore = function () {
         loadAssets('gadget');
-        loadAssets('widget');
-        $('#ues-store').find('.ues-store-assets').scroll(function () {
-            var thiz = $(this);
-            var type = thiz.data('type');
-            var child = $('.ues-content', thiz);
-            if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
-                return;
-            }
-            var query = $('.ues-search-box input', thiz).val();
-            loadAssets(type, query);
-            initNanoScroller();
-        }).find('.ues-search-box input').on('keypress', function (e) {
-            if (e.which !== 13) {
-                return;
-            }
-            e.preventDefault();
-            var thiz = $(this);
-            var query = thiz.val();
-            var type = thiz.closest('.ues-store-assets').data('type');
-            loadAssets(type, query);
-        })
+        $('#ues-store').find('.ues-store-assets')
+            .scroll(function () {
+                var thiz = $(this);
+                var type = thiz.data('type');
+                var child = $('.ues-content', thiz);
+                if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
+                    return;
+                }
+                var query = $('.ues-search-box input', thiz).val();
+                loadAssets(type, query);
+                initNanoScroller();
+            })
+            .find('.ues-search-box input')
+            .on('keypress', function (e) {
+                if (e.which !== 13) {
+                    return;
+                }
+                e.preventDefault();
+                var thiz = $(this);
+                var query = thiz.val();
+                var type = thiz.closest('.ues-store-assets').data('type');
+                loadAssets(type, query);
+            })
     };
 
     var addBreadcrumbsParents = function (pageName, url, element) {
@@ -2023,7 +2025,7 @@ $(function () {
         addBreadcrumbsParents("Dashboards", ues.utils.tenantPrefix() + "./dashboards");
 
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
-            generateMessage("You have given editor permission for this dashboard."+
+            generateMessage("You have given editor permission for this dashboard." +
                 " Please reset the dashboard to receive the permission.",
                 null, null, "error", "topCenter", null, ["button"]);
         }

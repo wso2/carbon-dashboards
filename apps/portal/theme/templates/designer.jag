@@ -88,11 +88,6 @@
                     </a>
                 </li>
                 <li>
-                    <a class="ues-store-toggle" data-type="widget" data-toggle="tooltip" title="WIDGETS" href="#">
-                        <i class="fw fw-applications"></i>
-                    </a>
-                </li>
-                <li>
                     <a class="ues-pages-toggle" data-type="pages" data-toggle="tooltip" title="PAGES" href="#">
                         <i class="fw fw-bpel"></i>
                     </a>
