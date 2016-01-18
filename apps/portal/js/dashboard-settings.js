@@ -323,7 +323,6 @@ $(function () {
             prefetch: {
                 url: rolesApi,
                 filter: function (roles) {
-                    roles.push(ues.global.anonRole);
                     return $.map(roles, function (role) {
                         return {name: role};
                     });
