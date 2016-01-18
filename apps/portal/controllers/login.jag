@@ -26,7 +26,7 @@ var dest;
                 var authToken = api.authenticate(username, password);
                 session.put('authToken', authToken);
 
-                if (superDomain != user.domain) {
+                /*if (superDomain != user.domain) {
                     var tenantDir = "/store/" + user.domain;
 
                     if (!(new File(tenantDir).isExists())) {
@@ -41,7 +41,7 @@ var dest;
                         copyDir(new File(layoutPath), tenantDir);
                         log.info("Layouts has been copied for tenant " + user.domain);
                     }
-                }
+                }*/
 
                 if (dest) {
                     response.sendRedirect(dest);
