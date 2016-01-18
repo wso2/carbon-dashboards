@@ -1,8 +1,8 @@
 {
     "id": "default-grid",
     "title": "Default Grid",
-    "description": "This is the default grid",
+    "description": "Default grid layout",
     "thumbnail": "store://layout/default-grid/index.png",
-    "url": "store://layout/default-grid/index.hbs"
+    "url": "store://layout/default-grid/index.json"
 }
 
