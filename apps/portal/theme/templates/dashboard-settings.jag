@@ -13,6 +13,14 @@
             <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
             </ol>
         </div>
+
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".ues-context-menu-actions" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+                
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
                  <li><a href="#" class="ues-dashboard-export">
