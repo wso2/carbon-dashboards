@@ -260,8 +260,42 @@ $(function () {
         return isExist;
     };
 
-    var initUI = function () {
+    /**
+     * Get the user details.
+     * @private
+     * */
+    var getUser = function () {
+        $.ajax({
+            url: userApi,
+            type: "GET",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data) {
+                    user = data;
+                }
+            }
+        });
+    };
 
+    /**
+     * Get number of user roles in the dashboard permissions.
+     * @param permission {String}
+     * @return number
+     * */
+    var getNumberOfUserRolesInDashboard = function (permission) {
+        var userRoles = 0;
+        for (var i = 0; i < user.roles.length; i++) {
+            for (var j = 0; j < permission.length; j++) {
+                if (user.roles[i] == permission[j]) {
+                    userRoles += 1;
+                }
+            }
+        }
+        return userRoles;
+    };
+
+    var initUI = function () {
         addBreadcrumbs("Dashboard Settings");
         getUser();
         var viewerRoles = new Bloodhound({
