@@ -26,10 +26,8 @@ public class DashboardConstants {
     public static final String SHARED_RESOURCE_LOCATION = "repository/resources/sharedstore";
     public static final String LAYOUT_TYPE = "layout";
     public static final String GADGET_TYPE = "gadget";
-    public static final String WIDGET_TYPE = "widget";
     public static final String LAYOUT_DEPLOYMENT_DIR = "layout";
     public static final String GADGET_DEPLOYMENT_DIR = "gadget";
-    public static final String WIDGET_DEPLOYMENT_DIR = "widget";
 
     public static final String DASHBOARD_ARTIFACT_TYPE = "dashboards/dashboard";
     public static final String LAYOUT_ARTIFACT_TYPE = "dashboards/layout";

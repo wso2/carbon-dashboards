@@ -35,16 +35,12 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
         String tenantDir = getTenantDirPath(tenantDomain);
         String layoutDir = tenantDir + DashboardConstants.LAYOUT_DEPLOYMENT_DIR;
         String gadgetDir = tenantDir + DashboardConstants.GADGET_DEPLOYMENT_DIR;
-        String widgetDir = tenantDir + DashboardConstants.WIDGET_DEPLOYMENT_DIR;
         createTenantDirectory(tenantDir);
         if (!isDSTenantIArtifactInitialized(layoutDir)) {
            copyResources(DashboardConstants.LAYOUT_TYPE, layoutDir);
         }
         if (!isDSTenantIArtifactInitialized(gadgetDir)) {
             copyResources(DashboardConstants.GADGET_TYPE, gadgetDir);
-        }
-        if (!isDSTenantIArtifactInitialized(widgetDir)) {
-            copyResources(DashboardConstants.WIDGET_TYPE, widgetDir);
         }
     }
 
