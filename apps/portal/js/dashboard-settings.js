@@ -20,7 +20,7 @@ $(function () {
 
     var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
 
-	var user = null;
+    var user = null;
 
     /**
      * Generate Noty Messages as to the content given using parameters.
