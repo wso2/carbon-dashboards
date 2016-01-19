@@ -698,21 +698,26 @@ $(function () {
                 id = componentBox.find('.ues-component').attr('id'),
                 removeBlock = true;
 
-            if (id) {
-                removeComponent(findComponent(id), function (err) {
-                    if (err) {
-                        removeBlock = false;
-                        console.error(err);
-                    }
-                    saveDashboard();
-                });
-            }
+            var removeGadgetBlock = function () {
+                if (id) {
+                    removeComponent(findComponent(id), function (err) {
+                        if (err) {
+                            removeBlock = false;
+                            console.error(err);
+                        }
+                        saveDashboard();
+                    });
+                }
 
-            if (removeBlock) {
-                gridster.remove_widget(componentBox, function () {
-                    updateLayout();
-                });
-            }
+                if (removeBlock) {
+                    gridster.remove_widget(componentBox, function () {
+                        updateLayout();
+                    });
+                }
+            };
+
+            generateMessage("This will remove the whole block and its content. Do you want to continue?",
+                removeGadgetBlock, null, "confirm", "topCenter", null, ["button"]);
         });
 
         $('body').on('click', '.modal-footer button', function () {
@@ -1278,7 +1283,7 @@ $(function () {
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        generateMessage("There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        generateMessage("Cannot remove the anonymous view of landing page when there are pages with anonymous views", null, null, "error", "topCenter", 3500, ['button', 'click']);
                     } else {
                         page.isanon = false;
 
@@ -1705,27 +1710,29 @@ $(function () {
      */
     var initStore = function () {
         loadAssets('gadget');
-        loadAssets('widget');
-        $('#ues-store').find('.ues-store-assets').scroll(function () {
-            var thiz = $(this);
-            var type = thiz.data('type');
-            var child = $('.ues-content', thiz);
-            if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
-                return;
-            }
-            var query = $('.ues-search-box input', thiz).val();
-            loadAssets(type, query);
-            initNanoScroller();
-        }).find('.ues-search-box input').on('keypress', function (e) {
-            if (e.which !== 13) {
-                return;
-            }
-            e.preventDefault();
-            var thiz = $(this);
-            var query = thiz.val();
-            var type = thiz.closest('.ues-store-assets').data('type');
-            loadAssets(type, query);
-        })
+        $('#ues-store').find('.ues-store-assets')
+            .scroll(function () {
+                var thiz = $(this);
+                var type = thiz.data('type');
+                var child = $('.ues-content', thiz);
+                if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
+                    return;
+                }
+                var query = $('.ues-search-box input', thiz).val();
+                loadAssets(type, query);
+                initNanoScroller();
+            })
+            .find('.ues-search-box input')
+            .on('keypress', function (e) {
+                if (e.which !== 13) {
+                    return;
+                }
+                e.preventDefault();
+                var thiz = $(this);
+                var query = thiz.val();
+                var type = thiz.closest('.ues-store-assets').data('type');
+                loadAssets(type, query);
+            })
     };
 
     var addBreadcrumbsParents = function (pageName, url, element) {
@@ -1770,6 +1777,17 @@ $(function () {
         menu.find('.ues-dashboard-preview').on('click', function () {
             previewDashboard(page);
         });
+
+        menu.find('.ues-copy').on('click', function (e) {
+            e.preventDefault();
+            var reset = function () {
+                window.open($('.ues-copy').attr('href'), "_self");
+            };
+
+            generateMessage("This will remove all the customization added to the dashboard." +
+                " Do you want to continue?", reset, null, "confirm", "topCenter", null, ["button"]);
+        });
+
         menu.find('.ues-tiles-menu-toggle').click(function () {
             menu.find('.ues-tiles-menu').slideToggle();
         });
@@ -1832,7 +1850,7 @@ $(function () {
                 var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
                 $(this).val(sanitizedInput);
             });
-            
+
             recentlyOpenedPageProperty = pid;
         });
         pagesMenu.find("#ues-page-properties").on("click", 'a .ues-trash', function (e) {
@@ -2018,6 +2036,12 @@ $(function () {
 
         // Adding breadcrumbs.
         addBreadcrumbsParents("Dashboards", ues.utils.tenantPrefix() + "./dashboards");
+
+        if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
+            generateMessage("You have given editor permission for this dashboard." +
+                " Please reset the dashboard to receive the permission.",
+                null, null, "error", "topCenter", null, ["button"]);
+        }
 
         $('[data-toggle="tooltip"]').tooltip();
     };
@@ -2519,7 +2543,7 @@ $(function () {
                     $('#banner-data').val(dataUrl);
                 }
             });
-            
+
             $('.ues-banner-placeholder button').prop('disabled', false);
             $('.ues-dashboard-banner-loading').hide();
         };
@@ -2532,7 +2556,7 @@ $(function () {
     var initBanner = function () {
 
         loadBanner();
-        
+
         // bind a handler to the change event of the file element (removing the handler initially to avoid multiple binding to the same handler)
         var fileBanner = document.getElementById('file-banner');
         fileBanner.removeEventListener('change', bannerChanged);
@@ -2572,11 +2596,11 @@ $(function () {
         });
 
         // event handler for the banner remove button
-        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {            
+        $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
-            
+
             if (ues.global.dashboard.isUserCustom && !ues.global.dashboard.banner.customBannerExists) {
-                
+
                 // in order to remove the global banner from a personalized dashboard, we need to save an empty resource.
                 $.ajax({
                     url: $form.attr('action'),
@@ -2587,16 +2611,16 @@ $(function () {
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
                     // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
-                    
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.customBannerExists = false;
                     }
-                    
+
                     ues.global.dashboard.banner.cropMode = false;
-                    
+
                     loadBanner();
                 });
-                
+
             } else {
                 // remove the banner 
                 $.ajax({
@@ -2604,7 +2628,7 @@ $(function () {
                     type: 'DELETE',
                     dataType: 'json'
                 }).success(function (d) {
-                    
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
                         ues.global.dashboard.banner.customBannerExists = false;
