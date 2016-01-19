@@ -22,7 +22,15 @@
                 <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
                 </ol>
             </div>
-            <div class="collapse navbar-collapse ues-context-menu-actions">
+            
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".ues-context-menu-actions" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse ues-context-menu-actions" id="ues-context-navbar">
                 <ul class="nav navbar-nav">
                     <!--<li class="active"><a href="#"><%= i18n.localize("dashboard.design") %> </a></li>-->
                     <% if (!dashboard.isUserCustom) { %>
@@ -66,19 +74,8 @@
         </div>
     </nav>
     <nav id="ues-store-menu" class="navbar-default navbar" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header" style="padding-right: 2px">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#ues-store-menu-actions">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <!--<span class="visible-xs navbar-brand">Designer Menu</span>-->
-        </div>
-
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div id="ues-store-menu-actions" class="collapse navbar-collapse">
+        <div id="ues-store-menu-actions">
             <ul class="nav navbar-nav nav-tabs" role="tablist">
                 <li>
                     <a class="ues-store-toggle" data-type="gadget" data-toggle="tooltip" title="GADGETS" href="#">
@@ -203,6 +200,14 @@
                     <li><a href=".././dashboards">Dashboards</a></li>
                 </ol>
             </div>
+            
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".ues-context-menu-actions" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
                     <li><a href="#" class="ues-go-back" id="ues-go-back">
@@ -605,7 +610,8 @@
             
 <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
     <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
-    <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
+    <li><a href="#" class="ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" 
+            data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>"><i class="fw fw-laptop"></i></a></li>
     <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
 </script>
 

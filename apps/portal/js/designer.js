@@ -644,6 +644,8 @@ $(function () {
                         renderMaxView(component, DEFAULT_COMPONENT_VIEW);
                         component.fullViewPoped = false;
                     });
+                
+                $(this).attr('title', $(this).data('maximize-title'));
 
                 componentBody.hide();
 
@@ -671,6 +673,8 @@ $(function () {
                         renderMaxView(component, FULL_COMPONENT_VIEW);
                         component.fullViewPoped = true;
                     });
+                
+                $(this).attr('title', $(this).data('minimize-title'));
 
                 componentBody.hide();
             }
@@ -1799,9 +1803,13 @@ $(function () {
                 e.stopPropagation();
                 return;
             }
-            ues.global.isSwitchToNewPage = true;
-            switchPage(pid, pageType);
-            ues.global.isSwitchToNewPage = false;
+            
+            // do not re-render if the user clicks on the current page name
+            if (pid != page.id) {
+				ues.global.isSwitchToNewPage = true;
+				switchPage(pid, pageType);
+				ues.global.isSwitchToNewPage = false;
+            }
 
             $('#' + pid).find('.panel-body').html(pageOptionsHbs({
                 id: page.id,
@@ -2260,8 +2268,10 @@ $(function () {
                         // re-render component on stop resizing the component
                         var container = widget.find('.ues-component');
                         if (container) {
-                            container.find('.ues-component-body').show();
-                            updateComponent(container.attr('id'));
+                            container.find('.ues-component-body').show();   
+                            if (container.attr('id')) {
+                                updateComponent(container.attr('id'));
+                            }
                         }
 
                         updateLayout();
