@@ -30,6 +30,8 @@ $(function () {
                 
                 renderMaxView(component, DASHBOARD_DEFAULT_VIEW);
                 
+                $(this).attr('title', $(this).data('maximize-title'));
+                
                 component.fullViewPoped = false;
             } else {
                 
@@ -42,6 +44,8 @@ $(function () {
                 
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
                 
+                $(this).attr('title', $(this).data('minimize-title'));
+                             
                 component.fullViewPoped = true;
             }
         });

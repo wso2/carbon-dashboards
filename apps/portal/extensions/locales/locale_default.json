@@ -45,7 +45,7 @@
     "select": "Select",
     "here.lable": "here",
     "dashboards.manage.description": "* View, Modify and Delete dashboards",
-    "no.dashboards.found.description": "No dashboards found. Please create dashboards by visiting",
+    "no.dashboards.found.description": "No dashboards found. To create a dashboard click",
     "create.a.dashboard": "Create a Dashboard",
     "create.gadget.lable": "Create Gadget",
     "name.of.your.dashboard": "Name of your Dashboard",
@@ -90,7 +90,7 @@
     "ds.dashboard.designer": "WSO2 DS - Dashboard Designer",
     "remove.block.label": "Remove Block",
     "add.block.label": "Add Block",
-    "add.block.description": "Define Gadget Size in Grid",
+    "add.block.description": "Define the block size in the grid",
     "add.block.button.text": "Add Block",
     "oauth.settings": "OAuth Settings",
     "enable": "Enable",
@@ -106,5 +106,7 @@
     "placeholder.item.list": "item1 | item2 | item3",
     "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'",
     "dashboard.server.label": "Dashboard Server",
-    "banner.loading.msg": "Please wait while the banner is being loaded..."
+    "banner.loading.msg": "Please wait while the banner is being loaded...",
+    "maximize.label": "Maximize",
+    "minimize.label": "Minimize"
 }

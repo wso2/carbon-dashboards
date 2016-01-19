@@ -4,6 +4,8 @@ $(function () {
 
     var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
 
+    var userApi = ues.utils.relativePrefix() + 'apis/user';
+
     var dashboard = ues.global.dashboard;
 
     var permissions = dashboard.permissions;
@@ -17,6 +19,8 @@ $(function () {
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
 
     var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
+
+	var user = null;
 
     /**
      * Generate Noty Messages as to the content given using parameters.
@@ -259,14 +263,13 @@ $(function () {
     var initUI = function () {
 
         addBreadcrumbs("Dashboard Settings");
-
+        getUser();
         var viewerRoles = new Bloodhound({
             name: 'roles',
             limit: 10,
             prefetch: {
                 url: rolesApi,
                 filter: function (roles) {
-                    roles.push(ues.global.anonRole);
                     return $.map(roles, function (role) {
                         return {name: role};
                     });
@@ -361,11 +364,10 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if (editors.length == 1) {
-                generateMessage("Only admin user will be able to edit this dashboard." +
+            if ((editors.length == 1 || getNumberOfUserRolesInDashboard(editors) == 1) && !user.isAdmin) {
+                generateMessage("After this permission removal only administrator will be able to edit this dashboard." +
                     " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
-            }
-            else {
+            } else {
                 removePermission();
             }
         }).end().find('.ues-shared-view').on('click', '.remove-button', function () {
@@ -379,11 +381,10 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if (viewers.length == 1) {
-                generateMessage("Only admin user will be able to view this dashboard." +
+            if ((viewers.length == 1 || getNumberOfUserRolesInDashboard(viewers) == 1) && !user.isAdmin) {
+                generateMessage("After this permission removal only administrator will be able to view this dashboard." +
                     " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
-            }
-            else {
+            } else {
                 removePermission();
             }
         });

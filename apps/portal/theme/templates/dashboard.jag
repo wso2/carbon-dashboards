@@ -223,9 +223,10 @@
 
 <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
     {{#has options}}
-    <li><a href="#" class="ues-component-settings-handle"><i class="fw fw-settings ues-component-properties-toggle"></i></a></li>
+    <li><a href="#" class="ues-component-settings-handle" title="<%= i18n.localize("properties.lable") %>"><i class="fw fw-settings ues-component-properties-toggle"></i></a></li>
     {{/has}}
-    <li><a href="#" class="ues-component-full-handle"><i class="fw fw-laptop"></i></a></li>
+    <li><a href="#" class="ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" 
+        data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>"><i class="fw fw-laptop"></i></a></li>
 </script>
 
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
