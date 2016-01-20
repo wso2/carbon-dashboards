@@ -412,10 +412,7 @@
                                     <div class="checkbox">
                                       <label>
                                         <input type="checkbox" class="notifier" data-from="{{from}}"
-                                        data-event="{{event}}" value=""{{#if wired}} checked="checked"{{/if}}>{{event}} ({{content.title}}
-                                        <a href="#" data-toggle="tooltip" title="{{from}}">
-                                            <i class="fw fw-info"></i>
-                                        </a>)
+                                        data-event="{{event}}" value=""{{#if wired}} checked="checked"{{/if}}>{{event}} ({{content.styles.title}})
                                         </label>
                                     </div>
                                   {{/each}}

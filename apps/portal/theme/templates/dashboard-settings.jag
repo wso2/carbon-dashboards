@@ -104,38 +104,51 @@
             <h3><%= i18n.localize("oauth.settings")%></h3>
             <form class="form-horizontal">
                 <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <div class="checkbox">
-                            <label>
-                                <input id="ues-enable-oauth" type="checkbox" value="enable" <% if (dashboard.enableOauth == true) {print("checked");} %> > <%= i18n.localize("enable")%>
-                            </label>
+                    <label for="ues-enable-oauth" class="col-sm-3 control-label"><%= i18n.localize("enable")%></label>
+                    <div class="col-sm-9">
+                        <label class="switch"><input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs" aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>" aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>><span class="toggle-button"></span></label>
+                    </div>
+                </div>
+                <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) { print("in"); } %>" >
+                    <div class="form-group">
+                        <label for="ues-is-url" class="col-sm-3 control-label"><%= i18n.localize("identity.server.url")%></label>
+                        <div class="col-sm-6">
+                            <%
+                            function endsWith(str, suffix){
+                                return str.indexOf(suffix, str.length - suffix.length) != -1;
+                            }
+                            var idpURL = require('/configs/designer.json').authentication.methods.sso.attributes.identityProviderURL;
+                            var isURL = "";
+                            if (endsWith(idpURL, "samlsso/")) {
+                                isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso/"));
+                            } else if (endsWith(idpURL, "samlsso")) {
+                                isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso"));
+                            }
+                            isURL = endsWith(isURL, "/") ? isURL : isURL + "/";
+                            %>
+                            <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
+                        </div>
+                        <div class="col-sm-3" style="text-align: right;">
+                            <button type="button" id="ues-oauth-refresh" class="btn btn-default" title="Refresh"><i class="fw fw-refresh"></i></button>
                         </div>
                     </div>
-                </div>
-                <div class="form-group has-feedback">
-                    <label for="ues-is-url" class="col-sm-3 control-label"><%= i18n.localize("identity.server.url")%><span class="required">*</span></label>
-                    <div class="col-sm-9">
-                        <input id="ues-is-url" type="text" class="form-control" placeholder="<%= i18n.localize("url")%>" value="<%=dashboard.identityServerUrl%>" <% if (!dashboard.enableOauth) {print("disabled");} %> >
-                        <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
-                        <label id="is-url-error" class="required-error hide" for="isurl">This field is required.</label>
+                    <div class="form-group">
+                        <label for="ues-access-token-url" class="col-sm-3 control-label"><%= i18n.localize("access.token.url")%></label>
+                        <div class="col-sm-9">
+                            <p id="ues-access-token-url" class="form-control-static"><%=dashboard.accessTokenUrl%></p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="ues-access-token-url" class="col-sm-3 control-label"><%= i18n.localize("access.token.url")%></label>
-                    <div class="col-sm-9">
-                        <input id="ues-access-token-url" type="url" class="form-control" placeholder="<%= i18n.localize("url")%>" value="<%=dashboard.accessTokenUrl%>" disabled>
+                    <div class="form-group">
+                        <label for="ues-api-key" class="col-sm-3 control-label"><%= i18n.localize("api.key")%></label>
+                        <div class="col-sm-9">
+                            <p id="ues-api-key" class="form-control-static"><%=dashboard.apiKey%></p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="ues-api-key" class="col-sm-3 control-label"><%= i18n.localize("api.key")%></label>
-                    <div class="col-sm-9">
-                        <input id="ues-api-key" type="text" class="form-control" placeholder="<%= i18n.localize("key")%>" value="<%=dashboard.apiKey%>" disabled>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="ues-api-secret" class="col-sm-3 control-label"><%= i18n.localize("api.secret")%></label>
-                    <div class="col-sm-9">
-                        <input id="ues-api-secret" type="text" class="form-control" placeholder="<%= i18n.localize("secret")%>" value="<%=dashboard.apiSecret%>" disabled>
+                    <div class="form-group">
+                        <label for="ues-api-secret" class="col-sm-3 control-label"><%= i18n.localize("api.secret")%></label>
+                        <div class="col-sm-9">
+                            <p id="ues-api-secret" class="form-control-static"><%=dashboard.apiSecret%></p>
+                        </div>
                     </div>
                 </div>
             </form>
