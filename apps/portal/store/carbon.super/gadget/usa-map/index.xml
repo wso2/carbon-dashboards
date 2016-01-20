@@ -26,6 +26,7 @@
 </head>
 <body>
 <div>
+<label id="defaultViewLabel">USA MAP (This is default view)</label>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -79,6 +80,7 @@
 </head>
 <body>
 <div>
+<label id="fullViewLabel">USA MAP(this is full screen view)</label>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
 <script src="../../../js/jquery-1.10.2.js"></script>
 <script src="js/uStates.js"></script>
@@ -111,4 +113,10 @@
 </html>
     ]]>
     </Content>
+
+ <Content type="html" view="settings">
+       <![CDATA[
+		This is settings
+  	]]>
+  </Content>
 </Module>
