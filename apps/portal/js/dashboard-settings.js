@@ -6,6 +6,10 @@ $(function () {
 
     var userApi = ues.utils.relativePrefix() + 'apis/user';
 
+    var searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search';
+
+    var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
+
     var dashboard = ues.global.dashboard;
 
     var permissions = dashboard.permissions;
@@ -297,7 +301,21 @@ $(function () {
 
     var initUI = function () {
         addBreadcrumbs("Dashboard Settings");
+        var viewerSearchQuery = '';
+        var maxLimit = 10;
         getUser();
+
+        $.ajax({
+            url: maxLimitApi,
+            type: "GET",
+            async: false,
+            dataType: "json"
+        }).success(function (data) {
+            maxLimit = data;
+        }).error(function () {
+            console.log('Error calling max roles limit');
+        });
+
         var viewerRoles = new Bloodhound({
             name: 'roles',
             limit: 10,
@@ -307,6 +325,22 @@ $(function () {
                     return $.map(roles, function (role) {
                         return {name: role};
                     });
+                },
+                ttl: 60
+            },
+            sufficient: 10,
+            remote: {
+                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                filter: function (searchRoles) {
+                    return $.map(searchRoles, function (searchRole) {
+                        return {name: searchRole};
+                    });
+                },
+                prepare: function (query, settings) {
+                    viewerSearchQuery = query;
+                    var currentURL = settings.url;
+                    settings.url = currentURL + query ;
+                    return settings;
                 },
                 ttl: 60
             },
@@ -326,7 +360,7 @@ $(function () {
         }, {
             name: 'roles',
             displayKey: 'name',
-            limit: 1,
+            limit: 10,
             source: viewerRoles.ttAdapter(),
             templates: {
                 empty: [
@@ -354,6 +388,22 @@ $(function () {
                 },
                 ttl: 60
             },
+            sufficient: 10,
+            remote: {
+                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                filter: function (searchRoles) {
+                    return $.map(searchRoles, function (searchRole) {
+                        return {name: searchRole};
+                    });
+                },
+                prepare: function (query, settings) {
+                    viewerSearchQuery = query;
+                    var currentURL = settings.url;
+                    settings.url = currentURL + query ;
+                    return settings;
+                },
+                ttl: 60
+            },
             datumTokenizer: function (d) {
                 return d.name.split(/[\s\/.]+/) || [];
             },
@@ -369,7 +419,7 @@ $(function () {
         }, {
             name: 'roles',
             displayKey: 'name',
-            limit: 1,
+            limit: 10,
             source: editorRoles.ttAdapter(),
             extraInfo: ues.global.dashboard,
             templates: {
