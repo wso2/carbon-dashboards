@@ -5,6 +5,7 @@
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
 
     <title><%= i18n.localize("dashboard.lable")%></title>
+    <% var config = require('/configs/designer.json'); %>
 </head>
 <body>
 
@@ -40,6 +41,7 @@
                                 </span> <%= i18n.localize("create.dashboard")%>
                             </a>
                         </li>
+						<% if (config.isCreateGadgetEnable) { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-gadget">
                                 <span class="fw-stack">
@@ -48,6 +50,7 @@
                                 </span> <%= i18n.localize("create.gadget.lable")%>
                             </a>
                         </li>
+						<% } %>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>

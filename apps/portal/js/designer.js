@@ -1135,7 +1135,7 @@ $(function () {
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        generateMessage("There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        generateMessage("Cannot remove the anonymous view of landing page when there are pages with anonymous views", null, null, "error", "topCenter", 3500, ['button', 'click']);
                     } else {
                         page.isanon = false;
 
@@ -1542,10 +1542,20 @@ $(function () {
     var initDesignerMenu = function () {
 
         // menu functions
-        // Preview the dashboard
-        $('.ues-context-menu .ues-dashboard-preview').on('click', function () {
-            previewDashboard(page);
-        });
+        $('.ues-context-menu')
+            .on('click', '.ues-dashboard-preview', function () {
+                // Preview the dashboard
+                previewDashboard(page);
+            })
+            .on('click', '.ues-copy', function (e) {
+                // reset the dashboard
+                e.preventDefault();
+
+                var that = $(this);
+                generateMessage("This will remove all the customization added to the dashboard. Do you want to continue?", function () {
+                    window.open(that.attr('href'), "_self");
+                }, null, "confirm", "topCenter", null, ["button"]);
+            });
 
         // page header functions
         $('.page-header')
@@ -1562,27 +1572,27 @@ $(function () {
             // delete dashboard page
             var pid = $(this).attr('data-page-id');
 
-            showConfirm('Deleting the page', 'This will remove the page and all its content. Do you want to continue?', function() {
-                removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
-                    var pages = dashboard.pages;
+                showConfirm('Deleting the page', 'This will remove the page and all its content. Do you want to continue?', function() {
+                    removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
+                        var pages = dashboard.pages;
 
-                    updatePagesList(pages);
-//
-                    // if the landing page was deleted, make the first page to be the landing page
-                    if (dashboard.pages.length) {
-                        if (pid == dashboard.landing) {
-                            dashboard.landing = pages[0].id;
+                        updatePagesList(pages);
+
+                        // if the landing page was deleted, make the first page to be the landing page
+                        if (dashboard.pages.length) {
+                            if (pid == dashboard.landing) {
+                                dashboard.landing = pages[0].id;
+                            }
+                        } else {
+                            dashboard.landing = null;
                         }
-                    } else {
-                        dashboard.landing = null;
-                    }
 
-                    // save the dashboard
-                    saveDashboard();
-                    renderPage(dashboard.landing);
+                        // save the dashboard
+                        saveDashboard();
+                        renderPage(dashboard.landing);
+                    });
                 });
             });
-        });
 
         // dashboard pages list functions
         var pagesMenu = $("#ues-dashboard-pages");
@@ -1758,6 +1768,11 @@ $(function () {
         initComponentToolbar();
         initComponents();
         initAddBlock();
+
+        if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
+            generateMessage("You have given editor permission for this dashboard. Please reset the dashboard to receive the permission.",
+                null, null, "error", "topCenter", null, ["button"]);
+        }
     };
 
     /**
@@ -2267,7 +2282,7 @@ $(function () {
                     $('#banner-data').val(dataUrl);
                 }
             });
-            
+
             $('.ues-banner-placeholder button').prop('disabled', false);
             $('.ues-dashboard-banner-loading').hide();
         };
@@ -2281,7 +2296,7 @@ $(function () {
     var initBanner = function () {
 
         loadBanner();
-        
+
         // bind a handler to the change event of the file element (removing the handler initially to avoid multiple binding to the same handler)
         var fileBanner = document.getElementById('file-banner');
         fileBanner.removeEventListener('change', bannerChanged);
@@ -2323,9 +2338,9 @@ $(function () {
         // event handler for the banner remove button
         $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
-            
+
             if (ues.global.dashboard.isUserCustom && !ues.global.dashboard.banner.customBannerExists) {
-                
+
                 // in order to remove the global banner from a personalized dashboard, we need to save an empty resource.
                 $.ajax({
                     url: $form.attr('action'),
@@ -2336,16 +2351,16 @@ $(function () {
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
                     // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
-                    
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.customBannerExists = false;
                     }
-                    
+
                     ues.global.dashboard.banner.cropMode = false;
-                    
+
                     loadBanner();
                 });
-                
+
             } else {
                 // remove the banner
                 $.ajax({
@@ -2353,7 +2368,7 @@ $(function () {
                     type: 'DELETE',
                     dataType: 'json'
                 }).success(function (d) {
-                    
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
                         ues.global.dashboard.banner.customBannerExists = false;

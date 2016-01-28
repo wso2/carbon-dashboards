@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-(function() {
+(function () {
 
     var carbon = require('carbon');
     var usr = require('/modules/user.js');
@@ -36,13 +36,13 @@
         }
 
         // the user must have either edit or view permission on the dashboard to view the banner
-        if (!utils.allowed(user.roles, dashboard.permissions.editors) && 
-            !utils.allowed(user.roles, dashboard.permissions.viewers)) {
+        if (user && !utils.allowed(user.roles, dashboard.permissions.editors) &&
+                    !utils.allowed(user.roles, dashboard.permissions.viewers)) {
             response.sendError(401, 'unauthorized to view the banner');
             return;
         }
 
-        dashboards.renderBanner(dashboard.id, user.username);
+        dashboards.renderBanner(dashboard.id, user ? user.username : "");
         return;
     }
 

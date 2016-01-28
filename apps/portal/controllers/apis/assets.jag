@@ -8,7 +8,7 @@
     }
 
     var DEFAULT_START = 0;
-    var DEFAULT_COUNT = 10;
+    var DEFAULT_COUNT = -1;
     var id;
     var start;
     var count;

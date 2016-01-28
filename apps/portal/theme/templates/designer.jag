@@ -18,7 +18,7 @@
 
     <!-- header -->
     <% include(utils.resolvePath('templates/global-navigation.jag')); %>
-
+    <% var configs = require('/configs/designer.json'); %>
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
@@ -43,6 +43,16 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <% if(! dashboard.isUserCustom) { %>
+                        <% if(configs.isCreateGadgetEnable){%>
+                        <li>
+                            <a href="<%=tenantedUrlPrefix%>create-gadget">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-add fw-stack-1x"></i>
+                                </span> <%=i18n.localize("create.gadget.lable")%>
+                            </a>
+                        </li>
+                        <%}%>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
                                 <span class="icon fw-stack">
@@ -697,8 +707,8 @@
                                     {{#each notifiers}}
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" class="notifier" data-from="{{from}}" data-event="{{event}}" value=""{{#if wired}} checked="checked"{{/if}} />
-                                            {{event}} ({{content.title}} <a href="#" data-toggle="tooltip" title="{{from}}"><i class="fw fw-info"></i></a>)
+                                            <input type="checkbox" class="notifier" data-from="{{from}}"
+                                            data-event="{{event}}" value=""{{#if wired}} checked="checked"{{/if}}>{{event}} ({{content.styles.title}})
                                         </label>
                                     </div>
                                     {{/each}}

@@ -29,9 +29,16 @@ var findOne = function (id) {
     var usr = require('/modules/user.js');
     var user = usr.current();
     var path = registryPath(id);
+    var originalDB;
     var isCustom = false;
     if (user) {
         var userDBPath = registryUserPath(id, user.username);
+        var originalDBPath = registryPath(id);
+
+        if(registry.exists(originalDBPath)){
+            originalDB = JSON.parse(registry.content(originalDBPath));
+        }
+
         if (registry.exists(userDBPath)) {
             path = userDBPath;
             isCustom = true;
@@ -41,6 +48,23 @@ var findOne = function (id) {
     var dashboard = JSON.parse(content);
     if (dashboard) {
         dashboard.isUserCustom = isCustom;
+        dashboard.isEditorEnable = false;
+
+        if(originalDB){
+            var carbon = require('carbon');
+            var server = new carbon.server.Server();
+            var um = new carbon.user.UserManager(server, user.tenantId);
+            user.roles = um.getRoleListOfUser(user.username);
+
+            for(var i = 0; i<user.roles.length; i++){
+                for(var j=0; j<originalDB.permissions.editors.length; j++){
+                    if(user.roles[i] == originalDB.permissions.editors[j]){
+                        dashboard.isEditorEnable = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         var banner = getBanner(id, (user ? user.username : null));
         dashboard.banner = {

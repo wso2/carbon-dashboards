@@ -1,9 +1,9 @@
 function fetchAccessToken() {
     var dashboard = ues.global.dashboard;
-    var url = "/portal/saml/saml-access-token.jag";
+    var tokenUrl = ues.utils.tenantPrefix() + 'apis/accesstokens/' + dashboard.id;
 
     $.ajax({
-        url: url,
+        url: tokenUrl,
         type: "GET",
         dataType: "json",
         data: {

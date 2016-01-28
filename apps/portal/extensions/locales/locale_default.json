@@ -44,7 +44,7 @@
     "select": "Select",
     "here.lable": "here",
     "dashboards.manage.description": "* View, Modify and Delete dashboards",
-    "no.dashboards.found.description": "No dashboards found. Please create dashboards by visiting",
+    "no.dashboards.found.description": "No dashboards found. To create a dashboard click",
     "create.a.dashboard": "Create a Dashboard",
     "create.gadget.lable": "Create Gadget",
     "name.of.your.dashboard": "Name of your Dashboard",

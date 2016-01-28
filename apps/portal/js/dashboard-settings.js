@@ -4,6 +4,12 @@ $(function () {
 
     var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
 
+    var userApi = ues.utils.relativePrefix() + 'apis/user';
+
+    var searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search';
+
+    var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
+
     var dashboard = ues.global.dashboard;
 
     var permissions = dashboard.permissions;
@@ -15,6 +21,10 @@ $(function () {
     var url = dashboardsApi + '/' + dashboard.id;
 
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
+
+    var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
+
+    var user = null;
 
     /**
      * Generate Noty Messages as to the content given using parameters.
@@ -92,26 +102,23 @@ $(function () {
 
     var getOauthSettings = function () {
         $.ajax({
-            url: "/portal/saml/saml-at-settings.jag",
+            url: tokenUrl,
             type: "GET",
             dataType: "json",
             data: {
-                id: dashboard.id,
-                isUrl: dashboard.identityServerUrl
+                id: dashboard.id
             }
         }).success(function (data) {
             if ($.trim(data.accessTokenUrl) == '' || $.trim(data.key) == '' || $.trim(data.secret) == '') {
-                showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "Entered URL is not pointed to a valid Identity Server.");
                 setOAuthSettingsFields('', '', '');
             } else {
-                hideInlineError($("#ues-is-url"), $("#is-url-error"));
                 setOAuthSettingsFields(data.accessTokenUrl, data.key, data.secret);
+                $("#ues-oauth-settings-inputs").show();
                 generateMessage("Saved Successfully", null, null, "success", "bottom", 2000);
             }
         }).error(function () {
-            showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "Error occured in server.");
-            generateMessage("Error Saving Dashboard", null, null, "error", "bottom", 2000);
-            console.log('error saving dashboard');
+            generateMessage("Error Getting OAuth settings", null, null, "error", "bottom", 2000);
+            console.log('error getting oauth settings');
         });
     };
 
@@ -123,9 +130,9 @@ $(function () {
      * @private
      * */
     var setOAuthSettingsFields = function (aturl, ak, as) {
-        $("#ues-access-token-url").val(aturl);
-        $("#ues-api-key").val(ak);
-        $("#ues-api-secret").val(as);
+        $("#ues-access-token-url").text(aturl);
+        $("#ues-api-key").text(ak);
+        $("#ues-api-secret").text(as);
     };
 
     var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
@@ -206,24 +213,6 @@ $(function () {
         errorElement.addClass("hide");
     };
 
-    /**
-     * Show error style for oauth element
-     * @param1 element
-     * @param2 errorElement
-     * @param3 error message
-     * @private
-     * */
-    var showOAuthInlineError = function (element, errorElement, errorMessage) {
-        //element.val('');
-        element.parent().addClass("has-error");
-        element.addClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("hide");
-        element.parent().find("span.glyphicon").addClass("show");
-        errorElement.removeClass("hide");
-        errorElement.addClass("show");
-        errorElement.html(errorMessage);
-    };
-
     var initExistingRoles = function () {
         var i;
         var role;
@@ -275,9 +264,57 @@ $(function () {
         return isExist;
     };
 
-    var initUI = function () {
+    /**
+     * Get the user details.
+     * @private
+     * */
+    var getUser = function () {
+        $.ajax({
+            url: userApi,
+            type: "GET",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                if (data) {
+                    user = data;
+                }
+            }
+        });
+    };
 
+    /**
+     * Get number of user roles in the dashboard permissions.
+     * @param permission {String}
+     * @return number
+     * */
+    var getNumberOfUserRolesInDashboard = function (permission) {
+        var userRoles = 0;
+        for (var i = 0; i < user.roles.length; i++) {
+            for (var j = 0; j < permission.length; j++) {
+                if (user.roles[i] == permission[j]) {
+                    userRoles += 1;
+                }
+            }
+        }
+        return userRoles;
+    };
+
+    var initUI = function () {
         addBreadcrumbs("Dashboard Settings");
+        var viewerSearchQuery = '';
+        var maxLimit = 10;
+        getUser();
+
+        $.ajax({
+            url: maxLimitApi,
+            type: "GET",
+            async: false,
+            dataType: "json"
+        }).success(function (data) {
+            maxLimit = data;
+        }).error(function () {
+            console.log('Error calling max roles limit');
+        });
 
         var viewerRoles = new Bloodhound({
             name: 'roles',
@@ -285,10 +322,25 @@ $(function () {
             prefetch: {
                 url: rolesApi,
                 filter: function (roles) {
-                    roles.push(ues.global.anonRole);
                     return $.map(roles, function (role) {
                         return {name: role};
                     });
+                },
+                ttl: 60
+            },
+            sufficient: 10,
+            remote: {
+                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                filter: function (searchRoles) {
+                    return $.map(searchRoles, function (searchRole) {
+                        return {name: searchRole};
+                    });
+                },
+                prepare: function (query, settings) {
+                    viewerSearchQuery = query;
+                    var currentURL = settings.url;
+                    settings.url = currentURL + query ;
+                    return settings;
                 },
                 ttl: 60
             },
@@ -308,7 +360,7 @@ $(function () {
         }, {
             name: 'roles',
             displayKey: 'name',
-            limit: 1,
+            limit: 10,
             source: viewerRoles.ttAdapter(),
             templates: {
                 empty: [
@@ -336,6 +388,22 @@ $(function () {
                 },
                 ttl: 60
             },
+            sufficient: 10,
+            remote: {
+                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                filter: function (searchRoles) {
+                    return $.map(searchRoles, function (searchRole) {
+                        return {name: searchRole};
+                    });
+                },
+                prepare: function (query, settings) {
+                    viewerSearchQuery = query;
+                    var currentURL = settings.url;
+                    settings.url = currentURL + query ;
+                    return settings;
+                },
+                ttl: 60
+            },
             datumTokenizer: function (d) {
                 return d.name.split(/[\s\/.]+/) || [];
             },
@@ -351,7 +419,7 @@ $(function () {
         }, {
             name: 'roles',
             displayKey: 'name',
-            limit: 1,
+            limit: 10,
             source: editorRoles.ttAdapter(),
             extraInfo: ues.global.dashboard,
             templates: {
@@ -380,11 +448,10 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if (editors.length == 1) {
-                generateMessage("Only admin user will be able to edit this dashboard." +
+            if ((editors.length == 1 || getNumberOfUserRolesInDashboard(editors) == 1) && !user.isAdmin) {
+                generateMessage("After this permission removal only administrator will be able to edit this dashboard." +
                     " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
-            }
-            else {
+            } else {
                 removePermission();
             }
         }).end().find('.ues-shared-view').on('click', '.remove-button', function () {
@@ -398,11 +465,10 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if (viewers.length == 1) {
-                generateMessage("Only admin user will be able to view this dashboard." +
+            if ((viewers.length == 1 || getNumberOfUserRolesInDashboard(viewers) == 1) && !user.isAdmin) {
+                generateMessage("After this permission removal only administrator will be able to view this dashboard." +
                     " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
-            }
-            else {
+            } else {
                 removePermission();
             }
         });
@@ -430,22 +496,14 @@ $(function () {
             dashboard.enableOauth = $(this).is(":checked");
             saveDashboard();
             if (dashboard.enableOauth) {
-                $('#ues-is-url').removeAttr("disabled");
+                $("#ues-oauth-settings-inputs").show();
             } else {
-                $("#ues-is-url").attr("disabled", "disabled");
-                hideInlineError($("#ues-is-url"), $("#is-url-error"));
+                $("#ues-oauth-settings-inputs").hide();
             }
         });
 
-        $('#ues-is-url').on('change', function () {
-            if ($.trim($(this).val()) == '') {
-                showOAuthInlineError($("#ues-is-url"), $("#is-url-error"), "This field is required.");
-                setOAuthSettingsFields('', '', '');
-            } else {
-                hideInlineError($("#ues-is-url"), $("#is-url-error"));
-                dashboard.identityServerUrl = $(this).val();
-                getOauthSettings();
-            }
+        $('#ues-oauth-refresh').on('click', function () {
+            getOauthSettings();
         });
 
         var menu = $('.ues-context-menu');

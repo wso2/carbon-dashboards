@@ -15,8 +15,12 @@
     store.assets = function (type, paging, cb) {
         var query = 'type=' + type;
         query += domain ? '&domain=' + domain : '';
-        query += paging.query ? '&query=' + paging.query : '';
-        query += '&start=' + paging.start + '&count=' + paging.count;
+
+        if (paging) {
+            query += paging.query ? '&query=' + paging.query : '';
+            query += '&start=' + paging.start + '&count=' + paging.count;
+        }
+
         $.get(assetsUrl + '?' + query, function (data) {
             cb(false, data);
         }, 'json');
