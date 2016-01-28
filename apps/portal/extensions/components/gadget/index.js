@@ -110,7 +110,7 @@
             
             var titlePositon = 'ues-component-title-' + (styles.titlePosition || 'left');
             
-            sandbox.find('.ues-component-header')
+            sandbox.find('.ues-component-heading')
                 .removeClass('ues-component-title-left ues-component-title-center ues-component-title-right')
                 .addClass(titlePositon);
 
@@ -123,7 +123,7 @@
             sandbox.find('.ues-component-body').html(container);
             
             var renderParams = {};    
-            renderParams[osapi.container.RenderParam.HEIGHT] = sandbox.closest('.ues-component-box').height() - 66;
+            renderParams[osapi.container.RenderParam.HEIGHT] = sandbox.closest('.ues-component-box').height() - 42;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             
             var site = ues.gadgets.render(container, url, params, renderParams);

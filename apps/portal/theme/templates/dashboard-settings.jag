@@ -1,52 +1,63 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
+
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
+
     <title><%= i18n.localize("dashboard.settings")%></title>
+
 </head>
 <body>
-<% include(utils.resolvePath('templates/global-navigation.jag')); %>
-<nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
-    <div class="container-fluid ues-top-nav">
-        <div class="navbar-header">
-        </div>
-        <div id="ues-breadcrumbs-container">
-            <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
-            </ol>
-        </div>
 
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".ues-context-menu-actions" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-                
-        <div class="collapse navbar-collapse ues-context-menu-actions">
-            <ul class="nav navbar-nav">
-                <!--<li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards"><%= i18n.localize("dashboards.lable")%></a></li>-->
-                <li><a id="ues-back" href="<%=tenantedUrlPrefix%>./dashboards">
-                    <span class="fw-stack">
-                        <i class="fw fw-ring fw-stack-2x"></i>
-                        <i class="fw fw-left-arrow fw-stack-1x"></i>
-                    </span> <%= i18n.localize("go.back")%></a></li>
-                 <li><a href="#" class="ues-dashboard-export">
-                     <span class="fw-stack">
-                        <i class="fw fw-ring fw-stack-2x"></i>
-                        <i class="fw fw-up-arrow-2 fw-stack-1x"></i>
-                     </span> <%=i18n.localize("export")%> </a></li>
-            </ul>
-        </div>
-        <!--/.nav-collapse -->
+    <% include(utils.resolvePath('templates/global-navigation.jag')); %>
+
+    <!-- breadcrumb -->
+    <div class="breadcrumb-wrapper">
+        <ol class="breadcrumb">
+            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=dashboard.title%></a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboard Settings</a></li>
+        </ol>
     </div>
-    <div class="ues-tiles-menu">
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i>
-                <%= i18n.localize("dashboards.lable")%></a></li>
-            </ul>
-        </div>
+
+    <!-- navbar -->
+    <div class="navbar-wrapper">
+        <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a id="ues-back" href="<%=tenantedUrlPrefix%>./dashboards">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-left-arrow fw-stack-1x"></i>
+                                </span>
+                                <%= i18n.localize("go.back")%>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="ues-dashboard-export">
+                                <span class="fw-stack">
+                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-up-arrow fw-stack-1x"></i>
+                                 </span>
+                                <%=i18n.localize("export")%>
+                            </a>
+                        </li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
     </div>
-</nav>
+
 <div id="ues-dashboard-settings" class="container-fluid">
     <div class="row">
         <div class="col-md-12">
@@ -148,6 +159,9 @@
         </div>
     </div>
 </div>
+
+<% include(utils.resolvePath('templates/portal-footer.jag')); %>
+
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/typeahead.bundle.min.js"></script>
@@ -161,13 +175,17 @@
 <% include('/controllers/includes/dashboard-scripts.jag'); %>
 <script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
+
+<!-- Handlebar templates -->
 <script id="ues-shared-role-hbs" type="text/x-handlebars-template">
     <div class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
 </script>
+
 <script id="permission-menu-hbs" type="text/x-handlebars-template">
     <div class="permission-menu-content">
         {{name}}
     </div>
 </script>
+
 </body>
 </html>

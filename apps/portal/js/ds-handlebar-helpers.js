@@ -56,6 +56,14 @@ Handlebars.registerHelper('equals', function (left, right, options) {
     return options.inverse(this);
 });
 
+Handlebars.registerHelper('if_neq', function (a, b, blocks) {
+    if (a != b) {
+        return blocks.fn(this);
+    } else {
+        return blocks.inverse(this);
+    }
+});
+
 Handlebars.registerHelper('dump', function (o) {
     return JSON.stringify(o);
 });

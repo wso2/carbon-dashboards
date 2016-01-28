@@ -1,85 +1,6 @@
 /**
- * dashboard view mode styles
+ * Banner
  */
-
-body {
-    padding-top: 70px;
-    font-family: "Oxygen", Helvetica, Arial, sans-serif;
-}
-
-a, a:focus {
-    outline: 0;
-}
-
-#wrapper {
-    margin-bottom: 20px;
-}
-
-.gadget-setting{
-    position: absolute;
-    width: 100%;
-    background: #ffffff;
-    top: 0;
-    left: 0;
-    padding: 8px;
-    overflow: auto;
-    height: 100%;
-}
-
-.ues-component-box {
-    box-sizing: border-box;
-}
-
-.ues-component-header {
-    background: #eee;
-    overflow: hidden;
-    padding: 0;
-}
-
-.ues-component .ues-component-title {
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 10px;
-}
-
-.ues-component .ues-component-title-right .ues-component-toolbar {
-    right: auto;
-    left: 15px;
-}
-
-.ues-component .ues-component-toolbar {
-    position: absolute;
-    top: 8px;
-    right: 15px;
-    left: auto;
-    z-index: 10;
-    display: none;
-}
-
-.ues-component:hover .ues-component-toolbar {
-    display: inline;
-}
-
-.ues-component-body {
-    padding: 10px;
-}
-
-.ues-component-box iframe {
-    transition: height 0.4s;
-}
-
-.ues-fullview-visible {
-    position: absolute;
-    top:0;
-    bottom:0;
-    right:0;
-    left:0;
-    overflow:hidden;
-    z-index: 2000;
-    width: 100%;
-    padding: 0;
-}
-
 .ues-banner-placeholder {
     overflow: hidden;
     text-align: center;
@@ -88,4 +9,48 @@ a, a:focus {
 .ues-banner-placeholder img {
     width: 100%;
     margin-bottom: 20px;
+}
+
+/**
+ * Gadget maximization
+ */
+.ues-component-fullview {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 2000;
+    width: 100%;
+    padding: 0;
+}
+
+/**
+ * Gadget containers
+ */
+.ues-component-box {
+    margin-bottom: 30px;
+}
+
+/**
+ * Gadget settings
+ */
+.gadget-setting {
+        padding: 6px 12px;
+        height: calc(100% - 42px);
+        background: #fff;
+        overflow: auto;
+    }
+
+.gadget-setting h4 {
+    padding-bottom: 6px;
+    border-bottom: 1px solid #ddd;
+}
+.gadget-setting label {
+    display: block;
+}
+
+.gadget-setting textarea {
+    width: 100%;
 }

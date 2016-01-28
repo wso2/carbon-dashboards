@@ -8,6 +8,11 @@
         <![CDATA[
         <head>
             <style type="text/css">
+                
+                body {
+                    padding: 12px;
+                }
+
                 .log {
                     width: 400px;
                     height: 400px;

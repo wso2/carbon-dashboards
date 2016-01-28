@@ -2,33 +2,32 @@
 var query = request.getQueryString();
 var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
 %>
-<nav id="ues-global-navigation" role="navigation" class="navbar navbar-inverse navbar-fixed-top ues-global-navigation">
+<header class="header header-default">
     <div class="container-fluid">
-        <div class="app-logo col-sm-6 col-xs-9">
-            <a href="<%=tenantedUrlPrefix%>./dashboards" >
-                <img src="<%=urlPrefix%><%=utils.resolveUrl('images/logo.png')%>" class="img-responsive"/> <h2
-                class="app-title"><%= i18n.localize("dashboard.designer")%></h2>
+        <div class="pull-left brand float-remove-xs text-center-xs">
+            <a href="<%=tenantedUrlPrefix%>./dashboards">
+                <img src="<%=urlPrefix%>libs/theme-wso2_1.0/images/logo-inverse.svg" alt="wso2" title="wso2" class="logo">
+                <h1>Dashboard Server</h1>
             </a>
         </div>
-        <div class="col-sm-6 col-xs-3">
-            <ul class="nav navbar-nav navbar-right ues-global-navigation-bar">
-                <% if (user) { %>
-                <li>
-                    <a href="#" class="dropdown-toggle logged-in" data-toggle="dropdown" role="button"
-                    aria-expanded="false">
-                        <i class="fw fw-user"></i>
-                        <span class="logged-in-username"><%=user.username%></span> <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%= i18n.localize("logout.lable")%></a></li>
-                    </ul>
-                </li>
-                </li>
-                <% } else { %>
-                <li><a href="<%=urlPrefix%>login?destination=<%=dest%>"><%= i18n.localize("login.lable")%></a></li>
-                <% } %>
+        <div class="pull-right auth float-remove-xs text-center-xs">
+            <% if (user) { %>
+            <a href="#" class="dropdown" data-toggle="dropdown">
+                <span class="hidden-xs add-padding-left-3x"><%=user.username%> <span class="caret"></span></span>
+                <span class="icon fw-stack fw-lg">
+                    <i class="fw fw-user fw-stack-1x"></i>
+                </span>
+            </a>
+            <ul class="dropdown-menu float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown" role="menu">
+                <li class="dropdown-header visible-xs"><%=user.username%> <span class="caret"></span></li>
+                <li class="divider visible-xs"></li>
+                <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%= i18n.localize("logout.label")%></a></li>
             </ul>
+            <% } else { %>
+            <a href="<%=urlPrefix%>login?destination=<%=dest%>" class="dropdown" data-toggle="dropdown">
+                <%= i18n.localize("login.label")%>
+            </a>
+            <% } %>
         </div>
-        <!--/.nav-collapse -->
     </div>
-</nav>
+</header>

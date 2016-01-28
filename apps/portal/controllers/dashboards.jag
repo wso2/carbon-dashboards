@@ -74,6 +74,9 @@ var fresh;
     }
 
     if (method === 'POST') {
+        dashboards = require('/modules/dashboards.js');
+        utils = require('/modules/utils.js');
+
         dashboard = {
             id: dashboardId,
             title: request.getParameter('title'),
@@ -93,8 +96,12 @@ var fresh;
                 html: null
             }
         };
-        fresh = true;
-        include('includes/designer.jag');
+
+        utils.sandbox(context, function() {
+            dashboards.create(dashboard);
+        });
+
+        response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
         return;
     }
 
