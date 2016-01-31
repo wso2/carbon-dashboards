@@ -19,7 +19,7 @@
      * @param component
      * @param done
      */
-    var createComponent = function (container, component, done) {        
+    var createComponent = function (container, component, done) {
         var type = component.content.type;
         var plugin = findPlugin(type);
 
@@ -79,7 +79,7 @@
     //overriding publish method
     var publish = ues.hub.publish;
     ues.hub.publish = function (topic, data){
-        $(".container").find('.ues-component').each(function () {
+        $(".gadgets-grid").find('.ues-component').each(function () {
             var id = $(this).attr('id');
             var channel = id + "." + topic;
             publish.apply(ues.hub, [channel, data]);
@@ -164,11 +164,11 @@
         wirings = wires(page, pageType);
         
         var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn)),
-            content = page.content[pageType], 
+            content = page.content[pageType],
             componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
         
         // this is to be rendered only in the designer. in the view mode, the template is rendered in the server side.
-        if (isDesigner) { 
+        if (isDesigner) {
             element.html(convertToDesignerLayout(layout[0]));
         }
         
@@ -181,7 +181,7 @@
             // the component box content (the skeleton) should be added only in the designer mode and 
             // the view mode only if there is a component
             if (isDesigner || hasComponent) {
-                container.html(componentBoxContentHbs());    
+                container.html(componentBoxContentHbs());
             }
             
             if (container.attr('data-banner') == 'true') {

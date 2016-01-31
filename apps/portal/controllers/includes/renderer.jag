@@ -20,6 +20,13 @@ var renderEngine = { };
             user.isEditor = false;
         }
     }
+
+    // if there is no pages to display, return 404
+    if (dashboard.pages.length == 0) {
+        response.sendError(404, 'dashboard not found');
+        return;
+    }
+
     if (!anonymous) {
         if (!user && !dashboard.isanon) {
             sendLogin();

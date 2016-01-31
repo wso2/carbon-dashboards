@@ -14,9 +14,7 @@
             <link rel="stylesheet" href="/portal/css/bootstrap.min.css" type="text/css"/>
             <style>
                 .textbox {
-                    padding-left: 0;
-                    padding-right: 0;
-                    padding-top: 0;
+                    padding: 12px;
                 }
             </style>
             <script src="/portal/js/jquery-1.10.2.js"></script>

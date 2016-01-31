@@ -408,7 +408,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
             
             var styles;
             if (!processedRow[x].banner) {
-                styles = 'min-height: ' + height + 'px;';
+                styles = 'height: ' + height + 'px;';
             }
             
             offset = x - previousEndPoint;
@@ -610,7 +610,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
     
     try {
         var json = (isAnon ? page.layout.content.anon.blocks : page.layout.content.loggedIn.blocks);
-        content = '<div class="' + (page.layout.fluidLayout ? 'container-fluid' : 'container') + '">' + process(initGrid(json)) + '</div>';
+        content = process(initGrid(json));
     } catch(e) {
         err.push(e);
     }
