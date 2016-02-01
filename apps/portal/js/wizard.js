@@ -3,34 +3,48 @@ var previewData = [];
 var columns = [];
 var done = false;
 var isPaginationSupported = true;
+var selectedTableCoulumns = [];
+var defaultTableColumns = [];
 
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 $(document).ready(function() {
-  //disable clicking on step2 
-  $('#step2').on('click',function() { return false;});
-  $('#next').hide();
+    // $("#dsList").select2({
+    //     placeholder: "Select a datasource",
+    //     templateResult: formatDS
+    // });
 });
+
+function formatDS(item) {
+    if (!item.id) {
+        return item.text;
+    }
+    var type = $(item.element).data("type");
+    var $item;
+    if (type === "realtime") {
+        $item = $('<div><i class="fa fa-bolt"> </i> ' + item.text + '</div>');
+    } else {
+        $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
+    }
+    // var $item = $(
+    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> ' + item.text + '</span>'
+    //   );
+    return $item;
+};
 
 $('#rootwizard').bootstrapWizard({
     onTabShow: function(tab, navigation, index) {
-        console.log("** Index : " + index);
+        //console.log("** Index : " + index);
         done = false;
         if (index == 0) {
             getDatasources();
             $("#btnPreview").hide();
-            $("#tblPreview").hide();
-            $("#fieldsContainer").hide();
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
-            $('#previous').hide();
         } else if (index == 1) {
             $('#rootwizard').find('.pager .finish').show();
-            $('#next').hide();
-            $('#previous').show();
             $("#previewChart").hide();
             done = true;
-            getCheckedColumns();
-            if (datasourceType === "batch") {
+            if (datasourceType === "batch" && isPaginationSupported) {
                 fetchData();
             }
             renderChartConfig();
@@ -43,40 +57,62 @@ $("#dsList").change(function() {
     if (datasource != "-1") {
         $('#rootwizard').find('.pager .next').removeClass("disabled");
         datasourceType = $("#dsList option:selected").attr("data-type");
-
-        if (datasourceType === "realtime") {
-            $('#next').show();
-        }
-
         getColumns(datasource, datasourceType);
+
         //check whether the seleced datasource supports pagination as well
         //first, get the recordstore for this table
-        if (datasourceType === "batch") {
-            var recordStore;
-            var tableName = datasource;
-            var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
-            $.getJSON(url, function (data) {
-                if (data.status === "success") {
-                    recordStore = data.message;
-                    //then check for pagination support on this recordstore
-                    recordStore = recordStore.replace(/"/g, "");
-                    checkPaginationSupported(recordStore);
-                }
-            });
-        }
+        var recordStore;
+        var tableName = datasource;
+        var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
+        $.getJSON(url, function(data) {
+            if (data.status==="success") {
+                recordStore = data.message;
+                //then check for pagination support on this recordstore
+                recordStore = recordStore.replace(/"/g,"");
+                checkPaginationSupported(recordStore);
+            }
+        });
+
     } else {
         $('#rootwizard').find('.pager .next').addClass("disabled");
     }
 });
 
 $("#btnPreview").click(function() {
-    getCheckedColumns();
     if ($("dsList").val() != -1) {
         fetchData(renderPreviewPane);
     }
 });
 
 $("#previewChart").click(function() {
+
+    var chartType = $("#chartType").val();
+    var notFilled = false;
+    $("#title").css("border-color", "");
+
+    $("."+chartType).find("input[type=text]").each(function(){
+        if( $(this).attr("id") != "title" && $(this).attr("id").indexOf("cusId") == -1 && $(this).val().length == 0){
+            $(this).css("border-color", "red");
+            notFilled = true;
+        }else{
+            $(this).css("border-color", "");
+        }
+    });
+
+    $("."+chartType+" select").each(function(){
+        if( $(this).attr("id") != "color" && $(this).attr("id") != "columns" && $(this).val() == -1){
+            $(this).css("border-color", "red");
+            notFilled = true;
+        }else{
+            $(this).css("border-color", "");
+        }
+    });
+
+    if(notFilled){
+        alert("Please Provide Required Fields !");
+        return;
+    }
+
     if (datasourceType === "realtime") {
         var streamId = $("#dsList").val();
         var url = "/portal/apis/rt?action=publisherIsExist&streamId=" + streamId;
@@ -86,31 +122,16 @@ $("#previewChart").click(function() {
                     " Please deploy an adapter to Preview Data.")
             } else {
                 //TODO DOn't do this! read this from a config file
-                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', window.location.pathname.split('/')[3],
-                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
-                    'WEBSOCKET', "SECURED");
+                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
+                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, 'localhost', '9443', 'WEBSOCKET', "SECURED");
                 var source = $("#wizard-zeroevents-hbs").html();;
                 var template = Handlebars.compile(source);
-                $("#chartArea").show();
                 $("#chartDiv").empty();
                 $("#chartDiv").append(template());
             }
         });
     } else {
-        var dataTable = makeDataTable(previewData);
-        var chartType = $("#chartType").val();
-        $("#chartArea").show();
-        $("#chartDiv").empty(); //clean up the chart canvas
-        var height = 240; //canvas height
-        var width = document.getElementById("chartDiv").offsetWidth;
-        var config = {
-            "yAxis": yAxis,
-            "xAxis": xAxis,
-            "width": width,
-            "height": height,
-            "chartType": chartType
-        };
-        drawChart(config,dataTable);
+        drawBatchChart(previewData);
     }
 
 });
@@ -119,54 +140,70 @@ $("#chartType").change(function() {
     $(".attr").hide();
     var className = jQuery(this).children(":selected").val();
     var chartType = this.value;
+
+    if(chartType == "tabular"){
+        $("#dynamicElements").empty();
+    }
+
+    $("."+chartType).find("input[type=text]").each(function(){
+        $(this).val("");
+        $(this).css("border-color", "");
+    });
+
+    $("."+chartType+" select").each(function(){
+        $(this).val(-1);
+        $(this).css("border-color", "");
+    });
+
     $("." + className).show();
     $("#previewChart").show();
     $('#rootwizard').find('.pager .finish').removeClass('disabled');
-
-    //Disable TIMESTAMP for Bar charts X Axis
-    if (chartType === "bar") {
-        $("#xAxis option[value=TIMESTAMP]").hide();
-        $("#xAxis")[0].selectedIndex = 1;
-    } else {
-        $("#xAxis option[value=TIMESTAMP]").show();
-        $("#xAxis")[0].selectedIndex = 0;
-    }
-
-    //Disable TIMESTAMP for Bar and Area charts Y Axis
-    if (chartType === "bar" || chartType === "area" || chartType === "scatter") {
-        $("#yAxis option[value=TIMESTAMP]").hide();
-        $("#yAxis")[0].selectedIndex = 1;
-    } else {
-        $("#yAxis option[value=TIMESTAMP]").show();
-        $("#yAxis")[0].selectedIndex = 0;
-    }
 
 });
 
 $(".pager .finish").click(function() {
     //do some validations
+    var chartType = $("#chartType").val();
+
     if ($("#title").val() == "") {
-        alert("Gadget title must be provided!");
+        $("#title").css("border-color", "red");
+        alert("Please Provide Required Fields !");
         return;
+    }else {
+        var notFilled = false;
+        $("#title").css("border-color", "");
+
+        $("."+chartType).find("input[type=text]").each(function(){
+            if( $(this).val().length == 0){
+                $(this).css("border-color", "red");
+                notFilled = true;
+            }else{
+                $(this).css("border-color", "");
+            }
+        });
+
+        $("."+chartType+" select").each(function(){
+            if( $(this).attr("id") != "color" && $(this).attr("id") != "columns" && $(this).val() == -1){
+                $(this).css("border-color", "red");
+                notFilled = true;
+            }else{
+                $(this).css("border-color", "");
+            }
+        });
+
+        if(notFilled){
+            alert("Please Provide Required Fields !");
+            return;
+        }
     }
     if (done) {
         console.log("*** Posting data for gadget [" + $("#title").val() + "]");
-
-        var defaultMaxValue = 10;
-
         //building the chart config depending on the chart type
-        var chartType = $("#chartType").val();
         var config = {
             chartType: $("#chartType").val()
         };
-
-        if (chartType === "area" || chartType === "line" || chartType === "map" || chartType === "scatter") {
-            defaultMaxValue = 0;
-        }
-
         configureChart(config);
         config = chartConfig;
-        // console.log(config); 
         var request = {
             id: $("#title").val().replace(/ /g, "_"),
             title: $("#title").val(),
@@ -174,7 +211,6 @@ $(".pager .finish").click(function() {
             type: $("#dsList option:selected").attr("data-type"),
             filter: $("#txtFilter").val(),
             columns: columns,
-            maxUpdateValue: defaultMaxValue,
             chartConfig: config
 
         };
@@ -201,7 +237,7 @@ function onRealTimeEventErrorRecieval(dataError) {
     console.log(dataError);
 };
 
-////////////////////////////////////////////////// end of event handlers //////////////////////////////////////////////
+////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
 
 function getDatasources() {
     $.ajax({
@@ -237,36 +273,14 @@ function getDatasources() {
             });
         },
         error: function(xhr,message,errorObj) {
-            var errorMessage = errorObj;
-            //When 401 Unauthorized occurs user session has been log out
-            if (xhr.status == 401) {
-                //reload() will redirect request to login page with set current page to redirect back page
-                location.reload();
-            } else if(xhr.status == 500) {
-                errorMessage = "Logged in user can not perform the attempted operation due to lack of permissions.";
-            }
             var source = $("#wizard-error-hbs").html();;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
-                error: errorMessage
+                error: xhr.responseText
             }));
         }
     });
-};
-
-function formatDS(item) {
-    if (!item.id) {
-        return item.text;
-    }
-    var type = $(item.element).data("type");
-    var $item;
-    if (type === "realtime") {
-        $item = $('<div><i class="fa fa-bolt"> </i> ' + item.text + '</div>');
-    } else {
-        $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
-    }
-    return $item;
 };
 
 function getColumns(datasource, datasourceType) {
@@ -284,41 +298,8 @@ function getColumns(datasource, datasourceType) {
         $.getJSON(url, function(data) {
             if (data) {
                 columns = parseColumns(JSON.parse(data.message));
-                $("#fields").show();
-                $("#fields").empty();
-                columns.forEach(function(column,i){
-                    var item = $('<div></div>').attr("class","checkbox");
-                    var label = $('<label></label>');
-                    var input = $('<input type="checkbox" checked="checked" name="field" />');
-                    input.attr("data-type",column.type)
-                    input.attr("data-name",column.name)
-                    
-                    label.append(input);
-                    label.append(column.name);
-                    item.append(label);
-                    $("#fields").append(item);
-                });
             }
         });
-    }
-};
-
-function getCheckedColumns() {
-    if (datasourceType != "realtime") {
-        columns = [];
-        var filtered = $("#fields input[name=field]:checked");
-        if (filtered.length == 0) {
-            alert("Please select at leat two fields!");
-            return;
-        }
-        filtered.each(
-            function () {
-                var column = {};
-                column.name = $(this).attr("data-name");
-                column.type = $(this).attr("data-type");
-                columns.push(column);
-            }
-        );
     }
 };
 
@@ -336,9 +317,6 @@ function checkPaginationSupported(recordStore) {
                 isPaginationSupported = false;
             }
         }
-        $('#next').show();
-        //populate fields dropdown list
-        $("#fieldsContainer").show();
     });
 };
 
@@ -398,22 +376,12 @@ function renderPreviewPane(rows) {
         tr.appendTo(table);
 
     });
-
-    if (datasourceType === "batch"){
-        $("#previewPane")
-            .append('<table><tr><td style="padding:15px 10px 0px 10px">'
-                +'<img src="../../portal/images/noEvents.png" align="left" style="width:24;height:24"/>'
-                +'</td><td><br/><p>Records limited of a large data set</p></td></tr></table>');
-    }
-
 };
 
 function renderChartConfig() {
-    //cleaning up the chart config area
-    $("#chartArea").hide();
-    $("#chartType").val("-1"); //reset to "--select"
-    $(".attr").hide(); //hide all chart controls
-    initCharts(columns);    //let the games begin!
+    //hide all chart controls
+    $(".attr").hide();
+    initCharts(columns);
 };
 
 function getColumnIndex(columnName) {
@@ -424,7 +392,7 @@ function getColumnIndex(columnName) {
     }
 };
 
-///////////////////////////////////// data formatting related functions ///////////////////////////////////////////////
+/////////////////////////////////////////////////////// data formatting related functions ///////////////////////////////////////////////////////
 
 function parseColumns(data) {
     if (data.columns) {
@@ -478,143 +446,209 @@ var dataTable;
 var chart;
 var counter = 0;
 var globalDataArray = [];
-
 function drawRealtimeChart(data) {
-    $("#chartDiv").empty();
-    var chartType = $("#chartType").val();
-    var defaultMaxValue = 10;
+    console.log("+++++++++++ drawRealtimeChart ");
 
-    if (chartType === "area" || chartType === "line" || chartType === "map" || chartType === "scatter") {
-        defaultMaxValue = 0;
+    var config = constructChartConfigurations();
+
+    if (chart != null) {
+        var persistedChartType = chart.chart.config.charts[0].type;
+        if(config.charts[0].type != persistedChartType){
+            chart = null;
+        }
     }
 
-    if (chartType == "map") {
-        var region = 5;
+    if (chart == null) {
+        $("#chartDiv").empty();
+
+        if(config.charts[0].type == "map"){
+            var mapType = config.charts[0].mapType;
+
+            if(mapType == "world"){
+                config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
+                config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/world/';
+            }else if(mapType == "usa"){
+                config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usaInfo/';
+                config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usa/';
+            }else if(mapType == "europe"){
+                gadgetConfig.chartConfig.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
+                gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/europe/';
+            }
+        }
+        chart = new vizg(createDatatable(convertData(data)), config);
+        chart.draw("#chartDiv");
+    } else {
+        chart.insert(convertData(data));
+    }
+
+};
+
+function drawBatchChart(data){
+    console.log("+++++++++++ drawBatchChart ");
+    $("#chartDiv").empty();
+
+    var config = constructChartConfigurations();
+
+    if(config.charts[0].type == "map"){
+        var mapType = config.charts[0].mapType;
+
+        if(mapType == "world"){
+            config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
+            config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/world/';
+        }else if(mapType == "usa"){
+            config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usaInfo/';
+            config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usa/';
+        }else if(mapType == "europe"){
+            gadgetConfig.chartConfig.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
+            gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/europe/';
+        }
+    }
+
+    chart = new vizg(createDatatable(convertData(data)), config);
+    chart.draw("#chartDiv");
+}
+
+function createDatatable(data) {
+    var names = [];
+    var types = [];
+
+    for(var i =0; i < columns.length; i++) {
+        var type;
+        names.push(columns[i]["name"]);
+
+        var type = columns[i]["type"].toUpperCase();
+
+        if(type === "INT" || type === "INTEGER" || type === "FLOAT" ||
+            type === "DOUBLE") {
+            type = "linear";
+        } else if (type == "TIME") {
+            type = "time";
+        } else {
+            type = "ordinal";
+        }
+
+        types.push(type);
+    }
+
+    var datatable =  [
+        {
+            "metadata" : {
+                "names" : names,
+                "types" : types
+            },
+            "data": data
+        }
+    ];
+
+    return datatable;
+}
+
+function convertData(data) {
+    for (var i = 0; i < data.length; i++) {
+        for (var x = 0; x < data[i].length; x++) {
+
+            var type = columns[x]["type"].toUpperCase();
+            if(type != "STRING" && type != "BOOLEAN" ){
+                data[i][x] = parseFloat(data[i][x]);
+            }
+        }
+    }
+
+    return data;
+}
+
+function constructChartConfigurations(){
+
+    var config = {};
+    var chartType = $("#chartType").val();
+    var xAxis = $("#xAxis").val();
+    var yAxis = $("#yAxis").val();
+    var maxDataLength = $("#maxDataLength").val();
+
+    config.x = xAxis;
+    config.maxLength = maxDataLength;
+
+    if (chartType == "bar") {
+        config.charts = [{type: chartType,  y : yAxis}];
+    } else if (chartType === "line") {
+        var colorAxis = $("#color").val();
+
+        if(colorAxis != -1){
+            config.charts = [{type: chartType,  y : yAxis, color:colorAxis}];
+        }else{
+            config.charts = [{type: chartType,  y : yAxis}];
+        }
+    } else if (chartType === "area") {
+        config.charts = [{type: chartType,  y : yAxis}];
+    } else if (chartType === "tabular") {
+        var columns = [];
+        var columnTitles = [];
+        var key = $("#key").val();
+
+        if(selectedTableCoulumns.length != 0){
+            for(i=0;i<selectedTableCoulumns.length;i++){
+                var cusId = "#cusId"+selectedTableCoulumns[i]+"";
+                columns.push(selectedTableCoulumns[i]);
+                if($(cusId).val() != ""){
+                    columnTitles.push($(cusId).val());
+                }else{
+                    columnTitles.push(selectedTableCoulumns[i]);
+                }
+            }
+        }else{
+            for(i=0;i<defaultTableColumns.length;i++){
+                columns.push(defaultTableColumns[i]);
+                columnTitles.push(defaultTableColumns[i]);
+            }
+        }
+        config.charts = [{type: "table", key : key, maxLength : maxDataLength, columns: columns, columnTitles:columnTitles}];
+    } else if (chartType === "scatter") {
+        var pointSize = $("#pointSize").val();
+        var pointColor = $("#pointColor").val();
+
+        config.charts = [{type: chartType,  y : yAxis,color: pointColor, size: pointSize,
+            "maxColor":"#ffff00","minColor":"#ff00ff"}];
+    } else if (chartType === "map") {
+        var region;
         if ($("#region").val().trim() != "") {
             region = $("#region").val();
         }
-        var xAxis = getColumnIndex($("#xAxis").val());
-        var yAxis = getColumnIndex($("#yAxis").val());
-        var legendGradientLevel;
-        if ($("#legendGradientLevel").val().trim() == ""){
-            legendGradientLevel = 5;
-        } else {
-            legendGradientLevel = $("#legendGradientLevel").val();
-        }
-        var config = {
-            "yAxis": yAxis,
-            "xAxis": xAxis,
-            "chartType": "map",
-            "title": "Map By Country",
-            "padding": 65,
-            "width": document.getElementById("chartDiv").offsetWidth,
-            "height": 240,
-            "region": region,
-            "legendGradientLevel": legendGradientLevel
-        }
-        if (counter == 0) {
-            dataTable = makeMapDataTable(data);
-            console.log(dataTable);
-            chart = igviz.draw("#chartDiv", config, dataTable);
-            chart.plot(dataTable.data,null,defaultMaxValue);
-            counter++;
-        } else {
-            chart.update(data);
-        }
+        config.charts = [{type: chartType, y : yAxis, mapType: region}];
+    } else if (chartType === "number") {
+        var attrDescription = $("#attrDescription").val();
+        config.charts = [{type: chartType, title:attrDescription}];
+    }
+
+    config.width = document.getElementById("chartDiv").offsetWidth; - 110;
+    config.height = 240 - 40;
+
+    return config;
+}
 
 
-    } else if(chartType === "arc") {
-        var config = { chartType: chartType, "height": 240, percentage: getColumnIndex($("#percentage").val())};
-        igviz.draw("#chartDiv", config,makeDataTable(data));
-    } else {
-        dataTable = makeDataTable(data);
-        var xAxis = getColumnIndex($("#xAxis").val());
-        var yAxis;
+function addCustomColumns(selectedValue){
 
-        if (chartType == "line") {
-            var yAxis =  [];
-            for (var i = 0; i < $("#yAxises").val().length; i++) {
-                yAxis.push(getColumnIndex($("#yAxises").val()[i]));
-            }
-        } else {
-            yAxis = getColumnIndex($("#yAxis").val());
-        }
+    if(selectedValue != -1){
+        var index = selectedTableCoulumns.indexOf(selectedValue);
 
-
-
-        var width = document.getElementById("chartDiv").offsetWidth;
-        var height = 240; //canvas height
-        var config = {
-            "yAxis": yAxis,
-            "xAxis": xAxis,
-            "width": width,
-            "height": height,
-            "chartType": chartType
-        }
-
-        if (chartType === "scatter") {
-            config.pointColor  = getColumnIndex($("#pointColor").val());
-            config.pointSize  = getColumnIndex($("#pointSize").val());
-            config.maxColor  = "#ffff00";
-            config.minColor  = "#ff00ff";
-        }
-
-        if (chartType === "bar" && dataTable.metadata.types[xAxis] === "N") {
-            dataTable.metadata.types[xAxis] = "C";
-        }
-
-        if(chartType === "tabular" || chartType ==="singleNumber") {
-
-            chart = igviz.draw("#chartDiv",config, dataTable);
-            globalDataArray.push(dataTable.data[0]);
-            chart.plot(globalDataArray, null, 10);
-
-        } else {
-
-            if (counter == 0) {
-                chart = igviz.setUp("#chartDiv", config, dataTable);
-                chart.setXAxis({
-                    "labelAngle": -35,
-                    "labelAlign": "right",
-                    "labelDy": 0,
-                    "labelDx": 0,
-                    "titleDy": 25
-                })
-                    .setYAxis({
-                        "titleDy": -30
-                    })
-
-                chart.plot(dataTable.data, null ,defaultMaxValue);
-                counter++;
-            } else {
-                chart.update(dataTable.data[0]);
-            }
+        if (index == -1) {
+            selectedTableCoulumns.push(selectedValue);
+            $("#dynamicElements").append('<tr id="'+selectedValue+'">'+
+                '<td><div class="left"><input name="originalValue" type="text" value="'+selectedValue+'" style="width: 128px"id="title" readonly></div></td>' +
+                '<td><div class="middle"><b style="padding-left: 4px;padding-right: 4px">AS</b></div></td>' +
+                '<td><div class="right"><input name="cusId'+selectedValue+'" id="cusId'+selectedValue+'" type="text" style="width: 128px"id="title" placeholder="Column Name"></div></td>' +
+                '<td><div class="buttonRemove" style="padding-left: 3px;"><input type="button" value="-" onclick="removeRow(\''+selectedValue+'\');" /></div></td>' +
+                '</tr>');
         }
     }
-};
 
-function makeDataTable(data) {
-    var dataTable = new igviz.DataTable();
-    if (columns.length > 0) {
-        columns.forEach(function(column, i) {
-            var type = "N";
-            if (column.type == "STRING" || column.type == "string") {
-                type = "C";
-            } else if (column.type == "TIME" || column.type == "time") {
-                type = "T";
-            }
-            dataTable.addColumn(column.name, type);
-        });
-    }
-    data.forEach(function(row, index) {
-        for (var i = 0; i < row.length; i++) {
-            if (columns[i].type == "FLOAT" || columns[i].type == "DOUBLE") {
-                row[i] = parseFloat(row[i]);
-            } else if (columns[i].type == "INTEGER" || columns[i].type == "LONG") {
-                row[i] = parseInt(row[i]);
-            }
-        }
-    });
-    dataTable.addRows(data);
-    return dataTable;
-};
+}
+
+function removeRow(rowId){
+    var arrayIndex = selectedTableCoulumns.indexOf(rowId);
+    selectedTableCoulumns.splice(arrayIndex, 1);
+}
+
+$('#dynamicElements').on('click', 'input[type="button"]', function () {
+    $(this).closest('tr').remove();
+});
