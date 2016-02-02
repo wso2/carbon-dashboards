@@ -11,7 +11,6 @@ $(function () {
             layout: []
         },
         nonCategoryKeyWord = "null",
-        gridsterUlDimension = {},
         designerScrollTop = 0,
         dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
         dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards',
@@ -523,9 +522,10 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id'),
                 component = findComponent(id),
                 componentContainer = $(this).closest('.ues-component-box'),
+                gsBlock = componentContainer.parent(),
                 componentContainerId = componentContainer.attr('id'),
                 componentBody = componentContainer.find('.ues-component-body'),
-                gridsterUl = $('.gridster > ul'),
+                gsContainer = $('.gridster > ul'),
                 trashButton = componentContainer.find('.ues-component-actions .ues-trash-handle');
 
             if (component.fullViewPoped) {
@@ -534,13 +534,13 @@ $(function () {
                 gridster.enable().enable_resize();
 
                 // restore the size of the gridster ul
-                gridsterUl.width(gridsterUlDimension.width).height(gridsterUlDimension.height);
+                gsContainer.height(gsContainer.attr('data-orig-height'));
 
                 trashButton.show();
-                $('.ues-component-box').show();
+                $('.gridster-block').show();
 
                 //minimize logic
-                componentContainer
+                gsBlock
                     .removeClass('ues-component-fullview')
                     .css('height', '')
                     .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function () {
@@ -566,14 +566,13 @@ $(function () {
                 gridster.disable().disable_resize();
 
                 // backup the size of the gridster ul and reset element size
-                gridsterUlDimension = {width: gridsterUl.width(), height: gridsterUl.height()};
-                gridsterUl.width('auto').height('auto');
+                gsContainer.attr('data-orig-height', gsContainer.height()).height('auto');
 
                 trashButton.hide();
-                $('.ues-component-box:not(#' + componentContainerId + ')').hide();
+                $('.gridster-block:not([data-id=' + componentContainerId + '])').hide();
 
                 //maximize logic
-                componentContainer
+                gsBlock
                     .addClass('ues-component-fullview')
                     .css('height', pageEl.height() - 85)
                     .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function () {
@@ -622,9 +621,11 @@ $(function () {
                     }
 
                     if (removeBlock) {
-                        gridster.remove_widget(componentBox, function () {
+                        gridster.remove_widget(componentBox.parent(), function () {
                             updateLayout();
                         });
+                    } else {
+                        componentBox.html(componentBoxContentHbs({appendResizeHandle: true}));
                     }
 
                     designerModal.modal('hide');
@@ -1540,7 +1541,6 @@ $(function () {
      * @private
      */
     var initDesignerMenu = function () {
-
         // menu functions
         $('.ues-context-menu')
             .on('click', '.ues-dashboard-preview', function () {
@@ -1948,8 +1948,16 @@ $(function () {
      * @private
      */
     var showCreatePage = function() {
-        $('#btn-pages-sidebar').click()
-        $('#left-sidebar button[rel=createPage]').click();
+
+        // if the left panel is closed, click on the pages button
+        if (! $('#left-sidebar').hasClass('toggled')) {
+            $('#btn-pages-sidebar').click()
+        }
+
+        // if the select layout is closed, click on the create page button
+        if (! $('#left-sidebar-sub').hasClass('toggled')) {
+            $('#left-sidebar button[rel=createPage]').click();
+        }
     }
 
     /**
@@ -2035,18 +2043,16 @@ $(function () {
             });
             listenLayout();
 
-            var gridsterContainer = $('.gridster > ul'),
-                minBlockWidth = Math.ceil($('.gridster').width() / 12) - 30,
-                minBlockHeight = minBlockWidth + 30;
+            var gridsterContainer = $('.gridster > ul');
 
             // bind the gridster to the layout
             gridster = gridsterContainer.gridster({
-                widget_margins: [15, 15],
-                widget_base_dimensions: [minBlockWidth, minBlockHeight],
+                widget_margins: [0, 0],
+                widget_base_dimensions: [150, 150],
                 min_cols: 12,
                 serialize_params: function (el, coords) {
                     return {
-                        id: el.prop('id'),
+                        id: el.data('id'),
                         col: coords.col,
                         row: coords.row,
                         size_x: coords.size_x,

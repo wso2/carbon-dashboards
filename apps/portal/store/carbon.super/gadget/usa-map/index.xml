@@ -28,7 +28,7 @@
 <div>
 <label id="defaultViewLabel">USA MAP (This is default view)</label>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
-<script src="../../../js/jquery-1.10.2.js"></script>
+<script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
 <script src="js/uStates.js"></script>
 <script src="js/d3.v3.min.js"></script>
 <script>
@@ -49,10 +49,7 @@
 			data[d]={color:d3.interpolate("#ffffcc", "#800026")(low/100)};
 		});
 
-	uStates.draw("#map", data, click);
-	//gadgets.util.registerOnLoadHandler(function() {
-	    //gadgets.window.adjustHeight();
-	//});
+    uStates.draw("#map", data, click);
 </script>
 </div>
 </body>
@@ -80,9 +77,9 @@
 </head>
 <body>
 <div>
-<label id="fullViewLabel">USA MAP(this is full screen view)</label>
+<label id="fullViewLabel">USA MAP (this is full screen view)</label>
 <svg id="map" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid"></svg>
-<script src="../../../js/jquery-1.10.2.js"></script>
+<script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
 <script src="js/uStates.js"></script>
 <script src="js/d3.v3.min.js"></script>
 <script>
@@ -103,10 +100,7 @@
 			data[d]={color:d3.interpolate("#ffffcc", "#800026")(low/100)};
 		});
 
-	uStates.draw("#map", data, click);
-	//gadgets.util.registerOnLoadHandler(function() {
-	    //gadgets.window.adjustHeight();
-	//});
+    uStates.draw("#map", data, click);
 </script>
 </div>
 </body>

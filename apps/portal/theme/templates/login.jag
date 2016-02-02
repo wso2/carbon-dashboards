@@ -54,8 +54,12 @@
     <!-- Footer -->
     <% include(utils.resolvePath('templates/portal-footer.jag')); %>
 
-    <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
-    <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+    <!-- Jquery JS -->
+    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
 </body>

@@ -76,6 +76,7 @@
 }
 
 .ues-banner-placeholder {
+    background: -webkit-repeating-linear-gradient(145deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     background: repeating-linear-gradient(-55deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     position: absolute;
     top: 39px;
@@ -115,4 +116,33 @@
     background: #eee;
     border: 1px solid #ddd;
     box-shadow: 0 0 10px #000;
+}
+
+/**
+ * Gridster
+ */
+@media screen and (max-width: 767px) {
+    .gridster .gs-w {
+        position: relative;
+    }
+}
+
+.gridster-block {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 15px;
+}
+
+.gridster ul {
+    list-style: none;
+}
+
+.gs-resize-handle-both {
+    bottom: 4px;
+    right: 4px;
+}
+
+.gadgets-grid {
+    padding: 40px 25px;
 }

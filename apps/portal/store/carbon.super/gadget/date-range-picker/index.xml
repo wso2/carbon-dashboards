@@ -9,15 +9,15 @@
         <head>
             <meta charset="utf-8">
             <title>jQuery UI Datepicker - Default functionality</title>
-            <link rel="stylesheet" href="/portal/css/bootstrap.min.css" type="text/css"/>
+            <link rel="stylesheet" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css">
             <link rel="stylesheet" href="css/bootstrap-datepicker.min.css" type="text/css"/>
             <style>
                 .datepicker-inline {
                     margin:0 auto;
                 }
             </style>
-            <script src="/portal/js/jquery-1.10.2.js"></script>
-            <script src="/portal/js/bootstrap.min.js"></script>
+            <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+            <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
             <script src="js/bootstrap-datepicker.min.js"></script>
             <script>
                 $(function() {

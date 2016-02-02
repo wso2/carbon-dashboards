@@ -65,7 +65,7 @@ $(function () {
 
             // toggle the component settings view if exists
             if (component.hasCustomUserPrefView) {
-                switchComponentView(component, (component.viewOption == DASHBOARD_SETTINGS_VIEW ? DASHBOARD_SETTINGS_VIEW : DASHBOARD_SETTINGS_VIEW));
+                switchComponentView(component, (component.viewOption == DASHBOARD_SETTINGS_VIEW ? DASHBOARD_DEFAULT_VIEW : DASHBOARD_SETTINGS_VIEW));
                 return;
             }
 
@@ -183,6 +183,15 @@ $(function () {
                 var component = findComponent($(this).attr('id'));
                 renderComponentToolbar(component);
             });
+
+            $('.ues-components-grid > ul').gridster({
+                widget_margins: [0, 0],
+                widget_base_dimensions: [150, 150],
+                min_cols: 12,
+                resize: {
+                    enabled: false
+                }
+            }).data('gridster').disable();
         });
     };
 

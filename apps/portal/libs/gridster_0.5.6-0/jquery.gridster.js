@@ -1100,7 +1100,7 @@
         this.draggable();
         this.options.resize.enabled && this.resizable();
 
-        $(window).bind('resize.gridster', throttle(
+        $(window).on('resize.gridster', throttle(
             $.proxy(this.recalculate_faux_grid, this), 200));
     };
 
@@ -3622,7 +3622,6 @@
 
         cols = Math.min(max_cols, Math.max(cols, this.options.min_cols));
         this.container_width = cols * this.min_widget_width;
-        this.$el.css('width', this.container_width);
         return this;
     };
 
@@ -3637,6 +3636,7 @@
     */
     fn.generate_stylesheet = function(opts) {
         var styles = '';
+        var lgStyles = '';
         var max_size_x = this.options.max_size_x || this.cols;
         var max_rows = 0;
         var max_cols = 0;
@@ -3666,16 +3666,14 @@
         Gridster.generated_stylesheets.push(serialized_opts);
 
         /* generate CSS styles for cols */
-        for (i = opts.cols; i >= 0; i--) {
-            styles += (opts.namespace + ' [data-col="'+ (i + 1) + '"] { left:' +
-                ((i * opts.widget_base_dimensions[0]) +
-                (i * opts.widget_margins[0]) +
-                ((i + 1) * opts.widget_margins[0])) + 'px; }\n');
+        for(i = 12; i >= 0; i--) {
+            lgStyles += (opts.namespace + ' [data-col="'+ (i + 1) + '"] { left:' +
+                (Math.round((i * 100 * 100000) / 12) / 100000) + '%; }\n');
         }
 
         /* generate CSS styles for rows */
         for (i = opts.rows; i >= 0; i--) {
-            styles += (opts.namespace + ' [data-row="' + (i + 1) + '"] { top:' +
+            lgStyles += (opts.namespace + ' [data-row="' + (i + 1) + '"] { top:' +
                 ((i * opts.widget_base_dimensions[1]) +
                 (i * opts.widget_margins[1]) +
                 ((i + 1) * opts.widget_margins[1]) ) + 'px; }\n');
@@ -3687,15 +3685,14 @@
                 (y - 1) * (opts.widget_margins[1] * 2)) + 'px; }\n');
         }
 
-        for (var x = 1; x <= max_size_x; x++) {
-            styles += (opts.namespace + ' [data-sizex="' + x + '"] { width:' +
-                (x * opts.widget_base_dimensions[0] +
-                (x - 1) * (opts.widget_margins[0] * 2)) + 'px; }\n');
+        for (var x = 1; x <= 12; x++) {
+            lgStyles += (opts.namespace + ' [data-sizex="' + x + '"] { width:' +
+                (Math.round((x * 100 * 100000) / 12) / 100000) + '%; }\n');
         }
 
         this.remove_style_tags();
 
-        return this.add_style_tag(styles);
+        return this.add_style_tag(styles, lgStyles);
     };
 
 
@@ -3706,17 +3703,22 @@
     * @param {String} css The styles to apply.
     * @return {Object} Returns the instance of the Gridster class.
     */
-    fn.add_style_tag = function(css) {
+    fn.add_style_tag = function(css, lgCss) {
         var d = document;
         var tag = d.createElement('style');
+
+        // append media queries
+        var styles = '@media screen and (min-width: 768px) {\n' +
+            lgCss + '\n}\n' +
+            css;
 
         d.getElementsByTagName('head')[0].appendChild(tag);
         tag.setAttribute('type', 'text/css');
 
         if (tag.styleSheet) {
-            tag.styleSheet.cssText = css;
+            tag.styleSheet.cssText = styles;
         } else {
-            tag.appendChild(document.createTextNode(css));
+            tag.appendChild(document.createTextNode(styles));
         }
 
         this.$style_tags = this.$style_tags.add(tag);

@@ -137,7 +137,7 @@
                             <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
                         </div>
                         <div class="col-sm-3" style="text-align: right;">
-                            <button type="button" id="ues-oauth-refresh" class="btn btn-default" title="Refresh"><i class="fw fw-refresh"></i></button>
+                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" title="Refresh"><i class="fw fw-refresh"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
@@ -166,12 +166,20 @@
 
 <% include(utils.resolvePath('templates/portal-footer.jag')); %>
 
-<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
-<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<!-- Jquery JS -->
+<script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+<!-- Theme WSO2 JS -->
+<script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+
+<!-- Handlebars -->
+<script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
 <script src="<%=urlPrefix%>js/typeahead.bundle.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
-<script src="<%=urlPrefix%>js/wso2-theme.js"></script>
-<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/spin.min.js"></script>
 <script src="<%=urlPrefix%>js/ladda.min.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -182,7 +190,7 @@
 
 <!-- Handlebar templates -->
 <script id="ues-shared-role-hbs" type="text/x-handlebars-template">
-    <div class="btn btn-default ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
+    <div class="btn btn-default btn-bordered ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
 </script>
 
 <script id="permission-menu-hbs" type="text/x-handlebars-template">

@@ -70,11 +70,15 @@
     <!-- Footer -->
     <% include(utils.resolvePath('templates/portal-footer.jag')); %>
 
-        <!-- Handlebars -->
+    <!-- Jquery JS -->
+    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Handlebars -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
 
-    <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
-    <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
     <script src="<%=urlPrefix%>js/spin.min.js"></script>
     <script src="<%=urlPrefix%>js/ladda.min.js"></script>
     <script src="<%=urlPrefix%>js/ues.js"></script>
@@ -106,8 +110,8 @@
     </script>
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-        <h2 id="ues-dashboard-title">{{title}}</h2>
-        <p id="ues-dashboard-url" class="ues-dashboard-url">URL: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
+        <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
+        <p id="ues-dashboard-url" class="ues-dashboard-url truncate">URL: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
         <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
         <div class="ues-actions">
             <a id="ues-view" class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
