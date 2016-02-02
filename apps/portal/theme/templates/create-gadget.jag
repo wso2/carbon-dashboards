@@ -69,7 +69,7 @@
 
                               <!-- <div class="col-md-1">
                                 <div class="dropdown" id="fields">
-                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" 
+                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     Fields
                                     <span class="caret"></span>
@@ -108,9 +108,6 @@
 
                         </fieldset>
                         </form>
-
-                        
-
                     </div>
 
                     <div class="tab-pane" id="tab2">
@@ -313,10 +310,20 @@
         </div>
     </div>
 </div>
-<script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
-<script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
-<script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
-<script src="<%=urlPrefix%>js/ues.js"></script>
+
+<!-- Jquery JS -->
+<script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+<!-- Theme WSO2 JS -->
+<script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+
+<!-- Handlebars -->
+<script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
+    <script src="<%=urlPrefix%>js/ues.js"></script>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
 <script src="<%=urlPrefix%>js/create.js"></script>
 

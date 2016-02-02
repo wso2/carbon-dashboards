@@ -48,6 +48,8 @@
             page = p;
         }
     });
+
+   var isEditor = (user && (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))));
 %>
 <html lang="en">
 <head>
@@ -82,15 +84,16 @@
     <script src="libs/respond_1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.min.css" />
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
+
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
+
+    <!-- Common CSS -->
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
 
     <!-- Custom theme overrides -->
     <link rel="stylesheet" href="<%=urlPrefix%><%=utils.dashboardStyles(dashboard.theme)%>">
-
-    <style type="text/css">
-
-    </style>
-
 </head>
 
 <body class="dashboard lang_<%=request.getLocale()%>">
@@ -104,7 +107,15 @@
 
                     <div class="page-header">
                         <div class="page-title">
-                            <h1><%=dashboard.title%></h1>
+                            <h1><%=dashboard.title%> <span>
+                                <% if (user) {
+                                        if (isEditor) { %>
+                                <a class="ues-copy" href="<%=dbRoot%>?editor=true" title="<%= i18n.localize("edit.button")%>"><i class="fw fw-edit"></i></a>
+                                <%      } else { %>
+                                <a class="ues-copy" href="<%=dbRoot%>?custom=true" title="<%= i18n.localize("personalize")%>"><i class="fw fw-edit"></i></a>
+                                <%      }
+                                   } %></span>
+                            </h1>
                         </div>
 
                         <div class="pull-right auth float-remove-xs text-center-xs">
@@ -117,34 +128,6 @@
 
                             <ul class="dropdown-menu float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown" role="menu">
                                 <li class="dropdown-header visible-xs"><%= user ? user.username : "anon" %> <span class="caret"></span></li>
-
-                                <li class="divider visible-xs"></li>
-
-                                <% if (user) {
-                                    if(!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) { %>
-                                    <li>
-                                        <a class="ues-copy" href="<%=dbRoot%>?editor=true">
-                                            <span class="fw-stack">
-                                                <i class="fw fw-ring fw-stack-2x"></i>
-                                                <i class="fw fw-settings fw-stack-1x"></i>
-                                            </span>
-                                            <%= i18n.localize("edit.button")%>
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                    <li>
-                                        <a class="ues-copy" href="<%=dbRoot%>?custom=true">
-                                            <span class="fw-stack">
-                                                <i class="fw fw-ring fw-stack-2x"></i>
-                                                <i class="fw fw-settings fw-stack-1x"></i>
-                                            </span>
-                                            <%= i18n.localize("personalize")%>
-                                        </a>
-                                    </li>
-                                <% }} %>
-
-                                <li class="divider visible-xs"></li>
-
                                 <% if (user) { %>
                                 <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%= i18n.localize("logout.label")%></a></li>
                                 <% } else { %>
@@ -184,8 +167,7 @@
 
                     <div class="page-content">
                         <!-- Components grid -->
-                        <div class="ues-components-grid gadgets-grid">
-                            <%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%>
+                        <div class="ues-components-grid gadgets-grid gridster">
                         </div>
                     </div>
                 </div>
@@ -203,6 +185,7 @@
 
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
@@ -212,6 +195,9 @@
 
     <!-- Theme WSO2 JS -->
     <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+
+    <!-- Gridster -->
+    <script src="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.js"></script>
 
     <!-- Handlebars JS -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
@@ -236,16 +222,18 @@
     <!-- Handlebar templates -->
     <!-- Component container -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-        <div class="ues-component gadget">
-            <div class="ues-component-heading gadget-heading">
-                <h4 class="ues-component-title gadget-title"></h4>
+        <div class="gadget-wrapper">
+            <div class="ues-component gadget">
+                <div class="ues-component-heading gadget-heading">
+                    <h4 class="ues-component-title gadget-title truncate"></h4>
 
-                <div class="ues-component-actions gadget-actions">
+                    <div class="ues-component-actions gadget-actions">
 
+                    </div>
                 </div>
-            </div>
 
-            <div class="ues-component-body gadget-body"></div>
+                <div class="ues-component-body gadget-body"></div>
+            </div>
         </div>
     </script>
 
@@ -256,7 +244,7 @@
             <button type="button" class="btn btn-default ues-component-settings-handle" title="<%= i18n.localize("properties.lable") %>">
                 <i class="icon fw fw-settings"></i>
             </button>
-             {{/has}}
+            {{/has}}
             <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
                 data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
                 <img src="<%=urlPrefix%>theme/images/icons/maximize.png">
@@ -321,6 +309,15 @@
             </form>
         </div>
     </script>
+
+     <!-- Template to generate gridster list -->
+    <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
+        {{#each blocks}}
+        <li class="gridster-block ues-component-box"  id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}">
+        </li>
+        {{/each}}
+    </script>
+
     <!-- Scripts -->
     <script>
 

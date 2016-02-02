@@ -1,7 +1,6 @@
 <%
 var dbRoot;
 var dest;
-var renderEngine = { };
 
 (function () {
     var log = new Log();
@@ -48,8 +47,5 @@ var renderEngine = { };
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
 
-    // global reference to getBootstrapLayout() function
-    renderEngine.getDashboardContent = db.getBootstrapLayout;
-   
     include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>

@@ -135,21 +135,6 @@
     };
 
     /**
-     * convert JSON layout to gridster
-     * @param json
-     * @returns {*}
-     */
-    var convertToDesignerLayout = function(json) {
-    
-        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''),
-            container = $('<ul />');
-        
-        $(componentBoxListHbs(json)).appendTo(container)
-        
-        return container;
-    }
-    
-    /**
      * renders a page in the dashboard designer and the view modes
      * @param element
      * @param dashboard
@@ -165,13 +150,15 @@
         
         var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn)),
             content = page.content[pageType],
-            componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
-        
-        // this is to be rendered only in the designer. in the view mode, the template is rendered in the server side.
-        if (isDesigner) {
-            element.html(convertToDesignerLayout(layout[0]));
-        }
-        
+            componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''),
+            componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || ''),
+            container = $('<ul />');
+
+        // add gridster layout to the container
+        $(componentBoxListHbs(layout[0])).appendTo(container);
+        element.html(container);
+
+        // render gadget contents
         $('.ues-component-box').each(function (i, container) {
             container = $(container);
             

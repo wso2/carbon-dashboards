@@ -2,7 +2,7 @@
 
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
 
 </head>
@@ -150,6 +150,15 @@
                         <div class="sidebar-brand">Block size in grid</div>
                         <div class="add-padding-3x">
 
+                            <div class="form-inline clearfix">
+                                <label class="control-label">Show Grid</label>
+                                <label class="switch pull-right">
+                                    <input type="checkbox" id="gridGuideToggle">
+                                    <span class="helper"></span>
+                                </label>
+                            </div>
+                            <hr />
+
                             <div class="form-group">
                                 <span>*</span> Width & Height [Max:12]
                             </div>
@@ -286,7 +295,7 @@
 
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
-    <script src="<%=urlPrefix%>js/jquery-ui.js"></script>
+    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
@@ -298,7 +307,7 @@
     <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
 
     <!-- Gridster -->
-    <script src="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.min.js"></script>
+    <script src="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.js"></script>
 
     <!-- Handlebars -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
@@ -318,7 +327,6 @@
     <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
     <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
-    <script src="<%=urlPrefix%>js/bootstrap-toggle.min.js"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
@@ -356,7 +364,10 @@
     <!-- Template to generate gridster list -->
     <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
         {{#each blocks}}
-        <li class="ues-component-box gadget-wrapper" id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}"></li>
+        <li class="gridster-block" data-id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}">
+            <div class="ues-component-box gadget-wrapper" id="{{id}}">
+            </div>
+        </li>
         {{/each}}
     </script>
 
@@ -799,6 +810,10 @@
             if (min !== '' && val < parseInt(min)) {
                 $(this).val(min);
             }
+        });
+
+        $('#gridGuideToggle').change(function(){
+            $('body').toggleClass('grid-on');
         });
     </script>
 

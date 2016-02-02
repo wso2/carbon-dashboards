@@ -37,11 +37,11 @@
  * Gadget settings
  */
 .gadget-setting {
-        padding: 6px 12px;
-        height: calc(100% - 42px);
-        background: #fff;
-        overflow: auto;
-    }
+    padding: 6px 12px;
+    height: calc(100% - 42px);
+    background: #fff;
+    overflow: auto;
+}
 
 .gadget-setting h4 {
     padding-bottom: 6px;
@@ -54,3 +54,49 @@
 .gadget-setting textarea {
     width: 100%;
 }
+
+/**
+ * Gridster
+ */
+@media screen and (max-width: 767px) {
+    .gridster .gs-w {
+        position: relative;
+    }
+}
+
+.gridster > ul {
+    list-style: none;
+}
+
+.gridster-block {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 15px;
+}
+
+/**
+ * Theme overrides
+ */
+.gadgets-grid {
+    padding: 15px 0 0 0;
+}
+
+.gadget-title {
+    width: calc(100% - 110px);
+}
+
+.dashboard .page-content {
+    margin-left: -30px;
+    margin-right: -30px;
+}
+
+.page-title h1 span a {
+    color: #aaa;
+    display: inline-block
+}
+
+.page-title h1 span a:hover {
+    color: #000;
+}
+
