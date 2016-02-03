@@ -161,6 +161,13 @@ $(function () {
             .html(componentPropertiesHbs(ctx))
             .on('change', 'input, select, textarea', function () {
                 updateComponentProperties($(this).closest('.ues-component-properties'));
+            })
+            .on('keypress', 'input, select, textarea', function(e) {
+                if (e.which === 13) {
+                    updateComponentProperties($(this).closest('.ues-component-properties'));
+                    e.preventDefault();
+                    return;
+                }
             });
 
         propertiesContainer
