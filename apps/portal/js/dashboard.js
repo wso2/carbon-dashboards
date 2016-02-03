@@ -183,15 +183,6 @@ $(function () {
                 var component = findComponent($(this).attr('id'));
                 renderComponentToolbar(component);
             });
-
-            $('.ues-components-grid > ul').gridster({
-                widget_margins: [0, 0],
-                widget_base_dimensions: [150, 150],
-                min_cols: 12,
-                resize: {
-                    enabled: false
-                }
-            }).data('gridster').disable();
         });
     };
 

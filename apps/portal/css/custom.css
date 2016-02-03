@@ -397,36 +397,6 @@ body > .page-content-wrapper > .container-fluid {
     min-height: 100%;
 }
 
-.modal-content {
-    background: #282828;
-    color: #fff;
-}
-
-.modal-header {
-    border-bottom: none;
-    padding: 15px 15px 0;
-}
-
-.modal-body {
-    padding: 0 15px;
-}
-
-.modal-footer {
-    border-top: none;
-}
-
-.modal-header .close {
-    color: #fff;
-    text-shadow: none;
-    opacity: 0.8;
-}
-
-@media (min-width: 1280px){
-    .modal-dialog {
-        width: 1000px;
-    }
-}
-
 .btn-stack, .btn-stack:active, .btn-stack:focus, .btn-stack:active:focus {
     text-align: left;
     background: linear-gradient(to right, #1f6895 0%, #1f6895 45px, #1f6895 45px, #2a80b9 45px, #2a80b9 100%);
