@@ -82,7 +82,6 @@
     <script src="libs/respond_1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
 
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
@@ -168,7 +167,8 @@
 
                     <div class="page-content">
                         <!-- Components grid -->
-                        <div class="ues-components-grid gadgets-grid gridster">
+                        <div class="ues-components-grid gadgets-grid">
+                            <%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%>
                         </div>
                     </div>
                 </div>
@@ -196,9 +196,6 @@
 
     <!-- Theme WSO2 JS -->
     <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
-
-    <!-- Gridster -->
-    <script src="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.js"></script>
 
     <!-- Handlebars JS -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
@@ -253,17 +250,6 @@
         </div>
     </script>
 
-    <!-- Banner -->
-    <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
-        {{#if isBannerExists}}
-        <div class="ues-banner-placeholder" style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
-        {{else}}
-        <div class="ues-banner-placeholder no-banner">
-            <p>Please add a banner...</p>
-        </div>
-        {{/if}}
-    </script>
-
     <!-- Gadget settings -->
     <script id="ues-gadget-setting-hbs" type="text/x-handlebars-template">
         <div class="ues-sandbox gadget-setting" data-component="{{id}}">
@@ -315,14 +301,6 @@
         </div>
     </script>
 
-     <!-- Template to generate gridster list -->
-    <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
-        {{#each blocks}}
-        <li class="gridster-block ues-component-box"  id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}">
-        </li>
-        {{/each}}
-    </script>
-
     <!-- Scripts -->
     <script>
 
@@ -341,9 +319,11 @@
 
         $(document).ready(function() {
             // Show banner
-            var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html()),
-                banner = ues.global.dashboard.banner;
-            $('.ues-component-box[data-banner=true]').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
+            if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
+                $('.ues-banner-placeholder').css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
+            } else {
+                $('.ues-banner-placeholder').hide();
+            }
 
             // Toggle component box heading
             $('.ues-component').hover(function() {
