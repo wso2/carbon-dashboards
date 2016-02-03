@@ -1069,7 +1069,7 @@ $(function () {
         }
 
         if (hasError) {
-            return;
+            return false;
         }
 
         var landing = $('input[name=landing]', e),
@@ -1168,6 +1168,8 @@ $(function () {
         } else {
             console.error('Unable to find the property.')
         }
+
+        return true;
     };
 
     /**
@@ -1617,8 +1619,9 @@ $(function () {
                 isUserCustom: dashboard.isUserCustom,
                 fluidLayout: page.layout.fluidLayout || false
             })).on('change', 'input', function () {
-                updatePageProperties($(this).closest('.ues-page-properties'));
-                switchPage(page.id, pageType);
+                if (updatePageProperties($(this).closest('.ues-page-properties'))) {
+                    switchPage(page.id, pageType);
+                }
             });
 
             // bind event handlers for page properties input fields
@@ -1781,7 +1784,7 @@ $(function () {
      * @private
      */
     var listenLayout = function () {
-        $('.gadgets-grid').find('.ues-component-box:not([data-banner=true])').droppable({
+        $('.gadgets-grid').find('.gridster-block:not([data-banner=true]) .ues-component-box').droppable({
             hoverClass: 'ui-state-hover',
             drop: function (event, ui) {
 

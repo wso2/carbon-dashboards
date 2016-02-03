@@ -343,7 +343,7 @@
 
         <div class="ues-component gadget">
             <div class="gadget-heading ues-component-heading">
-                <h1 class="gadget-title ues-component-title">:::</h1>
+                <h1 class="gadget-title ues-component-title truncate">:::</h1>
                 <div class="gadget-actions ues-component-actions">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="Remove">
@@ -374,16 +374,18 @@
     <!-- Template to generate component toolbar -->
     <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
 
-        <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)"><!--ues-properties-handle-->
-            <img src="<%=urlPrefix%>theme/images/icons/options.png">
-        </button>
-        <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
-            data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
-            <img src="<%=urlPrefix%>theme/images/icons/maximize.png">
-        </button>
-        <button type="button" class="btn btn-default ues-trash-handle" title="Remove">
-            <i class="icon fw fw-delete"></i>
-        </button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)"><!--ues-properties-handle-->
+                <img src="<%=urlPrefix%>theme/images/icons/options.png">
+            </button>
+            <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
+                data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+                <img src="<%=urlPrefix%>theme/images/icons/maximize.png">
+            </button>
+            <button type="button" class="btn btn-default ues-trash-handle" title="Remove">
+                <i class="icon fw fw-delete"></i>
+            </button>
+        </div>
     </script>
 
     <!-- Template to generate banners -->
@@ -688,7 +690,7 @@
                                 <div class="col-sm-12">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" name="borders"{{#if styles.borders}} checked="checked"{{/if}} /> <%= i18n.localize("borders") %>
+                                            <input type="checkbox" name="no_heading"{{#if styles.no_heading}} checked="checked"{{/if}} /> <%= i18n.localize("no.heading") %>
                                         </label>
                                     </div>
                                 </div>

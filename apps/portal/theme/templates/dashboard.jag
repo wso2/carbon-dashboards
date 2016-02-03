@@ -255,7 +255,11 @@
     <!-- Banner -->
     <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
         {{#if isBannerExists}}
-        <img src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" />
+        <div class="ues-banner-placeholder" style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
+        {{else}}
+        <div class="ues-banner-placeholder no-banner">
+            <p>Please add a banner...</p>
+        </div>
         {{/if}}
     </script>
 
@@ -335,10 +339,29 @@
         }
 
         $(document).ready(function() {
-            var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
-            var banner = ues.global.dashboard.banner;
-            $('.ues-banner-placeholder').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
+            // Show banner
+            var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html()),
+                banner = ues.global.dashboard.banner;
+            $('.ues-component-box[data-banner=true]').html(bannerHbs({ isBannerExists: banner.globalBannerExists || banner.customBannerExists }));
+
+            // Toggle component box heading
+            $('.ues-component').hover(function() {
+                toggleHeading($(this), true);
+            }, function() {
+                toggleHeading($(this), false);
+            });
         });
+
+        function toggleHeading(source, show) {
+            if (source.hasClass('ues-no-heading')) {
+                var heading = source.find('.ues-component-heading');
+                if (show) {
+                    heading.slideDown();
+                } else {
+                    heading.slideUp();
+                }
+            }
+        }
     </script>
 </body>
 </html>
