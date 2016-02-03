@@ -70,15 +70,16 @@
     $font-file: '#{$font-folder-path}/#{$font}/#{$file-name}';
     @font-face {
         font-family: $font;
-        font-style: $font-style;
         font-weight: $font-weight;
+        font-style: $font-style;
         src: url('#{$font-file}.eot');
-        src: local($font-name),
+        src: url('#{$font-file}.eot?#iefix') format('embedded-opentype'),
+        local($font-name),
         local($file-name),
-        url('#{$font-file}.eot') format('embedded-opentype'),
+        url('#{$font-file}.woff2') format('woff2'),
         url('#{$font-file}.woff') format('woff'),
         url('#{$font-file}.ttf') format('truetype'),
-        url('#{$font-file}.svg##{$font-name}') format('svg');
+        url('#{$font-file}.svg##{$font}') format('svg');
     }
 }
 
@@ -140,6 +141,7 @@
  * ======================================================================== */
 
 $font-folder-path: '../fonts';
+@include font( 'Roboto', 400, 'normal', 'Roboto Regular', 'Roboto-Regular', $font-folder-path)
 $font-default: 'Roboto', Arial, Helvetica, sans-serif;
 $font-icons: 'font-wso2';
 $font-default-weight: 300;
@@ -230,17 +232,18 @@ $sidebar-width-default: 350px;
  * loading fonts
  * ======================================================================== */
 
-@include font( 'Roboto', 100, 'italic', 'Roboto Thin Italic', 'Roboto-ThinItalic-webfont', $font-folder-path)
-@include font( 'Roboto', 300, 'italic', 'Roboto Light Italic', 'Roboto-LightItalic-webfont', $font-folder-path)
-@include font( 'Roboto', 500, 'italic', 'Roboto Medium Italic', 'Roboto-MediumItalic-webfont', $font-folder-path)
-@include font( 'Roboto', 700, 'italic', 'Roboto Bold Italic', 'Roboto-BoldItalic-webfont', $font-folder-path)
-@include font( 'Roboto', 900, 'italic', 'Roboto Black Italic', 'Roboto-BlackItalic-webfont', $font-folder-path)
-@include font( 'Roboto', 100, 'normal', 'Roboto Thin', 'Roboto-Thin-webfont', $font-folder-path)
-@include font( 'Roboto', 300, 'normal', 'Roboto Light', 'Roboto-Light-webfont', $font-folder-path)
-@include font( 'Roboto', 400, 'normal', 'Roboto Regular', 'Roboto-Regular-webfont', $font-folder-path)
-@include font( 'Roboto', 500, 'normal', 'Roboto Medium', 'Roboto-Medium-webfont', $font-folder-path)
-@include font( 'Roboto', 700, 'normal', 'Roboto Bold', 'Roboto-Bold-webfont', $font-folder-path)
-@include font( 'Roboto', 900, 'normal', 'Roboto Black', 'Roboto-Black-webfont', $font-folder-path)
+//@include font( 'Roboto', 100, 'normal', 'Roboto Thin', 'Roboto-Thin', $font-folder-path)
+//@include font( 'Roboto', 300, 'normal', 'Roboto Light', 'Roboto-Light', $font-folder-path)
+//@include font( 'Roboto', 400, 'normal', 'Roboto Regular', 'Roboto-Regular', $font-folder-path)
+//@include font( 'Roboto', 500, 'normal', 'Roboto Medium', 'Roboto-Medium', $font-folder-path)
+//@include font( 'Roboto', 700, 'normal', 'Roboto Bold', 'Roboto-Bold', $font-folder-path)
+//@include font( 'Roboto', 900, 'normal', 'Roboto Black', 'Roboto-Black', $font-folder-path)
+//@include font( 'Roboto', 100, 'italic', 'Roboto Thin Italic', 'Roboto-Thin-Italic', $font-folder-path)
+//@include font( 'Roboto', 300, 'italic', 'Roboto Light Italic', 'Roboto-Light-Italic', $font-folder-path)
+//@include font( 'Roboto', 400, 'italic', 'Roboto Italic', 'Roboto-Italic', $font-folder-path)
+//@include font( 'Roboto', 500, 'italic', 'Roboto Medium Italic', 'Roboto-Medium-Italic', $font-folder-path)
+//@include font( 'Roboto', 700, 'italic', 'Roboto Bold Italic', 'Roboto-Bold-Italic', $font-folder-path)
+//@include font( 'Roboto', 900, 'italic', 'Roboto Black Italic', 'Roboto-Black-Italict', $font-folder-path)
 
 /* ========================================================================
  * icon styles
@@ -1557,6 +1560,10 @@ footer a {
  * form styles
  * ======================================================================== */
 
+.form-horizontal {
+    max-width: $form-control-max-width;
+}
+
 .control-label {
     font-weight: 400;
 }
@@ -1674,11 +1681,11 @@ a.btn, .btn {
         height: 34px;
         line-height: 34px;
         text-align: center;
-        padding: 6px;
         background: transparent;
         border: none;
         z-index: 5;
-        opacity: 0.7
+        opacity: 0.7;
+        font-size: 14px;
     }
 
     &:hover {
@@ -1707,8 +1714,8 @@ input[type=number].form-control {
     padding: 0 0 0 12px;
 }
 
-.form-control, .input-wrap {
-    max-width: $form-control-max-width;
+.input-wrap {
+    width: 100%;
 }
 
 .form-control:focus {
@@ -2433,17 +2440,44 @@ ul.tiles .icon {
 }
 
 .modal-content {
+    background: $base-dark-color;
+    color: $base-light-color;
     @include border-radius;
     @include box-shadow;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding: 15px 15px 0;
+}
+
+.modal-header .close {
+    color: $base-light-color;
+    text-shadow: none;
+    opacity: 0.8;
+}
+
+.modal-body {
+    padding: 0 15px;
 }
 
 .modal-dialog {
     margin: 80px auto;
 }
 
+.modal-footer {
+    border-top: none;
+}
+
 @media only screen and (max-width: 768px) {
     .modal {
         padding: 0 15px !important;
+    }
+}
+
+@media only screen and (min-width: 1280px){
+    .modal-dialog {
+        width: 1000px;
     }
 }
 
@@ -2617,77 +2651,79 @@ a.list-group-item:hover {
     cursor: pointer;
     position: relative;
     margin-top: -4px;
-}
-.switch  > input[type=checkbox] {
-    position: absolute;
-    opacity: 0;
-}
-.switch .helper {
-    padding-left: 52px;
-    position: relative;
-}
 
-.switch .text {
-    display: none;
-    margin-left: 5px;
-    font-weight: 100;
-}
+    & > input[type=checkbox] {
+        position: absolute;
+        opacity: 0;
 
-.switch input[type="checkbox"]:checked + .helper + .text {
-    display: inline-block;
-}
+        &:checked + .helper + .text {
+            display: inline-block;
+        }
 
-.switch .helper:before {
-    position: absolute;
-    left: 0;
-    top: 2px;
-    display: block;
-    content: "";
-    width: 40px;
-    height: 16px;
-    cursor: pointer;
-    background: $switch-active-background-color;
-    margin-left: 2px;
-    z-index: 1;
-    border-radius: 8px;
-}
+        & + .helper:after {
+            position: absolute;
+            left: 18px;
+            top: -2px;
+            display: block;
+            content: "";
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            background: $switch-handler-active-color;
+            z-index: 2;
+            border-radius: 12px;
 
-.switch input[type="checkbox"] + .helper:after {
-    position: absolute;
-    left: 18px;
-    top: -2px;
-    display: block;
-    content: "";
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    background: $switch-handler-active-color;
-    z-index: 2;
-    border-radius: 12px;
+            -webkit-transition: left 0.2s ease-in-out;
+            -moz-transition: left 0.2s ease-in-out;
+            -o-transition: left 0.2s ease-in-out;
+            transition: left 0.2s ease-in-out;
+        }
 
-    -webkit-transition: left 0.2s ease-in-out;
-    -moz-transition: left 0.2s ease-in-out;
-    -o-transition: left 0.2s ease-in-out;
-    transition: left 0.2s ease-in-out;
-}
+        &:not(:checked) + .helper:after {
+            left: 1px !important;
+            background: $switch-handler-inactive-color;
+        }
 
-.switch input[type="checkbox"]:not(:checked) + .helper:after {
-    left: 1px !important;
-    background: $switch-handler-inactive-color;
-}
+        &:not(:checked) + .helper:before {
+            background: $switch-inactive-background-color !important;
+        }
 
-.switch input[type="checkbox"]:not(:checked) + .helper:before {
-    background: $switch-inactive-background-color !important;
-}
+        &:disabled + .helper:after {
+            cursor: default !important;
+            background: $switch-handler-disabled-color !important;
+        }
 
-.switch input[type="checkbox"]:disabled + .helper:after {
-    cursor: default !important;
-    background: $switch-handler-disabled-color !important;
-}
+        &:disabled + .helper:before {
+            cursor: default !important;
+            background: $switch-disabled-background-color !important;
+        }
+    }
 
-.switch input[type="checkbox"]:disabled + .helper:before {
-    cursor: default !important;
-    background: $switch-disabled-background-color !important;
+    & .helper {
+        padding-left: 52px;
+        position: relative;
+
+        &:before {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            display: block;
+            content: "";
+            width: 40px;
+            height: 16px;
+            cursor: pointer;
+            background: $switch-active-background-color;
+            margin-left: 2px;
+            z-index: 1;
+            border-radius: 8px;
+        }
+    }
+
+    & .text {
+        display: none;
+        margin-left: 5px;
+        font-weight: 100;
+    }
 }
 
 /* ========================================================================
@@ -2700,63 +2736,72 @@ a.list-group-item:hover {
     margin-bottom: 0;
     margin-top: 0;
     cursor: pointer;
-    font-weight: 100;
-}
-.radio  > input[type=radio] {
-    position: absolute;
-    opacity: 0;
-}
-.radio .helper {
-    padding-left: 26px;
-    padding-top: 1px;
-    position: relative;
-}
-.radio .helper:before {
-    position: absolute;
-    display: block;
-    height: 20px;
-    width: 20px;
-    content: "";
-    text-indent: -9999px;
-    border: 2px #d9d9d9 solid;
-    z-index: 1;
-    opacity: 1;
-    top: -1px;
-    left: 0;
-    border-radius: 100%;
-}
-.radio input[type="radio"]:checked + .helper:after {
-    position: absolute;
-    display: block;
-    content: "";
-    color: $button-primary-background-color;
-    z-index: 2;
-    font-size: 16px;
-    font-weight: bold;
-    left: 5px;
-    margin-left: 0;
-    top: 50%;
-    margin-top: -5px;
-    background-color: $button-primary-background-color;
-    width: 10px;
-    height: 10px;
-    border-radius: 100%;
-}
-.radio input[type="radio"]:checked + .helper:before {
-    border: 2px $button-primary-background-color solid;
-}
-.radio input[type="radio"]:disabled + .helper:before {
-    cursor: default;
-    background: #e6e6e6;
-}
-.radio input[type="radio"]:disabled + .helper:after {
-    background-color: #8a8a8a;
-}
-.radio:hover input:not(:disabled) + .helper:before {
-    border-color: #919191;
-}
-.radio:active input:not(:disabled) + .helper:before {
-    border-color: #919191;
+    font-weight: 300;
+
+    & > input[type=radio] {
+        position: absolute;
+        opacity: 0;
+
+        &:checked + .helper:after {
+            position: absolute;
+            display: block;
+            content: "";
+            color: $button-primary-background-color;
+            z-index: 2;
+            font-size: 16px;
+            font-weight: bold;
+            left: 5px;
+            margin-left: 0;
+            top: 50%;
+            margin-top: -5px;
+            background-color: $button-primary-background-color;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+        }
+
+        &:checked + .helper:before {
+            border: 2px $button-primary-background-color solid;
+        }
+
+        &:disabled + .helper:before {
+            cursor: default;
+            background: #e6e6e6;
+        }
+
+        &:disabled + .helper:after {
+            background-color: #8a8a8a;
+        }
+
+        &:not(:disabled) + .helper:before {
+            border-color: #919191;
+        }
+
+        &:not(:disabled) + .helper:before {
+            border-color: #919191;
+        }
+    }
+
+    & .helper {
+        padding-left: 26px;
+        padding-top: 1px;
+        position: relative;
+
+        &:before {
+            position: absolute;
+            display: block;
+            height: 20px;
+            width: 20px;
+            content: "";
+            text-indent: -9999px;
+            border: 2px #d9d9d9 solid;
+            z-index: 1;
+            opacity: 1;
+            top: -1px;
+            left: 0;
+            border-radius: 100%;
+        }
+    }
 }
 
 /* ========================================================================
@@ -2767,62 +2812,73 @@ a.list-group-item:hover {
     display: inline-block;
     margin: 0 10px 0 0;
     cursor: pointer;
-}
-.checkbox  > input[type=checkbox] {
-    position: absolute;
-    opacity: 0;
-}
-.checkbox .helper {
-    padding-left: 23px;
-    position: relative;
-}
-.checkbox .helper:before {
-    position: absolute;
-    display: block;
-    height: 20px;
-    width: 20px;
-    content: "";
-    text-indent: -9999px;
-    border: 2px #eaf0f1 solid;
-    z-index: 1;
-    opacity: 1;
-    top: 0;
-    left: 0;
-}
-.checkbox input[type="checkbox"]:checked + .helper:before {
-    border: 2px $button-primary-background-color solid;
-}
-.checkbox input[type="checkbox"]:checked + .helper:after {
-    position: absolute;
-    display: block;
-    content: "\e631";
-    font-size: 7pt;
-    height: 16px;
-    width: 16px;
-    line-height: 16px;
-    z-index: 2;
-    top: 2px;
-    margin-top: 0;
-    left: 2px;
-    margin-left: 0;
-    text-align: center;
-    background: $button-primary-background-color;
-    color: #fff;
-    font-family: fontwso2;
-}
-.checkbox input[type="checkbox"]:not(:checked) + .helper:after {
-    display: none;
-}
-.checkbox input[type="checkbox"]:disabled + .helper:before {
-    cursor: default;
-    background: #e6e6e6;
-}
-.checkbox input[type=checkbox]:disabled + .helper:after {
-    color: #8a8a8a;
-}
-.checkbox:hover input:not(:disabled) + .helper:before {
-    border-color: #526A84;
-}
-.checkbox:active input:not(:disabled) + .helper:before {
-    border-color: #526A84;
+    font-weight: 300;
+
+    & > input[type=checkbox] {
+        position: absolute;
+        opacity: 0;
+
+        &:checked + .helper:before {
+            border: 2px $button-primary-background-color solid;
+        }
+
+        &:checked + .helper:after {
+            position: absolute;
+            display: block;
+            content: "\e617";
+            font-size: 7pt;
+            height: 16px;
+            width: 16px;
+            line-height: 16px;
+            z-index: 2;
+            top: 2px;
+            margin-top: 0;
+            left: 2px;
+            margin-left: 0;
+            text-align: center;
+            background: $button-primary-background-color;
+            color: #fff;
+            font-family: font-wso2;
+        }
+
+        &:not(:checked) + .helper:after {
+            display: none;
+        }
+
+        &:disabled + .helper:before {
+            cursor: default;
+            background: #e6e6e6;
+        }
+
+        &:disabled + .helper:after {
+            color: #8a8a8a;
+        }
+
+        &:not(:disabled) + .helper:before {
+            border-color: #526A84;
+        }
+
+        :not(:disabled) + .helper:before {
+            border-color: #526A84;
+        }
+    }
+
+    & .helper {
+        padding-left: 23px;
+        position: relative;
+
+        &:before {
+            position: absolute;
+            display: block;
+            height: 20px;
+            width: 20px;
+            content: "";
+            text-indent: -9999px;
+            border: 2px #eaf0f1 solid;
+            z-index: 1;
+            opacity: 1;
+            top: 0;
+            left: 0;
+        }
+    }
 }

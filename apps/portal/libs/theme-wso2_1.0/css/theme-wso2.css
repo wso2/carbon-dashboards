@@ -19,97 +19,17 @@
 /* ========================================================================
  * default values
  * ======================================================================== */
+@font-face {
+  font-family: "Roboto";
+  font-weight: 400;
+  font-style: "normal";
+  src: url("../fonts/Roboto/Roboto-Regular.eot");
+  src: url("../fonts/Roboto/Roboto-Regular.eot?#iefix") format("embedded-opentype"), local("Roboto Regular"), local("Roboto-Regular"), url("../fonts/Roboto/Roboto-Regular.woff2") format("woff2"), url("../fonts/Roboto/Roboto-Regular.woff") format("woff"), url("../fonts/Roboto/Roboto-Regular.ttf") format("truetype"), url("../fonts/Roboto/Roboto-Regular.svg#Roboto") format("svg");
+}
+
 /* ========================================================================
  * loading fonts
  * ======================================================================== */
-@font-face {
-  font-family: "Roboto";
-  font-style: "italic";
-  font-weight: 100;
-  src: url("../fonts/Roboto/Roboto-ThinItalic-webfont.eot");
-  src: local("Roboto Thin Italic"), local("Roboto-ThinItalic-webfont"), url("../fonts/Roboto/Roboto-ThinItalic-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-ThinItalic-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-ThinItalic-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-ThinItalic-webfont.svg#Roboto Thin Italic") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "italic";
-  font-weight: 300;
-  src: url("../fonts/Roboto/Roboto-LightItalic-webfont.eot");
-  src: local("Roboto Light Italic"), local("Roboto-LightItalic-webfont"), url("../fonts/Roboto/Roboto-LightItalic-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-LightItalic-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-LightItalic-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-LightItalic-webfont.svg#Roboto Light Italic") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "italic";
-  font-weight: 500;
-  src: url("../fonts/Roboto/Roboto-MediumItalic-webfont.eot");
-  src: local("Roboto Medium Italic"), local("Roboto-MediumItalic-webfont"), url("../fonts/Roboto/Roboto-MediumItalic-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-MediumItalic-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-MediumItalic-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-MediumItalic-webfont.svg#Roboto Medium Italic") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "italic";
-  font-weight: 700;
-  src: url("../fonts/Roboto/Roboto-BoldItalic-webfont.eot");
-  src: local("Roboto Bold Italic"), local("Roboto-BoldItalic-webfont"), url("../fonts/Roboto/Roboto-BoldItalic-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-BoldItalic-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-BoldItalic-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-BoldItalic-webfont.svg#Roboto Bold Italic") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "italic";
-  font-weight: 900;
-  src: url("../fonts/Roboto/Roboto-BlackItalic-webfont.eot");
-  src: local("Roboto Black Italic"), local("Roboto-BlackItalic-webfont"), url("../fonts/Roboto/Roboto-BlackItalic-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-BlackItalic-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-BlackItalic-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-BlackItalic-webfont.svg#Roboto Black Italic") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "normal";
-  font-weight: 100;
-  src: url("../fonts/Roboto/Roboto-Thin-webfont.eot");
-  src: local("Roboto Thin"), local("Roboto-Thin-webfont"), url("../fonts/Roboto/Roboto-Thin-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-Thin-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-Thin-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-Thin-webfont.svg#Roboto Thin") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "normal";
-  font-weight: 300;
-  src: url("../fonts/Roboto/Roboto-Light-webfont.eot");
-  src: local("Roboto Light"), local("Roboto-Light-webfont"), url("../fonts/Roboto/Roboto-Light-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-Light-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-Light-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-Light-webfont.svg#Roboto Light") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "normal";
-  font-weight: 400;
-  src: url("../fonts/Roboto/Roboto-Regular-webfont.eot");
-  src: local("Roboto Regular"), local("Roboto-Regular-webfont"), url("../fonts/Roboto/Roboto-Regular-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-Regular-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-Regular-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-Regular-webfont.svg#Roboto Regular") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "normal";
-  font-weight: 500;
-  src: url("../fonts/Roboto/Roboto-Medium-webfont.eot");
-  src: local("Roboto Medium"), local("Roboto-Medium-webfont"), url("../fonts/Roboto/Roboto-Medium-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-Medium-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-Medium-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-Medium-webfont.svg#Roboto Medium") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "normal";
-  font-weight: 700;
-  src: url("../fonts/Roboto/Roboto-Bold-webfont.eot");
-  src: local("Roboto Bold"), local("Roboto-Bold-webfont"), url("../fonts/Roboto/Roboto-Bold-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-Bold-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-Bold-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-Bold-webfont.svg#Roboto Bold") format("svg");
-}
-
-@font-face {
-  font-family: "Roboto";
-  font-style: "normal";
-  font-weight: 900;
-  src: url("../fonts/Roboto/Roboto-Black-webfont.eot");
-  src: local("Roboto Black"), local("Roboto-Black-webfont"), url("../fonts/Roboto/Roboto-Black-webfont.eot") format("embedded-opentype"), url("../fonts/Roboto/Roboto-Black-webfont.woff") format("woff"), url("../fonts/Roboto/Roboto-Black-webfont.ttf") format("truetype"), url("../fonts/Roboto/Roboto-Black-webfont.svg#Roboto Black") format("svg");
-}
-
 /* ========================================================================
  * icon styles
  * ======================================================================== */
@@ -1676,6 +1596,10 @@ footer a, footer a:hover {
 /* ========================================================================
  * form styles
  * ======================================================================== */
+.form-horizontal {
+  max-width: 750px;
+}
+
 .control-label {
   font-weight: 400;
 }
@@ -1787,11 +1711,11 @@ a.btn:hover, .btn:hover {
   height: 34px;
   line-height: 34px;
   text-align: center;
-  padding: 6px;
   background: transparent;
   border: none;
   z-index: 5;
   opacity: 0.7;
+  font-size: 14px;
 }
 
 .form-control-btn:hover {
@@ -1822,8 +1746,8 @@ input[type=number].form-control {
   padding: 0 0 0 12px;
 }
 
-.form-control, .input-wrap {
-  max-width: 750px;
+.input-wrap {
+  width: 100%;
 }
 
 .form-control:focus {
@@ -2605,6 +2529,8 @@ ul.tiles .icon {
 }
 
 .modal-content {
+  background: #222;
+  color: #ffffff;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
@@ -2613,13 +2539,38 @@ ul.tiles .icon {
   box-shadow: none;
 }
 
+.modal-header {
+  border-bottom: none;
+  padding: 15px 15px 0;
+}
+
+.modal-header .close {
+  color: #ffffff;
+  text-shadow: none;
+  opacity: 0.8;
+}
+
+.modal-body {
+  padding: 0 15px;
+}
+
 .modal-dialog {
   margin: 80px auto;
+}
+
+.modal-footer {
+  border-top: none;
 }
 
 @media only screen and (max-width: 768px) {
   .modal {
     padding: 0 15px !important;
+  }
+}
+
+@media only screen and (min-width: 1280px) {
+  .modal-dialog {
+    width: 1000px;
   }
 }
 
@@ -2793,37 +2744,11 @@ a.list-group-item:hover {
   opacity: 0;
 }
 
-.switch .helper {
-  padding-left: 52px;
-  position: relative;
-}
-
-.switch .text {
-  display: none;
-  margin-left: 5px;
-  font-weight: 100;
-}
-
-.switch input[type="checkbox"]:checked + .helper + .text {
+.switch > input[type=checkbox]:checked + .helper + .text {
   display: inline-block;
 }
 
-.switch .helper:before {
-  position: absolute;
-  left: 0;
-  top: 2px;
-  display: block;
-  content: "";
-  width: 40px;
-  height: 16px;
-  cursor: pointer;
-  background: #25262b;
-  margin-left: 2px;
-  z-index: 1;
-  border-radius: 8px;
-}
-
-.switch input[type="checkbox"] + .helper:after {
+.switch > input[type=checkbox] + .helper:after {
   position: absolute;
   left: 18px;
   top: -2px;
@@ -2841,23 +2766,49 @@ a.list-group-item:hover {
   transition: left 0.2s ease-in-out;
 }
 
-.switch input[type="checkbox"]:not(:checked) + .helper:after {
+.switch > input[type=checkbox]:not(:checked) + .helper:after {
   left: 1px !important;
   background: #eaeaea;
 }
 
-.switch input[type="checkbox"]:not(:checked) + .helper:before {
+.switch > input[type=checkbox]:not(:checked) + .helper:before {
   background: #a6a6a6 !important;
 }
 
-.switch input[type="checkbox"]:disabled + .helper:after {
+.switch > input[type=checkbox]:disabled + .helper:after {
   cursor: default !important;
   background: #484e52 !important;
 }
 
-.switch input[type="checkbox"]:disabled + .helper:before {
+.switch > input[type=checkbox]:disabled + .helper:before {
   cursor: default !important;
   background: #6f7579 !important;
+}
+
+.switch .helper {
+  padding-left: 52px;
+  position: relative;
+}
+
+.switch .helper:before {
+  position: absolute;
+  left: 0;
+  top: 2px;
+  display: block;
+  content: "";
+  width: 40px;
+  height: 16px;
+  cursor: pointer;
+  background: #25262b;
+  margin-left: 2px;
+  z-index: 1;
+  border-radius: 8px;
+}
+
+.switch .text {
+  display: none;
+  margin-left: 5px;
+  font-weight: 100;
 }
 
 /* ========================================================================
@@ -2869,12 +2820,51 @@ a.list-group-item:hover {
   margin-bottom: 0;
   margin-top: 0;
   cursor: pointer;
-  font-weight: 100;
+  font-weight: 300;
 }
 
 .radio > input[type=radio] {
   position: absolute;
   opacity: 0;
+}
+
+.radio > input[type=radio]:checked + .helper:after {
+  position: absolute;
+  display: block;
+  content: "";
+  color: #2a80b9;
+  z-index: 2;
+  font-size: 16px;
+  font-weight: bold;
+  left: 5px;
+  margin-left: 0;
+  top: 50%;
+  margin-top: -5px;
+  background-color: #2a80b9;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+}
+
+.radio > input[type=radio]:checked + .helper:before {
+  border: 2px #2a80b9 solid;
+}
+
+.radio > input[type=radio]:disabled + .helper:before {
+  cursor: default;
+  background: #e6e6e6;
+}
+
+.radio > input[type=radio]:disabled + .helper:after {
+  background-color: #8a8a8a;
+}
+
+.radio > input[type=radio]:not(:disabled) + .helper:before {
+  border-color: #919191;
+}
+
+.radio > input[type=radio]:not(:disabled) + .helper:before {
+  border-color: #919191;
 }
 
 .radio .helper {
@@ -2898,45 +2888,6 @@ a.list-group-item:hover {
   border-radius: 100%;
 }
 
-.radio input[type="radio"]:checked + .helper:after {
-  position: absolute;
-  display: block;
-  content: "";
-  color: #2a80b9;
-  z-index: 2;
-  font-size: 16px;
-  font-weight: bold;
-  left: 5px;
-  margin-left: 0;
-  top: 50%;
-  margin-top: -5px;
-  background-color: #2a80b9;
-  width: 10px;
-  height: 10px;
-  border-radius: 100%;
-}
-
-.radio input[type="radio"]:checked + .helper:before {
-  border: 2px #2a80b9 solid;
-}
-
-.radio input[type="radio"]:disabled + .helper:before {
-  cursor: default;
-  background: #e6e6e6;
-}
-
-.radio input[type="radio"]:disabled + .helper:after {
-  background-color: #8a8a8a;
-}
-
-.radio:hover input:not(:disabled) + .helper:before {
-  border-color: #919191;
-}
-
-.radio:active input:not(:disabled) + .helper:before {
-  border-color: #919191;
-}
-
 /* ========================================================================
  * checkbox styles
  * ======================================================================== */
@@ -2944,11 +2895,56 @@ a.list-group-item:hover {
   display: inline-block;
   margin: 0 10px 0 0;
   cursor: pointer;
+  font-weight: 300;
 }
 
 .checkbox > input[type=checkbox] {
   position: absolute;
   opacity: 0;
+}
+
+.checkbox > input[type=checkbox]:checked + .helper:before {
+  border: 2px #2a80b9 solid;
+}
+
+.checkbox > input[type=checkbox]:checked + .helper:after {
+  position: absolute;
+  display: block;
+  content: "\e617";
+  font-size: 7pt;
+  height: 16px;
+  width: 16px;
+  line-height: 16px;
+  z-index: 2;
+  top: 2px;
+  margin-top: 0;
+  left: 2px;
+  margin-left: 0;
+  text-align: center;
+  background: #2a80b9;
+  color: #fff;
+  font-family: font-wso2;
+}
+
+.checkbox > input[type=checkbox]:not(:checked) + .helper:after {
+  display: none;
+}
+
+.checkbox > input[type=checkbox]:disabled + .helper:before {
+  cursor: default;
+  background: #e6e6e6;
+}
+
+.checkbox > input[type=checkbox]:disabled + .helper:after {
+  color: #8a8a8a;
+}
+
+.checkbox > input[type=checkbox]:not(:disabled) + .helper:before {
+  border-color: #526A84;
+}
+
+.checkbox > input[type=checkbox] :not(:disabled) + .helper:before {
+  border-color: #526A84;
 }
 
 .checkbox .helper {
@@ -2968,48 +2964,4 @@ a.list-group-item:hover {
   opacity: 1;
   top: 0;
   left: 0;
-}
-
-.checkbox input[type="checkbox"]:checked + .helper:before {
-  border: 2px #2a80b9 solid;
-}
-
-.checkbox input[type="checkbox"]:checked + .helper:after {
-  position: absolute;
-  display: block;
-  content: "\e631";
-  font-size: 7pt;
-  height: 16px;
-  width: 16px;
-  line-height: 16px;
-  z-index: 2;
-  top: 2px;
-  margin-top: 0;
-  left: 2px;
-  margin-left: 0;
-  text-align: center;
-  background: #2a80b9;
-  color: #fff;
-  font-family: fontwso2;
-}
-
-.checkbox input[type="checkbox"]:not(:checked) + .helper:after {
-  display: none;
-}
-
-.checkbox input[type="checkbox"]:disabled + .helper:before {
-  cursor: default;
-  background: #e6e6e6;
-}
-
-.checkbox input[type=checkbox]:disabled + .helper:after {
-  color: #8a8a8a;
-}
-
-.checkbox:hover input:not(:disabled) + .helper:before {
-  border-color: #526A84;
-}
-
-.checkbox:active input:not(:disabled) + .helper:before {
-  border-color: #526A84;
 }

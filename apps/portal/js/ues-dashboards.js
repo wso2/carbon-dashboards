@@ -170,8 +170,8 @@
             if (isDesigner || hasComponent) {
                 container.html(componentBoxContentHbs());
             }
-            
-            if (container.attr('data-banner') == 'true') {
+
+            if (container.parent().attr('data-banner') == 'true') {
                 container.find('.ues-component-body').addClass('ues-banner-placeholder');
             }
             

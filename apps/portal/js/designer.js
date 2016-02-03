@@ -1587,7 +1587,13 @@ $(function () {
                             }
                         } else {
                             dashboard.landing = null;
+
+                            // hide the sidebar if it is open
+                            if ($('#left-sidebar').hasClass('toggled')) {
+                                $('#btn-pages-sidebar').click();
+                            }
                         }
+
 
                         // save the dashboard
                         saveDashboard();

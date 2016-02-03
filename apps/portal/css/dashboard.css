@@ -78,8 +78,20 @@
 /**
  * Theme overrides
  */
-.gadgets-grid {
-    padding: 15px 0 0 0;
+@media screen and (max-width: 767px) {
+    .gadgets-grid {
+        padding: 40px;
+    }
+
+    .gadgets-grid > ul {
+        padding: 0;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .container .gadgets-grid {
+        padding: 15px 0 0 0;
+    }
 }
 
 .gadget-title {
@@ -146,4 +158,13 @@
 
 .ues-no-heading .ues-component-heading {
     display: none;
+}
+
+@media screen and (max-width: 767px) {
+    .page-header > .page-title {
+        float: none;
+    }
+
+    .page-header > .page-title > h1 {
+    }
 }
