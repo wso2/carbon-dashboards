@@ -100,3 +100,50 @@
     color: #000;
 }
 
+/**
+ * Banner
+ */
+.ues-banner-placeholder {
+    height: 100%;
+    width: 100%;
+}
+
+.ues-banner-placeholder:not(.no-banner) {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.no-banner {
+    background: rgba(226, 226, 226, 0.7);
+    position: relative;
+}
+
+.no-banner p {
+    font-size: 38px;
+    color: #fff;
+    position: absolute;
+    display: block;
+    width: 100%;
+    text-align: center;
+    top: calc(50% - 38px);
+}
+
+/**
+ * Component styles
+ */
+.ues-component-title-center .gadget-title {
+    text-align: center;
+}
+
+.ues-component-title-left .gadget-title {
+    text-align: left;
+}
+
+.ues-component-title-right .gadget-title {
+    text-align: right;
+}
+
+.ues-no-heading .ues-component-heading {
+    display: none;
+}

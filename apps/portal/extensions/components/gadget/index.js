@@ -101,11 +101,11 @@
                 gid = gadgetId(comp.id);
             
             sandbox.find('.ues-component-title').text(styles.title);
-            
-            if (styles.borders) {
-                sandbox.removeClass('ues-borderless');
+
+            if (styles.no_heading) {
+                sandbox.addClass('ues-no-heading');
             } else {
-                sandbox.addClass('ues-borderless');
+                sandbox.removeClass('ues-no-heading');
             }
             
             var titlePositon = 'ues-component-title-' + (styles.titlePosition || 'left');

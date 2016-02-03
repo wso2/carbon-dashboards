@@ -15,8 +15,8 @@
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
             <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=dashboard.title%></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboard Settings</a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=dashboard.title%></a></li>
+            <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboard-settings/<%=dashboard.id%>">Dashboard Settings</a></li>
         </ol>
     </div>
 
@@ -35,7 +35,7 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li>
-                            <a href="#" class="ues-dashboard-export">
+                            <a href="#" id="ues-dashboard-export">
                                 <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-up-arrow fw-stack-1x"></i>
@@ -62,12 +62,14 @@
                 <div class="form-group">
                     <label for="ues-dashboard-url" class="col-sm-3 control-label"><%= i18n.localize("url")%></label>
                     <div class="col-sm-9">
-                        <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" target="_blank">/dashboards/<%=dashboardId%></a>
+                        <p class="form-control-static">
+                            <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" target="_blank">/dashboards/<%=dashboardId%></a>
+                        </p>
                     </div>
                 </div>
                 <div class="form-group has-feedback">
                     <label for="ues-dashboard-title" class="col-sm-3 control-label">
-                    <%= i18n.localize("title")%><span class="required">*</span></label>
+                    <%= i18n.localize("title")%> <span class="required">*</span></label>
                     <div class="col-sm-9">
                         <input id="ues-dashboard-title" type="text" maxlength="250" class="form-control" placeholder="<%= i18n.localize("title")%>" value="<%=dashboard.title%>">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
@@ -91,8 +93,7 @@
                 <div class="form-group">
                     <label for="ues-share-view" class="col-sm-3 control-label"><%= i18n.localize("viewers")%></label>
                     <div class="col-sm-9">
-                        <input id="ues-share-view" type="text" class="form-control typeahead"
-                        placeholder="<%= i18n.localize("roles")%>">
+                        <input id="ues-share-view" type="text" class="form-control typeahead" placeholder="<%= i18n.localize("roles")%>">
                         <div class="ues-shared-view"></div>
                     </div>
                 </div>
@@ -114,7 +115,17 @@
                 <div class="form-group">
                     <label for="ues-enable-oauth" class="col-sm-3 control-label"><%= i18n.localize("enable")%></label>
                     <div class="col-sm-9">
-                        <label class="switch"><input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs" aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>" aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>><span class="toggle-button"></span></label>
+
+                        <label class="switch">
+                                    <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs"
+                                        aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
+                                        aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
+                                    <span class="helper"></span>
+                                </label>
+
+<!--
+                        <label class="switch">
+                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs" aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>" aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>><span class="toggle-button"></span></label>-->
                     </div>
                 </div>
                 <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) { print("in"); } %>" >

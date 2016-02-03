@@ -236,12 +236,6 @@ $(function () {
         settings.find('.ues-shared-edit').append(html);
     };
 
-    var addBreadcrumbs = function (pageName) {
-        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
-        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true'>" + dashboard.title + "</a></li>");
-        $("#ues-breadcrumbs").append("<li class='active'>" + pageName + "</li>");
-    };
-
     /**
      * pops up the export dashboard page
      * @private
@@ -300,7 +294,6 @@ $(function () {
     };
 
     var initUI = function () {
-        addBreadcrumbs("Dashboard Settings");
         var viewerSearchQuery = '';
         var maxLimit = 10;
         getUser();
@@ -473,6 +466,7 @@ $(function () {
             }
         });
 
+        // Dashboard title
         $('#ues-dashboard-title').on("keypress", function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim)
         }).on('change', function () {
@@ -485,6 +479,7 @@ $(function () {
             }
         });
 
+        // Dashboard description
         $('#ues-dashboard-description').on('keypress', function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
         }).on('change', function () {
@@ -492,6 +487,7 @@ $(function () {
             saveDashboard();
         });
 
+        // Enable Oauth settings
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");
             saveDashboard();
@@ -502,16 +498,13 @@ $(function () {
             }
         });
 
+        // Refresh Oauth settings
         $('#ues-oauth-refresh').on('click', function () {
             getOauthSettings();
         });
 
-        var menu = $('.ues-context-menu');
-        menu.find('.ues-tiles-menu-toggle').click(function () {
-            menu.find('.ues-tiles-menu').slideToggle();
-        });
-
-        menu.find('.ues-dashboard-export').on('click', function () {
+        // Export dashboard
+        $('#ues-dashboard-export').on('click', function () {
             exportDashboard();
         });
     };

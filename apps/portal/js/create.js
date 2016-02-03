@@ -96,8 +96,6 @@ $(function () {
         element.val('');
         element.parent().addClass("has-error");
         element.addClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("hide");
-        element.parent().find("span.glyphicon").addClass("show");
         errorElement.removeClass("hide");
         errorElement.addClass("show");
     };
@@ -111,8 +109,6 @@ $(function () {
     var hideInlineError = function (element, errorElement) {
         element.parent().removeClass("has-error");
         element.removeClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("show");
-        element.parent().find("span.glyphicon").addClass("hide");
         errorElement.removeClass("show");
         errorElement.addClass("hide");
     };
@@ -158,7 +154,6 @@ $(function () {
             !$.trim(title.val()) ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
             form.attr('action', url);
-            console.log("[Sending AJAX request to " + url);
 
             $.ajax({
                 url: url,
@@ -176,13 +171,4 @@ $(function () {
             });
         }
     });
-
-    var menu = $('.ues-context-menu');
-    menu.find('.ues-tiles-menu-toggle').click(function () {
-        menu.find('.ues-tiles-menu').slideToggle();
-    });
-
-    var breadcrumbs = $("#ues-breadcrumbs");
-    breadcrumbs.append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
-    breadcrumbs.append("<li class='active'>Create Dashboard</li>");
 });

@@ -32,12 +32,6 @@
     z-index:  1000;
 }
 
-/**
- * Theme overrides
- */
-.gadgets-grid {
-    min-height: 100%;
-}
 
 /*
  * Add block
@@ -56,33 +50,16 @@
 }
 
 /**
- * Validation messages
- */
-.required {
-    color: #e74c3c;
-}
-
-.required-error {
-    background: #a94442;
-    border: 1px solid #a94442;
-    padding: 6px 12px;
-}
-
-/**
  * Banner
  */
-.ues-component-box[data-banner=true] {
-    background: #eee;
-}
-
 .ues-banner-placeholder {
     background: -webkit-repeating-linear-gradient(145deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     background: repeating-linear-gradient(-55deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     position: absolute;
-    top: 39px;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 58px;
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
     overflow: hidden;
 }
 
@@ -146,3 +123,28 @@
 .gadgets-grid {
     padding: 40px 25px;
 }
+
+/**
+ * Theme overrides
+ */
+.gadgets-grid {
+    min-height: 100%;
+}
+
+.gadget .gadget-heading > .gadget-title {
+    width: calc(100% - 154px);
+}
+
+.ues-component-title-center .gadget-title {
+    text-align: center;
+}
+
+.ues-component-title-left .gadget-title {
+    text-align: left;
+}
+
+.ues-component-title-right .gadget-title {
+    text-align: right;
+}
+
+
