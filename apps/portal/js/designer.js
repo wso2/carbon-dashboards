@@ -161,6 +161,13 @@ $(function () {
             .html(componentPropertiesHbs(ctx))
             .on('change', 'input, select, textarea', function () {
                 updateComponentProperties($(this).closest('.ues-component-properties'));
+            })
+            .on('keypress', 'input, select, textarea', function(e) {
+                if (e.which === 13) {
+                    updateComponentProperties($(this).closest('.ues-component-properties'));
+                    e.preventDefault();
+                    return;
+                }
             });
 
         propertiesContainer
@@ -1587,7 +1594,13 @@ $(function () {
                             }
                         } else {
                             dashboard.landing = null;
+
+                            // hide the sidebar if it is open
+                            if ($('#left-sidebar').hasClass('toggled')) {
+                                $('#btn-pages-sidebar').click();
+                            }
                         }
+
 
                         // save the dashboard
                         saveDashboard();

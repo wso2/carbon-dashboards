@@ -441,13 +441,15 @@
     <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
 
         {{#each pages}}
-        <div class="panel panel-default"> <!-- active: {{#equals ../current/id id}} active{{/equals}} -->
+        <div class="panel panel-default{{#equals ../current/id id}} active{{/equals}}">
             <div class="panel-heading dropdown ues-page-list-heading" role="tab" id="pagesButton{{id}}" data-toggle="collapse" data-parent="#ues-dashboard-pages" data-target="#pages{{id}}" aria-expanded="false"  data-id="{{id}}">
                 <h4 class="panel-title">
-                    <span class="icon fw-stack {{#equals id ../home}}{{else}}disabled{{/equals}}">
+                    {{#equals id ../home}}
+                    <span class="icon fw-stack">
                         <i class="fw fw-home fw-stack-1x"></i>
                         <i class="fw fw-ring fw-stack-2x"></i>
-                    </span> {{title}} <span class="caret"></span></h4> <% //{{#if (lookup id ../current/id)}}yes{{else}}no{{/if}}%> <!-- todo -->
+                    </span>
+                    {{/equals}} {{title}} <span class="caret"></span></h4> <% //{{#if (lookup id ../current/id)}}yes{{else}}no{{/if}}%> <!-- todo -->
             </div>
             <div id="pages{{id}}" class="panel-collapse collapse ues-page-properties" role="tabpanel">
             </div>
