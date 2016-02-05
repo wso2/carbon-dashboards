@@ -53,6 +53,16 @@ var initCharts = function(columns) {
     });
 };
 
+var bindChartconfigs = function(columns,chartType) {
+    charts.forEach(function(item,i){
+
+        if(item.type == chartType){
+            var chart = item.value;
+            chart.bindConfigs(columns);
+        }
+    });
+};
+
 var drawChart = function(config, dataTable) {
     charts.forEach(function(item,i){
         if(config.chartType === item.type) {
@@ -108,15 +118,25 @@ BarChart.prototype.bindConfigs = function(columns) {
     $("#yAxis").append($('<option></option>')
         .val("-1")
         .html("-- Select --"));
+
     columns.forEach(function(column, i) {
-        $("#xAxis").append($('<option></option>')
-            .val(column.name)
-            .html(column.name)
-            .attr("data-type", column.type));
-        $("#yAxis").append($('<option></option>')
-            .val(column.name)
-            .html(column.name)
-            .attr("data-type", column.type));
+
+        var colType = column.type.toUpperCase();
+        if(colType != "BOOL" && colType != "BOOLEAN" ){
+
+            $("#xAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+
+        if(colType != "STRING" && colType != "BOOL" && colType != "BOOLEAN" && colType != "TIME"){
+
+            $("#yAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
     });
 };
 
@@ -140,14 +160,44 @@ function LineChart() {};
 LineChart.prototype.bindConfigs = function(columns) {
     console.log("****** Initializing LineChart *** ");
     $("#color").empty();
+    $("#xAxis").empty();
+    $("#yAxis").empty();
+
     $("#color").append($('<option></option>')
         .val("-1")
         .html("-- Select --"));
+    $("#xAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+    $("#yAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
     columns.forEach(function(column, i) {
-        $("#color").append($('<option></option>')
-            .val(column.name)
-            .html(column.name)
-            .attr("data-type", column.type));
+
+        var colType = column.type.toUpperCase();
+
+        if(colType != "BOOL" && colType != "BOOLEAN" && colType != "STRING"){
+
+            $("#xAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+
+        if(colType != "STRING" && colType != "BOOL" && colType != "BOOLEAN" && colType != "TIME"){
+
+            $("#yAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+
+        if(colType != "TIME"){
+            $("#color").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
     });
 };
 
@@ -173,6 +223,35 @@ function AreaChart() {};
 
 AreaChart.prototype.bindConfigs = function(columns) {
     console.log("****** Initializing AreaChart *** ");
+    $("#xAxis").empty();
+    $("#yAxis").empty();
+
+    $("#xAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+    $("#yAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+    columns.forEach(function(column, i) {
+
+        var colType = column.type.toUpperCase();
+
+        if(colType != "BOOL" && colType != "BOOLEAN" && colType != "STRING"){
+
+            $("#xAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+
+        if(colType != "STRING" && colType != "BOOL" && colType != "BOOLEAN" && colType != "TIME"){
+
+            $("#yAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+    });
 };
 
 AreaChart.prototype.configure = function(config) {
@@ -252,23 +331,54 @@ TableChart.prototype.draw = function(config, dataTable) {
 function ScatterChart() {};
 
 ScatterChart.prototype.bindConfigs = function(columns) {
+
+    $("#xAxis").empty();
+    $("#yAxis").empty();
     $("#pointSize").empty();
     $("#pointColor").empty();
+
+    $("#xAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+    $("#yAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
     $("#pointColor").append($('<option></option>')
         .val("-1")
         .html("-- Select --"));
     $("#pointSize").append($('<option></option>')
         .val("-1")
         .html("-- Select --"));
+
     columns.forEach(function(column, i) {
-        $("#pointColor").append($('<option></option>')
-            .val(column.name)
-            .html(column.name)
-            .attr("data-type", column.type));
-        $("#pointSize").append($('<option></option>')
-            .val(column.name)
-            .html(column.name)
-            .attr("data-type", column.type));
+
+        var colType = column.type.toUpperCase();
+
+        if(colType != "BOOL" && colType != "BOOLEAN" && colType != "STRING"){
+
+            $("#xAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+
+        if(colType != "STRING" && colType != "BOOL" && colType != "BOOLEAN" && colType != "TIME"){
+
+            $("#yAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+
+            $("#pointColor").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+
+            $("#pointSize").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
     });
 };
 
@@ -314,7 +424,36 @@ ArcChart.prototype.draw = function(config, dataTable) {
 function MapChart() {};
 
 MapChart.prototype.bindConfigs = function(columns) {
-    // body...
+    $("#xAxis").empty();
+    $("#yAxis").empty();
+
+    $("#xAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+    $("#yAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+
+    columns.forEach(function(column, i) {
+
+        var colType = column.type.toUpperCase();
+
+        if(colType == "STRING"){
+
+            $("#xAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+
+        if(colType != "STRING" && colType != "BOOL" && colType != "BOOLEAN" && colType != "TIME"){
+
+            $("#yAxis").append($('<option></option>')
+                .val(column.name)
+                .html(column.name)
+                .attr("data-type", column.type));
+        }
+    });
 };
 
 MapChart.prototype.configure = function(config) {
@@ -337,7 +476,19 @@ MapChart.prototype.draw = function(config, dataTable) {
 function NumberChart() {};
 
 NumberChart.prototype.bindConfigs = function(columns) {
-    // body...
+    $("#xAxis").empty();
+
+    $("#xAxis").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+
+    columns.forEach(function(column, i) {
+        $("#xAxis").append($('<option></option>')
+            .val(column.name)
+            .html(column.name)
+            .attr("data-type", column.type));
+    });
+
 };
 
 NumberChart.prototype.configure = function(config) {
