@@ -206,7 +206,8 @@
 
 <script id="permission-menu-hbs" type="text/x-handlebars-template">
     <div class="permission-menu-content">
-        {{name}}
+        <span>{{name}}</span>
+        <hr class="permission-item"/>
     </div>
 </script>
 
