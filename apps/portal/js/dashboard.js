@@ -26,6 +26,8 @@ $(function () {
 
             if (component.fullViewPoped) {
 
+                $('.ues-component-box').show();
+
                 // render normal view
                 // restore the normal view (remove the css class, restore the original height and remove the temporary attribute)
                 componentBox
@@ -38,7 +40,10 @@ $(function () {
                 $(this).attr('title', $(this).data('maximize-title'));
 
                 component.fullViewPoped = false;
+
             } else {
+
+                $('.ues-component-box:not([id="' + componentBox.attr('id') + '"])').hide();
 
                 // render max view
                 // change the container height for the max view (including backing up the original height for restoration later)

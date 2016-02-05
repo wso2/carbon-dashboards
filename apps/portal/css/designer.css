@@ -151,4 +151,6 @@
     background: #656f77;
 }
 
-
+.page-content .nano-content {
+    bottom: 32px;
+}

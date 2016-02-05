@@ -1,8 +1,8 @@
 /**
  * Gadget maximization
  */
-.ues-component-fullview {
-    position: absolute;
+.ues-component-box.ues-component-fullview {
+    position: fixed;
     top: 0;
     bottom: 0;
     right: 0;
@@ -11,6 +11,7 @@
     z-index: 2000;
     width: 100%;
     padding: 0;
+    margin-bottom: 0;
 }
 
 /**
@@ -67,9 +68,6 @@
 @media screen and (max-width: 767px) {
     .page-header > .page-title {
         float: none;
-    }
-
-    .page-header > .page-title > h1 {
     }
 }
 

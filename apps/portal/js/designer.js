@@ -702,7 +702,7 @@ $(function () {
                 throw err;
             }
             renderComponentToolbar(component);
-            renderComponentProperties(component);
+            container.find('.ues-component-actions .ues-component-properties-handle').click();
             saveDashboard();
         });
     };
@@ -2109,6 +2109,7 @@ $(function () {
 
             // stop resizing banner placeholder
             $('.gridster [data-banner=true] .gs-resize-handle').remove();
+            $('.gridster [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
 
             if (!done) {
                 return;
