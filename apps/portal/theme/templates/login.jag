@@ -9,7 +9,7 @@
         }
     </style>
 
-    <title><%= i18n.localize("dashboards.lable")%></title>
+    <title><%= i18n.localize("dashboards.label")%></title>
 
 </head>
 <body>

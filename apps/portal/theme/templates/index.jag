@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
 
-    <title><%= i18n.localize("dashboard.lable")%></title>
+    <title><%= i18n.localize("dashboard.label")%></title>
     <% var config = require('/configs/designer.json'); %>
 </head>
 <body>
@@ -15,7 +15,7 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
         </ol>
     </div>
 
@@ -25,7 +25,7 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
+                        <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -41,16 +41,16 @@
                                 </span> <%= i18n.localize("create.dashboard")%>
                             </a>
                         </li>
-						<% if (config.isCreateGadgetEnable) { %>
+                        <% if (config.isCreateGadgetEnable) { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-gadget">
                                 <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
-                                </span> <%= i18n.localize("create.gadget.lable")%>
+                                </span> <%= i18n.localize("create.gadget.label")%>
                             </a>
                         </li>
-						<% } %>
+                        <% } %>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -60,7 +60,7 @@
     <div id="ues-portal" class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="page-sub-title"><%= i18n.localize("dashboards.lable") %></h1>
+                <h1 class="page-sub-title"><%= i18n.localize("dashboards.label") %></h1>
                 <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
             </div>
         </div>
@@ -103,7 +103,7 @@
             <div class="caption">
                 <h4>
                     <%= i18n.localize("no.dashboards.found.description") %>
-                    <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.lable") %></a>.
+                    <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.label") %></a>.
                 </h4>
             </div>
         </div>
@@ -111,7 +111,7 @@
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
-        <p id="ues-dashboard-url" class="ues-dashboard-url truncate">URL: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
+        <p id="ues-dashboard-url" class="ues-dashboard-url truncate"><%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
         <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
         <div class="ues-actions">
             <a id="ues-view" class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">

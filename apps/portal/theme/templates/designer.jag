@@ -23,7 +23,7 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
             <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=dashboard.title%></a></li>
         </ol>
     </div>
@@ -34,7 +34,7 @@
             <div class="container-fluid ues-context-menu">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
+                        <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -49,7 +49,7 @@
                                 <span class="fw-stack">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
-                                </span> <%=i18n.localize("create.gadget.lable")%>
+                                </span> <%=i18n.localize("create.gadget.label")%>
                             </a>
                         </li>
                         <%}%>
@@ -93,17 +93,17 @@
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavPages', this)" title="Pages" id="btn-pages-sidebar">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavPages', this)" title="<%=i18n.localize("pages.label")%>" id="btn-pages-sidebar">
                     <i class="icon"><img src="<%=urlPrefix%>theme/images/icons/pages.png"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="Layouts" id="btn-sidebar-layouts">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("layouts")%>" id="btn-sidebar-layouts">
                     <i class="icon"><img src="<%=urlPrefix%>theme/images/icons/layouts.png"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="Gadgets" id="btn-sidebar-gadgets">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="<%=i18n.localize("gadgets")%>" id="btn-sidebar-gadgets">
                     <i class="icon fw fw-gadget"></i>
                 </a>
             </li>
@@ -123,7 +123,7 @@
 
                     <!-- Pages -->
                     <div id="sidebarNavPages">
-                        <div class="sidebar-brand">Pages</div>
+                        <div class="sidebar-brand"><%=i18n.localize("pages.label")%></div>
 
                         <div class="add-padding-3x">
 
@@ -131,14 +131,14 @@
                                 <button class="form-control-btn" type="button" title="Search">
                                     <i class="fw fw-search" aria-hidden="true"></i>
                                 </button>
-                                <input type="text" class="form-control" placeholder="<%print(i18n.localize("search.lable"));%>..." />
+                                <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>..." />
                             </div>
 
                             <button type="button" class="btn btn-primary btn-stack btn-block" data-toggle="sidebar" data-target="#left-sidebar-sub" aria-expanded="false" rel="createPage">
                                 <span class="icon fw-stack fw-lg">
                                     <i class="fw fw-ring fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
-                                </span> Create Page
+                                </span> <%=i18n.localize("create.page.label")%>
                             </button>
                         </div>
                         <div class="panel-group" id="ues-dashboard-pages" role="tablist" aria-multiselectable="true">
@@ -147,11 +147,11 @@
 
                     <!-- Layouts -->
                     <div id="sidebarNavLayouts">
-                        <div class="sidebar-brand">Block size in grid</div>
+                        <div class="sidebar-brand"><%=i18n.localize("add.block.description")%></div>
                         <div class="add-padding-3x">
 
                             <div class="form-inline clearfix">
-                                <label class="control-label">Show Grid</label>
+                                <label class="control-label"><%=i18n.localize("show.grid.label")%></label>
                                 <label class="switch pull-right">
                                     <input type="checkbox" id="gridGuideToggle">
                                     <span class="helper"></span>
@@ -160,16 +160,16 @@
                             <hr />
 
                             <div class="form-group">
-                                <span>*</span> Width & Height [Max:12]
+                                <span>*</span> <%=i18n.localize("block.size.description")%>
                             </div>
 
                             <div class="form-group form-inline">
                                 <div class="form-group">
-                                    <label class="control-label">Width</label>
+                                    <label class="control-label"><%=i18n.localize("width.label")%></label>
                                     <input type="text" id="block-width" class="form-control number-input" data-number-only="true" data-min="1" data-max="12" />
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Height</label>
+                                    <label class="control-label"><%=i18n.localize("height.label")%></label>
                                     <input type="text" id="block-height" class="form-control number-input" data-number-only="true" data-min="1" data-max="12" />
                                 </div>
                             </div>
@@ -180,16 +180,16 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-primary btn-block" id="ues-add-block-btn">Add block</button>
+                            <button type="button" class="btn btn-primary btn-block" id="ues-add-block-btn"><%=i18n.localize("add.block.label")%></button>
                         </div>
                     </div>
 
                     <!-- Gadgets -->
                     <div id="sidebarNavGadgets" class="ues-store-assets" data-type="gadget">
-                        <div class="sidebar-brand">Add Gadgets</div>
+                        <div class="sidebar-brand"><%=i18n.localize("add.gadgets")%></div>
 
                         <div class="alert alert-info">
-                            <%=i18n.localize("gadget.drop.lable")%>
+                            <%=i18n.localize("gadget.drop.label")%>
                         </div>
 
                         <div class="add-padding-3x">
@@ -198,7 +198,7 @@
                                 <button class="form-control-btn" type="button" title="Search">
                                     <i class="fw fw-search" aria-hidden="true"></i>
                                 </button>
-                                <input type="text" class="form-control" placeholder="<%print(i18n.localize("search.lable"));%>..." />
+                                <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>..." />
                             </div>
 
                             <div class="ues-thumbnails">
@@ -217,7 +217,7 @@
                     <button class="btn btn-default close-handle" data-handle="close" data-toggle="sidebar" data-target="#left-sidebar-sub" aria-expanded="true" rel="createPage"><i class="fw fw-cancel"></i></button>
 
                     <div class="add-padding-3x">
-                        Select layout
+                        <%=i18n.localize("select.layout")%>
                         <hr />
                         <div id="ues-page-layouts"></div>
                     </div>
@@ -239,7 +239,7 @@
                 <div class="nano">
                     <div class="nano-content">
 
-                        <div class="sidebar-brand"><i class="icon"></i> Gadget configuration</div>
+                        <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("gadget.configuration.label")%></div>
                         <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
                         </div>
                     </div>
@@ -249,10 +249,10 @@
             <div class="page-content">
                 <ul class="nav nav-tabs" id="designer-view-mode">
                     <li role="dashboard-view" data-view-mode="default" class="active">
-                        <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab" data-toggle="tab">Default View</a>
+                        <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab" data-toggle="tab"><%=i18n.localize("default.view")%></a>
                     </li>
                     <li role="dashboard-view" data-view-mode="anon" class="hide">
-                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab" data-toggle="tab">Anonymous View</a>
+                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab" data-toggle="tab"><%=i18n.localize("anon.view")%></a>
                     </li>
                 </ul>
                 <div class="nano">
@@ -346,7 +346,7 @@
                 <h1 class="gadget-title ues-component-title truncate">:::</h1>
                 <div class="gadget-actions ues-component-actions">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="Remove">
+                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
                             <i class="icon fw fw-delete"></i>
                         </button>
                     </div>
@@ -375,14 +375,14 @@
     <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
 
         <div class="btn-group">
-            <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)"><!--ues-properties-handle-->
+            <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
                 <img src="<%=urlPrefix%>theme/images/icons/options.png">
             </button>
             <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
                 data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
                 <img src="<%=urlPrefix%>theme/images/icons/maximize.png">
             </button>
-            <button type="button" class="btn btn-default ues-trash-handle" title="Remove">
+            <button type="button" class="btn btn-default ues-trash-handle" title="<%=i18n.localize("remove")%>">
                 <i class="icon fw fw-delete"></i>
             </button>
         </div>
@@ -442,14 +442,14 @@
 
         {{#each pages}}
         <div class="panel panel-default{{#equals ../current/id id}} active{{/equals}}">
-            <div class="panel-heading dropdown ues-page-list-heading" role="tab" id="pagesButton{{id}}" data-toggle="collapse" data-parent="#ues-dashboard-pages" data-target="#pages{{id}}" aria-expanded="false"  data-id="{{id}}">
+            <div class="panel-heading dropdown ues-page-list-heading" role="tab" id="pagesButton{{id}}" data-toggle="collapse" data-parent="#ues-dashboard-pages" data-target="#pages{{id}}" aria-expanded="false" data-id="{{id}}">
                 <h4 class="panel-title">
                     {{#equals id ../home}}
                     <span class="icon fw-stack">
                         <i class="fw fw-home fw-stack-1x"></i>
                         <i class="fw fw-ring fw-stack-2x"></i>
                     </span>
-                    {{/equals}} {{title}} <span class="caret"></span></h4> <% //{{#if (lookup id ../current/id)}}yes{{else}}no{{/if}}%> <!-- todo -->
+                    {{/equals}} {{title}} <span class="caret"></span></h4>
             </div>
             <div id="pages{{id}}" class="panel-collapse collapse ues-page-properties" role="tabpanel">
             </div>
@@ -463,15 +463,15 @@
                 <div class="form-group">
                     <div class="col-sm-12">
                         <label for="input-name" class="control-label"><%= i18n.localize("title") %> <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="page-title" maxlength="250" name="title" placeholder="<%= i18n.localize("page.tilte.lable") %>" value="{{title}}">
-                        <label id="title-error" class="required-error hide" for="title">Required</label>
+                        <input type="text" class="form-control" id="page-title" maxlength="250" name="title" placeholder="<%= i18n.localize("page.tilte.label") %>" value="{{title}}">
+                        <label id="title-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-12">
                         <label for="input-name" class="control-label"><%= i18n.localize("url") %> <span class="required">*</span></label>
                         <input type="text" class="form-control" id="page-url" maxlength="100"  name="id" placeholder="<%= i18n.localize("page.url.placeholder") %>" value="{{id}}">
-                        <label id="id-error" class="required-error hide" for="id">Required</label>
+                        <label id="id-error" class="required-error hide" for="id"><%=i18n.localize("required")%></label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -519,32 +519,32 @@
             {{message}}
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="ues-modal-confirm-yes">Yes</button>
-            <button type="button" class="btn btn-default" id="ues-modal-confirm-no" data-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary" id="ues-modal-confirm-yes"><%=i18n.localize("yes.label")%></button>
+            <button type="button" class="btn btn-default" id="ues-modal-confirm-no" data-dismiss="modal"><%=i18n.localize("no.label")%></button>
         </div>
     </script>
 
     <script id="ues-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
-            <h3 class="modal-title" id="deleteModalLabel">What do you want to Delete ?</h3>
+            <h3 class="modal-title" id="deleteModalLabel"><%=i18n.localize("block.delete.message")%></h3>
         </div>
         <div class="pull-left">
             <div class="modal-body add-margin-top-2x add-margin-bottom-2x">
                 <label class="radio">
-                    <input type="radio" name="delete-option" value="gadget">
-                    <span class="helper">Remove Gadget</span>
+                    <input type="radio" name="delete-option" value="gadget" checked>
+                    <span class="helper"><%=i18n.localize("block.delete.message.gadget")%></span>
                 </label>
                 <label class="radio">
-                    <input type="radio" name="delete-option" value="block" checked>
-                    <span class="helper">Delete Grid Container</span>
+                    <input type="radio" name="delete-option" value="block">
+                    <span class="helper"><%=i18n.localize("block.delete.message.block")%></span>
                 </label>
             </div>
         </div>
         <div class="pull-right">
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btn-delete">Delete</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-delete"><%=i18n.localize("delete")%></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("cancel")%></button>
             </div>
         </div>
     </script>
@@ -552,12 +552,12 @@
     <!-- No pages -->
     <script id="ues-no-pages-hbs" type="text/x-handlebars-template">
         <div class="jumbotron" style="text-align: center;">
-            <h3>No pages found. Please add a page to start working on...</h3>
+            <h3><%=i18n.localize("no.pages.message")%></h3>
             <button type="button" class="btn btn-primary" id="btn-add-page-empty">
                 <span class="fw-stack">
                     <i class="fw fw-ring fw-stack-2x"></i>
                     <i class="fw fw-add fw-stack-1x"></i>
-                </span> Add Page</button>
+                </span> <%=i18n.localize("create.page.label")%></button>
         </div>
     </script>
 
@@ -572,14 +572,14 @@
                 <button type="button" class="btn btn-default btn-bordered ues-switch-page-prev" data-page-id="{{prev/id}}" {{#if prev/available}}{{else}}disabled{{/if}}>
                     <i class="icon fw fw-left"></i>
                 </button>
-                <span class="btn-label btn-bordered ues-page-number">Page {{pageNumber}} of {{totalPages}}</span>
+                <span class="btn-label btn-bordered ues-page-number"><%=i18n.localize("page.number.page")%> {{pageNumber}} <%=i18n.localize("page.number.of")%> {{totalPages}}</span>
                 <button type="button" class="btn btn-default btn-bordered ues-switch-page-next" data-page-id="{{next/id}}" {{#if next/available}}{{else}}disabled{{/if}}>
                     <i class="icon fw fw-right"></i>
                 </button>
-                <button type="button" class="btn btn-default btn-bordered ues-refresh-page" data-page-id="{{id}}">
+                <button type="button" class="btn btn-default btn-bordered ues-refresh-page" data-page-id="{{id}}" title="<%=i18n.localize("refresh")%>">
                     <i class="icon fw fw-refresh"></i>
                 </button>
-                <button type="button" class="btn btn-default btn-bordered ues-delete-page" data-page-id="{{id}}">
+                <button type="button" class="btn btn-default btn-bordered ues-delete-page" data-page-id="{{id}}" title="<%=i18n.localize("delete")%>">
                     <i class="icon fw fw-delete"></i>
                 </button>
             </div>
@@ -624,7 +624,7 @@
                                     {{#equals type "LIST"}}
                                         <label>{{title}}
                                             <textarea name="{{@key}}" class="form-control" rows="4" placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
-                                            <label><%= i18n.localize("enter.your.list.entries.lable")%></label>
+                                            <label><%= i18n.localize("enter.your.list.entries.label")%></label>
                                         </label>
                                     {{/equals}}
                                     {{#equals type "text"}}
