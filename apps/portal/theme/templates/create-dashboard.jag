@@ -10,12 +10,20 @@
 
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 
+    <!-- Modal -->
+    <div class="modal fade" id="designerModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
+
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
             <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./create-dashboard">Create Dashboard</a></li>
+            <li class="active">Create Dashboard</li>
         </ol>
     </div>
 
@@ -107,5 +115,17 @@
     <script src="<%=urlPrefix%>js/create.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
+    <script id="ues-modal-info-hbs" type="text/x-handlebars-template">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+            <h3 class="modal-title" id="infoModalLabel">{{title}}</h3>
+        </div>
+        <div class="modal-body">
+            {{message}}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" id="ues-modal-info-ok" data-dismiss="modal">Ok</button>
+        </div>
+    </script>
 </body>
 </html>
