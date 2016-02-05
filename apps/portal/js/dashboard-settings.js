@@ -1,30 +1,56 @@
 $(function () {
 
-    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
+    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
+        rolesApi = ues.utils.relativePrefix() + 'apis/roles',
+        userApi = ues.utils.relativePrefix() + 'apis/user',
+        searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search',
+        maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit',
+        dashboard = ues.global.dashboard,
+        tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id,
+        permissions = dashboard.permissions,
+        viewers = permissions.viewers,
+        editors = permissions.editors,
+        url = dashboardsApi + '/' + dashboard.id,
+        permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || ''),
+        modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || ''),
+        sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || ''),
+        user = null;
 
-    var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
+    /**
+     * Show HTML modal
+     * @param {String} content      HTML content
+     * @param {function} beforeShow Function to be invoked just before showing the modal
+     * @private
+     */
+    var showHtmlModal = function (content, beforeShow) {
+        var el = $('#designerModal');
+        el.find('.modal-content').html(content);
+        if (beforeShow && typeof beforeShow === 'function') {
+            beforeShow();
+        }
 
-    var userApi = ues.utils.relativePrefix() + 'apis/user';
+        el.modal();
+    };
 
-    var searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search';
-
-    var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
-
-    var dashboard = ues.global.dashboard;
-
-    var permissions = dashboard.permissions;
-
-    var viewers = permissions.viewers;
-
-    var editors = permissions.editors;
-
-    var url = dashboardsApi + '/' + dashboard.id;
-
-    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
-
-    var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
-
-    var user = null;
+    /**
+     * Show confirm message with yes/no buttons
+     * @param {String} title    Title of the confirmation box
+     * @param {String} message  HTML content
+     * @param {function} ok     Callback function for yes button
+     * @private
+     */
+    var showConfirm = function (title, message, ok) {
+        var content = modalConfirmHbs({title: title, message: message});
+        showHtmlModal(content, function () {
+            var el = $('#designerModal');
+            el.find('#ues-modal-confirm-yes').on('click', function () {
+                if (ok && typeof ok === 'function') {
+                    ok();
+                    el.modal('hide');
+                }
+            });
+        });
+    };
 
     /**
      * Generate Noty Messages as to the content given using parameters.
@@ -81,6 +107,11 @@ $(function () {
         return noty(properties);
     };
 
+    /**
+     * Save the dashboard details.
+     * @param callback {function}
+     * @private
+     * */
     var saveDashboard = function (callback) {
         $.ajax({
             url: url,
@@ -100,6 +131,10 @@ $(function () {
         });
     };
 
+    /**
+     * Get the auth settings related details.
+     * @private
+     * */
     var getOauthSettings = function () {
         $.ajax({
             url: tokenUrl,
@@ -135,8 +170,12 @@ $(function () {
         $("#ues-api-secret").text(as);
     };
 
-    var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
-
+    /**
+     * Add the available viewer permission for dashboard in to permission list.
+     * @param1 el {Object} element of the list.
+     * @param2 role {String}
+     * @private
+     * */
     var viewer = function (el, role) {
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
@@ -148,6 +187,12 @@ $(function () {
         el.typeahead('val', '');
     };
 
+    /**
+     * Add the available editor permission for the dashboard in to permission list.
+     * @param1 el {Object} element of the list.
+     * @param2 role {String}
+     * @private
+     * */
     var editor = function (el, role) {
         var permissions = dashboard.permissions;
         var editors = permissions.editors;
@@ -245,7 +290,11 @@ $(function () {
     };
 
     /**
-     *
+     * Check whether permission is existing or not.
+     * @param1 permissions {Object}
+     * @param2 role {String}
+     * @return {Boolean}
+     * @private
      * */
     var isExistingPermission = function (permissions, role) {
         var isExist = false;
@@ -293,6 +342,10 @@ $(function () {
         return userRoles;
     };
 
+    /**
+     * Initialize the UI functionality.
+     * @private
+     * */
     var initUI = function () {
         var viewerSearchQuery = '';
         var maxLimit = 10;
@@ -323,7 +376,7 @@ $(function () {
             },
             sufficient: 10,
             remote: {
-                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                url: searchRolesApi + '?maxLimit=' + maxLimit + '&query=' + viewerSearchQuery,
                 filter: function (searchRoles) {
                     return $.map(searchRoles, function (searchRole) {
                         return {name: searchRole};
@@ -332,7 +385,7 @@ $(function () {
                 prepare: function (query, settings) {
                     viewerSearchQuery = query;
                     var currentURL = settings.url;
-                    settings.url = currentURL + query ;
+                    settings.url = currentURL + query;
                     return settings;
                 },
                 ttl: 60
@@ -383,7 +436,7 @@ $(function () {
             },
             sufficient: 10,
             remote: {
-                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                url: searchRolesApi + '?maxLimit=' + maxLimit + '&query=' + viewerSearchQuery,
                 filter: function (searchRoles) {
                     return $.map(searchRoles, function (searchRole) {
                         return {name: searchRole};
@@ -392,7 +445,7 @@ $(function () {
                 prepare: function (query, settings) {
                     viewerSearchQuery = query;
                     var currentURL = settings.url;
-                    settings.url = currentURL + query ;
+                    settings.url = currentURL + query;
                     return settings;
                 },
                 ttl: 60
@@ -442,8 +495,9 @@ $(function () {
             };
 
             if ((editors.length == 1 || getNumberOfUserRolesInDashboard(editors) == 1) && !user.isAdmin) {
-                generateMessage("After this permission removal only administrator will be able to edit this dashboard." +
-                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
+                showConfirm("Removing Permission",
+                    "After this permission removal only administrator will be able to edit this dashboard." +
+                    " Do you want to continue?", removePermission);
             } else {
                 removePermission();
             }
@@ -459,8 +513,9 @@ $(function () {
             };
 
             if ((viewers.length == 1 || getNumberOfUserRolesInDashboard(viewers) == 1) && !user.isAdmin) {
-                generateMessage("After this permission removal only administrator will be able to view this dashboard." +
-                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
+                showConfirm("Removing Permission",
+                    "After this permission removal only administrator will be able to view this dashboard." +
+                    " Do you want to continue?", removePermission);
             } else {
                 removePermission();
             }

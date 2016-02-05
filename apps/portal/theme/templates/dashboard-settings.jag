@@ -1,5 +1,5 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
-
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
 
@@ -10,13 +10,21 @@
 
     <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 
+    <!-- Modal -->
+    <div class="modal fade" id="designerModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
+
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
             <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
             <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=dashboard.title%></a></li>
-            <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboard-settings/<%=dashboard.id%>">Dashboard Settings</a></li>
+            <li class="active">Dashboard Settings</li>
         </ol>
     </div>
 
@@ -177,8 +185,9 @@
 
 <% include(utils.resolvePath('templates/portal-footer.jag')); %>
 
-<!-- Jquery JS -->
+<!-- Jquery JS/Jquery UI JS -->
 <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+<script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 
 <!-- Bootstrap JS -->
 <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
@@ -208,6 +217,20 @@
     <div class="permission-menu-content">
         <span>{{name}}</span>
         <hr class="permission-item"/>
+    </div>
+</script>
+
+<script id="ues-modal-confirm-hbs" type="text/x-handlebars-template">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+        <h3 class="modal-title" id="deleteModalLabel">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        {{message}}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="ues-modal-confirm-yes">Ok</button>
+        <button type="button" class="btn btn-default" id="ues-modal-confirm-no" data-dismiss="modal">Cancel</button>
     </div>
 </script>
 
