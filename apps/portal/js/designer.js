@@ -522,29 +522,62 @@ $(function () {
      * @return {Object}
      * @private
      * */
-    var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
+    var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close,mode) {
         var properties = {};
         properties.text = text;
-        if (ok || cancel) {
-            properties.buttons = [
-                {
-                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
-                    $noty.close();
-                    if (ok) {
-                        ok();
+
+        if(mode == undefined){
+
+            if (funPrimary || funSecondary) {
+                properties.buttons = [
+                    {
+                        addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                        $noty.close();
+                        if (funPrimary) {
+                            funPrimary();
+                        }
                     }
-                }
-                },
-                {
-                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
-                    $noty.close();
-                    if (cancel) {
-                        cancel();
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                        $noty.close();
+                        if (funSecondary) {
+                            funSecondary();
+                        }
                     }
-                }
-                }
-            ];
+                    }
+                ];
+            }
+
+        }else if(mode == "DEL_BLOCK_OR_ALL"){
+
+            if (funPrimary || funSecondary) {
+                properties.buttons = [
+                    {
+                        addClass: 'btn btn-primary', text: 'Gadget & Block', onClick: function ($noty) {
+                        $noty.close();
+                        if (funPrimary) {
+                            funPrimary();
+                        }
+                    }
+                    },
+                    {
+                        addClass: 'btn btn-primary', text: 'Gadget Only', onClick: function ($noty) {
+                        $noty.close();
+                        if (funSecondary) {
+                            funSecondary();
+                        }
+                    }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                        $noty.close();
+                    }
+                    }
+                ];
+            }
         }
+
 
         if (timeout) {
             properties.timeout = timeout;
@@ -644,7 +677,7 @@ $(function () {
                         renderMaxView(component, DEFAULT_COMPONENT_VIEW);
                         component.fullViewPoped = false;
                     });
-                
+
                 $(this).attr('title', $(this).data('maximize-title'));
 
                 componentBody.hide();
@@ -673,7 +706,7 @@ $(function () {
                         renderMaxView(component, FULL_COMPONENT_VIEW);
                         component.fullViewPoped = true;
                     });
-                
+
                 $(this).attr('title', $(this).data('minimize-title'));
 
                 componentBody.hide();
@@ -698,7 +731,7 @@ $(function () {
                 id = componentBox.find('.ues-component').attr('id'),
                 removeBlock = true;
 
-            var removeGadgetBlock = function () {
+            var removeWholeBlock = function () {
                 if (id) {
                     removeComponent(findComponent(id), function (err) {
                         if (err) {
@@ -707,6 +740,7 @@ $(function () {
                         }
                         saveDashboard();
                     });
+
                 }
 
                 if (removeBlock) {
@@ -716,8 +750,26 @@ $(function () {
                 }
             };
 
-            generateMessage("This will remove the whole block and its content. Do you want to continue?",
-                removeGadgetBlock, null, "confirm", "topCenter", null, ["button"]);
+            var removeGadgetContent = function () {
+                if (id) {
+                    removeComponent(findComponent(id), function (err) {
+                        if (err) {
+                            removeBlock = false;
+                            console.error(err);
+                        }
+                        saveDashboard();
+                    });
+                    componentBox.html(componentBoxContentHbs({appendResizeHandle: true}));
+                }
+            };
+
+            if(id == undefined){
+                generateMessage("This will remove the block. Do you want to continue?",
+                    removeWholeBlock, null, "confirm", "topCenter", null, ["button"]);
+            }else{
+                generateMessage("What do you want to Delete ?",
+                    removeWholeBlock, removeGadgetContent, "confirm", "topCenter", null, ["button"],"DEL_BLOCK_OR_ALL");
+            }
         });
 
         $('body').on('click', '.modal-footer button', function () {
@@ -814,9 +866,9 @@ $(function () {
      */
     var updateStyles = function (asset) {
         var styles = asset.styles || (asset.styles = {
-                title: true,
-                borders: true
-            });
+            title: true,
+            borders: true
+        });
         if (styles.title && typeof styles.title === 'boolean') {
             styles.title = asset.title;
         }
@@ -1520,9 +1572,9 @@ $(function () {
      */
     var loadAssets = function (type, query) {
         var paging = pagingHistory[type] || (pagingHistory[type] = {
-                start: 0,
-                count: COMPONENTS_PAGE_SIZE
-            });
+            start: 0,
+            count: COMPONENTS_PAGE_SIZE
+        });
         var buildPaging = function (paging, query) {
             if (paging.query === query) {
                 return;
@@ -1821,12 +1873,12 @@ $(function () {
                 e.stopPropagation();
                 return;
             }
-            
+
             // do not re-render if the user clicks on the current page name
             if (pid != page.id) {
-				ues.global.isSwitchToNewPage = true;
-				switchPage(pid, pageType);
-				ues.global.isSwitchToNewPage = false;
+                ues.global.isSwitchToNewPage = true;
+                switchPage(pid, pageType);
+                ues.global.isSwitchToNewPage = false;
             }
 
             $('#' + pid).find('.panel-body').html(pageOptionsHbs({
@@ -2039,7 +2091,7 @@ $(function () {
 
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
             generateMessage("You have given editor permission for this dashboard." +
-                " Please reset the dashboard to receive the permission.",
+                    " Please reset the dashboard to receive the permission.",
                 null, null, "error", "topCenter", null, ["button"]);
         }
 
@@ -2292,7 +2344,7 @@ $(function () {
                         // re-render component on stop resizing the component
                         var container = widget.find('.ues-component');
                         if (container) {
-                            container.find('.ues-component-body').show();   
+                            container.find('.ues-component-body').show();
                             if (container.attr('id')) {
                                 updateComponent(container.attr('id'));
                             }
@@ -2445,9 +2497,9 @@ $(function () {
     var loadBanner = function () {
 
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
-                globalBannerExists: false,
-                customBannerExists: false
-            };
+            globalBannerExists: false,
+            customBannerExists: false
+        };
 
         var $placeholder = $('.ues-banner-placeholder'),
             customDashboard = ues.global.dashboard.isUserCustom || false,
