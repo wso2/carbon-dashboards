@@ -115,7 +115,7 @@ $("#previewChart").click(function() {
 
     var selectedCoulmnValue = $("#columns").val();
 
-    if(selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
+    if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
         alert("Please select all attributes or add custom columns !");
         return;
     }
@@ -202,6 +202,13 @@ $(".pager .finish").click(function() {
 
         if(notFilled){
             alert("Please Provide Required Fields !");
+            return;
+        }
+
+        var selectedCoulmnValue = $("#columns").val();
+
+        if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
+            alert("Please select all attributes or add custom columns !");
             return;
         }
     }
