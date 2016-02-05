@@ -273,6 +273,7 @@ function TableChart() {};
 TableChart.prototype.bindConfigs = function(columns) {
     console.log("****** Initializing TableChart *** ");
     $("#key").empty();
+    $("#columns").empty();
     $("#key").append($('<option></option>')
         .val("-1")
         .html("-- Select --"));
