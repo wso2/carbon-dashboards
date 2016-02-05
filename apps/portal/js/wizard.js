@@ -113,6 +113,13 @@ $("#previewChart").click(function() {
         return;
     }
 
+    var selectedCoulmnValue = $("#columns").val();
+
+    if(selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
+        alert("Please select all attributes or add custom columns !");
+        return;
+    }
+
     if (datasourceType === "realtime") {
         var streamId = $("#dsList").val();
         var url = "/portal/apis/rt?action=publisherIsExist&streamId=" + streamId;
@@ -137,6 +144,8 @@ $("#previewChart").click(function() {
 });
 
 $("#chartType").change(function() {
+    bindChartconfigs(columns,this.value);
+    selectedTableCoulumns = [];
     $(".attr").hide();
     var className = jQuery(this).children(":selected").val();
     var chartType = this.value;
@@ -381,7 +390,6 @@ function renderPreviewPane(rows) {
 function renderChartConfig() {
     //hide all chart controls
     $(".attr").hide();
-    initCharts(columns);
 };
 
 function getColumnIndex(columnName) {

@@ -169,7 +169,7 @@ function drawRealtimeChart(data) {
         gadgetConfig.chartConfig.width = $("#placeholder").width() - 110;
         gadgetConfig.chartConfig.height = $("#placeholder").height() - 40;
 
-        if(gadgetConfig.chartConfig.chartType == "map"){
+        if(gadgetConfig.chartConfig.charts[0].type == "map"){
             var mapType = gadgetConfig.chartConfig.charts[0].mapType;
 
             if(mapType == "world"){
@@ -200,7 +200,7 @@ function drawBatchChart(data){
         gadgetConfig.chartConfig.width = $("#placeholder").width() - 110;
         gadgetConfig.chartConfig.height = $("#placeholder").height() - 40;
 
-        if(gadgetConfig.chartConfig.chartType == "map"){
+        if(gadgetConfig.chartConfig.charts[0].type == "map"){
             var mapType = gadgetConfig.chartConfig.charts[0].mapType;
 
             if(mapType == "world"){
