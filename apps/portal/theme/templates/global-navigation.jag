@@ -18,9 +18,8 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
                     <i class="fw fw-user fw-stack-1x"></i>
                 </span>
             </a>
-            <ul class="dropdown-menu float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown" role="menu">
+            <ul class="dropdown-menu dropdown-menu-right float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown" role="menu">
                 <li class="dropdown-header visible-xs"><%=user.username%> <span class="caret"></span></li>
-                <li class="divider visible-xs"></li>
                 <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%= i18n.localize("logout.label")%></a></li>
             </ul>
             <% } else { %>

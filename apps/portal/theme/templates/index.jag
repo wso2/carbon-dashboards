@@ -36,7 +36,7 @@
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-dashboard">
                                 <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
                                 </span> <%= i18n.localize("create.dashboard")%>
                             </a>
@@ -45,7 +45,7 @@
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-gadget">
                                 <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
                                 </span> <%= i18n.localize("create.gadget.label")%>
                             </a>
@@ -116,7 +116,7 @@
         <div class="ues-actions">
             <a id="ues-view" class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
                 <span class="fw-stack">
-                    <i class="fw fw-ring fw-stack-2x"></i>
+                    <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-view fw-stack-1x"></i>
                 </span>
                  <%= i18n.localize("view") %>
@@ -124,14 +124,14 @@
             {{#if editable}}
             <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
                 <span class="fw-stack">
-                    <i class="fw fw-ring fw-stack-2x"></i>
+                    <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-edit fw-stack-1x"></i>
                 </span>
                 <%= i18n.localize("design") %>
             </a>
             <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
                 <span class="fw-stack">
-                    <i class="fw fw-ring fw-stack-2x"></i>
+                    <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-settings fw-stack-1x"></i>
                 </span>
                 <%= i18n.localize("settings") %>
