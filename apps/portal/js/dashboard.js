@@ -127,6 +127,17 @@ $(function () {
         if (component) {
 
             var container = $('#' + component.id);
+            var userPrefsExists = false;
+            for (var key in component.content.options) {
+                console.log(component.content.options[key].type)
+                if (component.content.options[key].type.toUpperCase() != 'HIDDEN') {
+                    console.log('inside if')
+                    userPrefsExists =  true;
+                    break;
+                }
+            }
+            component.content.userPrefsExists = userPrefsExists;
+
             container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
 
             // hide the settings button from the anon view
