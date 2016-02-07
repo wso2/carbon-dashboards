@@ -15,7 +15,7 @@
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
             <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=dashboard.title%></a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
             <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboard-settings/<%=dashboard.id%>"><%=i18n.localize("dashboard.settings")%></a></li>
         </ol>
     </div>
@@ -117,15 +117,12 @@
                     <div class="col-sm-9">
 
                         <label class="switch">
-                                    <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs"
-                                        aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
-                                        aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
-                                    <span class="helper"></span>
-                                </label>
+                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs"
+                                aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
+                                aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
+                            <span class="helper"></span>
+                        </label>
 
-<!--
-                        <label class="switch">
-                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs" aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>" aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>><span class="toggle-button"></span></label>-->
                     </div>
                 </div>
                 <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) { print("in"); } %>" >
@@ -154,19 +151,19 @@
                     <div class="form-group">
                         <label for="ues-access-token-url" class="col-sm-3 control-label"><%= i18n.localize("access.token.url")%></label>
                         <div class="col-sm-9">
-                            <p id="ues-access-token-url" class="form-control-static"><%=dashboard.accessTokenUrl%></p>
+                            <p id="ues-access-token-url" class="form-control-static"><%=encodeHtml(dashboard.accessTokenUrl)%></p>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="ues-api-key" class="col-sm-3 control-label"><%= i18n.localize("api.key")%></label>
                         <div class="col-sm-9">
-                            <p id="ues-api-key" class="form-control-static"><%=dashboard.apiKey%></p>
+                            <p id="ues-api-key" class="form-control-static"><%=encodeHtml(dashboard.apiKey)%></p>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="ues-api-secret" class="col-sm-3 control-label"><%= i18n.localize("api.secret")%></label>
                         <div class="col-sm-9">
-                            <p id="ues-api-secret" class="form-control-static"><%=dashboard.apiSecret%></p>
+                            <p id="ues-api-secret" class="form-control-static"><%=encodeHtml(dashboard.apiSecret)%></p>
                         </div>
                     </div>
                 </div>

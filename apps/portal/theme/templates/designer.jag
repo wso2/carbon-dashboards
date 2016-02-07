@@ -24,7 +24,7 @@
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
             <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
-            <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=dashboard.title%></a></li>
+            <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
         </ol>
     </div>
 
@@ -563,7 +563,7 @@
 
     <script id="ues-designer-heading-hbs" type="text/x-handlebars-template">
         <div class="page-title">
-            <h1><%=dashboard.title%></h1>
+            <h1><%=encodeHtml(dashboard.title)%></h1>
             <p class="lead">{{title}}</p>
         </div>
         <div class="page-actions">
