@@ -80,6 +80,8 @@
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <script src="<%=urlPrefix%>js/wso2-theme.js"></script>
+<script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+<script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
