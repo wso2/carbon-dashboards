@@ -30,16 +30,15 @@ $(function () {
      * @return {null}
      * @private
      */
-    var showHtmlModal = function(content, beforeShow) {
-
+    var showHtmlModal = function (content, beforeShow) {
         var el = $('#designerModal');
-
         el.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
+
         el.modal();
-    }
+    };
 
     /**
      * Show confirm message with yes/no buttons
@@ -49,20 +48,29 @@ $(function () {
      * @return {null}
      * @private
      */
-    var showConfirm = function(title, message, ok) {
-
-        var content = modalConfirmHbs({ title: title, message: message });
-        showHtmlModal(content, function() {
-
+    var showConfirm = function (title, message, ok) {
+        var content = modalConfirmHbs({title: title, message: message});
+        showHtmlModal(content, function () {
             var el = $('#designerModal');
-            el.find('#ues-modal-confirm-yes').on('click', function() {
+            el.find('#ues-modal-confirm-yes').on('click', function () {
                 if (ok && typeof ok === 'function') {
                     ok();
                     el.modal('hide');
                 }
             });
         });
-    }
+    };
+
+    /**
+     * Show the information message with ok button.
+     * @param1 title {String}
+     * @param2 message {String}
+     * @private
+     * */
+    var showInformation = function (title, message) {
+        var content = modalInfoHbs({title: title, message: message});
+        showHtmlModal(content, null);
+    };
 
     /**
      * Clone JSON object
@@ -102,6 +110,8 @@ $(function () {
     var noPagesHbs = Handlebars.compile($('#ues-no-pages-hbs').html() || '');
 
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || '');
+
+    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
 
     /**
      * Generates a random ID
@@ -162,7 +172,7 @@ $(function () {
             .on('change', 'input, select, textarea', function () {
                 updateComponentProperties($(this).closest('.ues-component-properties'));
             })
-            .on('keypress', 'input, select, textarea', function(e) {
+            .on('keypress', 'input, select, textarea', function (e) {
                 if (e.which === 13) {
                     updateComponentProperties($(this).closest('.ues-component-properties'));
                     e.preventDefault();
@@ -604,13 +614,12 @@ $(function () {
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
 
             var that = $(this),
-                hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || ''),
-                confModal = $('#designerModal');
+                hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || '');
 
-            showHtmlModal(hbs(), function() {
+            showHtmlModal(hbs(), function () {
 
                 var designerModal = $('#designerModal');
-                designerModal.find('#btn-delete').on('click', function() {
+                designerModal.find('#btn-delete').on('click', function () {
 
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val(),
                         componentBox = that.closest('.ues-component-box'),
@@ -1048,7 +1057,7 @@ $(function () {
     /**
      * Update page options
      * @param {Object} e
-     * @return {null}
+     * @return {Boolean}
      * @private
      */
     var updatePageProperties = function (e) {
@@ -1087,10 +1096,9 @@ $(function () {
 
         var fn = {
             id: function () {
-
                 if (checkForPagesById(idVal) && page.id != idVal) {
-                    generateMessage("A page with entered URL already exists. Please select a different URL",
-                        null, null, "error", "topCenter", 3500, ['button', 'click']);
+                    showInformation("URL Already Exists",
+                        "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
                 } else {
                     page.id = idVal;
@@ -1098,52 +1106,48 @@ $(function () {
                         dashboard.landing = idVal;
                     }
                 }
-
             },
             title: function () {
-
                 if (checkForPagesByTitle(titleVal) && page.title.toUpperCase() != titleVal.toUpperCase()) {
-                    generateMessage("A page with entered title already exists. Please select a different title",
-                        null, null, "error", "topCenter", 3500, ['button', 'click']);
+                    showInformation("Title Already Exists",
+                        "A page with same title already exists. Please enter a different title");
                     title.val(page.title);
                     titleVal = page.title;
                 } else {
                     page.title = titleVal;
                 }
-
             },
             landing: function () {
-
                 if (landing.is(':checked')) {
                     if (hasAnonPages && !page.isanon) {
                         landing.prop("checked", false);
-                        generateMessage("Please add an anonymous view to this page before select it as the landing page", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        showInformation("Cannot Select This Page As Landing",
+                            "Please add an anonymous view to this page before select it as the landing page");
                     } else {
                         dashboard.landing = idVal;
                     }
                 }
-
             },
             anon: function () {
-
                 if (anon.is(':checked')) {
                     if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == idVal) {
                         ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
                         dashboard.isanon = true;
                         page.isanon = true;
+
                         // create the template if there is no content create before
                         page.layout.content.anon = page.layout.content.anon || page.layout.content.loggedIn;
-
                         $('#designer-view-mode li[data-view-mode=anon]').removeClass('hide');
-
                     } else {
                         $(anon).prop("checked", false);
-                        generateMessage("Please add an anonymous view to the landing page in order to make this page anonymous", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        showInformation("Cannot Make This Page Anonymous",
+                            "Please add an anonymous view to the landing page in order to make this page anonymous");
                     }
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        generateMessage("Cannot remove the anonymous view of landing page when there are pages with anonymous views", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        showInformation("Cannot Remove The Anonymous View",
+                            "Cannot remove the anonymous view of landing page when there are pages with anonymous views");
                     } else {
                         page.isanon = false;
 
@@ -1155,11 +1159,9 @@ $(function () {
 
                         // the anon layout should not be deleted since the gadgets in this layout is already there in the content
                         $('#designer-view-mode li[data-view-mode=anon]').addClass("hide");
-
                         page.content.anon = {};
                     }
                 }
-
             },
             fluidLayout: function () {
                 page.layout.fluidLayout = fluidLayout.is(':checked');
@@ -1168,10 +1170,8 @@ $(function () {
 
         if (typeof fn[e.context.name] === 'function') {
             fn[e.context.name]();
-
             updatePagesList();
             saveDashboard();
-
         } else {
             console.error('Unable to find the property.')
         }
@@ -1444,7 +1444,7 @@ $(function () {
      */
     var initComponents = function () {
 
-        $('#sidebarNavGadgets .ues-thumbnails').on('mouseenter', '.ues-thumbnail', function() {
+        $('#sidebarNavGadgets .ues-thumbnails').on('mouseenter', '.ues-thumbnail', function () {
             $(this).draggable({
                 cancel: false,
                 appendTo: 'body',
@@ -1462,7 +1462,7 @@ $(function () {
      */
     var initDesigner = function () {
 
-        $('#designer-view-mode').on('click', 'li', function() {
+        $('#designer-view-mode').on('click', 'li', function () {
             var currentPageType = pageType;
             var mode = $(this).data('view-mode');
             if (mode === 'default') {
@@ -1528,7 +1528,7 @@ $(function () {
         loadAssets('gadget');
 
         // initialize search options in gadgets sidebar
-        $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function(e) {
+        $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (e) {
             if (e.which !== 13) {
                 return;
             }
@@ -1538,7 +1538,7 @@ $(function () {
             loadAssets('gadgets', query);
         });
 
-        $('.ues-store-assets .ues-search-box button').on('click', function() {
+        $('.ues-store-assets .ues-search-box button').on('click', function () {
             var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
             loadAssets('gadgets', query);
         });
@@ -1559,16 +1559,17 @@ $(function () {
             .on('click', '.ues-copy', function (e) {
                 // reset the dashboard
                 e.preventDefault();
-
                 var that = $(this);
-                generateMessage("This will remove all the customization added to the dashboard. Do you want to continue?", function () {
-                    window.open(that.attr('href'), "_self");
-                }, null, "confirm", "topCenter", null, ["button"]);
+                showConfirm('Resetting the page',
+                    'This will remove all the customization added to the dashboard. Do you want to continue?',
+                    function () {
+                        window.open(that.attr('href'), "_self");
+                    });
             });
 
         // page header functions
         $('.page-header')
-            .on('click', '.ues-switch-page-prev, .ues-switch-page-next, .ues-refresh-page', function() {
+            .on('click', '.ues-switch-page-prev, .ues-switch-page-next, .ues-refresh-page', function () {
                 // navigate/refresh pages
                 var pid = $(this).attr('data-page-id');
 
@@ -1576,37 +1577,39 @@ $(function () {
                 switchPage(pid, pageType);
                 ues.global.isSwitchToNewPage = false;
             })
-            .on('click', '.ues-delete-page', function() {
+            .on('click', '.ues-delete-page', function () {
 
-            // delete dashboard page
-            var pid = $(this).attr('data-page-id');
+                // delete dashboard page
+                var pid = $(this).attr('data-page-id');
 
-                showConfirm('Deleting the page', 'This will remove the page and all its content. Do you want to continue?', function() {
-                    removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
-                        var pages = dashboard.pages;
+                showConfirm('Deleting the page',
+                    'This will remove the page and all its content. Do you want to continue?',
+                    function () {
+                        removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
+                            var pages = dashboard.pages;
 
-                        updatePagesList(pages);
+                            updatePagesList(pages);
 
-                        // if the landing page was deleted, make the first page to be the landing page
-                        if (dashboard.pages.length) {
-                            if (pid == dashboard.landing) {
-                                dashboard.landing = pages[0].id;
+                            // if the landing page was deleted, make the first page to be the landing page
+                            if (dashboard.pages.length) {
+                                if (pid == dashboard.landing) {
+                                    dashboard.landing = pages[0].id;
+                                }
+                            } else {
+                                dashboard.landing = null;
+
+                                // hide the sidebar if it is open
+                                if ($('#left-sidebar').hasClass('toggled')) {
+                                    $('#btn-pages-sidebar').click();
+                                }
                             }
-                        } else {
-                            dashboard.landing = null;
-
-                            // hide the sidebar if it is open
-                            if ($('#left-sidebar').hasClass('toggled')) {
-                                $('#btn-pages-sidebar').click();
-                            }
-                        }
 
 
-                        // save the dashboard
-                        saveDashboard();
-                        renderPage(dashboard.landing);
+                            // save the dashboard
+                            saveDashboard();
+                            renderPage(dashboard.landing);
+                        });
                     });
-                });
             });
 
         // dashboard pages list functions
@@ -1652,7 +1655,7 @@ $(function () {
             });
         });
 
-        var pageSearchFunction = function(searchQuery) {
+        var pageSearchFunction = function (searchQuery) {
             var pages = dashboard.pages;
             var resultPages = [];
             if (searchQuery) {
@@ -1675,7 +1678,7 @@ $(function () {
             pageSearchFunction($(this).val());
         });
 
-        $('#sidebarNavPages .ues-search-box button').on('click', function() {
+        $('#sidebarNavPages .ues-search-box button').on('click', function () {
             var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
             pageSearchFunction(query);
         });
@@ -1724,7 +1727,7 @@ $(function () {
     var initAddBlock = function () {
 
         // redraw the grid when changing the width/height values
-        $('#block-height, #block-width').on('keyup', function() {
+        $('#block-height, #block-width').on('keyup', function () {
 
             var dummy = $('.ues-dummy-gadget'),
                 unitSize = parseInt(dummy.data('unit-size'));
@@ -1756,7 +1759,7 @@ $(function () {
         $('.ues-dummy-gadget').resizable({
             grid: 18,
             containment: '.ues-block-container',
-            resize: function(e, ui) {
+            resize: function (e, ui) {
 
                 var height = $(this).height() / 18,
                     width = $(this).width() / 18;
@@ -1786,8 +1789,8 @@ $(function () {
         initAddBlock();
 
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
-            generateMessage("You have given editor permission for this dashboard. Please reset the dashboard to receive the permission.",
-                null, null, "error", "topCenter", null, ["button"]);
+            showInformation("Receive Editor Permission",
+                "You have given editor permission for this dashboard. Please reset the dashboard to receive the permission.");
         }
     };
 
@@ -1963,15 +1966,15 @@ $(function () {
      * @returns {null}
      * @private
      */
-    var showCreatePage = function() {
+    var showCreatePage = function () {
 
         // if the left panel is closed, click on the pages button
-        if (! $('#left-sidebar').hasClass('toggled')) {
+        if (!$('#left-sidebar').hasClass('toggled')) {
             $('#btn-pages-sidebar').click()
         }
 
         // if the select layout is closed, click on the create page button
-        if (! $('#left-sidebar-sub').hasClass('toggled')) {
+        if (!$('#left-sidebar-sub').hasClass('toggled')) {
             $('#left-sidebar button[rel=createPage]').click();
         }
     }
@@ -1992,7 +1995,7 @@ $(function () {
 
             $('.gadgets-grid')
                 .html(noPagesHbs())
-                .find('#btn-add-page-empty').on('click', function() {
+                .find('#btn-add-page-empty').on('click', function () {
                     showCreatePage();
                 });
 
@@ -2031,7 +2034,7 @@ $(function () {
 
         // render page header
         var currentPageIndex = 0;
-        for(;currentPageIndex < dashboard.pages.length && dashboard.pages[currentPageIndex].id != pid; currentPageIndex++);
+        for (; currentPageIndex < dashboard.pages.length && dashboard.pages[currentPageIndex].id != pid; currentPageIndex++);
 
         var hasPrevPage = currentPageIndex > 0,
             hasNextPage = currentPageIndex < dashboard.pages.length - 1;
