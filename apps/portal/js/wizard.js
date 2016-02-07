@@ -109,14 +109,14 @@ $("#previewChart").click(function() {
     });
 
     if(notFilled){
-        alert("Please Provide Required Fields !");
+        generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
         return;
     }
 
     var selectedCoulmnValue = $("#columns").val();
 
     if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
-        alert("Please select all attributes or add custom columns !");
+        generateMessage("Please select all attributes or add custom columns !", null, null, "error", "topCenter", 3500, ['button', 'click']);
         return;
     }
 
@@ -125,8 +125,8 @@ $("#previewChart").click(function() {
         var url = "/portal/apis/rt?action=publisherIsExist&streamId=" + streamId;
         $.getJSON(url, function(data) {
             if (!data) {
-                alert("You have not deployed a Publisher adapter UI Corresponding to selected StreamID:" + streamId +
-                    " Please deploy an adapter to Preview Data.")
+                generateMessage("You have not deployed a Publisher adapter UI Corresponding to selected StreamID:" + streamId +
+                    " Please deploy an adapter to Preview Data.", null, null, "error", "topCenter", 3500, ['button', 'click']);
             } else {
                 //TODO DOn't do this! read this from a config file
                 subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
@@ -176,7 +176,7 @@ $(".pager .finish").click(function() {
 
     if ($("#title").val() == "") {
         $("#title").css("border-color", "red");
-        alert("Please Provide Required Fields !");
+        generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
         return;
     }else {
         var notFilled = false;
@@ -201,14 +201,14 @@ $(".pager .finish").click(function() {
         });
 
         if(notFilled){
-            alert("Please Provide Required Fields !");
+            generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
             return;
         }
 
         var selectedCoulmnValue = $("#columns").val();
 
         if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
-            alert("Please select all attributes or add custom columns !");
+            generateMessage("Please select all attributes or add custom columns !", null, null, "error", "topCenter", 3500, ['button', 'click']);
             return;
         }
     }
@@ -667,3 +667,97 @@ function removeRow(rowId){
 $('#dynamicElements').on('click', 'input[type="button"]', function () {
     $(this).closest('tr').remove();
 });
+
+
+
+/**
+ * Generate Noty Messages as to the content given parameters
+ * @param1 text {String}
+ * @param2 ok {Object}
+ * @param3 cancel {Object}
+ * @param4 type {String}
+ * @param5 layout {String}
+ * @param6 timeout {Number}
+ * @return {Object}
+ * @private
+ * */
+var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close,mode) {
+    var properties = {};
+    properties.text = text;
+
+    if(mode == undefined){
+
+        if (funPrimary || funSecondary) {
+            properties.buttons = [
+                {
+                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                    $noty.close();
+                    if (funPrimary) {
+                        funPrimary();
+                    }
+                }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                    $noty.close();
+                    if (funSecondary) {
+                        funSecondary();
+                    }
+                }
+                }
+            ];
+        }
+
+    }else if(mode == "DEL_BLOCK_OR_ALL"){
+
+        if (funPrimary || funSecondary) {
+            properties.buttons = [
+                {
+                    addClass: 'btn btn-primary', text: 'Gadget & Block', onClick: function ($noty) {
+                    $noty.close();
+                    if (funPrimary) {
+                        funPrimary();
+                    }
+                }
+                },
+                {
+                    addClass: 'btn btn-primary', text: 'Gadget Only', onClick: function ($noty) {
+                    $noty.close();
+                    if (funSecondary) {
+                        funSecondary();
+                    }
+                }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                    $noty.close();
+                }
+                }
+            ];
+        }
+    }
+
+
+    if (timeout) {
+        properties.timeout = timeout;
+    }
+
+    if (close) {
+        properties.closeWith = close;
+    }
+
+    properties.layout = layout;
+    properties.theme = 'wso2';
+    properties.type = type;
+    properties.dismissQueue = true;
+    properties.killer = true;
+    properties.maxVisible = 1;
+    properties.animation = {
+        open: {height: 'toggle'},
+        close: {height: 'toggle'},
+        easing: 'swing',
+        speed: 500
+    };
+
+    return noty(properties);
+};
