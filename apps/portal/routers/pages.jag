@@ -3,7 +3,7 @@ var urlPrefix;
 var tenantedUrlPrefix;
 var sendLogin;
 var dest;
-var decodeHtml;
+var encodeHtml;
 
 (function () {
     var log = new Log();
