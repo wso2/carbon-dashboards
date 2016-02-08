@@ -39,14 +39,16 @@
 .ues-block-container {
     width: 216px;
     height: 216px;
-    background: #666;
+    background: url('../theme/images/grid.png') no-repeat center center;
     margin: 0 auto 20px auto;
+    border: 1px solid #666;
 }
 
 .ues-dummy-gadget {
     width: 54px;
     height: 54px;
     background: #fff;
+    opacity: 0.8;
 }
 
 /**
@@ -153,4 +155,8 @@
 
 .page-content .nano-content {
     bottom: 32px;
+}
+
+.form-inline .form-control.number-input {
+    width: 48px;
 }

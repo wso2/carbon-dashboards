@@ -22,9 +22,9 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=dashboard.title%></a></li>
-            <li class="active">Dashboard Settings</li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
+            <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
+            <li class="active"><%=i18n.localize("dashboard.settings")%></li>
         </ol>
     </div>
 
@@ -34,7 +34,7 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
+                        <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -45,7 +45,7 @@
                         <li>
                             <a href="#" id="ues-dashboard-export">
                                 <span class="fw-stack">
-                                    <i class="fw fw-ring fw-stack-2x"></i>
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-up-arrow fw-stack-1x"></i>
                                  </span>
                                 <%=i18n.localize("export")%>
@@ -81,7 +81,7 @@
                     <div class="col-sm-9">
                         <input id="ues-dashboard-title" type="text" maxlength="250" class="form-control" placeholder="<%= i18n.localize("title")%>" value="<%=dashboard.title%>">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
-                        <label id="title-error" class="required-error hide" for="title">This field is required.</label>
+                        <label id="title-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -125,15 +125,12 @@
                     <div class="col-sm-9">
 
                         <label class="switch">
-                                    <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs"
-                                        aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
-                                        aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
-                                    <span class="helper"></span>
-                                </label>
+                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs"
+                                aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
+                                aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
+                            <span class="helper"></span>
+                        </label>
 
-<!--
-                        <label class="switch">
-                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs" aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>" aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>><span class="toggle-button"></span></label>-->
                     </div>
                 </div>
                 <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) { print("in"); } %>" >
@@ -156,25 +153,25 @@
                             <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
                         </div>
                         <div class="col-sm-3" style="text-align: right;">
-                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" title="Refresh"><i class="fw fw-refresh"></i></button>
+                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" title="<%=i18n.localize("refresh")%>"><i class="fw fw-refresh"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="ues-access-token-url" class="col-sm-3 control-label"><%= i18n.localize("access.token.url")%></label>
                         <div class="col-sm-9">
-                            <p id="ues-access-token-url" class="form-control-static"><%=dashboard.accessTokenUrl%></p>
+                            <p id="ues-access-token-url" class="form-control-static"><%=encodeHtml(dashboard.accessTokenUrl)%></p>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="ues-api-key" class="col-sm-3 control-label"><%= i18n.localize("api.key")%></label>
                         <div class="col-sm-9">
-                            <p id="ues-api-key" class="form-control-static"><%=dashboard.apiKey%></p>
+                            <p id="ues-api-key" class="form-control-static"><%=encodeHtml(dashboard.apiKey)%></p>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="ues-api-secret" class="col-sm-3 control-label"><%= i18n.localize("api.secret")%></label>
                         <div class="col-sm-9">
-                            <p id="ues-api-secret" class="form-control-static"><%=dashboard.apiSecret%></p>
+                            <p id="ues-api-secret" class="form-control-static"><%=encodeHtml(dashboard.apiSecret)%></p>
                         </div>
                     </div>
                 </div>
