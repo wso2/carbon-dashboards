@@ -63,10 +63,49 @@ body > .page-content-wrapper > .container-fluid {
     height: 0;
 }
 
+.dashboard .page-header .auth {
+    min-height: 20px;
+    margin-bottom: 15px;
+}
+
+.dashboard .page-header .auth > div {
+    position: relative;
+}
+
+.dashboard .page-header .auth > div > span,
+.dashboard .page-header .auth > div > a {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 20px;
+    padding: 0 8px;
+}
+
+.dashboard .page-header .auth > div > a span i {
+    line-height: 20px;
+}
+
+.dashboard .page-header .auth > div .icon {
+    height: 20px;
+    width: 20px;
+}
+
+.dashboard .page-header .auth > div .caret {
+    margin-left: -2px;
+}
+
+.dashboard .page-header .auth > div.pull-right:not(:first-child) {
+    border-right: 1px solid #e4e4e4;
+}
+
 .page-header > .page-title > h1 {
     margin: 0;
     font-size: 20px;
     font-weight: 400;
+}
+
+.dashboard .page-header > .page-title > h1 {
+    padding: 20px 0;
+    font-size: 25px;
 }
 
 .page-header > .page-title > .lead {
@@ -124,7 +163,7 @@ body > .page-content-wrapper > .container-fluid {
 .sub-nav .nav > li > a {
     padding: 10px 13px;
     width: 55px;
-    color: #f3f3f3;
+    color: #e6e6e6;
 }
 
 .sub-nav .nav > li > a:hover,
@@ -274,15 +313,37 @@ body > .page-content-wrapper > .container-fluid {
     background: #3d464d;
     color: #fff;
     cursor: pointer;
+    border-bottom: 2px solid #373E44;
 }
 
 .panel-default > .panel-heading:hover {
     background: #49525a;
 }
 
+.panel-default > .panel-heading[data-parent][aria-expanded=true] {
+    background: #4F6A80;
+}
+
 .panel-default > .panel-heading .caret {
     float: right;
     margin-top: 7px;
+}
+
+.panel-default > .panel-heading.text-truncate:after {
+    content: " ";
+    display: block;
+    font-size: 0;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.panel-default > .panel-heading.text-truncate > .panel-title {
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    float: left;
 }
 
 .panel-default > .panel-heading > .panel-title .icon {
@@ -323,6 +384,7 @@ body > .page-content-wrapper > .container-fluid {
 
 .dashboard .gadgets-grid {
     background: transparent;
+    min-height: auto;
 }
 
 .gadget-wrapper {

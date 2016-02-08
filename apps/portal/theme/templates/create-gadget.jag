@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/d3.geomap.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title><%= i18n.localize("create.gadget.lable")%></title>
+    <title><%= i18n.localize("create.gadget.label")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -24,7 +24,7 @@
                 <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
                 <li><a href="<%=tenantedUrlPrefix%>./dashboards">
                     <span class="fw-stack">
-                        <i class="fw fw-ring fw-stack-2x"></i>
+                        <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-cancel fw-stack-1x"></i>
                     </span> Cancel</a></li>
             </ul>
