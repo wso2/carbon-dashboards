@@ -129,9 +129,7 @@ $(function () {
             var container = $('#' + component.id);
             var userPrefsExists = false;
             for (var key in component.content.options) {
-                console.log(component.content.options[key].type)
                 if (component.content.options[key].type.toUpperCase() != 'HIDDEN') {
-                    console.log('inside if')
                     userPrefsExists =  true;
                     break;
                 }
