@@ -15,7 +15,7 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
+            <li class="active"><%=i18n.localize("dashboards.label")%></li>
         </ol>
     </div>
 

@@ -243,11 +243,11 @@
     <!-- Component toolbar actions -->
     <script id="ues-component-actions-hbs" type="text/x-handlebars-template">
         <div class="btn-group">
-            {{#has options}}
+            {{#if userPrefsExists}}
             <button type="button" class="btn btn-default ues-component-settings-handle" title="<%= i18n.localize("properties.label") %>">
                 <i class="icon fw fw-settings"></i>
             </button>
-            {{/has}}
+            {{/if}}
             <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
                 data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
                 <i class="icon fw fw-expand"></i>
