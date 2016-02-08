@@ -132,8 +132,9 @@ $("#previewChart").click(function() {
             } else {
                 chart = null;
                 //TODO DOn't do this! read this from a config file
-                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
-                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, 'localhost', '9443', 'WEBSOCKET', "SECURED");
+                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', window.location.pathname.split('/')[3],
+                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
+                    'WEBSOCKET', "SECURED");
                 var source = $("#wizard-zeroevents-hbs").html();;
                 var template = Handlebars.compile(source);
                 $("#chartDiv").empty();
