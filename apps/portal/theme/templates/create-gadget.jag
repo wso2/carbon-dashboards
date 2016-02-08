@@ -215,6 +215,17 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group var attr tabular">
+                                        <label for="tblColor"
+                                               class="col-sm-6 control-label">Color </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="tblColor"
+                                                    name="tblColor">
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group attr var bar line area stackedBar groupedBar stackedArea
                                     multiArea scatter tabular">
                                         <label for="maxDataLength"
