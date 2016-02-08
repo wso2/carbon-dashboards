@@ -14,8 +14,9 @@ maxUpdateValue = gadgetConfig.maxUpdateValue;
 if(type === "realtime") {
     columns = gadgetConfig.columns;
     //subscribe to websocket
-    subscribe(datasource.split(":")[0], datasource.split(":")[1], '10', 'carbon.super',
-        onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, location.hostname, location.port, 'WEBSOCKET', "SECURED");
+    subscribe(datasource.split(":")[0], datasource.split(":")[1], '10', gadgetConfig.domain,
+        onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, location.hostname, location.port,
+        'WEBSOCKET', "SECURED");
 } else {
     //first, fetch datasource schema
     getColumns(datasource);
