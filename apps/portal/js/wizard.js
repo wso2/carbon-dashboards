@@ -57,22 +57,24 @@ $("#dsList").change(function() {
     if (datasource != "-1") {
         $('#rootwizard').find('.pager .next').removeClass("disabled");
         datasourceType = $("#dsList option:selected").attr("data-type");
-        getColumns(datasource, datasourceType);
+        getColumns(datasource, datasourceType)
 
-        //check whether the seleced datasource supports pagination as well
-        //first, get the recordstore for this table
-        var recordStore;
-        var tableName = datasource;
-        var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
-        $.getJSON(url, function(data) {
-            if (data.status==="success") {
-                recordStore = data.message;
-                //then check for pagination support on this recordstore
-                recordStore = recordStore.replace(/"/g,"");
-                checkPaginationSupported(recordStore);
-            }
-        });
+        if(datasourceType != "realtime") {
 
+            //check whether the seleced datasource supports pagination as well
+            //first, get the recordstore for this table
+            var recordStore;
+            var tableName = datasource;
+            var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
+            $.getJSON(url, function (data) {
+                if (data.status === "success") {
+                    recordStore = data.message;
+                    //then check for pagination support on this recordstore
+                    recordStore = recordStore.replace(/"/g, "");
+                    checkPaginationSupported(recordStore);
+                }
+            });
+        }
     } else {
         $('#rootwizard').find('.pager .next').addClass("disabled");
     }
@@ -100,7 +102,7 @@ $("#previewChart").click(function() {
     });
 
     $("."+chartType+" select").each(function(){
-        if( $(this).attr("id") != "color" && $(this).attr("id") != "columns" && $(this).val() == -1){
+        if( $(this).attr("id") != "color" && $(this).attr("id") != "tblColor" && $(this).attr("id") != "columns" && $(this).val() == -1){
             $(this).css("border-color", "red");
             notFilled = true;
         }else{
@@ -128,6 +130,7 @@ $("#previewChart").click(function() {
                 generateMessage("You have not deployed a Publisher adapter UI Corresponding to selected StreamID:" + streamId +
                     " Please deploy an adapter to Preview Data.", null, null, "error", "topCenter", 3500, ['button', 'click']);
             } else {
+                chart = null;
                 //TODO DOn't do this! read this from a config file
                 subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', 'carbon.super',
                     onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval, 'localhost', '9443', 'WEBSOCKET', "SECURED");
@@ -182,8 +185,9 @@ $(".pager .finish").click(function() {
         var notFilled = false;
         $("#title").css("border-color", "");
 
+
         $("."+chartType).find("input[type=text]").each(function(){
-            if( $(this).val().length == 0){
+            if( $(this).attr("id").indexOf("cusId") == -1 && $(this).val().length == 0){
                 $(this).css("border-color", "red");
                 notFilled = true;
             }else{
@@ -192,7 +196,7 @@ $(".pager .finish").click(function() {
         });
 
         $("."+chartType+" select").each(function(){
-            if( $(this).attr("id") != "color" && $(this).attr("id") != "columns" && $(this).val() == -1){
+            if( $(this).attr("id") != "color" && $(this).attr("id") != "tblColor" && $(this).attr("id") != "columns" && $(this).val() == -1){
                 $(this).css("border-color", "red");
                 notFilled = true;
             }else{
@@ -599,6 +603,7 @@ function constructChartConfigurations(){
         var columns = [];
         var columnTitles = [];
         var key = $("#key").val();
+        var colorColumn = $("#tblColor").val();
 
         if(selectedTableCoulumns.length != 0){
             for(i=0;i<selectedTableCoulumns.length;i++){
@@ -616,7 +621,7 @@ function constructChartConfigurations(){
                 columnTitles.push(defaultTableColumns[i]);
             }
         }
-        config.charts = [{type: "table", key : key, maxLength : maxDataLength, columns: columns, columnTitles:columnTitles}];
+        config.charts = [{type: "table", key : key, maxLength : maxDataLength, color:colorColumn, columns: columns, columnTitles:columnTitles}];
     } else if (chartType === "scatter") {
         var pointSize = $("#pointSize").val();
         var pointColor = $("#pointColor").val();

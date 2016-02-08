@@ -273,10 +273,17 @@ function TableChart() {};
 TableChart.prototype.bindConfigs = function(columns) {
     console.log("****** Initializing TableChart *** ");
     $("#key").empty();
+    $("#tblColor").empty();
     $("#columns").empty();
     $("#key").append($('<option></option>')
         .val("-1")
         .html("-- Select --"));
+    $("#tblColor").append($('<option></option>')
+        .val("-1")
+        .html("-- Select --"));
+    $("#tblColor").append($('<option></option>')
+        .val("*")
+        .html("*(All Attributes)"));
     $("#columns").append($('<option></option>')
         .val("-1")
         .html("*(All Attributes)"));
@@ -290,6 +297,10 @@ TableChart.prototype.bindConfigs = function(columns) {
             .val(column.name)
             .html(column.name)
             .attr("data-type", column.type));
+        $("#tblColor").append($('<option></option>')
+            .val(column.name)
+            .html(column.name)
+            .attr("data-type", column.type));
 
     });
 };
@@ -300,6 +311,7 @@ TableChart.prototype.configure = function(config) {
     var columnTitles = [];
     var maxDataLength = $("#maxDataLength").val();
     var key = $("#key").val();
+    var colorColumn = $("#tblColor").val();
 
     if(selectedTableCoulumns.length != 0){
         for(i=0;i<selectedTableCoulumns.length;i++){
@@ -318,7 +330,7 @@ TableChart.prototype.configure = function(config) {
         }
     }
 
-    config.charts = [{type: "table", key : key, maxLength : maxDataLength, columns: columns, columnTitles:columnTitles}];
+    config.charts = [{type: "table", key : key, maxLength : maxDataLength, color:colorColumn, columns: columns, columnTitles:columnTitles}];
     chartConfig = config;
 };
 
