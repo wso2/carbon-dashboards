@@ -3,16 +3,6 @@
     margin-top: 10px;
 }
 
-/**
- * Theme overrides
- */
-.switch {
-    margin-top: 6px;
-}
-
-/**
- * Auto complete menu
- */
 .tt-menu {
     max-height: 200px;
     width: 100%;
@@ -21,27 +11,34 @@
     background-color: #ffffff;
 }
 
-.permission-menu-content {
+/**
+ * Theme overrides
+ */
+.switch {
+    margin-top: 6px;
+}
+
+.permission-menu-content{
     display: block;
     background-color: #FFFFFF;
     width: 100%;
     height: 100%;
     cursor: hand;
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
     font-weight: 400;
-    font-size: 14px;
-    line-height: 28px;
+    font-size: 12pt;
 }
 
-.permission-menu-content span {
+.permission-menu-content span{
     padding-left: 5px;
 }
 
-.permission-menu-content:hover {
+.permission-menu-content:hover{
     background-color: #191b1a;
     color: #FFFFFF;
 }
 
-.permission-item {
+.permission-item{
     margin: 0 0 0 0;
 }
 
