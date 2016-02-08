@@ -3,6 +3,7 @@ var urlPrefix;
 var tenantedUrlPrefix;
 var sendLogin;
 var dest;
+var encodeHtml;
 
 (function () {
     var log = new Log();
@@ -16,6 +17,15 @@ var dest;
         var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
         response.sendRedirect(urlPrefix + 'login-controller?destination=' + dest);
     };
+
+    /**
+     * Encode HTML content
+     * @param {String} text     Text to be encoded
+     * @return {String}         Encoded text
+     */
+    encodeHtml = function(text) {
+        return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
 
     var page = request.getRequestURI();
     var controller = '/controllers';

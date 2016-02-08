@@ -24,7 +24,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><%= i18n.localize("dashboards.lable")%></title>
+    <title><%= i18n.localize("dashboards.label")%></title>
 
     <link rel="shortcut icon" href="<%=urlPrefix%>libs/theme-wso2_1.0/images/favicon.png" />
 
@@ -32,7 +32,7 @@
     <link href="<%=urlPrefix%>libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 
     <!-- Font WSO2 CSS -->
-    <link href="<%=urlPrefix%>libs/font-wso2_1.2/css/font-wso2.css" rel="stylesheet" type="text/css" />
+    <link href="<%=urlPrefix%>libs/font-wso2_1.0.0/css/font-wso2.min.css" rel="stylesheet" type="text/css" />
 
     <!-- Jquery Nanoscroller CSS -->
     <link href="<%=urlPrefix%>libs/nanoscroller_0.8.7/nanoscroller.css" rel="stylesheet" type="text/css" />

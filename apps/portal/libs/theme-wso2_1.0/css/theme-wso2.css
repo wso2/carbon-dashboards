@@ -483,6 +483,24 @@ body.inverse .fade-edge:after {
   .remove-margin-xs {
     margin: 0 !important;
   }
+  .fade-in-xs {
+    opacity: 1 !important;
+  }
+  .fade-out-xs {
+    opacity: 0 !important;
+  }
+  .display-none-xs {
+    display: none !important;
+  }
+  .display-block-xs {
+    display: block !important;
+  }
+  .display-inline-xs {
+    display: inline !important;
+  }
+  .display-inline-block-xs {
+    display: inline-block !important;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
@@ -512,6 +530,24 @@ body.inverse .fade-edge:after {
   }
   .remove-margin-sm {
     margin: 0 !important;
+  }
+  .fade-in-sm {
+    opacity: 1 !important;
+  }
+  .fade-out-sm {
+    opacity: 0 !important;
+  }
+  .display-none-sm {
+    display: none !important;
+  }
+  .display-block-sm {
+    display: block !important;
+  }
+  .display-inline-sm {
+    display: inline !important;
+  }
+  .display-inline-block-sm {
+    display: inline-block !important;
   }
 }
 
@@ -543,6 +579,24 @@ body.inverse .fade-edge:after {
   .remove-margin-md {
     margin: 0 !important;
   }
+  .fade-in-md {
+    opacity: 1 !important;
+  }
+  .fade-out-md {
+    opacity: 0 !important;
+  }
+  .display-none-md {
+    display: none !important;
+  }
+  .display-block-md {
+    display: block !important;
+  }
+  .display-inline-md {
+    display: inline !important;
+  }
+  .display-inline-block-md {
+    display: inline-block !important;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -572,6 +626,24 @@ body.inverse .fade-edge:after {
   }
   .remove-margin-lg {
     margin: 0 !important;
+  }
+  .fade-in-lg {
+    opacity: 1 !important;
+  }
+  .fade-out-lg {
+    opacity: 0 !important;
+  }
+  .display-none-lg {
+    display: none !important;
+  }
+  .display-block-lg {
+    display: block !important;
+  }
+  .display-inline-lg {
+    display: inline !important;
+  }
+  .display-inline-block-lg {
+    display: inline-block !important;
   }
 }
 
@@ -819,19 +891,20 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
   box-shadow: none;
 }
 
-.navbar-default .navbar-nav > li > a {
+.navbar-default .navbar-nav > li a {
   color: #ffffff;
   text-transform: uppercase;
   padding: 0 15px;
   line-height: 50px;
+  position: relative;
 }
 
-.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:active {
+.navbar-default .navbar-nav > li a:hover, .navbar-default .navbar-nav > li a:focus, .navbar-default .navbar-nav > li a:active {
   background: #429ad4;
   color: #ffffff;
 }
 
-.navbar-default .navbar-nav > li > a:hover {
+.navbar-default .navbar-nav > li a:hover {
   background: #429ad4;
 }
 
@@ -862,6 +935,10 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
   overflow: visible !important;
 }
 
+.navbar-collapse.tiles ul.nav {
+  height: 140px;
+}
+
 .navbar-collapse.tiles ul.nav li {
   display: inline-block;
   text-align: center;
@@ -879,14 +956,69 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
   line-height: 1.4em;
 }
 
+.navbar-collapse.tiles ul.nav li li a {
+  background: #777777;
+}
+
 .navbar-collapse.tiles ul.nav li a:hover {
   background: #555;
+}
+
+.navbar-collapse.tiles ul.nav li li a:hover {
+  background: #888888;
 }
 
 .navbar-collapse.tiles ul.nav li a i {
   font-size: 46px;
   display: block;
   margin-bottom: 10px;
+}
+
+.navbar-collapse.tiles ul.nav li ul {
+  padding-left: 140px;
+  margin-top: -130px;
+  display: none;
+}
+
+.navbar-collapse.tiles ul.nav li.has-sub > a:after {
+  width: 7px;
+  height: 120px;
+  background: #757575;
+  display: inline-block;
+  content: " ";
+  top: 0;
+  right: 0;
+  z-index: 100000;
+  position: absolute;
+}
+
+.navbar-collapse.tiles ul.nav li.has-sub[aria-expanded=true] > a:after {
+  right: auto;
+  left: 0;
+}
+
+.navbar-collapse.tiles ul.nav li.has-sub > a:before {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  top: 45%;
+  right: 1px;
+  position: absolute;
+  z-index: 1000000;
+  content: " ";
+  vertical-align: middle;
+  border-left: 4px dashed;
+  border-top: 4px solid\9;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  color: #dadada;
+}
+
+.navbar-collapse.tiles ul.nav li.has-sub[aria-expanded=true] > a:before {
+  right: auto;
+  left: -3px;
+  border-right: 4px dashed;
+  border-left: 4px dashed transparent;
 }
 
 .nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
@@ -1130,7 +1262,7 @@ footer > .container-fluid p {
 }
 
 footer .icon {
-  font-size: 21px;
+  font-size: 37px;
   vertical-align: middle;
   color: #cbcbcb;
 }
@@ -1477,6 +1609,10 @@ footer a, footer a:hover {
   transform: translate(-50%, -50%);
 }
 
+.loading .loading-animation .logo img {
+  max-width: 50px;
+}
+
 .loading .loading-animation .logo {
   position: relative;
   width: 50px;
@@ -1776,7 +1912,10 @@ input[type=number].form-control {
 }
 
 @media only screen and (max-width: 768px) {
-  .input-group.res-wrap, .input-group.res-wrap .form-control, .input-group.res-wrap .control-label, .input-group.res-wrap .input-group-btn {
+  .input-group.res-wrap,
+  .input-group.res-wrap .form-control,
+  .input-group.res-wrap .control-label,
+  .input-group.res-wrap .input-group-btn {
     min-width: 100%;
     display: block;
     float: none;
@@ -1951,7 +2090,8 @@ input[type=number].form-control {
 }
 
 .table.table-selectable > tbody > tr:hover td:not(.dataTables_empty):first-child:after,
-.table.table-selectable > tbody > tr.DTTT_selected td:not(.dataTables_empty):first-child:after {
+.table.table-selectable > tbody > tr.DTTT_selected td:not(.dataTables_empty):first-child:after,
+.table.table-selectable > tbody > tr[data-type=selectable] td:not(.dataTables_empty):first-child:after {
   position: absolute;
   display: block;
   border-top: 32px solid #007d85;
@@ -1960,6 +2100,10 @@ input[type=number].form-control {
   content: "";
   top: 0;
   z-index: 101;
+}
+
+.table.table-selectable > tbody > tr[data-type=selectable]:not(:hover):not(.DTTT_selected) td:not(.dataTables_empty):first-child:after {
+  border-top-color: #e4e4e4;
 }
 
 .table.list-table thead tr.bulk-action-row {
@@ -2964,4 +3108,13 @@ a.list-group-item:hover {
   opacity: 1;
   top: 0;
   left: 0;
+}
+
+@media (min-width: 768px) {
+  .tab-content > .tab-pane {
+    display: none !important;
+  }
+  .tab-content > .active {
+    display: block !important;
+  }
 }
