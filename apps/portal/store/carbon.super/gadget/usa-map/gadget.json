@@ -3,13 +3,6 @@
     "title": "USA Map",
     "type": "gadget",
     "thumbnail": "store://gadget/usa-map/index.png",
-    "options": {
-        "username": {
-            "type": "string",
-            "title": "Username",
-            "description": "Username to be used for service invocation"
-        }
-    },
     "settings": {
         "personalize": true
     },
