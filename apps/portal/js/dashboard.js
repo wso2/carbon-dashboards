@@ -37,7 +37,11 @@ $(function () {
 
                 renderMaxView(component, DASHBOARD_DEFAULT_VIEW);
 
-                $(this).attr('title', $(this).data('maximize-title'));
+                $(this)
+                    .attr('title', $(this).data('maximize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-contract')
+                    .addClass('fw-expand');
 
                 component.fullViewPoped = false;
 
@@ -54,7 +58,11 @@ $(function () {
 
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
 
-                $(this).attr('title', $(this).data('minimize-title'));
+                $(this)
+                    .attr('title', $(this).data('minimize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-expand')
+                    .addClass('fw-contract');
 
                 component.fullViewPoped = true;
             }
@@ -134,14 +142,11 @@ $(function () {
                     break;
                 }
             }
-            component.content.userPrefsExists = userPrefsExists;
+            
+            // anon dashboards doesn't have settings option
+            component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
 
             container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
-
-            // hide the settings button from the anon view
-            if (ues.global.dbType === 'anon') {
-                $('a.ues-component-settings-handle', container).hide();
-            }
         }
     };
 
