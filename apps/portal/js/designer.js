@@ -568,7 +568,11 @@ $(function () {
                     });
 
                 designer.css('height', 'auto');
-                $(this).attr('title', $(this).data('maximize-title'));
+                $(this)
+                    .attr('title', $(this).data('maximize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-contract')
+                    .addClass('fw-expand');
 
                 componentBody.hide();
 
@@ -599,7 +603,11 @@ $(function () {
                     });
 
                 designer.css('height', pageEl.height());
-                $(this).attr('title', $(this).data('minimize-title'));
+                $(this)
+                    .attr('title', $(this).data('minimize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-expand')
+                    .addClass('fw-contract');
 
                 componentBody.hide();
             }
