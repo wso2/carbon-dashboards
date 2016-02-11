@@ -104,8 +104,10 @@
 
             if (styles.no_heading) {
                 sandbox.addClass('ues-no-heading');
+                sandbox.find('.ues-component-heading').hide();
             } else {
                 sandbox.removeClass('ues-no-heading');
+                sandbox.find('.ues-component-heading').show();
             }
             
             var titlePositon = 'ues-component-title-' + (styles.titlePosition || 'left');

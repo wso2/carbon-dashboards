@@ -128,3 +128,7 @@
 .ues-no-heading .ues-component-heading {
     display: none;
 }
+
+.ues-component {
+    height: 100%;
+}

@@ -831,6 +831,26 @@
         $('#gridGuideToggle').change(function(){
             $('body').toggleClass('grid-on');
         });
+        
+        $('.gadgets-grid').on({
+            mouseenter: function() {
+                toggleHeading($(this), true);
+            }, 
+            mouseleave: function() {
+                toggleHeading($(this), false);
+            }
+        }, '.ues-component');
+        
+        function toggleHeading(source, show) {
+            if (source.hasClass('ues-no-heading')) {
+                var heading = source.find('.ues-component-heading');
+                if (show) {
+                    heading.slideDown();
+                } else {
+                    heading.slideUp();
+                }
+            }
+        }
     </script>
 
 </body>

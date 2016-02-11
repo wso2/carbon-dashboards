@@ -41,7 +41,6 @@
     height: 216px;
     background: url('../theme/images/grid.png') no-repeat center center;
     margin: 0 auto 20px auto;
-    border: 1px solid #666;
 }
 
 .ues-dummy-gadget {
@@ -159,4 +158,8 @@
 
 .form-inline .form-control.number-input {
     width: 48px;
+}
+
+.ues-no-heading .ues-component-heading {
+    display: none;
 }
