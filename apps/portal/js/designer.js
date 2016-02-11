@@ -1543,12 +1543,12 @@ $(function () {
             e.preventDefault();
 
             var query = $(this).val();
-            loadAssets('gadgets', query);
+            loadAssets('gadget', query);
         });
 
         $('.ues-store-assets .ues-search-box button').on('click', function () {
             var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
-            loadAssets('gadgets', query);
+            loadAssets('gadget', query);
         });
     };
 
