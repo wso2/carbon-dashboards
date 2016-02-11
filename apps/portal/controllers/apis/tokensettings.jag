@@ -46,7 +46,7 @@ function getApplicationKeyAndSecret(){
             ids.open(options, isURL + "services/OAuthAdminService", false, oauthSettings.username, oauthSettings.password);
             ids.send(payload);
         } catch (e) {
-            log.info(e.toString());
+            log.info(e);
         }
 
         var ids2 = new ws.WSRequest();
@@ -71,7 +71,7 @@ function getApplicationKeyAndSecret(){
             dashboard.apiKey = "";
             dashboard.apiSecret = "";
             dashboard.accessTokenUrl = "";
-            log.info(e.toString());
+            log.info(e);
         }
 
         dashboards.update(dashboard);
