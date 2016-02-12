@@ -86,7 +86,8 @@ function genericConfigure(config) {
     var maxDataLength = $("#maxDataLength").val();
     var newConfig = {
         "x": xAxis,
-        "maxLength": maxDataLength
+        "maxLength": maxDataLength,
+        "padding": {top:30,left:45,bottom:38,right:55}
     };
     chartConfig = newConfig;
 }
@@ -330,7 +331,7 @@ TableChart.prototype.configure = function(config) {
         }
     }
 
-    config.charts = [{type: "table", key : key, maxLength : maxDataLength, color:colorColumn, columns: columns, columnTitles:columnTitles}];
+    config.charts = [{type: "table", key : key, padding : {top:30,left:45,bottom:38,right:55}, maxLength : maxDataLength, color:colorColumn, columns: columns, columnTitles:columnTitles}];
     chartConfig = config;
 };
 

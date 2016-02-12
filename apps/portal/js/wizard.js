@@ -594,6 +594,7 @@ function constructChartConfigurations(){
 
     config.x = xAxis;
     config.maxLength = maxDataLength;
+    config.padding = {top:30,left:45,bottom:38,right:55};
 
     if (chartType == "bar") {
         config.charts = [{type: chartType,  y : yAxis}];
