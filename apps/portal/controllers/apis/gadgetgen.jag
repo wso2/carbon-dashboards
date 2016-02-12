@@ -65,10 +65,6 @@
     var file = new File(gadgetDir + template.getName());
     file.move(gadgetPath);
 
-    //create the gadget.json file with wizard's configurations data
-    // var ast = require(gadgetPath + "/" + "gadget.json");
-    // log.info(ast);
-
     //TODO refactor these methods!!!
     var gadgetDescriptor = new File(gadgetPath + "/" + "gadget.json");
     gadgetDescriptor.open('w');
@@ -78,7 +74,6 @@
     //TODO refactor these methods!!!
     var gadgetConf = new File(gadgetPath + "/js/" + "gadgetconf.js");
     var confString = "var gadgetConfig =" + JSON.stringify(config) + ";";
-    log.info(confString);
     gadgetConf.open('w');
     gadgetConf.write(confString);
     gadgetConf.close();
@@ -111,11 +106,9 @@
             var sourceFiles = source.listFiles();
             for (var i = 0; i < sourceFiles.length; i++) {
                 var inFile = sourceFiles[i];
-                log.info(inFile.getName());
                 copyDir(inFile, destination);
             }
         } else {
-            // log.info("** Copying file " + source.getName());
             copyFile(source,destination);
         }
     };
