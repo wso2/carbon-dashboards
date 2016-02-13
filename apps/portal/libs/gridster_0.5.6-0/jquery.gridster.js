@@ -3668,7 +3668,7 @@
         /* generate CSS styles for cols */
         for(i = 12; i >= 0; i--) {
             lgStyles += (opts.namespace + ' [data-col="'+ (i + 1) + '"] { left:' +
-                (Math.round((i * 100 * 100000) / 12) / 100000) + '%; }\n');
+                'calc(' + (Math.round((i * 100 * 100000) / 12) / 100000) + '% + 15px); }\n');
         }
 
         /* generate CSS styles for rows */
@@ -3687,7 +3687,7 @@
 
         for (var x = 1; x <= 12; x++) {
             lgStyles += (opts.namespace + ' [data-sizex="' + x + '"] { width:' +
-                (Math.round((x * 100 * 100000) / 12) / 100000) + '%; }\n');
+                'calc(' + (Math.round((x * 100 * 100000) / 12) / 100000) + '% - 30px); }\n');
         }
 
         this.remove_style_tags();

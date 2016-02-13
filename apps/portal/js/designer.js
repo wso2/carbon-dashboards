@@ -2074,7 +2074,7 @@ $(function () {
 
             // bind the gridster to the layout
             gridster = gridsterContainer.gridster({
-                widget_margins: [0, 0],
+                widget_margins: [0, 15],
                 widget_base_dimensions: [150, 150],
                 min_cols: 12,
                 serialize_params: function (el, coords) {

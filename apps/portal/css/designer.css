@@ -105,20 +105,8 @@
     }
 }
 
-.gridster-block {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    padding: 15px;
-}
-
 .gridster ul {
     list-style: none;
-}
-
-.gs-resize-handle-both {
-    bottom: 4px;
-    right: 4px;
 }
 
 .gadgets-grid {
