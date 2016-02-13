@@ -8,13 +8,9 @@
         "url": "store://gadget/publisher/index.xml"
     },
     "notify": {
-        "select": {
-            "type": "address",
-            "description": "This notifies selected state"
-        },
-        "cancel": {
-            "type": "boolean",
-            "description": "This notifies cancellation of state selection"
+        "publisher": {
+            "type": "message",
+            "description": "This notifies message generated in publisher"
         }
     }
 }

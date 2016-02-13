@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/d3.geomap.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title><%= i18n.localize("create.gadget.lable")%></title>
+    <title>Create Gadget</title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -21,8 +21,8 @@
         </div>
         <div class="collapse navbar-collapse ues-context-menu-actions">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="<%=tenantedUrlPrefix%>./dashboards">Dashboards</a></li>
-                <li><a href="<%=tenantedUrlPrefix%>./dashboards">
+                <li class="active"><a href="<%=tenantedUrlPrefix%>./">Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./">
                     <span class="fw-stack">
                         <i class="fw fw-ring fw-stack-2x"></i>
                         <i class="fw fw-cancel fw-stack-1x"></i>
@@ -34,7 +34,7 @@
     <div class="ues-tiles-menu">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="<%=tenantedUrlPrefix%>./dashboards"><i class="fw fw-dashboard"></i> Dashboards</a></li>
+                <li><a href="<%=tenantedUrlPrefix%>./"><i class="fw fw-dashboard"></i> Dashboards</a></li>
             </ul>
         </div>
     </div>
@@ -49,8 +49,8 @@
                   <div class="navbar-inner">
                     <div class="container">
                 <ul>
-                    <li id="step1"><a href="#tab1" data-toggle="tab">Select Table/Event Stream</a></li>
-                    <li id="step2"><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
+                    <li><a href="#tab1" data-toggle="tab">Select Table/Event Stream</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Configure Chart</a></li>
                 </ul>
                  </div>
                   </div>
@@ -60,57 +60,24 @@
                         <form class="form-horizontal">
                         <fieldset>
 
+                            <!-- Select Basic -->
                             <div class="form-group">
                               <label class="col-md-4 control-label" for="datasource">Analytics Table/Event Stream</label>
                               <div class="col-md-4">
-                                  <select id="dsList" name="datasource" class="form-control" style="width: 100%">
-                                  </select>
+                                <select id="dsList" name="datasource" class="form-control" style="width: 100%">
+                                </select>
                               </div>
-
-                              <!-- <div class="col-md-1">
-                                <div class="dropdown" id="fields">
-                                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" 
-                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    Fields
-                                    <span class="caret"></span>
-                                  </button>
-                                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="fieldsList">
-                                    <li>
-                                        <a href="#"><input type="checkbox"><span class="lbl"> Tuesday</span></a>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div> -->
-
                               <div class="col-md-1">
                                 <button type="button" id="btnPreview" class="btn btn-success" role="button">
                                     <i class="fa fa-eye"> Preview Data</i>
                                 </button>
                               </div>
-
                             </div>
-
-                            <div class="form-group" id="fieldsContainer">
-                              <label class="col-md-4 control-label" for="datasource">Fields</label>
-                              <div class="col-md-4" id="fields">
-
-                              </div>
-                            </div>
-
-                            <!-- <div class="form-group" id="luceneQuery">
-                              <label class="col-md-4 control-label" for="datasource">Filter (optionl Lucene query)</label>
-                              <div class="col-md-4" id="filter">
-                                    <textarea class="form-control" rows="2" id="comment"></textarea>
-                              </div>
-                            </div> -->
 
                             <div id="previewPane"></div>
 
                         </fieldset>
                         </form>
-
-                        
-
                     </div>
 
                     <div class="tab-pane" id="tab2">
@@ -120,7 +87,8 @@
                                 <h4>Configuration</h4>
                                 <form class="form-horizontal">
 
-                                    <div class="form-group attr bar line area arc stackedBar groupedBar stackedArea multiArea scatter tabular map">
+                                    <div class="form-group attr bar line area arc stackedBar groupedBar stackedArea
+                                    multiArea scatter tabular map number">
                                         <label for="title"
                                                class="col-sm-6 control-label">Title</label>
 
@@ -138,35 +106,21 @@
                                         <div class="col-sm-6">
                                             <select class="form-control" id="chartType"
                                                     name="chartType">
-                                                <option value="-1">--Select--</option>
+                                                <option value="">--Select--</option>
                                                 <option value="bar">Bar</option>
                                                 <option value="line">Line</option>
                                                 <option value="area">Area</option>
                                                 <option value="tabular">Table</option>
-                                                <option value="arc">Arc</option>
                                                 <option value="scatter">Scatter</option>
                                                 <option value="map">Map</option>
-                                                <!-- <option value="stackedBar">StackedBar</option>
-                                                <option value="groupedBar">GroupedBar</option>
-                                                <option value="stackedArea">StackedArea</option>
-                                                <option value="multiArea">MultiArea</option>
-                                                <option value="scatter">Scatter</option> -->
+                                                <option value="number">Number</option>
+
                                             </select>
                                         </div>
                                     </div>
 
-                                    <div class="form-group attr var arc">
-                                        <label for="percentage"
-                                               class="col-sm-6 control-label">Percentage </label>
-
-                                        <div class="col-sm-6">
-                                            <select class="form-control" id="percentage"
-                                                    name="percentage">
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group attr var bar line area stackedBar groupedBar stackedArea multiArea scatter map">
+                                    <div class="form-group attr var bar line area stackedBar groupedBar stackedArea
+                                    multiArea scatter map number">
                                         <label for="xAxis"
                                                class="col-sm-6 control-label">X-Axis </label>
 
@@ -177,7 +131,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group var attr bar area stackedBar groupedBar stackedArea  scatter map">
+                                    <div class="form-group var attr bar area line stackedBar groupedBar stackedArea
+                                    scatter map">
                                         <label for="yAxis"
                                                class="col-sm-6 control-label">Y-Axis </label>
 
@@ -188,13 +143,13 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group var  attr line multiArea">
-                                        <label for="yAxises" class="col-sm-6 control-label">Y-Axis </label>
+                                    <div class="form-group var attr line ">
+                                        <label for="color"
+                                               class="col-sm-6 control-label">Color Dimension </label>
 
                                         <div class="col-sm-6">
-                                            <select multiple class="form-control" id="yAxises"
-                                                    name="yAxis">
-
+                                            <select class="form-control" id="color"
+                                                    name="color">
                                             </select>
                                         </div>
                                     </div>
@@ -227,18 +182,84 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group var attr stackedBar groupedBar stackedArea tabular">
-                                        <label for="xAxis"
-                                               class="col-sm-6 control-label">Table Column</label>
+                                    <div class="form-group attr map">
+                                         <label for="region" class="col-sm-6 control-label">Region</label>
+                                         <div class="col-sm-6">
+                                             <select class="form-control" id="region" name="tableStyle">
+                                                    <option value="-1">-- Select --</option>
+                                                    <option value="world">World Map</option>
+                                                    <option value="usa">USA Map</option>
+                                                    <option value="europe">Europe Map</option>
+                                             </select>
+                                         </div>
+                                     </div>
+
+                                     <div class="form-group var attr tabular">
+                                        <label for="key"
+                                               class="col-sm-6 control-label">Key </label>
 
                                         <div class="col-sm-6">
-                                            <select class="form-control" id="column"
-                                                    name="column">
+                                            <select class="form-control" id="key"
+                                                    name="key">
                                             </select>
                                         </div>
                                     </div>
 
+                                    <div class="form-group attr number">
+                                        <label for="attrDescription"
+                                               class="col-sm-6 control-label">Number Description</label>
+
+                                        <div class="col-sm-6">
+                                            <input name='attrDescription' type="text" class="form-control"
+                                                   id="attrDescription" placeholder="Description for Number ">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var attr tabular">
+                                        <label for="tblColor"
+                                               class="col-sm-6 control-label">Color </label>
+
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="tblColor"
+                                                    name="tblColor">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group attr var bar line area stackedBar groupedBar stackedArea
+                                    multiArea scatter tabular">
+                                        <label for="maxDataLength"
+                                               class="col-sm-6 control-label">Number of Viewable Records</label>
+
+                                        <div class="col-sm-6">
+                                            <input name='maxDataLength' type="text" class="form-control"
+                                                   id="maxDataLength" placeholder="An integer (eg:-6)">
+                                        </div>
+                                    </div>
+
                                     <div class="form-group var attr stackedBar groupedBar stackedArea tabular">
+                                        <label for="columns"
+                                               class="col-sm-6 control-label">Columns</label>
+
+                                        <div class="col-sm-3">
+                                            <select style="width: 154px;" class="form-control" id="columns"
+                                                    name="columns">
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-3" style="padding-left: 53px;padding-top: 3px;">
+                                            <input type="button" value="Add" onclick="addCustomColumns(document
+                                            .getElementById('columns').value)">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var attr tabular">
+                                        <div class="col-md-6 pull-right">
+                                        <table id="dynamicElements" class="dynamicElements">
+                                        </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group var attr stackedBar groupedBar stackedArea">
                                         <label for="tableStyle" class="col-sm-6 control-label">Table Style </label>
 
                                         <div class="col-sm-6">
@@ -247,37 +268,6 @@
                                                     <option value="row">Row based (Default)</option>
                                                     <option value="color">Color based</option>
                                                     <option value="font">Font based</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group attr map">
-                                         <label for="region" class="col-sm-6 control-label">Region</label>
-                                         <div class="col-sm-6">
-                                             <select class="form-control" id="region" name="tableStyle">
-                                                    <option value="world">World Map</option>
-                                                    <option value="usa">USA Map</option>
-                                                    <option value="europe">Europe Map</option>
-                                             </select>
-                                         </div>
-                                     </div>
-
-                                    <div class="form-group attr map">
-                                        <label for="legendGradientLevel"  class="col-sm-6 control-label">Legend Gradient Level</label>
-                                        <div class="col-sm-6">
-                                            <input name='legendGradientLevel' type="text" class="form-control"
-                                                   id="legendGradientLevel" placeholder="An integer (eg:-5)">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group var attr line">
-                                        <label for="tableStyle" class="col-sm-6 control-label">Interpolation Mode</label>
-                                        <div class="col-sm-6">
-                                            <select class="form-control" id="interpolationMode"
-                                                    name="nterpolationMode">
-                                                    <option value="monotone">Monotone</option>
-                                                    <option value="line">Line</option>
-                                                    <option value="basis">Basis</option>
                                             </select>
                                         </div>
                                     </div>
@@ -292,7 +282,7 @@
                             </div>
                             <!-- /col-md-6 -->
 
-                            <div class="col-md-6" id="chartArea">
+                            <div class="col-md-6">
                                 <h4>Preview</h4>
                                 <div id="chartDiv"></div>
                             </div>
@@ -300,12 +290,11 @@
                         </div>
 
                     </div>
-                    <!-- /tab2-->
                     <ul class="pager wizard">
                         <li class="previous first" style="display:none;"><a href="#">First</a></li>
-                        <li id="previous" class="previous"><a href="#">Previous</a></li>
+                        <li class="previous"><a href="#">Previous</a></li>
                         <li class="next last" style="display:none;"><a href="#">Last</a></li>
-                        <li id="next" class="next"><a href="#">Next</a></li>
+                        <li class="next"><a href="#">Next</a></li>
                         <li class="next finish" style="display:none;"><a href="#">Add to Gadget Store</a></li>
                     </ul>
                 </div>
@@ -315,6 +304,8 @@
 </div>
 <script src="<%=urlPrefix%>js/jquery-1.10.2.js"></script>
 <script src="<%=urlPrefix%>js/bootstrap.min.js"></script>
+<script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+<script src="<%=urlPrefix%>js/wso2-theme.js"></script>
 <script src="<%=urlPrefix%>js/handlebars-v4.0.2.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
@@ -323,10 +314,9 @@
 <script src="<%=urlPrefix%>js/jquery.bootstrap.wizard.min.js"></script>
 <script src="<%=urlPrefix%>js/select2.min.js"></script>
 <script src="<%=urlPrefix%>js/d3.min.js"></script>
-<script src="<%=urlPrefix%>js/d3.geomap.dependencies.min.js"></script>
-<script src="<%=urlPrefix%>js/d3.geomap.min.js"></script>
+<script src="<%=urlPrefix%>js/topojson.js"></script>
 <script src="<%=urlPrefix%>js/vega.js"></script>
-<script src="<%=urlPrefix%>js/igviz.js"></script>
+<script src="<%=urlPrefix%>js/VizGrammar.min.js"></script>
 <script src="<%=urlPrefix%>js/charts.js"></script>
 <script src="<%=urlPrefix%>js/carbon-analytics.js"></script>
 <script src="<%=urlPrefix%>js/wizard.js"></script>
@@ -334,7 +324,7 @@
 
 <script id="wizard-error-hbs" type="text/x-handlebars-template">
     <div class="alert alert-danger" role="alert">
-        <strong>Something went wrong while initiating Gadget generation wizard. Reason is:
+        <strong>Something went wrong while initiating Gadget generation wizard. Please see the detailed error message below.
         </strong></br><br/> {{error}}
     </div>
 </script>

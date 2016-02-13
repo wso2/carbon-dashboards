@@ -34,18 +34,18 @@ $(function () {
         });
         alignAddBlock();
     });
-    
-    $(window).resize(function() {
+
+    $(window).resize(function () {
         alignAddBlock();
     });
 
-    var alignAddBlock = function() {
+    var alignAddBlock = function () {
         var el = $('#ues-add-block-menu'),
             parentTop = 330,
-            elementHeight = el.height(), 
-            windowHeight = $(window).height(), 
+            elementHeight = el.height(),
+            windowHeight = $(window).height(),
             top = ((parentTop + elementHeight) > windowHeight) ? (windowHeight - (parentTop + elementHeight)) + 'px' : '0';
-        
+
         el.css('top', top);
     }
 
@@ -114,10 +114,6 @@ $(function () {
     var showWorkspace = function (name) {
         $('.ues-workspace').hide();
         $('#ues-workspace-' + name).show();
-
-        if (name === 'designer') {
-            initBanner();
-        }
     };
 
     /**
@@ -526,29 +522,62 @@ $(function () {
      * @return {Object}
      * @private
      * */
-    var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
+    var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close,mode) {
         var properties = {};
         properties.text = text;
-        if (ok || cancel) {
-            properties.buttons = [
-                {
-                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
-                    $noty.close();
-                    if (ok) {
-                        ok();
+
+        if(mode == undefined){
+
+            if (funPrimary || funSecondary) {
+                properties.buttons = [
+                    {
+                        addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                        $noty.close();
+                        if (funPrimary) {
+                            funPrimary();
+                        }
                     }
-                }
-                },
-                {
-                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
-                    $noty.close();
-                    if (cancel) {
-                        cancel();
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                        $noty.close();
+                        if (funSecondary) {
+                            funSecondary();
+                        }
                     }
-                }
-                }
-            ];
+                    }
+                ];
+            }
+
+        }else if(mode == "DEL_BLOCK_OR_ALL"){
+
+            if (funPrimary || funSecondary) {
+                properties.buttons = [
+                    {
+                        addClass: 'btn btn-primary', text: 'Gadget & Block', onClick: function ($noty) {
+                        $noty.close();
+                        if (funPrimary) {
+                            funPrimary();
+                        }
+                    }
+                    },
+                    {
+                        addClass: 'btn btn-primary', text: 'Gadget Only', onClick: function ($noty) {
+                        $noty.close();
+                        if (funSecondary) {
+                            funSecondary();
+                        }
+                    }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                        $noty.close();
+                    }
+                    }
+                ];
+            }
         }
+
 
         if (timeout) {
             properties.timeout = timeout;
@@ -649,6 +678,8 @@ $(function () {
                         component.fullViewPoped = false;
                     });
 
+                $(this).attr('title', $(this).data('maximize-title'));
+
                 componentBody.hide();
 
             } else {
@@ -676,6 +707,8 @@ $(function () {
                         component.fullViewPoped = true;
                     });
 
+                $(this).attr('title', $(this).data('minimize-title'));
+
                 componentBody.hide();
             }
         });
@@ -698,20 +731,44 @@ $(function () {
                 id = componentBox.find('.ues-component').attr('id'),
                 removeBlock = true;
 
-            if (id) {
-                removeComponent(findComponent(id), function (err) {
-                    if (err) {
-                        removeBlock = false;
-                        console.error(err);
-                    }
-                    saveDashboard();
-                });
-            }
+            var removeWholeBlock = function () {
+                if (id) {
+                    removeComponent(findComponent(id), function (err) {
+                        if (err) {
+                            removeBlock = false;
+                            console.error(err);
+                        }
+                        saveDashboard();
+                    });
 
-            if (removeBlock) {
-                gridster.remove_widget(componentBox, function () {
-                    updateLayout();
-                });
+                }
+
+                if (removeBlock) {
+                    gridster.remove_widget(componentBox, function () {
+                        updateLayout();
+                    });
+                }
+            };
+
+            var removeGadgetContent = function () {
+                if (id) {
+                    removeComponent(findComponent(id), function (err) {
+                        if (err) {
+                            removeBlock = false;
+                            console.error(err);
+                        }
+                        saveDashboard();
+                    });
+                    componentBox.html(componentBoxContentHbs({appendResizeHandle: true}));
+                }
+            };
+
+            if(id == undefined){
+                generateMessage("This will remove the block. Do you want to continue?",
+                    removeWholeBlock, null, "confirm", "topCenter", null, ["button"]);
+            }else{
+                generateMessage("What do you want to Delete ?",
+                    removeWholeBlock, removeGadgetContent, "confirm", "topCenter", null, ["button"],"DEL_BLOCK_OR_ALL");
             }
         });
 
@@ -809,9 +866,9 @@ $(function () {
      */
     var updateStyles = function (asset) {
         var styles = asset.styles || (asset.styles = {
-                title: true,
-                borders: true
-            });
+            title: true,
+            borders: true
+        });
         if (styles.title && typeof styles.title === 'boolean') {
             styles.title = asset.title;
         }
@@ -1278,7 +1335,7 @@ $(function () {
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        generateMessage("There are existing pages which are anonymous. Remove their anonymous views to remove anonymous view for landing page", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        generateMessage("Cannot remove the anonymous view of landing page when there are pages with anonymous views", null, null, "error", "topCenter", 3500, ['button', 'click']);
                     } else {
                         page.isanon = false;
 
@@ -1515,9 +1572,9 @@ $(function () {
      */
     var loadAssets = function (type, query) {
         var paging = pagingHistory[type] || (pagingHistory[type] = {
-                start: 0,
-                count: COMPONENTS_PAGE_SIZE
-            });
+            start: 0,
+            count: COMPONENTS_PAGE_SIZE
+        });
         var buildPaging = function (paging, query) {
             if (paging.query === query) {
                 return;
@@ -1705,27 +1762,29 @@ $(function () {
      */
     var initStore = function () {
         loadAssets('gadget');
-        loadAssets('widget');
-        $('#ues-store').find('.ues-store-assets').scroll(function () {
-            var thiz = $(this);
-            var type = thiz.data('type');
-            var child = $('.ues-content', thiz);
-            if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
-                return;
-            }
-            var query = $('.ues-search-box input', thiz).val();
-            loadAssets(type, query);
-            initNanoScroller();
-        }).find('.ues-search-box input').on('keypress', function (e) {
-            if (e.which !== 13) {
-                return;
-            }
-            e.preventDefault();
-            var thiz = $(this);
-            var query = thiz.val();
-            var type = thiz.closest('.ues-store-assets').data('type');
-            loadAssets(type, query);
-        })
+        $('#ues-store').find('.ues-store-assets')
+            .scroll(function () {
+                var thiz = $(this);
+                var type = thiz.data('type');
+                var child = $('.ues-content', thiz);
+                if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
+                    return;
+                }
+                var query = $('.ues-search-box input', thiz).val();
+                loadAssets(type, query);
+                initNanoScroller();
+            })
+            .find('.ues-search-box input')
+            .on('keypress', function (e) {
+                if (e.which !== 13) {
+                    return;
+                }
+                e.preventDefault();
+                var thiz = $(this);
+                var query = thiz.val();
+                var type = thiz.closest('.ues-store-assets').data('type');
+                loadAssets(type, query);
+            })
     };
 
     var addBreadcrumbsParents = function (pageName, url, element) {
@@ -1770,6 +1829,17 @@ $(function () {
         menu.find('.ues-dashboard-preview').on('click', function () {
             previewDashboard(page);
         });
+
+        menu.find('.ues-copy').on('click', function (e) {
+            e.preventDefault();
+            var reset = function () {
+                window.open($('.ues-copy').attr('href'), "_self");
+            };
+
+            generateMessage("This will remove all the customization added to the dashboard." +
+                " Do you want to continue?", reset, null, "confirm", "topCenter", null, ["button"]);
+        });
+
         menu.find('.ues-tiles-menu-toggle').click(function () {
             menu.find('.ues-tiles-menu').slideToggle();
         });
@@ -1803,9 +1873,13 @@ $(function () {
                 e.stopPropagation();
                 return;
             }
-            ues.global.isSwitchToNewPage = true;
-            switchPage(pid, pageType);
-            ues.global.isSwitchToNewPage = false;
+
+            // do not re-render if the user clicks on the current page name
+            if (pid != page.id) {
+                ues.global.isSwitchToNewPage = true;
+                switchPage(pid, pageType);
+                ues.global.isSwitchToNewPage = false;
+            }
 
             $('#' + pid).find('.panel-body').html(pageOptionsHbs({
                 id: page.id,
@@ -1829,14 +1903,13 @@ $(function () {
                 $(this).val(sanitizedInput);
             });
 
-            initBanner();
             recentlyOpenedPageProperty = pid;
         });
         pagesMenu.find("#ues-page-properties").on("click", 'a .ues-trash', function (e) {
             e.stopPropagation();
             var thiz = $(this);
             var pid = thiz.parent().parent().data('id');
-            var removePageFromDB = function() {
+            var removePageFromDB = function () {
                 removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                     var pages = dashboard.pages;
 
@@ -2016,6 +2089,12 @@ $(function () {
         // Adding breadcrumbs.
         addBreadcrumbsParents("Dashboards", ues.utils.tenantPrefix() + "./dashboards");
 
+        if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
+            generateMessage("You have given editor permission for this dashboard." +
+                    " Please reset the dashboard to receive the permission.",
+                null, null, "error", "topCenter", null, ["button"]);
+        }
+
         $('[data-toggle="tooltip"]').tooltip();
     };
 
@@ -2060,6 +2139,13 @@ $(function () {
         })).find('.default-ues-layout');
     };
 
+    /**
+     * Update the page list as changes happened to the pages.
+     * @param current {Object}
+     * @param pages {Object}
+     * @param landing {String}
+     * @private
+     * */
     var updatePagesList = function (current, pages, landing) {
         $('#ues-dashboard-pages').find('#ues-page-properties').html(pagesListHbs({
             current: current ? current : page,
@@ -2170,6 +2256,7 @@ $(function () {
     /**
      * generate GUID
      * @returns {*}
+     * @private
      */
     function guid() {
         function s4() {
@@ -2258,7 +2345,9 @@ $(function () {
                         var container = widget.find('.ues-component');
                         if (container) {
                             container.find('.ues-component-body').show();
-                            updateComponent(container.attr('id'));
+                            if (container.attr('id')) {
+                                updateComponent(container.attr('id'));
+                            }
                         }
 
                         updateLayout();
@@ -2294,6 +2383,7 @@ $(function () {
 
         initBanner();
     };
+
     /**
      * Check for the autogenerated name to stop repeating the same name.
      * @param1 prefix {String}
@@ -2351,6 +2441,10 @@ $(function () {
         };
     };
 
+    /**
+     * Configure the layout selection workspace.
+     * @private
+     * */
     var layoutWorkspace = function () {
         var firstPage = !dashboard.pages.length,
             back = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-go-back'),
@@ -2403,9 +2497,9 @@ $(function () {
     var loadBanner = function () {
 
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
-                globalBannerExists: false,
-                customBannerExists: false
-            };
+            globalBannerExists: false,
+            customBannerExists: false
+        };
 
         var $placeholder = $('.ues-banner-placeholder'),
             customDashboard = ues.global.dashboard.isUserCustom || false,
@@ -2419,7 +2513,8 @@ $(function () {
             isEdit: bannerExists && !banner.cropMode,
             isCrop: banner.cropMode,
             isCustomBanner: customDashboard && banner.customBannerExists,
-            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard
+            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard,
+            isEditable: (pageType == DEFAULT_DASHBOARD_VIEW)
         };
         $placeholder.html(bannerHbs(data));
 
@@ -2433,77 +2528,91 @@ $(function () {
     };
 
     /**
+     * Change event handler for the banner file control
+     * @oaram e
+     */
+    var bannerChanged = function (e) {
+
+        var file = e.target.files[0];
+        if (file.size == 0) {
+            return;
+        }
+
+        if (!new RegExp('^image/', 'i').test(file.type)) {
+            return;
+        }
+
+        // since a valid image is selected, render the banner in crop mode
+        ues.global.dashboard.banner.cropMode = true;
+        loadBanner();
+        $('.ues-banner-placeholder button').prop('disabled', true);
+        $('.ues-dashboard-banner-loading').show();
+
+        var $placeholder = $('.ues-banner-placeholder'),
+            srcCanvas = document.getElementById('src-canvas'),
+            $srcCanvas = $(srcCanvas),
+            img = new Image(),
+            width = $placeholder.width(),
+            height = $placeholder.height();
+
+        // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
+        $srcCanvas.cropper('destroy');
+
+        // draw the selected image in the source canvas and initialize cropping
+        var srcCtx = srcCanvas.getContext('2d'),
+            objectUrl = URL.createObjectURL(file);
+
+        img.onload = function () {
+            // draw the uploaded image on the canvas
+            srcCanvas.width = img.width;
+            srcCanvas.height = img.height;
+
+            srcCtx.drawImage(img, 0, 0);
+
+            // bind the cropper
+            $srcCanvas.cropper({
+                aspectRatio: width / height,
+                autoCropArea: 1,
+                strict: true,
+                guides: true,
+                highlight: true,
+                dragCrop: false,
+                cropBoxMovable: false,
+                cropBoxResizable: true,
+
+                crop: function (e) {
+                    // draw the cropped image part in the dest. canvas and get the base64 encoded string
+                    var cropData = $srcCanvas.cropper('getData'),
+                        destCanvas = document.getElementById('dest-canvas'),
+                        destCtx = destCanvas.getContext('2d');
+
+                    destCanvas.width = width;
+                    destCanvas.height = height;
+
+                    destCtx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
+
+                    var dataUrl = destCanvas.toDataURL('image/jpeg');
+                    $('#banner-data').val(dataUrl);
+                }
+            });
+
+            $('.ues-banner-placeholder button').prop('disabled', false);
+            $('.ues-dashboard-banner-loading').hide();
+        };
+        img.src = objectUrl;
+    };
+
+    /**
      * initialize the banner
      */
     var initBanner = function () {
 
         loadBanner();
 
-        // bind a handler to the change event of the file element
-        document.getElementById('file-banner').addEventListener('change', function (e) {
-            var file = e.target.files[0];
-            if (file.size == 0) {
-                return;
-            }
-
-            if (!new RegExp('^image/', 'i').test(file.type)) {
-                return;
-            }
-
-            // since a valid image is selected, render the banner in crop mode
-            ues.global.dashboard.banner.cropMode = true;
-            loadBanner();
-
-            var $placeholder = $('.ues-banner-placeholder'),
-                srcCanvas = document.getElementById('src-canvas'),
-                $srcCanvas = $(srcCanvas),
-                img = new Image(),
-                width = $placeholder.width(),
-                height = $placeholder.height();
-
-            // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
-            $srcCanvas.cropper('destroy');
-
-            // draw the selected image in the source canvas and initialize cropping
-            var srcCtx = srcCanvas.getContext('2d'),
-                objectUrl = URL.createObjectURL(file);
-
-            img.onload = function () {
-                // draw the uploaded image on the canvas
-                srcCanvas.width = img.width;
-                srcCanvas.height = img.height;
-
-                srcCtx.drawImage(img, 0, 0);
-
-                // bind the cropper
-                $srcCanvas.cropper({
-                    aspectRatio: width / height,
-                    autoCropArea: 1,
-                    strict: true,
-                    guides: true,
-                    highlight: true,
-                    dragCrop: false,
-                    cropBoxMovable: false,
-                    cropBoxResizable: true,
-
-                    crop: function (e) {
-                        // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                        var cropData = $srcCanvas.cropper('getData'),
-                            destCanvas = document.getElementById('dest-canvas'),
-                            destCtx = destCanvas.getContext('2d');
-
-                        destCanvas.width = width;
-                        destCanvas.height = height;
-
-                        destCtx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
-
-                        var dataUrl = destCanvas.toDataURL('image/jpeg');
-                        $('#banner-data').val(dataUrl);
-                    }
-                });
-            };
-            img.src = objectUrl;
-        }, false);
+        // bind a handler to the change event of the file element (removing the handler initially to avoid multiple binding to the same handler)
+        var fileBanner = document.getElementById('file-banner');
+        fileBanner.removeEventListener('change', bannerChanged);
+        fileBanner.addEventListener('change', bannerChanged, false);
 
         // event handler for the banner edit button
         $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
@@ -2540,19 +2649,48 @@ $(function () {
 
         // event handler for the banner remove button
         $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
-            $.ajax({
-                url: $('#ues-dashboard-upload-banner-form').attr('action'),
-                type: 'DELETE'
-            }).success(function (d) {
+            var $form = $('#ues-dashboard-upload-banner-form');
 
-                if (ues.global.dashboard.isUserCustom) {
-                    ues.global.dashboard.banner.customBannerExists = false;
-                } else {
+            if (ues.global.dashboard.isUserCustom && !ues.global.dashboard.banner.customBannerExists) {
+
+                // in order to remove the global banner from a personalized dashboard, we need to save an empty resource.
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: {data: ''},
+                }).success(function (d) {
+
+                    // we need to suppress the global banner when removing the global banner from a custom dashboard.
+                    // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
-                }
-                ues.global.dashboard.banner.cropMode = false;
-                loadBanner();
-            });
+
+                    if (ues.global.dashboard.isUserCustom) {
+                        ues.global.dashboard.banner.customBannerExists = false;
+                    }
+
+                    ues.global.dashboard.banner.cropMode = false;
+
+                    loadBanner();
+                });
+
+            } else {
+                // remove the banner 
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'DELETE',
+                    dataType: 'json'
+                }).success(function (d) {
+
+                    if (ues.global.dashboard.isUserCustom) {
+                        ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
+                        ues.global.dashboard.banner.customBannerExists = false;
+                    } else {
+                        ues.global.dashboard.banner.globalBannerExists = false;
+                    }
+                    ues.global.dashboard.banner.cropMode = false;
+                    loadBanner();
+                });
+            }
         });
     };
 

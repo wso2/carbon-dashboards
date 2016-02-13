@@ -29,9 +29,16 @@ var findOne = function (id) {
     var usr = require('/modules/user.js');
     var user = usr.current();
     var path = registryPath(id);
+    var originalDB;
     var isCustom = false;
     if (user) {
         var userDBPath = registryUserPath(id, user.username);
+        var originalDBPath = registryPath(id);
+
+        if(registry.exists(originalDBPath)){
+            originalDB = JSON.parse(registry.content(originalDBPath));
+        }
+
         if (registry.exists(userDBPath)) {
             path = userDBPath;
             isCustom = true;
@@ -41,6 +48,23 @@ var findOne = function (id) {
     var dashboard = JSON.parse(content);
     if (dashboard) {
         dashboard.isUserCustom = isCustom;
+        dashboard.isEditorEnable = false;
+
+        if(originalDB){
+            var carbon = require('carbon');
+            var server = new carbon.server.Server();
+            var um = new carbon.user.UserManager(server, user.tenantId);
+            user.roles = um.getRoleListOfUser(user.username);
+
+            for(var i = 0; i<user.roles.length; i++){
+                for(var j=0; j<originalDB.permissions.editors.length; j++){
+                    if(user.roles[i] == originalDB.permissions.editors[j]){
+                        dashboard.isEditorEnable = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         var banner = getBanner(id, (user ? user.username : null));
         dashboard.banner = {
@@ -152,12 +176,12 @@ var allowed = function (dashboard, permission) {
 };
 
 /**
- * save banner in the registry
- * @param {String} dashboardId   id of the dashboard
- * @param {String} username      user's username
- * @param {String} filename      name of the file
- * @param {String} mime mime     type of the file
- * @param {Object} stream        byte stream of the file
+ * Save banner in the registry
+ * @param {String} dashboardId   ID of the dashboard
+ * @param {String} username      Username
+ * @param {String} filename      Name of the file
+ * @param {String} mime mime     Type of the file
+ * @param {Object} stream        Bytestream of the file
  */
 var saveBanner = function (dashboardId, username, filename, mime, stream) {
     var uuid = require('uuid');
@@ -176,19 +200,19 @@ var saveBanner = function (dashboardId, username, filename, mime, stream) {
 };
 
 /**
- * delete dashboard banner (if the username is empty, then the default banner will be removed,
+ * Delete dashboard banner (if the username is empty, then the default banner will be removed,
  * otherwise the custom banner for the user will be removed)
- * @param {String} dashboardId   id of the dashboard
- * @param {String} username      user's username
+ * @param {String} dashboardId   ID of the dashboard
+ * @param {String} username      Username
  */
 var deleteBanner = function (dashboardId, username) {
     getRegistry().remove(registryBannerPath(dashboardId, username));
 };
 
 /**
- * render banner
- * @param {String} dashboardId id of the dashboard
- * @param {String} username    user's username
+ * Render banner
+ * @param {String} dashboardId ID of the dashboard
+ * @param {String} username    Username
  */
 var renderBanner = function (dashboardId, username) {
     var registry = getRegistry();
@@ -212,7 +236,7 @@ var renderBanner = function (dashboardId, username) {
 };
 
 /**
- * path to customizations directory in registry
+ * Path to customizations directory in registry
  * @returns {String}
  */
 var registryCustomizationsPath = function () {
@@ -220,9 +244,9 @@ var registryCustomizationsPath = function () {
 };
 
 /**
- * get saved registry path for a banner
- * @param   {String} dashboardId id of the dashboard
- * @param   {String} username    current user's username
+ * Get saved registry path for a banner
+ * @param   {String} dashboardId ID of the dashboard
+ * @param   {String} username    Current user's username
  * @returns {String}
  */
 var registryBannerPath = function (dashboardId, username) {
@@ -231,21 +255,25 @@ var registryBannerPath = function (dashboardId, username) {
 };
 
 /**
- * get banner details (banner type and the registry path)
- * @param   {String} dashboardId id of the dashboard
- * @param   {String} username    user's username
+ * Get banner details (banner type and the registry path)
+ * @param   {String} dashboardId ID of the dashboard
+ * @param   {String} username    Username
  * @returns {Object}
  */
 var getBanner = function (dashboardId, username) {
     var registry = getRegistry();
-
     var path;
-    var result = {isCustomBanner: false, isGlobalBanner: false, path: null};
+    var result = { globalBannerExists: false, customBannerExists: false, path: null };
 
     // check to see whether the custom banner exists
     path = registryBannerPath(dashboardId, username);
     if (registry.exists(path)) {
-
+        
+        var resource = registry.get(path);
+        if (!resource.content || new String(resource.content).length == 0) {
+            return result;
+        }
+        
         result.customBannerExists = true;
         result.path = path;
     }
@@ -263,6 +291,9 @@ var getBanner = function (dashboardId, username) {
 
 /**
  * Generate Bootstrap layout from Gridster JSON serialized layout
+ * @param   {String} pageId     ID of the dashboard page
+ * @param   {String} isAnon     Is anon mode
+ * @returns {String}            Bootstrap layout markup
  */
 var getBootstrapLayout = function(pageId, isAnon) {
     var bitmap, 

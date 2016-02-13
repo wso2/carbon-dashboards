@@ -1,0 +1,19 @@
+{
+  "id": "textbox",
+  "title": "Text Box",
+  "type": "gadget",
+  "category": "Widgets",
+  "thumbnail": "store://gadget/textbox/index.png",
+  "data": {
+    "url": "store://gadget/textbox/index.xml"
+  },
+  "options": {
+    "content": {
+      "type": "text"
+    }
+  },
+  "styles": {
+    "borders": false,
+    "title": false
+  }
+}

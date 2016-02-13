@@ -19,9 +19,9 @@
         }
         uri = uri.replace(/^(..\/)*/i, '');
         if (window.location.protocol === 'https:') {
-            return 'https://localhost:' + server.httpsPort + context + '/' + uri;
+            return 'https://' + window.location.hostname + ":" + server.httpsPort + context + '/' + uri;
         }
-        return 'http://localhost:' + server.httpPort + context + '/' + uri;
+        return 'http://' + window.location.hostname + ":" + server.httpPort + context + '/' + uri;
     };
 
     var subscribeForClient = ues.hub.subscribeForClient;

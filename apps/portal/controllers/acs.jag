@@ -86,10 +86,15 @@
                         var user = carbon.server.tenantUser(username);
                         var utils = require('/modules/utils.js');
                         var server = new carbon.server.Server();
-                        var um = new carbon.user.UserManager(server);
-                        user.roles = um.getRoleListOfUser(username);
+                        var um = new carbon.user.UserManager(server, user.tenantId);
+                        user.roles = um.getRoleListOfUser(user.username);
                         session.put('user', user);
                         session.put("samlResponse", samlResponse);
+
+                        var saml2Cookie = require('/modules/saml-to-cookie.js');
+                        var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
+                        session.put('authToken', authToken);
+
                         response.sendRedirect(relayState);
                         /*var user = require('store').user;
 

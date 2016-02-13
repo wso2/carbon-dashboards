@@ -1,8 +1,8 @@
 {
     "id": "right-grid",
     "title": "Right Grid",
-    "description": "This is the right grid layout",
+    "description": "Right aligned grid layout",
     "thumbnail": "store://layout/right-grid/index.png",
-    "url": "store://layout/right-grid/index.hbs"
+    "url": "store://layout/right-grid/index.json"
 }
 

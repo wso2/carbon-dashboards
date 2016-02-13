@@ -12,7 +12,7 @@
 </head>
 <body class="<%=locale%>">
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
-
+<% var configs = require('/configs/designer.json'); %>
 <div id="ues-workspace-designer" class="ues-workspace" style="display:none">
     <nav role="navigation" class="navbar navbar-default navbar-fixed-top ues-context-menu">
         <div class="container-fluid ues-top-nav">
@@ -22,15 +22,25 @@
                 <ol id="ues-breadcrumbs" class="breadcrumb ues-designer-breadcrumb">
                 </ol>
             </div>
-            <div class="collapse navbar-collapse ues-context-menu-actions">
+            
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".ues-context-menu-actions" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse ues-context-menu-actions" id="ues-context-navbar">
                 <ul class="nav navbar-nav">
                     <!--<li class="active"><a href="#"><%= i18n.localize("dashboard.design") %> </a></li>-->
                     <% if (!dashboard.isUserCustom) { %>
+                        <% if(configs.isCreateGadgetEnable){%>
                                 <li><a href="<%=tenantedUrlPrefix%>create-gadget">
                                     <span class="fw-stack">
                                         <i class="fw fw-ring fw-stack-2x"></i>
                                         <i class="fw fw-add fw-stack-1x"></i>
                                     </span> <%=i18n.localize("create.gadget.lable")%> </a></li>
+                        <%}%>
                                 <li><a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>"  id="settings-link">
                                      <span class="fw-stack">
                                         <i class="fw fw-ring fw-stack-2x"></i>
@@ -66,28 +76,12 @@
         </div>
     </nav>
     <nav id="ues-store-menu" class="navbar-default navbar" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header" style="padding-right: 2px">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#ues-store-menu-actions">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <!--<span class="visible-xs navbar-brand">Designer Menu</span>-->
-        </div>
-
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div id="ues-store-menu-actions" class="collapse navbar-collapse">
+        <div id="ues-store-menu-actions">
             <ul class="nav navbar-nav nav-tabs" role="tablist">
                 <li>
                     <a class="ues-store-toggle" data-type="gadget" data-toggle="tooltip" title="GADGETS" href="#">
                         <i class="fw fw-pie-chart "></i>
-                    </a>
-                </li>
-                <li>
-                    <a class="ues-store-toggle" data-type="widget" data-toggle="tooltip" title="WIDGETS" href="#">
-                        <i class="fw fw-applications"></i>
                     </a>
                 </li>
                 <li>
@@ -203,6 +197,14 @@
                     <li><a href=".././dashboards">Dashboards</a></li>
                 </ol>
             </div>
+            
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".ues-context-menu-actions" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
             <div class="collapse navbar-collapse ues-context-menu-actions">
                 <ul class="nav navbar-nav">
                     <li><a href="#" class="ues-go-back" id="ues-go-back">
@@ -365,7 +367,7 @@
                             <h4><%= i18n.localize("styles") %></h4>
                             <div class="form-group">
                                 <label><%= i18n.localize("title") %>
-                                    <input type="text" class="form-control ues-localized-title" name="title"
+                                    <input type="text" maxlength="200" class="form-control ues-localized-title" name="title"
                                     placeholder="<%= i18n
         .localize("title") %>" value="{{#if styles.title}}{{styles.title}}{{/if}}">
                                 </label>
@@ -410,10 +412,7 @@
                                     <div class="checkbox">
                                       <label>
                                         <input type="checkbox" class="notifier" data-from="{{from}}"
-                                        data-event="{{event}}" value=""{{#if wired}} checked="checked"{{/if}}>{{event}} ({{content.title}}
-                                        <a href="#" data-toggle="tooltip" title="{{from}}">
-                                            <i class="fw fw-info"></i>
-                                        </a>)
+                                        data-event="{{event}}" value=""{{#if wired}} checked="checked"{{/if}}>{{event}} ({{content.styles.title}})
                                         </label>
                                     </div>
                                   {{/each}}
@@ -484,7 +483,7 @@
                         <label><%= i18n.localize("title") %>
                             <span class="required">*</span>
                         </label>
-                        <input id="page-title" type="text" class="form-control" name="title" placeholder="<%= i18n.localize("page.tilte.lable") %>" value="{{title}}">
+                        <input id="page-title" maxlength="250" type="text" class="form-control" name="title" placeholder="<%= i18n.localize("page.tilte.lable") %>" value="{{title}}">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="title-error" class="required-error hide" for="title">This is required.</label>
                     </div>
@@ -492,7 +491,7 @@
                         <label><%= i18n.localize("url") %>
                             <span class="required">*</span>
                         </label>
-                        <input id="page-url" type="text" class="form-control" name="id" placeholder="URL" value="{{id}}">
+                        <input id="page-url" type="text" maxlength="100" class="form-control" name="id" placeholder="URL" value="{{id}}">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="id-error" class="required-error hide" for="id">This is required.</label>
                     </div>
@@ -547,6 +546,7 @@
 
 <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
     
+    <div class="ues-dashboard-banner-loading" style="display: none;"><%= i18n.localize('banner.loading.msg') %></div>
     <canvas id="src-canvas" class="hidden"></canvas>    
     <canvas id="dest-canvas" class="hidden"></canvas>
     
@@ -554,6 +554,7 @@
     <img src="" id="img-banner" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
     {{/if}}
        
+    {{#if isEditable}}
     <div class="button-panel">
     
         {{#if isAdd}}
@@ -562,9 +563,7 @@
 
         {{#if isEdit}}
         <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('edit.button')%></button>
-        {{#if showRemove}}
         <button type="button" id="btn-remove-banner" class="btn btn-danger">{{#if isCustomBanner}}<%=i18n.localize('reset')%>{{else}}<%=i18n.localize('remove')%>{{/if}}</button>
-        {{/if}}
         {{/if}}
 
         {{#if isCrop}}
@@ -573,6 +572,7 @@
         {{/if}}
     
     </div>
+    {{/if}}
     
 </script> <!--/#ues-dashboard-banner-hbs -->
 
@@ -604,7 +604,8 @@
             
 <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
     <li><a href="#" class="ues-properties-handle" title="Properties"><i class="fw fw-settings"></i></a></li>
-    <li><a href="#" class="ues-component-full-handle" title="Maximize"><i class="fw fw-laptop"></i></a></li>
+    <li><a href="#" class="ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" 
+            data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>"><i class="fw fw-laptop"></i></a></li>
     <li><a href="#" class="ues-trash-handle" title="Remove"><i class="fw fw-delete"></i></a></li>
 </script>
 

@@ -50,6 +50,10 @@ var fresh;
         isCustomize = request.getParameter('custom');
 
         if (isCustomize) {
+            for (var i = 0; i < dashboard.pages.length; i++) {
+                dashboard.pages[i].isanon = false;
+            }
+
             dashboards.copy(dashboard);
             response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
             return;
@@ -64,7 +68,7 @@ var fresh;
         }
 
         if (user && !urlDomain && user.domain != superDomain) {
-            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain)+ "dashboards/" + dashboardId);
+            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain) + "dashboards/" + dashboardId);
             return;
         }
 
@@ -86,7 +90,8 @@ var fresh;
             identityServerUrl: "",
             accessTokenUrl: "",
             apiKey: "",
-            apiSecret: ""
+            apiSecret: "",
+            theme: ""
         };
         fresh = true;
         include('includes/designer.jag');

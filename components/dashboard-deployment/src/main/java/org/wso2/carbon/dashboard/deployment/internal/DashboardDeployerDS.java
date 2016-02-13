@@ -26,6 +26,7 @@ import org.wso2.carbon.application.deployer.AppDeployerUtils;
 import org.wso2.carbon.application.deployer.Feature;
 import org.wso2.carbon.application.deployer.handler.AppDeploymentHandler;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -54,6 +55,9 @@ public class DashboardDeployerDS {
             //dashboard artifacts deployer
             appHandlerRegistration = ctxt.getBundleContext().registerService(
                     AppDeploymentHandler.class.getName(), new DashboardDeployer(), null);
+
+            ctxt.getBundleContext().registerService(Axis2ConfigurationContextObserver.class.getName(),
+                    new DSAxis2ConfigurationObserverImpl(), null);
 
             // read required-features.xml
             URL reqFeaturesResource = ctxt.getBundleContext().getBundle()

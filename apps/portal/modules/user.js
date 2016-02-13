@@ -3,6 +3,8 @@ var login;
 var logout;
 var authorized;
 var roles;
+var searchRoles;
+var maxRolesLimit;
 
 (function () {
     var log = new Log();
@@ -69,4 +71,20 @@ var roles;
         return um.allRoles();
     };
 
+    searchRoles = function (filter, maxItems) {
+        var carbon = require('carbon');
+        var server = new carbon.server.Server();
+        var user = session.get('user');
+        var um = new carbon.user.UserManager(server, user.tenantId);
+        return um.searchRoles(filter, maxItems, true, true, true);
+    };
+
+    maxRolesLimit = function (){
+        var carbon = require('carbon');
+        var server = new carbon.server.Server();
+        var user = session.get('user');
+        var um = new carbon.user.UserManager(server, user.tenantId);
+        var map = um.getMaxLimit('MaxRoleNameListLength');
+        return map.get("PRIMARY");
+    };
 }());
