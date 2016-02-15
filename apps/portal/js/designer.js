@@ -2074,7 +2074,7 @@ $(function () {
 
             // bind the gridster to the layout
             gridster = gridsterContainer.gridster({
-                widget_margins: [0, 15],
+                widget_margins: [15, 15],
                 widget_base_dimensions: [150, 150],
                 min_cols: 12,
                 serialize_params: function (el, coords) {
@@ -2117,6 +2117,9 @@ $(function () {
                     }
                 }
             }).data('gridster');
+            
+			// remove the width of the gridster container to facilitate responsive layouts
+            gridsterContainer.css('width', '');
 
             // stop resizing banner placeholder
             $('.gridster [data-banner=true] .gs-resize-handle').remove();
