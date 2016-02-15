@@ -249,3 +249,11 @@
 .ues-no-heading .ues-component-heading {
     display: none;
 }
+
+/**
+ * Breadcrumb
+ */
+.breadcrumb li.dashboard-name {
+    max-width: calc(100% - 150px);
+    margin-bottom: -5px;
+}

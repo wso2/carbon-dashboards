@@ -24,7 +24,7 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
+            <li class="dashboard-name truncate"><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
             <li class="active"><%=i18n.localize("dashboard.settings")%></li>
         </ol>
     </div>
@@ -71,7 +71,7 @@
                 <div class="form-group">
                     <label for="ues-dashboard-url" class="col-sm-3 control-label"><%= i18n.localize("url")%></label>
                     <div class="col-sm-9">
-                        <p class="form-control-static">
+                        <p class="form-control-static truncate">
                             <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" target="_blank">/dashboards/<%=dashboardId%></a>
                         </p>
                     </div>

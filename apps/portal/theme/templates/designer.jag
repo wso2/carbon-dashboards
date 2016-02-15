@@ -26,7 +26,7 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
-            <li class="active"><%=encodeHtml(dashboard.title)%></li>
+            <li class="active dashboard-name truncate"><%=encodeHtml(dashboard.title)%></li>
         </ol>
     </div>
 

@@ -42,3 +42,10 @@
     margin: 0 0 0 0;
 }
 
+/**
+ * Breadcrumb
+ */
+.breadcrumb li.dashboard-name {
+    max-width: calc(100% - 300px);
+    margin-bottom: -5px;
+}
