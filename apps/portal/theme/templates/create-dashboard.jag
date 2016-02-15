@@ -1,9 +1,9 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
 
-    <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
 
-    <title><%= i18n.localize("dashboards.label")%></title>
+    <title><%= i18n.localize("create.dashboard")%></title>
 
 </head>
 <body>
@@ -21,9 +21,8 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
-            <li><%=i18n.localize("create.dashboard")%></li>
+            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
+            <li class="active"><%=i18n.localize("create.dashboard")%></li>
         </ol>
     </div>
 

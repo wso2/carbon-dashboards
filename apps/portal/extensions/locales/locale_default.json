@@ -100,7 +100,7 @@
     "identity.server.url": "Identity Server URL",
     "remove": "Remove",
     "save": "Save",
-    "fluid.layout": "Fluid Layout",
+    "fluid.layout": "Full Width",
     "placeholder.item.list": "item1 | item2 | item3",
     "enter.your.list.entries.lable": "* Enter your list entries separated by a '|'",
     "dashboard.server.label": "Dashboard Server",

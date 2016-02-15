@@ -3,7 +3,10 @@
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
+    
+    <title><%= i18n.localize("dashboard.designer")%></title>
 
 </head>
 <body>
@@ -22,8 +25,7 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
+            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
             <li class="active"><%=encodeHtml(dashboard.title)%></li>
         </ol>
     </div>
@@ -166,11 +168,11 @@
                             <div class="form-group form-inline">
                                 <div class="form-group">
                                     <label class="control-label"><%=i18n.localize("width.label")%></label>
-                                    <input type="text" id="block-width" class="form-control number-input" data-number-only="true" data-min="1" data-max="12" />
+                                    <input type="number" id="block-width" class="form-control number-input" min="1" max="12" />
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label"><%=i18n.localize("height.label")%></label>
-                                    <input type="text" id="block-height" class="form-control number-input" data-number-only="true" data-min="1" data-max="12" />
+                                    <input type="number" id="block-height" class="form-control number-input" min="1" max="12" />
                                 </div>
                             </div>
 
@@ -478,7 +480,7 @@
                     <div class="col-sm-12">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" name="landing"{{#if landing}} checked{{/if}} /> <%= i18n.localize("use.as.landing") %>
+                                <input type="checkbox" name="landing"{{#if landing}} checked disabled{{/if}} /> <%= i18n.localize("use.as.landing") %>
                             </label>
                         </div>
                         <div class="checkbox {{#if isUserCustom}}hidden{{/if}}">
@@ -806,26 +808,6 @@
         $('#left-sidebar').on('hidden.sidebar', function(e){
             $(e.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
             $.sidebar_toggle('hide', '#left-sidebar-sub', '.page-content-wrapper');
-        });
-
-        $('input[type=text][data-number-only]').on('keypress', function(e) {
-
-            if (e.which < 48 || e.which > 57) {
-                e.preventDefault();
-                return;
-            }
-        }).on('keyup', function() {
-            var val = parseInt($(this).val() || '0'),
-                max = $(this).data('max'),
-                min = $(this).data('min');
-
-            if (max !== '' && val > parseInt(max)) {
-                $(this).val(max);
-            }
-
-            if (min !== '' && val < parseInt(min)) {
-                $(this).val(min);
-            }
         });
 
         $('#gridGuideToggle').change(function(){

@@ -82,6 +82,7 @@
     <script src="<%=urlPrefix%>libs/respond_1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- JQuery UI -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
 
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
@@ -100,23 +101,24 @@
             <div class="page-header">
 				<div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%>">
                     <div class="page-title pull-left float-remove-xs text-center-xs">
-                        <h1 class="text-center-xs"><%=encodeHtml(dashboard.title)%> <span>
-                            <% if (user) {
-                                    if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) {
-                                        if (user.isEditor) { %>
-                            <a class="ues-copy" href="<%=dbRoot%>?editor=true" title="<%= i18n.localize("edit.button")%>"><i class="fw fw-edit"></i></a>
-                            <%          } else { %>
-                            <a class="ues-copy" href="<%=dbRoot%>?custom=true" title="<%= i18n.localize("personalize")%>"><i class="fw fw-edit"></i></a>
-                            <%          }
-                                    }
-                               } %></span>
-                        </h1>
+                        <h1 class="text-center-xs"><%=encodeHtml(dashboard.title)%></h1>
                     </div>
 
                     <div class="pull-right float-remove-xs clearix">
                         <div class="auth float-remove-xs text-center-xs text-right">
                             <div>
                                 <span class="hidden-xs add-padding-left-3x"><%= user ? user.username : "anon" %></span>
+                                    
+                                <% if (user) {
+                                        if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) {
+                                            if (user.isEditor) { %>
+                                <a href="<%=dbRoot%>?editor=true" class="ues-copy" title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>
+                                <%          } else { %>
+                                <a href="<%=dbRoot%>?custom=true" class="ues-copy" title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>
+                                <%          }
+                                        }
+                                   } %>
+                                    
                                 <a href="#" class="dropdown" data-toggle="dropdown">
                                     <span class="icon fw-stack fw-lg">
                                        <i class="fw fw-user fw-stack-1x"></i>
@@ -185,7 +187,7 @@
     <!--Footer -->
     <footer class="footer">
         <div class="container-fluid">
-            <p>Powered By <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i></a> Dashboard Server &copy; <script>document.write(new Date().getFullYear());</script> | All Rights Reserved.</p>
+            <p>WSO2 Dashboard Server 2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script> <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
         </div>
     </footer>
 
@@ -245,7 +247,7 @@
         <div class="btn-group">
             {{#if userPrefsExists}}
             <button type="button" class="btn btn-default ues-component-settings-handle" title="<%= i18n.localize("properties.label") %>">
-                <i class="icon fw fw-settings"></i>
+                <i class="icon fw fw fw-configarations"></i>
             </button>
             {{/if}}
             <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
