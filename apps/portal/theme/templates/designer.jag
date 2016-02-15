@@ -578,7 +578,7 @@
 
     <script id="ues-designer-heading-hbs" type="text/x-handlebars-template">
         <div class="page-title">
-            <h1><%=encodeHtml(dashboard.title)%></h1>
+            <h1><%=encodeHtml(dashboard.title)%> <span id="save-status" class="float-right save-status"></span></h1>
             <p class="lead">{{title}}</p>
         </div>
         <div class="page-actions">
