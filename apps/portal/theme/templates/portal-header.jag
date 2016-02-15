@@ -24,8 +24,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><%= i18n.localize("dashboards.label")%></title>
-
     <link rel="shortcut icon" href="<%=urlPrefix%>libs/theme-wso2_1.0/images/favicon.png" />
 
     <!-- Bootstrap CSS -->

@@ -429,7 +429,7 @@ $(function () {
 
     /**
      * Pops up the dashboard preview page
-     * @param {OBject} page     The page object
+     * @param {Object} page     The page object
      * @return {null}
      * @private
      */
@@ -439,65 +439,19 @@ $(function () {
         var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
     };
-
+    
     /**
-     * Generate Noty Messages as to the content given parameters
-     * @param {String} text     The message
-     * @param {function} ok     The OK function
-     * @param {function} cancel The Cancel function
-     * @param {String} type     Type of the message
-     * @param {String} layout   The layout
-     * @param {Number} timeout  Timeout
-     * @return {Object}
+     * Show message when saving the dashboard
+     * @param {String} message      Message to be displayed
+     * @param {Integer} timeout     Timeout for the message
      * @private
-     * */
-    var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
-        var properties = {};
-        properties.text = text;
-        if (ok || cancel) {
-            properties.buttons = [
-                {
-                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
-                    $noty.close();
-                    if (ok) {
-                        ok();
-                    }
-                }
-                },
-                {
-                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
-                    $noty.close();
-                    if (cancel) {
-                        cancel();
-                    }
-                }
-                }
-            ];
-        }
-
+     */
+    var generateMessage = function(message, timeout) {
+        $('#save-status').text(message).show(); 
         if (timeout) {
-            properties.timeout = timeout;
+            setTimeout("$('#save-status').fadeOut();", timeout);
         }
-
-        if (close) {
-            properties.closeWith = close;
-        }
-
-        properties.layout = layout;
-        properties.theme = 'wso2';
-        properties.type = type;
-        properties.dismissQueue = true;
-        properties.killer = true;
-        properties.maxVisible = 1;
-        properties.animation = {
-            open: {height: 'toggle'},
-            close: {height: 'toggle'},
-            easing: 'swing',
-            speed: 500
-        };
-
-        return noty(properties);
-    };
+    }
 
     /**
      * Saves the dashboard content
@@ -508,6 +462,8 @@ $(function () {
         var method = 'PUT',
             url = dashboardsApi + '/' + dashboard.id,
             isRedirect = false;
+        
+        generateMessage('Saving...');
 
         $.ajax({
             url: url,
@@ -515,13 +471,13 @@ $(function () {
             data: JSON.stringify(dashboard),
             contentType: 'application/json'
         }).success(function (data) {
-            generateMessage("Saved Successfully", null, null, "success", "bottom", 2000, null);
+            generateMessage('Saved!', 2000);
             if (isRedirect) {
                 isRedirect = false;
                 window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
             }
         }).error(function () {
-            generateMessage("Error Occurred While Saving", null, null, "error", "bottom", 2000, null);
+            generateMessage('Error Occurred While Saving', 2000);
             console.log('error saving dashboard');
         });
     };
@@ -1543,12 +1499,12 @@ $(function () {
             e.preventDefault();
 
             var query = $(this).val();
-            loadAssets('gadgets', query);
+            loadAssets('gadget', query);
         });
 
         $('.ues-store-assets .ues-search-box button').on('click', function () {
             var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
-            loadAssets('gadgets', query);
+            loadAssets('gadget', query);
         });
     };
 
@@ -2074,7 +2030,7 @@ $(function () {
 
             // bind the gridster to the layout
             gridster = gridsterContainer.gridster({
-                widget_margins: [0, 0],
+                widget_margins: [15, 15],
                 widget_base_dimensions: [150, 150],
                 min_cols: 12,
                 serialize_params: function (el, coords) {
@@ -2117,6 +2073,9 @@ $(function () {
                     }
                 }
             }).data('gridster');
+            
+			// remove the width of the gridster container to facilitate responsive layouts
+            gridsterContainer.css('width', '');
 
             // stop resizing banner placeholder
             $('.gridster [data-banner=true] .gs-resize-handle').remove();

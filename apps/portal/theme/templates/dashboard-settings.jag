@@ -1,5 +1,7 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
+    
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
+    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
 
@@ -21,9 +23,8 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards"><%=i18n.localize("dashboards.label")%></a></li>
-            <li><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
+            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
+            <li class="dashboard-name truncate"><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
             <li class="active"><%=i18n.localize("dashboard.settings")%></li>
         </ol>
     </div>
@@ -60,7 +61,7 @@
 <div id="ues-dashboard-settings" class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="page-sub-title"><%= i18n.localize("dashboard.settings")%></h1>
+            <h1 class="page-sub-title"><%= i18n.localize("dashboard.settings")%> <span id="save-status" class="float-right save-status"></span></h1>
         </div>
     </div>
     <div class="row">
@@ -70,7 +71,7 @@
                 <div class="form-group">
                     <label for="ues-dashboard-url" class="col-sm-3 control-label"><%= i18n.localize("url")%></label>
                     <div class="col-sm-9">
-                        <p class="form-control-static">
+                        <p class="form-control-static truncate">
                             <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" target="_blank">/dashboards/<%=dashboardId%></a>
                         </p>
                     </div>

@@ -1,10 +1,11 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
 
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
 
-    <title><%= i18n.localize("dashboard.label")%></title>
+    <title><%= i18n.localize("dashboards.label")%></title>
     <% var config = require('/configs/designer.json'); %>
 </head>
 <body>
@@ -14,8 +15,7 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i></a></li>
-            <li class="active"><%=i18n.localize("dashboards.label")%></li>
+            <li class="active"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></li>
         </ol>
     </div>
 
@@ -112,7 +112,7 @@
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
         <p id="ues-dashboard-url" class="ues-dashboard-url truncate"><%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
-        <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
+        <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
         <div class="ues-actions">
             <a id="ues-view" class="ues-view" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
                 <span class="fw-stack">

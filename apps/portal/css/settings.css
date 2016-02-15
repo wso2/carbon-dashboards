@@ -24,9 +24,9 @@
     width: 100%;
     height: 100%;
     cursor: hand;
-    font-family: "Roboto", Arial, Helvetica, sans-serif;
     font-weight: 400;
-    font-size: 12pt;
+    font-size: 14px;
+    line-height: 28px;
 }
 
 .permission-menu-content span{
@@ -42,3 +42,10 @@
     margin: 0 0 0 0;
 }
 
+/**
+ * Breadcrumb
+ */
+.breadcrumb li.dashboard-name {
+    max-width: calc(100% - 300px);
+    margin-bottom: -5px;
+}

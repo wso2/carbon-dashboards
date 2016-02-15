@@ -61,22 +61,6 @@ $(function () {
     };
 
     /**
-     * Shrink the description for the dashboard if it is more than 50 characters.
-     * @param data
-     * @return [object]
-     * @private
-     * */
-    var shrinkDashboardDescription = function (data) {
-        for (var i = 0; i < data.length; i++) {
-            if (data[i].description.length > 50) {
-                data[i].description = data[i].description.substring(0, 50) + "...";
-            }
-        }
-
-        return data;
-    };
-
-    /**
      * Load the list of dashboards available.
      * @private
      * */
@@ -94,8 +78,6 @@ $(function () {
                 dashboardsEl.append(dashboardsEmptyHbs());
                 return;
             }
-
-            data = shrinkDashboardDescription(data);
 
             nextStart += PAGE_COUNT;
             dashboards = dashboards.concat(data);
@@ -134,11 +116,6 @@ $(function () {
             var id = dashboardEl.data('id');
             var dashboard = findDashboard(id);
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
-        });
-
-        var menu = $('.ues-context-menu');
-        menu.find('.ues-tiles-menu-toggle').click(function () {
-            menu.find('.ues-tiles-menu').slideToggle();
         });
 
         $(window).scroll(function () {
