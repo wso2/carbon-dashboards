@@ -90,6 +90,11 @@
                         user.roles = um.getRoleListOfUser(user.username);
                         session.put('user', user);
                         session.put("samlResponse", samlResponse);
+
+                        var saml2Cookie = require('/modules/saml-to-cookie.js');
+                        var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
+                        session.put('authToken', authToken);
+
                         response.sendRedirect(relayState);
                         /*var user = require('store').user;
 

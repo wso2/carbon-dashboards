@@ -688,9 +688,9 @@ $(function () {
      */
     var updateStyles = function (asset) {
         var styles = asset.styles || (asset.styles = {
-                title: true,
-                borders: true
-            });
+            title: true,
+            borders: true
+        });
         if (styles.title && typeof styles.title === 'boolean') {
             styles.title = asset.title;
         }
@@ -1389,9 +1389,9 @@ $(function () {
      */
     var loadAssets = function (type, query) {
         var paging = pagingHistory[type] || (pagingHistory[type] = {
-                start: 0,
-                count: COMPONENTS_PAGE_SIZE
-            });
+            start: 0,
+            count: COMPONENTS_PAGE_SIZE
+        });
         var buildPaging = function (paging, query) {
             if (paging.query === query) {
                 return;
@@ -1457,7 +1457,7 @@ $(function () {
             $(this).draggable({
                 cancel: false,
                 appendTo: 'body',
-                helper: 'clone',
+                helper: 'clone'
             });
         }).on('mouseleave', '.ues-thumbnail', function () {
             $(this).draggable('destroy');
@@ -2221,9 +2221,9 @@ $(function () {
     var loadBanner = function () {
 
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
-                globalBannerExists: false,
-                customBannerExists: false
-            };
+            globalBannerExists: false,
+            customBannerExists: false
+        };
 
         var $placeholder = $('.ues-banner-placeholder'),
             customDashboard = ues.global.dashboard.isUserCustom || false,
