@@ -2198,9 +2198,9 @@ $(function () {
         $placeholder.html(bannerHbs(data));
 
         // display the image
-        var img = $placeholder.find('#img-banner');
+        var img = $placeholder.find('.banner-image');
         if (bannerExists) {
-            img.attr('src', img.data('src') + '?rand=' + Math.floor(Math.random() * 100000)).show();
+            img.css('background-image', "url('" + img.data('src') + '?rand=' + Math.floor(Math.random() * 100000) + "')").show();
         } else {
             img.hide();
         }
@@ -2297,7 +2297,7 @@ $(function () {
 
         // event handler for the banner edit button
         $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
-            $('#file-banner').click();
+            $('#file-banner').val('').click();
         });
 
         // event handler for the banner save button

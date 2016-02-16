@@ -56,10 +56,10 @@
     background: -webkit-repeating-linear-gradient(145deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     background: repeating-linear-gradient(-55deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     position: absolute;
-    top: 58px;
-    right: 16px;
-    bottom: 16px;
-    left: 16px;
+    top: 43px;
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
     overflow: hidden;
 }
 
@@ -73,17 +73,19 @@
     width: 80px;
 }
 
-.ues-banner-placeholder img {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
 .ues-banner-placeholder .ues-dashboard-banner-loading {
     background: #0074cc;
     color: #fff;
     padding: 5px 10px;
     display: inline-block;
+}
+
+.ues-banner-placeholder .banner-image {
+    width: 100%; 
+    height: 100%; 
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
 }
 
 /**

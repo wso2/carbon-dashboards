@@ -400,7 +400,7 @@
         <canvas id="dest-canvas" class="hidden"></canvas>
 
         {{#if isEdit}}
-        <img src="" id="img-banner" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="display: none;" />
+        <div class="banner-image" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
         {{/if}}
 
         {{#if isEditable}}
