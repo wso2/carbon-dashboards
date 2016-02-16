@@ -89,6 +89,10 @@ $(function () {
                 return;
             }
             loadDashboards();
+
+            $(".disable").on('click', function (event) {
+                event.preventDefault();
+            });
         });
     };
 

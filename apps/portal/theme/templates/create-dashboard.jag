@@ -21,7 +21,7 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
+            <li><a href="<%=tenantedUrlPrefix%>/portal/dashboards"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
             <li class="active"><%=i18n.localize("create.dashboard")%></li>
         </ol>
     </div>
