@@ -14,6 +14,8 @@ $(function () {
 
     var dashboards = [];
 
+    var isStillLoading = false;
+
     var nextStart = 0;
 
     var PAGE_COUNT = 10;
@@ -65,7 +67,10 @@ $(function () {
      * @private
      * */
     var loadDashboards = function () {
+        isStillLoading = true;
+
         if (!hasMore) {
+            isStillLoading = false;
             return;
         }
         ues.store.assets('dashboard', {
@@ -85,10 +90,16 @@ $(function () {
 
             var win = $(window);
             var doc = $(document);
+            isStillLoading = false;
             if (doc.height() > win.height()) {
                 return;
             }
+
             loadDashboards();
+
+            $(".disable").on('click', function (event) {
+                event.preventDefault();
+            });
         });
     };
 
@@ -124,7 +135,10 @@ $(function () {
             if (win.scrollTop() + win.height() < doc.height() - 100) {
                 return;
             }
-            loadDashboards();
+
+            if (!isStillLoading) {
+                loadDashboards();
+            }
         });
 
         $("#ues-breadcrumbs").append("<li class='active'>Dashboards</li>");
