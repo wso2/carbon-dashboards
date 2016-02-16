@@ -319,7 +319,6 @@
     <!-- Cropper -->
     <script src="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.js"></script>
 
-
     <script src="<%=urlPrefix%>js/async.js"></script>
     <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
     <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
@@ -339,6 +338,7 @@
     <script src="<%=urlPrefix%>js/designer.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
     <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
+    <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
     <!-- Handlebar templates -->
@@ -580,8 +580,8 @@
 
     <script id="ues-designer-heading-hbs" type="text/x-handlebars-template">
         <div class="page-title">
-            <h1><%=encodeHtml(dashboard.title)%> <span id="save-status" class="float-right save-status"></span></h1>
-            <p class="lead">{{title}}</p>
+            <h1 class="truncate"><%=encodeHtml(dashboard.title)%></h1> 
+            <p class="lead truncate">{{title}}</p>
         </div>
         <div class="page-actions">
             <div class="btn-group">

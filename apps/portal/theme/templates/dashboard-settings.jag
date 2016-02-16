@@ -61,7 +61,7 @@
 <div id="ues-dashboard-settings" class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="page-sub-title"><%= i18n.localize("dashboard.settings")%> <span id="save-status" class="float-right save-status"></span></h1>
+            <h1 class="page-sub-title"><%= i18n.localize("dashboard.settings")%></h1>
         </div>
     </div>
     <div class="row">
@@ -204,6 +204,7 @@
 <% include('/controllers/includes/common-scripts.jag'); %>
 <% include('/controllers/includes/dashboard-scripts.jag'); %>
 <script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
+<script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
 <!-- Handlebar templates -->

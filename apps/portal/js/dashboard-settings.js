@@ -53,17 +53,59 @@ $(function () {
     };
     
     /**
-     * Generate messages to be displayed
-     * @param {String} message      Message to be displayed
-     * @param {Integer} timeout     Timeout to hide the message
+     * Generate Noty Messages as to the content given using parameters.
+     * @param1 text {String}
+     * @param2 ok {Object}
+     * @param3 cancel {Object}
+     * @param4 type {String}
+     * @param5 layout {String}
+     * @param6 timeout {Number}
+     * @return {Object}
      * @private
-     */
-    var generateMessage = function(message, timeout) {
-        $('#save-status').text(message).show();   
-        if (timeout) {
-            setTimeout("$('#save-status').fadeOut();", timeout);
+     * */
+    var generateMessage = function (text, ok, cancel, type, layout, timeout) {
+        var properties = {};
+        properties.text = text;
+        if (ok || cancel) {
+            properties.buttons = [
+                {
+                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                        $noty.close();
+                        if (ok) {
+                            ok();
+                        }
+                    }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                        $noty.close();
+                        if (cancel) {
+                            cancel();
+                        }
+                    }
+                }
+            ];
         }
-    }
+
+        if (timeout) {
+            properties.timeout = timeout;
+        }
+
+        properties.layout = layout;
+        properties.theme = 'wso2';
+        properties.type = type;
+        properties.dismissQueue = true;
+        properties.killer = true;
+        properties.maxVisible = 1;
+        properties.animation = {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'swing',
+            speed: 500
+        };
+
+        return noty(properties);
+    };
 
     /**
      * Save the dashboard details.
@@ -71,21 +113,20 @@ $(function () {
      * @private
      * */
     var saveDashboard = function (callback) {
-        generateMessage('Saving...');
         $.ajax({
             url: url,
             method: 'PUT',
             data: JSON.stringify(dashboard),
             contentType: 'application/json'
         }).success(function (data) {
-            generateMessage('Saved!', 2000);
+            generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000);
             console.log('dashboard saved successfully');
 
             if (callback) {
                 callback();
             }
         }).error(function () {
-            generateMessage('Error Saving Dashboard', 2000);
+            generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000);
             console.log('error saving dashboard');
         });
     };
@@ -95,7 +136,6 @@ $(function () {
      * @private
      * */
     var getOauthSettings = function () {
-        generateMessage('Saving...');
         $.ajax({
             url: tokenUrl,
             type: "GET",
@@ -109,10 +149,10 @@ $(function () {
             } else {
                 setOAuthSettingsFields(data.accessTokenUrl, data.key, data.secret);
                 $("#ues-oauth-settings-inputs").show();
-                generateMessage('Saved!', 2000);
+                generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000);
             }
         }).error(function () {
-            generateMessage('Error Getting OAuth settings', 2000);
+            generateMessage("Error getting OAuth settings", null, null, "error", "topCenter", 2000);
             console.log('error getting oauth settings');
         });
     };

@@ -30,7 +30,6 @@ $.noty.themes.wso2 = {
         }
     },
     style: function () {
-
         this.$bar.css({
             overflow: 'hidden',
             margin: '4px 0',
@@ -41,7 +40,7 @@ $.noty.themes.wso2 = {
             fontSize: '14px',
             lineHeight: '16px',
             textAlign: 'center',
-            padding: '10px',
+            padding: '0',
             width: 'auto',
             position: 'relative'
         });
@@ -95,9 +94,10 @@ $.noty.themes.wso2 = {
             case 'inline':
                 this.$bar.css({
                     border: '1px solid #eee',
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    marginTop: "130px"
                 });
-                this.$message.css({fontSize: '13px', textAlign: 'center'});
+                this.$message.css({fontSize: '14px', textAlign: 'center'});
                 break;
             case 'topLeft':
             case 'topRight':

@@ -441,17 +441,64 @@ $(function () {
     };
     
     /**
-     * Show message when saving the dashboard
-     * @param {String} message      Message to be displayed
-     * @param {Integer} timeout     Timeout for the message
+     * Generate Noty Messages as to the content given parameters
+     * @param {String} text     The message
+     * @param {function} ok     The OK function
+     * @param {function} cancel The Cancel function
+     * @param {String} type     Type of the message
+     * @param {String} layout   The layout
+     * @param {Number} timeout  Timeout
+     * @return {Object}
      * @private
-     */
-    var generateMessage = function(message, timeout) {
-        $('#save-status').text(message).show(); 
-        if (timeout) {
-            setTimeout("$('#save-status').fadeOut();", timeout);
+     * */
+    var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
+        
+        var properties = {};
+        properties.text = text;
+        if (ok || cancel) {
+            properties.buttons = [
+                {
+                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                    $noty.close();
+                    if (ok) {
+                        ok();
+                    }
+                }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                    $noty.close();
+                    if (cancel) {
+                        cancel();
+                    }
+                }
+                }
+            ];
         }
-    }
+
+        if (timeout) {
+            properties.timeout = timeout;
+        }
+
+        if (close) {
+            properties.closeWith = close;
+        }
+
+        properties.layout = layout;
+        properties.theme = 'wso2';
+        properties.type = type;
+        properties.dismissQueue = true;
+        properties.killer = true;
+        properties.maxVisible = 1;
+        properties.animation = {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'swing',
+            speed: 500
+        };
+
+        return noty(properties);
+    };
 
     /**
      * Saves the dashboard content
@@ -462,8 +509,6 @@ $(function () {
         var method = 'PUT',
             url = dashboardsApi + '/' + dashboard.id,
             isRedirect = false;
-        
-        generateMessage('Saving...');
 
         $.ajax({
             url: url,
@@ -471,13 +516,13 @@ $(function () {
             data: JSON.stringify(dashboard),
             contentType: 'application/json'
         }).success(function (data) {
-            generateMessage('Saved!', 2000);
+            generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
             if (isRedirect) {
                 isRedirect = false;
                 window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
             }
         }).error(function () {
-            generateMessage('Error Occurred While Saving', 2000);
+            generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
             console.log('error saving dashboard');
         });
     };
