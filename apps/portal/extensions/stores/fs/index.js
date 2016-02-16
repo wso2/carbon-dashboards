@@ -59,23 +59,22 @@ var utils = require('/modules/utils.js');
 
         var userDashboards = [];
         allDashboards.forEach(function (dashboard) {
-            var permissions = dashboard.permissions;
-            if (utils.allowed(userRoles, permissions.editors)) {
-                userDashboards.push({
+            var permissions = dashboard.permissions,
+                data = {
                     id: dashboard.id,
                     title: dashboard.title,
                     description: dashboard.description,
+                    pagesAvailable: dashboard.pages.length > 0,
                     editable: true
-                });
+                };
+
+            if (utils.allowed(userRoles, permissions.editors)) {
+                userDashboards.push(data);
                 return;
             }
             if (utils.allowed(userRoles, permissions.viewers)) {
-                userDashboards.push({
-                    id: dashboard.id,
-                    title: dashboard.title,
-                    description: dashboard.description,
-                    editable: false
-                });
+                data.editable = false;
+                userDashboards.push(data);
             }
         });
         return userDashboards;
