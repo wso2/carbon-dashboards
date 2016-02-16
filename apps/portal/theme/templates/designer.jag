@@ -310,6 +310,8 @@
 
     <!-- Gridster -->
     <script src="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.js"></script>
+    <!-- Overrides Gridster for responsive layouts -->
+    <script src="<%=urlPrefix%>js/jquery.gridster.override.js"></script>
 
     <!-- Handlebars -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
