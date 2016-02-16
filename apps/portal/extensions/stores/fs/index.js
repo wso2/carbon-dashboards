@@ -121,8 +121,7 @@ var utils = require('/modules/utils.js');
                     return;
                 }
                 var title = asset.title || '';
-                var description = asset.description || '';
-                if (!query.test(title) && !query.test(description)) {
+                if (!query.test(title)) {
                     file.close();
                     return;
                 }
