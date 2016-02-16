@@ -164,6 +164,10 @@
     background-color: #E45F5C;
 }
 
+.alert.alert-info {
+    background-color: #2A80B9;
+}
+
 /**
  * Breadcrumb
  */
