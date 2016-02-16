@@ -160,6 +160,10 @@
     max-width: 100%;
 }
 
+.btn-danger:hover {
+    background-color: #E45F5C;
+}
+
 /**
  * Breadcrumb
  */

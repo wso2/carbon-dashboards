@@ -2314,7 +2314,7 @@ $(function () {
                     destCanvas.width = width;
                     destCanvas.height = height;
 
-                    destCtx.drawImage(img, cropData.x, cropData.y, cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
+                    destCtx.drawImage(img, Math.max(cropData.x, 0), Math.max(cropData.y, 0), cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
 
                     var dataUrl = destCanvas.toDataURL('image/jpeg');
                     $('#banner-data').val(dataUrl);
