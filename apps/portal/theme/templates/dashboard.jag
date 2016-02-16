@@ -48,6 +48,26 @@
             page = p;
         }
     });
+   
+    // Build the URL for the home page
+    var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
+    if (request.getParameter('isAnonView') == 'true') {
+        dashboardUrl += '?isAnonView=true';
+    }
+   
+    // Show navigation menu (There should be more than one page to show the navigation menu)
+    var showNavigation = false;
+    if (isAnonView || !user) {
+        var anonPageCount = 0;
+        pages.forEach(function(p) {
+            if (p.isAnon) {
+                anonPageCount++;
+            }
+        });
+        showNavigation = (anonPageCount > 1);
+    } else {
+        showNavigation = (pages.length > 1);
+    }
 %>
 <html lang="en">
 <head>
@@ -101,7 +121,7 @@
             <div class="page-header">
 				<div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%>">
                     <div class="page-title pull-left float-remove-xs text-center-xs">
-                        <h1 class="text-center-xs"><%=encodeHtml(dashboard.title)%></h1>
+                        <h1 class="text-center-xs"><a href="<%=dashboardUrl%>"><%=encodeHtml(dashboard.title)%></a></h1>
                     </div>
 
                     <div class="pull-right float-remove-xs clearix">
@@ -138,7 +158,7 @@
                         <div class="page-actions  text-center-xs">
                             <div class="btn-group">
                                 <%
-                                if (pages.length > 1) {
+                                if (showNavigation) {
                                     // render links
                                     pages.forEach(function (p) {
                                         if (isAnonView || !user) {
