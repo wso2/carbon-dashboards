@@ -1,89 +1,103 @@
 $(function () {
-    var DASHBOARD_DEFAULT_VIEW = 'default';
-    var DASHBOARD_FULL_SCEEN_VIEW = 'full';
-    var DASHBOARD_SETTINGS_VIEW = 'settings';
-    var containerPrefix = 'gadget-';
+    var DASHBOARD_DEFAULT_VIEW = 'default',
+        DASHBOARD_FULL_SCEEN_VIEW = 'full',
+        DASHBOARD_SETTINGS_VIEW = 'settings',
+        CONTAINER_PREFIX = 'gadget-';
 
-    var componentToolbarHbs = Handlebars.compile($('#ues-component-toolbar-hbs').html() || '');
-    var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html() || '');
     var page;
 
     /**
+     * Precompiling Handlebar templates
+     */
+    var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html() || ''),
+        gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html() || '');
+
+    /**
      * initializes the component toolbar
+     * @private
      */
     var initComponentToolbar = function () {
-        
-        $('#wrapper').on('click', 'a.ues-component-full-handle', function (e) {
-            
-            var id = $(this).closest('.ues-component').attr('id'), 
-                component = findComponent(id), 
+
+        // gadget maximization handler
+        $('.ues-components-grid').on('click', '.ues-component-full-handle', function (e) {
+            var id = $(this).closest('.ues-component').attr('id'),
+                component = findComponent(id),
                 componentBox = $(this).closest('.ues-component-box');
-            
+
             if (component.fullViewPoped) {
-                
+
+                $('.ues-component-box').show();
+
                 // render normal view
                 // restore the normal view (remove the css class, restore the original height and remove the temporary attribute)
                 componentBox
-                    .removeClass('ues-fullview-visible')
-                    .css('height', '')
-                    .removeAttr('data-height');
-                
+                    .removeClass('ues-component-fullview')
+                    .css('height', componentBox.attr('data-original-height'))
+                    .removeAttr('data-original-height');
+
                 renderMaxView(component, DASHBOARD_DEFAULT_VIEW);
-                
-                $(this).attr('title', $(this).data('maximize-title'));
-                
+
+                $(this)
+                    .attr('title', $(this).data('maximize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-contract')
+                    .addClass('fw-expand');
+
                 component.fullViewPoped = false;
+
             } else {
-                
-                // render max view                
+
+                $('.ues-component-box:not([id="' + componentBox.attr('id') + '"])').hide();
+
+                // render max view
                 // change the container height for the max view (including backing up the original height for restoration later)
                 componentBox
-                    .attr('data-height', componentBox.css('height'))
-                    .addClass('ues-fullview-visible')
-                    .css('height', $(window).height() + 'px');
-                
+                    .attr('data-original-height', componentBox.css('height'))
+                    .addClass('ues-component-fullview')
+                    .css('height', ($(window).height() - 40) + 'px');
+
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
-                
-                $(this).attr('title', $(this).data('minimize-title'));
-                             
+
+                $(this)
+                    .attr('title', $(this).data('minimize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-expand')
+                    .addClass('fw-contract');
+
                 component.fullViewPoped = true;
             }
         });
 
-        $('#wrapper').on('click', 'a.ues-component-settings-handle', function (e) {
-            
+        // gadget settings handler
+        $('.ues-components-grid').on('click', '.ues-component-settings-handle', function (e) {
             e.preventDefault();
-            
+
             var id = $(this).closest('.ues-component').attr('id'),
-                component = findComponent(id), 
-                componentContainer = $('#' + containerPrefix + id);
+                component = findComponent(id),
+                componentContainer = $('#' + CONTAINER_PREFIX + id);
 
             // toggle the component settings view if exists
             if (component.hasCustomUserPrefView) {
-                if (component.viewOption == DASHBOARD_SETTINGS_VIEW) {
-                    switchComponentView(component, DASHBOARD_DEFAULT_VIEW);
-                } else {
-                    switchComponentView(component, DASHBOARD_SETTINGS_VIEW);
-                }
+                switchComponentView(component, (component.viewOption == DASHBOARD_SETTINGS_VIEW ? DASHBOARD_DEFAULT_VIEW : DASHBOARD_SETTINGS_VIEW));
                 return;
             }
 
-            var settings = gadgetSettingsViewHbs(component.content);
             if (componentContainer.hasClass('ues-userprep-visible')) {
                 componentContainer.removeClass('ues-userprep-visible');
                 updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
-                componentContainer.find('.ues-sandbox').remove();
                 return;
             }
-            componentContainer.append(settings)
-                .addClass('ues-userprep-visible');
+
+            componentContainer.html(gadgetSettingsViewHbs(component.content)).addClass('ues-userprep-visible');
         });
     };
 
     /**
      * Switch component view mode
-     * @param component
-     * @param view
+     * @param {Object} component
+     * @param {String} view
+     * @returns {null}
+     * @private
      */
     var switchComponentView = function(component, view){
         component.viewOption = view;
@@ -94,17 +108,12 @@ $(function () {
         });
     };
 
-    Handlebars.registerHelper('equals', function (left, right, options) {
-        if (left === right) {
-            return options.fn(this);
-        }
-        return options.inverse(this);
-    });
-
     /**
      * Render maximized view for a gadget
-     * @param component
-     * @param componentContainer
+     * @param {Object} component
+     * @param {String} view
+     * @returns {null}
+     * @private
      */
     var renderMaxView = function (component, view) {
         component.viewOption = view;
@@ -114,31 +123,38 @@ $(function () {
             }
         });
     };
-    
+
     /**
      * Renders the component toolbar of a given component
-     * @param component
+     * @param {Object} component
+     * @returns {null}
+     * @private
      */
     var renderComponentToolbar = function (component) {
-        
+
         if (component) {
-            
+
             var container = $('#' + component.id);
-            container.find('.ues-component-toolbar ul').html($(componentToolbarHbs(component.content)));
-            
-            // hide the settings button from the anon view
-            if (ues.global.dbType === 'anon') {
-                $('a.ues-component-settings-handle', container).hide();
+            var userPrefsExists = false;
+            for (var key in component.content.options) {
+                if (component.content.options[key].type.toUpperCase() != 'HIDDEN') {
+                    userPrefsExists =  true;
+                    break;
+                }
             }
-            $('[data-toggle="tooltip"]', container).tooltip();
+            
+            // anon dashboards doesn't have settings option
+            component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
+
+            container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
         }
     };
-    
+
     /**
      * Find a given component in the current page
-     * @param id
-     * @returns {*}
-     * @param content
+     * @param {Number} id
+     * @returns {Object}
+     * @private
      */
     var findComponent = function (id) {
         var i;
@@ -161,36 +177,34 @@ $(function () {
             }
         }
     };
-    
-    /**
-     * This is the call back function for dashboard drawing
-     */
-    var dashboardDone = function () {
-        $('.ues-component-box div.ues-component').each(function () {
-            var component = findComponent($(this).attr('id'));
-            renderComponentToolbar(component);
-        });
-    };
-    
+
     /**
      * This is the initial call from the dashboard.js
+     * @private
      */
     var initDashboard = function () {
         var allPages = ues.global.dashboard.pages;
+
         if (allPages.length > 0) {
             page = (ues.global.page ? ues.global.page : allPages[0]);
         }
+
         for (var i = 0; i < allPages.length; i++) {
             if (ues.global.page == allPages[i].id) {
                 page = allPages[i];
             }
         }
-        $('body').on('click', '.modal-footer button', function () {
-            $('#componentFull').modal('hide');
+
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function() {
+
+            // render component toolbar for each components
+            $('.ues-component-box .ues-component').each(function () {
+                var component = findComponent($(this).attr('id'));
+                renderComponentToolbar(component);
+            });
         });
-        ues.dashboards.render($('#wrapper'), ues.global.dashboard, ues.global.page, ues.global.dbType, dashboardDone);
     };
-    
+
     initDashboard();
     initComponentToolbar();
 });

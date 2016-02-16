@@ -296,14 +296,14 @@ var getBanner = function (dashboardId, username) {
  * @returns {String}            Bootstrap layout markup
  */
 var getBootstrapLayout = function(pageId, isAnon) {
-    var bitmap, 
-        err = [], 
-        content = '', 
-        unitHeight = 115;
-    
+    var bitmap,
+        err = [],
+        content = '',
+        unitHeight = 150;
+
     /**
      * Process the data object and build the grid
-     */    
+     */
     function initGrid(data) {
 
         var grid = [];
@@ -311,15 +311,15 @@ var getBootstrapLayout = function(pageId, isAnon) {
         data.forEach(function(d) {
 
             // if there is no second dimension array, create it
-            if (typeof grid[d.row - 1] === 'undefined') 
+            if (typeof grid[d.row - 1] === 'undefined')
                 grid[d.row - 1] = [];
-            
+
             grid[d.row - 1][d.col - 1] = { "id": d.id, "width": d.size_x, "height": d.size_y, "banner": d.banner || false };
         });
 
         return grid;
     };
-    
+
     /**
      * Generate bitmap to mark starts and ends of the blocks
      */
@@ -357,8 +357,8 @@ var getBootstrapLayout = function(pageId, isAnon) {
             for(x = sx; x <= ex; x++) {
                 if (typeof grid[y][x] === 'undefined') continue;
 
-                // this is for multi-row blocks. iterate through all the rows and mark the 
-                // starts and offsets 
+                // this is for multi-row blocks. iterate through all the rows and mark the
+                // starts and offsets
                 for(i = y; i < y + grid[y][x].height; i++) {
 
                     bitmap[i][x] = true;                    // start of the block
@@ -368,7 +368,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
         }
 
         return bitmap;
-    }    
+    }
 
     /**
      * Prints a single bootstrap row
@@ -379,11 +379,11 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
         var x, width, el, classes, row, left,
             offset = 0,
-            previousEndPoint = 0, 
-            processedRow = [], 
+            previousEndPoint = 0,
+            processedRow = [],
             content = '',
             height = 0;
-        
+
         // calculate new indices and widths depending on the parent's width
         for(x = sx; x <= ex; x++) {
             var el = grid[y][x];
@@ -398,26 +398,23 @@ var getBootstrapLayout = function(pageId, isAnon) {
         // draw the bootstrap columns
         for(x = 0; x <= 11; x++) {
             if (typeof processedRow[x] === 'undefined') continue;
-            
+
             height = unitHeight * processedRow[x].height;
             classes = 'col-md-' + processedRow[x].width + ' ues-component-box';
-            
+
             if (processedRow[x].banner) {
                 classes += ' ues-banner-placeholder';
             }
-            
-            var styles;
-            if (!processedRow[x].banner) {
-                styles = 'min-height: ' + height + 'px;';
-            }
-            
+
+            var styles = 'height: ' + height + 'px;';
+
             offset = x - previousEndPoint;
-            if (offset > 0) 
-                classes += ' col-md-offset-' + offset;   
+            if (offset > 0)
+                classes += ' col-md-offset-' + offset;
 
             previousEndPoint += processedRow[x].width + offset;
 
-            content += '<div id="' + processedRow[x].id + '" class="' + classes +'" '; 
+            content += '<div id="' + processedRow[x].id + '" class="' + classes +'" ';
             if (styles) {
                 content += 'style="' + styles + '" ';
             }
@@ -445,14 +442,14 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
                 sy = y;
                 break;
-            }   
+            }
         }
 
-        var x, previousHeight, 
-            varyingHeight = false, 
-            y = sy, 
+        var x, previousHeight,
+            varyingHeight = false,
+            y = sy,
             rowSpan = 1,
-            startRow = sy, 
+            startRow = sy,
             endRow = -1;
 
         var content = '';
@@ -468,12 +465,12 @@ var getBootstrapLayout = function(pageId, isAnon) {
             for(x = sx; x <= ex; x++) {
                 if (typeof grid[y] === 'undefined' || typeof grid[y][x] === 'undefined') continue;
 
-                if (typeof previousHeight === 'undefined') { 
+                if (typeof previousHeight === 'undefined') {
                     previousHeight = grid[y][x].height;
                 }
 
                 if (previousHeight != grid[y][x].height) {
-                    varyingHeight = true;   
+                    varyingHeight = true;
                 }
 
                 rowSpan = Math.max(rowSpan, grid[y][x].height);
@@ -489,7 +486,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
                 endRow = y;
 
-                // if the heights of each block is not varying, then the section can be 
+                // if the heights of each block is not varying, then the section can be
                 // printed as a single row. otherwise the row block needc to be processed.
                 if (!varyingHeight) {
 
@@ -497,8 +494,8 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
                 } else {
 
-                    // now we have a block of rows. so try to split it vertically if 
-                    // possible. if not, this kind of layout cannot be rendered using 
+                    // now we have a block of rows. so try to split it vertically if
+                    // possible. if not, this kind of layout cannot be rendered using
                     // bootstrap.
 
                     // split vertically (by columns)
@@ -515,7 +512,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
                     var startCol, endCol, child, width, row, child = '';
 
-                    // iterate through all the column, identify the start and end columns 
+                    // iterate through all the column, identify the start and end columns
                     // and process the sub-grid recursively
 
                     for(x = sx; x <= ex; x++) {
@@ -524,10 +521,10 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
                             if (typeof startCol === 'undefined')  {
                                 startCol = (x == sx) ? x : x - 1;
-                                continue;   
+                                continue;
                             }
 
-                            endCol = (x == ex) ? x : x - 1; 
+                            endCol = (x == ex) ? x : x - 1;
                             width = endCol - startCol + 1;
 
                             var subContent = '';
@@ -537,40 +534,40 @@ var getBootstrapLayout = function(pageId, isAnon) {
                                     name: 'UnsupportedLayoutError',
                                     message: 'Unable to properly render the layout using Bootstrap'
                                 });
-                                
+
                                 // fallback to the failsafe mode
-                                
+
                                 var refinedGrid = [], i = 0, x2, y2;
-                                
+
                                 // read the non-renderable section from the grid and create a renderable grid with refined indices
                                 for(y2 = startRow; y2 <= endRow; y2++) {
                                     if (typeof grid[y2] === 'undefined') continue;
                                     for(x2 = sx; x2 <= ex; x2++) {
                                         var el = grid[y2][x2];
                                         if (typeof el === 'undefined') continue;
-                                          
+
                                         refinedGrid[i] = [el];
                                         i += el.height;
                                     }
                                 }
-                                
+
                                 // print each row from the non-renderable grid
                                 for(y2 = 0; y2 < refinedGrid.length; y2++) {
                                     if (typeof refinedGrid[y2] === 'undefined') continue;
                                     for(x2 = 0; x2 <= 11; x2++) {
                                         if (typeof refinedGrid[y2][x2] === 'undefined') continue;
-                                        
+
                                         subContent += printRow(refinedGrid, y2, 0, 11, 12);
                                     }
                                 }
-                                
+
                             } else {
-                                subContent += process(grid, startCol, startRow, endCol, endRow, width);   
+                                subContent += process(grid, startCol, startRow, endCol, endRow, width);
                             }
 
                             child += '<div class="col-md-' + width + '">' + subContent + '</div>';
                             startCol = endCol + 1;
-                        }                            
+                        }
                     }
 
                     content += '<div class="row">' + child + '</div>';
@@ -594,7 +591,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
         return content;
     };
-    
+
     var page, result = '';
     dashboard.pages.forEach(function(p) {
         if (p.id == pageId) {
@@ -602,20 +599,20 @@ var getBootstrapLayout = function(pageId, isAnon) {
             return;
         }
     });
-    
+
     if (!page) {
         response.sendError(404, 'not found');
         return;
     }
-    
+
     try {
         var json = (isAnon ? page.layout.content.anon.blocks : page.layout.content.loggedIn.blocks);
-        content = '<div class="' + (page.layout.fluidLayout ? 'container-fluid' : 'container') + '">' + process(initGrid(json)) + '</div>';
+        content = process(initGrid(json));
     } catch(e) {
         err.push(e);
     }
-    
-    if (err.length > 0) {      
+
+    if (err.length > 0) {
         var errMessage = '';
         err.forEach(function(e) {
             errMessage += e.message + '\n';
@@ -625,5 +622,3 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
     return content;
 }
-
-

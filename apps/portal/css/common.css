@@ -1,26 +1,35 @@
-.ues-component-box .ues-borderless {
-    border-color: transparent;
-    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    margin-bottom: 0;
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.ues-component-box .ues-borderless .panel-heading {
-    border: 1px solid transparent;
-    background: none;
-    margin: -1px;
+/**
+ * Validation messages
+ */
+.required {
+    color: #e74c3c;
 }
 
-.ues-component .ues-component-title-left .ues-component-title {
-    text-align: left;
+.required-error {
+    background: #a94442;
+    border: 1px solid #a94442;
+    padding: 6px 12px;
+    color: #fff;
 }
 
-.ues-component .ues-component-title-center .ues-component-title {
-    text-align: center;
+/**
+ * Theme overrides
+ */
+.breadcrumb li .fw-home {
+    float: left;
+    padding-top: 2px;
+    margin-right: 5px;
 }
 
-.ues-component .ues-component-title-right .ues-component-title {
-    text-align: right;
+.save-status {
+    font-size: 14px; 
+    padding: 5px; 
+    color: #666;
+    display: none;
 }

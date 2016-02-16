@@ -3,7 +3,36 @@
  * */
 $(function () {
 
-    var overridden = false;
+    var overridden = false,
+        modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
+
+    /**
+     * Show HTML modal
+     * @param {String} content      HTML content
+     * @param {function} beforeShow Function to be invoked just before showing the modal
+     * @return {null}
+     * @private
+     */
+    var showHtmlModal = function (content, beforeShow) {
+        var el = $('#designerModal');
+        el.find('.modal-content').html(content);
+        if (beforeShow && typeof beforeShow === 'function') {
+            beforeShow();
+        }
+
+        el.modal();
+    };
+
+    /**
+     * Show the information message with ok button.
+     * @param1 title {String}
+     * @param2 message {String}
+     * @private
+     * */
+    var showInformation = function (title, message) {
+        var content = modalInfoHbs({title: title, message: message});
+        showHtmlModal(content, null);
+    };
 
     /**
      * Generate URL from the user entered title.
@@ -61,32 +90,6 @@ $(function () {
     };
 
     /**
-     * Generate message box according to the type.
-     * @param1 type
-     * @param2 text
-     * @private
-     * */
-    var generateMessage = function (type, text) {
-        return noty({
-            text: text,
-            type: type,
-            closeWith: ['button', 'click'],
-            layout: 'topCenter',
-            theme: 'wso2',
-            timeout: '3500',
-            dismissQueue: true,
-            killer: true,
-            maxVisible: 1,
-            animation: {
-                open: {height: 'toggle'},
-                close: {height: 'toggle'},
-                easing: 'swing',
-                speed: 500
-            }
-        });
-    };
-
-    /**
      * Show error style for given element
      * @param1 element
      * @param2 errorElement
@@ -96,8 +99,6 @@ $(function () {
         element.val('');
         element.parent().addClass("has-error");
         element.addClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("hide");
-        element.parent().find("span.glyphicon").addClass("show");
         errorElement.removeClass("hide");
         errorElement.addClass("show");
     };
@@ -111,8 +112,6 @@ $(function () {
     var hideInlineError = function (element, errorElement) {
         element.parent().removeClass("has-error");
         element.removeClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("show");
-        element.parent().find("span.glyphicon").addClass("hide");
         errorElement.removeClass("show");
         errorElement.addClass("hide");
     };
@@ -158,14 +157,14 @@ $(function () {
             !$.trim(title.val()) ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
             form.attr('action', url);
-            console.log("[Sending AJAX request to " + url);
 
             $.ajax({
                 url: url,
                 method: "GET",
                 contentType: "application/json",
                 success: function (data) {
-                    generateMessage('error', "A dashboard with same URL already exists. Please select a different dashboard URL.");
+                    showInformation("URL Already Exists",
+                        "A dashboard with same URL already exists. Please select a different dashboard URL.");
                 },
                 error: function (xhr) {
                     if (xhr.status == 404) {
@@ -176,13 +175,4 @@ $(function () {
             });
         }
     });
-
-    var menu = $('.ues-context-menu');
-    menu.find('.ues-tiles-menu-toggle').click(function () {
-        menu.find('.ues-tiles-menu').slideToggle();
-    });
-
-    var breadcrumbs = $("#ues-breadcrumbs");
-    breadcrumbs.append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
-    breadcrumbs.append("<li class='active'>Create Dashboard</li>");
 });

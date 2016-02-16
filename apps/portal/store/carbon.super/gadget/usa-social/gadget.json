@@ -3,7 +3,6 @@
     "title": "USA Social Media Usage",
     "type": "gadget",
     "thumbnail": "store://gadget/usa-social/index.png",
-    "options": {},
     "data": {
         "url": "store://gadget/usa-social/index.xml"
     },

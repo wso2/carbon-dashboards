@@ -8,6 +8,11 @@
         <![CDATA[
         <head>
             <style type="text/css">
+                
+                body {
+                    padding: 12px;
+                }
+
                 .log {
                     width: 400px;
                     height: 400px;
@@ -28,7 +33,7 @@
                     margin-bottom: 0px;
                 }
             </style>
-            <link rel="stylesheet" href="/portal/css/bootstrap.min.css">
+            <link rel="stylesheet" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css">
         <head>
         <body>
             <p>Type a message and click on the Publish.</p>
@@ -41,8 +46,8 @@
             <div id="autoMessage" class="well well-lg">No Messages...</div>
             <button id="btnAutoGen" type="button" class="btn btn-primary">Auto</button>
 
-            <script language="javascript" type="text/javascript" src="/portal/js/jquery-1.10.2.js"></script>
-            <script language="javascript" type="text/javascript" src="/portal/js/bootstrap.min.js"></script>
+            <script language="javascript" type="text/javascript" src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+            <script language="javascript" type="text/javascript" src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
             <script>
                 var interval;
 

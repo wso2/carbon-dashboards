@@ -1,20 +1,16 @@
 $(function () {
-    //TODO: cleanup this
     var dashboard,
         page,
         pageType,
         activeComponent,
         gridster,
         breadcrumbs = [],
-        recentlyOpenedPageProperty,
         storeCache = {
             gadget: [],
             widget: [],
             layout: []
         },
         nonCategoryKeyWord = "null",
-        freshDashboard = true,
-        gridsterUlDimension = {},
         designerScrollTop = 0,
         dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
         dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards',
@@ -22,33 +18,66 @@ $(function () {
         findPage = ues.dashboards.findPage,
         lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage),
         COMPONENTS_PAGE_SIZE = 20,
-        DUMMY_GADGET_SIZE = 30,
         DEFAULT_DASHBOARD_VIEW = 'default',
         ANONYMOUS_DASHBOARD_VIEW = 'anon',
         FULL_COMPONENT_VIEW = 'full',
         DEFAULT_COMPONENT_VIEW = 'default';
 
-    $(document).ready(function () {
-        $(".nav li.disabled a").click(function () {
-            return false;
+    /**
+     * Show HTML modal
+     * @param {String} content      HTML content
+     * @param {function} beforeShow Function to be invoked just before showing the modal
+     * @return {null}
+     * @private
+     */
+    var showHtmlModal = function (content, beforeShow) {
+        var el = $('#designerModal');
+        el.find('.modal-content').html(content);
+        if (beforeShow && typeof beforeShow === 'function') {
+            beforeShow();
+        }
+
+        el.modal();
+    };
+
+    /**
+     * Show confirm message with yes/no buttons
+     * @param {String} title    Title of the confirmation box
+     * @param {String} message  HTML content
+     * @param {function} ok     Callback function for yes button
+     * @return {null}
+     * @private
+     */
+    var showConfirm = function (title, message, ok) {
+        var content = modalConfirmHbs({title: title, message: message});
+        showHtmlModal(content, function () {
+            var el = $('#designerModal');
+            el.find('#ues-modal-confirm-yes').on('click', function () {
+                if (ok && typeof ok === 'function') {
+                    ok();
+                    el.modal('hide');
+                }
+            });
         });
-        alignAddBlock();
-    });
+    };
 
-    $(window).resize(function () {
-        alignAddBlock();
-    });
+    /**
+     * Show the information message with ok button.
+     * @param1 title {String}
+     * @param2 message {String}
+     * @private
+     * */
+    var showInformation = function (title, message) {
+        var content = modalInfoHbs({title: title, message: message});
+        showHtmlModal(content, null);
+    };
 
-    var alignAddBlock = function () {
-        var el = $('#ues-add-block-menu'),
-            parentTop = 330,
-            elementHeight = el.height(),
-            windowHeight = $(window).height(),
-            top = ((parentTop + elementHeight) > windowHeight) ? (windowHeight - (parentTop + elementHeight)) + 'px' : '0';
-
-        el.css('top', top);
-    }
-
+    /**
+     * Clone JSON object
+     * @param {Object} o    Object to be cloned
+     * @returns {Object}
+     * @private
+     */
     var clone = function (o) {
         return JSON.parse(JSON.stringify(o));
     };
@@ -58,7 +87,7 @@ $(function () {
      */
     var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html() || '');
 
-    var layoutHbs = Handlebars.compile($("#ues-layout-hbs").html() || '');
+    var designerHeadingHbs = Handlebars.compile($('#ues-designer-heading-hbs').html() || '');
 
     var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html() || '');
 
@@ -78,20 +107,15 @@ $(function () {
 
     var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
 
-    /**
-     * Registering not equals helper to the Handlebars
-     * */
-    Handlebars.registerHelper('if_neq', function (a, b, blocks) {
-        if (a != b) {
-            return blocks.fn(this);
-        } else {
-            return blocks.inverse(this);
-        }
-    });
+    var noPagesHbs = Handlebars.compile($('#ues-no-pages-hbs').html() || '');
+
+    var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || '');
+
+    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
 
     /**
-     * generates a random id
-     * @returns {string}
+     * Generates a random ID
+     * @return {String}
      * @private
      */
     var randomId = function () {
@@ -99,7 +123,8 @@ $(function () {
     };
 
     /**
-     * Initialize the nano scroller.
+     * Initialize the nano scroller
+     * @return {null}
      * @private
      * */
     var initNanoScroller = function () {
@@ -107,118 +132,17 @@ $(function () {
     };
 
     /**
-     * switches workspaces in the designer
-     * @param name
-     * @private
-     */
-    var showWorkspace = function (name) {
-        $('.ues-workspace').hide();
-        $('#ues-workspace-' + name).show();
-    };
-
-    /**
-     * show the store of a given type
-     * @param type
-     * @private
-     */
-    var showStore = function (type) {
-        var store = $('#ues-store').removeClass('ues-hidden');
-        store.find('.ues-store-assets').addClass('ues-hidden');
-        store.find('#ues-store-' + type).removeClass('ues-hidden');
-
-        var designer = $('#ues-designer');
-        if (designer.hasClass('ues-storeprop-visible') || designer.hasClass('ues-store-visible')) {
-            return;
-        }
-        if (designer.hasClass('ues-properties-visible')) {
-            designer.removeClass('ues-properties-visible').addClass('ues-storeprop-visible');
-            return;
-        }
-        designer.addClass('ues-store-visible');
-    };
-
-    /**
-     * hide the store
-     * @private
-     */
-    var hideStore = function (type) {
-        $('#ues-store').addClass('ues-hidden');
-        $('#ues-store-' + type).addClass('ues-hidden');
-
-        var designer = $('#ues-designer');
-        if (designer.hasClass('ues-storeprop-visible')) {
-            designer.removeClass('ues-storeprop-visible').addClass('ues-properties-visible');
-            return;
-        }
-        designer.removeClass('ues-store-visible');
-
-    };
-
-    /**
-     * check whether store is visible
-     * @returns {boolean}
-     * @private
-     */
-    var storeVisible = function () {
-        return !$('#ues-store').hasClass('ues-hidden');
-    };
-
-    /**
-     * shows properties panel
-     * @private
-     */
-    var showProperties = function () {
-        $('#ues-properties').removeClass('ues-hidden');
-        var designer = $('#ues-designer');
-        if (designer.hasClass('ues-storeprop-visible') || designer.hasClass('ues-properties-visible')) {
-            return;
-        }
-        if (designer.hasClass('ues-store-visible')) {
-            designer.removeClass('ues-store-visible').addClass('ues-storeprop-visible');
-            return;
-        }
-        designer.addClass('ues-properties-visible');
-    };
-
-    /**
-     * hides properties panel
-     * @private
-     */
-    var hideProperties = function () {
-        $('#ues-properties').addClass('ues-hidden');
-
-        var menu = $('.ues-context-menu');
-        menu.find('.ues-component-properties-toggle').parent().removeClass('active');
-        menu.find('.ues-page-properties-toggle').parent().removeClass('active');
-
-        var designer = $('#ues-designer');
-        if (designer.hasClass('ues-storeprop-visible')) {
-            designer.removeClass('ues-storeprop-visible').addClass('ues-store-visible');
-            return;
-        }
-        designer.removeClass('ues-properties-visible');
-    };
-
-    /**
-     * checks whether properties panel is visible
-     * @returns {boolean}
-     * @private
-     */
-    var propertiesVisible = function () {
-        return !$('#ues-properties').hasClass('ues-hidden');
-    };
-
-    /**
-     * update component properties panel and save
-     * @param sandbox
+     * Update component properties panel and save
+     * @param {Object} sandbox JQuery wrapped sandbox HTML element
+     * @return {null}
      * @private
      */
     var updateComponentProperties = function (sandbox) {
-        var notifiers = {};
-        var options = {};
-        var settings = {};
-        var styles = {};
-        var id = sandbox.data('component');
+        var notifiers = {},
+            options = {},
+            settings = {},
+            styles = {},
+            id = sandbox.data('component');
 
         saveOptions(sandbox, options);
         saveSettings(sandbox, settings);
@@ -234,39 +158,45 @@ $(function () {
     };
 
     /**
-     * renders the component properties panel
-     * @param component
+     * Renders the component properties panel
+     * @param {Object} component Component object
+     * @return {null}
      * @private
      */
     var renderComponentProperties = function (component) {
-        activeComponent = component;
-        var ctx = buildPropertiesContext(component, page);
-        var el = $('#ues-properties').find('.ues-content').html(componentPropertiesHbs(ctx))
-            .find('.ues-sandbox').on('change', 'input, select, textarea', function () {
-                updateComponentProperties($(this).closest('.ues-sandbox'));
+        var ctx = buildPropertiesContext(component, page),
+            propertiesContainer = $('.ues-component-properties-container');
+
+        propertiesContainer
+            .html(componentPropertiesHbs(ctx))
+            .on('change', 'input, select, textarea', function () {
+                updateComponentProperties($(this).closest('.ues-component-properties'));
+            })
+            .on('keypress', 'input, select, textarea', function (e) {
+                if (e.which === 13) {
+                    updateComponentProperties($(this).closest('.ues-component-properties'));
+                    e.preventDefault();
+                    return;
+                }
             });
 
-        $(".form-control.ues-localized-title").on("keypress", function (e) {
-            return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
-        }).on('change', function (e) {
-            if ($.trim($(this).val()) == '') {
-                $(this).val('');
-            }
-        });
-        $('[data-toggle="tooltip"]', el).tooltip();
-        var toggle = $('#ues-workspace-designer').find('.ues-context-menu')
-            .find('.ues-context-menu-actions')
-            .find('.ues-component-properties-toggle');
-        var parent = toggle.parent();
-        parent.siblings().removeClass('active');
-        parent.addClass('active').show();
-        showProperties();
+        propertiesContainer
+            .find('.ues-localized-title')
+            .on("keypress", function (e) {
+                return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+            })
+            .on('change', function (e) {
+                if ($.trim($(this).val()) == '') {
+                    $(this).val('');
+                }
+            });
     };
 
     /**
-     * Render maximized view for a gadget
-     * @param component
-     * @param componentContainer
+     * Render maximized view of a gadget
+     * @param {Object} component The component to be rendered
+     * @param {String} view      Component view mode
+     * @return {null}
      * @private
      */
     var renderMaxView = function (component, view) {
@@ -279,10 +209,10 @@ $(function () {
     };
 
     /**
-     * find an asset of the given type from the store cache
-     * @param type
-     * @param id
-     * @returns {*}
+     * Find an asset of the given type from the store cache
+     * @param {String} type The cache type
+     * @param {String} id   Asset ID
+     * @return {Object}
      * @private
      */
     var findStoreCache = function (type, id) {
@@ -299,9 +229,9 @@ $(function () {
     };
 
     /**
-     * find a given component in the current page
-     * @param id
-     * @returns {*}
+     * Find a given component in the current page
+     * @param {String} id   The component ID
+     * @return {Object}
      * @private
      */
     var findComponent = function (id) {
@@ -327,9 +257,10 @@ $(function () {
     };
 
     /**
-     * save component properties
-     * @param id
-     * @param data
+     * Save component properties
+     * @param {String} id   The component ID
+     * @param {Object} data Component properties data
+     * @return {null}
      * @private
      */
     var saveComponentProperties = function (id, data) {
@@ -372,9 +303,10 @@ $(function () {
     };
 
     /**
-     * removes and destroys the given component from the page
-     * @param component
-     * @param done
+     * Removes and destroys the given component from the page
+     * @param {Object} component    The component to be removed
+     * @param {function} done       Callback function
+     * @return {null}
      * @private
      */
     var removeComponent = function (component, done) {
@@ -391,25 +323,23 @@ $(function () {
             area.splice(index, 1);
             container.remove();
 
-            var properties = $('#ues-properties').find('.ues-content');
-            var compId = properties.find('.ues-sandbox').data('component');
+            var compId = $('.ues-component-properties').data('component');
             if (compId !== component.id) {
                 return done();
             }
-            properties.empty();
-            hideProperties();
+            $('.ues-component-properties .ues-component-properties-container').empty();
             done();
         });
     };
 
     /**
-     * destroys the given component
-     * @param component
-     * @param done
+     * Destroys the given component
+     * @param {Object} component    Component to be destroyed
+     * @param {function} done       Callback function
+     * @return {null}
      * @private
      */
     var destroyComponent = function (component, done) {
-
         ues.components.destroy(component, function (err) {
             if (err) {
                 return err;
@@ -419,9 +349,10 @@ $(function () {
     };
 
     /**
-     * destroys a given list of components of an area
-     * @param components
-     * @param done
+     * Destroys a given list of components of an area
+     * @param {Object[]} components Components to be removed
+     * @param {function} done       Callback function
+     * @return {null}
      * @private
      */
     var destroyArea = function (components, done) {
@@ -443,21 +374,16 @@ $(function () {
     };
 
     /**
-     * destroys all areas in a given page
-     * @param page
-     * @param done
+     * Destroys all areas in a given page
+     * @param {Object} page     The page object
+     * @param {String} pageType Type of the page
+     * @param {function} done   Callback function
+     * @return {null}
      * @private
      */
     var destroyPage = function (page, pageType, done) {
-        var checked = $('#toggle-dashboard-view').prop('checked');
         var area;
-        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-
-        if (!page.isanon && checked) {
-            pageType = DEFAULT_DASHBOARD_VIEW;
-        } else if (!page.isanon && !checked) {
-            pageType = ANONYMOUS_DASHBOARD_VIEW;
-        }
+        pageType = pageType || DEFAULT_DASHBOARD_VIEW;
 
         var content = page.content[pageType];
         var tasks = [];
@@ -473,7 +399,7 @@ $(function () {
             }
         }
         async.parallel(tasks, function (err, results) {
-            $('#ues-designer').empty();
+            $('.gadgets-grid').empty();
             if (!done) {
                 return;
             }
@@ -483,9 +409,11 @@ $(function () {
     };
 
     /**
-     * remove and destroys a given page
-     * @param pid
-     * @param done
+     * Remove and destroys a given page
+     * @param {String} pid      Page ID
+     * @param {type}            Type of the page
+     * @param {function} done   Callback function
+     * @return {null}
      * @private
      */
     var removePage = function (pid, type, done) {
@@ -500,8 +428,9 @@ $(function () {
     };
 
     /**
-     * pops up the preview dashboard page
-     * @param page
+     * Pops up the dashboard preview page
+     * @param {Object} page     The page object
+     * @return {null}
      * @private
      */
     var previewDashboard = function (page) {
@@ -510,151 +439,67 @@ $(function () {
         var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
     };
-
+    
     /**
-     * Generate Noty Messages as to the content given parameters
-     * @param1 text {String}
-     * @param2 ok {Object}
-     * @param3 cancel {Object}
-     * @param4 type {String}
-     * @param5 layout {String}
-     * @param6 timeout {Number}
-     * @return {Object}
+     * Show message when saving the dashboard
+     * @param {String} message      Message to be displayed
+     * @param {Integer} timeout     Timeout for the message
      * @private
      * */
-    var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close,mode) {
-        var properties = {};
-        properties.text = text;
-
-        if(mode == undefined){
-
-            if (funPrimary || funSecondary) {
-                properties.buttons = [
-                    {
-                        addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
-                        $noty.close();
-                        if (funPrimary) {
-                            funPrimary();
-                        }
-                    }
-                    },
-                    {
-                        addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
-                        $noty.close();
-                        if (funSecondary) {
-                            funSecondary();
-                        }
-                    }
-                    }
-                ];
-            }
-
-        }else if(mode == "DEL_BLOCK_OR_ALL"){
-
-            if (funPrimary || funSecondary) {
-                properties.buttons = [
-                    {
-                        addClass: 'btn btn-primary', text: 'Gadget & Block', onClick: function ($noty) {
-                        $noty.close();
-                        if (funPrimary) {
-                            funPrimary();
-                        }
-                    }
-                    },
-                    {
-                        addClass: 'btn btn-primary', text: 'Gadget Only', onClick: function ($noty) {
-                        $noty.close();
-                        if (funSecondary) {
-                            funSecondary();
-                        }
-                    }
-                    },
-                    {
-                        addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
-                        $noty.close();
-                    }
-                    }
-                ];
-            }
-        }
-
-
+  var generateMessage = function(message, timeout) {
+        $('#save-status').text(message).show(); 
         if (timeout) {
-            properties.timeout = timeout;
+            setTimeout("$('#save-status').fadeOut();", timeout);
         }
-
-        if (close) {
-            properties.closeWith = close;
-        }
-
-        properties.layout = layout;
-        properties.theme = 'wso2';
-        properties.type = type;
-        properties.dismissQueue = true;
-        properties.killer = true;
-        properties.maxVisible = 1;
-        properties.animation = {
-            open: {height: 'toggle'},
-            close: {height: 'toggle'},
-            easing: 'swing',
-            speed: 500
-        };
-
-        return noty(properties);
-    };
+    }
 
     /**
-     * saves the dashboard content
+     * Saves the dashboard content
+     * @return {null}
      * @private
      */
     var saveDashboard = function () {
-        var method,
-            url,
+        var method = 'PUT',
+            url = dashboardsApi + '/' + dashboard.id,
             isRedirect = false;
+        
+        generateMessage('Saving...');
 
-        if (freshDashboard) {
-            freshDashboard = false;
-            method = 'POST';
-            url = dashboardsApi;
-            isRedirect = true;
-        } else {
-            method = 'PUT';
-            url = dashboardsApi + '/' + dashboard.id;
-        }
         $.ajax({
             url: url,
             method: method,
             data: JSON.stringify(dashboard),
             contentType: 'application/json'
         }).success(function (data) {
-            generateMessage("Saved Successfully", null, null, "success", "bottom", 2000, null);
-            console.log('dashboard saved successfully');
+            generateMessage('Saved!', 2000);
             if (isRedirect) {
                 isRedirect = false;
                 window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
             }
         }).error(function () {
-            generateMessage("Error Occurred While Saving", null, null, "error", "bottom", 2000, null);
+            generateMessage('Error Occurred While Saving', 2000);
             console.log('error saving dashboard');
         });
     };
 
     /**
-     * initializes the component toolbar
+     * Initializes the component toolbar
+     * @return {null}
      * @private
      */
     var initComponentToolbar = function () {
-        var designer = $('#ues-designer');
+        var designer = $('.gadgets-grid');
 
-        designer.on('click', '.ues-component-box .ues-component-toolbar .ues-component-full-handle', function () {
+        designer.on('click', '.ues-component-box .ues-component-full-handle', function () {
 
             var id = $(this).closest('.ues-component').attr('id'),
                 component = findComponent(id),
                 componentContainer = $(this).closest('.ues-component-box'),
+                gsBlock = componentContainer.parent(),
                 componentContainerId = componentContainer.attr('id'),
                 componentBody = componentContainer.find('.ues-component-body'),
-                gridsterUl = $('.gridster > ul'),
-                trashButton = componentContainer.find('.ues-component-toolbar .ues-trash-handle').parent();
+                gsContainer = $('.gridster > ul'),
+                trashButton = componentContainer.find('.ues-component-actions .ues-trash-handle');
 
             if (component.fullViewPoped) {
                 // rendering normal view
@@ -662,13 +507,13 @@ $(function () {
                 gridster.enable().enable_resize();
 
                 // restore the size of the gridster ul
-                gridsterUl.width(gridsterUlDimension.width).height(gridsterUlDimension.height);
+                gsContainer.height(gsContainer.attr('data-orig-height'));
 
                 trashButton.show();
-                $('.ues-component-box').show();
+                $('.gridster-block').show();
 
                 //minimize logic
-                componentContainer
+                gsBlock
                     .removeClass('ues-component-fullview')
                     .css('height', '')
                     .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function () {
@@ -678,12 +523,19 @@ $(function () {
                         component.fullViewPoped = false;
                     });
 
-                $(this).attr('title', $(this).data('maximize-title'));
+                designer.css('height', 'auto');
+                $(this)
+                    .attr('title', $(this).data('maximize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-contract')
+                    .addClass('fw-expand');
 
                 componentBody.hide();
 
             } else {
                 // rendering full view
+
+                var pageEl = $('.page-content');
 
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
@@ -691,177 +543,102 @@ $(function () {
                 gridster.disable().disable_resize();
 
                 // backup the size of the gridster ul and reset element size
-                gridsterUlDimension = {width: gridsterUl.width(), height: gridsterUl.height()};
-                gridsterUl.width('auto').height('auto');
+                gsContainer.attr('data-orig-height', gsContainer.height()).height('auto');
 
                 trashButton.hide();
-                $('.ues-component-box:not(#' + componentContainerId + ')').hide();
+                $('.gridster-block:not([data-id=' + componentContainerId + '])').hide();
 
                 //maximize logic
-                componentContainer
+                gsBlock
                     .addClass('ues-component-fullview')
-                    .css('height', ($('#ues-designer').height() - 100) + 'px')
+                    .css('height', pageEl.height() - 85)
                     .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function () {
                         componentBody.fadeIn(300);
                         renderMaxView(component, FULL_COMPONENT_VIEW);
                         component.fullViewPoped = true;
                     });
 
-                $(this).attr('title', $(this).data('minimize-title'));
+                designer.css('height', pageEl.height());
+                $(this)
+                    .attr('title', $(this).data('minimize-title'))
+                    .find('i.fw')
+                    .removeClass('fw-expand')
+                    .addClass('fw-contract');
 
                 componentBody.hide();
             }
         });
 
-        designer.on('click', '.ues-component-box .ues-component-toolbar .ues-properties-handle', function () {
+        designer.on('click', '.ues-component-box .ues-component-properties-handle', function () {
+
             var id = $(this).closest('.ues-component').attr('id');
-            var parent = $(this).parent();
-            if (parent.hasClass('active')) {
-                parent.removeClass('active');
-                hideProperties();
-                return;
-            }
-            parent.addClass("active");
             renderComponentProperties(findComponent(id));
         });
 
-        designer.on('click', '.ues-component-box .ues-component-toolbar .ues-trash-handle', function () {
+        designer.on('click', '.ues-component-box .ues-trash-handle', function () {
 
-            var componentBox = $(this).closest('.ues-component-box'),
-                id = componentBox.find('.ues-component').attr('id'),
-                removeBlock = true;
+            var that = $(this),
+                hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || '');
 
-            var removeWholeBlock = function () {
-                if (id) {
-                    removeComponent(findComponent(id), function (err) {
-                        if (err) {
-                            removeBlock = false;
-                            console.error(err);
-                        }
-                        saveDashboard();
-                    });
+            showHtmlModal(hbs(), function () {
 
-                }
+                var designerModal = $('#designerModal');
+                designerModal.find('#btn-delete').on('click', function () {
 
-                if (removeBlock) {
-                    gridster.remove_widget(componentBox, function () {
-                        updateLayout();
-                    });
-                }
-            };
+                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val(),
+                        componentBox = that.closest('.ues-component-box'),
+                        id = componentBox.find('.ues-component').attr('id'),
+                        removeBlock = (action == 'block');
 
-            var removeGadgetContent = function () {
-                if (id) {
-                    removeComponent(findComponent(id), function (err) {
-                        if (err) {
-                            removeBlock = false;
-                            console.error(err);
-                        }
-                        saveDashboard();
-                    });
-                    componentBox.html(componentBoxContentHbs({appendResizeHandle: true}));
-                }
-            };
+                    if (id) {
+                        removeComponent(findComponent(id), function (err) {
+                            if (err) {
+                                removeBlock = false;
+                                console.error(err);
+                            }
+                            saveDashboard();
+                        });
+                    }
 
-            if(id == undefined){
-                generateMessage("This will remove the block. Do you want to continue?",
-                    removeWholeBlock, null, "confirm", "topCenter", null, ["button"]);
-            }else{
-                generateMessage("What do you want to Delete ?",
-                    removeWholeBlock, removeGadgetContent, "confirm", "topCenter", null, ["button"],"DEL_BLOCK_OR_ALL");
-            }
-        });
+                    if (removeBlock) {
+                        gridster.remove_widget(componentBox.parent(), function () {
+                            updateLayout();
+                        });
+                    } else {
+                        componentBox.html(componentBoxContentHbs({appendResizeHandle: true}));
+                    }
 
-        $('body').on('click', '.modal-footer button', function () {
-            $('#componentFull').modal('hide');
-
-        });
-
-        designer.on('click', '.ues-design-default-view', function () {
-            //default
-            pageType = DEFAULT_DASHBOARD_VIEW;
-            ues.global.type = DEFAULT_DASHBOARD_VIEW;
-            switchPage(getPageId(), pageType);
-            $('.toggle-design-view-anon').removeClass('disabled');
-            $('.toggle-design-view-default').addClass('disabled');
-        });
-
-        designer.on('click', '.ues-design-anon-view', function () {
-            //anon
-            pageType = ANONYMOUS_DASHBOARD_VIEW;
-            ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
-            ues.global.anon = true;
-            switchPage(getPageId(), pageType);
-            $('.toggle-design-view-default').removeClass('disabled');
-            $('.toggle-design-view-anon').addClass('disabled');
-        });
-
-        designer.on('#toggle-dashboard-view').change(function () {
-            var checked = $('#toggle-dashboard-view').prop('checked');
-            var state = 'on';
-
-            if (checked) {
-                pageType = DEFAULT_DASHBOARD_VIEW;
-                ues.global.type = DEFAULT_DASHBOARD_VIEW;
-                state = 'on';
-
-                switchPage(getPageId(), ANONYMOUS_DASHBOARD_VIEW);
-
-            } else {
-                pageType = ANONYMOUS_DASHBOARD_VIEW;
-                ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
-                ues.global.anon = true;
-                state = 'off';
-
-                switchPage(getPageId(), DEFAULT_DASHBOARD_VIEW);
-            }
-
+                    designerModal.modal('hide');
+                });
+            });
         });
     };
 
     /**
-     * return page id from DOM
+     * Return the ID of the page
+     * @return {String}     ID of the page
      * @private
      */
     var getPageId = function () {
-        return $('.ues-page-id').text();
+        return page.id;
     };
 
     /**
-     * initializes the ues properties
-     * @private
-     */
-    var initUESProperties = function () {
-        $('body').on('click', '.close-db-settings', function () {
-            hideProperties();
-        });
-    };
-
-    /**
-     * initializes the toggle for dashboard view switching
-     * @private
-     */
-    var initToggleView = function () {
-        $(function () {
-            $('#toggle-dashboard-view').bootstrapToggle();
-        })
-    };
-
-    /**
-     * renders the component toolbar of a given component
-     * @param component
+     * Renders the component toolbar of a given component
+     * @param {Object} component
+     * @return {null}
      * @private
      */
     var renderComponentToolbar = function (component) {
         if (component) {
-            var el = $('#' + component.id + ' .ues-component-toolbar ul').html($(componentToolbarHbs(component.content)));
-            $('[data-toggle="tooltip"]', el).tooltip();
+            $('#' + component.id + ' .ues-component-actions').html($(componentToolbarHbs(component.content)));
         }
     };
 
     /**
-     * updates the styles of a given store asset
-     * @param asset
+     * Updates the styles of a given store asset
+     * @param {Object} asset
+     * @return {null}
      * @private
      */
     var updateStyles = function (asset) {
@@ -875,14 +652,14 @@ $(function () {
     };
 
     /**
-     * creates a component in the given container
-     * @param container
-     * @param asset
+     * Creates a component in the given container
+     * @param {Object} container
+     * @param {Object} asset
+     * @return {null}
      * @private
      */
     var createComponent = function (container, asset) {
         var id = randomId();
-        //TODO: remove hardcoded gadget
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -898,14 +675,15 @@ $(function () {
                 throw err;
             }
             renderComponentToolbar(component);
-            renderComponentProperties(component);
+            container.find('.ues-component-actions .ues-component-properties-handle').click();
             saveDashboard();
         });
     };
 
     /**
-     * triggers update hook of a given component
-     * @param id
+     * Triggers update hook of a given component
+     * @param {String} id   Component ID
+     * @return {null}
      * @private
      */
     var updateComponent = function (id) {
@@ -917,10 +695,11 @@ $(function () {
     };
 
     /**
-     * builds up the component notifiers
-     * @param notifiers
-     * @param current
-     * @param component
+     * Builds up the component notifiers
+     * @param {Object[]} notifiers  List of events
+     * @param {Object} current      Current component
+     * @param {Object} component    Other component
+     * @return {null}
      * @private
      */
     var componentNotifiers = function (notifiers, current, component) {
@@ -950,10 +729,11 @@ $(function () {
     };
 
     /**
-     * builds up the area notifiers
-     * @param notifiers
-     * @param component
-     * @param components
+     * Builds up the area notifiers
+     * @param {Object[]} notifiers  List of events
+     * @param {Object} component    The component
+     * @param {Object[]} components All components
+     * @return {null}
      * @private
      */
     var areaNotifiers = function (notifiers, component, components) {
@@ -965,10 +745,10 @@ $(function () {
     };
 
     /**
-     * builds up the page notifiers
-     * @param component
-     * @param page
-     * @returns {{}}
+     * Builds up the page notifiers
+     * @param {Object} component    The component
+     * @param {Object} page         The page
+     * @returns {Object[]} Notifiers
      * @private
      */
     var pageNotifiers = function (component, page) {
@@ -985,7 +765,7 @@ $(function () {
     };
 
     /**
-     * find matching notifiers for a given component
+     * Find matching notifiers for a given component
      * @param component
      * @param page
      * @returns {Array}
@@ -1016,7 +796,7 @@ $(function () {
     };
 
     /**
-     * find the wired notifier
+     * Find the wired notifier
      * @param from
      * @param event
      * @param notifiers
@@ -1035,7 +815,7 @@ $(function () {
     };
 
     /**
-     * wire an event
+     * Wire an event
      * @param on
      * @param notifiers
      * @private
@@ -1054,7 +834,7 @@ $(function () {
     };
 
     /**
-     * get all notifiers of a given event
+     * Get all notifiers of a given event
      * @param event
      * @param notifiers
      * @returns {notifiers|*}
@@ -1072,10 +852,10 @@ $(function () {
     };
 
     /**
-     * wire events of a given component
-     * @param component
-     * @param notifiers
-     * @returns {*}
+     * Wire events of a given component
+     * @param {Object} component
+     * @param {Object[]} notifiers
+     * @returns {Object[]}
      * @private
      */
     var wireEvents = function (component, notifiers) {
@@ -1097,7 +877,7 @@ $(function () {
     };
 
     /**
-     * build the hbs context for component properties panel
+     * Build the hbs context for component properties panel
      * @param component
      * @param page
      * @returns {{id: (*|component.id), title: *, options: *, styles: (styles|*|buildPropertiesContext.styles), settings: *, listeners: *}}
@@ -1118,10 +898,10 @@ $(function () {
 
     /**
      * Check whether current landing page is anonymous or not.
-     * @param landing
-     * @return boolean
+     * @param {String} landing  Current landing page
+     * @return {boolean}
      * @private
-     * */
+     */
     var checkForAnonLandingPage = function (landing) {
         var isLandingAnon = false;
         for (var availablePage in dashboard.pages) {
@@ -1136,10 +916,10 @@ $(function () {
 
     /**
      * Check whether there are any anonymous pages.
-     * @param pageId
-     * @return boolean
+     * @param {String} pageId Page ID
+     * @return [boolean]
      * @private
-     * */
+     */
     var checkForAnonPages = function (pageId) {
         var isAnonPagesAvailable = false;
         for (var availablePage in dashboard.pages) {
@@ -1155,8 +935,8 @@ $(function () {
     /**
      * Check whether dashboard is anon or not based on whether there are anon
      * pages available or not.
-     * @return isDashboardAnon{Boolean}: true if there are any page with anon view.
-     * */
+     * @return {boolean} true if there are any page with anon view.
+     */
     var checkWhetherDashboardIsAnon = function () {
         var isDashboardAnon = false;
         for (var availablePage in dashboard.pages) {
@@ -1171,10 +951,10 @@ $(function () {
 
     /**
      * Check whether there are any pages which has given id.
-     * @param pageId {String}
-     * @return {Boolean}
+     * @param {String} pageId
+     * @return {boolean}
      * @private
-     * */
+     */
     var checkForPagesById = function (pageId) {
         var isPageAvailable = false;
         for (var availablePage = 0; availablePage < dashboard.pages.length; availablePage++) {
@@ -1189,10 +969,10 @@ $(function () {
 
     /**
      * Check whether there are any page which has the given title.
-     * @param pageTitle {String}
-     * @return {Boolean}
+     * @param {String} pageTitle
+     * @return {boolean}
      * @private
-     * */
+     */
     var checkForPagesByTitle = function (pageTitle) {
         var isPageAvailable = false;
         for (var availablePage = 0; availablePage < dashboard.pages.length; availablePage++) {
@@ -1207,10 +987,11 @@ $(function () {
 
     /**
      * Show error style for given element
-     * @param1 element
-     * @param2 errorElement
+     * @param {Object} element
+     * @param {Object} errorElement
+     * @return {null}
      * @private
-     * */
+     */
     var showInlineError = function (element, errorElement) {
         element.val('');
         element.parent().addClass("has-error");
@@ -1223,10 +1004,11 @@ $(function () {
 
     /**
      * Hide error style for given element
-     * @param1 element
-     * @param2 errorElement
+     * @param {Object} element
+     * @param {Object} errorElement
+     * @return {null}
      * @private
-     * */
+     */
     var hideInlineError = function (element, errorElement) {
         element.parent().removeClass("has-error");
         element.removeClass("has-error");
@@ -1237,8 +1019,9 @@ $(function () {
     };
 
     /**
-     * update page options
-     * @param e
+     * Update page options
+     * @param {Object} e
+     * @return {Boolean}
      * @private
      */
     var updatePageProperties = function (e) {
@@ -1266,7 +1049,7 @@ $(function () {
         }
 
         if (hasError) {
-            return;
+            return false;
         }
 
         var landing = $('input[name=landing]', e),
@@ -1277,10 +1060,9 @@ $(function () {
 
         var fn = {
             id: function () {
-
                 if (checkForPagesById(idVal) && page.id != idVal) {
-                    generateMessage("A page with entered URL already exists. Please select a different URL",
-                        null, null, "error", "topCenter", 3500, ['button', 'click']);
+                    showInformation("URL Already Exists",
+                        "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
                 } else {
                     page.id = idVal;
@@ -1288,54 +1070,48 @@ $(function () {
                         dashboard.landing = idVal;
                     }
                 }
-
             },
             title: function () {
-
                 if (checkForPagesByTitle(titleVal) && page.title.toUpperCase() != titleVal.toUpperCase()) {
-                    generateMessage("A page with entered title already exists. Please select a different title",
-                        null, null, "error", "topCenter", 3500, ['button', 'click']);
+                    showInformation("Title Already Exists",
+                        "A page with same title already exists. Please enter a different title");
                     title.val(page.title);
                     titleVal = page.title;
                 } else {
                     page.title = titleVal;
                 }
-
-                $('#ues-designer .ues-page-title .page-title').text(titleVal);
-                $('#ues-properties .ues-page-title').find().text(titleVal);
-
             },
             landing: function () {
-
                 if (landing.is(':checked')) {
                     if (hasAnonPages && !page.isanon) {
                         landing.prop("checked", false);
-                        generateMessage("Please add an anonymous view to this page before select it as the landing page", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        showInformation("Cannot Select This Page As Landing",
+                            "Please add an anonymous view to this page before select it as the landing page");
                     } else {
                         dashboard.landing = idVal;
                     }
                 }
-
             },
             anon: function () {
-
                 if (anon.is(':checked')) {
                     if (checkForAnonLandingPage(dashboard.landing) || dashboard.landing == idVal) {
                         ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
                         dashboard.isanon = true;
                         page.isanon = true;
+
                         // create the template if there is no content create before
                         page.layout.content.anon = page.layout.content.anon || page.layout.content.loggedIn;
-                        $(".toggle-design-view").removeClass("hide");
-                        toggleView.bootstrapToggle('off');
+                        $('#designer-view-mode li[data-view-mode=anon]').removeClass('hide');
                     } else {
                         $(anon).prop("checked", false);
-                        generateMessage("Please add an anonymous view to the landing page in order to make this page anonymous", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        showInformation("Cannot Make This Page Anonymous",
+                            "Please add an anonymous view to the landing page in order to make this page anonymous");
                     }
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        generateMessage("Cannot remove the anonymous view of landing page when there are pages with anonymous views", null, null, "error", "topCenter", 3500, ['button', 'click']);
+                        showInformation("Cannot Remove The Anonymous View",
+                            "Cannot remove the anonymous view of landing page when there are pages with anonymous views");
                     } else {
                         page.isanon = false;
 
@@ -1346,14 +1122,10 @@ $(function () {
                         }
 
                         // the anon layout should not be deleted since the gadgets in this layout is already there in the content
-                        $(".toggle-design-view").addClass("hide");
-
-                        toggleView.bootstrapToggle(toggleView.prop("checked") ? 'on' : 'off');
-
+                        $('#designer-view-mode li[data-view-mode=anon]').addClass("hide");
                         page.content.anon = {};
                     }
                 }
-
             },
             fluidLayout: function () {
                 page.layout.fluidLayout = fluidLayout.is(':checked');
@@ -1362,28 +1134,23 @@ $(function () {
 
         if (typeof fn[e.context.name] === 'function') {
             fn[e.context.name]();
-
             updatePagesList();
             saveDashboard();
-            initNanoScroller();
-
         } else {
-            console.error('function not implemented')
+            console.error('Unable to find the property.')
         }
 
-        if (recentlyOpenedPageProperty && !$('#ues-dashboard-pages').find('#ues-page-properties').find("#" + recentlyOpenedPageProperty).hasClass('in')) {
-            $('#ues-dashboard-pages').find('#ues-page-properties').find('a[data-id="' + recentlyOpenedPageProperty + '"]').click();
-            initNanoScroller();
-        }
+        return true;
     };
 
     /**
      * Sanitize the given event's key code.
-     * @param1 event
-     * @param1 regEx
-     * @return boolean
+     * @param {Object} element
+     * @param {Object} event
+     * @param {String} regEx
+     * @return {boolean}
      * @private
-     * */
+     */
     var sanitizeOnKeyPress = function (element, event, regEx) {
         var code;
         if (event.keyCode) {
@@ -1401,9 +1168,10 @@ $(function () {
     };
 
     /**
-     * saves page options of the component
-     * @param sandbox
-     * @param options
+     * Save page options of the component
+     * @param {Object} sandbox  Sandbox element
+     * @param {Object} options  Options object
+     * @return {null}
      * @private
      */
     var saveOptions = function (sandbox, options) {
@@ -1434,9 +1202,10 @@ $(function () {
     };
 
     /**
-     * save settings of the component
-     * @param sandbox
-     * @param settings
+     * Save settings of the component
+     * @param {Object} sandbox  Sandbox element
+     * @param {Object} settings Settings object
+     * @return {null}
      * @private
      */
     var saveSettings = function (sandbox, settings) {
@@ -1455,9 +1224,10 @@ $(function () {
     };
 
     /**
-     * save styles of the component
-     * @param sandbox
-     * @param styles
+     * Save styles of the component
+     * @param {Object} sandbox  Sandbox element
+     * @param {Object} styles   Styles object
+     * @return {null}
      * @private
      */
     var saveStyles = function (sandbox, styles, id) {
@@ -1479,9 +1249,10 @@ $(function () {
     };
 
     /**
-     * save notifiers of the component
-     * @param sandbox
-     * @param notifiers
+     * Save notifiers of the component
+     * @param {Object} sandbox  Sandbox element
+     * @param notifiers         Notifiers object
+     * @return {null}
      * @private
      */
     var saveNotifiers = function (sandbox, notifiers) {
@@ -1502,29 +1273,29 @@ $(function () {
     };
 
     /**
-     * holds the store paging history for infinite scroll
+     * Holds the store paging history for infinite scroll
      * @type {{}}
      * @private
      */
     var pagingHistory = {};
 
     /**
-     * Check whether given category is already existing or not.
-     * @param1 categories {Object}
-     * @param2 category {String}
+     * Check whether given category is already existing or not
+     * @param {Object} categories   All the categories
+     * @param {String} category     Category to be checked
      * @return {Boolean}
      * @private
-     * */
+     */
     var checkForExistingCategory = function (categories, category) {
         return categories[category] ? true : false;
     };
 
     /**
      * Filter the component By Categories
-     * @param data {Object}
+     * @param {Object} data
      * @return {Object}
      * @private
-     * */
+     */
     var filterComponentByCategories = function (data) {
         var componentsWithCategories = {};
         var categories = {};
@@ -1547,12 +1318,12 @@ $(function () {
     };
 
     /**
-     * Sort the Filtered component to show the non categorized components first.
-     * @param1 nonCategoryString {String}
-     * @param2 componentsWithCategories {String}
+     * Sort the Filtered component to show the non categorized components first
+     * @param {String} nonCategoryString
+     * @param {String} componentsWithCategories
      * @return {Object}
      * @private
-     * */
+     */
     var sortComponentsByCategory = function (nonCategoryString, componentsWithCategories) {
         var sortedList = {};
         sortedList[nonCategoryString] = componentsWithCategories[nonCategoryString];
@@ -1565,9 +1336,10 @@ $(function () {
     };
 
     /**
-     * loads given type of assets matching the query
-     * @param type
-     * @param query
+     * Loads given type of assets matching the query
+     * @param {String} type
+     * @param {String} query
+     * @return {null}
      * @private
      */
     var loadAssets = function (type, query) {
@@ -1598,7 +1370,8 @@ $(function () {
                 console.log(err);
                 return;
             }
-            var assets = $('#ues-store-' + type).find('.ues-thumbnails');
+
+            var assets = $('.ues-store-assets').find('.ues-thumbnails');
             var fresh = !paging.start;
             var assetz = storeCache[type];
             storeCache[type] = assetz.concat(data);
@@ -1629,21 +1402,17 @@ $(function () {
     };
 
     /**
-     * initializes the components
+     * Initializes the components
+     * @return {null}
      * @private
      */
     var initComponents = function () {
-        $('#ues-store').on('mouseenter', '.ues-thumbnail', function () {
+
+        $('#sidebarNavGadgets .ues-thumbnails').on('mouseenter', '.ues-thumbnail', function () {
             $(this).draggable({
                 cancel: false,
                 appendTo: 'body',
-                helper: 'clone',
-                start: function (event, ui) {
-                    ui.helper.addClass('ues-store-thumbnail');
-                },
-                stop: function (event, ui) {
-                    ui.helper.removeClass('ues-store-thumbnail');
-                }
+                helper: 'clone'
             });
         }).on('mouseleave', '.ues-thumbnail', function () {
             $(this).draggable('destroy');
@@ -1651,85 +1420,31 @@ $(function () {
     };
 
     /**
-     * initializes the designer
+     * Initializes the designer
+     * @return {null}
      * @private
      */
     var initDesigner = function () {
-        var actions = $('#ues-store-menu-actions');
-        actions.find('.ues-store-toggle').click(function () {
-            var thiz = $(this);
-            var parent = thiz.parent();
-            var type = thiz.data('type');
-            parent.siblings().addBack().removeClass('active');
-            var store = $('#ues-store');
-            var assets = $('#ues-store-' + type);
-            if (store.hasClass('ues-hidden') || assets.hasClass('ues-hidden')) {
-                parent.addClass('active');
-                assets.siblings().addClass('ues-hidden');
-                showStore(type);
-                initNanoScroller();
-                return;
+
+        $('#designer-view-mode').on('click', 'li', function () {
+            var currentPageType = pageType;
+            var mode = $(this).data('view-mode');
+            if (mode === 'default') {
+                pageType = DEFAULT_DASHBOARD_VIEW;
+                ues.global.type = DEFAULT_DASHBOARD_VIEW;
+            } else {
+                pageType = ANONYMOUS_DASHBOARD_VIEW;
+                ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
+                ues.global.anon = true;
             }
-            hideStore(type);
-        });
 
-        actions.find('.ues-pages-toggle').click(function () {
-            var element = $(this);
-            var parent = element.parent();
-            var type = element.data('type');
-            parent.siblings().addBack().removeClass('active');
-
-            var store = $('#ues-store');
-            var pagesMenu = $('#ues-dashboard-pages');
-            var designer = $('#ues-designer');
-
-            if (store.hasClass('ues-hidden') || pagesMenu.hasClass('ues-hidden')) {
-                parent.addClass('active');
-                pagesMenu.siblings().addClass('ues-hidden');
-                showPages();
-                initNanoScroller();
-                return;
-            }
-            parent.removeClass('active');
-            hidePages();
+            switchPage(getPageId(), currentPageType);
         });
     };
 
     /**
-     * Show the page list.
-     * @private
-     * */
-    var showPages = function () {
-        $('#ues-store').removeClass('ues-hidden');
-        $('#ues-dashboard-pages').removeClass('ues-hidden');
-        var designer = $('#ues-designer');
-        if (designer.hasClass('ues-storeprop-visible') || designer.hasClass('ues-store-visible')) {
-            return;
-        }
-        if (designer.hasClass('ues-properties-visible')) {
-            designer.removeClass('ues-properties-visible').addClass('ues-storeprop-visible');
-            return;
-        }
-        designer.addClass('ues-store-visible');
-    };
-
-    /**
-     * Hide the page list.
-     * @private
-     * */
-    var hidePages = function () {
-        $('#ues-dashboard-pages').addClass('ues-hidden');
-        $('#ues-store').addClass('ues-hidden');
-        var designer = $('#ues-designer');
-        if (designer.hasClass('ues-storeprop-visible')) {
-            designer.removeClass('ues-storeprop-visible').addClass('ues-properties-visible');
-            return;
-        }
-        designer.removeClass('ues-store-visible');
-    };
-
-    /**
-     * Load the layouts for workspace.
+     * Load layouts for workspace
+     * @returns {null}
      * @private
      * */
     var loadLayouts = function () {
@@ -1738,142 +1453,135 @@ $(function () {
             count: 20
         }, function (err, data) {
             storeCache.layout = data;
-            var workspace = $('#ues-workspace-layout').find('.ues-content').html(layoutsListHbs(data));
+            $('#ues-page-layouts').html(layoutsListHbs(data));
         });
     };
 
     /**
      * Initialize the layout for the workspace
+     * @returns {null}
      * @private
      * */
     var initLayoutWorkspace = function () {
-        $('#ues-workspace-layout').find('.ues-content').on('click', '.layout-selection', function (e) {
+
+        $('#ues-page-layouts').on('click', '.thumbnail', function (e) {
             e.preventDefault();
-            createPage(pageOptions(), $(this).data('id'), function (err) {
-                showWorkspace('designer');
+            var options = pageOptions();
+
+            createPage(options, $(this).data('id'), function (err) {
+
+                // reload pages list
+                updatePagesList();
+
+                // hide the sidebar
+                $('#sidebarNavPages button[rel="createPage"]').click();
+                // open page options
+                $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
+
             });
         });
         loadLayouts();
     };
 
     /**
-     * initializes the store
+     * Initializes the store
+     * @return {null}
      * @private
      */
     var initStore = function () {
         loadAssets('gadget');
-        $('#ues-store').find('.ues-store-assets')
-            .scroll(function () {
-                var thiz = $(this);
-                var type = thiz.data('type');
-                var child = $('.ues-content', thiz);
-                if (thiz.scrollTop() + thiz.height() < child.height() - 100) {
-                    return;
-                }
-                var query = $('.ues-search-box input', thiz).val();
-                loadAssets(type, query);
-                initNanoScroller();
-            })
-            .find('.ues-search-box input')
-            .on('keypress', function (e) {
-                if (e.which !== 13) {
-                    return;
-                }
-                e.preventDefault();
-                var thiz = $(this);
-                var query = thiz.val();
-                var type = thiz.closest('.ues-store-assets').data('type');
-                loadAssets(type, query);
-            })
-    };
 
-    var addBreadcrumbsParents = function (pageName, url, element) {
-        var breadCrumb = element ? $(element).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
-        breadcrumbs.push(pageName);
-        breadCrumb.append("<li><a href='" + url + "'>" + pageName + "</a></li>");
-    };
-
-    var addBreadcrumbsCurrent = function (pageName, element) {
-        var breadCrumb = element ? $(element).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
-        if (breadCrumb.find(".active").text() != pageName) {
-            removeBreadcrumbsCurrent();
-            removeBreadcrumbsElement(pageName, "a", "li");
-
-        }
-        breadcrumbs.push(pageName);
-        breadCrumb.append("<li class='active'>" + pageName + "</li>");
-    };
-
-    var removeBreadcrumbsCurrent = function (element) {
-        var breadCrumb = element ? $(element).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
-        breadCrumb.find(".active").remove();
-        breadcrumbs.pop();
-    };
-
-    var removeBreadcrumbsElement = function (text, element, parent, breadCrumbElement) {
-        var breadCrumb = breadCrumbElement ? $(breadCrumbElement).find('#ues-breadcrumbs') : $('#ues-breadcrumbs');
-        var anchors = breadCrumb.find(element);
-        for (var i = 0; i < anchors.length; i++) {
-            if ($(anchors[i]).text() == text) {
-                parent ? $(anchors[i]).parent(parent).remove() : $(anchors[i]).remove();
-                break;
+        // initialize search options in gadgets sidebar
+        $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (e) {
+            if (e.which !== 13) {
+                return;
             }
-        }
-    };
-
-    var initDesignerMenu = function () {
-        var designer = $("#ues-workspace-designer");
-        designer.show();
-
-        var menu = designer.find('.ues-context-menu');
-        menu.find('.ues-dashboard-preview').on('click', function () {
-            previewDashboard(page);
-        });
-
-        menu.find('.ues-copy').on('click', function (e) {
             e.preventDefault();
-            var reset = function () {
-                window.open($('.ues-copy').attr('href'), "_self");
-            };
 
-            generateMessage("This will remove all the customization added to the dashboard." +
-                " Do you want to continue?", reset, null, "confirm", "topCenter", null, ["button"]);
+            var query = $(this).val();
+            loadAssets('gadget', query);
         });
 
-        menu.find('.ues-tiles-menu-toggle').click(function () {
-            menu.find('.ues-tiles-menu').slideToggle();
+        $('.ues-store-assets .ues-search-box button').on('click', function () {
+            var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
+            loadAssets('gadget', query);
         });
+    };
 
-        var actions = menu.find('.ues-context-menu-actions');
-        actions.find('.ues-component-properties-toggle').click(function () {
-            var thiz = $(this);
-            var parent = thiz.parent();
-            if (parent.hasClass('active')) {
-                //parent.removeClass('active');
-                hideProperties();
-                return;
-            }
-            renderComponentProperties(activeComponent);
-        });
+    /**
+     * Initialize the designer menu
+     * @return {null}
+     * @private
+     */
+    var initDesignerMenu = function () {
+        // menu functions
+        $('.ues-context-menu')
+            .on('click', '.ues-dashboard-preview', function () {
+                // Preview the dashboard
+                previewDashboard(page);
+            })
+            .on('click', '.ues-copy', function (e) {
+                // reset the dashboard
+                e.preventDefault();
+                var that = $(this);
+                showConfirm('Resetting the page',
+                    'This will remove all the customization added to the dashboard. Do you want to continue?',
+                    function () {
+                        window.open(that.attr('href'), "_self");
+                    });
+            });
 
+        // page header functions
+        $('.page-header')
+            .on('click', '.ues-switch-page-prev, .ues-switch-page-next, .ues-refresh-page', function () {
+                // navigate/refresh pages
+                var pid = $(this).attr('data-page-id');
+
+                ues.global.isSwitchToNewPage = true;
+                switchPage(pid, pageType);
+                ues.global.isSwitchToNewPage = false;
+            })
+            .on('click', '.ues-delete-page', function () {
+
+                // delete dashboard page
+                var pid = $(this).attr('data-page-id');
+
+                showConfirm('Deleting the page',
+                    'This will remove the page and all its content. Do you want to continue?',
+                    function () {
+                        removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
+                            var pages = dashboard.pages;
+
+                            updatePagesList(pages);
+
+                            // if the landing page was deleted, make the first page to be the landing page
+                            if (dashboard.pages.length) {
+                                if (pid == dashboard.landing) {
+                                    dashboard.landing = pages[0].id;
+                                }
+                            } else {
+                                dashboard.landing = null;
+
+                                // hide the sidebar if it is open
+                                if ($('#left-sidebar').hasClass('toggled')) {
+                                    $('#btn-pages-sidebar').click();
+                                }
+                            }
+
+
+                            // save the dashboard
+                            saveDashboard();
+                            renderPage(dashboard.landing);
+                        });
+                    });
+            });
+
+        // dashboard pages list functions
         var pagesMenu = $("#ues-dashboard-pages");
-        pagesMenu.find(".ues-pages-list").on('click', 'li a', function () {
-            var thiz = $(this);
-            var pid = thiz.data('id');
-            ues.global.isSwitchToNewPage = true;
-            switchPage(pid, pageType);
-            ues.global.isSwitchToNewPage = false;
-        });
-        pagesMenu.find("#ues-page-properties").on("click", 'a', function (e) {
-            var thiz = $(this);
-            var pid = thiz.data('id');
-            if ($("#" + pid).hasClass('in')) {
-                $("#" + pid).removeClass('in');
-                recentlyOpenedPageProperty = null;
-                e.stopPropagation();
-                return;
-            }
+        // load page properties
+        pagesMenu.on("click", '.ues-page-list-heading', function (e) {
 
+            var pid = $(this).data('id')
             // do not re-render if the user clicks on the current page name
             if (pid != page.id) {
                 ues.global.isSwitchToNewPage = true;
@@ -1881,77 +1589,36 @@ $(function () {
                 ues.global.isSwitchToNewPage = false;
             }
 
-            $('#' + pid).find('.panel-body').html(pageOptionsHbs({
+            // render page properties
+            pagesMenu.find('.ues-page-properties#pages' + pid).html(pageOptionsHbs({
                 id: page.id,
                 title: page.title,
                 landing: (dashboard.landing == page.id),
                 isanon: page.isanon,
                 isUserCustom: dashboard.isUserCustom,
                 fluidLayout: page.layout.fluidLayout || false
-            })).find('.ues-sandbox').on('change', 'input', function () {
-                updatePageProperties($(this).closest('.ues-sandbox'));
+            })).on('change', 'input', function () {
+                if (updatePageProperties($(this).closest('.ues-page-properties'))) {
+                    switchPage(page.id, pageType);
+                }
             });
 
+            // bind event handlers for page properties input fields
+            // sanitize the page title property
             $("#page-title").on("keypress", function (e) {
                 return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
             });
 
+            // sanitize the page URL property
             $("#page-url").on("keypress", function (e) {
                 return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
             }).on("keyup", function (e) {
                 var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
                 $(this).val(sanitizedInput);
             });
-
-            recentlyOpenedPageProperty = pid;
-        });
-        pagesMenu.find("#ues-page-properties").on("click", 'a .ues-trash', function (e) {
-            e.stopPropagation();
-            var thiz = $(this);
-            var pid = thiz.parent().parent().data('id');
-            var removePageFromDB = function () {
-                removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
-                    var pages = dashboard.pages;
-
-                    if (recentlyOpenedPageProperty == pid) {
-                        recentlyOpenedPageProperty = null;
-                    }
-
-                    updatePagesList(pages);
-                    initNanoScroller();
-                    if (!pages.length) {
-                        dashboard.landing = null;
-                        hideProperties();
-                        initFirstPage();
-                        return;
-                    }
-
-                    var first = pages[0];
-                    if (pid === dashboard.landing) {
-                        dashboard.landing = first.id;
-                    }
-
-                    saveDashboard();
-                    if (pid !== page.id) {
-                        updatePagesList(pages);
-                        initNanoScroller();
-                        return;
-                    }
-                    hideProperties();
-                    renderPage(first.id);
-                });
-            };
-
-            generateMessage("This will remove the page and all its content." +
-                " Do you want to continue?", removePageFromDB, null, "confirm", "topCenter", null);
         });
 
-        pagesMenu.find(".ues-search-box input").on("keypress", function (e) {
-            if (e.which !== 13) {
-                return;
-            }
-            e.preventDefault();
-            var searchQuery = "" + $(this).val();
+        var pageSearchFunction = function (searchQuery) {
             var pages = dashboard.pages;
             var resultPages = [];
             if (searchQuery) {
@@ -1961,42 +1628,29 @@ $(function () {
                     }
                 }
                 updatePagesList(page, resultPages, dashboard.landing);
-                initNanoScroller();
             } else {
                 updatePagesList();
-                initNanoScroller();
             }
-        });
-        pagesMenu.find('.ues-page-add').on('click', function () {
-            layoutWorkspace();
-            removeBreadcrumbsCurrent($('#ues-workspace-layout').find('.ues-context-menu'));
-            removeBreadcrumbsElement(dashboard.title, "a", "li", $('#ues-workspace-layout').find('.ues-context-menu'));
-            addBreadcrumbsParents(dashboard.title, ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true", $('#ues-workspace-layout').find('.ues-context-menu'));
-            addBreadcrumbsCurrent("Add Page", $('#ues-workspace-layout').find('.ues-context-menu'));
-        });
-    };
+        }
 
-    var initLayoutMenu = function () {
-        var menu = $('#ues-workspace-layout').find('.ues-context-menu');
-        menu.find('.ues-go-back').on('click', function () {
-            removeBreadcrumbsCurrent($('#ues-workspace-layout').find('.ues-context-menu'));
-            removeBreadcrumbsElement(dashboard.title, "a", "li", $('#ues-workspace-layout').find('.ues-context-menu'));
-            addBreadcrumbsCurrent(dashboard.title);
-            showWorkspace('designer');
+        $('#sidebarNavPages .ues-search-box input[type=text]').on('keypress', function (e) {
+            if (e.which !== 13) {
+                return;
+            }
+            e.preventDefault();
+            pageSearchFunction($(this).val());
         });
-        menu.find('.ues-tiles-menu-toggle').click(function () {
-            menu.find('.ues-tiles-menu').slideToggle();
-        });
-    };
 
-    var initContextMenus = function () {
-        initDesignerMenu();
-        initLayoutMenu();
+        $('#sidebarNavPages .ues-search-box button').on('click', function () {
+            var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
+            pageSearchFunction(query);
+        });
     };
 
     /**
      * Register the "set_pref" rpc function. When user set the user preferences using
      * pref.set() method this will be executed.
+     * @return {null}
      * @private
      */
     var registerRpc = function () {
@@ -2030,14 +1684,27 @@ $(function () {
     };
 
     /**
-     * initialized adding block function
+     * Initialized adding block function
+     * @return {null}
      */
     var initAddBlock = function () {
 
+        // redraw the grid when changing the width/height values
+        $('#block-height, #block-width').on('keyup', function () {
+
+            var dummy = $('.ues-dummy-gadget'),
+                unitSize = parseInt(dummy.data('unit-size'));
+
+            dummy
+                .css('width', unitSize * parseInt($('#block-width').val()))
+                .css('height', unitSize * parseInt($('#block-height').val()));
+        });
+
         // add block handler
         $('#ues-add-block-btn').on('click', function () {
-            var width = parseInt($('#dummy-size').attr('data-w')) || 0,
-                height = parseInt($('#dummy-size').attr('data-h')) || 0,
+
+            var width = $('#block-width').val() || 0,
+                height = $('#block-height').val() || 0,
                 id = guid();
 
             if (width == 0 || height == 0) {
@@ -2047,63 +1714,56 @@ $(function () {
             gridster.add_widget(componentBoxListHbs({blocks: [{id: id}]}), width, height, 1, 1);
 
             $('.ues-component-box#' + id).html(componentBoxContentHbs({appendResizeHandle: true}));
-            $('#ues-add-block-menu-item').removeClass('open');
 
             updateLayout();
             listenLayout();
         });
 
-        $('#dummy-gadget').resizable({
-            grid: DUMMY_GADGET_SIZE,
-            containment: "#dummy-gadget-container",
-            resize: function (event, ui) {
+        $('.ues-dummy-gadget').resizable({
+            grid: 18,
+            containment: '.ues-block-container',
+            resize: function (e, ui) {
 
-                var height = Math.round($(this).height() / DUMMY_GADGET_SIZE),
-                    width = Math.round($(this).width() / DUMMY_GADGET_SIZE),
-                    label = width + 'x' + height;
+                var height = $(this).height() / 18,
+                    width = $(this).width() / 18;
 
-                $(this).find('#dummy-size').html(label).attr({
-                    'data-w': width,
-                    'data-h': height
-                });
+                $('#block-width').val(width);
+                $('#block-height').val(height);
             }
         });
+
+        $('#block-width').val($('.ues-dummy-gadget').width() / 18);
+        $('#block-height').val($('.ues-dummy-gadget').height() / 18);
     };
 
     /**
-     * initializes the UI
+     * Initializes the UI
+     * @return {null}
      * @private
      */
     var initUI = function () {
         registerRpc();
-        initContextMenus();
+        initDesignerMenu();
         initLayoutWorkspace();
         initDesigner();
         initStore();
         initComponentToolbar();
         initComponents();
-        initUESProperties();
-        initToggleView();
         initAddBlock();
 
-        // Adding breadcrumbs.
-        addBreadcrumbsParents("Dashboards", ues.utils.tenantPrefix() + "./dashboards");
-
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
-            generateMessage("You have given editor permission for this dashboard." +
-                    " Please reset the dashboard to receive the permission.",
-                null, null, "error", "topCenter", null, ["button"]);
+            showInformation("Receive Editor Permission",
+                "You have given editor permission for this dashboard. Please reset the dashboard to receive the permission.");
         }
-
-        $('[data-toggle="tooltip"]').tooltip();
     };
 
     /**
-     * initializes the layout listeners
+     * Initializes the layout listeners
+     * @return {null}
      * @private
      */
     var listenLayout = function () {
-        $('#ues-designer').find('.ues-component-box:not([data-banner=true])').droppable({
+        $('.gadgets-grid').find('.gridster-block:not([data-banner=true]) .ues-component-box').droppable({
             hoverClass: 'ui-state-hover',
             drop: function (event, ui) {
 
@@ -2118,50 +1778,46 @@ $(function () {
     };
 
     /**
-     * check whether the container has any components
-     * @param container
-     * @returns boolean
+     * Check whether the container has any components
+     * @param {Object} container
+     * @returns {boolean}
+     * @private
      */
     var hasComponents = function (container) {
         return (container.find('.ues-component .ues-component-body div').length > 0);
     };
 
     /**
-     * get the container for layouts
-     * @returns {*|jQuery}
-     * @private
-     */
-    var layoutContainer = function () {
-        return $('#ues-designer').html(layoutHbs({
-            pages: dashboard.pages,
-            current: page,
-            isanon: (page.isanon && !dashboard.isUserCustom)
-        })).find('.default-ues-layout');
-    };
-
-    /**
-     * Update the page list as changes happened to the pages.
-     * @param current {Object}
-     * @param pages {Object}
-     * @param landing {String}
+     * Update the page list as changes happened to the pages
+     * @param {Object} current
+     * @param {Object} pages
+     * @param {String} landing
+     * @return {null}
      * @private
      * */
     var updatePagesList = function (current, pages, landing) {
-        $('#ues-dashboard-pages').find('#ues-page-properties').html(pagesListHbs({
-            current: current ? current : page,
-            pages: pages ? pages : dashboard.pages,
-            home: landing ? landing : dashboard.landing
+
+        current = current || page;
+
+        $('#ues-dashboard-pages').html(pagesListHbs({
+            current: current,
+            pages: pages || dashboard.pages,
+            home: landing || dashboard.landing,
         }));
+
+        $('#ues-dashboard-pages #pagesButton' + current.id).click();
     };
 
     /**
      * creates a page with the given options
-     * @param options
-     * @param lid
-     * @param done
+     * @param {Object} options  Page options
+     * @param {String} lid      Layout ID
+     * @param {function} done   Callback function
+     * @return {null}
      * @private
      */
     var createPage = function (options, lid, done) {
+
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
@@ -2183,8 +1839,8 @@ $(function () {
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
+
             saveDashboard();
-            hideProperties();
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
                 switchPage(id, pageType);
@@ -2192,16 +1848,13 @@ $(function () {
             } else {
                 renderPage(id, done);
             }
-
-            addBreadcrumbsCurrent(dashboard.title);
-            initNanoScroller();
         }, 'html');
     };
 
     /**
-     * returns the current page
-     * @param p
-     * @returns {*}
+     * Returns the current page
+     * @param {Object} p    Page object
+     * @returns {Object}
      * @private
      */
     var currentPage = function (p) {
@@ -2209,8 +1862,10 @@ $(function () {
     };
 
     /**
-     * switches the given page
-     * @param pid
+     * Switches the given page
+     * @param {String} pid      Page ID
+     * @param {String} pageType Type of the page
+     * @return {null}
      * @private
      */
     var switchPage = function (pid, pageType) {
@@ -2226,7 +1881,8 @@ $(function () {
     };
 
     /**
-     * update the layout after modification
+     * Update the layout after modification
+     * @return {null}
      */
     var updateLayout = function () {
         // extract the layout from the designer (gridster) and save it
@@ -2254,8 +1910,8 @@ $(function () {
     };
 
     /**
-     * generate GUID
-     * @returns {*}
+     * Generate GUID
+     * @returns {String}
      * @private
      */
     function guid() {
@@ -2269,54 +1925,116 @@ $(function () {
     }
 
     /**
-     * renders the given page in the designer view
-     * @param pid
-     * @param done
+     * Show page layouts selection pane
+     * @returns {null}
+     * @private
+     */
+    var showCreatePage = function () {
+
+        // if the left panel is closed, click on the pages button
+        if (!$('#left-sidebar').hasClass('toggled')) {
+            $('#btn-pages-sidebar').click()
+        }
+
+        // if the select layout is closed, click on the create page button
+        if (!$('#left-sidebar-sub').hasClass('toggled')) {
+            $('#left-sidebar button[rel=createPage]').click();
+        }
+    }
+
+    /**
+     * Renders the given page in the designer view
+     * @param {String} pid      Page ID
+     * @param {function} done   Callback function
+     * @return {null}
      * @private
      */
     var renderPage = function (pid, done) {
+
+        // if no pages found, display a message
+        if (!dashboard.pages.length) {
+
+            $('#ues-dashboard-preview-link').hide();
+
+            $('.gadgets-grid')
+                .html(noPagesHbs())
+                .find('#btn-add-page-empty').on('click', function () {
+                    showCreatePage();
+                });
+
+            $('.page-header .page-actions').hide();
+            $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
+
+            showCreatePage();
+            return;
+        }
+
+        $('#ues-dashboard-preview-link').show();
+        $('.gadgets-grid').html('');
+        $('.page-header .page-actions').show();
+        $('#btn-sidebar-layouts, #btn-sidebar-gadgets').show();
+
         currentPage(findPage(dashboard, pid));
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
 
-        // TODO: Revise the following commented line.
-        //if (propertiesVisible()) {
-        //    renderPageProperties(page);
-        //}
+        pageType = pageType || DEFAULT_DASHBOARD_VIEW;
 
-        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        if (ues.global.isSwitchToNewPage || !page.isanon) {
-            pageType = DEFAULT_DASHBOARD_VIEW;
-            ues.global.type = DEFAULT_DASHBOARD_VIEW;
-        } else if (!($("#toggle-dashboard-view").prop("checked")) && $("#toggle-dashboard-view").length > 0) {
-            pageType = ANONYMOUS_DASHBOARD_VIEW;
-            ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
+        var anonToggle = $('#designer-view-mode li[data-view-mode=anon]');
+        if (page.isanon && !dashboard.isUserCustom) {
+            anonToggle.removeClass('hide');
+        } else {
+            anonToggle.addClass('hide');
         }
 
-        // TODO: Disable the properties if no gadgets available in the view.
-        //$('.ues-context-menu .ues-component-properties-toggle').parent().hide();
+        // if the current page doesn't have a anon view defined, render the default view
+        if (!page.isanon) {
+            pageType = DEFAULT_DASHBOARD_VIEW;
+            $('#designer-view-mode li').removeClass('active');
+            $('#designer-view-mode li[data-view-mode=default]').addClass('active');
+        }
 
-        var default_container = layoutContainer();
-        ues.dashboards.render(default_container, dashboard, pid, pageType, function (err) {
-            $('#ues-designer').find('.ues-component').each(function () {
+        // render page header
+        var currentPageIndex = 0;
+        for (; currentPageIndex < dashboard.pages.length && dashboard.pages[currentPageIndex].id != pid; currentPageIndex++);
+
+        var hasPrevPage = currentPageIndex > 0,
+            hasNextPage = currentPageIndex < dashboard.pages.length - 1;
+
+        $('.page-header').html(headerContent = designerHeadingHbs({
+            id: page.id,
+            title: page.title,
+            pageNumber: currentPageIndex + 1,
+            totalPages: dashboard.pages.length,
+            prev: {
+                available: hasPrevPage,
+                id: (hasPrevPage ? dashboard.pages[currentPageIndex - 1].id : '')
+            },
+            next: {
+                available: hasNextPage,
+                id: (hasNextPage ? dashboard.pages[currentPageIndex + 1].id : '')
+            }
+        }));
+
+        ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
+
+            $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
 
-            var gridsterContainer = $('.gridster > ul'),
-                minBlockWidth = Math.ceil($('.gridster').width() / 12) - 30,
-                minBlockHeight = minBlockWidth + 30;
+            var gridsterContainer = $('.gridster > ul');
 
             // bind the gridster to the layout
             gridster = gridsterContainer.gridster({
                 widget_margins: [15, 15],
-                widget_base_dimensions: [minBlockWidth, minBlockHeight],
+                widget_base_dimensions: [150, 150],
                 min_cols: 12,
                 serialize_params: function (el, coords) {
                     return {
-                        id: el.prop('id'),
+                        id: el.data('id'),
                         col: coords.col,
                         row: coords.row,
                         size_x: coords.size_x,
@@ -2325,7 +2043,7 @@ $(function () {
                     };
                 },
                 draggable: {
-                    handle: '.ues-component-header, .ues-component-header .ues-component-title',
+                    handle: '.ues-component-heading, .ues-component-heading .ues-component-title',
                     stop: function () {
                         updateLayout();
                     }
@@ -2354,40 +2072,30 @@ $(function () {
                     }
                 }
             }).data('gridster');
+            
+			// remove the width of the gridster container to facilitate responsive layouts
+            gridsterContainer.css('width', '');
 
             // stop resizing banner placeholder
             $('.gridster [data-banner=true] .gs-resize-handle').remove();
+            $('.gridster [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
 
             if (!done) {
                 return;
             }
 
             done(err);
-
         }, true);
 
-        // stop closing the add block dropdown on clicking
-        $('#ues-add-block-menu').on('click', function (e) {
-            e.stopPropagation();
-        });
 
         updatePagesList();
-        initToggleView();
-
-        if (pageType != DEFAULT_DASHBOARD_VIEW) {
-            $("#toggle-dashboard-view").parent().addClass("off");
-            $(".toggle-group").find(".active").removeClass("active");
-            $(".toggle-group").find(".toggle-off").addClass("active");
-            $("#toggle-dashboard-view").prop("checked", false);
-        }
-
         initBanner();
     };
 
     /**
-     * Check for the autogenerated name to stop repeating the same name.
-     * @param1 prefix {String}
-     * @param2 pid {Number}
+     * Check for the autogenerated name to stop repeating the same name
+     * @param {String} prefix
+     * @param {Number} pid
      * @return {Number}
      * @private
      * */
@@ -2409,8 +2117,8 @@ $(function () {
     };
 
     /**
-     * build up the page options for the given type of page
-     * @param type
+     * Build up the page options for the given type of page
+     * @param {String} type
      * @returns {{id: string, title: string}}
      * @private
      */
@@ -2419,7 +2127,7 @@ $(function () {
         if (type === 'landing' || !pages.length) {
             return {
                 id: 'landing',
-                title: 'Welcome'
+                title: 'Home'
             };
         }
         if (type === 'login') {
@@ -2442,57 +2150,27 @@ $(function () {
     };
 
     /**
-     * Configure the layout selection workspace.
-     * @private
-     * */
-    var layoutWorkspace = function () {
-        var firstPage = !dashboard.pages.length,
-            back = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-go-back'),
-            cancel = $('#ues-workspace-layout').find('.ues-context-menu-actions .ues-cancel');
-
-        if (firstPage) {
-            back.hide();
-            cancel.show();
-        } else {
-            back.show();
-            cancel.hide();
-        }
-        showWorkspace('layout');
-    };
-
-    /**
-     * initializes the given type of page
+     * Initializes the dashboard
+     * @param {Object} db   Dashboard object
+     * @param {String} page Page ID
+     * @returns {null}
      * @private
      */
-    var initFirstPage = function () {
-        layoutWorkspace();
-    };
+    var initDashboard = function (db, page) {
 
-    /**
-     * initializes the dashboard
-     * @param db
-     * @param page
-     * @param fresh
-     * @private
-     */
-    var initDashboard = function (db, page, fresh) {
-        freshDashboard = fresh;
         dashboard = (ues.global.dashboard = db);
-        if (fresh) {
-            initFirstPage();
-            return;
-        }
         var pages = dashboard.pages;
-        if (!pages.length) {
-            initFirstPage();
-            return;
+
+        if (pages.length > 0) {
+            renderPage(page || db.landing || pages[0].id);
+        } else {
+            renderPage(null)
         }
-        renderPage(page || db.landing || pages[0].id);
-        addBreadcrumbsCurrent(dashboard.title);
     };
 
     /**
-     * load the content within the banner placeholder
+     * Load the content within the banner placeholder
+     * @returns {null}
      */
     var loadBanner = function () {
 
@@ -2529,7 +2207,8 @@ $(function () {
 
     /**
      * Change event handler for the banner file control
-     * @oaram e
+     * @param {Object} e
+     * @returns {null}
      */
     var bannerChanged = function (e) {
 
@@ -2603,7 +2282,8 @@ $(function () {
     };
 
     /**
-     * initialize the banner
+     * Initialize the banner
+     * @returns {null}
      */
     var initBanner = function () {
 
@@ -2674,7 +2354,7 @@ $(function () {
                 });
 
             } else {
-                // remove the banner 
+                // remove the banner
                 $.ajax({
                     url: $form.attr('action'),
                     type: 'DELETE',
@@ -2695,7 +2375,7 @@ $(function () {
     };
 
     initUI();
-    initDashboard(ues.global.dashboard, ues.global.page, ues.global.fresh);
+    initDashboard(ues.global.dashboard, ues.global.page);
 
     ues.dashboards.save = saveDashboard;
 });

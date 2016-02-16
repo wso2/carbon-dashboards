@@ -19,18 +19,27 @@
         <head>
             <style type="text/css">
                 .log {
-                    width: 100%;
-                    height: 100%;
+                    position: fixed;
+                    top: 0;
+                    right: 1px;
+                    bottom: 0;
+                    left: 0;
                     background-color: #0E0E0E;
                     color: #fff;
                     overflow: auto;
+                    padding: 12px;
+                }
+
+                .log * { 
+                    font-family: monospace;
+                    line-height: 18px;
                 }
 
                 .message{
                     color: #5FC715;
                 }
             </style>
-            <script language="javascript" type="text/javascript" src="/portal/js/jquery-1.10.2.js"></script>
+            <script language="javascript" type="text/javascript" src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
             <script>
                 gadgets.HubSettings.onConnect = function() {
                     gadgets.Hub.subscribe('subscriber', function(topic, data, subscriberData) {

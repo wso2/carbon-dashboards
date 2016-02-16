@@ -1,106 +1,101 @@
 $(function () {
 
-    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
-
-    var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
-
-    var userApi = ues.utils.relativePrefix() + 'apis/user';
-
-    var searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search';
-
-    var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
-
-    var dashboard = ues.global.dashboard;
-
-    var permissions = dashboard.permissions;
-
-    var viewers = permissions.viewers;
-
-    var editors = permissions.editors;
-
-    var url = dashboardsApi + '/' + dashboard.id;
-
-    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
-
-    var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
-
-    var user = null;
+    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
+        rolesApi = ues.utils.relativePrefix() + 'apis/roles',
+        userApi = ues.utils.relativePrefix() + 'apis/user',
+        searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search',
+        maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit',
+        dashboard = ues.global.dashboard,
+        tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id,
+        permissions = dashboard.permissions,
+        viewers = permissions.viewers,
+        editors = permissions.editors,
+        url = dashboardsApi + '/' + dashboard.id,
+        permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || ''),
+        modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || ''),
+        sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || ''),
+        user = null;
 
     /**
-     * Generate Noty Messages as to the content given using parameters.
-     * @param1 text {String}
-     * @param2 ok {Object}
-     * @param3 cancel {Object}
-     * @param4 type {String}
-     * @param5 layout {String}
-     * @param6 timeout {Number}
-     * @return {Object}
+     * Show HTML modal
+     * @param {String} content      HTML content
+     * @param {function} beforeShow Function to be invoked just before showing the modal
      * @private
-     * */
-    var generateMessage = function (text, ok, cancel, type, layout, timeout) {
-        var properties = {};
-        properties.text = text;
-        if (ok || cancel) {
-            properties.buttons = [
-                {
-                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
-                    $noty.close();
-                    if (ok) {
-                        ok();
-                    }
-                }
-                },
-                {
-                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
-                    $noty.close();
-                    if (cancel) {
-                        cancel();
-                    }
-                }
-                }
-            ];
+     */
+    var showHtmlModal = function (content, beforeShow) {
+        var el = $('#designerModal');
+        el.find('.modal-content').html(content);
+        if (beforeShow && typeof beforeShow === 'function') {
+            beforeShow();
         }
 
-        if (timeout) {
-            properties.timeout = timeout;
-        }
-
-        properties.layout = layout;
-        properties.theme = 'wso2';
-        properties.type = type;
-        properties.dismissQueue = true;
-        properties.killer = true;
-        properties.maxVisible = 1;
-        properties.animation = {
-            open: {height: 'toggle'},
-            close: {height: 'toggle'},
-            easing: 'swing',
-            speed: 500
-        };
-
-        return noty(properties);
+        el.modal();
     };
 
+    /**
+     * Show confirm message with yes/no buttons
+     * @param {String} title    Title of the confirmation box
+     * @param {String} message  HTML content
+     * @param {function} ok     Callback function for yes button
+     * @private
+     */
+    var showConfirm = function (title, message, ok) {
+        var content = modalConfirmHbs({title: title, message: message});
+        showHtmlModal(content, function () {
+            var el = $('#designerModal');
+            el.find('#ues-modal-confirm-yes').on('click', function () {
+                if (ok && typeof ok === 'function') {
+                    ok();
+                    el.modal('hide');
+                }
+            });
+        });
+    };
+    
+    /**
+     * Generate messages to be displayed
+     * @param {String} message      Message to be displayed
+     * @param {Integer} timeout     Timeout to hide the message
+     * @private
+     */
+    var generateMessage = function(message, timeout) {
+        $('#save-status').text(message).show();   
+        if (timeout) {
+            setTimeout("$('#save-status').fadeOut();", timeout);
+        }
+    }
+
+    /**
+     * Save the dashboard details.
+     * @param callback {function}
+     * @private
+     * */
     var saveDashboard = function (callback) {
+        generateMessage('Saving...');
         $.ajax({
             url: url,
             method: 'PUT',
             data: JSON.stringify(dashboard),
             contentType: 'application/json'
         }).success(function (data) {
-            generateMessage("Saved Successfully", null, null, "success", "bottom", 2000);
+            generateMessage('Saved!', 2000);
             console.log('dashboard saved successfully');
 
             if (callback) {
                 callback();
             }
         }).error(function () {
-            generateMessage("Error Saving Dashboard", null, null, "error", "bottom", 2000);
+            generateMessage('Error Saving Dashboard', 2000);
             console.log('error saving dashboard');
         });
     };
 
+    /**
+     * Get the auth settings related details.
+     * @private
+     * */
     var getOauthSettings = function () {
+        generateMessage('Saving...');
         $.ajax({
             url: tokenUrl,
             type: "GET",
@@ -114,10 +109,10 @@ $(function () {
             } else {
                 setOAuthSettingsFields(data.accessTokenUrl, data.key, data.secret);
                 $("#ues-oauth-settings-inputs").show();
-                generateMessage("Saved Successfully", null, null, "success", "bottom", 2000);
+                generateMessage('Saved!', 2000);
             }
         }).error(function () {
-            generateMessage("Error Getting OAuth settings", null, null, "error", "bottom", 2000);
+            generateMessage('Error Getting OAuth settings', 2000);
             console.log('error getting oauth settings');
         });
     };
@@ -135,8 +130,12 @@ $(function () {
         $("#ues-api-secret").text(as);
     };
 
-    var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
-
+    /**
+     * Add the available viewer permission for dashboard in to permission list.
+     * @param1 el {Object} element of the list.
+     * @param2 role {String}
+     * @private
+     * */
     var viewer = function (el, role) {
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
@@ -148,6 +147,12 @@ $(function () {
         el.typeahead('val', '');
     };
 
+    /**
+     * Add the available editor permission for the dashboard in to permission list.
+     * @param1 el {Object} element of the list.
+     * @param2 role {String}
+     * @private
+     * */
     var editor = function (el, role) {
         var permissions = dashboard.permissions;
         var editors = permissions.editors;
@@ -236,12 +241,6 @@ $(function () {
         settings.find('.ues-shared-edit').append(html);
     };
 
-    var addBreadcrumbs = function (pageName) {
-        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards'>Dashboards</a></li>");
-        $('#ues-breadcrumbs').append("<li><a href='" + ues.utils.tenantPrefix() + "./dashboards/" + dashboard.id + "/?editor=true'>" + dashboard.title + "</a></li>");
-        $("#ues-breadcrumbs").append("<li class='active'>" + pageName + "</li>");
-    };
-
     /**
      * pops up the export dashboard page
      * @private
@@ -251,7 +250,11 @@ $(function () {
     };
 
     /**
-     *
+     * Check whether permission is existing or not.
+     * @param1 permissions {Object}
+     * @param2 role {String}
+     * @return {Boolean}
+     * @private
      * */
     var isExistingPermission = function (permissions, role) {
         var isExist = false;
@@ -299,8 +302,11 @@ $(function () {
         return userRoles;
     };
 
+    /**
+     * Initialize the UI functionality.
+     * @private
+     * */
     var initUI = function () {
-        addBreadcrumbs("Dashboard Settings");
         var viewerSearchQuery = '';
         var maxLimit = 10;
         getUser();
@@ -330,7 +336,7 @@ $(function () {
             },
             sufficient: 10,
             remote: {
-                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                url: searchRolesApi + '?maxLimit=' + maxLimit + '&query=' + viewerSearchQuery,
                 filter: function (searchRoles) {
                     return $.map(searchRoles, function (searchRole) {
                         return {name: searchRole};
@@ -339,7 +345,7 @@ $(function () {
                 prepare: function (query, settings) {
                     viewerSearchQuery = query;
                     var currentURL = settings.url;
-                    settings.url = currentURL + query ;
+                    settings.url = currentURL + query;
                     return settings;
                 },
                 ttl: 60
@@ -390,7 +396,7 @@ $(function () {
             },
             sufficient: 10,
             remote: {
-                url: searchRolesApi +'?maxLimit='+maxLimit+'&query='+viewerSearchQuery,
+                url: searchRolesApi + '?maxLimit=' + maxLimit + '&query=' + viewerSearchQuery,
                 filter: function (searchRoles) {
                     return $.map(searchRoles, function (searchRole) {
                         return {name: searchRole};
@@ -399,7 +405,7 @@ $(function () {
                 prepare: function (query, settings) {
                     viewerSearchQuery = query;
                     var currentURL = settings.url;
-                    settings.url = currentURL + query ;
+                    settings.url = currentURL + query;
                     return settings;
                 },
                 ttl: 60
@@ -449,8 +455,9 @@ $(function () {
             };
 
             if ((editors.length == 1 || getNumberOfUserRolesInDashboard(editors) == 1) && !user.isAdmin) {
-                generateMessage("After this permission removal only administrator will be able to edit this dashboard." +
-                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
+                showConfirm("Removing Permission",
+                    "After this permission removal only administrator will be able to edit this dashboard." +
+                    " Do you want to continue?", removePermission);
             } else {
                 removePermission();
             }
@@ -466,13 +473,15 @@ $(function () {
             };
 
             if ((viewers.length == 1 || getNumberOfUserRolesInDashboard(viewers) == 1) && !user.isAdmin) {
-                generateMessage("After this permission removal only administrator will be able to view this dashboard." +
-                    " Do you want to continue?", removePermission, null, "confirm", "topCenter", null);
+                showConfirm("Removing Permission",
+                    "After this permission removal only administrator will be able to view this dashboard." +
+                    " Do you want to continue?", removePermission);
             } else {
                 removePermission();
             }
         });
 
+        // Dashboard title
         $('#ues-dashboard-title').on("keypress", function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim)
         }).on('change', function () {
@@ -485,6 +494,7 @@ $(function () {
             }
         });
 
+        // Dashboard description
         $('#ues-dashboard-description').on('keypress', function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
         }).on('change', function () {
@@ -492,6 +502,7 @@ $(function () {
             saveDashboard();
         });
 
+        // Enable Oauth settings
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");
             saveDashboard();
@@ -502,16 +513,13 @@ $(function () {
             }
         });
 
+        // Refresh Oauth settings
         $('#ues-oauth-refresh').on('click', function () {
             getOauthSettings();
         });
 
-        var menu = $('.ues-context-menu');
-        menu.find('.ues-tiles-menu-toggle').click(function () {
-            menu.find('.ues-tiles-menu').slideToggle();
-        });
-
-        menu.find('.ues-dashboard-export').on('click', function () {
+        // Export dashboard
+        $('#ues-dashboard-export').on('click', function () {
             exportDashboard();
         });
     };
