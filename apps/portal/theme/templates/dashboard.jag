@@ -60,7 +60,7 @@
     if (isAnonView || !user) {
         var anonPageCount = 0;
         pages.forEach(function(p) {
-            if (p.isAnon) {
+            if (p.isanon) {
                 anonPageCount++;
             }
         });
@@ -173,7 +173,7 @@
                                 }
 
                                 function renderPageLink(p) {
-                                    var queryString = isAnonView ? '?isAnonView=true' : '';
+                                    var queryString = (request.getParameter('isAnonView') == 'true') ? '?isAnonView=true' : '';
 
                                 %>
                                 <a class="btn btn-default btn-bordered <%= (p.id === pageId) ? 'active': '' %>" href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a>
