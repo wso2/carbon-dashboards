@@ -1512,6 +1512,7 @@ $(function () {
         }, function (err, data) {
             storeCache.layout = data;
             $('#ues-page-layouts').html(layoutsListHbs(data));
+            initNanoScroller();
         });
     };
 
