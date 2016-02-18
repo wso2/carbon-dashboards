@@ -237,7 +237,7 @@ body > .page-content-wrapper > .container-fluid {
 .close-handle.close-sidebar {
     height: 30px;
     width: 30px;
-    background: #2A80B9;
+    background: #4F6A80;
     font-size: 14px;
     color: #fff;
     display: none;
@@ -459,7 +459,7 @@ body > .page-content-wrapper > .container-fluid {
     min-height: 100%;
 }
 
-.btn-stack, .btn-stack:active, .btn-stack:focus, .btn-stack:active:focus {
+.btn-stack, .btn-stack:active, .btn-stack:focus, .btn-stack:active:focus, .btn-stack.active {
     text-align: left;
     background: linear-gradient(to right, #1f6895 0%, #1f6895 45px, #1f6895 45px, #2a80b9 45px, #2a80b9 100%);
     padding: 6px 10px;

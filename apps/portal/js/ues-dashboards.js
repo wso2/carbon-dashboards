@@ -134,17 +134,17 @@
         document.title = dashboard.title + ' | ' + page.title;
     };
 
-    /**              /**
-     * convert JSON layout to gridster
+    /**
+     * convert JSON layout to gridstack
      * @param json
      * @returns {*}
      */
      var convertToDesignerLayout = function(json) {
 
          var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''),
-             container = $('<ul />');
+             container = $('<div />').addClass('grid-stack');
 
-         $(componentBoxListHbs(json)).appendTo(container)
+         $(componentBoxListHbs(json)).appendTo(container);
 
          return container;
      }

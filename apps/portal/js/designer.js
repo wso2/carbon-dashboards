@@ -3,7 +3,6 @@ $(function () {
         page,
         pageType,
         activeComponent,
-        gridster,
         breadcrumbs = [],
         storeCache = {
             gadget: [],
@@ -60,6 +59,15 @@ $(function () {
             });
         });
     };
+    
+    /**
+     * Get Gridstack object
+     * @return {Object}
+     * @private
+     */
+    var getGridstack = function() {
+        return $('.grid-stack').data('gridstack');
+    }
 
     /**
      * Show the information message with ok button.
@@ -112,6 +120,8 @@ $(function () {
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || '');
 
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
+    
+    var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html() || '');
 
     /**
      * Generates a random ID
@@ -548,32 +558,31 @@ $(function () {
                 gsBlock = componentContainer.parent(),
                 componentContainerId = componentContainer.attr('id'),
                 componentBody = componentContainer.find('.ues-component-body'),
-                gsContainer = $('.gridster > ul'),
+                gsContainer =  $('.grid-stack'),
                 trashButton = componentContainer.find('.ues-component-actions .ues-trash-handle');
 
             if (component.fullViewPoped) {
                 // rendering normal view
 
-                gridster.enable().enable_resize();
+                getGridstack().enable();
 
-                // restore the size of the gridster ul
-                gsContainer.height(gsContainer.attr('data-orig-height'));
+                // restore the size of the gridstack
+                gsContainer.height(gsContainer.attr('data-orig-height')).removeAttr('data-orig-height');
 
                 trashButton.show();
-                $('.gridster-block').show();
+                $('.grid-stack-item').show();
 
                 //minimize logic
                 gsBlock
                     .removeClass('ues-component-fullview')
                     .css('height', '')
                     .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function () {
-                        componentBody.fadeIn(300);
+                        componentBody.show();
                         designer.scrollTop(designerScrollTop);
                         renderMaxView(component, DEFAULT_COMPONENT_VIEW);
                         component.fullViewPoped = false;
                     });
 
-                designer.css('height', 'auto');
                 $(this)
                     .attr('title', $(this).data('maximize-title'))
                     .find('i.fw')
@@ -590,25 +599,24 @@ $(function () {
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
 
-                gridster.disable().disable_resize();
+                getGridstack().disable();
 
-                // backup the size of the gridster ul and reset element size
+                // backup the size of gridstack and reset element size
                 gsContainer.attr('data-orig-height', gsContainer.height()).height('auto');
 
                 trashButton.hide();
-                $('.gridster-block:not([data-id=' + componentContainerId + '])').hide();
+                $('.grid-stack-item:not([data-id=' + componentContainerId + '])').hide();
 
                 //maximize logic
                 gsBlock
                     .addClass('ues-component-fullview')
-                    .css('height', pageEl.height() - 85)
+                    .css('height', pageEl.height() - 120)
                     .on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function () {
-                        componentBody.fadeIn(300);
+                        componentBody.show();
                         renderMaxView(component, FULL_COMPONENT_VIEW);
                         component.fullViewPoped = true;
                     });
 
-                designer.css('height', pageEl.height());
                 $(this)
                     .attr('title', $(this).data('minimize-title'))
                     .find('i.fw')
@@ -617,6 +625,7 @@ $(function () {
 
                 componentBody.hide();
             }
+            initNanoScroller();
         });
 
         designer.on('click', '.ues-component-box .ues-component-properties-handle', function () {
@@ -651,11 +660,10 @@ $(function () {
                     }
 
                     if (removeBlock) {
-                        gridster.remove_widget(componentBox.parent(), function () {
-                            updateLayout();
-                        });
+                        getGridstack().remove_widget(componentBox.parent());
+                        updateLayout();
                     } else {
-                        componentBox.html(componentBoxContentHbs({appendResizeHandle: true}));
+                        componentBox.html(componentBoxContentHbs());
                     }
 
                     designerModal.modal('hide');
@@ -1504,6 +1512,7 @@ $(function () {
         }, function (err, data) {
             storeCache.layout = data;
             $('#ues-page-layouts').html(layoutsListHbs(data));
+            initNanoScroller();
         });
     };
 
@@ -1739,17 +1748,22 @@ $(function () {
      * @return {null}
      */
     var initAddBlock = function () {
-
-        // redraw the grid when changing the width/height values
-        $('#block-height, #block-width').on('keyup', function () {
-
+        
+        var dummySizeChanged = function() {
             var dummy = $('.ues-dummy-gadget'),
                 unitSize = parseInt(dummy.data('unit-size'));
 
-            dummy
-                .css('width', unitSize * parseInt($('#block-width').val()))
-                .css('height', unitSize * parseInt($('#block-height').val()));
-        });
+            dummy.css({
+                width: unitSize * parseInt($('#block-width').val()),
+                height: unitSize * parseInt($('#block-height').val())
+            });
+        }
+
+        // redraw the grid when changing the width/height values
+        $('#block-height, #block-width')
+            .on('change', dummySizeChanged)
+            .on('keyup', dummySizeChanged)
+            .on('blur', dummySizeChanged);
 
         // add block handler
         $('#ues-add-block-btn').on('click', function () {
@@ -1761,10 +1775,9 @@ $(function () {
             if (width == 0 || height == 0) {
                 return;
             }
-
-            gridster.add_widget(componentBoxListHbs({blocks: [{id: id}]}), width, height, 1, 1);
-
-            $('.ues-component-box#' + id).html(componentBoxContentHbs({appendResizeHandle: true}));
+            
+            getGridstack().add_widget($(newBlockHbs({id: id})), 0, 0, width, height);
+            $('.ues-component-box#' + id).html(componentBoxContentHbs())
 
             updateLayout();
             listenLayout();
@@ -1814,7 +1827,7 @@ $(function () {
      * @private
      */
     var listenLayout = function () {
-        $('.gadgets-grid').find('.gridster-block:not([data-banner=true]) .ues-component-box').droppable({
+        $('.gadgets-grid').find('.grid-stack-item:not([data-banner=true]) .ues-component-box').droppable({
             hoverClass: 'ui-state-hover',
             drop: function (event, ui) {
 
@@ -1936,8 +1949,32 @@ $(function () {
      * @return {null}
      */
     var updateLayout = function () {
-        // extract the layout from the designer (gridster) and save it
-        var json = {blocks: gridster.serialize()},
+        
+		// extract the layout from the designer and save it
+        var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
+            el = $(el);
+            var node = el.data('_gridstack_node');
+            
+            if (node) {
+                return {
+                    id: el.attr('data-id'),
+                    x: node.x,
+                    y: node.y,
+                    width: node.width,
+                    height: node.height,
+                    banner: el.attr('data-banner') == 'true'
+                };
+            }
+        });
+        
+        var serializedGrid = [];
+        for(i = 0; i < res.length; i++) {
+            if (res[i]) {
+                serializedGrid.push(res[i]);
+            }
+        }
+        
+        var json = {blocks: serializedGrid},
             id, i;
 
         // find the current page index
@@ -2075,61 +2112,41 @@ $(function () {
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
+        
+            $('.grid-stack').gridstack({
+                width: 12,
+                animate: true,
+                cell_height: 150,
+                vertical_margin: 30,
+                handle: '.ues-component-heading, .ues-component-heading .ues-component-title',
+            }).on('dragstop', function(e, ui) {
 
-            var gridsterContainer = $('.gridster > ul');
+                updateLayout();
 
-            // bind the gridster to the layout
-            gridster = gridsterContainer.gridster({
-                widget_margins: [15, 15],
-                widget_base_dimensions: [150, 150],
-                min_cols: 12,
-                serialize_params: function (el, coords) {
-                    return {
-                        id: el.data('id'),
-                        col: coords.col,
-                        row: coords.row,
-                        size_x: coords.size_x,
-                        size_y: coords.size_y,
-                        banner: el.attr('data-banner') == 'true'
-                    };
-                },
-                draggable: {
-                    handle: '.ues-component-heading, .ues-component-heading .ues-component-title',
-                    stop: function () {
-                        updateLayout();
-                    }
-                },
-                resize: {
-                    enabled: true,
-                    max_size: [12, 12],
-                    start: function (e, ui, widget) {
-                        // hide the component content on start resizing the component
-                        var container = widget.find('.ues-component');
-                        if (container) {
-                            container.find('.ues-component-body').hide();
-                        }
-                    },
-                    stop: function (e, ui, widget) {
-                        // re-render component on stop resizing the component
-                        var container = widget.find('.ues-component');
-                        if (container) {
-                            container.find('.ues-component-body').show();
-                            if (container.attr('id')) {
-                                updateComponent(container.attr('id'));
-                            }
-                        }
+            }).on('resizestart', function(e, ui) {
+                
+                // hide the component content on start resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    container.find('.ues-component-body').hide();
+                }
 
-                        updateLayout();
+            }).on('resizestop', function(e, ui) {
+                
+                // re-render component on stop resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    container.find('.ues-component-body').show();
+                    if (container.attr('id')) {
+                        updateComponent(container.attr('id'));
                     }
                 }
-            }).data('gridster');
-            
-			// remove the width of the gridster container to facilitate responsive layouts
-            gridsterContainer.css('width', '');
+                
+                updateLayout();
 
-            // stop resizing banner placeholder
-            $('.gridster [data-banner=true] .gs-resize-handle').remove();
-            $('.gridster [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
+            });
+
+            $('.gadgets-grid [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
 
             if (!done) {
                 return;
@@ -2429,4 +2446,126 @@ $(function () {
     initDashboard(ues.global.dashboard, ues.global.page);
 
     ues.dashboards.save = saveDashboard;
+});
+
+// Initialize nano scrollers
+var nanoScrollerSelector = $(".nano");
+nanoScrollerSelector.nanoScroller();
+
+/**
+ * Update sidebar
+ * @param {String} view     Selector of the sidebar pane
+ * @param {Object} button   Event source
+ */
+function updateSidebarNav(view, button) {
+    var target = $(button).data('target');
+    $(view).show();
+    $(view).siblings().hide();
+
+    if($(view).find('button[data-target=#left-sidebar-sub]').length == 0){
+        $('#left-sidebar-sub').hide();
+    }
+    else {
+        $('#left-sidebar-sub').show();
+    }
+
+    nanoScrollerSelector[0].nanoscroller.reset();
+}
+
+/**
+ * Update the UI when closing the right sidebar
+ * @param {Object} button       Event source
+ */
+function updateSidebarOptions(button) {
+
+    var target = $(button).data('target');
+
+    $('.gadget').removeClass('active');
+    setTimeout(function(){
+        if($(target).hasClass('toggled')){
+            $(button).closest('.gadget').addClass('active');
+            $(button).closest('.gadget').removeClass('deactive');
+            $('.gadget:not(.active)').addClass('deactive');
+        }
+        else{
+            $('.gadget').removeClass('active').removeClass('deactive');
+        }
+    }, 5);
+}
+
+/**
+ * Toggle caret when sidebar toggles
+ * @param {*} e
+ */
+function toggleCaret(e) {
+    $(e.target)
+        .prev('.panel-heading')
+        .toggleClass('dropup dropdown');
+    nanoScrollerSelector[0].nanoscroller.reset();
+}
+
+$('.sidebar-wrapper').on('hidden.bs.collapse', toggleCaret);
+$('.sidebar-wrapper').on('shown.bs.collapse', toggleCaret);
+
+$('#left-sidebar').on('hidden.sidebar', function(e){
+    $(e.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
+    $.sidebar_toggle('hide', '#left-sidebar-sub', '.page-content-wrapper');
+});
+
+$('#gridGuideToggle').change(function(){
+    $('body').toggleClass('grid-on');
+});
+
+$('.gadgets-grid').on({
+    mouseenter: function() {
+        toggleHeading($(this), true);
+    }, 
+    mouseleave: function() {
+        toggleHeading($(this), false);
+    }
+}, '.ues-component');
+
+/**
+ * Toggle gadget heading when no heading is activated
+ * @param {Object} source       Event source
+ * @param {Boolean} show        Flag
+ */
+function toggleHeading(source, show) {
+    if (source.hasClass('ues-no-heading')) {
+        var heading = source.find('.ues-component-heading');
+        if (show) {
+            heading.slideDown();
+        } else {
+            heading.slideUp();
+        }
+    }
+}
+
+// Enforce min/max values of number fields
+$('input[type=number]').on('change', function() {
+
+    var input = $(this),
+        max = input.attr('max'),
+        min = input.attr('min');
+
+    if (input.val().trim() == '') {
+        return;
+    }
+
+    var value = parseInt(input.val());
+
+    if (max !== '' && !isNaN(max) && value > parseInt(max)) {                
+        input.val(max);
+    }
+
+    if (min !== '' && !isNaN(min) && value < parseInt(min)) {
+        input.val(min);
+    }
+
+}).on('blur', function() {
+
+    var input = $(this);
+    if (input.val() == '' && input.attr('min')) {
+        input.val(input.attr('min'));
+    }
 });
