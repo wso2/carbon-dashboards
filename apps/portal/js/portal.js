@@ -117,6 +117,11 @@ $(function () {
             var dashboard = findDashboard(id);
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
         });
+        
+        portal.on('click', '.ues-view', function(e) {
+            e.preventDefault();
+            window.open($(this).attr('href'), '_blank');
+        })
 
         $(window).scroll(function () {
             var win = $(window);
