@@ -56,10 +56,10 @@
     background: -webkit-repeating-linear-gradient(145deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     background: repeating-linear-gradient(-55deg, #ddd, #ddd 10px, #eee 10px, #eee 20px);
     position: absolute;
-    top: 43px;
-    right: 1px;
-    bottom: 1px;
-    left: 1px;
+    top: 42px;
+    right: 0;
+    bottom: 0;
+    left: 0;
     overflow: hidden;
 }
 
@@ -88,19 +88,6 @@
     background-position: center center;
 }
 
-/**
- * Gridster
- */
-@media screen and (max-width: 767px) {
-    .gridster .gs-w {
-        position: relative;
-    }
-}
-
-.gridster ul {
-    list-style: none;
-}
-
 .gadgets-grid {
     padding: 40px 25px;
 }
@@ -126,10 +113,6 @@
 
 .ues-component-title-right .gadget-title {
     text-align: right;
-}
-
-#ues-dashboard-pages .active .panel-heading {
-    background: #656f77;
 }
 
 .page-content .nano-content {
@@ -174,5 +157,17 @@
 .breadcrumb li.dashboard-name {
     max-width: calc(100% - 150px);
     margin-bottom: -5px;
+}
+
+/**
+ * Gridstack
+ */
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    left: 15px;
+    right: 15px;
+}
+
+.grid-stack .gadget-wrapper {
+    min-height: 100%;
 }
 

@@ -302,7 +302,7 @@ var getBanner = function (dashboardId, username) {
 };
 
 /**
- * Generate Bootstrap layout from Gridster JSON serialized layout
+ * Generate Bootstrap layout from JSON layout
  * @param   {String} pageId     ID of the dashboard page
  * @param   {String} isAnon     Is anon mode
  * @returns {String}            Bootstrap layout markup
@@ -323,10 +323,10 @@ var getBootstrapLayout = function(pageId, isAnon) {
         data.forEach(function(d) {
 
             // if there is no second dimension array, create it
-            if (typeof grid[d.row - 1] === 'undefined')
-                grid[d.row - 1] = [];
+            if (typeof grid[d.y] === 'undefined')
+                grid[d.y] = [];
 
-            grid[d.row - 1][d.col - 1] = { "id": d.id, "width": d.size_x, "height": d.size_y, "banner": d.banner || false };
+            grid[d.y][d.x] = { "id": d.id, "width": d.width, "height": d.height, "banner": d.banner || false };
         });
 
         return grid;

@@ -1,8 +1,8 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
 
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
     
@@ -275,8 +275,7 @@
                         </div>
                     </div>
                     <div class="nano-content">
-                        <div class="gadgets-grid gridster">
-
+                        <div class="gadgets-grid">
                         </div>
                     </div>
                 </div>
@@ -307,11 +306,11 @@
 
     <!-- Theme WSO2 JS -->
     <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+        
+    <script src="<%=urlPrefix%>libs/underscore-1.8.3/underscore-min.js"></script>
 
-    <!-- Gridster -->
-    <script src="<%=urlPrefix%>libs/gridster_0.5.6-0/jquery.gridster.js"></script>
-    <!-- Overrides Gridster for responsive layouts -->
-    <script src="<%=urlPrefix%>js/jquery.gridster.override.js"></script>
+    <!-- Gridstack -->
+    <script src="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.js"></script>
 
     <!-- Handlebars -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
@@ -359,20 +358,24 @@
             <div class="gadget-body ues-component-body">
             </div>
         </div>
-
-        {{#if appendResizeHandle}}
-        <span class="gs-resize-handle gs-resize-handle-both"></span>
-        {{/if}}
     </script>
 
-    <!-- Template to generate gridster list -->
+    <!-- Template to generate gridstack list -->
     <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
         {{#each blocks}}
-        <li class="gridster-block" data-id="{{id}}" data-col="{{col}}" data-row="{{row}}" data-sizex="{{size_x}}" data-sizey="{{size_y}}" data-banner="{{banner}}">
-            <div class="ues-component-box gadget-wrapper" id="{{id}}">
+        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
+            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
             </div>
-        </li>
+        </div>
         {{/each}}
+    </script>
+        
+    <!-- Template to add new gridstack block -->
+    <script id="ues-new-block-hbs" type="text/x-handlebars-template">
+        <div data-id="{{id}}">
+            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
+            </div>
+        </div>
     </script>
 
     <!-- Template to generate component toolbar -->
