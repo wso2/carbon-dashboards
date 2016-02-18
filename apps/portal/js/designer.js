@@ -1748,17 +1748,22 @@ $(function () {
      * @return {null}
      */
     var initAddBlock = function () {
-
-        // redraw the grid when changing the width/height values
-        $('#block-height, #block-width').on('keyup', function () {
-
+        
+        var dummySizeChanged = function() {
             var dummy = $('.ues-dummy-gadget'),
                 unitSize = parseInt(dummy.data('unit-size'));
 
-            dummy
-                .css('width', unitSize * parseInt($('#block-width').val()))
-                .css('height', unitSize * parseInt($('#block-height').val()));
-        });
+            dummy.css({
+                width: unitSize * parseInt($('#block-width').val()),
+                height: unitSize * parseInt($('#block-height').val())
+            });
+        }
+
+        // redraw the grid when changing the width/height values
+        $('#block-height, #block-width')
+            .on('change', dummySizeChanged)
+            .on('keyup', dummySizeChanged)
+            .on('blur', dummySizeChanged);
 
         // add block handler
         $('#ues-add-block-btn').on('click', function () {
@@ -2441,4 +2446,126 @@ $(function () {
     initDashboard(ues.global.dashboard, ues.global.page);
 
     ues.dashboards.save = saveDashboard;
+});
+
+// Initialize nano scrollers
+var nanoScrollerSelector = $(".nano");
+nanoScrollerSelector.nanoScroller();
+
+/**
+ * Update sidebar
+ * @param {String} view     Selector of the sidebar pane
+ * @param {Object} button   Event source
+ */
+function updateSidebarNav(view, button) {
+    var target = $(button).data('target');
+    $(view).show();
+    $(view).siblings().hide();
+
+    if($(view).find('button[data-target=#left-sidebar-sub]').length == 0){
+        $('#left-sidebar-sub').hide();
+    }
+    else {
+        $('#left-sidebar-sub').show();
+    }
+
+    nanoScrollerSelector[0].nanoscroller.reset();
+}
+
+/**
+ * Update the UI when closing the right sidebar
+ * @param {Object} button       Event source
+ */
+function updateSidebarOptions(button) {
+
+    var target = $(button).data('target');
+
+    $('.gadget').removeClass('active');
+    setTimeout(function(){
+        if($(target).hasClass('toggled')){
+            $(button).closest('.gadget').addClass('active');
+            $(button).closest('.gadget').removeClass('deactive');
+            $('.gadget:not(.active)').addClass('deactive');
+        }
+        else{
+            $('.gadget').removeClass('active').removeClass('deactive');
+        }
+    }, 5);
+}
+
+/**
+ * Toggle caret when sidebar toggles
+ * @param {*} e
+ */
+function toggleCaret(e) {
+    $(e.target)
+        .prev('.panel-heading')
+        .toggleClass('dropup dropdown');
+    nanoScrollerSelector[0].nanoscroller.reset();
+}
+
+$('.sidebar-wrapper').on('hidden.bs.collapse', toggleCaret);
+$('.sidebar-wrapper').on('shown.bs.collapse', toggleCaret);
+
+$('#left-sidebar').on('hidden.sidebar', function(e){
+    $(e.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
+    $.sidebar_toggle('hide', '#left-sidebar-sub', '.page-content-wrapper');
+});
+
+$('#gridGuideToggle').change(function(){
+    $('body').toggleClass('grid-on');
+});
+
+$('.gadgets-grid').on({
+    mouseenter: function() {
+        toggleHeading($(this), true);
+    }, 
+    mouseleave: function() {
+        toggleHeading($(this), false);
+    }
+}, '.ues-component');
+
+/**
+ * Toggle gadget heading when no heading is activated
+ * @param {Object} source       Event source
+ * @param {Boolean} show        Flag
+ */
+function toggleHeading(source, show) {
+    if (source.hasClass('ues-no-heading')) {
+        var heading = source.find('.ues-component-heading');
+        if (show) {
+            heading.slideDown();
+        } else {
+            heading.slideUp();
+        }
+    }
+}
+
+// Enforce min/max values of number fields
+$('input[type=number]').on('change', function() {
+
+    var input = $(this),
+        max = input.attr('max'),
+        min = input.attr('min');
+
+    if (input.val().trim() == '') {
+        return;
+    }
+
+    var value = parseInt(input.val());
+
+    if (max !== '' && !isNaN(max) && value > parseInt(max)) {                
+        input.val(max);
+    }
+
+    if (min !== '' && !isNaN(min) && value < parseInt(min)) {
+        input.val(min);
+    }
+
+}).on('blur', function() {
+
+    var input = $(this);
+    if (input.val() == '' && input.attr('min')) {
+        input.val(input.attr('min'));
+    }
 });
