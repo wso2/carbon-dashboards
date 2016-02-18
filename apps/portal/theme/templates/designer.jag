@@ -100,7 +100,7 @@
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("layouts")%>" id="btn-sidebar-layouts">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("add.block")%>" id="btn-sidebar-layouts">
                     <i class="icon fw fw-layout"></i>
                 </a>
             </li>

@@ -117,6 +117,7 @@
     "add.gadgets": "Add Gadgets",
     "gadget.configuration.label": "Gadget configuration",
     "layouts": "Layouts",
+    "add.block": "Add Block",
     "gadgets": "Gadgets",
     "required": "Required",
     "yes.label": "Yes",
@@ -127,5 +128,5 @@
     "page.number.page": "Page",
     "page.number.of": "of",
     "refresh": "Refresh",
-    "block.delete.message.block": "Gadget &amp; Block",
+    "block.delete.message.block": "Gadget &amp; Block"
 }

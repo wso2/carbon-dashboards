@@ -21,7 +21,7 @@ var draw = function (o) {
     document.getElementById("chart").innerHTML = "";
     var margin = {top: 20, right: 20, bottom: 30, left: 40},
         width = window.document.body.scrollWidth - margin.left - margin.right,
-        height = window.document.body.scrollHeight - margin.top - margin.bottom;
+        height = window.document.body.scrollHeight - margin.top - margin.bottom - 60;
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);

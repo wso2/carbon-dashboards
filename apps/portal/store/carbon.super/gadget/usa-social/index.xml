@@ -55,8 +55,8 @@ var draw = function(data) {
     document.getElementById("chart").innerHTML = "";
     
     var margin = {top: 20, right: 50, bottom: 30, left: 40},
-        width = window.document.body.scrollWidth - margin.left - margin.right,
-        height = window.document.body.scrollHeight - margin.top - margin.bottom;
+        width = window.document.body.scrollWidth - margin.left - margin.right - 20,
+        height = window.document.body.scrollHeight - margin.top - margin.bottom -60;
 
     var parseDate = d3.time.format("%Y%m%d").parse;
 
