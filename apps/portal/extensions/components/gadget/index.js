@@ -1,16 +1,12 @@
 (function () {
 
-    var gadgetPrefix = (osapi.container.GadgetHolder.IFRAME_ID_PREFIX_ = 'sandbox-');
-
-    var containerPrefix = 'gadget-';
-
-    var gadgets = {};
-
-    var server = ues.global.server;
-
-    var resolveURI = ues.dashboards.resolveURI;
-
-    var context = ues.global.context;
+    var gadgetPrefix = (osapi.container.GadgetHolder.IFRAME_ID_PREFIX_ = 'sandbox-'),
+        containerPrefix = 'gadget-',
+        gadgets = {},
+        server = ues.global.server,
+        host = ues.global.host,
+        resolveURI = ues.dashboards.resolveURI,
+        context = ues.global.context;
 
     var resolveGadgetURL = function (uri) {
         uri = resolveURI(uri);
@@ -18,10 +14,12 @@
             return uri;
         }
         uri = uri.replace(/^(..\/)*/i, '');
-        if (window.location.protocol === 'https:') {
-            return 'https://' + window.location.hostname + ":" + server.httpsPort + context + '/' + uri;
-        }
-        return 'http://' + window.location.hostname + ":" + server.httpPort + context + '/' + uri;
+
+        var hostname = host.hostname ? host.hostname : window.location.hostname,
+            port = host.port ? host.port : window.location.port,
+            protocol = host.protocol ? (host.protocol + ":") : window.location.protocol;
+
+        return protocol + '//' + hostname + ":" + port + context + '/' + uri;
     };
 
     var subscribeForClient = ues.hub.subscribeForClient;
@@ -47,16 +45,16 @@
     };
 
     var component = (ues.plugins.components['gadget'] = {});
-    
+
     var hasCustomUserPrefView = function (metadata, comp) {
-        if(metadata.views.hasOwnProperty('settings')){
-            comp.hasCustomUserPrefView= true;
+        if (metadata.views.hasOwnProperty('settings')) {
+            comp.hasCustomUserPrefView = true;
         }
     };
 
     var hasCustomFullView = function (metadata, comp) {
-        if(metadata.views.hasOwnProperty('full')){
-            comp.hasCustomFullView= true;
+        if (metadata.views.hasOwnProperty('full')) {
+            comp.hasCustomFullView = true;
         }
     };
 
@@ -68,18 +66,18 @@
     };
 
     component.create = function (sandbox, comp, hub, done) {
-        var content = comp.content, 
-            url = resolveGadgetURL(content.data.url), 
-            settings = content.settings || {}, 
-            styles = content.styles || {}, 
+        var content = comp.content,
+            url = resolveGadgetURL(content.data.url),
+            settings = content.settings || {},
+            styles = content.styles || {},
             options = content.options || (content.options = {});
         ues.gadgets.preload(url, function (err, metadata) {
-            var pref, 
-                name, 
-                option, 
-                params = {}, 
+            var pref,
+                name,
+                option,
+                params = {},
                 prefs = metadata.userPrefs;
-            
+
             for (pref in prefs) {
                 if (prefs.hasOwnProperty(pref)) {
                     pref = prefs[pref];
@@ -95,11 +93,11 @@
                     params[name] = option.value;
                 }
             }
-            
+
             loadLocalizedTitle(styles, comp);
-            var cid = containerId(comp.id), 
+            var cid = containerId(comp.id),
                 gid = gadgetId(comp.id);
-            
+
             sandbox.find('.ues-component-title').text(styles.title);
 
             if (styles.no_heading) {
@@ -109,9 +107,9 @@
                 sandbox.removeClass('ues-no-heading');
                 sandbox.find('.ues-component-heading').show();
             }
-            
+
             var titlePositon = 'ues-component-title-' + (styles.titlePosition || 'left');
-            
+
             sandbox.find('.ues-component-heading')
                 .removeClass('ues-component-title-left ues-component-title-center ues-component-title-right')
                 .addClass(titlePositon);
@@ -120,14 +118,14 @@
                 hasCustomUserPrefView(metadata, comp);
                 hasCustomFullView(metadata, comp);
             }
-            
+
             var container = $('<div />').attr('id', cid);
             sandbox.find('.ues-component-body').html(container);
-            
-            var renderParams = {};    
+
+            var renderParams = {};
             renderParams[osapi.container.RenderParam.HEIGHT] = sandbox.closest('.ues-component-box').height() - 42;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
-            
+
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
                 component: comp,

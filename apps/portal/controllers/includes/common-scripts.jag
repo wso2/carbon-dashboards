@@ -15,7 +15,7 @@ ues.global.urlDomain = <%=JSON.stringify(urlDomain)%>;
 ues.global.tenantPrefix = <%=JSON.stringify(tenantPrefix)%>;
 ues.global.type = 'default';
 ues.global.anon = false;
-
+ues.global.host = <%=require('/configs/designer.json').host%>;
 ues.global.context = <%=JSON.stringify(request.getContextPath())%>;
 ues.global.server = {
     httpPort: <%=JSON.stringify(httpPort)%>,
