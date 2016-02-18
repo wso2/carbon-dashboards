@@ -24,33 +24,45 @@ var registryUserPath = function (id, username) {
     return id ? path + '/' + id : path;
 };
 
-var findOne = function (id) {
+/**
+ * Finds a dashboard by its ID
+ * @param {String} id                       ID of the dashboard
+ * @param {Boolean} originalDashboardOnly   Original dashboard only
+ * @return {Object}                         Dashboard JSON 
+ */
+var findOne = function (id, originalDashboardOnly) {
+    
+    originalDashboardOnly = originalDashboardOnly || false;
+    
     var registry = getRegistry();
     var usr = require('/modules/user.js');
     var user = usr.current();
     var path = registryPath(id);
     var originalDB;
     var isCustom = false;
+    
     if (user) {
-        var userDBPath = registryUserPath(id, user.username);
         var originalDBPath = registryPath(id);
-
         if(registry.exists(originalDBPath)){
             originalDB = JSON.parse(registry.content(originalDBPath));
         }
 
-        if (registry.exists(userDBPath)) {
-            path = userDBPath;
-            isCustom = true;
+        if (! originalDashboardOnly) {
+            var userDBPath = registryUserPath(id, user.username);
+            if (registry.exists(userDBPath)) {
+                path = userDBPath;
+                isCustom = true;
+            }
         }
     }
+    
     var content = registry.content(path);
     var dashboard = JSON.parse(content);
     if (dashboard) {
         dashboard.isUserCustom = isCustom;
         dashboard.isEditorEnable = false;
 
-        if(originalDB){
+        if (!originalDashboardOnly && originalDB) {
             var carbon = require('carbon');
             var server = new carbon.server.Server();
             var um = new carbon.user.UserManager(server, user.tenantId);

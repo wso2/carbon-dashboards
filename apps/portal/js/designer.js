@@ -521,7 +521,12 @@ $(function () {
                 isRedirect = false;
                 window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
             }
-        }).error(function () {
+        }).error(function (xhr, status, err) {            
+            if (xhr.status === 403) {
+                window.location.reload();
+                return;
+            }
+
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
             console.log('error saving dashboard');
         });
