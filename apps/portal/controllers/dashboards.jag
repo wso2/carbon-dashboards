@@ -46,6 +46,41 @@ var fresh;
             response.sendError(404, 'requested dashboard cannot be found');
             return;
         }
+        
+        // Verify the original dashboard when returning a custom dashboard
+        if (dashboard.isUserCustom) {
+            
+            // Get the original dashboard
+            var originalDashboard;
+            utils.sandbox(context, function() {
+                originalDashboard = dashboards.findOne(dashboardId, true);
+            });
+        
+            // If the original dashboard is deleted, returns 404
+            if (! originalDashboard) {
+                response.sendError(404, 'requested dashboard cannot be found');
+                return;
+            }
+            
+            // If the user doesn't have any permission on the original dashboard, returns 401
+            var authorized = false;
+            
+            // To view personalized dashboard, the user should have logged in, in the same domain and should have either editor or viewer permissions
+            if (user && user.domain == (urlDomain || superDomain) && 
+                (utils.allowed(user.roles, originalDashboard.permissions.editors) || utils.allowed(user.roles, originalDashboard.permissions.viewers))) {
+                authorized = true;                
+            }
+            
+            if (! authorized) {
+                // If there is no anon view defined send the unauthorized error, else return the anon view
+                if (!originalDashboard.isanon) {
+                    response.sendError(401, 'access to this dashboard is denied');
+                    return;   
+                }
+                
+                dashboard = originalDashboard;
+            }
+        }
 
         isCustomize = request.getParameter('custom');
 

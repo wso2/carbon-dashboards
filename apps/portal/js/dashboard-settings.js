@@ -125,7 +125,12 @@ $(function () {
             if (callback) {
                 callback();
             }
-        }).error(function () {
+        }).error(function (xhr, status, err) {
+            if (xhr.status === 403) {
+                window.location.reload();
+                return;
+            }
+            
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000);
             console.log('error saving dashboard');
         });
