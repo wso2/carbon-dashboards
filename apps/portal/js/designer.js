@@ -59,13 +59,13 @@ $(function () {
             });
         });
     };
-    
+
     /**
      * Get Gridstack object
      * @return {Object}
      * @private
      */
-    var getGridstack = function() {
+    var getGridstack = function () {
         return $('.grid-stack').data('gridstack');
     }
 
@@ -120,7 +120,7 @@ $(function () {
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || '');
 
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
-    
+
     var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html() || '');
 
     /**
@@ -449,7 +449,7 @@ $(function () {
         var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
     };
-    
+
     /**
      * Generate Noty Messages as to the content given parameters
      * @param {String} text     The message
@@ -462,7 +462,7 @@ $(function () {
      * @private
      * */
     var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
-        
+
         var properties = {};
         properties.text = text;
         if (ok || cancel) {
@@ -531,7 +531,7 @@ $(function () {
                 isRedirect = false;
                 window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
             }
-        }).error(function (xhr, status, err) {            
+        }).error(function (xhr, status, err) {
             if (xhr.status === 403) {
                 window.location.reload();
                 return;
@@ -558,7 +558,7 @@ $(function () {
                 gsBlock = componentContainer.parent(),
                 componentContainerId = componentContainer.attr('id'),
                 componentBody = componentContainer.find('.ues-component-body'),
-                gsContainer =  $('.grid-stack'),
+                gsContainer = $('.grid-stack'),
                 trashButton = componentContainer.find('.ues-component-actions .ues-trash-handle');
 
             if (component.fullViewPoped) {
@@ -701,9 +701,9 @@ $(function () {
      */
     var updateStyles = function (asset) {
         var styles = asset.styles || (asset.styles = {
-            title: true,
-            borders: true
-        });
+                title: true,
+                borders: true
+            });
         if (styles.title && typeof styles.title === 'boolean') {
             styles.title = asset.title;
         }
@@ -935,6 +935,24 @@ $(function () {
     };
 
     /**
+     * Check whether options are available or not
+     * @param optionKeys {Object}
+     * @param options {Object}
+     * @return isAvailable {boolean}
+     * @private
+     * */
+    var isOptionAvailable = function (optionKeys, options) {
+        var isAvailable = false;
+        for (var i = 0; i < optionKeys.length; i++) {
+            if (options[optionKeys[i]].type.toUpperCase() != "HIDDEN") {
+                isAvailable = true;
+                break;
+            }
+        }
+        return isAvailable;
+    };
+
+    /**
      * Build the hbs context for component properties panel
      * @param component
      * @param page
@@ -942,12 +960,15 @@ $(function () {
      * @private
      */
     var buildPropertiesContext = function (component, page) {
-        var notifiers = findNotifiers(component, page);
-        var content = component.content;
+        var notifiers = findNotifiers(component, page),
+            content = component.content,
+            optionsAvailable = isOptionAvailable(Object.keys(content.options), content.options),
+            options = optionsAvailable ? content.options : {};
+
         return {
             id: component.id,
             title: content.title,
-            options: content.options,
+            options: options,
             styles: content.styles,
             settings: content.settings,
             listeners: wireEvents(component, notifiers)
@@ -1402,9 +1423,9 @@ $(function () {
      */
     var loadAssets = function (type, query) {
         var paging = pagingHistory[type] || (pagingHistory[type] = {
-            start: 0,
-            count: COMPONENTS_PAGE_SIZE
-        });
+                start: 0,
+                count: COMPONENTS_PAGE_SIZE
+            });
         var buildPaging = function (paging, query) {
             if (paging.query === query) {
                 return;
@@ -1748,8 +1769,8 @@ $(function () {
      * @return {null}
      */
     var initAddBlock = function () {
-        
-        var dummySizeChanged = function() {
+
+        var dummySizeChanged = function () {
             var dummy = $('.ues-dummy-gadget'),
                 unitSize = parseInt(dummy.data('unit-size'));
 
@@ -1775,7 +1796,7 @@ $(function () {
             if (width == 0 || height == 0) {
                 return;
             }
-            
+
             getGridstack().add_widget($(newBlockHbs({id: id})), 0, 0, width, height);
             $('.ues-component-box#' + id).html(componentBoxContentHbs())
 
@@ -1949,12 +1970,12 @@ $(function () {
      * @return {null}
      */
     var updateLayout = function () {
-        
-		// extract the layout from the designer and save it
+
+        // extract the layout from the designer and save it
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
             var node = el.data('_gridstack_node');
-            
+
             if (node) {
                 return {
                     id: el.attr('data-id'),
@@ -1966,14 +1987,14 @@ $(function () {
                 };
             }
         });
-        
+
         var serializedGrid = [];
-        for(i = 0; i < res.length; i++) {
+        for (i = 0; i < res.length; i++) {
             if (res[i]) {
                 serializedGrid.push(res[i]);
             }
         }
-        
+
         var json = {blocks: serializedGrid},
             id, i;
 
@@ -2112,27 +2133,27 @@ $(function () {
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
-        
+
             $('.grid-stack').gridstack({
                 width: 12,
                 animate: true,
                 cell_height: 150,
                 vertical_margin: 30,
                 handle: '.ues-component-heading, .ues-component-heading .ues-component-title',
-            }).on('dragstop', function(e, ui) {
+            }).on('dragstop', function (e, ui) {
 
                 updateLayout();
 
-            }).on('resizestart', function(e, ui) {
-                
+            }).on('resizestart', function (e, ui) {
+
                 // hide the component content on start resizing the component
                 var container = $(ui.element).find('.ues-component');
                 if (container) {
                     container.find('.ues-component-body').hide();
                 }
 
-            }).on('resizestop', function(e, ui) {
-                
+            }).on('resizestop', function (e, ui) {
+
                 // re-render component on stop resizing the component
                 var container = $(ui.element).find('.ues-component');
                 if (container) {
@@ -2141,7 +2162,7 @@ $(function () {
                         updateComponent(container.attr('id'));
                     }
                 }
-                
+
                 updateLayout();
 
             });
@@ -2243,9 +2264,9 @@ $(function () {
     var loadBanner = function () {
 
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
-            globalBannerExists: false,
-            customBannerExists: false
-        };
+                globalBannerExists: false,
+                customBannerExists: false
+            };
 
         var $placeholder = $('.ues-banner-placeholder'),
             customDashboard = ues.global.dashboard.isUserCustom || false,
@@ -2462,7 +2483,7 @@ function updateSidebarNav(view, button) {
     $(view).show();
     $(view).siblings().hide();
 
-    if($(view).find('button[data-target=#left-sidebar-sub]').length == 0){
+    if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
     }
     else {
@@ -2481,13 +2502,13 @@ function updateSidebarOptions(button) {
     var target = $(button).data('target');
 
     $('.gadget').removeClass('active');
-    setTimeout(function(){
-        if($(target).hasClass('toggled')){
+    setTimeout(function () {
+        if ($(target).hasClass('toggled')) {
             $(button).closest('.gadget').addClass('active');
             $(button).closest('.gadget').removeClass('deactive');
             $('.gadget:not(.active)').addClass('deactive');
         }
-        else{
+        else {
             $('.gadget').removeClass('active').removeClass('deactive');
         }
     }, 5);
@@ -2507,20 +2528,20 @@ function toggleCaret(e) {
 $('.sidebar-wrapper').on('hidden.bs.collapse', toggleCaret);
 $('.sidebar-wrapper').on('shown.bs.collapse', toggleCaret);
 
-$('#left-sidebar').on('hidden.sidebar', function(e){
+$('#left-sidebar').on('hidden.sidebar', function (e) {
     $(e.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
     $.sidebar_toggle('hide', '#left-sidebar-sub', '.page-content-wrapper');
 });
 
-$('#gridGuideToggle').change(function(){
+$('#gridGuideToggle').change(function () {
     $('body').toggleClass('grid-on');
 });
 
 $('.gadgets-grid').on({
-    mouseenter: function() {
+    mouseenter: function () {
         toggleHeading($(this), true);
-    }, 
-    mouseleave: function() {
+    },
+    mouseleave: function () {
         toggleHeading($(this), false);
     }
 }, '.ues-component');
@@ -2542,7 +2563,7 @@ function toggleHeading(source, show) {
 }
 
 // Enforce min/max values of number fields
-$('input[type=number]').on('change', function() {
+$('input[type=number]').on('change', function () {
 
     var input = $(this),
         max = input.attr('max'),
@@ -2554,7 +2575,7 @@ $('input[type=number]').on('change', function() {
 
     var value = parseInt(input.val());
 
-    if (max !== '' && !isNaN(max) && value > parseInt(max)) {                
+    if (max !== '' && !isNaN(max) && value > parseInt(max)) {
         input.val(max);
     }
 
@@ -2562,7 +2583,7 @@ $('input[type=number]').on('change', function() {
         input.val(min);
     }
 
-}).on('blur', function() {
+}).on('blur', function () {
 
     var input = $(this);
     if (input.val() == '' && input.attr('min')) {
