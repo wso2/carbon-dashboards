@@ -1837,8 +1837,8 @@ $(function () {
         initAddBlock();
 
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
-            showInformation("Receive Editor Permission",
-                "You have given editor permission for this dashboard. Please reset the dashboard to receive the permission.");
+            showInformation("Received Edit Permission",
+                "You have given edit permission for this dashboard. Please reset the dashboard to receive the permission.");
         }
     };
 
