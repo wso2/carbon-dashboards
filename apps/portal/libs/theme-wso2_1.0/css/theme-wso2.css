@@ -738,6 +738,7 @@ header .brand img.logo {
 
 header .brand a {
   min-height: 24px;
+  white-space: nowrap;
 }
 
 header .brand h1 {
@@ -1045,9 +1046,14 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 .page-content-wrapper.fixed,
 .page-content-wrapper.fixed > div,
 .page-content-wrapper.fixed > .sidebar-wrapper {
-  max-height: calc(100% - 130px);
-  overflow-y: auto;
-  overflow-x: hidden;
+    max-height: $page-content-wrapper-height;
+    overflow-x: hidden;
+}
+
+html:not('.ie') .page-content-wrapper.fixed,
+html:not('.ie') .page-content-wrapper.fixed > div,
+html:not('.ie') .page-content-wrapper.fixed > .sidebar-wrapper {
+    overflow-y: auto;
 }
 
 .page-content-wrapper.fixed,

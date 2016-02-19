@@ -77,7 +77,7 @@ body > .page-content-wrapper > .container-fluid {
     display: inline-block;
     vertical-align: middle;
     line-height: 20px;
-    padding: 0 8px;
+    padding: 0 4px;
 }
 
 .dashboard .page-header .auth > div > a span i {
@@ -191,8 +191,12 @@ body > .page-content-wrapper > .container-fluid {
 .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
     width: 250px;
     background: #373e44;
-    overflow-y: auto;
     overflow: visible;
+}
+
+html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-nav, 
+html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
+    overflow-y: auto;
 }
 
 .page-content-wrapper.fixed .sidebar-wrapper.sidebar-nav-sub {
@@ -392,6 +396,10 @@ body > .page-content-wrapper > .container-fluid {
     background: #fff;
     overflow: hidden;
     margin-bottom: 30px; 
+}
+
+.dashboard .gadget-wrapper {
+    border: none;
 }
 
 .gadget.deactive {
