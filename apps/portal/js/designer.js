@@ -2079,6 +2079,7 @@ $(function () {
         // if the current page doesn't have a anon view defined, render the default view
         if (!page.isanon) {
             pageType = DEFAULT_DASHBOARD_VIEW;
+            ues.global.type = DEFAULT_DASHBOARD_VIEW;
             $('#designer-view-mode li').removeClass('active');
             $('#designer-view-mode li[data-view-mode=default]').addClass('active');
         }
