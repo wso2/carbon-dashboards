@@ -133,3 +133,27 @@
 .ues-component {
     height: 100%;
 }
+
+/**
+ * Auth menu
+ */
+.auth-xs {
+    color: #000;
+}
+
+.auth-xs ul {
+/*    color: #000;*/
+    background-color: #fff; 
+}
+
+.auth-xs li {
+    color: #444;
+}
+
+.auth-xs li a {
+    color: #000;
+}
+
+.auth-xs li a:hover {
+    background: #eee;
+}

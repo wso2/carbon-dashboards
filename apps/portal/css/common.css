@@ -26,3 +26,35 @@
     padding-top: 2px;
     margin-right: 5px;
 }
+
+/**
+ * Auth menu
+ */
+.auth .hidden-xs {
+    line-height: 38px;
+}
+
+.auth-xs {
+    color: #fff;
+}
+
+.auth-xs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    line-height: 28px;
+    background-color: #2a80b9;
+}
+
+.auth-xs li {
+    color: #ccc;
+}
+
+.auth-xs li a {
+    display: block;
+    color: #fff;
+}
+
+.auth-xs li a:hover {
+    background-color: #499dd5;
+}
