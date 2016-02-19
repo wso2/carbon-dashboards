@@ -176,6 +176,19 @@
         $('.ues-component-box').each(function (i, container) {
             container = $(container);
             
+            // Calculate the data-height field which is required to render the gadget
+            if (isDesigner) {
+                
+                var gsItem = container.closest('.grid-stack-item'),
+                    node = gsItem.data('_gridstack_node'), 
+                    gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height')), 
+                    height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                
+                container.attr('data-height', height);
+            } else {
+                container.attr('data-height', container.height());
+            }
+            
             var id = container.attr('id'),
                 hasComponent = content.hasOwnProperty(id) && content[id][0];
             

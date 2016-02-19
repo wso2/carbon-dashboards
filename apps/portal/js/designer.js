@@ -571,6 +571,11 @@ $(function () {
 
                 trashButton.show();
                 $('.grid-stack-item').show();
+                
+                // restore the previous data-height value and remove the backup value
+                componentContainer
+                    .attr('data-height', componentContainer.attr('data-original-height'))
+                    .removeAttr('data-original-height');
 
                 //minimize logic
                 gsBlock
@@ -606,7 +611,12 @@ $(function () {
 
                 trashButton.hide();
                 $('.grid-stack-item:not([data-id=' + componentContainerId + '])').hide();
-
+                
+                // replace the data-height value with new container height (and backup previous one)
+                componentContainer
+                    .attr('data-original-height', componentContainer.attr('data-height'))
+                    .attr('data-height', pageEl.height() - 120);
+                
                 //maximize logic
                 gsBlock
                     .addClass('ues-component-fullview')
@@ -2137,6 +2147,14 @@ $(function () {
                 // re-render component on stop resizing the component
                 var container = $(ui.element).find('.ues-component');
                 if (container) {
+                    
+                    var gsItem = container.closest('.grid-stack-item'),
+                        node = gsItem.data('_gridstack_node'), 
+                        gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height')), 
+                        height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                    
+                    container.closest('.ues-component-box').attr('data-height', height);
+                    
                     container.find('.ues-component-body').show();
                     if (container.attr('id')) {
                         updateComponent(container.attr('id'));
@@ -2155,7 +2173,6 @@ $(function () {
 
             done(err);
         }, true);
-
 
         updatePagesList();
         initBanner();

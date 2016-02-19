@@ -33,6 +33,7 @@ $(function () {
                 componentBox
                     .removeClass('ues-component-fullview')
                     .css('height', componentBox.attr('data-original-height'))
+                    .attr('data-height', componentBox.attr('data-original-height'))
                     .removeAttr('data-original-height');
 
                 renderMaxView(component, DASHBOARD_DEFAULT_VIEW);
@@ -52,9 +53,10 @@ $(function () {
                 // render max view
                 // change the container height for the max view (including backing up the original height for restoration later)
                 componentBox
-                    .attr('data-original-height', componentBox.css('height'))
+                    .attr('data-original-height', componentBox.attr('data-height'))
                     .addClass('ues-component-fullview')
-                    .css('height', ($(window).height() - 40) + 'px');
+                    .css('height', ($(window).height() - 40) + 'px')
+                    .attr('data-height', ($(window).height() - 40));
 
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
 
