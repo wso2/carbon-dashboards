@@ -19,6 +19,7 @@
             port = host.port ? host.port : window.location.port,
             protocol = host.protocol ? (host.protocol + ":") : window.location.protocol;
 
+        port = port ? (":" + port) : "";
         return protocol + '//' + hostname + ":" + port + context + '/' + uri;
     };
 
