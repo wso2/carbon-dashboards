@@ -36,7 +36,7 @@
   },
   "host": {
     "hostname": "localhost",
-    "port": "",
-    "protocol": ""
+    "port": "9443",
+    "protocol": "https"
   }
 }
