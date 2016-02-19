@@ -25,7 +25,7 @@ var encodeHtml;
      */
     encodeHtml = function(text) {
         return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
+    };
 
     var page = request.getRequestURI();
     var controller = '/controllers';

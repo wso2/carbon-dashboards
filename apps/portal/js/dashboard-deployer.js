@@ -35,6 +35,8 @@ try {
 
                 log.info("Deploying the dashboard: " + dashboardJson.title);
                 dashboard.create(dashboardJson);
+
+                file.del();
             }
         }
     }

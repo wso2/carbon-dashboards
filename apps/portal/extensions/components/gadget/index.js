@@ -1,16 +1,12 @@
 (function () {
 
-    var gadgetPrefix = (osapi.container.GadgetHolder.IFRAME_ID_PREFIX_ = 'sandbox-');
-
-    var containerPrefix = 'gadget-';
-
-    var gadgets = {};
-
-    var server = ues.global.server;
-
-    var resolveURI = ues.dashboards.resolveURI;
-
-    var context = ues.global.context;
+    var gadgetPrefix = (osapi.container.GadgetHolder.IFRAME_ID_PREFIX_ = 'sandbox-'),
+        containerPrefix = 'gadget-',
+        gadgets = {},
+        server = ues.global.server,
+        host = ues.global.host,
+        resolveURI = ues.dashboards.resolveURI,
+        context = ues.global.context;
 
     var resolveGadgetURL = function (uri) {
         uri = resolveURI(uri);
@@ -18,10 +14,12 @@
             return uri;
         }
         uri = uri.replace(/^(..\/)*/i, '');
-        if (window.location.protocol === 'https:') {
-            return 'https://' + window.location.hostname + ":" + server.httpsPort + context + '/' + uri;
-        }
-        return 'http://' + window.location.hostname + ":" + server.httpPort + context + '/' + uri;
+
+        var hostname = host.hostname ? host.hostname : window.location.hostname,
+            port = host.port ? host.port : window.location.port,
+            protocol = host.protocol ? (host.protocol + ":") : window.location.protocol;
+
+        return protocol + '//' + hostname + ":" + port + context + '/' + uri;
     };
 
     var subscribeForClient = ues.hub.subscribeForClient;
@@ -49,14 +47,14 @@
     var component = (ues.plugins.components['gadget'] = {});
     
     var hasCustomUserPrefView = function (metadata, comp) {
-        if(metadata.views.hasOwnProperty('settings')){
-            comp.hasCustomUserPrefView= true;
+        if (metadata.views.hasOwnProperty('settings')) {
+            comp.hasCustomUserPrefView = true;
         }
     };
 
     var hasCustomFullView = function (metadata, comp) {
-        if(metadata.views.hasOwnProperty('full')){
-            comp.hasCustomFullView= true;
+        if (metadata.views.hasOwnProperty('full')) {
+            comp.hasCustomFullView = true;
         }
     };
 

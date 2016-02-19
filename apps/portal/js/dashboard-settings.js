@@ -51,7 +51,7 @@ $(function () {
             });
         });
     };
-    
+
     /**
      * Generate Noty Messages as to the content given using parameters.
      * @param1 text {String}
@@ -70,19 +70,19 @@ $(function () {
             properties.buttons = [
                 {
                     addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
-                        $noty.close();
-                        if (ok) {
-                            ok();
-                        }
+                    $noty.close();
+                    if (ok) {
+                        ok();
                     }
+                }
                 },
                 {
                     addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
-                        $noty.close();
-                        if (cancel) {
-                            cancel();
-                        }
+                    $noty.close();
+                    if (cancel) {
+                        cancel();
                     }
+                }
                 }
             ];
         }
@@ -347,6 +347,7 @@ $(function () {
         return userRoles;
     };
 
+
     /**
      * Initialize the UI functionality.
      * @private
@@ -499,7 +500,9 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if ((editors.length == 1 || getNumberOfUserRolesInDashboard(editors) == 1) && !user.isAdmin) {
+            if ((editors.length == 1 || (getNumberOfUserRolesInDashboard(editors) == 1
+                && isExistingPermission(user.roles, role)))
+                && !user.isAdmin) {
                 showConfirm("Removing Permission",
                     "After this permission removal only administrator will be able to edit this dashboard." +
                     " Do you want to continue?", removePermission);
@@ -517,7 +520,9 @@ $(function () {
                 saveDashboard(removeElement);
             };
 
-            if ((viewers.length == 1 || getNumberOfUserRolesInDashboard(viewers) == 1) && !user.isAdmin) {
+            if ((viewers.length == 1 || (getNumberOfUserRolesInDashboard(viewers) == 1
+                && isExistingPermission(user.roles, role)))
+                && !user.isAdmin) {
                 showConfirm("Removing Permission",
                     "After this permission removal only administrator will be able to view this dashboard." +
                     " Do you want to continue?", removePermission);

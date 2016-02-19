@@ -56,7 +56,7 @@
     text-decoration: none;
 }
 
-.ues-actions a:hover {
+.ues-actions a:not(.no-hover):hover {
     color: #fff;
 }
 
@@ -70,4 +70,14 @@
     right: 8px;
     bottom: 7px;
     position: absolute;
+}
+
+.disable {
+    cursor: default !important; /*Important is added to remove the pointer cursor appear due to theme-wso2.css*/
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    color: #333;
 }
