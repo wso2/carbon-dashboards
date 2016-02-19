@@ -20,7 +20,7 @@
             protocol = host.protocol ? (host.protocol + ":") : window.location.protocol;
 
         port = port ? (":" + port) : "";
-        return protocol + '//' + hostname + ":" + port + context + '/' + uri;
+        return protocol + '//' + hostname + port + context + '/' + uri;
     };
 
     var subscribeForClient = ues.hub.subscribeForClient;
