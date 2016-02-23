@@ -19,6 +19,8 @@
         </ol>
     </div>
 
+	<% var showNavigation = !isMobileDevice || config.isCreateGadgetEnable; %>
+    <% if (showNavigation) { %>
     <!-- navbar -->
     <div class="navbar-wrapper">
         <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
@@ -33,6 +35,7 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
+                        <% if (! isMobileDevice) { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-dashboard">
                                 <span class="fw-stack">
@@ -41,6 +44,7 @@
                                 </span> <%= i18n.localize("create.dashboard")%>
                             </a>
                         </li>
+                        <% } %>
                         <% if (config.isCreateGadgetEnable) { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-gadget">
@@ -56,6 +60,7 @@
             </div>
         </nav>
     </div>
+    <% } %>
 
     <div id="ues-portal" class="container-fluid">
         <div class="row">
@@ -114,13 +119,14 @@
         <p id="ues-dashboard-url" class="ues-dashboard-url truncate"><%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a></p>
         <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
         <div class="ues-actions">
-            <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" data-toggle="tooltip" title="Pages not available"{{/if}} href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
+            <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
                 <span class="fw-stack">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-view fw-stack-1x"></i>
                 </span>
                  <%= i18n.localize("view") %>
             </a>
+            <% if (! isMobileDevice) { %>
             {{#if editable}}
             <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
                 <span class="fw-stack">
@@ -137,6 +143,7 @@
                 <%= i18n.localize("settings") %>
             </a>
             {{/if}}
+            <% } %>
         </div>
         {{#if editable}}
         <a href="#" class="ues-dashboard-trash-handle">
