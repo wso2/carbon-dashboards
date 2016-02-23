@@ -128,7 +128,7 @@
                         <div class="auth float-remove-xs text-center-xs text-right">
                             <div>                            
                                 <%                                   
-                                   var showEdit = user && (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain))));
+                                   var showEdit = user && (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) && !isMobileDevice;
                                    var isEdit = showEdit && user.isEditor;
                                 %>
                                 

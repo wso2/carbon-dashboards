@@ -4,9 +4,20 @@ var tenantedUrlPrefix;
 var sendLogin;
 var dest;
 var encodeHtml;
+var isMobileDevice = false;
 
 (function () {
     var log = new Log();
+    
+    // check whether the user agent is a mobile device
+    var deviceTokens = ['Android', 'Windows Phone', 'iPhone', 'iPad'], 
+        ua = request.getHeader("User-Agent");
+    
+    deviceTokens.forEach(function(token) {
+        if (ua.indexOf(token) > 0) {
+            isMobileDevice = true;
+        }
+    });
 
     urlPrefix = utils.relativePrefix(originalURI);
 
