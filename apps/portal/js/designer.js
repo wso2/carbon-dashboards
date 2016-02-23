@@ -1191,6 +1191,7 @@ $(function () {
                         // create the template if there is no content create before
                         page.layout.content.anon = page.layout.content.anon || page.layout.content.loggedIn;
                         $('#designer-view-mode li[data-view-mode=anon]').removeClass('hide');
+                        $('#designer-view-mode li[data-view-mode=anon] a').click();
                     } else {
                         $(anon).prop("checked", false);
                         showInformation("Cannot Make This Page Anonymous",
