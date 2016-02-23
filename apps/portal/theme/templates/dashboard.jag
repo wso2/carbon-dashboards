@@ -18,9 +18,6 @@
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
-    // If the pageId is null, render the landing page
-    pageId = pageId || dashboard.landing;
-
     var usr = require('/modules/user.js'),
         user = usr.current(),
         isAnonView = request.getParameter('isAnonView');

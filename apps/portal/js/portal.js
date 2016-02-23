@@ -129,7 +129,7 @@ $(function () {
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
         });
         
-        portal.on('click', '.ues-view', function(e) {
+        portal.on('click', '.ues-view:not(.disable)', function(e) {
             e.preventDefault();
             window.open($(this).attr('href'), '_blank');
         })
@@ -145,8 +145,6 @@ $(function () {
                 loadDashboards();
             }
         });
-
-        $("#ues-breadcrumbs").append("<li class='active'>Dashboards</li>");
     };
 
     initUI();

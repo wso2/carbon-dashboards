@@ -21,12 +21,6 @@ var renderEngine = { };
         }
     }
 
-    // if there is no pages to display, return 404
-    if (dashboard.pages.length == 0) {
-        response.sendError(404, 'dashboard not found');
-        return;
-    }
-
     if (!anonymous) {
         if (!user && !dashboard.isanon) {
             sendLogin();
@@ -45,6 +39,22 @@ var renderEngine = { };
             return;
         }
     }
+    
+    // check whether the requested page exists
+    pageId = pageId || dashboard.landing;
+    
+    var pageExists = false;
+    dashboard.pages.forEach(function(p) {
+        if (p.id == pageId) {
+            pageExists = true;
+        }    
+    });
+    
+    if (! pageExists) {
+        response.sendError(404, 'not found');
+        return;
+    }
+    
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
 

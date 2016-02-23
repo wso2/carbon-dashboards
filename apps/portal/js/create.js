@@ -149,7 +149,8 @@ $(function () {
         var title = $("#ues-dashboard-title"),
             id = $("#ues-dashboard-id"),
             form = $('#ues-dashboard-form'),
-            url = $("#create-dashboard-url").val() + "/" + id.val(),
+            url = form.data('action') + "/" + id.val(),
+            apiUrl = form.data('api-url') + "/" + id.val(),
             titleError = $("#title-error"),
             idError = $("#id-error");
 
@@ -159,7 +160,7 @@ $(function () {
             form.attr('action', url);
 
             $.ajax({
-                url: url,
+                url: apiUrl,
                 method: "GET",
                 contentType: "application/json",
                 success: function (data) {
