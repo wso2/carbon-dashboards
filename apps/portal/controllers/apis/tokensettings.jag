@@ -39,6 +39,7 @@ function getApplicationKeyAndSecret(){
         var options = new Array();
         options.useSOAP = 1.2;
         options.useWSA = 1.0;
+        options.mep = 'in-only';
         options.action = "urn:registerOAuthApplicationData";
         var payload = '<xsd:registerOAuthApplicationData xmlns:xsd="http://org.apache.axis2/xsd" xmlns:xsd1="http://dto.oauth.identity.carbon.wso2.org/xsd"><xsd:application><xsd1:OAuthVersion>Oauth-2.0</xsd1:OAuthVersion><xsd1:applicationName>' + applicationName + '</xsd1:applicationName><xsd1:callbackUrl> </xsd1:callbackUrl><xsd1:grantTypes>authorization_code implicit password client_credentials refresh_token urn:ietf:params:oauth:grant-type:saml2-bearer iwa:ntlm</xsd1:grantTypes></xsd:application></xsd:registerOAuthApplicationData>';
 
