@@ -128,5 +128,7 @@
     "page.number.page": "Page",
     "page.number.of": "of",
     "refresh": "Refresh",
-    "block.delete.message.block": "Gadget &amp; Block"
+    "block.delete.message.block": "Gadget &amp; Block",
+    "delete.block.only.message": "Are you sure you want to delete the block?",
+    "delete.block.only.header": "Deleting the block",
 }
