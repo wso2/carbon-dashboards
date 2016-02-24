@@ -647,9 +647,14 @@ $(function () {
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
 
             var that = $(this),
-                hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || '');
+                hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || ''),
+                hasComponent = false;
+            
+            if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
+                hasComponent = true;
+            }
 
-            showHtmlModal(hbs(), function () {
+            showHtmlModal(hbs({ hasComponent: hasComponent }), function () {
 
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
