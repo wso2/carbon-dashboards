@@ -109,7 +109,8 @@ $(function () {
      * */
     var initUI = function () {
         var portal = $('#ues-portal');
-        portal.on('click', '.ues-dashboards .ues-dashboard-trash-handle', function () {
+        portal.on('click', '.ues-dashboards .ues-dashboard-trash-handle', function (e) {
+            e.preventDefault();
             var thiz = $(this);
             var dashboardEl = thiz.closest('.ues-dashboard');
             var id = dashboardEl.data('id');
@@ -117,11 +118,13 @@ $(function () {
             dashboardEl.html(dashboardConfirmHbs(dashboard));
         });
 
-        portal.on('click', '.ues-dashboards .ues-dashboard-trash-confirm', function () {
+        portal.on('click', '.ues-dashboards .ues-dashboard-trash-confirm', function (e) {
+            e.preventDefault();
             deleteDashboard($(this));
         });
 
-        portal.on('click', '.ues-dashboards .ues-dashboard-trash-cancel', function () {
+        portal.on('click', '.ues-dashboards .ues-dashboard-trash-cancel', function (e) {
+            e.preventDefault();
             var thiz = $(this);
             var dashboardEl = thiz.closest('.ues-dashboard');
             var id = dashboardEl.data('id');

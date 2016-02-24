@@ -545,8 +545,16 @@
     <script id="ues-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
-            <h3 class="modal-title" id="deleteModalLabel"><%=i18n.localize("block.delete.message")%></h3>
+            <h3 class="modal-title" id="deleteModalLabel">
+                {{#if hasComponent}}
+                <%=i18n.localize("block.delete.message")%>
+                {{else}}
+                <%=i18n.localize("delete.block.only.header")%>
+                {{/if}}
+            </h3>
         </div>
+            
+        {{#if hasComponent}}
         <div class="pull-left">
             <div class="modal-body add-margin-top-2x add-margin-bottom-2x">
                 <label class="radio">
@@ -565,17 +573,22 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("cancel")%></button>
             </div>
         </div>
+        {{else}}
+        <div class="modal-body">
+            <%=i18n.localize("delete.block.only.message")%>
+            <input type="radio" name="delete-option" value="block" class="hidden" checked>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-delete" data-dismiss="modal"><%=i18n.localize("yes.label")%></button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("no.label")%></button>
+        </div>
+        {{/if}}
     </script>
 
     <!-- No pages -->
     <script id="ues-no-pages-hbs" type="text/x-handlebars-template">
         <div class="jumbotron" style="text-align: center;">
             <h3><%=i18n.localize("no.pages.message")%></h3>
-            <button type="button" class="btn btn-primary" id="btn-add-page-empty">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-add fw-stack-1x"></i>
-                </span> <%=i18n.localize("create.page.label")%></button>
         </div>
     </script>
 
