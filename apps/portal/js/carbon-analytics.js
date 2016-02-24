@@ -54,6 +54,7 @@ function AnalyticsClient() {
     var TYPE_WAIT_FOR_INDEXING_FOR_TABLE = 28;
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var TYPE_REINDEX = 30;
+    var TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES = 31;
     var HTTP_GET = "GET";
     var HTTP_POST = "POST";
     var RESPONSE_ELEMENT = "responseJSON";
@@ -486,13 +487,18 @@ function AnalyticsClient() {
     };
 
     /**
-     * Returns the search count of records in a given table using lucene queries.
+     * Returns aggregated values as records in a table.
      * @param queryInfo Query information which contains the table name and search parameters.
+     * @ableName is the name of the table if which the records are being aggregated
+     * @groupByField is the field by which the aggregation is performed to "group by"
+     * @aggregateFields contains an array of object which contains the aggregating field and aggregating
+     * method and also the alias for the aggregated result value
      * e.g.
      * queryInfo = {
      * searchParams : {
             tableName:"TEST",
-            groupByField:"single_valued_facet_field",
+            groupByField:"facet_field",
+            query : "lucene_query_to_match",
             aggregateFields:[
             {
                 fieldName:"n",
@@ -520,15 +526,80 @@ function AnalyticsClient() {
                 alias:"count"
             }
             ]
-         }
+         },
+         aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself"
+         parentPath : a json array representing the group by level in "groupByField"
       }
-     * @param callback The callback function which has one argument containing the number of
-     * matched records
+     * @param callback The callback function which has one argument containing an array of arrays of
+     * aggregated records for multiple tables
      * @param error The callback function which has one argument which contains the error if any
      */
     this.searchWithAggregates = function (queryInfo, callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" + queryInfo["tableName"],
+                        data: JSON.stringify(queryInfo["searchParams"]),
+                        type: HTTP_POST,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * Returns aggregated values as records for multiple tables.
+     * @param queryInfo Query information which contains the table name and search parameters.
+     * @ableName is the name of the table if which the records are being aggregated
+     * @groupByField is the field by which the aggregation is performed to "group by"
+     * @aggregateFields contains an array of object which contains the aggregating field and aggregating
+     * method and also the alias for the aggregated result value
+     * e.g.
+     * queryInfo = {
+     * searchParams : [{
+            tableName:"TEST1",
+            groupByField:"facet_field_of_TEST1",
+            query : "lucene_query",
+            aggregateFields:[
+            {
+                fieldName:"n",
+                aggregate:"AVG",
+                alias:avg"
+            },
+            {
+                fieldName:"n",
+                aggregate:"MAX",
+                alias:"max"
+            }],
+            aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself",
+            parentPath : a json array representing the group by level in "groupByField"
+         }, {
+            tableName:"TEST2",
+            groupByField:"facet_field_of_TEST2",
+            query : "lucene_query",
+            aggregateFields:[
+            {
+                fieldName:"n",
+                aggregate:"AVG",
+                alias:avg"
+            },
+            {
+                fieldName:"n",
+                aggregate:"MAX",
+                alias:"max"
+            }],
+            aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself",
+            parentPath : a json array representing the group by level in "groupByField"
+         } ]
+      }
+     * @param callback The callback function which has one argument containing an array of arrays of
+     * aggregated records for multiple tables
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.searchMultiTablesWithAggregates = function (queryInfo, callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES,
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
                         success: function (data) {
