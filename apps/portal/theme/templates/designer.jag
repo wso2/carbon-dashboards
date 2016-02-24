@@ -571,11 +571,6 @@
     <script id="ues-no-pages-hbs" type="text/x-handlebars-template">
         <div class="jumbotron" style="text-align: center;">
             <h3><%=i18n.localize("no.pages.message")%></h3>
-            <button type="button" class="btn btn-primary" id="btn-add-page-empty">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-add fw-stack-1x"></i>
-                </span> <%=i18n.localize("create.page.label")%></button>
         </div>
     </script>
 
