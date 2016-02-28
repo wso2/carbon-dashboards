@@ -530,8 +530,8 @@ function AnalyticsClient() {
          aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself"
          parentPath : a json array representing the group by level in "groupByField"
       }
-     * @param callback The callback function which has one argument containing an array of arrays of
-     * aggregated records for multiple tables
+     * @param callback The callback function which has one argument containing an array of
+     * aggregated records for the specified table
      * @param error The callback function which has one argument which contains the error if any
      */
     this.searchWithAggregates = function (queryInfo, callback, error) {
