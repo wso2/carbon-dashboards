@@ -250,7 +250,7 @@ function createDatatable(data) {
 
         var type = columns[i]["type"].toUpperCase();
 
-        if(type === "INT" || type === "INTEGER" || type === "FLOAT" ||
+        if(type === "INT" || type === "INTEGER" || type === "FLOAT" || type === "LONG" ||
             type === "DOUBLE" || type === "LONG") {
             type = "linear";
         } else if (gadgetConfig.columns[i]["type"].toUpperCase() == "TIME") {

@@ -545,7 +545,7 @@ function createDatatable(data) {
 
         var type = columns[i]["type"].toUpperCase();
 
-        if(type === "INT" || type === "INTEGER" || type === "FLOAT" ||
+        if(type === "INT" || type === "INTEGER" || type === "FLOAT" || type === "LONG" ||
             type === "DOUBLE") {
             type = "linear";
         } else if (type == "TIME") {
