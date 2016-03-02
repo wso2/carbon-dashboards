@@ -515,7 +515,7 @@ function AnalyticsClient() {
             },
             {
                 fieldName:"n",
-                aggregate:"sum",
+                aggregate:"SUM",
                 alias:"sum"
             },
             {
