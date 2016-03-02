@@ -493,6 +493,9 @@ function AnalyticsClient() {
      * @groupByField is the field by which the aggregation is performed to "group by"
      * @aggregateFields contains an array of object which contains the aggregating field and aggregating
      * method and also the alias for the aggregated result value
+     * @parentPath a json array representing the group by level in "groupByField"
+     * @aggregateLevel integer representing the child category level from the parentPath. 0 will be the parentPath itself
+     * @noOfRecords No of Records to be aggregated in each group.
      * e.g.
      * queryInfo = {
      * searchParams : {
@@ -527,7 +530,8 @@ function AnalyticsClient() {
             }
             ],
             aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself"
-            parentPath : a json array representing the group by level in "groupByField"
+            parentPath : a json array representing the group by level in "groupByField",
+            noOfRecords : 10000
          }
       }
      * @param callback The callback function which has one argument containing an array of
@@ -536,7 +540,8 @@ function AnalyticsClient() {
      */
     this.searchWithAggregates = function (queryInfo, callback, error) {
         jQuery.ajax({
-                        url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" + queryInfo["searchParams"]["tableName"],
+                        url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" +
+                            queryInfo["searchParams"]["tableName"],
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
                         success: function (data) {
@@ -555,6 +560,9 @@ function AnalyticsClient() {
      * @groupByField is the field by which the aggregation is performed to "group by"
      * @aggregateFields contains an array of object which contains the aggregating field and aggregating
      * method and also the alias for the aggregated result value
+     * @aggregateLevel  integer representing the child category level from the parentPath. 0 will be the parentPath itself
+     * @parentPath  a json array representing the group by level in "groupByField"
+     * @noOfRecords No of Records to be aggregated in each group.
      * e.g.
      * queryInfo = {
      * searchParams : [{
@@ -573,7 +581,8 @@ function AnalyticsClient() {
                 alias:"max"
             }],
             aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself",
-            parentPath : a json array representing the group by level in "groupByField"
+            parentPath : a json array representing the group by level in "groupByField",
+            noOfRecords : 10000
          }, {
             tableName:"TEST2",
             groupByField:"facet_field_of_TEST2",
@@ -590,7 +599,8 @@ function AnalyticsClient() {
                 alias:"max"
             }],
             aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself",
-            parentPath : a json array representing the group by level in "groupByField"
+            parentPath : a json array representing the group by level in "groupByField",
+            noOfRecords : 10000
          } ]
       }
      * @param callback The callback function which has one argument containing an array of arrays of
