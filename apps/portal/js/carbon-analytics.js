@@ -525,10 +525,10 @@ function AnalyticsClient() {
                 aggregate:"COUNT",
                 alias:"count"
             }
-            ]
-         },
-         aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself"
-         parentPath : a json array representing the group by level in "groupByField"
+            ],
+            aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself"
+            parentPath : a json array representing the group by level in "groupByField"
+         }
       }
      * @param callback The callback function which has one argument containing an array of
      * aggregated records for the specified table
