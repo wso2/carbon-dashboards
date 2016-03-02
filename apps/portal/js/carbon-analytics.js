@@ -536,7 +536,7 @@ function AnalyticsClient() {
      */
     this.searchWithAggregates = function (queryInfo, callback, error) {
         jQuery.ajax({
-                        url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" + queryInfo["tableName"],
+                        url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" + queryInfo["searchParams"]["tableName"],
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
                         success: function (data) {
