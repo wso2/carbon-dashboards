@@ -466,6 +466,13 @@ function AnalyticsClient() {
      *              query : "logFile : wso2carbon.log",
      *              start : 0,
      *              count : 10,
+     *              sortBy : [
+     *                {
+     *                  field : "timestamp",
+     *                  sortType : "ASC", // This can be ASC, DESC, INDEX_ORDER or RELEVANCE
+     *                  reversed : "false"
+     *                }
+     *              ]
      *          }
      *      }
      * @param callback The callback function which has one argument containing the number of
