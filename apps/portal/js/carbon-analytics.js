@@ -504,27 +504,27 @@ function AnalyticsClient() {
             query : "lucene_query_to_match",
             aggregateFields:[
             {
-                fieldName:"n",
-                aggregate:"AVG",
-                alias:avg"
+                fields:["n"], //Array of field names used as variables for aggregateFunction
+                aggregate:"AVG", //Aggregate Function Name
+                alias:avg"   //Alias given to the result after aggregation
             },
             {
-                fieldName:"n",
+                fields:["n"],
                 aggregate:"MAX",
                 alias:"max"
             },
             {
-                fieldName:"n",
+                fields:["n"],
                 aggregate:"SUM",
                 alias:"sum"
             },
             {
-                fieldName:"n",
+                fields:["n"],
                 aggregate:"MIN",
                 alias:"min"
             },
             {
-                fieldName:"n",
+                fields:["n"],
                 aggregate:"COUNT",
                 alias:"count"
             }
@@ -571,12 +571,12 @@ function AnalyticsClient() {
             query : "lucene_query",
             aggregateFields:[
             {
-                fieldName:"n",
-                aggregate:"AVG",
-                alias:avg"
+                fields:["n"], //Array of field names used as variables for aggregateFunction
+                aggregate:"AVG", //Aggregate Function Name
+                alias:avg"   //Alias given to the result after aggregation
             },
             {
-                fieldName:"n",
+                fieldName:["n"],
                 aggregate:"MAX",
                 alias:"max"
             }],
@@ -589,12 +589,12 @@ function AnalyticsClient() {
             query : "lucene_query",
             aggregateFields:[
             {
-                fieldName:"n",
+                fieldName:["n"],
                 aggregate:"AVG",
                 alias:avg"
             },
             {
-                fieldName:"n",
+                fieldName:["n"],
                 aggregate:"MAX",
                 alias:"max"
             }],
