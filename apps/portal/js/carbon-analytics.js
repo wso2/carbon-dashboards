@@ -470,7 +470,7 @@ function AnalyticsClient() {
      *                {
      *                  field : "timestamp",
      *                  sortType : "ASC", // This can be ASC, DESC, INDEX_ORDER or RELEVANCE
-     *                  reversed : "false"
+     *                  reversed : "false" //optional
      *                }
      *              ]
      *          }
@@ -802,7 +802,14 @@ function AnalyticsClient() {
      *              query : "field1 : value1",
      *              recordStart : 0,
      *              recordCount : 50,
-     *              scoreFunction : "scoreParamField * 2"
+     *              scoreFunction : "scoreParamField * 2",
+     *              sortBy : [
+     *                {
+     *                  field : "timestamp",
+     *                  sortType : "ASC", // This can be ASC, DESC, INDEX_ORDER or RELEVANCE
+     *                  reversed : "false" //optional
+     *                }
+     *              ]
      *          }
      * @param callback The callback function which has one argument which contains the matching records
      * @param error The callback function which has one argument which contains the error if any
