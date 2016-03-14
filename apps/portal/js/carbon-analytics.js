@@ -469,7 +469,7 @@ function AnalyticsClient() {
      *              sortBy : [
      *                {
      *                  field : "timestamp",
-     *                  sortType : "ASC", // This can be ASC, DESC, INDEX_ORDER or RELEVANCE
+     *                  sortType : "ASC", // This can be ASC, DESC
      *                  reversed : "false" //optional
      *                }
      *              ]
@@ -806,7 +806,7 @@ function AnalyticsClient() {
      *              sortBy : [
      *                {
      *                  field : "timestamp",
-     *                  sortType : "ASC", // This can be ASC, DESC, INDEX_ORDER or RELEVANCE
+     *                  sortType : "ASC", // This can be ASC, DESC
      *                  reversed : "false" //optional
      *                }
      *              ]
