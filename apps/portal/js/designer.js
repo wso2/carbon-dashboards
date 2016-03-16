@@ -1,26 +1,51 @@
 $(function () {
-    var dashboard,
-        page,
-        pageType,
-        activeComponent,
-        breadcrumbs = [],
-        storeCache = {
-            gadget: [],
-            widget: [],
-            layout: []
-        },
-        nonCategoryKeyWord = "null",
-        designerScrollTop = 0,
-        dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
-        dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards',
-        resolveURI = ues.dashboards.resolveURI,
-        findPage = ues.dashboards.findPage,
-        lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage),
-        COMPONENTS_PAGE_SIZE = 20,
-        DEFAULT_DASHBOARD_VIEW = 'default',
-        ANONYMOUS_DASHBOARD_VIEW = 'anon',
-        FULL_COMPONENT_VIEW = 'full',
-        DEFAULT_COMPONENT_VIEW = 'default';
+    var dashboard;
+    var page;
+    var pageType;
+    var storeCache = {
+        gadget: [],
+        widget: [],
+        layout: []
+    };
+    var nonCategoryKeyWord = "null";
+    var designerScrollTop = 0;
+    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
+
+    var dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards';
+    var resolveURI = ues.dashboards.resolveURI;
+    var findPage = ues.dashboards.findPage;
+    var lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
+
+    /**
+     * Page size for assests.
+     * @const
+     * */
+    var COMPONENTS_PAGE_SIZE = 20;
+    /**
+     * Default dashboard flag.
+     * @const
+     * */
+    var DEFAULT_DASHBOARD_VIEW = 'default';
+    /**
+     * Anonymous view flag.
+     * @const
+     * */
+    var ANONYMOUS_DASHBOARD_VIEW = 'anon';
+    /**
+     * Full component week flag.
+     * @const
+     * */
+    var FULL_COMPONENT_VIEW = 'full';
+    /**
+     * Default component view flag.
+     * @const
+     * */
+    var DEFAULT_COMPONENT_VIEW = 'default';
+    /**
+     * Hidden flag
+     * @const
+     * */
+    var HIDDEN = "HIDDEN";
 
     /**
      * Show HTML modal
@@ -67,7 +92,7 @@ $(function () {
      */
     var getGridstack = function () {
         return $('.grid-stack').data('gridstack');
-    }
+    };
 
     /**
      * Show the information message with ok button.
@@ -291,10 +316,8 @@ $(function () {
 
         //save settings
         content.settings = data.settings;
-
         //save styles
         content.styles = data.styles;
-
         //save wiring
         var event;
         var listener;
@@ -394,7 +417,6 @@ $(function () {
     var destroyPage = function (page, pageType, done) {
         var area;
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
-
         var content = page.content[pageType];
         var tasks = [];
         for (area in content) {
@@ -462,7 +484,6 @@ $(function () {
      * @private
      * */
     var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
-
         var properties = {};
         properties.text = text;
         if (ok || cancel) {
@@ -538,7 +559,6 @@ $(function () {
             }
 
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
-            console.log('error saving dashboard');
         });
     };
 
@@ -549,9 +569,7 @@ $(function () {
      */
     var initComponentToolbar = function () {
         var designer = $('.gadgets-grid');
-
         designer.on('click', '.ues-component-box .ues-component-full-handle', function () {
-
             var id = $(this).closest('.ues-component').attr('id'),
                 component = findComponent(id),
                 componentContainer = $(this).closest('.ues-component-box'),
@@ -563,20 +581,15 @@ $(function () {
 
             if (component.fullViewPoped) {
                 // rendering normal view
-
                 getGridstack().enable();
-
                 // restore the size of the gridstack
                 gsContainer.height(gsContainer.attr('data-orig-height')).removeAttr('data-orig-height');
-
                 trashButton.show();
                 $('.grid-stack-item').show();
-                
                 // restore the previous data-height value and remove the backup value
                 componentContainer
                     .attr('data-height', componentContainer.attr('data-original-height'))
                     .removeAttr('data-original-height');
-
                 //minimize logic
                 gsBlock
                     .removeClass('ues-component-fullview')
@@ -593,30 +606,21 @@ $(function () {
                     .find('i.fw')
                     .removeClass('fw-contract')
                     .addClass('fw-expand');
-
                 componentBody.hide();
-
             } else {
                 // rendering full view
-
                 var pageEl = $('.page-content');
-
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
-
                 getGridstack().disable();
-
                 // backup the size of gridstack and reset element size
                 gsContainer.attr('data-orig-height', gsContainer.height()).height('auto');
-
                 trashButton.hide();
                 $('.grid-stack-item:not([data-id=' + componentContainerId + '])').hide();
-                
                 // replace the data-height value with new container height (and backup previous one)
                 componentContainer
                     .attr('data-original-height', componentContainer.attr('data-height'))
                     .attr('data-height', pageEl.height() - 120);
-                
                 //maximize logic
                 gsBlock
                     .addClass('ues-component-fullview')
@@ -632,43 +636,36 @@ $(function () {
                     .find('i.fw')
                     .removeClass('fw-expand')
                     .addClass('fw-contract');
-
                 componentBody.hide();
             }
             initNanoScroller();
         });
 
         designer.on('click', '.ues-component-box .ues-component-properties-handle', function () {
-
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
         });
 
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
+            var that = $(this);
+            var hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || '');
+            var hasComponent = false;
 
-            var that = $(this),
-                hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || ''),
-                hasComponent = false;
-            
             if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
                 hasComponent = true;
             }
 
-            showHtmlModal(hbs({ hasComponent: hasComponent }), function () {
-
+            showHtmlModal(hbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
-
-                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val(),
-                        componentBox = that.closest('.ues-component-box'),
-                        id = componentBox.find('.ues-component').attr('id'),
-                        removeBlock = (action == 'block');
-
+                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
+                    var componentBox = that.closest('.ues-component-box');
+                    var id = componentBox.find('.ues-component').attr('id');
+                    var removeBlock = (action == 'block');
                     if (id) {
                         removeComponent(findComponent(id), function (err) {
                             if (err) {
                                 removeBlock = false;
-                                console.error(err);
                             }
                             saveDashboard();
                         });
@@ -864,7 +861,6 @@ $(function () {
                 });
             }
         }
-        console.log(listeners);
         return listeners;
     };
 
@@ -959,7 +955,7 @@ $(function () {
     var isOptionAvailable = function (optionKeys, options) {
         var isAvailable = false;
         for (var i = 0; i < optionKeys.length; i++) {
-            if (options[optionKeys[i]].type.toUpperCase() != "HIDDEN") {
+            if (options[optionKeys[i]].type.toUpperCase() != HIDDEN) {
                 isAvailable = true;
                 break;
             }
@@ -1462,7 +1458,6 @@ $(function () {
         ues.store.assets(type, paging, function (err, data) {
             paging.loading = false;
             if (err) {
-                console.log(err);
                 return;
             }
 
@@ -1559,21 +1554,16 @@ $(function () {
      * @private
      * */
     var initLayoutWorkspace = function () {
-
         $('#ues-page-layouts').on('click', '.thumbnail', function (e) {
             e.preventDefault();
             var options = pageOptions();
-
             createPage(options, $(this).data('id'), function (err) {
-
                 // reload pages list
                 updatePagesList();
-
                 // hide the sidebar
                 $('#sidebarNavPages button[rel="createPage"]').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
-
             });
         });
         loadLayouts();
@@ -1588,12 +1578,11 @@ $(function () {
         loadAssets('gadget');
 
         // initialize search options in gadgets sidebar
-        $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (e) {
-            if (e.which !== 13) {
+        $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (event) {
+            if (event.which !== 13) {
                 return;
             }
-            e.preventDefault();
-
+            event.preventDefault();
             var query = $(this).val();
             loadAssets('gadget', query);
         });
@@ -1616,9 +1605,9 @@ $(function () {
                 // Preview the dashboard
                 previewDashboard(page);
             })
-            .on('click', '.ues-copy', function (e) {
+            .on('click', '.ues-copy', function (event) {
                 // reset the dashboard
-                e.preventDefault();
+                event.preventDefault();
                 var that = $(this);
                 showConfirm('Resetting the page',
                     'This will remove all the customization added to the dashboard. Do you want to continue?',
@@ -1638,18 +1627,14 @@ $(function () {
                 ues.global.isSwitchToNewPage = false;
             })
             .on('click', '.ues-delete-page', function () {
-
                 // delete dashboard page
                 var pid = $(this).attr('data-page-id');
-
                 showConfirm('Deleting the page',
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
                         removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                             var pages = dashboard.pages;
-
                             updatePagesList(pages);
-
                             // if the landing page was deleted, make the first page to be the landing page
                             if (dashboard.pages.length) {
                                 if (pid == dashboard.landing) {
@@ -1664,7 +1649,6 @@ $(function () {
                                 }
                             }
 
-
                             // save the dashboard
                             saveDashboard();
                             renderPage(dashboard.landing);
@@ -1676,8 +1660,7 @@ $(function () {
         var pagesMenu = $("#ues-dashboard-pages");
         // load page properties
         pagesMenu.on("click", '.ues-page-list-heading', function (e) {
-
-            var pid = $(this).data('id')
+            var pid = $(this).data('id');
 
             // do not re-render if the user clicks on the current page name
             if (pid != page.id) {
@@ -1918,7 +1901,6 @@ $(function () {
      * @private
      */
     var createPage = function (options, lid, done) {
-
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
@@ -1940,7 +1922,6 @@ $(function () {
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
-
             saveDashboard();
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
@@ -1986,7 +1967,6 @@ $(function () {
      * @return {null}
      */
     var updateLayout = function () {
-
         // extract the layout from the designer and save it
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
@@ -2055,7 +2035,6 @@ $(function () {
      * @private
      */
     var showCreatePage = function () {
-
         // if the left panel is closed, click on the pages button
         if (!$('#left-sidebar').hasClass('toggled')) {
             $('#btn-pages-sidebar').click()
@@ -2075,18 +2054,14 @@ $(function () {
      * @private
      */
     var renderPage = function (pid, done) {
-
         // if no pages found, display a message
         if (!dashboard.pages.length) {
-
             $('#ues-dashboard-preview-link').hide();
-
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
                     showCreatePage();
                 });
-
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
 
@@ -2144,7 +2119,6 @@ $(function () {
         }));
 
         ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
-
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
@@ -2158,11 +2132,8 @@ $(function () {
                 vertical_margin: 30,
                 handle: '.ues-component-heading, .ues-component-heading .ues-component-title',
             }).on('dragstop', function (e, ui) {
-
                 updateLayout();
-
             }).on('resizestart', function (e, ui) {
-
                 // hide the component content on start resizing the component
                 var container = $(ui.element).find('.ues-component');
                 if (container) {
@@ -2170,26 +2141,22 @@ $(function () {
                 }
 
             }).on('resizestop', function (e, ui) {
-
                 // re-render component on stop resizing the component
                 var container = $(ui.element).find('.ues-component');
                 if (container) {
-                    
                     var gsItem = container.closest('.grid-stack-item'),
-                        node = gsItem.data('_gridstack_node'), 
-                        gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height')), 
+                        node = gsItem.data('_gridstack_node'),
+                        gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height')),
                         height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-                    
+
                     container.closest('.ues-component-box').attr('data-height', height);
-                    
+
                     container.find('.ues-component-body').show();
                     if (container.attr('id')) {
                         updateComponent(container.attr('id'));
                     }
                 }
-
                 updateLayout();
-
             });
 
             $('.gadgets-grid [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
@@ -2253,9 +2220,7 @@ $(function () {
         var pid = 0;
         var prefix = 'page';
         var titlePrefix = 'Page ';
-
         pid = checkForExistingPageNames(prefix, pid);
-
         return {
             id: prefix + pid,
             title: titlePrefix + pid
@@ -2270,10 +2235,8 @@ $(function () {
      * @private
      */
     var initDashboard = function (db, page) {
-
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
-
         if (pages.length > 0) {
             renderPage(page || db.landing || pages[0].id);
         } else {
@@ -2286,7 +2249,6 @@ $(function () {
      * @returns {null}
      */
     var loadBanner = function () {
-
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
                 globalBannerExists: false,
                 customBannerExists: false
@@ -2324,7 +2286,6 @@ $(function () {
      * @returns {null}
      */
     var bannerChanged = function (e) {
-
         var file = e.target.files[0];
         if (file.size == 0) {
             return;
@@ -2399,14 +2360,11 @@ $(function () {
      * @returns {null}
      */
     var initBanner = function () {
-
         loadBanner();
-
         // bind a handler to the change event of the file element (removing the handler initially to avoid multiple binding to the same handler)
         var fileBanner = document.getElementById('file-banner');
         fileBanner.removeEventListener('change', bannerChanged);
         fileBanner.addEventListener('change', bannerChanged, false);
-
         // event handler for the banner edit button
         $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
             $('#file-banner').val('').click();
@@ -2416,13 +2374,11 @@ $(function () {
         $('.ues-banner-placeholder').on('click', '#btn-save-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
             var cropData = $form.find('#banner-data').val();
-
             $.ajax({
                 url: $form.attr('action'),
                 type: $form.attr('method'),
                 data: {'data': cropData},
             }).success(function (d) {
-
                 if (ues.global.dashboard.isUserCustom) {
                     ues.global.dashboard.banner.customBannerExists = true;
                 } else {
@@ -2443,29 +2399,22 @@ $(function () {
         // event handler for the banner remove button
         $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
-
             if (ues.global.dashboard.isUserCustom && !ues.global.dashboard.banner.customBannerExists) {
-
                 // in order to remove the global banner from a personalized dashboard, we need to save an empty resource.
                 $.ajax({
                     url: $form.attr('action'),
                     type: $form.attr('method'),
                     data: {data: ''},
                 }).success(function (d) {
-
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
                     // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
-
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.customBannerExists = false;
                     }
-
                     ues.global.dashboard.banner.cropMode = false;
-
                     loadBanner();
                 });
-
             } else {
                 // remove the banner
                 $.ajax({
@@ -2473,7 +2422,6 @@ $(function () {
                     type: 'DELETE',
                     dataType: 'json'
                 }).success(function (d) {
-
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
                         ues.global.dashboard.banner.customBannerExists = false;
@@ -2489,7 +2437,6 @@ $(function () {
 
     initUI();
     initDashboard(ues.global.dashboard, ues.global.page);
-
     ues.dashboards.save = saveDashboard;
 });
 
@@ -2506,14 +2453,12 @@ function updateSidebarNav(view, button) {
     var target = $(button).data('target');
     $(view).show();
     $(view).siblings().hide();
-
     if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
     }
     else {
         $('#left-sidebar-sub').show();
     }
-
     nanoScrollerSelector[0].nanoscroller.reset();
 }
 
@@ -2522,9 +2467,7 @@ function updateSidebarNav(view, button) {
  * @param {Object} button       Event source
  */
 function updateSidebarOptions(button) {
-
     var target = $(button).data('target');
-
     $('.gadget').removeClass('active');
     setTimeout(function () {
         if ($(target).hasClass('toggled')) {
@@ -2552,8 +2495,8 @@ function toggleCaret(e) {
 $('.sidebar-wrapper').on('hidden.bs.collapse', toggleCaret);
 $('.sidebar-wrapper').on('shown.bs.collapse', toggleCaret);
 
-$('#left-sidebar').on('hidden.sidebar', function (e) {
-    $(e.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
+$('#left-sidebar').on('hidden.sidebar', function (event) {
+    $(event.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
     $.sidebar_toggle('hide', '#left-sidebar-sub', '.page-content-wrapper');
 });
 
@@ -2588,17 +2531,14 @@ function toggleHeading(source, show) {
 
 // Enforce min/max values of number fields
 $('input[type=number]').on('change', function () {
-
-    var input = $(this),
-        max = input.attr('max'),
-        min = input.attr('min');
-
+    var input = $(this);
+    var max = input.attr('max');
+    var min = input.attr('min');
     if (input.val().trim() == '') {
         return;
     }
 
     var value = parseInt(input.val());
-
     if (max !== '' && !isNaN(max) && value > parseInt(max)) {
         input.val(max);
     }
@@ -2606,9 +2546,7 @@ $('input[type=number]').on('change', function () {
     if (min !== '' && !isNaN(min) && value < parseInt(min)) {
         input.val(min);
     }
-
 }).on('blur', function () {
-
     var input = $(this);
     if (input.val() == '' && input.attr('min')) {
         input.val(input.attr('min'));

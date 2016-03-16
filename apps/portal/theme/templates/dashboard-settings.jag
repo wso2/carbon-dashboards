@@ -53,7 +53,7 @@
                             </a>
                         </li>
                     </ul>
-                </div><!--/.nav-collapse -->
+                </div>
             </div>
         </nav>
     </div>
@@ -228,8 +228,8 @@
         {{message}}
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="ues-modal-confirm-yes">Ok</button>
-        <button type="button" class="btn btn-default" id="ues-modal-confirm-no" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="ues-modal-confirm-yes"><%= i18n.localize("ok")%></button>
+        <button type="button" class="btn btn-default" id="ues-modal-confirm-no" data-dismiss="modal"><%= i18n.localize("cancel")%></button>
     </div>
 </script>
 

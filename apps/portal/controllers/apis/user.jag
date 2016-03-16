@@ -1,6 +1,5 @@
 <%
 (function () {
-
     if (!user) {
         response.sendError(401, 'unauthorized to access');
         return;
@@ -15,15 +14,14 @@
         var adminRole = userManager.getAdminRoleName();
         user.isAdmin = false;
 
-        for(var i = 0; i < user.roles.length; i++){
-            if(user.roles[i]== adminRole){
+        for (var i = 0; i < user.roles.length; i++) {
+            if (user.roles[i] == adminRole) {
                 user.isAdmin = true;
                 break;
             }
         }
 
         print(user);
-        return;
     }
 }());
 %>

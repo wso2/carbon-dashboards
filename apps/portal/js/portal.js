@@ -1,25 +1,14 @@
 $(function () {
-
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
-
     var dashboardsListHbs = Handlebars.compile($("#ues-dashboards-list-hbs").html());
-
     var dashboardThumbnailHbs = Handlebars.compile($("#ues-dashboard-thumbnail-hbs").html());
-
     var dashboardConfirmHbs = Handlebars.compile($("#ues-dashboard-confirm-hbs").html());
-
     var dashboardsEmptyHbs = Handlebars.compile($("#ues-dashboards-empty-hbs").html());
-
     Handlebars.registerPartial('ues-dashboard-thumbnail-hbs', dashboardThumbnailHbs);
-
     var dashboards = [];
-
     var isStillLoading = false;
-
     var nextStart = 0;
-
     var PAGE_COUNT = 10;
-
     var hasMore = true;
 
     /**

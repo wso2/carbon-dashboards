@@ -1,20 +1,34 @@
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 $(function () {
-
-    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
-        rolesApi = ues.utils.relativePrefix() + 'apis/roles',
-        userApi = ues.utils.relativePrefix() + 'apis/user',
-        searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search',
-        maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit',
-        dashboard = ues.global.dashboard,
-        tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id,
-        permissions = dashboard.permissions,
-        viewers = permissions.viewers,
-        editors = permissions.editors,
-        url = dashboardsApi + '/' + dashboard.id,
-        permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || ''),
-        modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || ''),
-        sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || ''),
-        user = null;
+    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
+    var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
+    var userApi = ues.utils.relativePrefix() + 'apis/user';
+    var searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search';
+    var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
+    var dashboard = ues.global.dashboard;
+    var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
+    var permissions = dashboard.permissions;
+    var viewers = permissions.viewers;
+    var editors = permissions.editors;
+    var url = dashboardsApi + '/' + dashboard.id;
+    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
+    var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || '');
+    var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
+    var user = null;
 
     /**
      * Show HTML modal
@@ -23,13 +37,13 @@ $(function () {
      * @private
      */
     var showHtmlModal = function (content, beforeShow) {
-        var el = $('#designerModal');
-        el.find('.modal-content').html(content);
+        var element = $('#designerModal');
+        element.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
 
-        el.modal();
+        element.modal();
     };
 
     /**
@@ -67,24 +81,25 @@ $(function () {
         var properties = {};
         properties.text = text;
         if (ok || cancel) {
-            properties.buttons = [
-                {
-                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+            properties.buttons = [{
+                addClass: 'btn btn-primary',
+                text: 'Ok',
+                onClick: function ($noty) {
                     $noty.close();
                     if (ok) {
                         ok();
                     }
                 }
-                },
-                {
-                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+            }, {
+                addClass: 'btn btn-danger',
+                text: 'Cancel',
+                onClick: function ($noty) {
                     $noty.close();
                     if (cancel) {
                         cancel();
                     }
                 }
-                }
-            ];
+            }];
         }
 
         if (timeout) {
@@ -120,7 +135,6 @@ $(function () {
             contentType: 'application/json'
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000);
-            console.log('dashboard saved successfully');
 
             if (callback) {
                 callback();
@@ -130,9 +144,8 @@ $(function () {
                 window.location.reload();
                 return;
             }
-            
+
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000);
-            console.log('error saving dashboard');
         });
     };
 
@@ -158,7 +171,6 @@ $(function () {
             }
         }).error(function () {
             generateMessage("Error getting OAuth settings", null, null, "error", "topCenter", 2000);
-            console.log('error getting oauth settings');
         });
     };
 
