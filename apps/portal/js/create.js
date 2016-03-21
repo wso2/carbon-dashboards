@@ -1,32 +1,48 @@
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Functionality of the Create Dashboard defined in create.js.
  * */
 $(function () {
-
-    var overridden = false,
-        modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
+    var overridden = false;
+    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
 
     /**
-     * Show HTML modal
-     * @param {String} content      HTML content
+     * Show HTML modal.
+     * @param {String} content HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
      * @return {null}
      * @private
      */
     var showHtmlModal = function (content, beforeShow) {
-        var el = $('#designerModal');
-        el.find('.modal-content').html(content);
+        var modalElement = $('#designerModal');
+        moda
+        lElement.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
-
-        el.modal();
+        modalElement.modal();
     };
 
     /**
      * Show the information message with ok button.
-     * @param1 title {String}
-     * @param2 message {String}
+     * @param title {String}
+     * @param message {String}
+     * @return {null}
      * @private
      * */
     var showInformation = function (title, message) {
@@ -41,7 +57,7 @@ $(function () {
      * @private
      * */
     var generateUrl = function (title) {
-        title = title.substring(0,100);
+        title = title.substring(0, 100);
         return title.replace(/[^\w]/g, '-').toLowerCase();
     };
 
@@ -116,13 +132,13 @@ $(function () {
         errorElement.addClass("hide");
     };
 
+    // Bind event handlers for dashboard title field
     $('#ues-dashboard-title').on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#title-error"));
         }
-
         updateUrl();
     }).on('change', function () {
         var sanitizedInput = sanitizeInput($(this).val());
@@ -130,6 +146,7 @@ $(function () {
         updateUrl();
     });
 
+    // Bind event handlers for dashboard ID field
     $('#ues-dashboard-id').on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
@@ -137,28 +154,28 @@ $(function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#id-error"));
         }
-
         $(this).val(generateUrl($(this).val()));
     });
 
+    // Bind event handlers for dashboard description field
     $('#ues-dashboard-description').on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
     });
 
+    // Bind event handlers for the create button
     $('#ues-dashboard-create').on('click', function () {
-        var title = $("#ues-dashboard-title"),
-            id = $("#ues-dashboard-id"),
-            form = $('#ues-dashboard-form'),
-            url = form.data('action') + "/" + id.val(),
-            apiUrl = form.data('api-url') + "/" + id.val(),
-            titleError = $("#title-error"),
-            idError = $("#id-error");
+        var title = $("#ues-dashboard-title");
+        var id = $("#ues-dashboard-id");
+        var form = $('#ues-dashboard-form');
+        var url = form.data('action') + "/" + id.val();
+        var apiUrl = form.data('api-url') + "/" + id.val();
+        var titleError = $("#title-error");
+        var idError = $("#id-error");
 
         if (!$.trim(title.val()) || !$.trim(id.val())) {
             !$.trim(title.val()) ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
             form.attr('action', url);
-
             $.ajax({
                 url: apiUrl,
                 method: "GET",

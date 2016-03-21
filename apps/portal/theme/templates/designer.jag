@@ -1,16 +1,29 @@
+<%
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+%>
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
-
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
-    
     <title><%= i18n.localize("dashboard.designer")%></title>
-
 </head>
 <body>
-
     <!-- Modal -->
     <div class="modal fade" id="designerModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -291,52 +304,6 @@
         <input type="hidden" id="banner-data" name="data" />
         <button type="submit">Submit</button>
     </form>
-
-    <!-- Jquery/Jquery UI JS -->
-    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
-    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-
-    <!-- Bootstrap JS -->
-    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
-
-    <!-- Jquery Nanoscroller JS -->
-    <script src="<%=urlPrefix%>libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
-
-    <!-- Theme WSO2 JS -->
-    <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
-        
-    <script src="<%=urlPrefix%>libs/underscore-1.8.3/underscore-min.js"></script>
-
-    <!-- Gridstack -->
-    <script src="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.js"></script>
-
-    <!-- Handlebars -->
-    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
-
-    <!-- Cropper -->
-    <script src="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.js"></script>
-
-    <script src="<%=urlPrefix%>js/async.js"></script>
-    <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
-    <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
-    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
-    <script src="<%=urlPrefix%>js/ues.js"></script>
-    <script src="<%=urlPrefix%>js/ues-prefs.js"></script>
-    <% include('/controllers/includes/common-scripts.jag'); %>
-    <% include('/controllers/includes/dashboard-scripts.jag'); %>
-    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
-    <script src="<%=urlPrefix%>js/ues-store.js"></script>
-    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
-    <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
-    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
-    <script src="<%=urlPrefix%>js/designer.js"></script>
-    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
-    <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
-    <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
-    <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
     <!-- Handlebar templates -->
     <!-- Template to generate component content -->
@@ -772,5 +739,51 @@
             {{/has}}
         </div>
     </script>
+
+    <!-- Jquery/Jquery UI JS -->
+    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Jquery Nanoscroller JS -->
+    <script src="<%=urlPrefix%>libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
+
+    <!-- Theme WSO2 JS -->
+    <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+
+    <script src="<%=urlPrefix%>libs/underscore-1.8.3/underscore-min.js"></script>
+
+    <!-- Gridstack -->
+    <script src="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.js"></script>
+
+    <!-- Handlebars -->
+    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
+    <!-- Cropper -->
+    <script src="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.js"></script>
+
+    <script src="<%=urlPrefix%>js/async.js"></script>
+    <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+    <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
+    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
+    <script src="<%=urlPrefix%>js/ues.js"></script>
+    <script src="<%=urlPrefix%>js/ues-prefs.js"></script>
+    <% include('/controllers/includes/common-scripts.jag'); %>
+    <% include('/controllers/includes/dashboard-scripts.jag'); %>
+    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
+    <script src="<%=urlPrefix%>js/ues-store.js"></script>
+    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+    <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
+    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/designer.js"></script>
+    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
+    <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
+    <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 </body>
 </html>

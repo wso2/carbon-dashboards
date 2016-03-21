@@ -1,13 +1,27 @@
+<%
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+%>
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
 
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-
     <title><%= i18n.localize("create.dashboard")%></title>
-
 </head>
 <body>
-
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 
     <!-- Modal -->
@@ -94,6 +108,19 @@
     <!-- Footer -->
     <% include(utils.resolvePath('templates/portal-footer.jag')); %>
 
+    <script id="ues-modal-info-hbs" type="text/x-handlebars-template">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+            <h3 class="modal-title" id="infoModalLabel">{{title}}</h3>
+        </div>
+        <div class="modal-body">
+            {{message}}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" id="ues-modal-info-ok" data-dismiss="modal">Ok</button>
+        </div>
+    </script>
+
     <!-- Jquery JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
 
@@ -111,18 +138,5 @@
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
     <script src="<%=urlPrefix%>js/create.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
-
-    <script id="ues-modal-info-hbs" type="text/x-handlebars-template">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
-            <h3 class="modal-title" id="infoModalLabel">{{title}}</h3>
-        </div>
-        <div class="modal-body">
-            {{message}}
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" id="ues-modal-info-ok" data-dismiss="modal">Ok</button>
-        </div>
-    </script>
 </body>
 </html>
