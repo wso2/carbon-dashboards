@@ -48,21 +48,19 @@ var registryUserPath = function (id, username) {
  */
 var findOne = function (id, originalDashboardOnly) {
     originalDashboardOnly = originalDashboardOnly || false;
-    
     var registry = getRegistry();
     var usr = require('/modules/user.js');
     var user = usr.current();
     var path = registryPath(id);
     var originalDB;
     var isCustom = false;
-    
+
     if (user) {
         var originalDBPath = registryPath(id);
-        if(registry.exists(originalDBPath)){
+        if (registry.exists(originalDBPath)) {
             originalDB = JSON.parse(registry.content(originalDBPath));
         }
-
-        if (! originalDashboardOnly) {
+        if (!originalDashboardOnly) {
             var userDBPath = registryUserPath(id, user.username);
             if (registry.exists(userDBPath)) {
                 path = userDBPath;
@@ -70,22 +68,20 @@ var findOne = function (id, originalDashboardOnly) {
             }
         }
     }
-    
+
     var content = registry.content(path);
     var dashboard = JSON.parse(content);
     if (dashboard) {
         dashboard.isUserCustom = isCustom;
         dashboard.isEditorEnable = false;
-
         if (!originalDashboardOnly && originalDB) {
             var carbon = require('carbon');
             var server = new carbon.server.Server();
             var um = new carbon.user.UserManager(server, user.tenantId);
             user.roles = um.getRoleListOfUser(user.username);
-
-            for(var i = 0; i<user.roles.length; i++){
-                for(var j=0; j<originalDB.permissions.editors.length; j++){
-                    if(user.roles[i] == originalDB.permissions.editors[j]){
+            for (var i = 0; i < user.roles.length; i++) {
+                for (var j = 0; j < originalDB.permissions.editors.length; j++) {
+                    if (user.roles[i] == originalDB.permissions.editors[j]) {
                         dashboard.isEditorEnable = true;
                         break;
                     }
@@ -226,7 +222,7 @@ var saveBanner = function (dashboardId, username, filename, mime, stream) {
 };
 
 /**
- * Delete dashboard banner (if the username is empty, then the default banner will be removed, otherwise the custom 
+ * Delete dashboard banner (if the username is empty, then the default banner will be removed, otherwise the custom
  * banner for the user will be removed).
  * @param {String} dashboardId ID of the dashboard
  * @param {String} username Username
@@ -288,7 +284,7 @@ var registryBannerPath = function (dashboardId, username) {
 var getBanner = function (dashboardId, username) {
     var registry = getRegistry();
     var path;
-    var result = { globalBannerExists: false, customBannerExists: false, path: null };
+    var result = {globalBannerExists: false, customBannerExists: false, path: null};
     // check to see whether the custom banner exists
     path = registryBannerPath(dashboardId, username);
     if (registry.exists(path)) {
@@ -303,7 +299,6 @@ var getBanner = function (dashboardId, username) {
     // check to see if there is any global banner
     path = registryBannerPath(dashboardId, null);
     if (registry.exists(path)) {
-
         result.globalBannerExists = true;
         result.path = result.path || path;
     }
@@ -316,7 +311,7 @@ var getBanner = function (dashboardId, username) {
  * @param {String} isAnon Is anon mode
  * @returns {String} Bootstrap layout markup
  */
-var getBootstrapLayout = function(pageId, isAnon) {
+var getBootstrapLayout = function (pageId, isAnon) {
     var bitmap;
     var err = [];
     var content = '';
@@ -330,12 +325,12 @@ var getBootstrapLayout = function(pageId, isAnon) {
      */
     function initGrid(data) {
         var grid = [];
-        data.forEach(function(d) {
+        data.forEach(function (d) {
             // if there is no second dimension array, create it
             if (typeof grid[d.y] === 'undefined') {
                 grid[d.y] = [];
             }
-            grid[d.y][d.x] = { "id": d.id, "width": d.width, "height": d.height, "banner": d.banner || false };
+            grid[d.y][d.x] = {"id": d.id, "width": d.width, "height": d.height, "banner": d.banner || false};
         });
         return grid;
     };
@@ -357,14 +352,14 @@ var getBootstrapLayout = function(pageId, isAnon) {
         var extra = 0;
         var localMax;
         bitmap = [];
-        
+
         // calculate the total height of the bitmap
-        for(y = sy; y <= ey; y++) {
+        for (y = sy; y <= ey; y++) {
             if (typeof grid[y] === 'undefined') {
                 continue;
             }
             localMax = 0;
-            for(x = sx; x <= ex; x++) {
+            for (x = sx; x <= ex; x++) {
                 if (typeof grid[y][x] === 'undefined') {
                     continue;
                 }
@@ -374,24 +369,24 @@ var getBootstrapLayout = function(pageId, isAnon) {
         }
 
         // create a x * y bitmap and initialize into false state
-        for(y = sy; y <= extra + ey; y++) {
+        for (y = sy; y <= extra + ey; y++) {
             bitmap[y] = [];
-            for(x = sx; x <= ex; x++) {
+            for (x = sx; x <= ex; x++) {
                 bitmap[y][x] = false;
             }
         }
 
         // traverse through the entire grid and mark cells appropriately
-        for(y = sy; y <= ey; y++) {
+        for (y = sy; y <= ey; y++) {
             if (typeof grid[y] === 'undefined') {
-                 continue;
+                continue;
             }
-            for(x = sx; x <= ex; x++) {
+            for (x = sx; x <= ex; x++) {
                 if (typeof grid[y][x] === 'undefined') {
                     continue;
                 }
                 // this is for multi-row blocks. iterate through all the rows and mark the starts and offsets
-                for(i = y; i < y + grid[y][x].height; i++) {
+                for (i = y; i < y + grid[y][x].height; i++) {
                     bitmap[i][x] = true;                    // start of the block
                     bitmap[i][x + grid[y][x].width] = true; // end of the block
                 }
@@ -421,22 +416,22 @@ var getBootstrapLayout = function(pageId, isAnon) {
         var offset = 0;
         var previousEndPoint = 0;
         var processedRow = [];
-        var content = ''; 
+        var content = '';
         var height = 0;
-        
+
         // calculate new indices and widths depending on the parent's width
-        for(x = sx; x <= ex; x++) {
+        for (x = sx; x <= ex; x++) {
             var el = grid[y][x];
             if (typeof el === 'undefined') {
                 continue;
             }
             left = Math.ceil((x - sx) * 12) / (12 - sx);
             width = Math.ceil((el.width * 12) / parentWidth);
-            processedRow[left] = { id: el.id, height: el.height, width: width, left: left, banner: el.banner };
+            processedRow[left] = {id: el.id, height: el.height, width: width, left: left, banner: el.banner};
         }
 
         // draw the bootstrap columns
-        for(x = 0; x <= 11; x++) {
+        for (x = 0; x <= 11; x++) {
             if (typeof processedRow[x] === 'undefined') {
                 continue;
             }
@@ -445,14 +440,14 @@ var getBootstrapLayout = function(pageId, isAnon) {
             if (processedRow[x].banner) {
                 classes += ' ues-banner-placeholder';
             }
-            
+
             var styles = 'height: ' + height + 'px;';
             offset = x - previousEndPoint;
             if (offset > 0) {
                 classes += ' col-md-offset-' + offset;
             }
             previousEndPoint += processedRow[x].width + offset;
-            content += '<div id="' + processedRow[x].id + '" class="' + classes +'" ';
+            content += '<div id="' + processedRow[x].id + '" class="' + classes + '" ';
             if (styles) {
                 content += 'style="' + styles + '" ';
             }
@@ -480,7 +475,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
         // if the start row not defined, get the first defined row
         if (!sy) {
-            for(y = 0; y <= ey; y++) {
+            for (y = 0; y <= ey; y++) {
                 if (typeof grid[y] === 'undefined') {
                     continue;
                 }
@@ -503,7 +498,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
         while (y <= ey) {
             previousHeight = undefined;
             // calculate the row span (height of the row)
-            for(x = sx; x <= ex; x++) {
+            for (x = sx; x <= ex; x++) {
                 if (typeof grid[y] === 'undefined' || typeof grid[y][x] === 'undefined') {
                     continue;
                 }
@@ -531,9 +526,9 @@ var getBootstrapLayout = function(pageId, isAnon) {
                     // split vertically (by columns)
                     // identify the columns which have aligned margins
                     var columnStatus = [];
-                    for(x = sx; x <= ex; x++) {
+                    for (x = sx; x <= ex; x++) {
                         columnStatus[x] = true;
-                        for(var i = startRow; i <= endRow; i++) {
+                        for (var i = startRow; i <= endRow; i++) {
                             columnStatus[x] = columnStatus[x] && bitmap[i][x];
                         }
                     }
@@ -546,9 +541,9 @@ var getBootstrapLayout = function(pageId, isAnon) {
                     var child = '';
                     // iterate through all the column, identify the start and end columns
                     // and process the sub-grid recursively
-                    for(x = sx; x <= ex; x++) {
+                    for (x = sx; x <= ex; x++) {
                         if (columnStatus[x] || x == ex) {
-                            if (typeof startCol === 'undefined')  {
+                            if (typeof startCol === 'undefined') {
                                 startCol = (x == sx) ? x : x - 1;
                                 continue;
                             }
@@ -563,15 +558,15 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
                                 // fallback to the failsafe mode
                                 var refinedGrid = [];
-                                var i =;
+                                var i = 0;
                                 var x2;
                                 var y2;
                                 // read the non-renderable section from the grid and create a renderable grid with refined indices
-                                for(y2 = startRow; y2 <= endRow; y2++) {
+                                for (y2 = startRow; y2 <= endRow; y2++) {
                                     if (typeof grid[y2] === 'undefined') {
                                         continue;
                                     }
-                                    for(x2 = sx; x2 <= ex; x2++) {
+                                    for (x2 = sx; x2 <= ex; x2++) {
                                         var el = grid[y2][x2];
                                         if (typeof el === 'undefined') {
                                             continue;
@@ -582,11 +577,11 @@ var getBootstrapLayout = function(pageId, isAnon) {
                                 }
 
                                 // print each row from the non-renderable grid
-                                for(y2 = 0; y2 < refinedGrid.length; y2++) {
+                                for (y2 = 0; y2 < refinedGrid.length; y2++) {
                                     if (typeof refinedGrid[y2] === 'undefined') {
                                         continue;
                                     }
-                                    for(x2 = 0; x2 <= 11; x2++) {
+                                    for (x2 = 0; x2 <= 11; x2++) {
                                         if (typeof refinedGrid[y2][x2] === 'undefined') {
                                             continue;
                                         }
@@ -604,7 +599,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
                     content += '<div class="row">' + child + '</div>';
                 }
                 // skip the rows until a defined row is found
-                for(y = endRow + 1; y <= ey && typeof grid[y] === 'undefined'; y++);
+                for (y = endRow + 1; y <= ey && typeof grid[y] === 'undefined'; y++);
                 rowSpan = 1;
                 startRow = y;
                 varyingHeight = false;
@@ -618,7 +613,7 @@ var getBootstrapLayout = function(pageId, isAnon) {
 
     var page;
     var result = '';
-    dashboard.pages.forEach(function(p) {
+    dashboard.pages.forEach(function (p) {
         if (p.id == pageId) {
             page = p;
             return;
@@ -633,13 +628,13 @@ var getBootstrapLayout = function(pageId, isAnon) {
     try {
         var json = (isAnon ? page.layout.content.anon.blocks : page.layout.content.loggedIn.blocks);
         content = process(initGrid(json));
-    } catch(e) {
+    } catch (e) {
         err.push(e);
     }
 
     if (err.length > 0) {
         var errMessage = '';
-        err.forEach(function(e) {
+        err.forEach(function (e) {
             errMessage += e.message + '\n';
         });
         log.error('Errors found when generating Bootstrap layout: ' + errMessage);

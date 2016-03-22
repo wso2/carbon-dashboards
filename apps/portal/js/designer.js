@@ -479,7 +479,8 @@ $(function () {
      * @private
      */
     var previewDashboard = function (page) {
-        var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? '?isAnonView=true' : '';
+        var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ?
+            '?isAnonView=true' : '';
         var pageURL = dashboard.landing !== page.id ? page.id : '';
         var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
@@ -1200,8 +1201,8 @@ $(function () {
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        showInformation("Cannot Remove The Anonymous View",
-                            "Cannot remove the anonymous view of landing page when there are pages with anonymous views");
+                        showInformation("Cannot Remove The Anonymous View", "Cannot remove the anonymous view of " +
+                            "landing page when there are pages with anonymous views");
                     } else {
                         page.isanon = false;
 
@@ -1211,7 +1212,8 @@ $(function () {
                             ues.global.dbType = DEFAULT_DASHBOARD_VIEW;
                         }
 
-                        // the anon layout should not be deleted since the gadgets in this layout is already there in the content
+                        // the anon layout should not be deleted since the gadgets in this layout is already there in
+                        // the content
                         $('#designer-view-mode li[data-view-mode=anon]').addClass("hide");
                         page.content.anon = {};
                     }
@@ -2114,7 +2116,6 @@ $(function () {
                     var node = gsItem.data('_gridstack_node');
                     var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
                     var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-                    
                     container.closest('.ues-component-box').attr('data-height', height);
                     container.find('.ues-component-body').show();
                     if (container.attr('id')) {
@@ -2311,7 +2312,8 @@ $(function () {
      */
     var initBanner = function () {
         loadBanner();
-        // bind a handler to the change event of the file element (removing the handler initially to avoid multiple binding to the same handler)
+        // bind a handler to the change event of the file element (removing the handler initially to avoid multiple
+        // binding to the same handler)
         var fileBanner = document.getElementById('file-banner');
         fileBanner.removeEventListener('change', bannerChanged);
         fileBanner.addEventListener('change', bannerChanged, false);

@@ -308,7 +308,6 @@
     <!-- Handlebar templates -->
     <!-- Template to generate component content -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-
         <div class="ues-component gadget">
             <div class="gadget-heading ues-component-heading">
                 <h1 class="gadget-title ues-component-title truncate">:::</h1>
@@ -345,7 +344,6 @@
 
     <!-- Template to generate component toolbar -->
     <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
-
         <div class="btn-group">
             <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
                 <i class="fw fw-configarations"></i>
@@ -362,37 +360,29 @@
 
     <!-- Template to generate banners -->
     <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
-
         <div class="ues-dashboard-banner-loading" style="display: none;"><%= i18n.localize('banner.loading.msg') %></div>
         <canvas id="src-canvas" class="hidden"></canvas>
         <canvas id="dest-canvas" class="hidden"></canvas>
-
         {{#if isEdit}}
         <div class="banner-image" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
         {{/if}}
-
         {{#if isEditable}}
         <div class="button-panel">
-
             {{#if isAdd}}
             <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('add')%></button>
             {{/if}}
-
             {{#if isEdit}}
             <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('edit.button')%></button>
             <button type="button" id="btn-remove-banner" class="btn btn-danger">
                 {{#if isCustomBanner}}<%=i18n.localize('reset')%>{{else}}<%=i18n.localize('remove')%>{{/if}}
             </button>
             {{/if}}
-
             {{#if isCrop}}
             <button type="button" id="btn-save-banner" class="btn btn-primary"><%=i18n.localize('save')%></button>
             <button type="button" id="btn-cancel-banner" class="btn btn-danger"><%=i18n.localize('cancel')%></button>
             {{/if}}
-
         </div>
         {{/if}}
-
     </script>
 
     <script id="ues-components-list-hbs" type="text/x-handlebars-template">
@@ -411,7 +401,6 @@
     </script>
 
     <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
-
         {{#each pages}}
         <div class="panel panel-default{{#equals ../current/id id}} active{{/equals}}">
             <div class="panel-heading text-truncate dropdown ues-page-list-heading" role="tab" id="pagesButton{{id}}" data-toggle="collapse" data-parent="#ues-dashboard-pages" data-target="#pages{{id}}" aria-expanded="false" data-id="{{id}}">
@@ -520,7 +509,6 @@
                 {{/if}}
             </h3>
         </div>
-            
         {{#if hasComponent}}
         <div class="pull-left">
             <div class="modal-body add-margin-top-2x add-margin-bottom-2x">
@@ -566,7 +554,6 @@
         </div>
         <div class="page-actions">
             <div class="btn-group">
-
                 <button type="button" class="btn btn-default btn-bordered ues-switch-page-prev" data-page-id="{{prev/id}}" {{#if prev/available}}{{else}}disabled{{/if}}>
                     <i class="icon fw fw-left"></i>
                 </button>
@@ -585,9 +572,7 @@
     </script>
 
     <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
-
         <div class="panel-group ues-component-properties" id="accordion" role="tablist" aria-multiselectable="true" data-component="{{id}}">
-
             {{#has options}}
             <div class="panel panel-default ues-options ues-properties">
                 <div class="panel-heading text-truncate dropup" role="tab" id="optionsButtonSettings" data-toggle="collapse" data-target="#optionsOptions" aria-expanded="true">
