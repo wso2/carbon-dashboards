@@ -33,6 +33,7 @@ $(function () {
     var findPage = ues.dashboards.findPage;
     var lang = navigator.languages ?
         navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
+    var gadgetIds;
 
     /**
      * Number of assets to be loaded.
@@ -163,16 +164,37 @@ $(function () {
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
 
     var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html());
-
+    
     /**
-     * Generates a random ID.
-     * @return {String}
+     * Generate unique gadget ID.
+     * @param {String} gadgetName Name of the gadget
+     * @return {String} Unique gadget ID
      * @private
      */
-    var randomId = function () {
-        return Math.random().toString(36).slice(2);
-    };
-
+    var generateGadgetId = function(gadgetName) {
+        if (!gadgetIds) {
+            // If gadget Ids list is not defined, then need to read all the gadgets and re-populate the index list.
+            gadgetIds = { };
+            $('.ues-component').each(function() {
+                var id = $(this).attr('id');
+                if (id) {
+                    var parts = id.split('-');
+                    var currentGadgetIndex = parseInt(parts.pop());
+                    var gadgetName = parts.join('-');
+                    if (!gadgetIds[gadgetName]) {
+                        gadgetIds[gadgetName] = 0;
+                    }
+                    gadgetIds[gadgetName] = Math.max(gadgetIds[gadgetName], currentGadgetIndex + 1);
+                }
+            });
+        }
+        
+        if (!gadgetIds[gadgetName]) {
+            gadgetIds[gadgetName] = 0;
+        }
+        return gadgetName + '-' + (gadgetIds[gadgetName]++);
+    }
+    
     /**
      * Initialize the nano scroller.
      * @return {null}
@@ -741,7 +763,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id = randomId();
+        var id =  generateGadgetId(asset.id);
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -2028,6 +2050,12 @@ $(function () {
      * @private
      */
     var renderPage = function (pid, done) {
+<<<<<<< Updated upstream
+=======
+
+        gadgetIds = undefined;
+        
+>>>>>>> Stashed changes
         // if no pages found, display a message
         if (!dashboard.pages.length) {
             $('#ues-dashboard-preview-link').hide();

@@ -75,7 +75,7 @@
      * @return {String} Gadget ID
      */
     var componentId = function (clientId) {
-        return clientId.split('-').pop();
+        return clientId.replace('sandbox-gadget-', '');
     };
 
     var wirings;

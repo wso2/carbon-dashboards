@@ -767,7 +767,7 @@
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
     <script src="<%=urlPrefix%>js/designer.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
-    <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
+	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>
     <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 </body>
