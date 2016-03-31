@@ -1,17 +1,37 @@
 <%
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 var dbRoot;
 var dest;
 var renderEngine = { };
 
 (function () {
     var log = new Log();
-
-    var unauthorizedError;
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
     var permissions = dashboard.permissions;
     var anonymous = permissions.viewers.indexOf(anonRole) !== -1;
     var db = require('/modules/dashboards.js');
+
+    /**
+     * Unauthorized error message.
+     * @const
+     */
+    var UNAUTHORIZED_ERROR = 'Dashboard access not authorized';
 
     if (user) {
         if (utils.allowed(user.roles, permissions.editors)) {
@@ -27,39 +47,35 @@ var renderEngine = { };
             return;
         }
 
-        unauthorizedError = 'dashboard access not authorized';
-
         if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
-            response.sendError(401, unauthorizedError);
+            response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
 
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
-            response.sendError(401, unauthorizedError);
+        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) &&
+                !utils.allowed(user.roles, permissions.viewers)) {
+            response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
     }
     
     // check whether the requested page exists
     pageId = pageId || dashboard.landing;
-    
     var pageExists = false;
     dashboard.pages.forEach(function(p) {
         if (p.id == pageId) {
             pageExists = true;
-        }    
+        }
     });
     
     if (! pageExists) {
-        response.sendError(404, 'not found');
+        response.sendError(404, "Page '" + pageId + "' not found");
         return;
     }
-    
+
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
-
     // global reference to getBootstrapLayout() function
     renderEngine.getDashboardContent = db.getBootstrapLayout;
-
     include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>
