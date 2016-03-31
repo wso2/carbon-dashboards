@@ -724,6 +724,10 @@
             {{/has}}
         </div>
     </script>
+                        
+    <script id="ues-no-components-hbs" type="text/x-handlebars-template">
+        <%= i18n.localize("no.items.found") %>
+    </script>
 
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>

@@ -137,6 +137,7 @@ $(function () {
      * Precompiling Handlebar templates
      */
     var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html());
+    
     var designerHeadingHbs = Handlebars.compile($('#ues-designer-heading-hbs').html());
 
     var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html());
@@ -2050,12 +2051,8 @@ $(function () {
      * @private
      */
     var renderPage = function (pid, done) {
-<<<<<<< Updated upstream
-=======
-
         gadgetIds = undefined;
         
->>>>>>> Stashed changes
         // if no pages found, display a message
         if (!dashboard.pages.length) {
             $('#ues-dashboard-preview-link').hide();
