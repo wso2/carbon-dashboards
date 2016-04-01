@@ -48,7 +48,8 @@
         <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
             <div class="container-fluid ues-context-menu">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" 
+                            aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -108,17 +109,26 @@
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavPages', this)" title="<%=i18n.localize("pages.label")%>" id="btn-pages-sidebar">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
+                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                    onclick="updateSidebarNav('#sidebarNavPages', this)" title="<%=i18n.localize("pages.label")%>" 
+                    id="btn-pages-sidebar">
                     <i class="icon fw fw-pages"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("add.block")%>" id="btn-sidebar-layouts">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
+                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                    onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("add.block")%>" 
+                    id="btn-sidebar-layouts">
                     <i class="icon fw fw-layout"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="<%=i18n.localize("gadgets")%>" id="btn-sidebar-gadgets">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
+                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                    onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="<%=i18n.localize("gadgets")%>" 
+                    id="btn-sidebar-gadgets">
                     <i class="icon fw fw-gadget"></i>
                 </a>
             </li>
@@ -131,7 +141,9 @@
         <!-- .left-sidebar -->
         <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55">
 
-            <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
+            <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
+                data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" 
+                aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
 
             <div class="nano">
                 <div class="nano-content">
@@ -142,7 +154,8 @@
 
                         <div class="add-padding-3x">
 
-                            <button type="button" class="btn btn-primary btn-stack btn-block" data-toggle="sidebar" data-target="#left-sidebar-sub" aria-expanded="false" rel="createPage">
+                            <button type="button" class="btn btn-primary btn-stack btn-block" data-toggle="sidebar" 
+                                data-target="#left-sidebar-sub" aria-expanded="false" rel="createPage">
                                 <span class="icon fw-stack fw-lg">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
@@ -227,7 +240,8 @@
             <div class="nano">
                 <div class="nano-content">
 
-                    <button class="btn btn-default close-handle" data-handle="close" data-toggle="sidebar" data-target="#left-sidebar-sub" aria-expanded="true" rel="createPage"><i class="fw fw-cancel"></i></button>
+                    <button class="btn btn-default close-handle" data-handle="close" data-toggle="sidebar" 
+                        data-target="#left-sidebar-sub" aria-expanded="true" rel="createPage"><i class="fw fw-cancel"></i></button>
 
                     <div class="add-padding-3x">
                         <%=i18n.localize("select.layout")%>
@@ -247,7 +261,9 @@
             <!-- .right-sidebar -->
             <div class="sidebar-wrapper sidebar-options" id="right-sidebar" data-side="right" data-width="235">
 
-                <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="true" rel="show-options"  onclick="updateSidebarOptions(this)"><i class="fw fw-right-arrow"></i></button>
+                <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
+                    data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" 
+                    aria-expanded="true" rel="show-options" onclick="updateSidebarOptions(this)"><i class="fw fw-right-arrow"></i></button>
 
                 <div class="nano">
                     <div class="nano-content">
@@ -262,10 +278,12 @@
             <div class="page-content">
                 <ul class="nav nav-tabs" id="designer-view-mode">
                     <li role="dashboard-view" data-view-mode="default" class="active">
-                        <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab" data-toggle="tab"><%=i18n.localize("default.view")%></a>
+                        <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab" 
+                            data-toggle="tab"><%=i18n.localize("default.view")%></a>
                     </li>
                     <li role="dashboard-view" data-view-mode="anon" class="hide">
-                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab" data-toggle="tab"><%=i18n.localize("anon.view")%></a>
+                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab" 
+                            data-toggle="tab"><%=i18n.localize("anon.view")%></a>
                     </li>
                 </ul>
                 <div class="nano">
@@ -364,7 +382,8 @@
         <canvas id="src-canvas" class="hidden"></canvas>
         <canvas id="dest-canvas" class="hidden"></canvas>
         {{#if isEdit}}
-        <div class="banner-image" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
+        <div class="banner-image" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" 
+             style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
         {{/if}}
         {{#if isEditable}}
         <div class="button-panel">

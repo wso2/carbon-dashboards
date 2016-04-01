@@ -36,9 +36,19 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
-            <li class="dashboard-name truncate"><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
-            <li class="active"><%=i18n.localize("dashboard.settings")%></li>
+            <li>
+                <a href="<%=tenantedUrlPrefix%>">
+                    <i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%>
+                </a>
+            </li>
+            <li class="dashboard-name truncate">
+                <a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true">
+                    <%=encodeHtml(dashboard.title)%>
+                </a>
+            </li>
+            <li class="active">
+                <%=i18n.localize("dashboard.settings")%>
+            </li>
         </ol>
     </div>
 
@@ -47,7 +57,8 @@
         <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" 
+                            aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -85,7 +96,8 @@
                     <label for="ues-dashboard-url" class="col-sm-3 control-label"><%= i18n.localize("url")%></label>
                     <div class="col-sm-9">
                         <p class="form-control-static truncate">
-                            <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" target="_blank">/dashboards/<%=dashboardId%></a>
+                            <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" 
+                               target="_blank">/dashboards/<%=dashboardId%></a>
                         </p>
                     </div>
                 </div>
@@ -93,7 +105,8 @@
                     <label for="ues-dashboard-title" class="col-sm-3 control-label">
                     <%= i18n.localize("title")%> <span class="required">*</span></label>
                     <div class="col-sm-9">
-                        <input id="ues-dashboard-title" type="text" maxlength="250" class="form-control" placeholder="<%= i18n.localize("title")%>" value="<%=dashboard.title%>">
+                        <input id="ues-dashboard-title" type="text" maxlength="250" class="form-control" 
+                               placeholder="<%= i18n.localize("title")%>" value="<%=dashboard.title%>">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="title-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
                     </div>
@@ -102,7 +115,8 @@
                     <label for="ues-dashboard-description" class="col-sm-3 control-label">
                             <%= i18n.localize("description")%></label>
                     <div class="col-sm-9">
-                        <textarea id="ues-dashboard-description" maxlength="500" class="form-control" rows="4" placeholder="<%= i18n.localize("description")%>"><%=dashboard.description%></textarea>
+                        <textarea id="ues-dashboard-description" maxlength="500" class="form-control" rows="4" 
+                            placeholder="<%= i18n.localize("description")%>"><%=dashboard.description%></textarea>
                     </div>
                 </div>
             </form>
@@ -139,7 +153,8 @@
                     <div class="col-sm-9">
 
                         <label class="switch">
-                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs"
+                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" 
+                                data-target="#ues-oauth-settings-inputs" 
                                 aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
                                 aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
                             <span class="helper"></span>
@@ -167,7 +182,8 @@
                             <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
                         </div>
                         <div class="col-sm-3" style="text-align: right;">
-                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" title="<%=i18n.localize("refresh")%>"><i class="fw fw-refresh"></i></button>
+                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" 
+                                title="<%=i18n.localize("refresh")%>"><i class="fw fw-refresh"></i></button>
                         </div>
                     </div>
                     <div class="form-group">

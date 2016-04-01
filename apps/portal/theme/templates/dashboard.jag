@@ -128,7 +128,9 @@
                         <div class="auth float-remove-xs text-center-xs text-right">
                             <div>                            
                                 <%                                   
-                                   var showEdit = user && (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) && !isMobileDevice;
+                                   var showEdit = user && (!isAnonView && (urlDomain == user.domain || 
+                                       (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) && 
+                                       !isMobileDevice;
                                    var isEdit = showEdit && user.isEditor;
                                 %>
                                 
@@ -140,11 +142,13 @@
                                     <span class="add-margin-right-2x username"><%=user.username%></span>
                                         
                                     <% if (showEdit && user.isEditor) { %>
-                                    <a href="<%=dbRoot%>?editor=true" class="ues-copy" title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>      
+                                    <a href="<%=dbRoot%>?editor=true" class="ues-copy" 
+                                        title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
 
                                     <% if (showEdit && !user.isEditor) { %>
-                                    <a href="<%=dbRoot%>?custom=true" class="ues-copy" title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>      
+                                    <a href="<%=dbRoot%>?custom=true" class="ues-copy" 
+                                        title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
                                         
                                     <!-- auth other -->
@@ -167,14 +171,17 @@
                                 <!-- View for XS -->
                                 <span class="visible-xs auth-xs">
                                     <% if (showEdit && user.isEditor) { %>
-                                        <a href="<%=dbRoot%>?editor=true" class="ues-copy" title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>      
+                                        <a href="<%=dbRoot%>?editor=true" class="ues-copy" 
+                                            title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
 
                                     <% if (showEdit && !user.isEditor) { %>
-                                        <a href="<%=dbRoot%>?custom=true" class="ues-copy" title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>      
+                                        <a href="<%=dbRoot%>?custom=true" class="ues-copy" 
+                                            title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
                                         
-                                    <a href="#" class="collapsed add-margin-left-2x" data-toggle="collapse" data-target="#auth-menu-items" aria-expanded="false">
+                                    <a href="#" class="collapsed add-margin-left-2x" data-toggle="collapse" 
+                                        data-target="#auth-menu-items" aria-expanded="false">
                                         <span class="fw fw-user"></span>
                                         <span class="caret"></span>
                                     </a>                
@@ -213,7 +220,8 @@
                                     var queryString = (request.getParameter('isAnonView') == 'true') ? '?isAnonView=true' : '';
 
                                 %>
-                                <a class="btn btn-default btn-bordered <%= (p.id === pageId) ? 'active': '' %>" href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a>
+                                <a class="btn btn-default btn-bordered <%= (p.id === pageId) ? 'active': '' %>" 
+                                    href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a>
                                 <%
                                 }
                                 %>
@@ -244,7 +252,8 @@
     <!--Footer -->
     <footer class="footer">
         <div class="container-fluid">
-            <p>WSO2 Dashboard Server v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script> <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
+            <p>WSO2 Dashboard Server v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script> 
+                <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
         </div>
     </footer>
 
@@ -312,7 +321,8 @@
                             {{/equals}}
                             {{#equals type "LIST"}}
                             <label>{{title}}
-                                <textarea name="{{@key}}" class="form-control" rows="4" placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
+                                <textarea name="{{@key}}" class="form-control" rows="4" 
+                                    placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
                                 <label><%= i18n.localize("enter.your.list.entries.label")%></label>
                             </label>
                             {{/equals}}
