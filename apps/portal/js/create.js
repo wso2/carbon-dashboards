@@ -30,8 +30,7 @@ $(function () {
      */
     var showHtmlModal = function (content, beforeShow) {
         var modalElement = $('#designerModal');
-        moda
-        lElement.find('.modal-content').html(content);
+        modalElement.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
