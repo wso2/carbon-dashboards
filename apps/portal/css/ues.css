@@ -1,7 +1,6 @@
 body {
     padding-top: 136px;
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
-    /*overflow: hidden; Fixing DAS-348, unable to reach Next button on wizard */
 }
 
 h1 {
@@ -128,12 +127,6 @@ a, a:focus {
 
 .ues-context-menu .ues-context-menu-actions {
     border: none;
-}
-
-@media all and (max-width: 768px) {    
-    .ues-context-menu .ues-context-menu-actions li {
-        padding-left: 10px;
-    }
 }
 
 /**
@@ -358,10 +351,16 @@ h2.app-title {
 }
 
 .breadcrumb > .active {
-    color: #ccc; /* #5bc0de; */
+    color: #ccc;
 }
 
 .ues-context-menu > .container-fluid {
     padding-left: 0;
     padding-right: 0;
+}
+
+@media all and (max-width: 768px) {
+    .ues-context-menu .ues-context-menu-actions li {
+        padding-left: 10px;
+    }
 }
