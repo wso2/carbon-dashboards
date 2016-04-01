@@ -1,71 +1,96 @@
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 $(function () {
-    var DASHBOARD_DEFAULT_VIEW = 'default',
-        DASHBOARD_FULL_SCEEN_VIEW = 'full',
-        DASHBOARD_SETTINGS_VIEW = 'settings',
-        CONTAINER_PREFIX = 'gadget-';
+    /**
+     * Gadget default view mode.
+     * @const
+     */
+    var DASHBOARD_DEFAULT_VIEW = 'default';
+
+    /**
+     * Gadget full screen mode.
+     * @const
+     */
+    var DASHBOARD_FULL_SCEEN_VIEW = 'full';
+
+    /**
+     * Gadget settings view mode.
+     * @const
+     */
+    var DASHBOARD_SETTINGS_VIEW = 'settings';
+
+    /**
+     * Gadget container prefix.
+     * @const
+     */
+    var CONTAINER_PREFIX = 'gadget-';
 
     var page;
 
     /**
-     * Precompiling Handlebar templates
+     * Pre-compiling Handlebar templates
      */
-    var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html() || ''),
-        gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html() || '');
+    var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html());
+    var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
 
     /**
-     * initializes the component toolbar
+     * Initializes the component toolbar.
+     * @return {null}
      * @private
      */
     var initComponentToolbar = function () {
-
         // gadget maximization handler
         $('.ues-components-grid').on('click', '.ues-component-full-handle', function (e) {
-            var id = $(this).closest('.ues-component').attr('id'),
-                component = findComponent(id),
-                componentBox = $(this).closest('.ues-component-box');
-
+            var id = $(this).closest('.ues-component').attr('id');
+            var component = findComponent(id);
+            var componentBox = $(this).closest('.ues-component-box');
             if (component.fullViewPoped) {
-
                 $('.ues-component-box').show();
-
                 // render normal view
-                // restore the normal view (remove the css class, restore the original height and remove the temporary attribute)
+                // restore the normal view (remove the css class, restore the original height and remove the temporary
+                // attribute)
                 componentBox
                     .removeClass('ues-component-fullview')
                     .css('height', componentBox.attr('data-original-height'))
                     .attr('data-height', componentBox.attr('data-original-height'))
                     .removeAttr('data-original-height');
-
                 renderMaxView(component, DASHBOARD_DEFAULT_VIEW);
-
                 $(this)
                     .attr('title', $(this).data('maximize-title'))
                     .find('i.fw')
                     .removeClass('fw-contract')
                     .addClass('fw-expand');
-
                 component.fullViewPoped = false;
-
             } else {
-
                 $('.ues-component-box:not([id="' + componentBox.attr('id') + '"])').hide();
-
                 // render max view
-                // change the container height for the max view (including backing up the original height for restoration later)
+                // change the container height for the max view (including backing up the original height for
+                // restoration later)
                 componentBox
                     .attr('data-original-height', componentBox.attr('data-height'))
                     .addClass('ues-component-fullview')
                     .css('height', ($(window).height() - 40) + 'px')
                     .attr('data-height', ($(window).height() - 40));
-
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
-
                 $(this)
                     .attr('title', $(this).data('minimize-title'))
                     .find('i.fw')
                     .removeClass('fw-expand')
                     .addClass('fw-contract');
-
                 component.fullViewPoped = true;
             }
         });
@@ -73,14 +98,13 @@ $(function () {
         // gadget settings handler
         $('.ues-components-grid').on('click', '.ues-component-settings-handle', function (e) {
             e.preventDefault();
-
-            var id = $(this).closest('.ues-component').attr('id'),
-                component = findComponent(id),
-                componentContainer = $('#' + CONTAINER_PREFIX + id);
-
+            var id = $(this).closest('.ues-component').attr('id');
+            var component = findComponent(id);
+            var componentContainer = $('#' + CONTAINER_PREFIX + id);
             // toggle the component settings view if exists
             if (component.hasCustomUserPrefView) {
-                switchComponentView(component, (component.viewOption == DASHBOARD_SETTINGS_VIEW ? DASHBOARD_DEFAULT_VIEW : DASHBOARD_SETTINGS_VIEW));
+                switchComponentView(component, (component.viewOption == DASHBOARD_SETTINGS_VIEW ?
+                    DASHBOARD_DEFAULT_VIEW : DASHBOARD_SETTINGS_VIEW));
                 return;
             }
 
@@ -89,7 +113,6 @@ $(function () {
                 updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
                 return;
             }
-
             componentContainer.html(gadgetSettingsViewHbs(component.content)).addClass('ues-userprep-visible');
         });
     };
@@ -127,15 +150,13 @@ $(function () {
     };
 
     /**
-     * Renders the component toolbar of a given component
-     * @param {Object} component
+     * Renders the component toolbar of a given component.
+     * @param {Object} component Component object
      * @returns {null}
      * @private
      */
     var renderComponentToolbar = function (component) {
-
         if (component) {
-
             var container = $('#' + component.id);
             var userPrefsExists = false;
             for (var key in component.content.options) {
@@ -144,10 +165,8 @@ $(function () {
                     break;
                 }
             }
-            
             // anon dashboards doesn't have settings option
             component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
-
             container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
         }
     };
@@ -181,12 +200,12 @@ $(function () {
     };
 
     /**
-     * This is the initial call from the dashboard.js
+     * This is the initial call from the dashboard.js.
+     * @return {null}
      * @private
      */
     var initDashboard = function () {
         var allPages = ues.global.dashboard.pages;
-
         if (allPages.length > 0) {
             page = (ues.global.page ? ues.global.page : allPages[0]);
         }
@@ -198,7 +217,6 @@ $(function () {
         }
 
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function() {
-
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = findComponent($(this).attr('id'));
