@@ -274,7 +274,7 @@ function AnalyticsClient() {
     this.getRecordsByIds = function (recordsInfo, callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_GET_BY_ID + "&tableName=" + recordsInfo["tableName"],
-                        data: JSON.stringify(recordsInfo["ids"]),
+                        data: JSON.stringify({ids : recordsInfo["ids"], columns : recordsInfo["columns"]}),
                         type: HTTP_POST,
                         success: function (data) {
                             callback(data);
