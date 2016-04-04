@@ -1,15 +1,28 @@
+<%
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+%>
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
-    
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-
     <title><%= i18n.localize("dashboard.settings")%></title>
-
 </head>
 <body>
-
     <% include(utils.resolvePath('templates/global-navigation.jag')); %>
 
     <!-- Modal -->
@@ -23,9 +36,19 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="<%=tenantedUrlPrefix%>"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></a></li>
-            <li class="dashboard-name truncate"><a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true"><%=encodeHtml(dashboard.title)%></a></li>
-            <li class="active"><%=i18n.localize("dashboard.settings")%></li>
+            <li>
+                <a href="<%=tenantedUrlPrefix%>">
+                    <i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%>
+                </a>
+            </li>
+            <li class="dashboard-name truncate">
+                <a href="<%=tenantedUrlPrefix%>./dashboards/<%=dashboard.id%>?editor=true">
+                    <%=encodeHtml(dashboard.title)%>
+                </a>
+            </li>
+            <li class="active">
+                <%=i18n.localize("dashboard.settings")%>
+            </li>
         </ol>
     </div>
 
@@ -34,7 +57,8 @@
         <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" 
+                            aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -72,7 +96,8 @@
                     <label for="ues-dashboard-url" class="col-sm-3 control-label"><%= i18n.localize("url")%></label>
                     <div class="col-sm-9">
                         <p class="form-control-static truncate">
-                            <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" target="_blank">/dashboards/<%=dashboardId%></a>
+                            <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboardId%>" id="ues-dashboard-url" 
+                               target="_blank">/dashboards/<%=dashboardId%></a>
                         </p>
                     </div>
                 </div>
@@ -80,7 +105,8 @@
                     <label for="ues-dashboard-title" class="col-sm-3 control-label">
                     <%= i18n.localize("title")%> <span class="required">*</span></label>
                     <div class="col-sm-9">
-                        <input id="ues-dashboard-title" type="text" maxlength="250" class="form-control" placeholder="<%= i18n.localize("title")%>" value="<%=dashboard.title%>">
+                        <input id="ues-dashboard-title" type="text" maxlength="250" class="form-control" 
+                               placeholder="<%= i18n.localize("title")%>" value="<%=dashboard.title%>">
                         <span class="glyphicon glyphicon-remove form-control-feedback hide"></span>
                         <label id="title-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
                     </div>
@@ -89,7 +115,8 @@
                     <label for="ues-dashboard-description" class="col-sm-3 control-label">
                             <%= i18n.localize("description")%></label>
                     <div class="col-sm-9">
-                        <textarea id="ues-dashboard-description" maxlength="500" class="form-control" rows="4" placeholder="<%= i18n.localize("description")%>"><%=dashboard.description%></textarea>
+                        <textarea id="ues-dashboard-description" maxlength="500" class="form-control" rows="4" 
+                            placeholder="<%= i18n.localize("description")%>"><%=dashboard.description%></textarea>
                     </div>
                 </div>
             </form>
@@ -126,7 +153,8 @@
                     <div class="col-sm-9">
 
                         <label class="switch">
-                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" data-target="#ues-oauth-settings-inputs"
+                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" 
+                                data-target="#ues-oauth-settings-inputs" 
                                 aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
                                 aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
                             <span class="helper"></span>
@@ -154,7 +182,8 @@
                             <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
                         </div>
                         <div class="col-sm-3" style="text-align: right;">
-                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" title="<%=i18n.localize("refresh")%>"><i class="fw fw-refresh"></i></button>
+                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" 
+                                title="<%=i18n.localize("refresh")%>"><i class="fw fw-refresh"></i></button>
                         </div>
                     </div>
                     <div class="form-group">

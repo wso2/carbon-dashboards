@@ -1,42 +1,60 @@
-$(function () {
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards',
-        rolesApi = ues.utils.relativePrefix() + 'apis/roles',
-        userApi = ues.utils.relativePrefix() + 'apis/user',
-        searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search',
-        maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit',
-        dashboard = ues.global.dashboard,
-        tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id,
-        permissions = dashboard.permissions,
-        viewers = permissions.viewers,
-        editors = permissions.editors,
-        url = dashboardsApi + '/' + dashboard.id,
-        permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || ''),
-        modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || ''),
-        sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || ''),
-        user = null;
+$(function () {
+    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
+    var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
+    var userApi = ues.utils.relativePrefix() + 'apis/user';
+    var searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search';
+    var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
+    var dashboard = ues.global.dashboard;
+    var tokenUrl = ues.utils.tenantPrefix() + 'apis/tokensettings/' + dashboard.id;
+    var permissions = dashboard.permissions;
+    var viewers = permissions.viewers;
+    var editors = permissions.editors;
+    var url = dashboardsApi + '/' + dashboard.id;
+    var user = null;
+
+    // Pre-compiling handlebar templates
+    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
+    var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
+    var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html());
 
     /**
-     * Show HTML modal
-     * @param {String} content      HTML content
+     * Show HTML modal.
+     * @param {String} content HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
+     * @return {null}
      * @private
      */
     var showHtmlModal = function (content, beforeShow) {
-        var el = $('#designerModal');
-        el.find('.modal-content').html(content);
+        var modalElement = $('#designerModal');
+        modalElement.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
-
-        el.modal();
+        modalElement.modal();
     };
 
     /**
-     * Show confirm message with yes/no buttons
-     * @param {String} title    Title of the confirmation box
-     * @param {String} message  HTML content
-     * @param {function} ok     Callback function for yes button
+     * Show confirm message with yes/no buttons.
+     * @param {String} title Title of the confirmation box
+     * @param {String} message HTML content
+     * @param {function} ok Callback function for yes button
+     * @return {null}
      * @private
      */
     var showConfirm = function (title, message, ok) {
@@ -109,7 +127,8 @@ $(function () {
 
     /**
      * Save the dashboard details.
-     * @param callback {function}
+     * @param {function} callback Callback function when the dashboard saved successfully.
+     * @return {null}
      * @private
      * */
     var saveDashboard = function (callback) {
@@ -120,8 +139,6 @@ $(function () {
             contentType: 'application/json'
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000);
-            console.log('dashboard saved successfully');
-
             if (callback) {
                 callback();
             }
@@ -130,9 +147,7 @@ $(function () {
                 window.location.reload();
                 return;
             }
-            
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000);
-            console.log('error saving dashboard');
         });
     };
 
