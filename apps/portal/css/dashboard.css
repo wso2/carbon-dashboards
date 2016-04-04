@@ -17,18 +17,14 @@
 /**
  * Gadget maximization
  */
-.ues-component-box.ues-component-fullview {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    overflow: hidden;
-    z-index: 2000;
-    width: 100%;
-    padding: 0;
-    margin-bottom: 0;
-    margin-left: 0;
+.ues-component-fullview {
+    position: fixed !important;
+    top: 0 !important;
+    right: -15px !important;
+    bottom: 0 !important;
+    left: -15px !important;
+    width: calc(100% + 30px) !important;
+    height: calc(100% - 40px) !important;
 }
 
 /**
@@ -93,10 +89,18 @@
     font-weight: 400;
 }
 
+.gadgets-grid {
+    margin-bottom: 20px;
+}
+
+.gadget-wrapper {
+    background: none;
+}
+
 /**
  * Banner
  */
-.ues-banner-placeholder {
+[data-banner=true] {
     background: no-repeat center;
     background-size: cover;
 }
@@ -132,8 +136,7 @@
 }
 
 .auth-xs ul {
-/*    color: #000;*/
-    background-color: #fff; 
+    background-color: #fff;
 }
 
 .auth-xs li {
@@ -146,6 +149,14 @@
 
 .auth-xs li a:hover {
     background: #eee;
+}
+
+/** 
+ * Gridstack
+ */
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    left: 15px;
+    right: 15px;
 }
 
 @media screen and (min-width: 768px) {

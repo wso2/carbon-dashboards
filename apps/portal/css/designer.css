@@ -191,16 +191,8 @@
     line-height: 24px;
 }
 
-.grid-stack>.grid-stack-item>.ui-resizable-se::before, .grid-stack>.grid-stack-item>.ui-resizable-sw::before {
-    content: none;
-}
-
 .grid-stack > .grid-stack-item > .ui-resizable-se {
-    transform: none;
-    -webkit-transform: none;
-    width: 16px;
-    height: 16px;
     right: 18px;
-    bottom: 4px;
+    bottom: 2px;
 }
 
