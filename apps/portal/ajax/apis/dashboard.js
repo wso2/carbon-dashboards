@@ -51,6 +51,13 @@ gadgets.dsapi = { };
      * @private
      */
     var RPC_SERVICE_GET_QUERY_STRING = 'RPC_SERVICE_GET_QUERY_STRING';
+
+    /**
+     * RPC service name to show gadget.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_SHOW_GADGET = 'RPC_SERVICE_SHOW_GADGET';
     
     /**
      * RPC service name of gadget side callback.
@@ -127,6 +134,14 @@ gadgets.dsapi = { };
      */
     ns.getQueryString = function(param, callback) {
         requestRpcService(RPC_SERVICE_GET_QUERY_STRING, param, callback);
+    }
+
+    /**
+     * Display an already hidden gadget
+     * @return {null}
+     */
+    ns.showGadget = function() {
+        requestRpcService(RPC_SERVICE_SHOW_GADGET , null);
     }
     
     // Register callback function to get responses from the container.
