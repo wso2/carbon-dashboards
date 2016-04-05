@@ -1,16 +1,29 @@
+<%
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+%>
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
-
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
-    
     <title><%= i18n.localize("dashboard.designer")%></title>
-
 </head>
 <body>
-
     <!-- Modal -->
     <div class="modal fade" id="designerModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -35,7 +48,8 @@
         <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
             <div class="container-fluid ues-context-menu">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" 
+                            aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -95,17 +109,26 @@
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavPages', this)" title="<%=i18n.localize("pages.label")%>" id="btn-pages-sidebar">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
+                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                    onclick="updateSidebarNav('#sidebarNavPages', this)" title="<%=i18n.localize("pages.label")%>" 
+                    id="btn-pages-sidebar">
                     <i class="icon fw fw-pages"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("add.block")%>" id="btn-sidebar-layouts">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
+                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                    onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("add.block")%>" 
+                    id="btn-sidebar-layouts">
                     <i class="icon fw fw-layout"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="false" rel="sub-nav" onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="<%=i18n.localize("gadgets")%>" id="btn-sidebar-gadgets">
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
+                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                    onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="<%=i18n.localize("gadgets")%>" 
+                    id="btn-sidebar-gadgets">
                     <i class="icon fw fw-gadget"></i>
                 </a>
             </li>
@@ -118,7 +141,9 @@
         <!-- .left-sidebar -->
         <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55">
 
-            <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
+            <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
+                data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" 
+                aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
 
             <div class="nano">
                 <div class="nano-content">
@@ -129,7 +154,8 @@
 
                         <div class="add-padding-3x">
 
-                            <button type="button" class="btn btn-primary btn-stack btn-block" data-toggle="sidebar" data-target="#left-sidebar-sub" aria-expanded="false" rel="createPage">
+                            <button type="button" class="btn btn-primary btn-stack btn-block" data-toggle="sidebar" 
+                                data-target="#left-sidebar-sub" aria-expanded="false" rel="createPage">
                                 <span class="icon fw-stack fw-lg">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
@@ -214,7 +240,8 @@
             <div class="nano">
                 <div class="nano-content">
 
-                    <button class="btn btn-default close-handle" data-handle="close" data-toggle="sidebar" data-target="#left-sidebar-sub" aria-expanded="true" rel="createPage"><i class="fw fw-cancel"></i></button>
+                    <button class="btn btn-default close-handle" data-handle="close" data-toggle="sidebar" 
+                        data-target="#left-sidebar-sub" aria-expanded="true" rel="createPage"><i class="fw fw-cancel"></i></button>
 
                     <div class="add-padding-3x">
                         <%=i18n.localize("select.layout")%>
@@ -234,7 +261,9 @@
             <!-- .right-sidebar -->
             <div class="sidebar-wrapper sidebar-options" id="right-sidebar" data-side="right" data-width="235">
 
-                <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="true" rel="show-options"  onclick="updateSidebarOptions(this)"><i class="fw fw-right-arrow"></i></button>
+                <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
+                    data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" 
+                    aria-expanded="true" rel="show-options" onclick="updateSidebarOptions(this)"><i class="fw fw-right-arrow"></i></button>
 
                 <div class="nano">
                     <div class="nano-content">
@@ -249,10 +278,12 @@
             <div class="page-content">
                 <ul class="nav nav-tabs" id="designer-view-mode">
                     <li role="dashboard-view" data-view-mode="default" class="active">
-                        <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab" data-toggle="tab"><%=i18n.localize("default.view")%></a>
+                        <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab" 
+                            data-toggle="tab"><%=i18n.localize("default.view")%></a>
                     </li>
                     <li role="dashboard-view" data-view-mode="anon" class="hide">
-                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab" data-toggle="tab"><%=i18n.localize("anon.view")%></a>
+                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab" 
+                            data-toggle="tab"><%=i18n.localize("anon.view")%></a>
                     </li>
                 </ul>
                 <div class="nano">
@@ -292,56 +323,9 @@
         <button type="submit">Submit</button>
     </form>
 
-    <!-- Jquery/Jquery UI JS -->
-    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
-    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-
-    <!-- Bootstrap JS -->
-    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
-
-    <!-- Jquery Nanoscroller JS -->
-    <script src="<%=urlPrefix%>libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
-
-    <!-- Theme WSO2 JS -->
-    <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
-        
-    <script src="<%=urlPrefix%>libs/underscore-1.8.3/underscore-min.js"></script>
-
-    <!-- Gridstack -->
-    <script src="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.js"></script>
-
-    <!-- Handlebars -->
-    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
-
-    <!-- Cropper -->
-    <script src="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.js"></script>
-
-    <script src="<%=urlPrefix%>js/async.js"></script>
-    <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
-    <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
-    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
-    <script src="<%=urlPrefix%>js/ues.js"></script>
-    <script src="<%=urlPrefix%>js/ues-prefs.js"></script>
-    <% include('/controllers/includes/common-scripts.jag'); %>
-    <% include('/controllers/includes/dashboard-scripts.jag'); %>
-    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
-    <script src="<%=urlPrefix%>js/ues-store.js"></script>
-    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
-    <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
-    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
-    <script src="<%=urlPrefix%>js/designer.js"></script>
-    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
-    <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
-    <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
-    <% include('/controllers/includes/theme-portal-scripts.jag'); %>
-
     <!-- Handlebar templates -->
     <!-- Template to generate component content -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-
         <div class="ues-component gadget">
             <div class="gadget-heading ues-component-heading">
                 <h1 class="gadget-title ues-component-title truncate">:::</h1>
@@ -378,7 +362,6 @@
 
     <!-- Template to generate component toolbar -->
     <script id="ues-component-toolbar-hbs" type="text/x-handlebars-template">
-
         <div class="btn-group">
             <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
                 <i class="fw fw-configarations"></i>
@@ -395,37 +378,30 @@
 
     <!-- Template to generate banners -->
     <script id="ues-dashboard-banner-hbs" type="text/x-handlebars-template">
-
         <div class="ues-dashboard-banner-loading" style="display: none;"><%= i18n.localize('banner.loading.msg') %></div>
         <canvas id="src-canvas" class="hidden"></canvas>
         <canvas id="dest-canvas" class="hidden"></canvas>
-
         {{#if isEdit}}
-        <div class="banner-image" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
+        <div class="banner-image" data-src="<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>" 
+             style="background-image: url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>');"></div>
         {{/if}}
-
         {{#if isEditable}}
         <div class="button-panel">
-
             {{#if isAdd}}
             <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('add')%></button>
             {{/if}}
-
             {{#if isEdit}}
             <button type="button" id="btn-edit-banner" class="btn btn-primary"><%=i18n.localize('edit.button')%></button>
             <button type="button" id="btn-remove-banner" class="btn btn-danger">
                 {{#if isCustomBanner}}<%=i18n.localize('reset')%>{{else}}<%=i18n.localize('remove')%>{{/if}}
             </button>
             {{/if}}
-
             {{#if isCrop}}
             <button type="button" id="btn-save-banner" class="btn btn-primary"><%=i18n.localize('save')%></button>
             <button type="button" id="btn-cancel-banner" class="btn btn-danger"><%=i18n.localize('cancel')%></button>
             {{/if}}
-
         </div>
         {{/if}}
-
     </script>
 
     <script id="ues-components-list-hbs" type="text/x-handlebars-template">
@@ -444,7 +420,6 @@
     </script>
 
     <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
-
         {{#each pages}}
         <div class="panel panel-default{{#equals ../current/id id}} active{{/equals}}">
             <div class="panel-heading text-truncate dropdown ues-page-list-heading" role="tab" id="pagesButton{{id}}" data-toggle="collapse" data-parent="#ues-dashboard-pages" data-target="#pages{{id}}" aria-expanded="false" data-id="{{id}}">
@@ -553,7 +528,6 @@
                 {{/if}}
             </h3>
         </div>
-            
         {{#if hasComponent}}
         <div class="pull-left">
             <div class="modal-body add-margin-top-2x add-margin-bottom-2x">
@@ -599,7 +573,6 @@
         </div>
         <div class="page-actions">
             <div class="btn-group">
-
                 <button type="button" class="btn btn-default btn-bordered ues-switch-page-prev" data-page-id="{{prev/id}}" {{#if prev/available}}{{else}}disabled{{/if}}>
                     <i class="icon fw fw-left"></i>
                 </button>
@@ -618,9 +591,7 @@
     </script>
 
     <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
-
         <div class="panel-group ues-component-properties" id="accordion" role="tablist" aria-multiselectable="true" data-component="{{id}}">
-
             {{#has options}}
             <div class="panel panel-default ues-options ues-properties">
                 <div class="panel-heading text-truncate dropup" role="tab" id="optionsButtonSettings" data-toggle="collapse" data-target="#optionsOptions" aria-expanded="true">
@@ -725,6 +696,11 @@
                                             <input type="checkbox" name="no_heading"{{#if styles.no_heading}} checked="checked"{{/if}} /> <%= i18n.localize("no.heading") %>
                                         </label>
                                     </div>
+                                    <div class="checkbox">
+                                       <label>
+                                          <input type="checkbox" name="hide_gadget"{{#if styles.hide_gadget}} checked="checked"{{/if}} /> <%= i18n.localize("hide.gadget") %>
+                                       </label>
+                                   </div>
                                 </div>
                             </div>
                         </form>
@@ -772,5 +748,55 @@
             {{/has}}
         </div>
     </script>
+                        
+    <script id="ues-no-components-hbs" type="text/x-handlebars-template">
+        <%= i18n.localize("no.items.found") %>
+    </script>
+
+    <!-- Jquery/Jquery UI JS -->
+    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Jquery Nanoscroller JS -->
+    <script src="<%=urlPrefix%>libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
+
+    <!-- Theme WSO2 JS -->
+    <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+
+    <script src="<%=urlPrefix%>libs/underscore-1.8.3/underscore-min.js"></script>
+
+    <!-- Gridstack -->
+    <script src="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.js"></script>
+
+    <!-- Handlebars -->
+    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
+    <!-- Cropper -->
+    <script src="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.js"></script>
+
+    <script src="<%=urlPrefix%>js/async.js"></script>
+    <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+    <script src="<%=urlPrefix%>js/jquery.simulate.js"></script>
+    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
+    <script src="<%=urlPrefix%>js/ues.js"></script>
+    <script src="<%=urlPrefix%>js/ues-prefs.js"></script>
+    <% include('/controllers/includes/common-scripts.jag'); %>
+    <% include('/controllers/includes/dashboard-scripts.jag'); %>
+    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
+    <script src="<%=urlPrefix%>js/ues-store.js"></script>
+    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+    <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
+    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/designer.js"></script>
+    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>
+    <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
+    <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 </body>
 </html>

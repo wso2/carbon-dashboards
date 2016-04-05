@@ -265,7 +265,8 @@ function AnalyticsClient() {
      * @param recordsInfo The object which contains the record ids.
      *  e.g. recordsInfo = {
      *          tableName : "TEST",
-     *          ids : [ "id1", "id2", "id3"]
+     *          ids : [ "id1", "id2", "id3"],
+     *          columns : [column1, column2]
      *      }
      * @param callback The callback function which has one argument containing the response message.
      * @param error The callback function which has one argument which contains the error if any
@@ -273,7 +274,7 @@ function AnalyticsClient() {
     this.getRecordsByIds = function (recordsInfo, callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_GET_BY_ID + "&tableName=" + recordsInfo["tableName"],
-                        data: JSON.stringify(recordsInfo["ids"]),
+                        data: JSON.stringify({ids : recordsInfo["ids"], columns : recordsInfo["columns"]}),
                         type: HTTP_POST,
                         success: function (data) {
                             callback(data);
@@ -472,7 +473,8 @@ function AnalyticsClient() {
      *                  sortType : "ASC", // This can be ASC, DESC
      *                  reversed : "false" //optional
      *                }
-     *              ]
+     *              ],
+     *              columns : [column1, column2]
      *          }
      *      }
      * @param callback The callback function which has one argument containing the number of
@@ -809,7 +811,8 @@ function AnalyticsClient() {
      *                  sortType : "ASC", // This can be ASC, DESC
      *                  reversed : "false" //optional
      *                }
-     *              ]
+     *              ],
+     *              columns : [column1, column2]
      *          }
      * @param callback The callback function which has one argument which contains the matching records
      * @param error The callback function which has one argument which contains the error if any

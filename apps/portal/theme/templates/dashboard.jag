@@ -1,19 +1,20 @@
-<!--
-~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
-~
-~   Licensed under the Apache License, Version 2.0 (the "License");
-~   you may not use this file except in compliance with the License.
-~   You may obtain a copy of the License at
-~
-~        http://www.apache.org/licenses/LICENSE-2.0
-~
-~   Unless required by applicable law or agreed to in writing, software
-~   distributed under the License is distributed on an "AS IS" BASIS,
-~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~   See the License for the specific language governing permissions and
-~   limitations under the License.
--->
 <%
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
     // i18n
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
@@ -32,7 +33,8 @@
         isAnonView = JSON.parse(isAnonView);
 
         if((user.domain != urlDomain && urlDomain) ||
-            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) &&
+                !utils.allowed(user.roles, dashboard.permissions.viewers))) {
             isAnonView = true;
         }
     }
@@ -71,7 +73,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
     <!-- Favicon -->
@@ -113,7 +114,6 @@
     <!-- Custom theme overrides -->
     <link rel="stylesheet" href="<%=urlPrefix%><%=utils.dashboardStyles(dashboard.theme)%>">
 </head>
-
 <body class="dashboard lang_<%=request.getLocale()%>">
     <div class="nano">
         <div class="nano-content">
@@ -128,7 +128,9 @@
                         <div class="auth float-remove-xs text-center-xs text-right">
                             <div>                            
                                 <%                                   
-                                   var showEdit = user && (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) && !isMobileDevice;
+                                   var showEdit = user && (!isAnonView && (urlDomain == user.domain || 
+                                       (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) && 
+                                       !isMobileDevice;
                                    var isEdit = showEdit && user.isEditor;
                                 %>
                                 
@@ -140,11 +142,13 @@
                                     <span class="add-margin-right-2x username"><%=user.username%></span>
                                         
                                     <% if (showEdit && user.isEditor) { %>
-                                    <a href="<%=dbRoot%>?editor=true" class="ues-copy" title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>      
+                                    <a href="<%=dbRoot%>?editor=true" class="ues-copy" 
+                                        title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
 
                                     <% if (showEdit && !user.isEditor) { %>
-                                    <a href="<%=dbRoot%>?custom=true" class="ues-copy" title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>      
+                                    <a href="<%=dbRoot%>?custom=true" class="ues-copy" 
+                                        title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
                                         
                                     <!-- auth other -->
@@ -167,14 +171,17 @@
                                 <!-- View for XS -->
                                 <span class="visible-xs auth-xs">
                                     <% if (showEdit && user.isEditor) { %>
-                                        <a href="<%=dbRoot%>?editor=true" class="ues-copy" title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>      
+                                        <a href="<%=dbRoot%>?editor=true" class="ues-copy" 
+                                            title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
 
                                     <% if (showEdit && !user.isEditor) { %>
-                                        <a href="<%=dbRoot%>?custom=true" class="ues-copy" title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>      
+                                        <a href="<%=dbRoot%>?custom=true" class="ues-copy" 
+                                            title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>
                                     <% } %>
                                         
-                                    <a href="#" class="collapsed add-margin-left-2x" data-toggle="collapse" data-target="#auth-menu-items" aria-expanded="false">
+                                    <a href="#" class="collapsed add-margin-left-2x" data-toggle="collapse" 
+                                        data-target="#auth-menu-items" aria-expanded="false">
                                         <span class="fw fw-user"></span>
                                         <span class="caret"></span>
                                     </a>                
@@ -213,7 +220,8 @@
                                     var queryString = (request.getParameter('isAnonView') == 'true') ? '?isAnonView=true' : '';
 
                                 %>
-                                <a class="btn btn-default btn-bordered <%= (p.id === pageId) ? 'active': '' %>" href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a>
+                                <a class="btn btn-default btn-bordered <%= (p.id === pageId) ? 'active': '' %>" 
+                                    href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a>
                                 <%
                                 }
                                 %>
@@ -244,42 +252,10 @@
     <!--Footer -->
     <footer class="footer">
         <div class="container-fluid">
-            <p>WSO2 Dashboard Server v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script> <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
+            <p>WSO2 Dashboard Server v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script> 
+                <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
         </div>
     </footer>
-
-    <!-- Jquery/Jquery UI JS -->
-    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
-    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-
-    <!-- Bootstrap JS -->
-    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
-
-    <!-- Jquery Nanoscroller JS -->
-    <script src="<%=urlPrefix%>libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
-
-    <!-- Theme WSO2 JS -->
-    <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
-
-    <!-- Handlebars JS -->
-    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
-
-    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
-    <script src="<%=urlPrefix%>js/ues.js"></script>
-    <script src="<%=urlPrefix%>js/ues-prefs.js"></script>
-    <% include('/controllers/includes/common-scripts.jag'); %>
-    <% include('/controllers/includes/dashboard-scripts.jag'); %>
-    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
-    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
-    <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
-    <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
-    <script src="<%=urlPrefix%>js/gadget-properties.js"></script>
-    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
-    <script src="<%=urlPrefix%>js/ues-saml-at.js"></script>
-    <script src="<%=urlPrefix%>js/dashboard.js"></script>
-    <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <!-- Handlebar templates -->
     <!-- Component container -->
@@ -345,7 +321,8 @@
                             {{/equals}}
                             {{#equals type "LIST"}}
                             <label>{{title}}
-                                <textarea name="{{@key}}" class="form-control" rows="4" placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
+                                <textarea name="{{@key}}" class="form-control" rows="4" 
+                                    placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
                                 <label><%= i18n.localize("enter.your.list.entries.label")%></label>
                             </label>
                             {{/equals}}
@@ -365,7 +342,39 @@
         </div>
     </script>
 
-    <!-- Scripts -->
+    <!-- Jquery/Jquery UI JS -->
+    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+    <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Jquery Nanoscroller JS -->
+    <script src="<%=urlPrefix%>libs/nanoscroller_0.8.7/jquery.nanoscroller.min.js"></script>
+
+    <!-- Theme WSO2 JS -->
+    <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+
+    <!-- Handlebars JS -->
+    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
+    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
+    <script src="<%=urlPrefix%>js/ues.js"></script>
+    <script src="<%=urlPrefix%>js/ues-prefs.js"></script>
+    <% include('/controllers/includes/common-scripts.jag'); %>
+    <% include('/controllers/includes/dashboard-scripts.jag'); %>
+    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
+    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+    <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
+    <script src="<%=urlPrefix%>extensions/uris/store/index.js"></script>
+    <script src="<%=urlPrefix%>js/gadget-properties.js"></script>
+    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/dashboard.js"></script>
+	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>
+    <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
+
     <script>
 
         var nanoScrollerSelector = $(".nano");
@@ -384,7 +393,8 @@
         $(document).ready(function() {
             // Show banner
             if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
-                $('.ues-banner-placeholder').css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
+                $('.ues-banner-placeholder')
+                    .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
             } else {
                 $('.ues-banner-placeholder').hide();
             }
