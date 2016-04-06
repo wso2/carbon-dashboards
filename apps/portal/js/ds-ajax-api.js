@@ -49,6 +49,13 @@
      * @private
      */
     var RPC_SERVICE_GET_QUERY_STRING = 'RPC_SERVICE_GET_QUERY_STRING';
+
+    /**
+     * RPC service name fo show gadget
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_SHOW_GADGET = 'RPC_SERVICE_SHOW_GADGET';
     
     /**
      * RPC service name of gadget side callback.
@@ -212,5 +219,14 @@
             return;
         }
         sendGadgetResponse(this.f, RPC_SERVICE_GET_QUERY_STRING, queryStringObj);
+    });
+
+    // Show already Hidden Gadget
+    gadgets.rpc.register(RPC_SERVICE_SHOW_GADGET, function() {
+        var gadgetID = getGadgetId(this.f);
+        var sandbox = $('#' + gadgetID);
+        sandbox.removeClass('ues-hide-gadget');
+        sandbox.find('.ues-component-body').show();
+        sendGadgetResponse(this.f, RPC_SERVICE_SHOW_GADGET);
     });
 })();

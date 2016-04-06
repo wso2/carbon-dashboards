@@ -54,6 +54,7 @@ function AnalyticsClient() {
     var TYPE_WAIT_FOR_INDEXING_FOR_TABLE = 28;
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var TYPE_REINDEX = 30;
+    var TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES = 31;
     var HTTP_GET = "GET";
     var HTTP_POST = "POST";
     var RESPONSE_ELEMENT = "responseJSON";
@@ -264,7 +265,8 @@ function AnalyticsClient() {
      * @param recordsInfo The object which contains the record ids.
      *  e.g. recordsInfo = {
      *          tableName : "TEST",
-     *          ids : [ "id1", "id2", "id3"]
+     *          ids : [ "id1", "id2", "id3"],
+     *          columns : [column1, column2]
      *      }
      * @param callback The callback function which has one argument containing the response message.
      * @param error The callback function which has one argument which contains the error if any
@@ -272,7 +274,7 @@ function AnalyticsClient() {
     this.getRecordsByIds = function (recordsInfo, callback, error) {
         jQuery.ajax({
                         url: this.serverUrl + "?type=" + TYPE_GET_BY_ID + "&tableName=" + recordsInfo["tableName"],
-                        data: JSON.stringify(recordsInfo["ids"]),
+                        data: JSON.stringify({ids : recordsInfo["ids"], columns : recordsInfo["columns"]}),
                         type: HTTP_POST,
                         success: function (data) {
                             callback(data);
@@ -465,6 +467,14 @@ function AnalyticsClient() {
      *              query : "logFile : wso2carbon.log",
      *              start : 0,
      *              count : 10,
+     *              sortBy : [
+     *                {
+     *                  field : "timestamp",
+     *                  sortType : "ASC", // This can be ASC, DESC
+     *                  reversed : "false" //optional
+     *                }
+     *              ],
+     *              columns : [column1, column2]
      *          }
      *      }
      * @param callback The callback function which has one argument containing the number of
@@ -486,49 +496,129 @@ function AnalyticsClient() {
     };
 
     /**
-     * Returns the search count of records in a given table using lucene queries.
+     * Returns aggregated values as records in a table.
      * @param queryInfo Query information which contains the table name and search parameters.
+     * @ableName is the name of the table if which the records are being aggregated
+     * @groupByField is the field by which the aggregation is performed to "group by"
+     * @aggregateFields contains an array of object which contains the aggregating field and aggregating
+     * method and also the alias for the aggregated result value
+     * @parentPath a json array representing the group by level in "groupByField"
+     * @aggregateLevel integer representing the child category level from the parentPath. 0 will be the parentPath itself
+     * @noOfRecords No of Records to be aggregated in each group.
      * e.g.
      * queryInfo = {
      * searchParams : {
             tableName:"TEST",
-            groupByField:"single_valued_facet_field",
+            groupByField:"facet_field",
+            query : "lucene_query_to_match",
             aggregateFields:[
             {
-                fieldName:"n",
-                aggregate:"AVG",
-                alias:avg"
+                fields:["n"], //Array of field names used as variables for aggregateFunction
+                aggregate:"AVG", //Aggregate Function Name
+                alias:avg"   //Alias given to the result after aggregation
             },
             {
-                fieldName:"n",
+                fields:["n"],
                 aggregate:"MAX",
                 alias:"max"
             },
             {
-                fieldName:"n",
-                aggregate:"sum",
+                fields:["n"],
+                aggregate:"SUM",
                 alias:"sum"
             },
             {
-                fieldName:"n",
+                fields:["n"],
                 aggregate:"MIN",
                 alias:"min"
             },
             {
-                fieldName:"n",
+                fields:["n"],
                 aggregate:"COUNT",
                 alias:"count"
             }
-            ]
+            ],
+            aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself"
+            parentPath : a json array representing the group by level in "groupByField",
+            noOfRecords : 10000
          }
       }
-     * @param callback The callback function which has one argument containing the number of
-     * matched records
+     * @param callback The callback function which has one argument containing an array of
+     * aggregated records for the specified table
      * @param error The callback function which has one argument which contains the error if any
      */
     this.searchWithAggregates = function (queryInfo, callback, error) {
         jQuery.ajax({
-                        url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" + queryInfo["tableName"],
+                        url: this.serverUrl + "?type=" + TYPE_SEARCH_WITH_AGGREGATES + "&tableName=" +
+                            queryInfo["searchParams"]["tableName"],
+                        data: JSON.stringify(queryInfo["searchParams"]),
+                        type: HTTP_POST,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * Returns aggregated values as records for multiple tables.
+     * @param queryInfo Query information which contains the table name and search parameters.
+     * @ableName is the name of the table if which the records are being aggregated
+     * @groupByField is the field by which the aggregation is performed to "group by"
+     * @aggregateFields contains an array of object which contains the aggregating field and aggregating
+     * method and also the alias for the aggregated result value
+     * @aggregateLevel  integer representing the child category level from the parentPath. 0 will be the parentPath itself
+     * @parentPath  a json array representing the group by level in "groupByField"
+     * @noOfRecords No of Records to be aggregated in each group.
+     * e.g.
+     * queryInfo = {
+     * searchParams : [{
+            tableName:"TEST1",
+            groupByField:"facet_field_of_TEST1",
+            query : "lucene_query",
+            aggregateFields:[
+            {
+                fields:["n"], //Array of field names used as variables for aggregateFunction
+                aggregate:"AVG", //Aggregate Function Name
+                alias:avg"   //Alias given to the result after aggregation
+            },
+            {
+                fieldName:["n"],
+                aggregate:"MAX",
+                alias:"max"
+            }],
+            aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself",
+            parentPath : a json array representing the group by level in "groupByField",
+            noOfRecords : 10000
+         }, {
+            tableName:"TEST2",
+            groupByField:"facet_field_of_TEST2",
+            query : "lucene_query",
+            aggregateFields:[
+            {
+                fieldName:["n"],
+                aggregate:"AVG",
+                alias:avg"
+            },
+            {
+                fieldName:["n"],
+                aggregate:"MAX",
+                alias:"max"
+            }],
+            aggregateLevel : "integer representing the child category level from the parentPath. 0 will be the parentPath itself",
+            parentPath : a json array representing the group by level in "groupByField",
+            noOfRecords : 10000
+         } ]
+      }
+     * @param callback The callback function which has one argument containing an array of arrays of
+     * aggregated records for multiple tables
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.searchMultiTablesWithAggregates = function (queryInfo, callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES,
                         data: JSON.stringify(queryInfo["searchParams"]),
                         type: HTTP_POST,
                         success: function (data) {
@@ -714,7 +804,15 @@ function AnalyticsClient() {
      *              query : "field1 : value1",
      *              recordStart : 0,
      *              recordCount : 50,
-     *              scoreFunction : "scoreParamField * 2"
+     *              scoreFunction : "scoreParamField * 2",
+     *              sortBy : [
+     *                {
+     *                  field : "timestamp",
+     *                  sortType : "ASC", // This can be ASC, DESC
+     *                  reversed : "false" //optional
+     *                }
+     *              ],
+     *              columns : [column1, column2]
      *          }
      * @param callback The callback function which has one argument which contains the matching records
      * @param error The callback function which has one argument which contains the error if any

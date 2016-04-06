@@ -11,6 +11,8 @@
     var CONTENT_TYPE_JSON = "application/json";
     var AUTHORIZATION_HEADER = "Authorization";
     var USER_TOKEN = "user";
+    var TENANT_DOMAIN = "domain";
+    var CONST_AT = "@";
     var USERNAME = "username";
     var WAIT_TIME = "waitTime";
     var LOCALHOST = "localhost";
@@ -51,6 +53,7 @@
     var TYPE_WAIT_FOR_INDEXING_FOR_TABLE = 28;
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var TYPE_REINDEX = 30;
+    var TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES = 31;
     var log = new Log();
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
@@ -77,7 +80,7 @@
     } else {
         var token = session.get(USER_TOKEN);
         if (token != null) {
-            loggedInUser = token[USERNAME];
+            loggedInUser = token[USERNAME] + CONST_AT + token[TENANT_DOMAIN];
         } else {
             log.error("user is not authenticated!");
             response.status = HTTP_USER_NOT_AUTHENTICATED;
@@ -115,6 +118,7 @@
             type != TYPE_GET_STREAM_DEFINITION &&
             type != TYPE_PUBLISH_EVENTS &&
             type != TYPE_WAIT_FOR_INDEXING &&
+            type != TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES &&
             type != TYPE_GET_RECORDSTORES) {
         if (tableName == null) {
             log.error("tableName is not provided!");
@@ -274,17 +278,17 @@
             }
             case TYPE_ADD_STREAM_DEFINITION:
             {
-                result = connector.addStreamDefinition(contentAsString);
+                result = connector.addStreamDefinition(loggedInUser, contentAsString);
                 break;
             }
             case TYPE_GET_STREAM_DEFINITION:
             {
-                result = connector.getStreamDefinition(contentAsString);
+                result = connector.getStreamDefinition(loggedInUser, contentAsString);
                 break;
             }
             case TYPE_PUBLISH_EVENTS:
             {
-                result = connector.publishEvent(contentAsString);
+                result = connector.publishEvent(loggedInUser, contentAsString);
                 break;
             }
             case TYPE_GET_RECORDSTORES:
@@ -299,7 +303,12 @@
             }
             case TYPE_SEARCH_WITH_AGGREGATES:
             {
-                result = connector.searchWithAggregates(loggedInUser, contentAsString);
+                result = connector.searchWithAggregates(loggedInUser, tableName, contentAsString);
+                break;
+            }
+            case TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES:
+            {
+                result = connector.searchMultiTablesWithAggregates(loggedInUser, contentAsString);
                 break;
             }
             case TYPE_REINDEX:
