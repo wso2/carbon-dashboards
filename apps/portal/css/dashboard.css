@@ -130,6 +130,10 @@
     display: none;
 }
 
+.ues-hide-gadget.ues-component {
+     display: none;
+ }
+
 .ues-component {
     height: 100%;
 }

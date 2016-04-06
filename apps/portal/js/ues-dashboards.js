@@ -42,6 +42,11 @@
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
 
+        if (component.content.styles.hide_gadget) {
+            hideGadget(sandbox);
+        } else {
+            showGadget(sandbox);
+        }
         plugin.create(sandbox, component, ues.hub, done);
     };
 
@@ -54,6 +59,11 @@
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
+        if (component.content.styles.hide_gadget) {
+            hideGadget(container);
+        } else {
+            showGadget(container);
+        }
         plugin.update(container, component, ues.hub, done);
     };
 
@@ -68,6 +78,26 @@
         var container = $('#' + component.id);
         plugin.destroy(container, component, ues.hub, done);
     };
+
+    /**
+     * Hide gadget
+     * @param sandbox
+     */
+    var hideGadget = function (sandbox) {
+        sandbox.addClass('ues-hide-gadget');
+        sandbox.find('.ues-component-body').hide();
+
+    }
+
+    /**
+     * Show Gadget the gadget
+     * @param sandbox
+     */
+    var showGadget = function (sandbox) {
+        sandbox.removeClass('ues-hide-gadget');
+        sandbox.find('.ues-component-body').show();
+
+    }
 
     /**
      * Get a component ID.

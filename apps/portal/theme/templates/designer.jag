@@ -696,6 +696,11 @@
                                             <input type="checkbox" name="no_heading"{{#if styles.no_heading}} checked="checked"{{/if}} /> <%= i18n.localize("no.heading") %>
                                         </label>
                                     </div>
+                                    <div class="checkbox">
+                                       <label>
+                                          <input type="checkbox" name="hide_gadget"{{#if styles.hide_gadget}} checked="checked"{{/if}} /> <%= i18n.localize("hide.gadget") %>
+                                       </label>
+                                   </div>
                                 </div>
                             </div>
                         </form>
