@@ -763,9 +763,11 @@ function AnalyticsClient() {
      *          tableName : "TEST",
      *          drillDownInfo : {
      *              fieldName : "facetField1",
-     *              categoryPath : [ "category", "subCategory"]
-     *              query : "logFile : wso2carbon.log"
-     *              scoreFunction : "sqrt(weight)"
+     *              categoryPath : [ "category", "subCategory"],
+     *              query : "logFile : wso2carbon.log",
+     *              scoreFunction : "sqrt(weight)",
+     *              start : 0,
+     *              count : 10
      *          }
      *      }
      * @param callback The callback function which has one argument which contains the subcategories.
