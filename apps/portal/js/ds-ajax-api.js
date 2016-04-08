@@ -44,11 +44,11 @@
     var RPC_SERVICE_GET_ACCESS_TOKEN = 'RPC_SERVICE_GET_ACCESS_TOKEN';
     
     /**
-     * RPC service name fo get query string params.
+     * RPC service name to navigate to other page.
      * @const
      * @private
      */
-    var RPC_SERVICE_GET_QUERY_STRING = 'RPC_SERVICE_GET_QUERY_STRING';
+    var RPC_SERVICE_NAVIGATE_PAGE = 'RPC_SERVICE_NAVIGATE_PAGE';
 
     /**
      * RPC service name fo show gadget
@@ -63,9 +63,8 @@
      * @private
      */
     var RPC_SERVICE_GADGET_CALLBACK = 'RPC_SERVICE_GADGET_CALLBACK';
-    
+
     var username;
-    var queryStringObj;
     var encodeHash = false;
     
     /**
@@ -180,7 +179,7 @@
                 username = data.username;
                 sendGadgetResponse(target, RPC_SERVICE_GET_USERNAME, username);
             },
-            error: function (msg) {
+            error: function () {
                 sendGadgetResponse(target, RPC_SERVICE_GET_USERNAME, '');
             }
         });
@@ -202,24 +201,6 @@
             }
         });
     });
-    
-    // Get query string
-    gadgets.rpc.register(RPC_SERVICE_GET_QUERY_STRING, function(param) {
-        if (!queryStringObj) {
-            var queryString = window.location.search.substr(1);
-            queryStringObj = { };
-            var tokens = queryString.split('&');
-            for(var i = 0; i < tokens.length; i++) {
-                var kv = tokens[i].split('=');
-                queryStringObj[kv[0]] = kv[1];
-            }
-        }
-        if (param) {
-            sendGadgetResponse(this.f, RPC_SERVICE_GET_QUERY_STRING, queryStringObj[param]);
-            return;
-        }
-        sendGadgetResponse(this.f, RPC_SERVICE_GET_QUERY_STRING, queryStringObj);
-    });
 
     // Show already Hidden Gadget
     gadgets.rpc.register(RPC_SERVICE_SHOW_GADGET, function() {
@@ -228,5 +209,10 @@
         sandbox.removeClass('ues-hide-gadget');
         sandbox.find('.ues-component-body').show();
         sendGadgetResponse(this.f, RPC_SERVICE_SHOW_GADGET);
+    });
+
+    // Navigate to other page
+    gadgets.rpc.register(RPC_SERVICE_NAVIGATE_PAGE, function(url) {
+        window.open(url, "_self");
     });
 })();
