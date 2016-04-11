@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,32 +25,36 @@ $(function () {
     var viewers = permissions.viewers;
     var editors = permissions.editors;
     var url = dashboardsApi + '/' + dashboard.id;
-    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html() || '');
-    var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || '');
-    var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html() || '');
     var user = null;
 
+    // Pre-compiling handlebar templates
+    var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
+    var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
+    var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html());
+
     /**
-     * Show HTML modal
+     * Show HTML modal.
      * @param {String} content      HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
+     * @return {null}
      * @private
      */
     var showHtmlModal = function (content, beforeShow) {
-        var element = $('#designerModal');
-        element.find('.modal-content').html(content);
+        var modalElement = $('#designerModal');
+        modalElement.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
 
-        element.modal();
+        modalElement.modal();
     };
 
     /**
-     * Show confirm message with yes/no buttons
+     * Show confirm message with yes/no buttons.
      * @param {String} title    Title of the confirmation box
      * @param {String} message  HTML content
      * @param {function} ok     Callback function for yes button
+     * @return {null}
      * @private
      */
     var showConfirm = function (title, message, ok) {
@@ -124,7 +128,8 @@ $(function () {
 
     /**
      * Save the dashboard details.
-     * @param callback {function}
+     * @param {function} callback Callback function when the dashboard saved successfully.
+     * @return {null}
      * @private
      * */
     var saveDashboard = function (callback) {
@@ -135,7 +140,6 @@ $(function () {
             contentType: 'application/json'
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000);
-
             if (callback) {
                 callback();
             }
@@ -144,7 +148,6 @@ $(function () {
                 window.location.reload();
                 return;
             }
-
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000);
         });
     };

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ues-dashboard-settings .ues-shared-view,
 #ues-dashboard-settings .ues-shared-edit {
     margin-top: 10px;
@@ -22,7 +23,7 @@
     max-height: 200px;
     width: 100%;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     background-color: #ffffff;
 }
 
@@ -33,7 +34,7 @@
     margin-top: 6px;
 }
 
-.permission-menu-content {
+.permission-menu-content{
     display: block;
     background-color: #FFFFFF;
     width: 100%;
@@ -44,17 +45,17 @@
     line-height: 28px;
 }
 
-.permission-menu-content span {
+.permission-menu-content span{
     padding-left: 5px;
 }
 
-.permission-menu-content:hover {
+.permission-menu-content:hover{
     background-color: #191b1a;
-    color: #FFFFFF;
+    color: #fff;
 }
 
-.permission-item {
-    margin: 0 0 0 0;
+.permission-item{
+    margin: 0;
 }
 
 /**

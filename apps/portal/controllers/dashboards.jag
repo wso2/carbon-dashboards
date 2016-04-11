@@ -1,6 +1,6 @@
 <%
-/**
- * Copyright 2016 WSO2, Inc. (http://wso2.com)
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ var fresh;
         }
 
         if (userDomain !== (urlDomain || superDomain)) {
-            response.sendError(401, 'designer access not authorized of this tenant');
+            response.sendError(401, 'Designer access not authorized of this tenant');
             return;
         }
 
@@ -58,7 +58,7 @@ var fresh;
         });
 
         if (!dashboard) {
-            response.sendError(404, 'requested dashboard cannot be found');
+            response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
             return;
         }
         
@@ -73,7 +73,7 @@ var fresh;
         
             // If the original dashboard is deleted, returns 404
             if (! originalDashboard) {
-                response.sendError(404, 'requested dashboard cannot be found');
+                response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
                 return;
             }
             
@@ -89,7 +89,7 @@ var fresh;
             if (! authorized) {
                 // If there is no anon view defined send the unauthorized error, else return the anon view
                 if (!originalDashboard.isanon) {
-                    response.sendError(401, 'access to this dashboard is denied');
+                    response.sendError(401, "Access to dashboard '" + dashboardId + "' is denied");
                     return;   
                 }
                 
@@ -155,6 +155,6 @@ var fresh;
         return;
     }
 
-    response.sendError(400, 'bad dashboard request');
+    response.sendError(400, 'Bad dashboard request');
 }());
 %>

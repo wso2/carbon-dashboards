@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Functionality of the Create Dashboard defined in create.js.
+ * */
 $(function () {
     var overridden = false;
-    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
+    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
 
     /**
-     * Show HTML modal
+     * Show HTML modal.
      * @param {String} content      HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
      * @return {null}
      * @private
      */
     var showHtmlModal = function (content, beforeShow) {
-        var element = $('#designerModal');
-        element.find('.modal-content').html(content);
+        var modalElement = $('#designerModal');
+        modalElement.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
-
-        element.modal();
+        modalElement.modal();
     };
 
     /**
      * Show the information message with ok button.
-     * @param1 title {String}
-     * @param2 message {String}
+     * @param title {String}
+     * @param message {String}
+     * @return {null}
      * @private
      * */
     var showInformation = function (title, message) {
@@ -52,7 +55,7 @@ $(function () {
      * @private
      * */
     var generateUrl = function (title) {
-        title = title.substring(0, 100);
+        title = title.substring(0,100);
         return title.replace(/[^\w]/g, '-').toLowerCase();
     };
 
@@ -127,8 +130,9 @@ $(function () {
         errorElement.addClass("hide");
     };
 
-    $('#ues-dashboard-title').on("keypress", function (event) {
-        return sanitizeOnKeyPress(this, event, /[^a-z0-9-\s]/gim);
+    // Bind event handlers for dashboard title field
+    $('#ues-dashboard-title').on("keypress", function (e) {
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#title-error"));
@@ -140,8 +144,9 @@ $(function () {
         updateUrl();
     });
 
-    $('#ues-dashboard-id').on("keypress", function (event) {
-        return sanitizeOnKeyPress(this, event, /[^a-z0-9-\s]/gim);
+    // Bind event handlers for dashboard ID field
+    $('#ues-dashboard-id').on("keypress", function (e) {
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
     }).on('keyup', function () {
         overridden = overridden || true;
         if ($(this).val()) {
@@ -150,10 +155,12 @@ $(function () {
         $(this).val(generateUrl($(this).val()));
     });
 
-    $('#ues-dashboard-description').on("keypress", function (event) {
-        return sanitizeOnKeyPress(this, event, /[^a-z0-9-.\s]/gim);
+    // Bind event handlers for dashboard description field
+    $('#ues-dashboard-description').on("keypress", function (e) {
+        return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
     });
 
+    // Bind event handlers for the create button
     $('#ues-dashboard-create').on('click', function () {
         var title = $("#ues-dashboard-title");
         var id = $("#ues-dashboard-id");

@@ -1,6 +1,6 @@
 <%
-/**
- * Copyright 2005-2015 WSO2, Inc. (http://wso2.com)
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,14 +31,14 @@
         var dashboard = dashboards.findOne(vars.dashboardId);
 
         if (dashboard == null) {
-            response.sendError(404, 'unable to find the dashboard');
+            response.sendError(404, 'Unable to find the dashboard');
             return;
         }
 
-        // the user must have either edit or view permission on the dashboard to view the banner
+        // user must have either edit or view permission on the dashboard to view the banner
         if (user && !utils.allowed(user.roles, dashboard.permissions.editors) &&
                     !utils.allowed(user.roles, dashboard.permissions.viewers)) {
-            response.sendError(401, 'unauthorized to view the banner');
+            response.sendError(401, 'Unauthorized to view the banner');
             return;
         }
 
@@ -46,6 +46,6 @@
         return;
     }
 
-    response.sendError(404, 'requested file cannot be found');
+    response.sendError(404, 'Requested file not found');
 }());
 %>

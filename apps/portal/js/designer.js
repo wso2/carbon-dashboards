@@ -1,45 +1,67 @@
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 $(function () {
     var dashboard;
     var page;
     var pageType;
+    var activeComponent;
+    var breadcrumbs = [];
     var storeCache = {
-        gadget: [],
-        widget: [],
-        layout: []
+            gadget: [],
+            widget: [],
+            layout: []
     };
     var nonCategoryKeyWord = "null";
     var designerScrollTop = 0;
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
-
     var dashboardsUrl = ues.utils.tenantPrefix() + 'dashboards';
     var resolveURI = ues.dashboards.resolveURI;
     var findPage = ues.dashboards.findPage;
-    var lang = navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
+    var lang = navigator.languages ?
+        navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
+    var gadgetIds;
 
     /**
-     * Page size for assests.
+     * Number of assets to be loaded.
      * @const
-     * */
+     */
     var COMPONENTS_PAGE_SIZE = 20;
+
     /**
-     * Default dashboard flag.
+     * Default dashboard view mode.
      * @const
-     * */
+     */
     var DEFAULT_DASHBOARD_VIEW = 'default';
+
     /**
-     * Anonymous view flag.
+     * Anonymous dashboard view mode.
      * @const
-     * */
+     */
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
+
     /**
-     * Full component week flag.
+     * Gadget full view mode.
      * @const
-     * */
+     */
     var FULL_COMPONENT_VIEW = 'full';
+
     /**
-     * Default component view flag.
+     * Gadget default view mode.
      * @const
-     * */
+     */
     var DEFAULT_COMPONENT_VIEW = 'default';
     /**
      * Hidden flag
@@ -48,24 +70,24 @@ $(function () {
     var HIDDEN = "HIDDEN";
 
     /**
-     * Show HTML modal
+     * Show HTML modal.
      * @param {String} content      HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
      * @return {null}
      * @private
      */
     var showHtmlModal = function (content, beforeShow) {
-        var el = $('#designerModal');
-        el.find('.modal-content').html(content);
+        var modalElement = $('#designerModal');
+        modalElement.find('.modal-content').html(content);
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
 
-        el.modal();
+        modalElement.modal();
     };
 
     /**
-     * Show confirm message with yes/no buttons
+     * Show confirm message with yes/no buttons.
      * @param {String} title    Title of the confirmation box
      * @param {String} message  HTML content
      * @param {function} ok     Callback function for yes button
@@ -75,18 +97,18 @@ $(function () {
     var showConfirm = function (title, message, ok) {
         var content = modalConfirmHbs({title: title, message: message});
         showHtmlModal(content, function () {
-            var el = $('#designerModal');
-            el.find('#ues-modal-confirm-yes').on('click', function () {
+            var modalElement = $('#designerModal');
+            modalElement.find('#ues-modal-confirm-yes').on('click', function () {
                 if (ok && typeof ok === 'function') {
                     ok();
-                    el.modal('hide');
+                    modalElement.modal('hide');
                 }
             });
         });
     };
 
     /**
-     * Get Gridstack object
+     * Get Gridstack object.
      * @return {Object}
      * @private
      */
@@ -96,8 +118,9 @@ $(function () {
 
     /**
      * Show the information message with ok button.
-     * @param1 title {String}
-     * @param2 message {String}
+     * @param {String} title Title of the information box
+     * @param {String} message HTML content
+     * @return {null}
      * @private
      * */
     var showInformation = function (title, message) {
@@ -106,9 +129,9 @@ $(function () {
     };
 
     /**
-     * Clone JSON object
+     * Clone JSON object.
      * @param {Object} o    Object to be cloned
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     var clone = function (o) {
@@ -118,47 +141,68 @@ $(function () {
     /**
      * Precompiling Handlebar templates
      */
-    var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html() || '');
+    var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html());
 
-    var designerHeadingHbs = Handlebars.compile($('#ues-designer-heading-hbs').html() || '');
+    var designerHeadingHbs = Handlebars.compile($('#ues-designer-heading-hbs').html());
 
-    var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html() || '');
+    var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html());
 
-    var noComponentsHbs = Handlebars.compile($("#ues-no-components-hbs").html() || '');
+    var noComponentsHbs = Handlebars.compile($("#ues-no-components-hbs").html());
 
-    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html() || '');
+    var componentToolbarHbs = Handlebars.compile($("#ues-component-toolbar-hbs").html());
 
-    var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html() || '');
+    var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html());
 
-    var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html() || '');
+    var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
 
-    var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html() || '');
+    var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
-    var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html() || '');
+    var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
 
-    var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || '');
+    var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html());
 
-    var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
+    var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
 
-    var noPagesHbs = Handlebars.compile($('#ues-no-pages-hbs').html() || '');
+    var noPagesHbs = Handlebars.compile($('#ues-no-pages-hbs').html());
 
-    var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html() || '');
+    var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
 
-    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html() || '');
+    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
 
-    var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html() || '');
+    var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html());
 
     /**
-     * Generates a random ID
-     * @return {String}
+     * Generate unique gadget ID.
+     * @param {String} gadgetName Name of the gadget
+     * @return {String} Unique gadget ID
      * @private
      */
-    var randomId = function () {
-        return Math.random().toString(36).slice(2);
-    };
+    var generateGadgetId = function(gadgetName) {
+        if (!gadgetIds) {
+            // If gadget Ids list is not defined, then need to read all the gadgets and re-populate the index list.
+            gadgetIds = { };
+            $('.ues-component').each(function() {
+                var id = $(this).attr('id');
+                if (id) {
+                    var parts = id.split('-');
+                    var currentGadgetIndex = parseInt(parts.pop());
+                    var gadgetName = parts.join('-');
+                    if (!gadgetIds[gadgetName]) {
+                        gadgetIds[gadgetName] = 0;
+                    }
+                    gadgetIds[gadgetName] = Math.max(gadgetIds[gadgetName], currentGadgetIndex + 1);
+                }
+            });
+        }
+        
+        if (!gadgetIds[gadgetName]) {
+            gadgetIds[gadgetName] = 0;
+        }
+        return gadgetName + '-' + (gadgetIds[gadgetName]++);
+    }
 
     /**
-     * Initialize the nano scroller
+     * Initialize the nano scroller.
      * @return {null}
      * @private
      * */
@@ -167,17 +211,17 @@ $(function () {
     };
 
     /**
-     * Update component properties panel and save
+     * Update component properties panel and save.
      * @param {Object} sandbox JQuery wrapped sandbox HTML element
      * @return {null}
      * @private
      */
     var updateComponentProperties = function (sandbox) {
-        var notifiers = {},
-            options = {},
-            settings = {},
-            styles = {},
-            id = sandbox.data('component');
+        var notifiers = {};
+        var options = {};
+        var settings = {};
+        var styles = {};
+        var id = sandbox.data('component');
 
         saveOptions(sandbox, options);
         saveSettings(sandbox, settings);
@@ -193,14 +237,14 @@ $(function () {
     };
 
     /**
-     * Renders the component properties panel
+     * Renders the component properties panel.
      * @param {Object} component Component object
      * @return {null}
      * @private
      */
     var renderComponentProperties = function (component) {
-        var ctx = buildPropertiesContext(component, page),
-            propertiesContainer = $('.ues-component-properties-container');
+        var ctx = buildPropertiesContext(component, page);
+        var propertiesContainer = $('.ues-component-properties-container');
 
         propertiesContainer
             .html(componentPropertiesHbs(ctx))
@@ -228,7 +272,7 @@ $(function () {
     };
 
     /**
-     * Render maximized view of a gadget
+     * Render maximized view of a gadget.
      * @param {Object} component The component to be rendered
      * @param {String} view      Component view mode
      * @return {null}
@@ -244,7 +288,7 @@ $(function () {
     };
 
     /**
-     * Find an asset of the given type from the store cache
+     * Find an asset of the given type from the store cache.
      * @param {String} type The cache type
      * @param {String} id   Asset ID
      * @return {Object}
@@ -264,7 +308,7 @@ $(function () {
     };
 
     /**
-     * Find a given component in the current page
+     * Find a given component in the current page.
      * @param {String} id   The component ID
      * @return {Object}
      * @private
@@ -292,7 +336,7 @@ $(function () {
     };
 
     /**
-     * Save component properties
+     * Save component properties.
      * @param {String} id   The component ID
      * @param {Object} data Component properties data
      * @return {null}
@@ -316,8 +360,10 @@ $(function () {
 
         //save settings
         content.settings = data.settings;
+
         //save styles
         content.styles = data.styles;
+
         //save wiring
         var event;
         var listener;
@@ -336,7 +382,7 @@ $(function () {
     };
 
     /**
-     * Removes and destroys the given component from the page
+     * Removes and destroys the given component from the page.
      * @param {Object} component    The component to be removed
      * @param {function} done       Callback function
      * @return {null}
@@ -366,7 +412,7 @@ $(function () {
     };
 
     /**
-     * Destroys the given component
+     * Destroys the given component.
      * @param {Object} component    Component to be destroyed
      * @param {function} done       Callback function
      * @return {null}
@@ -382,7 +428,7 @@ $(function () {
     };
 
     /**
-     * Destroys a given list of components of an area
+     * Destroys a given list of components of an area.
      * @param {Object[]} components Components to be removed
      * @param {function} done       Callback function
      * @return {null}
@@ -407,7 +453,7 @@ $(function () {
     };
 
     /**
-     * Destroys all areas in a given page
+     * Destroys all areas in a given page.
      * @param {Object} page     The page object
      * @param {String} pageType Type of the page
      * @param {function} done   Callback function
@@ -417,6 +463,7 @@ $(function () {
     var destroyPage = function (page, pageType, done) {
         var area;
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
+
         var content = page.content[pageType];
         var tasks = [];
         for (area in content) {
@@ -441,7 +488,7 @@ $(function () {
     };
 
     /**
-     * Remove and destroys a given page
+     * Remove and destroys a given page.
      * @param {String} pid      Page ID
      * @param {type}            Type of the page
      * @param {function} done   Callback function
@@ -460,20 +507,21 @@ $(function () {
     };
 
     /**
-     * Pops up the dashboard preview page
+     * Pops up the dashboard preview page.
      * @param {Object} page     The page object
      * @return {null}
      * @private
      */
     var previewDashboard = function (page) {
-        var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ? '?isAnonView=true' : '';
+        var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ?
+            '?isAnonView=true' : '';
         var pageURL = dashboard.landing !== page.id ? page.id : '';
         var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
     };
 
     /**
-     * Generate Noty Messages as to the content given parameters
+     * Generate Noty Messages as to the content given parameters.
      * @param {String} text     The message
      * @param {function} ok     The OK function
      * @param {function} cancel The Cancel function
@@ -484,6 +532,7 @@ $(function () {
      * @private
      * */
     var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
+
         var properties = {};
         properties.text = text;
         if (ok || cancel) {
@@ -532,15 +581,14 @@ $(function () {
     };
 
     /**
-     * Saves the dashboard content
+     * Saves the dashboard content.
      * @return {null}
      * @private
      */
     var saveDashboard = function () {
-        var method = 'PUT',
-            url = dashboardsApi + '/' + dashboard.id,
-            isRedirect = false;
-
+        var method = 'PUT';
+        var url = dashboardsApi + '/' + dashboard.id;
+        var isRedirect = false;
         $.ajax({
             url: url,
             method: method,
@@ -557,27 +605,28 @@ $(function () {
                 window.location.reload();
                 return;
             }
-
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
         });
     };
 
     /**
-     * Initializes the component toolbar
+     * Initializes the component toolbar.
      * @return {null}
      * @private
      */
     var initComponentToolbar = function () {
         var designer = $('.gadgets-grid');
+
+        // event handler for maximize button
         designer.on('click', '.ues-component-box .ues-component-full-handle', function () {
-            var id = $(this).closest('.ues-component').attr('id'),
-                component = findComponent(id),
-                componentContainer = $(this).closest('.ues-component-box'),
-                gsBlock = componentContainer.parent(),
-                componentContainerId = componentContainer.attr('id'),
-                componentBody = componentContainer.find('.ues-component-body'),
-                gsContainer = $('.grid-stack'),
-                trashButton = componentContainer.find('.ues-component-actions .ues-trash-handle');
+            var id = $(this).closest('.ues-component').attr('id');
+            var component = findComponent(id);
+            var componentContainer = $(this).closest('.ues-component-box');
+            var gsBlock = componentContainer.parent();
+            var componentContainerId = componentContainer.attr('id');
+            var componentBody = componentContainer.find('.ues-component-body');
+            var gsContainer = $('.grid-stack');
+            var trashButton = componentContainer.find('.ues-component-actions .ues-trash-handle');
 
             if (component.fullViewPoped) {
                 // rendering normal view
@@ -600,7 +649,6 @@ $(function () {
                         renderMaxView(component, DEFAULT_COMPONENT_VIEW);
                         component.fullViewPoped = false;
                     });
-
                 $(this)
                     .attr('title', $(this).data('maximize-title'))
                     .find('i.fw')
@@ -630,38 +678,40 @@ $(function () {
                         renderMaxView(component, FULL_COMPONENT_VIEW);
                         component.fullViewPoped = true;
                     });
-
                 $(this)
                     .attr('title', $(this).data('minimize-title'))
                     .find('i.fw')
                     .removeClass('fw-expand')
                     .addClass('fw-contract');
+
                 componentBody.hide();
             }
             initNanoScroller();
         });
 
+        // event handler for properties button
         designer.on('click', '.ues-component-box .ues-component-properties-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
         });
 
+        // event handler for trash button
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
             var that = $(this);
-            var hbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html() || '');
+            var confirmDeleteBlockHbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html());
             var hasComponent = false;
-
             if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
                 hasComponent = true;
             }
 
-            showHtmlModal(hbs({hasComponent: hasComponent}), function () {
+            showHtmlModal(confirmDeleteBlockHbs({ hasComponent: hasComponent }), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
                     var componentBox = that.closest('.ues-component-box');
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
+
                     if (id) {
                         removeComponent(findComponent(id), function (err) {
                             if (err) {
@@ -685,7 +735,7 @@ $(function () {
     };
 
     /**
-     * Return the ID of the page
+     * Return the ID of the page.
      * @return {String}     ID of the page
      * @private
      */
@@ -694,7 +744,7 @@ $(function () {
     };
 
     /**
-     * Renders the component toolbar of a given component
+     * Renders the component toolbar of a given component.
      * @param {Object} component
      * @return {null}
      * @private
@@ -706,7 +756,7 @@ $(function () {
     };
 
     /**
-     * Updates the styles of a given store asset
+     * Updates the styles of a given store asset.
      * @param {Object} asset
      * @return {null}
      * @private
@@ -722,14 +772,14 @@ $(function () {
     };
 
     /**
-     * Creates a component in the given container
+     * Creates a component in the given container.
      * @param {Object} container
      * @param {Object} asset
      * @return {null}
      * @private
      */
     var createComponent = function (container, asset) {
-        var id = randomId();
+        var id =  generateGadgetId(asset.id);
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -751,7 +801,7 @@ $(function () {
     };
 
     /**
-     * Triggers update hook of a given component
+     * Triggers update hook of a given component.
      * @param {String} id   Component ID
      * @return {null}
      * @private
@@ -765,7 +815,7 @@ $(function () {
     };
 
     /**
-     * Builds up the component notifiers
+     * Builds up the component notifiers.
      * @param {Object[]} notifiers  List of events
      * @param {Object} current      Current component
      * @param {Object} component    Other component
@@ -799,7 +849,7 @@ $(function () {
     };
 
     /**
-     * Builds up the area notifiers
+     * Builds up the area notifiers.
      * @param {Object[]} notifiers  List of events
      * @param {Object} component    The component
      * @param {Object[]} components All components
@@ -815,10 +865,10 @@ $(function () {
     };
 
     /**
-     * Builds up the page notifiers
+     * Builds up the page notifiers.
      * @param {Object} component    The component
      * @param {Object} page         The page
-     * @returns {Object[]} Notifiers
+     * @returns {Array} Notifiers
      * @private
      */
     var pageNotifiers = function (component, page) {
@@ -835,10 +885,10 @@ $(function () {
     };
 
     /**
-     * Find matching notifiers for a given component
-     * @param component
-     * @param page
-     * @returns {Array}
+     * Find matching notifiers for a given component.
+     * @param {Object} component Component
+     * @param {Object} page Page
+     * @returns {Array} Notiifiers
      * @private
      */
     var findNotifiers = function (component, page) {
@@ -1076,7 +1126,7 @@ $(function () {
     };
 
     /**
-     * Show error style for given element
+     * Show error style for given element.
      * @param {Object} element
      * @param {Object} errorElement
      * @return {null}
@@ -1093,7 +1143,7 @@ $(function () {
     };
 
     /**
-     * Hide error style for given element
+     * Hide error style for given element.
      * @param {Object} element
      * @param {Object} errorElement
      * @return {null}
@@ -1109,45 +1159,40 @@ $(function () {
     };
 
     /**
-     * Update page options
-     * @param {Object} e
+     * Update page options.
+     * @param {Object} e Event object
      * @return {Boolean}
      * @private
      */
     var updatePageProperties = function (e) {
 
-        var titleError = $("#title-error"),
-            idError = $("#id-error"),
-            hasError = false,
-            id = $('input[name=id]', e),
-            title = $('input[name=title]', e),
-            idVal = $.trim(id.val()),
-            titleVal = $.trim(title.val());
+        var titleError = $("#title-error");
+        var idError = $("#id-error");
+        var hasError = false;
+        var id = $('input[name=id]', e);
+        var title = $('input[name=title]', e);
+        var idVal = $.trim(id.val());
+        var titleVal = $.trim(title.val());
 
         // validate inputs
         hideInlineError(id, idError);
         hideInlineError(title, titleError);
-
         if (!idVal) {
             showInlineError(id, idError);
             hasError = true;
         }
-
         if (!titleVal) {
             showInlineError(title, titleError);
             hasError = true;
         }
-
         if (hasError) {
             return false;
         }
-
-        var landing = $('input[name=landing]', e),
-            toggleView = $('#toggle-dashboard-view'),
-            anon = $('input[name=anon]', e),
-            fluidLayout = $('input[name=fluidLayout]', e),
-            hasAnonPages = checkForAnonPages(idVal);
-
+        var landing = $('input[name=landing]', e);
+        var toggleView = $('#toggle-dashboard-view');
+        var anon = $('input[name=anon]', e);
+        var fluidLayout = $('input[name=fluidLayout]', e);
+        var hasAnonPages = checkForAnonPages(idVal);
         var fn = {
             id: function () {
                 if (checkForPagesById(idVal) && page.id != idVal) {
@@ -1201,8 +1246,8 @@ $(function () {
                 } else {
                     if (hasAnonPages && dashboard.landing == idVal) {
                         $(anon).prop("checked", true);
-                        showInformation("Cannot Remove The Anonymous View",
-                            "Cannot remove the anonymous view of landing page when there are pages with anonymous views");
+                        showInformation("Cannot Remove The Anonymous View", "Cannot remove the anonymous view of " +
+                            "landing page when there are pages with anonymous views");
                     } else {
                         page.isanon = false;
 
@@ -1212,7 +1257,8 @@ $(function () {
                             ues.global.dbType = DEFAULT_DASHBOARD_VIEW;
                         }
 
-                        // the anon layout should not be deleted since the gadgets in this layout is already there in the content
+                        // the anon layout should not be deleted since the gadgets in this layout is already there in
+                        // the content
                         $('#designer-view-mode li[data-view-mode=anon]').addClass("hide");
                         page.content.anon = {};
                     }
@@ -1228,7 +1274,6 @@ $(function () {
             updatePagesList();
             saveDashboard();
         } else {
-            console.error('Unable to find the property.')
         }
 
         return true;
@@ -1259,7 +1304,7 @@ $(function () {
     };
 
     /**
-     * Save page options of the component
+     * Save page options of the component.
      * @param {Object} sandbox  Sandbox element
      * @param {Object} options  Options object
      * @return {null}
@@ -1293,7 +1338,7 @@ $(function () {
     };
 
     /**
-     * Save settings of the component
+     * Save settings of the component.
      * @param {Object} sandbox  Sandbox element
      * @param {Object} settings Settings object
      * @return {null}
@@ -1315,7 +1360,7 @@ $(function () {
     };
 
     /**
-     * Save styles of the component
+     * Save styles of the component.
      * @param {Object} sandbox  Sandbox element
      * @param {Object} styles   Styles object
      * @return {null}
@@ -1340,9 +1385,9 @@ $(function () {
     };
 
     /**
-     * Save notifiers of the component
+     * Save notifiers of the component.
      * @param {Object} sandbox  Sandbox element
-     * @param notifiers         Notifiers object
+     * @param {Array} notifiers Notifiers object
      * @return {null}
      * @private
      */
@@ -1371,7 +1416,7 @@ $(function () {
     var pagingHistory = {};
 
     /**
-     * Check whether given category is already existing or not
+     * Check whether given category is already existing or not.
      * @param {Object} categories   All the categories
      * @param {String} category     Category to be checked
      * @return {Boolean}
@@ -1492,7 +1537,7 @@ $(function () {
     };
 
     /**
-     * Initializes the components
+     * Initializes the components.
      * @return {null}
      * @private
      */
@@ -1510,7 +1555,7 @@ $(function () {
     };
 
     /**
-     * Initializes the designer
+     * Initializes the designer.
      * @return {null}
      * @private
      */
@@ -1533,7 +1578,7 @@ $(function () {
     };
 
     /**
-     * Load layouts for workspace
+     * Load layouts for workspace.
      * @returns {null}
      * @private
      * */
@@ -1549,28 +1594,33 @@ $(function () {
     };
 
     /**
-     * Initialize the layout for the workspace
+     * Initialize the layout for the workspace.
      * @returns {null}
      * @private
      * */
     var initLayoutWorkspace = function () {
+
         $('#ues-page-layouts').on('click', '.thumbnail', function (e) {
             e.preventDefault();
             var options = pageOptions();
+
             createPage(options, $(this).data('id'), function (err) {
+
                 // reload pages list
                 updatePagesList();
+
                 // hide the sidebar
                 $('#sidebarNavPages button[rel="createPage"]').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
+
             });
         });
         loadLayouts();
     };
 
     /**
-     * Initializes the store
+     * Initializes the store.
      * @return {null}
      * @private
      */
@@ -1594,7 +1644,7 @@ $(function () {
     };
 
     /**
-     * Initialize the designer menu
+     * Initialize the designer menu.
      * @return {null}
      * @private
      */
@@ -1627,14 +1677,18 @@ $(function () {
                 ues.global.isSwitchToNewPage = false;
             })
             .on('click', '.ues-delete-page', function () {
+
                 // delete dashboard page
                 var pid = $(this).attr('data-page-id');
+
                 showConfirm('Deleting the page',
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
                         removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                             var pages = dashboard.pages;
+
                             updatePagesList(pages);
+
                             // if the landing page was deleted, make the first page to be the landing page
                             if (dashboard.pages.length) {
                                 if (pid == dashboard.landing) {
@@ -1649,6 +1703,7 @@ $(function () {
                                 }
                             }
 
+
                             // save the dashboard
                             saveDashboard();
                             renderPage(dashboard.landing);
@@ -1661,7 +1716,6 @@ $(function () {
         // load page properties
         pagesMenu.on("click", '.ues-page-list-heading', function (e) {
             var pid = $(this).data('id');
-
             // do not re-render if the user clicks on the current page name
             if (pid != page.id) {
                 ues.global.isSwitchToNewPage = true;
@@ -1764,14 +1818,14 @@ $(function () {
     };
 
     /**
-     * Initialized adding block function
+     * Initialized adding block function.
      * @return {null}
      */
     var initAddBlock = function () {
 
         var dummySizeChanged = function () {
-            var dummy = $('.ues-dummy-gadget'),
-                unitSize = parseInt(dummy.data('unit-size'));
+            var dummy = $('.ues-dummy-gadget');
+            var unitSize = parseInt(dummy.data('unit-size'));
 
             dummy.css({
                 width: unitSize * parseInt($('#block-width').val()),
@@ -1788,9 +1842,9 @@ $(function () {
         // add block handler
         $('#ues-add-block-btn').on('click', function () {
 
-            var width = $('#block-width').val() || 0,
-                height = $('#block-height').val() || 0,
-                id = guid();
+            var width = $('#block-width').val() || 0;
+            var height = $('#block-height').val() || 0;
+            var id = guid();
 
             if (width == 0 || height == 0) {
                 return;
@@ -1807,15 +1861,12 @@ $(function () {
             grid: 18,
             containment: '.ues-block-container',
             resize: function (e, ui) {
-
-                var height = $(this).height() / 18,
-                    width = $(this).width() / 18;
-
+                var height = $(this).height() / 18;
+                var width = $(this).width() / 18;
                 $('#block-width').val(width);
                 $('#block-height').val(height);
             }
         });
-
         $('#block-width').val($('.ues-dummy-gadget').width() / 18);
         $('#block-height').val($('.ues-dummy-gadget').height() / 18);
     };
@@ -1836,13 +1887,13 @@ $(function () {
         initAddBlock();
 
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
-            showInformation("Received Edit Permission",
-                "You have given edit permission for this dashboard. Please reset the dashboard to receive the permission.");
+            showInformation("Received Edit Permission", "You have given edit permission for this dashboard. Please " +
+                "reset the dashboard to receive the permission.");
         }
     };
 
     /**
-     * Initializes the layout listeners
+     * Initializes the layout listeners.
      * @return {null}
      * @private
      */
@@ -1850,10 +1901,8 @@ $(function () {
         $('.gadgets-grid').find('.grid-stack-item:not([data-banner=true]) .ues-component-box').droppable({
             hoverClass: 'ui-state-hover',
             drop: function (event, ui) {
-
-                var id = ui.helper.data('id'),
-                    type = ui.helper.data('type');
-
+                var id = ui.helper.data('id');
+                var type = ui.helper.data('type');
                 if (!hasComponents($(this))) {
                     createComponent($(this), findStoreCache(type, id));
                 }
@@ -1872,7 +1921,7 @@ $(function () {
     };
 
     /**
-     * Update the page list as changes happened to the pages
+     * Update the page list as changes happened to the pages.
      * @param {Object} current
      * @param {Object} pages
      * @param {String} landing
@@ -1901,6 +1950,7 @@ $(function () {
      * @private
      */
     var createPage = function (options, lid, done) {
+
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
@@ -1922,6 +1972,7 @@ $(function () {
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
+
             saveDashboard();
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
@@ -1963,10 +2014,11 @@ $(function () {
     };
 
     /**
-     * Update the layout after modification
+     * Update the layout after modification.
      * @return {null}
      */
     var updateLayout = function () {
+
         // extract the layout from the designer and save it
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
@@ -1991,31 +2043,28 @@ $(function () {
             }
         }
 
-        var json = {blocks: serializedGrid},
-            id, i;
-
+        var json = { blocks: serializedGrid };
+        var id;
+        var i;
         // find the current page index
         for (i = 0; i < ues.global.dashboard.pages.length; i++) {
             if (ues.global.dashboard.pages[i].id === page.id) {
                 id = i;
             }
         }
-
         if (typeof id === 'undefined') {
-            throw 'specified page : ' + page.id + ' cannot be found';
+            throw 'Specified page : ' + page.id + ' cannot be found';
         }
-
         if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
             ues.global.dashboard.pages[id].layout.content.anon = json;
         } else {
             ues.global.dashboard.pages[id].layout.content.loggedIn = json;
         }
-
         saveDashboard();
     };
 
     /**
-     * Generate GUID
+     * Generate GUID.
      * @returns {String}
      * @private
      */
@@ -2030,11 +2079,12 @@ $(function () {
     }
 
     /**
-     * Show page layouts selection pane
+     * Show page layouts selection pane.
      * @returns {null}
      * @private
      */
     var showCreatePage = function () {
+
         // if the left panel is closed, click on the pages button
         if (!$('#left-sidebar').hasClass('toggled')) {
             $('#btn-pages-sidebar').click()
@@ -2047,21 +2097,26 @@ $(function () {
     }
 
     /**
-     * Renders the given page in the designer view
+     * Renders the given page in the designer view.
      * @param {String} pid      Page ID
      * @param {function} done   Callback function
      * @return {null}
      * @private
      */
     var renderPage = function (pid, done) {
+        gadgetIds = undefined;
+
         // if no pages found, display a message
         if (!dashboard.pages.length) {
+
             $('#ues-dashboard-preview-link').hide();
+
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
                     showCreatePage();
                 });
+
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
 
@@ -2098,10 +2153,10 @@ $(function () {
 
         // render page header
         var currentPageIndex = 0;
-        for (; currentPageIndex < dashboard.pages.length && dashboard.pages[currentPageIndex].id != pid; currentPageIndex++);
-
-        var hasPrevPage = currentPageIndex > 0,
-            hasNextPage = currentPageIndex < dashboard.pages.length - 1;
+        for (; currentPageIndex < dashboard.pages.length && dashboard.pages[currentPageIndex].id != pid;
+               currentPageIndex++);
+        var hasPrevPage = currentPageIndex > 0;
+        var hasNextPage = currentPageIndex < dashboard.pages.length - 1;
 
         $('.page-header').html(headerContent = designerHeadingHbs({
             id: page.id,
@@ -2119,12 +2174,12 @@ $(function () {
         }));
 
         ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
+
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
             });
             listenLayout();
-
             $('.grid-stack').gridstack({
                 width: 12,
                 animate: true,
@@ -2139,51 +2194,47 @@ $(function () {
                 if (container) {
                     container.find('.ues-component-body').hide();
                 }
-
             }).on('resizestop', function (e, ui) {
                 // re-render component on stop resizing the component
                 var container = $(ui.element).find('.ues-component');
                 if (container) {
-                    var gsItem = container.closest('.grid-stack-item'),
-                        node = gsItem.data('_gridstack_node'),
-                        gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height')),
-                        height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-
+                    var gsItem = container.closest('.grid-stack-item');
+                    var node = gsItem.data('_gridstack_node');
+                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
                     container.closest('.ues-component-box').attr('data-height', height);
-
                     container.find('.ues-component-body').show();
                     if (container.attr('id')) {
                         updateComponent(container.attr('id'));
                     }
                 }
+
                 updateLayout();
+
             });
 
             $('.gadgets-grid [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
-
             if (!done) {
                 return;
             }
-
             done(err);
         }, true);
-
         updatePagesList();
         initBanner();
     };
 
     /**
-     * Check for the autogenerated name to stop repeating the same name
+     * Check for the auto-generated name to stop repeating the same name.
      * @param {String} prefix
      * @param {Number} pid
      * @return {Number}
      * @private
      * */
     var checkForExistingPageNames = function (prefix, pid) {
-        var i,
-            pages = dashboard.pages,
-            length = pages.length,
-            page = prefix + pid;
+        var i;
+        var pages = dashboard.pages;
+        var length = pages.length;
+        var page = prefix + pid;
 
         for (i = 0; i < length; i++) {
             if (pages[i].id === page) {
@@ -2197,7 +2248,7 @@ $(function () {
     };
 
     /**
-     * Build up the page options for the given type of page
+     * Build up the page options for the given type of page.
      * @param {String} type
      * @returns {{id: string, title: string}}
      * @private
@@ -2220,7 +2271,9 @@ $(function () {
         var pid = 0;
         var prefix = 'page';
         var titlePrefix = 'Page ';
+
         pid = checkForExistingPageNames(prefix, pid);
+
         return {
             id: prefix + pid,
             title: titlePrefix + pid
@@ -2228,15 +2281,17 @@ $(function () {
     };
 
     /**
-     * Initializes the dashboard
+     * Initializes the dashboard.
      * @param {Object} db   Dashboard object
      * @param {String} page Page ID
      * @returns {null}
      * @private
      */
     var initDashboard = function (db, page) {
+
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
+
         if (pages.length > 0) {
             renderPage(page || db.landing || pages[0].id);
         } else {
@@ -2245,21 +2300,20 @@ $(function () {
     };
 
     /**
-     * Load the content within the banner placeholder
-     * @returns {null}
+     * Load the content within the banner placeholder.
+     * @return {null}
      */
     var loadBanner = function () {
+
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
                 globalBannerExists: false,
                 customBannerExists: false
             };
 
-        var $placeholder = $('.ues-banner-placeholder'),
-            customDashboard = ues.global.dashboard.isUserCustom || false,
-            banner = ues.global.dashboard.banner;
-
+        var $placeholder = $('.ues-banner-placeholder'); 
+        var customDashboard = ues.global.dashboard.isUserCustom || false; 
+        var banner = ues.global.dashboard.banner;
         var bannerExists = banner.globalBannerExists || banner.customBannerExists;
-
         // create the view model to be passed to handlebar
         var data = {
             isAdd: !bannerExists && !banner.cropMode,
@@ -2272,18 +2326,19 @@ $(function () {
         $placeholder.html(bannerHbs(data));
 
         // display the image
-        var img = $placeholder.find('.banner-image');
+        var bannerImage = $placeholder.find('.banner-image');
         if (bannerExists) {
-            img.css('background-image', "url('" + img.data('src') + '?rand=' + Math.floor(Math.random() * 100000) + "')").show();
+            bannerImage.css('background-image', 
+                "url('" + bannerImage.data('src') + '?rand=' + Math.floor(Math.random() * 100000) + "')").show();
         } else {
-            img.hide();
+            bannerImage.hide();
         }
     };
 
     /**
-     * Change event handler for the banner file control
-     * @param {Object} e
-     * @returns {null}
+     * Change event handler for the banner file control.
+     * @param {Object} e Event object
+     * @return {null}
      */
     var bannerChanged = function (e) {
         var file = e.target.files[0];
@@ -2301,27 +2356,22 @@ $(function () {
         $('.ues-banner-placeholder button').prop('disabled', true);
         $('.ues-dashboard-banner-loading').show();
 
-        var $placeholder = $('.ues-banner-placeholder'),
-            srcCanvas = document.getElementById('src-canvas'),
-            $srcCanvas = $(srcCanvas),
-            img = new Image(),
-            width = $placeholder.width(),
-            height = $placeholder.height();
-
+        var $placeholder = $('.ues-banner-placeholder'); 
+        var srcCanvas = document.getElementById('src-canvas'); 
+        var $srcCanvas = $(srcCanvas); 
+        var img = new Image(); 
+        var width = $placeholder.width(); 
+        var height = $placeholder.height();
         // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
         $srcCanvas.cropper('destroy');
-
         // draw the selected image in the source canvas and initialize cropping
-        var srcCtx = srcCanvas.getContext('2d'),
-            objectUrl = URL.createObjectURL(file);
-
+        var srcCtx = srcCanvas.getContext('2d'); 
+        var objectUrl = URL.createObjectURL(file);
         img.onload = function () {
             // draw the uploaded image on the canvas
             srcCanvas.width = img.width;
             srcCanvas.height = img.height;
-
             srcCtx.drawImage(img, 0, 0);
-
             // bind the cropper
             $srcCanvas.cropper({
                 aspectRatio: width / height,
@@ -2332,23 +2382,19 @@ $(function () {
                 dragCrop: false,
                 cropBoxMovable: false,
                 cropBoxResizable: true,
-
                 crop: function (e) {
                     // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                    var cropData = $srcCanvas.cropper('getData'),
-                        destCanvas = document.getElementById('dest-canvas'),
-                        destCtx = destCanvas.getContext('2d');
-
+                    var cropData = $srcCanvas.cropper('getData'); 
+                    var destCanvas = document.getElementById('dest-canvas');
+                    var destCtx = destCanvas.getContext('2d');
                     destCanvas.width = width;
                     destCanvas.height = height;
-
-                    destCtx.drawImage(img, Math.max(cropData.x, 0), Math.max(cropData.y, 0), cropData.width, cropData.height, 0, 0, destCanvas.width, destCanvas.height);
-
+                    destCtx.drawImage(img, Math.max(cropData.x, 0), Math.max(cropData.y, 0), cropData.width,
+                        cropData.height, 0, 0, destCanvas.width, destCanvas.height);
                     var dataUrl = destCanvas.toDataURL('image/jpeg');
                     $('#banner-data').val(dataUrl);
                 }
             });
-
             $('.ues-banner-placeholder button').prop('disabled', false);
             $('.ues-dashboard-banner-loading').hide();
         };
@@ -2356,12 +2402,13 @@ $(function () {
     };
 
     /**
-     * Initialize the banner
-     * @returns {null}
+     * Initialize the banner.
+     * @return {null}
      */
     var initBanner = function () {
         loadBanner();
-        // bind a handler to the change event of the file element (removing the handler initially to avoid multiple binding to the same handler)
+        // bind a handler to the change event of the file element (removing the handler initially to avoid multiple
+        // binding to the same handler)
         var fileBanner = document.getElementById('file-banner');
         fileBanner.removeEventListener('change', bannerChanged);
         fileBanner.addEventListener('change', bannerChanged, false);
@@ -2406,15 +2453,20 @@ $(function () {
                     type: $form.attr('method'),
                     data: {data: ''},
                 }).success(function (d) {
+
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
                     // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.customBannerExists = false;
                     }
+
                     ues.global.dashboard.banner.cropMode = false;
+
                     loadBanner();
                 });
+
             } else {
                 // remove the banner
                 $.ajax({
@@ -2422,6 +2474,7 @@ $(function () {
                     type: 'DELETE',
                     dataType: 'json'
                 }).success(function (d) {
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
                         ues.global.dashboard.banner.customBannerExists = false;
@@ -2437,6 +2490,7 @@ $(function () {
 
     initUI();
     initDashboard(ues.global.dashboard, ues.global.page);
+
     ues.dashboards.save = saveDashboard;
 });
 
@@ -2445,45 +2499,50 @@ var nanoScrollerSelector = $(".nano");
 nanoScrollerSelector.nanoScroller();
 
 /**
- * Update sidebar
+ * Update sidebar.
  * @param {String} view     Selector of the sidebar pane
  * @param {Object} button   Event source
+ * @return {null}
  */
 function updateSidebarNav(view, button) {
     var target = $(button).data('target');
     $(view).show();
     $(view).siblings().hide();
+
     if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
-    }
-    else {
+    } else {
         $('#left-sidebar-sub').show();
     }
+
     nanoScrollerSelector[0].nanoscroller.reset();
 }
 
 /**
- * Update the UI when closing the right sidebar
+ * Update the UI when closing the right sidebar.
  * @param {Object} button       Event source
+ * @return {null}
  */
 function updateSidebarOptions(button) {
+
     var target = $(button).data('target');
+
     $('.gadget').removeClass('active');
     setTimeout(function () {
         if ($(target).hasClass('toggled')) {
             $(button).closest('.gadget').addClass('active');
             $(button).closest('.gadget').removeClass('deactive');
             $('.gadget:not(.active)').addClass('deactive');
-        }
-        else {
+        } else {
             $('.gadget').removeClass('active').removeClass('deactive');
         }
     }, 5);
 }
 
 /**
- * Toggle caret when sidebar toggles
- * @param {*} e
+ * Toggle caret when sidebar toggles.
+ * @param {*} e Event object
+ * @return {null}
  */
 function toggleCaret(e) {
     $(e.target)
@@ -2514,9 +2573,10 @@ $('.gadgets-grid').on({
 }, '.ues-component');
 
 /**
- * Toggle gadget heading when no heading is activated
+ * Toggle gadget heading when no heading is activated.
  * @param {Object} source       Event source
  * @param {Boolean} show        Flag
+ * @return {null}
  */
 function toggleHeading(source, show) {
     if (source.hasClass('ues-no-heading')) {
@@ -2531,18 +2591,16 @@ function toggleHeading(source, show) {
 
 // Enforce min/max values of number fields
 $('input[type=number]').on('change', function () {
-    var input = $(this);
-    var max = input.attr('max');
-    var min = input.attr('min');
+        var input = $(this);
+        var max = input.attr('max');
+        var min = input.attr('min');
     if (input.val().trim() == '') {
         return;
     }
-
     var value = parseInt(input.val());
     if (max !== '' && !isNaN(max) && value > parseInt(max)) {
         input.val(max);
     }
-
     if (min !== '' && !isNaN(min) && value < parseInt(min)) {
         input.val(min);
     }

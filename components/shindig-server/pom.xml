@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>1.0.14-SNAPSHOT</version>
+        <version>1.0.15-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -34,6 +34,10 @@
             <artifactId>shindig-server</artifactId>
             <type>war</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>shindig-wso2-features</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -43,6 +47,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <packagingExcludes>WEB-INF/lib/slf4j-*.jar</packagingExcludes>
+                    <webXml>src/main/resources/web.xml</webXml>
                 </configuration>
             </plugin>
         </plugins>

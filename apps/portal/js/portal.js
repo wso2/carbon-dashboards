@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 WSO2, Inc. (http://wso2.com)
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 $(function () {
+
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
+    var dashboards = [];
+    var isStillLoading = false;
+    var nextStart = 0;
+    var hasMore = true;
+
+    /**
+     * Page count.
+     * @const
+     */
+    var PAGE_COUNT = 10;
+
+    // Pre-compiling handlebar templates
     var dashboardsListHbs = Handlebars.compile($("#ues-dashboards-list-hbs").html());
     var dashboardThumbnailHbs = Handlebars.compile($("#ues-dashboard-thumbnail-hbs").html());
     var dashboardConfirmHbs = Handlebars.compile($("#ues-dashboard-confirm-hbs").html());
     var dashboardsEmptyHbs = Handlebars.compile($("#ues-dashboards-empty-hbs").html());
     Handlebars.registerPartial('ues-dashboard-thumbnail-hbs', dashboardThumbnailHbs);
-    var dashboards = [];
-    var isStillLoading = false;
-    var nextStart = 0;
-    var PAGE_COUNT = 10;
-    var hasMore = true;
 
     /**
      * Find the dashboard using dashboard id.
@@ -135,11 +143,11 @@ $(function () {
             var dashboard = findDashboard(id);
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
         });
-
-        portal.on('click', '.ues-view:not(.disable)', function (e) {
+        
+        portal.on('click', '.ues-view:not(.disable)', function(e) {
             e.preventDefault();
             window.open($(this).attr('href'), '_blank');
-        });
+        })
 
         $(window).scroll(function () {
             var win = $(window);

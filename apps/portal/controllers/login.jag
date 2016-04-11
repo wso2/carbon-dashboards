@@ -1,6 +1,6 @@
 <%
-/**
- * Copyright 2016 WSO2, Inc. (http://wso2.com)
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var message, 
-    dest;
+
+var message;
+var dest;
 (function () {
-    var usr, 
-        user, 
-        username, 
-        password, 
-        carbon, 
-        log = new Log(), 
-        method = request.getMethod(), 
-        configs = require('/configs/portal.js').config();
-    
+    var usr;
+    var user;
+    var username;
+    var password;
+    var carbon;
+    var log = new Log();
+    var method = request.getMethod();
+    var configs = require('/configs/portal.js').config();
     dest = request.getParameter('destination');
 
     if (method === 'POST') {
-        
         // Sanitize the dest. URL to prevent redirecting to malicious websites
         if (dest) {
-
-            // Check whether the dest. URL starts with either http:// or https://. If so remove the authority and ger the rest of the URL.
+            // Check whether the dest. URL starts with either http:// or https://. If so remove the authority and get
+            // the rest of the URL.
             if (/^https?:\/\//i.test(dest)) {
                 var url = new Packages.java.net.URL(dest), 
                     authority = url.getAuthority();            
                 dest = dest.substring(dest.indexOf(authority) + authority.length());
             }
-
             // Check whether the dest. URL starts with '/'. If not prepend the '/'.
             if (! /^\//i.test(dest)) {
                 dest = '/' + dest;
             }
-
             // Check whether the dest. URL starts with '/portal'. if not set the url to '/portal'.
             if (! /^\/portal/i.test(dest)) {
                 dest = '/portal';
@@ -54,11 +51,9 @@ var message,
         carbon = require('carbon');
         username = request.getParameter('username');
         user = carbon.server.tenantUser(username);
-        
         if (user.tenantId !== -1) {
             usr = require('/modules/user.js');
             password = request.getParameter('password');
-        
             if (usr.login(username, password)) {
                 //authorize the backend API too
                 var api = require('/modules/api.js');
@@ -78,7 +73,6 @@ var message,
                 return;
             }
         }
-        
         message = 'incorrect.login.message';
         include(utils.resolvePath('templates/login.jag'));
     }
@@ -114,5 +108,4 @@ var message,
             copyFile(source, destination);
         }
     }
-    
 }()); %>
