@@ -35,12 +35,12 @@ var originalURI;
         var newURL = request.getRequestURL().replace(request.getLocalPort(), 9443 + (request.getLocalPort()-9763));
         newURL = newURL.replace("http","https");
         response.sendRedirect(newURL);
-        if(log.isDebugEnabeld()) {
+        if(log.isDebugEnabled()) {
             log.debug("login request is re-directed to " + newURL);
         }
         return;
     }
-    
+
     if (matcher.match(tenantPattern) || matcher.match(tenantPattern + '/')) {
         vars = matcher.elements();
         urlDomain = vars.domain;
