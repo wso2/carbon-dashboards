@@ -478,6 +478,14 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
     display: none;
 }
 
+.container-grid{
+    background-color: #DFDFDF;
+    background-image: linear-gradient(whitesmoke 40px, transparent 2px), linear-gradient(90deg, whitesmoke 48px, transparent 2px);
+    background-size: 100px 24.880847%, 8.129% 100px, 20px 20px, 20px 20px;
+    height: 100%;
+    width: 100%;
+}
+
 .grid-on .gird-guide {
     display: block;
 }
