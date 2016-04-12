@@ -29,17 +29,6 @@ var originalURI;
 
     var tenantPattern = '/{context}' + tenantPrefix + '/{domain}';
 
-    // Check whether a request from secured channel
-    if(!request.isSecure()){
-        // If it is not secure redirect it to a secure channel
-        var newURL = request.getRequestURL().replace(request.getLocalPort(), 9443 + (request.getLocalPort()-9763));
-        newURL = newURL.replace("http","https");
-        response.sendRedirect(newURL);
-        if(log.isDebugEnabled()) {
-            log.debug("login request is re-directed to " + newURL);
-        }
-        return;
-    }
 
     if (matcher.match(tenantPattern) || matcher.match(tenantPattern + '/')) {
         vars = matcher.elements();
