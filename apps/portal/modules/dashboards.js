@@ -620,8 +620,7 @@ var getBootstrapLayout = function (pageId, isAnon) {
         }
     });
 
-    //check whether the page is not available or the anonymous view is undefined
-    if (!page || page.layout.content.anon === undefined) {
+    if (!page) {
         response.sendError(404, 'Not found');
         return;
     }

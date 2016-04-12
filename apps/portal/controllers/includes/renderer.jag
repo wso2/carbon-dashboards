@@ -34,10 +34,14 @@ var renderEngine = { };
     var UNAUTHORIZED_ERROR = 'Dashboard access not authorized';
 
     if (user) {
+        //identify edit/view permission for the logged user
         if (utils.allowed(user.roles, permissions.editors)) {
             user.isEditor = true;
-        } else {
+        } else  if(utils.allowed(user.roles, permissions.viewers)){
+            user.isViewer = true;
+        } else{
             user.isEditor = false;
+            user.isViewer = false;
         }
     }
 
@@ -59,18 +63,32 @@ var renderEngine = { };
         }
     }
     
-    // check whether the requested page exists
+    // check whether the requested page exists and the anonymous view for
+    // that page is defined
     pageId = pageId || dashboard.landing;
+    var anonView;
     var pageExists = false;
     dashboard.pages.forEach(function(p) {
         if (p.id == pageId) {
             pageExists = true;
+            anonView = p.layout.content.anon;
         }
     });
-    
-    if (! pageExists) {
+
+    //check whether the page doesn't exist, or the user hasn't logged in
+    // and the anonymous view is undefined
+    if (!pageExists || (!user && (anonView === undefined))) {
         response.sendError(404, "Page '" + pageId + "' not found");
         return;
+    }
+
+    //check whether the user has no edit/view permission and the anonymous
+    // view is undefined
+    if(user){
+        if(!(user.isEditor || user.isViewer) && (anonView === undefined)){
+            response.sendError(404, "Page '" + pageId + "' not found");
+            return;
+        }
     }
 
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
