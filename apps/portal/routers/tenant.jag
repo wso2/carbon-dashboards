@@ -29,7 +29,6 @@ var originalURI;
 
     var tenantPattern = '/{context}' + tenantPrefix + '/{domain}';
 
-
     if (matcher.match(tenantPattern) || matcher.match(tenantPattern + '/')) {
         vars = matcher.elements();
         urlDomain = vars.domain;
