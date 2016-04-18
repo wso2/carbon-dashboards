@@ -2183,8 +2183,8 @@ $(function () {
             $('.grid-stack').gridstack({
                 width: 12,
                 animate: true,
-                cell_height: 150,
-                vertical_margin: 30,
+                cellHeight: 50,
+                verticalMargin: 30,
                 handle: '.ues-component-heading, .ues-component-heading .ues-component-title',
             }).on('dragstop', function (e, ui) {
                 updateLayout();

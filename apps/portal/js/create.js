@@ -180,7 +180,7 @@ $(function () {
                 contentType: "application/json",
                 success: function (data) {
                     showInformation("URL Already Exists",
-                        "A dashboard with same URL already exists. Please select a different dashboard URL.");
+                        "A dashboard with same URL already exists. Please enter a different dashboard URL.");
                 },
                 error: function (xhr) {
                     if (xhr.status == 404) {
