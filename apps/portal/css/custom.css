@@ -489,7 +489,6 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
 .gird-guide > .row > [class*='col-'] {
     height: 100%;
 }
- 
 .gird-guide > .row > [class*='col-']:after {
     display: block;
     content: " ";
@@ -500,7 +499,7 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
     border-left: 1px solid #e1e1e1;
     border-right: 1px solid #e1e1e1;
     height: 100%;
-} 
+}
 
 .grid-on .gadgets-grid {
     background: transparent;
