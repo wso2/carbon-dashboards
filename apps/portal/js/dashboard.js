@@ -222,8 +222,8 @@ $(function () {
             
             $('.grid-stack').gridstack({
                 width: 12,
-                cell_height: 150,
-                vertical_margin: 30,
+                cellHeight: 50,
+                verticalMargin: 30,
                 disableResize: true,
                 disableDrag: true,
             });
