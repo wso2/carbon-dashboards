@@ -208,6 +208,12 @@
             </form>
         </div>
     </div>
+    <div class="row">
+  	    <div class="col-md-6">
+		    <button type="button" id="ues-dashboard-cancelBtn" style="float:right; margin:5px; margin-bottom:10px; margin-right:0px;" class="btn btn-default btn-bordered">Cancel</button>
+  		    <button type="button" id="ues-dashboard-saveBtn" style="float:right; margin:5px; margin-bottom:10px; margin-right:0px;" class="btn btn-default btn-bordered">Save</button>
+  	    </div>
+    </div>
 </div>
 
 <% include(utils.resolvePath('templates/portal-footer.jag')); %>
