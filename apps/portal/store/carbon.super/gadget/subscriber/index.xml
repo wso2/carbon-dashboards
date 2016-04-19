@@ -13,6 +13,7 @@
             </Param>
         </Require>
         <Require feature="dynamic-height"/>
+        <Require feature="wso2-gadgets-controls" />
     </ModulePrefs>
     <Content type="html">
         <![CDATA[
@@ -47,6 +48,7 @@
                             $('.log').empty();
                             return;
                         }
+                        wso2.gadgets.controls.showGadget();
                         $('.log').append('<div>Message received, <span class="message">Message: ' + JSON.stringify(data) + '</span></div>');
                     });
                 };
