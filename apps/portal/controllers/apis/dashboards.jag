@@ -34,7 +34,6 @@
     var carbon = require('carbon');
     var anonRole = carbon.user.anonRole;
     var method = request.getMethod();
-
     var matcher = new URIMatcher(request.getRequestURI());
     if (matcher.match('/dashboards/{id}')) {
         vars = matcher.elements();
@@ -73,13 +72,11 @@
         if (method === 'PUT') {
             var personalize = request.getParameter('personalize');
             var dashboard = request.getContent();
-
             if (personalize && !utils.allowed(user.roles, editors)) {
                 dashboard.isUserCustom = true;
             }
-
-            if ((!user || !utils.allowed(user.roles, configs.designers) || !utils.allowed(user.roles,
-                            editors)) && !(utils.allowed(user.roles, viewers) && dashboard.isUserCustom)) {
+            if ((!user || !utils.allowed(user.roles, configs.designers) || !utils.allowed(user.roles, editors))
+                    && !(utils.allowed(user.roles, viewers) && dashboard.isUserCustom)) {
                 response.sendError(401, JSON.stringify({
                     error: 'Unauthorized to access the dashboard'
                 }));
@@ -113,7 +110,6 @@
         }));
         return;
     }
-
     if (matcher.match('/dashboards')) {
         if (!user) {
             response.sendError(401, JSON.stringify({
@@ -162,16 +158,13 @@
                 }));
                 return;
             }
-
             dashboard = request.getContent();
             utils.sandbox(context, function () {
                 dashboards.create(dashboard);
             });
-
             print({
                 error: false
             });
-
             return;
         }
         response.sendError(405, JSON.stringify({
@@ -179,7 +172,6 @@
         }));
         return;
     }
-
     response.sendError(404, JSON.stringify({
         error: true
     }));

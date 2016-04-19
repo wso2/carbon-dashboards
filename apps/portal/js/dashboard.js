@@ -19,33 +19,27 @@ $(function () {
      * @const
      */
     var DASHBOARD_DEFAULT_VIEW = 'default';
-
     /**
      * Gadget full screen mode.
      * @const
      */
     var DASHBOARD_FULL_SCEEN_VIEW = 'full';
-
     /**
      * Gadget settings view mode.
      * @const
      */
     var DASHBOARD_SETTINGS_VIEW = 'settings';
-
     /**
      * Gadget container prefix.
      * @const
      */
     var CONTAINER_PREFIX = 'gadget-';
-
     var page;
-
     /**
      * Pre-compiling Handlebar templates
      */
     var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
-
     /**
      * Initializes the component toolbar.
      * @return {null}
@@ -59,9 +53,7 @@ $(function () {
             var componentBox = $(this).closest('.ues-component-box');
             var gsContainer = $('.grid-stack');
             var gsBlock = componentBox.parent();
-
             if (component.fullViewPoped) {
-
                 // render normal view
                 $('.ues-component-box').show();
                 // restore the original height and remove the temporary attribute
@@ -74,11 +66,8 @@ $(function () {
                     .find('i.fw')
                     .removeClass('fw-contract')
                     .addClass('fw-expand');
-
                 component.fullViewPoped = false;
-
             } else {
-
                 // render max view
                 $('.ues-component-box:not([id="' + componentBox.attr('id') + '"])').hide();
                 // backup the origin height and render the max view
@@ -91,7 +80,6 @@ $(function () {
                     .find('i.fw')
                     .removeClass('fw-expand')
                     .addClass('fw-contract');
-
                 component.fullViewPoped = true;
             }
             $('.nano').nanoScroller();
@@ -109,13 +97,11 @@ $(function () {
                     DASHBOARD_DEFAULT_VIEW : DASHBOARD_SETTINGS_VIEW));
                 return;
             }
-
             if (componentContainer.hasClass('ues-userprep-visible')) {
                 componentContainer.removeClass('ues-userprep-visible');
                 updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
                 return;
             }
-
             componentContainer.html(gadgetSettingsViewHbs(component.content)).addClass('ues-userprep-visible');
         });
     };
@@ -127,7 +113,7 @@ $(function () {
      * @returns {null}
      * @private
      */
-    var switchComponentView = function(component, view){
+    var switchComponentView = function (component, view) {
         component.viewOption = view;
         ues.components.update(component, function (err, block) {
             if (err) {
@@ -159,21 +145,17 @@ $(function () {
      * @private
      */
     var renderComponentToolbar = function (component) {
-
         if (component) {
-
             var container = $('#' + component.id);
             var userPrefsExists = false;
             for (var key in component.content.options) {
                 if (component.content.options[key].type.toUpperCase() != 'HIDDEN') {
-                    userPrefsExists =  true;
+                    userPrefsExists = true;
                     break;
                 }
             }
-            
             // anon dashboards doesn't have settings option
             component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
-
             container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
         }
     };
@@ -190,7 +172,6 @@ $(function () {
         var area;
         var component;
         var components;
-
         var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -213,19 +194,15 @@ $(function () {
      */
     var initDashboard = function () {
         var allPages = ues.global.dashboard.pages;
-
         if (allPages.length > 0) {
             page = (ues.global.page ? ues.global.page : allPages[0]);
         }
-
         for (var i = 0; i < allPages.length; i++) {
             if (ues.global.page == allPages[i].id) {
                 page = allPages[i];
             }
         }
-
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function() {
-
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = findComponent($(this).attr('id'));
@@ -237,7 +214,7 @@ $(function () {
                 verticalMargin: 30,
                 disableResize: true,
                 disableDrag: true,
-        });
+            });
         });
         $('.nano').nanoScroller();
     };
