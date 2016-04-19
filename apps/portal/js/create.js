@@ -148,12 +148,15 @@ $(function () {
     // Bind event handlers for dashboard ID field
     $('#ues-dashboard-id').on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
-    }).on('keyup', function () {
+    }).on('keyup', function (e) {
         overridden = overridden || true;
         if ($(this).val()) {
             hideInlineError($(this), $("#id-error"));
         }
-        $(this).val(generateUrl($(this).val()));
+
+        // If the key released is not a generic key (E.g - arrow keys, backspace, delete), update the URL field
+        if(e.which == "number" && e.which > 0)
+            $(this).val(generateUrl($(this).val()));
     });
 
     // Bind event handlers for dashboard description field
