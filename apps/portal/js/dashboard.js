@@ -58,17 +58,16 @@ $(function () {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
             var componentBox = $(this).closest('.ues-component-box');
+            var gsContainer = $('.grid-stack');
+            var gsBlock = componentBox.parent();
             if (component.fullViewPoped) {
-                $('.ues-component-box').show();
                 // render normal view
-                // restore the normal view (remove the css class, restore the original height and remove the temporary
-                // attribute)
-                componentBox
-                    .removeClass('ues-component-fullview')
-                    .css('height', componentBox.attr('data-original-height'))
-                    .attr('data-height', componentBox.attr('data-original-height'))
-                    .removeAttr('data-original-height');
+                $('.ues-component-box').show();
+                // restore the original height and remove the temporary attribute
+                gsContainer.height(gsContainer.attr('data-orig-height')).removeAttr('data-orig-height');
+                gsBlock.removeClass('ues-component-fullview');
                 renderMaxView(component, DASHBOARD_DEFAULT_VIEW);
+                // modify the tooltip message and the maximize icon
                 $(this)
                     .attr('title', $(this).data('maximize-title'))
                     .find('i.fw')
@@ -76,16 +75,13 @@ $(function () {
                     .addClass('fw-expand');
                 component.fullViewPoped = false;
             } else {
-                $('.ues-component-box:not([id="' + componentBox.attr('id') + '"])').hide();
                 // render max view
-                // change the container height for the max view (including backing up the original height for
-                // restoration later)
-                componentBox
-                    .attr('data-original-height', componentBox.attr('data-height'))
-                    .addClass('ues-component-fullview')
-                    .css('height', ($(window).height() - 40) + 'px')
-                    .attr('data-height', ($(window).height() - 40));
+                $('.ues-component-box:not([id="' + componentBox.attr('id') + '"])').hide();
+                // backup the origin height and render the max view
+                gsContainer.attr('data-orig-height', gsContainer.height()).height('auto');
+                gsBlock.addClass('ues-component-fullview');
                 renderMaxView(component, DASHBOARD_FULL_SCEEN_VIEW);
+                // modify the tooltip message and the maximize icon
                 $(this)
                     .attr('title', $(this).data('minimize-title'))
                     .find('i.fw')
@@ -93,6 +89,7 @@ $(function () {
                     .addClass('fw-contract');
                 component.fullViewPoped = true;
             }
+            $('.nano').nanoScroller();
         });
 
         // gadget settings handler
@@ -222,7 +219,16 @@ $(function () {
                 var component = findComponent($(this).attr('id'));
                 renderComponentToolbar(component);
             });
+            
+            $('.grid-stack').gridstack({
+                width: 12,
+                cellHeight: 50,
+                verticalMargin: 30,
+                disableResize: true,
+                disableDrag: true,
+            });
         });
+        $('.nano').nanoScroller();
     };
 
     initDashboard();

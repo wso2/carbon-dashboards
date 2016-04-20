@@ -1,18 +1,30 @@
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Gadget maximization
  */
-.ues-component-box.ues-component-fullview {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    overflow: hidden;
-    z-index: 2000;
-    width: 100%;
-    padding: 0;
-    margin-bottom: 0;
-    margin-left: 0;
+.ues-component-fullview {
+    position: fixed !important;
+    top: 0 !important;
+    right: -15px !important;
+    bottom: 0 !important;
+    left: -15px !important;
+    width: calc(100% + 30px) !important;
+    height: calc(100% - 40px) !important;
 }
 
 /**
@@ -47,24 +59,13 @@
 /**
  * Theme overrides
  */
-@media screen and (min-width: 768px) {
-    .container .gadgets-grid {
-        padding: 40px 0 0 0;
-    }
-    
-    .page-header .container-fluid {
-        padding-left: 30px;
-        padding-right: 30px;
-    }
-}
-
 .gadget-title {
     width: calc(100% - 110px);
 }
 
 .page-title h1 span {
     font-size: 16px;
-    display: inline-block
+    display: inline-block;
 }
 
 .page-title h1 span a {
@@ -88,27 +89,20 @@
     font-weight: 400;
 }
 
+.gadgets-grid {
+    margin-bottom: 20px;
+}
+
+.gadget-wrapper {
+    background: none;
+}
+
 /**
  * Banner
  */
-.ues-banner-placeholder {
-    background-position: center center;
-    background-repeat: no-repeat;
+[data-banner=true] {
+    background: no-repeat center;
     background-size: cover;
-}
-
-@media screen and (max-width: 767px) {
-    .ues-banner-placeholder {
-        margin-left: 15px;
-        margin-right: 15px;
-    }
-}
-
-@media screen and (min-width: 768px) {
-    .container-fluid .ues-banner-placeholder {
-        margin-left: 15px;
-        width: calc(100% - 30px);
-    }
 }
 
 /**
@@ -146,8 +140,7 @@
 }
 
 .auth-xs ul {
-/*    color: #000;*/
-    background-color: #fff; 
+    background-color: #fff;
 }
 
 .auth-xs li {
@@ -160,4 +153,44 @@
 
 .auth-xs li a:hover {
     background: #eee;
+}
+
+/** 
+ * Gridstack
+ */
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    left: 15px;
+    right: 15px;
+}
+
+@media screen and (min-width: 768px) {
+    /**
+     * Theme overrides
+     */
+    .container .gadgets-grid {
+        padding: 40px 0 0 0;
+    }
+
+    .page-header .container-fluid {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    /**
+     * Banner
+     */
+    .container-fluid .ues-banner-placeholder {
+        margin-left: 15px;
+        width: calc(100% - 30px);
+    }
+}
+
+@media screen and (max-width: 767px) {
+    /**
+     * Banner
+     */
+    .ues-banner-placeholder {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
 }

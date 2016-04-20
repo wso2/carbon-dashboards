@@ -18,7 +18,7 @@
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.css" />
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
     <title><%= i18n.localize("dashboard.designer")%></title>
@@ -331,7 +331,8 @@
                 <h1 class="gadget-title ues-component-title truncate">:::</h1>
                 <div class="gadget-actions ues-component-actions">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
+                            data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
                             <i class="icon fw fw-delete"></i>
                         </button>
                     </div>
@@ -345,7 +346,8 @@
     <!-- Template to generate gridstack list -->
     <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
         {{#each blocks}}
-        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
+        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" 
+             data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
             <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
             </div>
         </div>
@@ -769,7 +771,7 @@
     <script src="<%=urlPrefix%>libs/underscore-1.8.3/underscore-min.js"></script>
 
     <!-- Gridstack -->
-    <script src="<%=urlPrefix%>libs/gridstack.js-0.2.4/gridstack.min.js"></script>
+    <script src="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.js"></script>
 
     <!-- Handlebars -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
