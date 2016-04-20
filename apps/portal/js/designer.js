@@ -244,11 +244,13 @@ $(function () {
             .html(componentPropertiesHbs(ctx))
             .on('change', 'input[type=checkbox], select, textarea', function () {
                 var isCheckbox = false;
+                //if a checkbox got changed, disable it before updating properties
                 if(this.type === "checkbox"){
                     isCheckbox = true;
                     this.disabled = true;
                 }
                 updateComponentProperties($(this).closest('.ues-component-properties'));
+                //enable back the checkbox, after updating its properties
                 if(isCheckbox){
                     this.disabled = false;
                 }
