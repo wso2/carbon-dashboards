@@ -242,10 +242,18 @@ $(function () {
         var propertiesContainer = $('.ues-component-properties-container');
         propertiesContainer
             .html(componentPropertiesHbs(ctx))
-            .on('change', 'input, select, textarea', function () {
+            .on('change', 'input[type=checkbox], select, textarea', function () {
+                var isCheckbox = false;
+                if(this.type === "checkbox"){
+                    isCheckbox = true;
+                    this.disabled = true;
+                }
                 updateComponentProperties($(this).closest('.ues-component-properties'));
+                if(isCheckbox){
+                    this.disabled = false;
+                }
             })
-            .on('keypress', 'input, select, textarea', function (e) {
+            .on('keypress', 'input[type=text], select, textarea', function (e) {
                 if (e.which === 13) {
                     updateComponentProperties($(this).closest('.ues-component-properties'));
                     e.preventDefault();
