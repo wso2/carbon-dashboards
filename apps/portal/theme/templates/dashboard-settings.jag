@@ -215,7 +215,7 @@
 			        <label for="ues-share-view" class="col-sm-3 control-label"><%= i18n.localize("viewers")%></label>
 			        <div class = "col-sm-3">
 			            <button type="button" id="ues-dashboard-saveBtn" class="btn btn-default btn-bordered btn-primary">Save</button>
-		  	            <button type="button" id="ues-dashboard-cancelBtn" class="btn btn-default btn-bordered btn-primary">Cancel</button>
+		  	            <button type="button" id="ues-dashboard-cancelBtn" class="btn btn-default btn-bordered">Cancel</button>
 			        </div>
 		        </div>
 	        </form>
