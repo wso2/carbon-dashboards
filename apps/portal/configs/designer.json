@@ -1,6 +1,6 @@
 {
   "store": {
-    "type": "fs"
+    "types": ["fs","es"]
   },
   "authentication": {
     "activeMethod": "basic",
