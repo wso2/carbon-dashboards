@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 $(function () {
+
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
     var dashboards = [];
     var isStillLoading = false;
@@ -32,7 +32,6 @@ $(function () {
     var dashboardThumbnailHbs = Handlebars.compile($("#ues-dashboard-thumbnail-hbs").html());
     var dashboardConfirmHbs = Handlebars.compile($("#ues-dashboard-confirm-hbs").html());
     var dashboardsEmptyHbs = Handlebars.compile($("#ues-dashboards-empty-hbs").html());
-
     Handlebars.registerPartial('ues-dashboard-thumbnail-hbs', dashboardThumbnailHbs);
 
     /**

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 var pageId;
 var dashboard;
 var fresh;
@@ -23,6 +22,7 @@ var fresh;
     var vars;
     var dashboardId;
     var matcher = new URIMatcher(request.getRequestURI());
+
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
         dashboardId = vars.id;
@@ -40,6 +40,7 @@ var fresh;
             response.sendError(401, 'Designer access not authorized of this tenant');
             return;
         }
+
         include(utils.resolvePath("templates/index.jag"));
         return;
     }
@@ -49,6 +50,7 @@ var fresh;
     var isCustomize;
     var toReset;
     var method = request.getMethod();
+
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');
         utils.sandbox(context, function () {
@@ -62,6 +64,7 @@ var fresh;
         
         // Verify the original dashboard when returning a custom dashboard
         if (dashboard.isUserCustom) {
+            
             // Get the original dashboard
             var originalDashboard;
             utils.sandbox(context, function() {
@@ -76,33 +79,38 @@ var fresh;
             
             // If the user doesn't have any permission on the original dashboard, returns 401
             var authorized = false;
+            
             // To view personalized dashboard, the user should have logged in, in the same domain and should have either editor or viewer permissions
             if (user && user.domain == (urlDomain || superDomain) && 
                 (utils.allowed(user.roles, originalDashboard.permissions.editors) || utils.allowed(user.roles, originalDashboard.permissions.viewers))) {
-                authorized = true;
+                authorized = true;                
             }
-
+            
             if (! authorized) {
                 // If there is no anon view defined send the unauthorized error, else return the anon view
                 if (!originalDashboard.isanon) {
                     response.sendError(401, "Access to dashboard '" + dashboardId + "' is denied");
                     return;   
                 }
+                
                 dashboard = originalDashboard;
             }
         }
 
         isCustomize = request.getParameter('custom');
+
         if (isCustomize) {
             for (var i = 0; i < dashboard.pages.length; i++) {
                 dashboard.pages[i].isanon = false;
             }
+
             dashboards.copy(dashboard);
             response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
             return;
         }
 
         toReset = request.getParameter('reset');
+
         if (toReset) {
             dashboards.reset(dashboard.id);
             response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId);
@@ -122,6 +130,7 @@ var fresh;
     if (method === 'POST') {
         dashboards = require('/modules/dashboards.js');
         utils = require('/modules/utils.js');
+
         dashboard = {
             id: dashboardId,
             title: request.getParameter('title'),
@@ -137,12 +146,15 @@ var fresh;
             apiSecret: "",
             theme: ""
         };
+
         utils.sandbox(context, function() {
             dashboards.create(dashboard);
         });
+
         response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
         return;
     }
+
     response.sendError(400, 'Bad dashboard request');
 }());
 %>

@@ -17,7 +17,6 @@
 
 var message;
 var dest;
-
 (function () {
     var usr;
     var user;

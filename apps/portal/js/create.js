@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * Functionality of the Create Dashboard defined in create.js.
  * */
@@ -23,7 +22,7 @@ $(function () {
 
     /**
      * Show HTML modal.
-     * @param {String} content HTML content
+     * @param {String} content      HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
      * @return {null}
      * @private
@@ -56,7 +55,7 @@ $(function () {
      * @private
      * */
     var generateUrl = function (title) {
-        title = title.substring(0, 100);
+        title = title.substring(0,100);
         return title.replace(/[^\w]/g, '-').toLowerCase();
     };
 
