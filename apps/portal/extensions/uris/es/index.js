@@ -3,7 +3,7 @@
 
     var domain = ues.global.urlDomain || ues.global.userDomain;
 
-    ues.plugins.uris['fs'] = function (uri) {
-        return prefix + 'store/' + (domain ? domain + '/' : '') + 'fs/' + uri;
+    ues.plugins.uris['es'] = function (uri) {
+        return prefix + 'store/' + (domain ? domain + '/' : '') + 'es/' + uri;
     };
 }());
