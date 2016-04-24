@@ -1,6 +1,6 @@
 <%
-/*
- *  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -18,34 +18,33 @@
  *
  */
 (function () {
-    var log = new Log(),
-            configs = require('/configs/portal.js').config(),
-            samlResponse = request.getParameter('SAMLResponse'),
-            sessionId = session.getId(),
-            samlRequest = request.getParameter('SAMLRequest'),
-            //see https://wso2.org/jira/browse/IDENTITY-3454
-            relayState = decodeURIComponent(request.getParameter('RelayState')),
-            attr = configs.authentication.methods.sso.attributes,
-            sso = require('sso'),
-            samlRespObj;
+    var log = new Log();
+    var configs = require('/configs/portal.js').config();
+    var samlResponse = request.getParameter('SAMLResponse');
+    var sessionId = session.getId();
+    var samlRequest = request.getParameter('SAMLRequest');
+    //see https://wso2.org/jira/browse/IDENTITY-3454
+    var relayState = decodeURIComponent(request.getParameter('RelayState'));
+    var attr = configs.authentication.methods.sso.attributes;
+    var sso = require('sso');
+    var samlRespObj;
     var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
     var keyStorePassword = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Password");
     var keyStoreName = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Location");
     var identityAlias = attr.identityAlias;
-    var     keyStoreProps = {
-                KEY_STORE_NAME: keyStoreName,
-                KEY_STORE_PASSWORD: keyStorePassword,
-                IDP_ALIAS: identityAlias,
-                USE_ST_KEY: !attr.useTenantKey
-            };
+    var keyStoreProps = {
+        KEY_STORE_NAME: keyStoreName,
+        KEY_STORE_PASSWORD: keyStorePassword,
+        IDP_ALIAS: identityAlias,
+        USE_ST_KEY: !attr.useTenantKey
+    };
     var sso_sessions = application.get('sso_sessions');
 
-    var loadTenant = function(username) {
+    var loadTenant = function (username) {
         var carbon = require('carbon');
         var MultitenantUtils = Packages.org.wso2.carbon.utils.multitenancy.MultitenantUtils;
         var MultitenantConstants = Packages.org.wso2.carbon.base.MultitenantConstants;
         var TenantAxisUtils = Packages.org.wso2.carbon.core.multitenancy.utils.TenantAxisUtils;
-
         var service;
         var ctx;
         var domain = MultitenantUtils.getTenantDomain(username);
@@ -77,7 +76,7 @@
                         session.put("Loged", "true");
 
                         sso_sessions[sessionObj.sessionId] = sessionObj.sessionIndex;
-                        if(log.isDebugEnabled()){
+                        if (log.isDebugEnabled()) {
                             log.debug("RELAYSTATE: " + relayState);
                         }
                         //var user = require('store').user;
@@ -90,35 +89,10 @@
                         user.roles = um.getRoleListOfUser(user.username);
                         session.put('user', user);
                         session.put("samlResponse", samlResponse);
-
                         var saml2Cookie = require('/modules/saml-to-cookie.js');
                         var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
                         session.put('authToken', authToken);
-
                         response.sendRedirect(relayState);
-                        /*var user = require('store').user;
-
-                        var username = sessionObj.loggedInUser;
-                        user.loadTenant(username)
-
-                        var permissionAPI = require('rxt').permissions;
-                        var carbon = require('carbon');
-                        var usr = carbon.server.tenantUser(username);
-                        var modifiedUsername = user.removeTenantDomainFromUsername(username);
-                        var hasStoreLoginPermission = permissionAPI.hasAppPermission('APP_LOGIN', usr.tenantId,
-                                modifiedUsername);
-
-                        if (hasStoreLoginPermission) {
-                             user.emitLogin(username)
-                             log.debug('user is set :::' + username);
-                             response.sendRedirect(relayState);
-                        }
-                        else{
-                            //session.invalidate();
-                            log.warn('User '+sessionObj.loggedInUser+' does not have permission to access the store application.Make sure the user has the store role.');
-                            response.sendError(401,'You do not have permission to login to this application.Please contact your administrator and request permission.');
-                        }*/
-
                     }
                 }
             }
@@ -133,14 +107,9 @@
     if (samlRequest != null) {
         var index = sso.client.decodeSAMLLogoutRequest(sso.client.getSamlObject(samlRequest));
         log.debug('BACKEND LOGOUT RECIEVED FROM STORE THE INDEX IS ######' + index);
-
         var jSessionId = application.get('sso_sessions')[index];
-
         delete application.get('sso_sessions')[index];
-
-
         log.debug('store Session Id :::' + jSessionId);
-
         session.invalidate();
     }
 }());

@@ -1,6 +1,6 @@
 <%
-/*
- *  Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -17,28 +17,25 @@
  *  under the License.
  *
  */
-(function(){
+(function () {
     var user = session.get("LOGGED_IN_USER");
-    //var caramel = require('caramel');
     var relayState = request.getHeader('referer') ? request.getHeader('referer') : "portal";
     var ignoreReferer = request.getParameter("ignoreReferer");
-    //var rxt = require("rxt");
-    var context = 'portal';//rxt.app.getContext();
+    var context = 'portal';
     relayState = (!ignoreReferer) ? relayState : context + '/login?ignoreReferer=true';
-    if(user === null) {
+    if (user === null) {
         response.sendRedirect(relayState);
     } else {
-        var config = require('/configs/portal.js').config(),
-                sso = require('sso'),
-                sso_sessions = application.get('sso_sessions'),
-                sessionId = session.getId(),
-                attr = config.authentication.methods.sso.attributes,
-                encodedSAMLLogoutRequest = sso.client.getEncodedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer),
-                //postUrl = "https://" + process.getProperty('carbon.local.ip') + ":" + process.getProperty('https.port');
-                postUrl = attr.identityProviderURL;
+        var config = require('/configs/portal.js').config();
+        var sso = require('sso');
+        var sso_sessions = application.get('sso_sessions');
+        var sessionId = session.getId();
+        var attr = config.authentication.methods.sso.attributes;
+        var encodedSAMLLogoutRequest = sso.client.getEncodedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer);
+        var postUrl = attr.identityProviderURL;
         var log = new Log();
-        if(log.isDebugEnabled()){
-            log.debug("store session index : " + sso_sessions[session.getId()] + " postURL: " +postUrl);
+        if (log.isDebugEnabled()) {
+            log.debug("store session index : " + sso_sessions[session.getId()] + " postURL: " + postUrl);
         }
         session.invalidate();
         %>
@@ -47,20 +44,18 @@
            redirection fails, please click the post button.</p>
 
             <form id="logoutForm" method="post" action="<%=postUrl%>">
-            <p>
-                <input type="hidden" name="SAMLRequest"
-                      value="<%= encodedSAMLLogoutRequest %>"/>
-                <input type="hidden" name="RelayState" value="<%= relayState %>"/>
-                 <input type="hidden" name="SSOAuthSessionID" value="<%= sessionId %>"/>
-                <button type="submit">POST</button>
-            </p>
+                <p>
+                    <input type="hidden" name="SAMLRequest" value="<%=encodedSAMLLogoutRequest%>"/>
+                    <input type="hidden" name="RelayState" value="<%=relayState%>"/>
+                    <input type="hidden" name="SSOAuthSessionID" value="<%=sessionId%>"/>
+                    <button type="submit">POST</button>
+                </p>
             </form>
         </div>
         <script type = "text/javascript" >
-                       document.forms[0].submit();
+            document.forms[0].submit();
         </script>
-
-         <%
+<%
     }
 }());
 %>

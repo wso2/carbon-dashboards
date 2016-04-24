@@ -13,40 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 $(function () {
     /**
      * Gadget default view mode.
      * @const
      */
     var DASHBOARD_DEFAULT_VIEW = 'default';
-
     /**
      * Gadget full screen mode.
      * @const
      */
     var DASHBOARD_FULL_SCEEN_VIEW = 'full';
-
     /**
      * Gadget settings view mode.
      * @const
      */
     var DASHBOARD_SETTINGS_VIEW = 'settings';
-
     /**
      * Gadget container prefix.
      * @const
      */
     var CONTAINER_PREFIX = 'gadget-';
-
     var page;
-
     /**
      * Pre-compiling Handlebar templates
      */
     var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
-
     /**
      * Initializes the component toolbar.
      * @return {null}
@@ -93,8 +86,8 @@ $(function () {
         });
 
         // gadget settings handler
-        $('.ues-components-grid').on('click', '.ues-component-settings-handle', function (e) {
-            e.preventDefault();
+        $('.ues-components-grid').on('click', '.ues-component-settings-handle', function (event) {
+            event.preventDefault();
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
             var componentContainer = $('#' + CONTAINER_PREFIX + id);
@@ -104,7 +97,6 @@ $(function () {
                     DASHBOARD_DEFAULT_VIEW : DASHBOARD_SETTINGS_VIEW));
                 return;
             }
-
             if (componentContainer.hasClass('ues-userprep-visible')) {
                 componentContainer.removeClass('ues-userprep-visible');
                 updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
@@ -121,7 +113,7 @@ $(function () {
      * @returns {null}
      * @private
      */
-    var switchComponentView = function(component, view){
+    var switchComponentView = function (component, view) {
         component.viewOption = view;
         ues.components.update(component, function (err, block) {
             if (err) {
@@ -158,7 +150,7 @@ $(function () {
             var userPrefsExists = false;
             for (var key in component.content.options) {
                 if (component.content.options[key].type.toUpperCase() != 'HIDDEN') {
-                    userPrefsExists =  true;
+                    userPrefsExists = true;
                     break;
                 }
             }
@@ -180,7 +172,6 @@ $(function () {
         var area;
         var component;
         var components;
-
         var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -206,20 +197,17 @@ $(function () {
         if (allPages.length > 0) {
             page = (ues.global.page ? ues.global.page : allPages[0]);
         }
-
         for (var i = 0; i < allPages.length; i++) {
             if (ues.global.page == allPages[i].id) {
                 page = allPages[i];
             }
         }
-
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function() {
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = findComponent($(this).attr('id'));
                 renderComponentToolbar(component);
             });
-            
             $('.grid-stack').gridstack({
                 width: 12,
                 cellHeight: 50,
