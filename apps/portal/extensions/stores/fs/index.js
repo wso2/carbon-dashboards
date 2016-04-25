@@ -1,9 +1,22 @@
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 var findOne, find, create, update, remove, getDashboardsFromRegistry;
 var utils = require('/modules/utils.js');
 
 (function () {
-    var log = new Log();
-
     var dir = '/store/';
 
     var utils = require('/modules/utils.js');
@@ -26,7 +39,6 @@ var utils = require('/modules/utils.js');
         var registry = new carbon.registry.Registry(server, {
             system: true
         });
-
         var dashboards = registry.content(registryPath(), {
             start: start,
             count: count
@@ -59,23 +71,22 @@ var utils = require('/modules/utils.js');
 
         var userDashboards = [];
         allDashboards.forEach(function (dashboard) {
-            var permissions = dashboard.permissions;
-            if (utils.allowed(userRoles, permissions.editors)) {
-                userDashboards.push({
+            var permissions = dashboard.permissions,
+                data = {
                     id: dashboard.id,
                     title: dashboard.title,
                     description: dashboard.description,
+                    pagesAvailable: dashboard.pages.length > 0,
                     editable: true
-                });
+                };
+
+            if (utils.allowed(userRoles, permissions.editors)) {
+                userDashboards.push(data);
                 return;
             }
             if (utils.allowed(userRoles, permissions.viewers)) {
-                userDashboards.push({
-                    id: dashboard.id,
-                    title: dashboard.title,
-                    description: dashboard.description,
-                    editable: false
-                });
+                data.editable = false;
+                userDashboards.push(data);
             }
         });
         return userDashboards;
@@ -121,8 +132,7 @@ var utils = require('/modules/utils.js');
                     return;
                 }
                 var title = asset.title || '';
-                var description = asset.description || '';
-                if (!query.test(title) && !query.test(description)) {
+                if (!query.test(title)) {
                     file.close();
                     return;
                 }

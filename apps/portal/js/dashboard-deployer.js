@@ -22,7 +22,7 @@ try {
     dashboard = require("/modules/dashboards.js");
     var dashboardDirectory = new File("/extensions/dashboards");
     if (!dashboardDirectory.isDirectory()) {
-        log.error("Cannot find the dashboards directory in extensions");
+        log.error("Cannot find the dashboards directory in extensions.");
     } else {
         var files = dashboardDirectory.listFiles();
         for (var index = 0; index < files.length; index++) {
@@ -32,14 +32,14 @@ try {
             if (dashboardJson.id) {
                 log.info("Deleting existing dashboard by same id: " + dashboardJson.id);
                 dashboard.remove(dashboardJson.id);
-
                 log.info("Deploying the dashboard: " + dashboardJson.title);
                 dashboard.create(dashboardJson);
+                file.del();
             }
         }
     }
-} catch (Exception) {
-    log.error("Required Files for auto Dashboard Deployer are missing");
+} catch (exception) {
+    log.error("Error retrieving required files for auto dashboard deployer: " + exception.toString());
 }
 
 

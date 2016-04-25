@@ -1,26 +1,76 @@
-.ues-component-box .ues-borderless {
-    border-color: transparent;
-    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0);
-    margin-bottom: 0;
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.ues-component-box .ues-borderless .panel-heading {
-    border: 1px solid transparent;
-    background: none;
-    margin: -1px;
+/**
+ * Validation messages
+ */
+.required {
+    color: #e74c3c;
 }
 
-.ues-component .ues-component-title-left .ues-component-title {
-    text-align: left;
+.required-error {
+    background: #a94442;
+    border: 1px solid #a94442;
+    padding: 6px 12px;
+    color: #fff;
 }
 
-.ues-component .ues-component-title-center .ues-component-title {
-    text-align: center;
+/**
+ * Theme overrides
+ */
+.breadcrumb li .fw-home {
+    float: left;
+    padding-top: 2px;
+    margin-right: 5px;
 }
 
-.ues-component .ues-component-title-right .ues-component-title {
-    text-align: right;
+/**
+ * Auth menu
+ */
+.auth .hidden-xs {
+    line-height: 38px;
+}
+
+.auth-xs {
+    color: #fff;
+}
+
+.auth-xs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    line-height: 28px;
+    background-color: #2a80b9;
+}
+
+.auth-xs li {
+    color: #ccc;
+}
+
+.auth-xs li a {
+    display: block;
+    color: #fff;
+}
+
+.auth-xs li a:hover {
+    background-color: #499dd5;
 }

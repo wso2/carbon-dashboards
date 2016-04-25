@@ -1,10 +1,10 @@
 {
     "blocks": [
-        { "id": "a", "row": 1, "col": 1, "size_x": 4, "size_y": 3 },
-        { "id": "b", "row": 1, "col": 5, "size_x": 4, "size_y": 3 },
-        { "id": "c", "row": 1, "col": 9, "size_x": 4, "size_y": 3 },
-        { "id": "d", "row": 4, "col": 1, "size_x": 4, "size_y": 3 },
-        { "id": "e", "row": 4, "col": 5, "size_x": 4, "size_y": 3 },
-        { "id": "f", "row": 4, "col": 9, "size_x": 4, "size_y": 3 }
+        { "id": "a", "x": 0, "y": 0, "width": 4, "height": 3 },
+        { "id": "b", "x": 4, "y": 0, "width": 4, "height": 3 },
+        { "id": "c", "x": 8, "y": 0, "width": 4, "height": 3 },
+        { "id": "d", "x": 0, "y": 3, "width": 4, "height": 3 },
+        { "id": "e", "x": 4, "y": 3, "width": 4, "height": 3 },
+        { "id": "f", "x": 8, "y": 3, "width": 4, "height": 3 }
     ]
 }

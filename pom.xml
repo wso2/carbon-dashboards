@@ -25,11 +25,12 @@
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.12-SNAPSHOT</version>
+    <version>1.0.16-SNAPSHOT</version>
     <name>WSO2 Carbon Dashboards</name>
     <url>http://wso2.org</url>
 
     <modules>
+        <module>components/shindig-wso2-features</module>
         <module>components/shindig-server</module>
         <module>components/dashboard-deployment</module>
         <module>features/org.wso2.carbon.dashboards.shindig.feature</module>
@@ -41,9 +42,10 @@
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
-        <carbon.dashboards.version>1.0.12-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>1.0.16-SNAPSHOT</carbon.dashboards.version>
         <carbon.kernel.version>4.4.2</carbon.kernel.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
+        <apache.google.guice.version>3.0</apache.google.guice.version>
     </properties>
 
     <scm>
@@ -81,6 +83,21 @@
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.application.deployer</artifactId>
                 <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${apache.google.guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-multibindings</artifactId>
+                <version>${apache.google.guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>shindig-wso2-features</artifactId>
+                <version>${carbon.dashboards.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

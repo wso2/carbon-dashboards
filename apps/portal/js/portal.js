@@ -1,24 +1,38 @@
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 $(function () {
 
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
-
-    var dashboardsListHbs = Handlebars.compile($("#ues-dashboards-list-hbs").html());
-
-    var dashboardThumbnailHbs = Handlebars.compile($("#ues-dashboard-thumbnail-hbs").html());
-
-    var dashboardConfirmHbs = Handlebars.compile($("#ues-dashboard-confirm-hbs").html());
-
-    var dashboardsEmptyHbs = Handlebars.compile($("#ues-dashboards-empty-hbs").html());
-
-    Handlebars.registerPartial('ues-dashboard-thumbnail-hbs', dashboardThumbnailHbs);
-
     var dashboards = [];
-
+    var isStillLoading = false;
     var nextStart = 0;
+    var hasMore = true;
 
+    /**
+     * Page count.
+     * @const
+     */
     var PAGE_COUNT = 10;
 
-    var hasMore = true;
+    // Pre-compiling handlebar templates
+    var dashboardsListHbs = Handlebars.compile($("#ues-dashboards-list-hbs").html());
+    var dashboardThumbnailHbs = Handlebars.compile($("#ues-dashboard-thumbnail-hbs").html());
+    var dashboardConfirmHbs = Handlebars.compile($("#ues-dashboard-confirm-hbs").html());
+    var dashboardsEmptyHbs = Handlebars.compile($("#ues-dashboards-empty-hbs").html());
+    Handlebars.registerPartial('ues-dashboard-thumbnail-hbs', dashboardThumbnailHbs);
 
     /**
      * Find the dashboard using dashboard id.
@@ -61,27 +75,14 @@ $(function () {
     };
 
     /**
-     * Shrink the description for the dashboard if it is more than 50 characters.
-     * @param data
-     * @return [object]
-     * @private
-     * */
-    var shrinkDashboardDescription = function (data) {
-        for (var i = 0; i < data.length; i++) {
-            if (data[i].description.length > 50) {
-                data[i].description = data[i].description.substring(0, 50) + "...";
-            }
-        }
-
-        return data;
-    };
-
-    /**
      * Load the list of dashboards available.
      * @private
      * */
     var loadDashboards = function () {
+        isStillLoading = true;
+
         if (!hasMore) {
+            isStillLoading = false;
             return;
         }
         ues.store.assets('dashboard', {
@@ -95,18 +96,22 @@ $(function () {
                 return;
             }
 
-            data = shrinkDashboardDescription(data);
-
             nextStart += PAGE_COUNT;
             dashboards = dashboards.concat(data);
             dashboardsEl.append(dashboardsListHbs(data));
 
             var win = $(window);
             var doc = $(document);
+            isStillLoading = false;
             if (doc.height() > win.height()) {
                 return;
             }
+
             loadDashboards();
+
+            $(".disable").on('click', function (event) {
+                event.preventDefault();
+            });
         });
     };
 
@@ -116,7 +121,8 @@ $(function () {
      * */
     var initUI = function () {
         var portal = $('#ues-portal');
-        portal.on('click', '.ues-dashboards .ues-dashboard-trash-handle', function () {
+        portal.on('click', '.ues-dashboards .ues-dashboard-trash-handle', function (e) {
+            e.preventDefault();
             var thiz = $(this);
             var dashboardEl = thiz.closest('.ues-dashboard');
             var id = dashboardEl.data('id');
@@ -124,22 +130,24 @@ $(function () {
             dashboardEl.html(dashboardConfirmHbs(dashboard));
         });
 
-        portal.on('click', '.ues-dashboards .ues-dashboard-trash-confirm', function () {
+        portal.on('click', '.ues-dashboards .ues-dashboard-trash-confirm', function (e) {
+            e.preventDefault();
             deleteDashboard($(this));
         });
 
-        portal.on('click', '.ues-dashboards .ues-dashboard-trash-cancel', function () {
+        portal.on('click', '.ues-dashboards .ues-dashboard-trash-cancel', function (e) {
+            e.preventDefault();
             var thiz = $(this);
             var dashboardEl = thiz.closest('.ues-dashboard');
             var id = dashboardEl.data('id');
             var dashboard = findDashboard(id);
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
         });
-
-        var menu = $('.ues-context-menu');
-        menu.find('.ues-tiles-menu-toggle').click(function () {
-            menu.find('.ues-tiles-menu').slideToggle();
-        });
+        
+        portal.on('click', '.ues-view:not(.disable)', function(e) {
+            e.preventDefault();
+            window.open($(this).attr('href'), '_blank');
+        })
 
         $(window).scroll(function () {
             var win = $(window);
@@ -147,10 +155,11 @@ $(function () {
             if (win.scrollTop() + win.height() < doc.height() - 100) {
                 return;
             }
-            loadDashboards();
-        });
 
-        $("#ues-breadcrumbs").append("<li class='active'>Dashboards</li>");
+            if (!isStillLoading) {
+                loadDashboards();
+            }
+        });
     };
 
     initUI();

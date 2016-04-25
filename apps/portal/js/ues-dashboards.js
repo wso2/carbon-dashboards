@@ -1,9 +1,24 @@
-(function () {
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+(function () {
     /**
-     * Find a component
-     * @param type
-     * @returns {*}
+     * Find a component.
+     * @param {String} type Type of the plugin
+     * @return {Object}
      */
     var findPlugin = function (type) {
         var plugin = ues.plugins.components[type];
@@ -14,36 +29,49 @@
     };
 
     /**
-     * Create a component inside a container
-     * @param container
-     * @param component
-     * @param done
+     * Create a component inside a container.
+     * @param {Object} container Gadget container
+     * @param {Object} component Component object
+     * @param {function} done Callback function
+     * @return {null}
      */
-    var createComponent = function (container, component, done) {        
+    var createComponent = function (container, component, done) {
         var type = component.content.type;
         var plugin = findPlugin(type);
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
 
+        if (component.content.styles.hide_gadget) {
+            hideGadget(sandbox);
+        } else {
+            showGadget(sandbox);
+        }
         plugin.create(sandbox, component, ues.hub, done);
     };
 
     /**
-     * Update a particular component
-     * @param component
-     * @param done
+     * Update a particular component.
+     * @param {Object} component Component object
+     * @param {function} done Callback function
+     * @return {null}
      */
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
+        if (component.content.styles.hide_gadget) {
+            hideGadget(container);
+        } else {
+            showGadget(container);
+        }
         plugin.update(container, component, ues.hub, done);
     };
 
     /**
-     * Destroy a component
-     * @param component
-     * @param done
+     * Destroy a component.
+     * @param {Object} component Component object
+     * @param {function} done Callback function
+     * @return {null}
      */
     var destroyComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
@@ -52,12 +80,32 @@
     };
 
     /**
-     * Get a component ID
-     * @param clientId
-     * @returns {T}
+     * Hide gadget
+     * @param sandbox
+     */
+    var hideGadget = function (sandbox) {
+        sandbox.addClass('ues-hide-gadget');
+        sandbox.find('.ues-component-body').hide();
+
+    }
+
+    /**
+     * Show Gadget the gadget
+     * @param sandbox
+     */
+    var showGadget = function (sandbox) {
+        sandbox.removeClass('ues-hide-gadget');
+        sandbox.find('.ues-component-body').show();
+
+    }
+
+    /**
+     * Get a component ID.
+     * @param {String} clientId Container ID
+     * @return {String} Gadget ID
      */
     var componentId = function (clientId) {
-        return clientId.split('-').pop();
+        return clientId.replace('sandbox-gadget-', '');
     };
 
     var wirings;
@@ -65,7 +113,6 @@
     // Overriding publish for clients method
     var publishForClient = ues.hub.publishForClient;
     ues.hub.publishForClient = function (container, topic, data) {
-        console.log('publishing data container:%s, topic:%s, data:%j', container.getClientID(), topic, data);
         var clientId = componentId(container.getClientID());
         var channels = wirings[clientId + '.' + topic];
         if (!channels) {
@@ -78,8 +125,8 @@
 
     //overriding publish method
     var publish = ues.hub.publish;
-    ues.hub.publish = function (topic, data){
-        $(".container").find('.ues-component').each(function () {
+    ues.hub.publish = function (topic, data) {
+        $(".gadgets-grid").find('.ues-component').each(function () {
             var id = $(this).attr('id');
             var channel = id + "." + topic;
             publish.apply(ues.hub, [channel, data]);
@@ -126,89 +173,80 @@
     };
 
     /**
-     * Set dashboard document ID in the titlebar
-     * @param dashboard
-     * @param page
+     * Set page title.
+     * @param {Object} dashboard Dashboard object
+     * @param {Object} page Page object
      */
     var setDocumentTitle = function (dashboard, page) {
         document.title = dashboard.title + ' | ' + page.title;
     };
 
     /**
-     * convert JSON layout to gridster
-     * @param json
-     * @returns {*}
+     * Convert JSON layout to Gridstack.
+     * @param {Object} json Layout object
+     * @return {String} HTML markup
      */
-    var convertToDesignerLayout = function(json) {
-    
-        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html() || ''),
-            container = $('<ul />');
-        
-        $(componentBoxListHbs(json)).appendTo(container)
-        
+    var getGridstackLayout = function (json) {
+        var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html());
+        var container = $('<div />').addClass('grid-stack');
+        $(componentBoxListHbs(json)).appendTo(container);
         return container;
     }
-    
+
     /**
-     * renders a page in the dashboard designer and the view modes
-     * @param element
-     * @param dashboard
-     * @param page
-     * @param pageType
-     * @param done
-     * @param isDesigner
-    */
+     * Renders a page in the dashboard designer and the view modes.
+     * @param {Object} element Gadget container wrapper
+     * @param {Object} dashboard Dashboard object
+     * @param {Object} page Page object
+     * @param {String} pageType Type of the page
+     * @param {function} done Callback function
+     * @param {Boolean} isDesigner Flag to indicate the designer
+     * @return {null}
+     */
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
-        
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
+
+        var layout = (pageType === 'anon' ? $(page.layout.content.anon) : $(page.layout.content.loggedIn));
+        var content = page.content[pageType];
+        var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
+        // this is to be rendered only in the designer. in the view mode, the template is rendered in the server
+        element.html(getGridstackLayout(layout[0]));
         
-        var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn)),
-            content = page.content[pageType], 
-            componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
-        
-        // this is to be rendered only in the designer. in the view mode, the template is rendered in the server side.
-        if (isDesigner) { 
-            element.html(convertToDesignerLayout(layout[0]));
-        }
-        
+        // render gadget contents
         $('.ues-component-box').each(function (i, container) {
             container = $(container);
-            
-            var id = container.attr('id'),
-                hasComponent = content.hasOwnProperty(id) && content[id][0];
-            
-            // the component box content (the skeleton) should be added only in the designer mode and 
-            // the view mode only if there is a component
+            // Calculate the data-height field which is required to render the gadget
+            var gsItem = container.closest('.grid-stack-item');
+            var node = gsItem.data('_gridstack_node');
+            var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+            var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+            container.attr('data-height', height);
+            var id = container.attr('id');
+            var hasComponent = content.hasOwnProperty(id) && content[id][0];
+            // the component box content (the skeleton) should be added only in the designer mode and the view mode only
+            // if there is a component
             if (isDesigner || hasComponent) {
-                container.html(componentBoxContentHbs());    
+                container.html(componentBoxContentHbs());
             }
-            
-            if (container.attr('data-banner') == 'true') {
-                container.find('.ues-component-body').addClass('ues-banner-placeholder');
-            }
-            
             if (hasComponent) {
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
-                        console.error(err);
                     }
                 });
             }
         });
-        
         if (!done) {
             return;
         }
-        
         done();
     };
 
     /**
      * Find a particular page within a dashboard
-     * @param dashboard
-     * @param id
-     * @returns {*}
+     * @param {Object} dashboard Dashboard object
+     * @param {String} id Page id
+     * @return {Object} Page object
      */
     var findPage = function (dashboard, id) {
         var i;
@@ -224,18 +262,17 @@
     };
 
     /**
-     * Ender entire dashboard
-     * @param element
-     * @param dashboard
-     * @param name
-     * @param pageType
-     * @param done
-     * @param isDesigner
+     * Render the dashboard.
+     * @param {Object} element Gadget container element
+     * @param {Object} dashboard Dashboard object
+     * @param {String} name Name of the page
+     * @param {String} pageType Type of the page
+     * @param {function} done Callback function
+     * @param {Boolean} isDesigner Flag to indicate the designer mode
+     * @return {null}
      */
     var renderDashboard = function (element, dashboard, name, pageType, done, isDesigner) {
-        
         isDesigner = isDesigner || false;
-        
         name = name || dashboard.landing;
         var page = findPage(dashboard, name);
         if (!page) {
@@ -249,9 +286,9 @@
     };
 
     /**
-     * Resolve URI
-     * @param uri
-     * @returns {*}
+     * Resolve URI.
+     * @param {String} uri URI
+     * @return {String} Resolved path
      */
     var resolveURI = function (uri) {
         var index = uri.indexOf('://');

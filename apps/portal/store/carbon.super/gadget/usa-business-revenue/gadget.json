@@ -3,7 +3,6 @@
     "title": "USA Business Revenue",
     "type": "gadget",
     "thumbnail": "store://gadget/usa-business-revenue/index.png",
-    "options": {},
     "data": {
         "url": "store://gadget/usa-business-revenue/index.xml"
     },

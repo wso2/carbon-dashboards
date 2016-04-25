@@ -25,7 +25,7 @@ var maxRolesLimit;
             if (!server.authenticate(username, password)) {
                 return false;
             }
-        }catch (e){
+        } catch (e) {
             var message = "Invalid Domain Name";
             if (e.message.toLowerCase().indexOf(message.toLowerCase()) >= 0) {
                 log.error("Invalid Domain Name: " + e.message);
@@ -79,7 +79,7 @@ var maxRolesLimit;
         return um.searchRoles(filter, maxItems, true, true, true);
     };
 
-    maxRolesLimit = function (){
+    maxRolesLimit = function () {
         var carbon = require('carbon');
         var server = new carbon.server.Server();
         var user = session.get('user');
