@@ -155,7 +155,7 @@ $(function () {
         }
 
         // If the key released is not a generic key other than space (E.g - arrow keys, backspace, delete), update the URL field
-        if((e.which == "number" && e.which > 0) || e.keyCode == 0 || e.keyCode == 32)
+        if ((e.which == "number" && e.which > 0) || e.keyCode == 0 || e.keyCode == 32)
             $(this).val(generateUrl($(this).val()));
     });
 
