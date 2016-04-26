@@ -69,17 +69,17 @@ var renderEngine = { };
 
     var anonView;
     var pageExists = false;
-    dashboard.pages.forEach(function(p) {
-        if (p.id == pageId) {
+    dashboard.pages.forEach(function(page) {
+        if (page.id == pageId) {
             pageExists = true;
-            anonView = p.layout.content.anon;
+            anonView = page.layout.content.anon;
         }
     });
 
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
     if (!pageExists || (!user && (anonView === undefined))) {
-        response.sendError(404, "Page '" + pageId + "' not found");
+        response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.label"));
         return;
     }
 
@@ -87,7 +87,7 @@ var renderEngine = { };
     // view is undefined
     if(user) {
         if(!(user.isEditor || user.isViewer) && (anonView === undefined)) {
-            response.sendError(404, "Page '" + pageId + "' not found");
+            response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.label"));
             return;
         }
     }

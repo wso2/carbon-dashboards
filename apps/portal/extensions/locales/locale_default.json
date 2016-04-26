@@ -123,6 +123,8 @@
     "required": "Required",
     "yes.label": "Yes",
     "no.label": "No",
+    "page.label": "Page",
+    "page.not.found": "not found",
     "block.delete.message": "What do you want to delete?",
     "block.delete.message.gadget": "Gadget Only",
     "no.pages.message": "No pages found. Please add a page to start working on...",
