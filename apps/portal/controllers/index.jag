@@ -41,7 +41,7 @@
     if (configs.defaultDashboardRedirect) {
         // Check the number of dashboards available.
         utils.sandbox(utils.context(user, urlDomain), function () {
-            assetsForUser = store.getAsset('dashboard', {
+            assetsForUser = store.getAssets('dashboard', {
                 start: 0,
                 count: 10
             }, 0, 10);
