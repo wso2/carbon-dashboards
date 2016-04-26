@@ -25,6 +25,18 @@ wso2.gadgets.controls = (function () {
      * @private
      */
     var RPC_SERVICE_SHOW_GADGET = 'RPC_SERVICE_SHOW_GADGET';
+    var RPC_GADGET_BUTTON_CALLBACK = 'RPC_GADGET_BUTTON_CALLBACK';
+    var btnCallbacks = {};
+    /**
+     * Adding button callback functions.
+     * @return {null}
+     */
+    var addButtonListener = function (action, callback) {
+        if (!btnCallbacks[action]) {
+            btnCallbacks[action] = [];
+        }
+        btnCallbacks[action].push(callback);
+    };
 
     /**
      * Display an already hidden gadget.
@@ -34,7 +46,18 @@ wso2.gadgets.controls = (function () {
         wso2.gadgets.core.callContainerService(RPC_SERVICE_SHOW_GADGET, null, null);
     };
 
+    // Register callback function to trigger respective fuction to button click.
+    gadgets.rpc.register(RPC_GADGET_BUTTON_CALLBACK, function (action) {
+        if (!btnCallbacks[action]) {
+            return;
+        }
+        for (var i = 0; i < btnCallbacks[action].length; i++) {
+            btnCallbacks[action][i]();
+        }
+    });
+
     return {
-        showGadget: showGadget
+        showGadget: showGadget,
+        addButtonListener: addButtonListener
     };
 })();

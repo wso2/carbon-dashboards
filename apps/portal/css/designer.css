@@ -116,7 +116,7 @@
 }
 
 .gadget .gadget-heading > .gadget-title {
-    width: calc(100% - 154px);
+    max-width: 90%;
 }
 
 .ues-component-title-center .gadget-title {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
 $(function () {
     /**
      * Gadget default view mode.
@@ -46,8 +47,18 @@ $(function () {
      * @private
      */
     var initComponentToolbar = function () {
+        var viewer = $('.ues-components-grid');
+
+
+        //gadget title bar custom button function handler
+        viewer.on('click', '.ues-custom-action', function (e) {
+            var fid = $(this).closest('.ues-component-box').find('iframe').attr('id');
+            var action = $(this).attr('data-action');
+            gadgets.rpc.call(fid, RPC_GADGET_BUTTON_CALLBACK, null, action);
+        });
+
         // gadget maximization handler
-        $('.ues-components-grid').on('click', '.ues-component-full-handle', function (e) {
+        viewer.on('click', '.ues-component-full-handle', function (e) {
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
             var componentBox = $(this).closest('.ues-component-box');
@@ -86,7 +97,7 @@ $(function () {
         });
 
         // gadget settings handler
-        $('.ues-components-grid').on('click', '.ues-component-settings-handle', function (event) {
+        viewer.on('click', '.ues-component-settings-handle', function (event) {
             event.preventDefault();
             var id = $(this).closest('.ues-component').attr('id');
             var component = findComponent(id);
@@ -147,6 +158,7 @@ $(function () {
     var renderComponentToolbar = function (component) {
         if (component) {
             var container = $('#' + component.id);
+            var noOfDefaultBtn = 0;
             var userPrefsExists = false;
             for (var key in component.content.options) {
                 if (component.content.options[key].type.toUpperCase() != 'HIDDEN') {
@@ -154,6 +166,28 @@ $(function () {
                     break;
                 }
             }
+            if (userPrefsExists) {
+                noOfDefaultBtn = noOfDefaultBtn + 1;
+            }
+            // anon dashboards doesn't have settings option
+            if (component.content.defaultButtonConfigs.isMaximize) {
+                noOfDefaultBtn = noOfDefaultBtn + 1;
+            }
+            var customtoolbarOpt = component.content.toolbarButtons.custom;
+            for (var customBtn in customtoolbarOpt) {
+                if (customtoolbarOpt.hasOwnProperty(customBtn)) {
+                    noOfDefaultBtn = noOfDefaultBtn + 1;
+                    var iconTypeCSS = 'css';
+                    var iconTypeImage = 'image';
+                    if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
+                        customtoolbarOpt[customBtn].isTypeCSS = true;
+                    }
+                    if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
+                        customtoolbarOpt[customBtn].isTypeImage = true;
+                    }
+                }
+            }
+            component.content.isDropDownView = noOfDefaultBtn > 3;
             // anon dashboards doesn't have settings option
             component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
             container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
