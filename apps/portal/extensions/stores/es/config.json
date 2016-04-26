@@ -6,6 +6,6 @@
         "username": "admin",
         "password": "admin"
     },
-    "dirNameSeperator": "$"
+    "dirNameDelimiter": "$"
 }
 

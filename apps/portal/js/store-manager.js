@@ -14,38 +14,35 @@
  * limitations under the License.
  */
 var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
-var utils = require('/modules/utils.js');
 
 (function () {
     var log = new Log();
 
-    var dir = '/store/';
-
+    var carbon = require('carbon');
     var utils = require('/modules/utils.js');
     var config = require('/configs/designer.json');
+
+    var STORE_EXTENSIONS_LOCATION = '/extensions/stores/';
 
     var registryPath = function (id) {
         var path = '/_system/config/ues/dashboards';
         return id ? path + '/' + id : path;
     };
 
-    var storeExtension = function (storeType){
-        return '/extensions/stores/' + storeType + '/index.js';
+    var storeExtension = function (storeType) {
+        return STORE_EXTENSIONS_LOCATION + storeType + '/index.js';
     };
 
     getDashboardsFromRegistry = function (start, count) {
-        var carbon = require('carbon');
+
         var server = new carbon.server.Server();
         var registry = new carbon.registry.Registry(server, {
             system: true
         });
-
-        var dashboards = registry.content(registryPath(), {
+        return registry.content(registryPath(), {
             start: start,
             count: count
         });
-
-        return dashboards;
     };
 
     var findDashboards = function (ctx, type, query, start, count) {
@@ -53,7 +50,6 @@ var utils = require('/modules/utils.js');
             return [];
         }
 
-        var carbon = require('carbon');
         var server = new carbon.server.Server();
         var registry = new carbon.registry.Registry(server, {
             system: true
@@ -103,7 +99,7 @@ var utils = require('/modules/utils.js');
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
             var specificStore = require(storeExtension(storeTypes[i]));
-            var asset = specificStore.getAsset(type, id)
+            var asset = specificStore.getAsset(type, id);
             if (asset) {
                 break;
             }
@@ -125,11 +121,10 @@ var utils = require('/modules/utils.js');
             return findDashboards(ctx, type, query, start, count);
         }
         var allAssets = [];
-        //var allAssets = {};
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
             var specificStore = require(storeExtension(storeTypes[i]));
-            var assets = specificStore.getAssets(type, query, start, count);
+            var assets = specificStore.getAssets(type, query);
             if (assets) {
                 for (var j = 0; j < assets.length; j++) {
                     assets[j].thumbnail = storeTypes[i].concat('://' + assets[j].thumbnail);
@@ -143,6 +138,9 @@ var utils = require('/modules/utils.js');
                 allAssets = assets.concat(allAssets);
             }
         }
+        var end = start + count;
+        end = end > allAssets.length ? allAssets.length : end;
+        allAssets = allAssets.slice(start, end);
         return allAssets;
     };
 

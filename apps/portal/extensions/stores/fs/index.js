@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getAsset, getAssets,addAsset, deleteAsset;
+var getAsset, getAssets, addAsset, deleteAsset;
 
 (function () {
     var log = new Log();
@@ -74,10 +74,6 @@ var getAsset, getAssets,addAsset, deleteAsset;
                 file.close();
             }
         });
-
-        var end = start + count;
-        end = end > assets.length ? assets.length : end;
-        assets = assets.slice(start, end);
         return assets;
     };
 

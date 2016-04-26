@@ -133,8 +133,7 @@ var handlers = function (name) {
 };
 
 var store = function () {
-    var storePath = '/js/store.js';
-    return require(storePath);
+    return require('/js/store-manager.js');
 };
 
 var dashboardStyles = function (theme) {
