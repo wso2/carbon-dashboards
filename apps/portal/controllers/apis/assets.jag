@@ -1,4 +1,22 @@
 <%
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
 (function () {
     var log = new Log();
 
@@ -27,7 +45,7 @@
         id = matcher.elements().id;
         if (method === 'GET') {
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.findOne(assetType, id);
+                assets = store.getAsset(assetType, id);
             });
             if (!assets) {
                 response.sendError(404, JSON.stringify({
@@ -64,7 +82,7 @@
             }
             query = request.getParameter('query');
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.find(assetType, query, start, count);
+                assets = store.getAssets(assetType, query, start, count);
             });
             print(assets);
             return;

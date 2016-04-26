@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 var log = new Log();
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
@@ -30,11 +29,22 @@ var getRegistry = function () {
 };
 
 //TODO: what happen when the context is changed or mapped via reverse proxy
+/**
+ * Get the registry path for the id.
+ * @param {String} id                       Id of the dashboard
+ * @return {String}                         Registry Path to dashboard
+ * */
 var registryPath = function (id) {
     var path = '/_system/config/ues/dashboards';
     return id ? path + '/' + id : path;
 };
 
+/**
+ * Get the user registry path for dashboard.
+ * @param {String} id                       Id of the dashboard
+ * @param {String} username                 Username of the user
+ * @return {String}                         Path to user
+ * */
 var registryUserPath = function (id, username) {
     var path = '/_system/config/ues/' + username + '/dashboards';
     return id ? path + '/' + id : path;
@@ -42,11 +52,11 @@ var registryUserPath = function (id, username) {
 
 /**
  * Finds a dashboard by its ID.
- * @param {String} id ID of the dashboard
- * @param {Boolean} originalDashboardOnly Original dashboard only
+ * @param {String} id                       ID of the dashboard
+ * @param {Boolean} originalDashboardOnly   Original dashboard only
  * @return {Object} Dashboard object
  */
-var findOne = function (id, originalDashboardOnly) {
+var getAsset = function (id, originalDashboardOnly) {
     originalDashboardOnly = originalDashboardOnly || false;
     var registry = getRegistry();
     var usr = require('/modules/user.js');
@@ -54,7 +64,6 @@ var findOne = function (id, originalDashboardOnly) {
     var path = registryPath(id);
     var originalDB;
     var isCustom = false;
-
     if (user) {
         var originalDBPath = registryPath(id);
         if (registry.exists(originalDBPath)) {
@@ -68,7 +77,6 @@ var findOne = function (id, originalDashboardOnly) {
             }
         }
     }
-
     var content = registry.content(path);
     var dashboard = JSON.parse(content);
     if (dashboard) {
@@ -88,7 +96,6 @@ var findOne = function (id, originalDashboardOnly) {
                 }
             }
         }
-
         var banner = getBanner(id, (user ? user.username : null));
         dashboard.banner = {
             globalBannerExists: banner.globalBannerExists,
@@ -98,7 +105,12 @@ var findOne = function (id, originalDashboardOnly) {
     return dashboard;
 };
 
-var find = function (paging) {
+/**
+ * Find dashboards available in the registry.
+ * @param {Object} paging                      Paging query.
+ * @return {Object} dashboardz                 Array containing dashboards.
+ * */
+var getAssets = function (paging) {
     var registry = getRegistry();
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
@@ -108,6 +120,11 @@ var find = function (paging) {
     return dashboardz;
 };
 
+/**
+ * Create dashboard with given dashboard id and the content.
+ * @param {Object} dashboard                    Dashboard object to be saved.
+ * @return {null}
+ * */
 var create = function (dashboard) {
     var server = new carbon.server.Server();
     var registry = getRegistry();
@@ -123,16 +140,18 @@ var create = function (dashboard) {
     userManager.denyRole('internal/everyone', path, 'read');
 };
 
+/**
+ * Update an existing dashboard with given data.
+ * @param {Object} dashboard                    Dashboard object to be updated.
+ * @return {null}
+ * */
 var update = function (dashboard) {
-
     var registry = getRegistry();
-
     var usr = require('/modules/user.js');
     var user = usr.current();
     if (!user) {
         throw 'User is not logged in ';
     }
-
     var path = registryUserPath(dashboard.id, user.username);
     if (!registry.exists(path) && !dashboard.isUserCustom) {
         path = registryPath(dashboard.id);
@@ -146,6 +165,11 @@ var update = function (dashboard) {
     });
 };
 
+/**
+ * Copy a dashboard to an user path.
+ * @param {Object} dashboard                    Dashboard object to be copied.
+ * @return {null}
+ * */
 var copy = function (dashboard) {
     var registry = getRegistry();
     var usr = require('/modules/user.js');
@@ -160,9 +184,13 @@ var copy = function (dashboard) {
             mediaType: 'application/json'
         });
     }
-
 };
 
+/**
+ * Remove the dashboard which copied to a user path.
+ * @param {String} id                           Id of the dashboard.
+ * @return {null}
+ * */
 var reset = function (id) {
     var registry = getRegistry();
     var usr = require('/modules/user.js');
@@ -174,10 +202,14 @@ var reset = function (id) {
     if (registry.exists(path)) {
         registry.remove(path);
     }
-
     deleteBanner(id, user.username);
 };
 
+/**
+ * Remove an existing dashboard from registry.
+ * @param {String} id                          Id of the dashboard.
+ * @return {null}
+ * */
 var remove = function (id) {
     var registry = getRegistry();
     var path = registryPath(id);
@@ -186,6 +218,12 @@ var remove = function (id) {
     }
 };
 
+/**
+ * Check if user has permission for the dashboard.
+ * @param {Object} dashboard                   Dashboard Object.
+ * @param {Object} permission                  Array of available permission for dashboard.
+ * @return {Boolean}                           True if user has permission false if user doesn't.
+ * */
 var allowed = function (dashboard, permission) {
     var usr = require('/modules/user.js');
     var user = usr.current();
@@ -200,11 +238,11 @@ var allowed = function (dashboard, permission) {
 
 /**
  * Save banner in the registry.
- * @param {String} dashboardId ID of the dashboard
- * @param {String} username Username
- * @param {String} filename Name of the file
- * @param {String} mime mime Type of the file
- * @param {Object} stream Bytestream of the file
+ * @param {String} dashboardId   ID of the dashboard
+ * @param {String} username      Username
+ * @param {String} filename      Name of the file
+ * @param {String} mime mime     Type of the file
+ * @param {Object} stream        Bytestream of the file
  * @return {null}
  */
 var saveBanner = function (dashboardId, username, filename, mime, stream) {
@@ -224,8 +262,8 @@ var saveBanner = function (dashboardId, username, filename, mime, stream) {
 /**
  * Delete dashboard banner (if the username is empty, then the default banner will be removed, otherwise the custom
  * banner for the user will be removed).
- * @param {String} dashboardId ID of the dashboard
- * @param {String} username Username
+ * @param {String} dashboardId   ID of the dashboard
+ * @param {String} username      Username
  * @return {null}
  */
 var deleteBanner = function (dashboardId, username) {
@@ -235,7 +273,7 @@ var deleteBanner = function (dashboardId, username) {
 /**
  * Render banner.
  * @param {String} dashboardId ID of the dashboard
- * @param {String} username Username
+ * @param {String} username    Username
  * @return {null}
  */
 var renderBanner = function (dashboardId, username) {
@@ -246,13 +284,11 @@ var renderBanner = function (dashboardId, username) {
         response.sendError(404, FILE_NOT_FOUND_ERROR);
         return;
     }
-
     var r = registry.get(banner.path);
     if (r == null || r.content == null) {
         response.sendError(404, FILE_NOT_FOUND_ERROR);
         return;
     }
-
     response.contentType = r.mediaType;
     print(r.content);
 };
@@ -267,18 +303,19 @@ var registryCustomizationsPath = function () {
 
 /**
  * Get saved registry path for a banner.
- * @param {String} dashboardId ID of the dashboard
- * @param {String} username Current user's username
+ * @param   {String} dashboardId ID of the dashboard
+ * @param   {String} username    Current user's username
  * @returns {String} Path to the banner
  */
 var registryBannerPath = function (dashboardId, username) {
-    return registryCustomizationsPath() + '/' + dashboardId + (username ? '/' + username : '') + '/banner';
+    return registryCustomizationsPath() + '/' + dashboardId + (username ? '/' + username : '')
+        + '/banner';
 };
 
 /**
  * Get banner details (banner type and the registry path).
- * @param {String} dashboardId ID of the dashboard
- * @param {String} username Username
+ * @param   {String} dashboardId ID of the dashboard
+ * @param   {String} username    Username
  * @returns {Object} Banner details
  */
 var getBanner = function (dashboardId, username) {
@@ -295,7 +332,6 @@ var getBanner = function (dashboardId, username) {
         result.customBannerExists = true;
         result.path = path;
     }
-
     // check to see if there is any global banner
     path = registryBannerPath(dashboardId, null);
     if (registry.exists(path)) {
@@ -307,9 +343,9 @@ var getBanner = function (dashboardId, username) {
 
 /**
  * Generate Bootstrap layout from JSON layout
- * @param {String} pageId ID of the dashboard page
- * @param {String} isAnon Is anon mode
- * @returns {String} Bootstrap layout markup
+ * @param   {String} pageId     ID of the dashboard page
+ * @param   {String} isAnon     Is anon mode
+ * @returns {String}            Bootstrap layout markup
  */
 var getBootstrapLayout = function (pageId, isAnon) {
     var bitmap;
@@ -352,7 +388,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
         var extra = 0;
         var localMax;
         bitmap = [];
-
         // calculate the total height of the bitmap
         for (y = sy; y <= ey; y++) {
             if (typeof grid[y] === 'undefined') {
@@ -367,7 +402,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
             }
             extra = Math.max(--extra, 0) + localMax - 1;
         }
-
         // create a x * y bitmap and initialize into false state
         for (y = sy; y <= extra + ey; y++) {
             bitmap[y] = [];
@@ -375,7 +409,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
                 bitmap[y][x] = false;
             }
         }
-
         // traverse through the entire grid and mark cells appropriately
         for (y = sy; y <= ey; y++) {
             if (typeof grid[y] === 'undefined') {
@@ -418,7 +451,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
         var processedRow = [];
         var content = '';
         var height = 0;
-
         // calculate new indices and widths depending on the parent's width
         for (x = sx; x <= ex; x++) {
             var el = grid[y][x];
@@ -429,7 +461,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
             width = Math.ceil((el.width * 12) / parentWidth);
             processedRow[left] = {id: el.id, height: el.height, width: width, left: left, banner: el.banner};
         }
-
         // draw the bootstrap columns
         for (x = 0; x <= 11; x++) {
             if (typeof processedRow[x] === 'undefined') {
@@ -440,7 +471,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
             if (processedRow[x].banner) {
                 classes += ' ues-banner-placeholder';
             }
-
             var styles = 'height: ' + height + 'px;';
             offset = x - previousEndPoint;
             if (offset > 0) {
@@ -472,7 +502,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
         ex = ex || 11;
         ey = ey || grid.length - 1;
         parentWidth = parentWidth || 12;
-
         // if the start row not defined, get the first defined row
         if (!sy) {
             for (y = 0; y <= ey; y++) {
@@ -483,7 +512,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
                 break;
             }
         }
-
         var x;
         var previousHeight;
         var varyingHeight = false;
@@ -493,7 +521,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
         var endRow = -1;
         var content = '';
         bitmap = bitmap || generateBitmap(grid, sx, sy, ex, ey);
-
         // traverse through all the rows in the grid and process row-by-row
         while (y <= ey) {
             previousHeight = undefined;
@@ -532,7 +559,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
                             columnStatus[x] = columnStatus[x] && bitmap[i][x];
                         }
                     }
-
                     var startCol;
                     var endCol;
                     var child;
@@ -555,7 +581,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
                                     name: 'UnsupportedLayoutError',
                                     message: 'Unable to properly render the layout using Bootstrap'
                                 });
-
                                 // fallback to the failsafe mode
                                 var refinedGrid = [];
                                 var i = 0;
@@ -575,7 +600,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
                                         i += el.height;
                                     }
                                 }
-
                                 // print each row from the non-renderable grid
                                 for (y2 = 0; y2 < refinedGrid.length; y2++) {
                                     if (typeof refinedGrid[y2] === 'undefined') {
@@ -591,7 +615,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
                             } else {
                                 subContent += process(grid, startCol, startRow, endCol, endRow, width);
                             }
-
                             child += '<div class="col-md-' + width + '">' + subContent + '</div>';
                             startCol = endCol + 1;
                         }
@@ -610,7 +633,6 @@ var getBootstrapLayout = function (pageId, isAnon) {
         }
         return content;
     };
-
     var page;
     var result = '';
     dashboard.pages.forEach(function (p) {
@@ -619,19 +641,16 @@ var getBootstrapLayout = function (pageId, isAnon) {
             return;
         }
     });
-
     if (!page) {
         response.sendError(404, 'Not found');
         return;
     }
-
     try {
         var json = (isAnon ? page.layout.content.anon.blocks : page.layout.content.loggedIn.blocks);
         content = process(initGrid(json));
     } catch (e) {
         err.push(e);
     }
-
     if (err.length > 0) {
         var errMessage = '';
         err.forEach(function (e) {
@@ -640,4 +659,4 @@ var getBootstrapLayout = function (pageId, isAnon) {
         log.error('Errors found when generating Bootstrap layout: ' + errMessage);
     }
     return content;
-}
+};

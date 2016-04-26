@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 $(function () {
     var dashboard;
     var page;
@@ -21,9 +20,9 @@ $(function () {
     var activeComponent;
     var breadcrumbs = [];
     var storeCache = {
-        gadget: [],
-        widget: [],
-        layout: []
+            gadget: [],
+            widget: [],
+            layout: []
     };
     var nonCategoryKeyWord = "null";
     var designerScrollTop = 0;
@@ -64,10 +63,15 @@ $(function () {
      * @const
      */
     var DEFAULT_COMPONENT_VIEW = 'default';
+    /**
+     * Hidden flag
+     * @const
+     * */
+    var HIDDEN = "HIDDEN";
 
     /**
      * Show HTML modal.
-     * @param {String} content HTML content
+     * @param {String} content      HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
      * @return {null}
      * @private
@@ -78,14 +82,15 @@ $(function () {
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
+
         modalElement.modal();
     };
 
     /**
      * Show confirm message with yes/no buttons.
-     * @param {String} title Title of the confirmation box
-     * @param {String} message HTML content
-     * @param {function} ok Callback function for yes button
+     * @param {String} title    Title of the confirmation box
+     * @param {String} message  HTML content
+     * @param {function} ok     Callback function for yes button
      * @return {null}
      * @private
      */
@@ -109,7 +114,7 @@ $(function () {
      */
     var getGridstack = function () {
         return $('.grid-stack').data('gridstack');
-    }
+    };
 
     /**
      * Show the information message with ok button.
@@ -125,7 +130,7 @@ $(function () {
 
     /**
      * Clone JSON object.
-     * @param {Object} o Object to be cloned
+     * @param {Object} o    Object to be cloned
      * @return {Object}
      * @private
      */
@@ -137,7 +142,7 @@ $(function () {
      * Precompiling Handlebar templates
      */
     var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html());
-    
+
     var designerHeadingHbs = Handlebars.compile($('#ues-designer-heading-hbs').html());
 
     var componentsListHbs = Handlebars.compile($("#ues-components-list-hbs").html());
@@ -165,7 +170,7 @@ $(function () {
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
 
     var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html());
-    
+
     /**
      * Generate unique gadget ID.
      * @param {String} gadgetName Name of the gadget
@@ -195,7 +200,7 @@ $(function () {
         }
         return gadgetName + '-' + (gadgetIds[gadgetName]++);
     }
-    
+
     /**
      * Initialize the nano scroller.
      * @return {null}
@@ -240,6 +245,7 @@ $(function () {
     var renderComponentProperties = function (component) {
         var ctx = buildPropertiesContext(component, page);
         var propertiesContainer = $('.ues-component-properties-container');
+
         propertiesContainer
             .html(componentPropertiesHbs(ctx))
             .on('change', 'input, select, textarea', function () {
@@ -268,7 +274,7 @@ $(function () {
     /**
      * Render maximized view of a gadget.
      * @param {Object} component The component to be rendered
-     * @param {String} view Component view mode
+     * @param {String} view      Component view mode
      * @return {null}
      * @private
      */
@@ -284,7 +290,7 @@ $(function () {
     /**
      * Find an asset of the given type from the store cache.
      * @param {String} type The cache type
-     * @param {String} id Asset ID
+     * @param {String} id   Asset ID
      * @return {Object}
      * @private
      */
@@ -303,7 +309,7 @@ $(function () {
 
     /**
      * Find a given component in the current page.
-     * @param {String} id The component ID
+     * @param {String} id   The component ID
      * @return {Object}
      * @private
      */
@@ -331,7 +337,7 @@ $(function () {
 
     /**
      * Save component properties.
-     * @param {String} id The component ID
+     * @param {String} id   The component ID
      * @param {Object} data Component properties data
      * @return {null}
      * @private
@@ -341,6 +347,7 @@ $(function () {
         var opt;
         var block = findComponent(id);
         var content = block.content;
+
         //save options
         var options = content.options;
         var opts = data.options;
@@ -350,10 +357,13 @@ $(function () {
                 o.value = opts[opt];
             }
         }
+
         //save settings
         content.settings = data.settings;
+
         //save styles
         content.styles = data.styles;
+
         //save wiring
         var event;
         var listener;
@@ -365,6 +375,7 @@ $(function () {
                 listener.on = notifiers[event];
             }
         }
+
         ues.dashboards.rewire(page, pageType);
         updateComponent(id);
         saveDashboard();
@@ -372,8 +383,8 @@ $(function () {
 
     /**
      * Removes and destroys the given component from the page.
-     * @param {Object} component The component to be removed
-     * @param {function} done Callback function
+     * @param {Object} component    The component to be removed
+     * @param {function} done       Callback function
      * @return {null}
      * @private
      */
@@ -402,8 +413,8 @@ $(function () {
 
     /**
      * Destroys the given component.
-     * @param {Object} component Component to be destroyed
-     * @param {function} done Callback function
+     * @param {Object} component    Component to be destroyed
+     * @param {function} done       Callback function
      * @return {null}
      * @private
      */
@@ -419,7 +430,7 @@ $(function () {
     /**
      * Destroys a given list of components of an area.
      * @param {Object[]} components Components to be removed
-     * @param {function} done Callback function
+     * @param {function} done       Callback function
      * @return {null}
      * @private
      */
@@ -443,9 +454,9 @@ $(function () {
 
     /**
      * Destroys all areas in a given page.
-     * @param {Object} page The page object
+     * @param {Object} page     The page object
      * @param {String} pageType Type of the page
-     * @param {function} done Callback function
+     * @param {function} done   Callback function
      * @return {null}
      * @private
      */
@@ -478,9 +489,9 @@ $(function () {
 
     /**
      * Remove and destroys a given page.
-     * @param {String} pid Page ID
-     * @param {type} Type of the page
-     * @param {function} done Callback function
+     * @param {String} pid      Page ID
+     * @param {type}            Type of the page
+     * @param {function} done   Callback function
      * @return {null}
      * @private
      */
@@ -511,16 +522,17 @@ $(function () {
 
     /**
      * Generate Noty Messages as to the content given parameters.
-     * @param {String} text The message
-     * @param {function} ok The OK function
+     * @param {String} text     The message
+     * @param {function} ok     The OK function
      * @param {function} cancel The Cancel function
-     * @param {String} type Type of the message
-     * @param {String} layout The layout
-     * @param {Number} timeout Timeout
+     * @param {String} type     Type of the message
+     * @param {String} layout   The layout
+     * @param {Number} timeout  Timeout
      * @return {Object}
      * @private
      * */
     var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
+
         var properties = {};
         properties.text = text;
         if (ok || cancel) {
@@ -564,6 +576,7 @@ $(function () {
             easing: 'swing',
             speed: 500
         };
+
         return noty(properties);
     };
 
@@ -670,6 +683,7 @@ $(function () {
                     .find('i.fw')
                     .removeClass('fw-expand')
                     .addClass('fw-contract');
+
                 componentBody.hide();
             }
             initNanoScroller();
@@ -713,6 +727,7 @@ $(function () {
                     } else {
                         componentBox.html(componentBoxContentHbs());
                     }
+
                     designerModal.modal('hide');
                 });
             });
@@ -721,7 +736,7 @@ $(function () {
 
     /**
      * Return the ID of the page.
-     * @return {String} ID of the page
+     * @return {String}     ID of the page
      * @private
      */
     var getPageId = function () {
@@ -787,7 +802,7 @@ $(function () {
 
     /**
      * Triggers update hook of a given component.
-     * @param {String} id Component ID
+     * @param {String} id   Component ID
      * @return {null}
      * @private
      */
@@ -801,9 +816,9 @@ $(function () {
 
     /**
      * Builds up the component notifiers.
-     * @param {Object[]} notifiers List of events
-     * @param {Object} current Current component
-     * @param {Object} component Other component
+     * @param {Object[]} notifiers  List of events
+     * @param {Object} current      Current component
+     * @param {Object} component    Other component
      * @return {null}
      * @private
      */
@@ -835,8 +850,8 @@ $(function () {
 
     /**
      * Builds up the area notifiers.
-     * @param {Object[]} notifiers List of events
-     * @param {Object} component The component
+     * @param {Object[]} notifiers  List of events
+     * @param {Object} component    The component
      * @param {Object[]} components All components
      * @return {null}
      * @private
@@ -851,8 +866,8 @@ $(function () {
 
     /**
      * Builds up the page notifiers.
-     * @param {Object} component The component
-     * @param {Object} page The page
+     * @param {Object} component    The component
+     * @param {Object} page         The page
      * @returns {Array} Notifiers
      * @private
      */
@@ -896,7 +911,6 @@ $(function () {
                 });
             }
         }
-        console.log(listeners);
         return listeners;
     };
 
@@ -991,7 +1005,7 @@ $(function () {
     var isOptionAvailable = function (optionKeys, options) {
         var isAvailable = false;
         for (var i = 0; i < optionKeys.length; i++) {
-            if (options[optionKeys[i]].type.toUpperCase() != "HIDDEN") {
+            if (options[optionKeys[i]].type.toUpperCase() != HIDDEN) {
                 isAvailable = true;
                 break;
             }
@@ -1024,7 +1038,7 @@ $(function () {
 
     /**
      * Check whether current landing page is anonymous or not.
-     * @param {String} landing Current landing page
+     * @param {String} landing  Current landing page
      * @return {boolean}
      * @private
      */
@@ -1036,6 +1050,7 @@ $(function () {
                 break;
             }
         }
+
         return isLandingAnon;
     };
 
@@ -1053,11 +1068,13 @@ $(function () {
                 break;
             }
         }
+
         return isAnonPagesAvailable;
     };
 
     /**
-     * Check whether dashboard is anon or not based on whether there are anon pages available or not.
+     * Check whether dashboard is anon or not based on whether there are anon
+     * pages available or not.
      * @return {boolean} true if there are any page with anon view.
      */
     var checkWhetherDashboardIsAnon = function () {
@@ -1068,6 +1085,7 @@ $(function () {
                 break;
             }
         }
+
         return isDashboardAnon;
     };
 
@@ -1085,6 +1103,7 @@ $(function () {
                 break;
             }
         }
+
         return isPageAvailable;
     };
 
@@ -1102,6 +1121,7 @@ $(function () {
                 break;
             }
         }
+
         return isPageAvailable;
     };
 
@@ -1145,6 +1165,7 @@ $(function () {
      * @private
      */
     var updatePageProperties = function (e) {
+
         var titleError = $("#title-error");
         var idError = $("#id-error");
         var hasError = false;
@@ -1254,6 +1275,7 @@ $(function () {
             saveDashboard();
         } else {
         }
+
         return true;
     };
 
@@ -1283,8 +1305,8 @@ $(function () {
 
     /**
      * Save page options of the component.
-     * @param {Object} sandbox Sandbox element
-     * @param {Object} options Options object
+     * @param {Object} sandbox  Sandbox element
+     * @param {Object} options  Options object
      * @return {null}
      * @private
      */
@@ -1317,7 +1339,7 @@ $(function () {
 
     /**
      * Save settings of the component.
-     * @param {Object} sandbox Sandbox element
+     * @param {Object} sandbox  Sandbox element
      * @param {Object} settings Settings object
      * @return {null}
      * @private
@@ -1339,8 +1361,8 @@ $(function () {
 
     /**
      * Save styles of the component.
-     * @param {Object} sandbox Sandbox element
-     * @param {Object} styles Styles object
+     * @param {Object} sandbox  Sandbox element
+     * @param {Object} styles   Styles object
      * @return {null}
      * @private
      */
@@ -1364,7 +1386,7 @@ $(function () {
 
     /**
      * Save notifiers of the component.
-     * @param {Object} sandbox Sandbox element
+     * @param {Object} sandbox  Sandbox element
      * @param {Array} notifiers Notifiers object
      * @return {null}
      * @private
@@ -1395,8 +1417,8 @@ $(function () {
 
     /**
      * Check whether given category is already existing or not.
-     * @param {Object} categories All the categories
-     * @param {String} category Category to be checked
+     * @param {Object} categories   All the categories
+     * @param {String} category     Category to be checked
      * @return {Boolean}
      * @private
      */
@@ -1481,7 +1503,6 @@ $(function () {
         ues.store.assets(type, paging, function (err, data) {
             paging.loading = false;
             if (err) {
-                console.log(err);
                 return;
             }
 
@@ -1521,6 +1542,7 @@ $(function () {
      * @private
      */
     var initComponents = function () {
+
         $('#sidebarNavGadgets .ues-thumbnails').on('mouseenter', '.ues-thumbnail', function () {
             $(this).draggable({
                 cancel: false,
@@ -1538,6 +1560,7 @@ $(function () {
      * @private
      */
     var initDesigner = function () {
+
         $('#designer-view-mode').on('click', 'li', function () {
             var currentPageType = pageType;
             var mode = $(this).data('view-mode');
@@ -1549,6 +1572,7 @@ $(function () {
                 ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.anon = true;
             }
+
             switchPage(getPageId(), currentPageType);
         });
     };
@@ -1575,16 +1599,21 @@ $(function () {
      * @private
      * */
     var initLayoutWorkspace = function () {
+
         $('#ues-page-layouts').on('click', '.thumbnail', function (e) {
             e.preventDefault();
             var options = pageOptions();
+
             createPage(options, $(this).data('id'), function (err) {
+
                 // reload pages list
                 updatePagesList();
+
                 // hide the sidebar
                 $('#sidebarNavPages button[rel="createPage"]').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
+
             });
         });
         loadLayouts();
@@ -1597,12 +1626,13 @@ $(function () {
      */
     var initStore = function () {
         loadAssets('gadget');
+
         // initialize search options in gadgets sidebar
-        $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (e) {
-            if (e.which !== 13) {
+        $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (event) {
+            if (event.which !== 13) {
                 return;
             }
-            e.preventDefault();
+            event.preventDefault();
             var query = $(this).val();
             loadAssets('gadget', query);
         });
@@ -1625,9 +1655,9 @@ $(function () {
                 // Preview the dashboard
                 previewDashboard(page);
             })
-            .on('click', '.ues-copy', function (e) {
+            .on('click', '.ues-copy', function (event) {
                 // reset the dashboard
-                e.preventDefault();
+                event.preventDefault();
                 var that = $(this);
                 showConfirm('Resetting the page',
                     'This will remove all the customization added to the dashboard. Do you want to continue?',
@@ -1641,19 +1671,24 @@ $(function () {
             .on('click', '.ues-switch-page-prev, .ues-switch-page-next, .ues-refresh-page', function () {
                 // navigate/refresh pages
                 var pid = $(this).attr('data-page-id');
+
                 ues.global.isSwitchToNewPage = true;
                 switchPage(pid, pageType);
                 ues.global.isSwitchToNewPage = false;
             })
             .on('click', '.ues-delete-page', function () {
+
                 // delete dashboard page
                 var pid = $(this).attr('data-page-id');
+
                 showConfirm('Deleting the page',
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
                         removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                             var pages = dashboard.pages;
+
                             updatePagesList(pages);
+
                             // if the landing page was deleted, make the first page to be the landing page
                             if (dashboard.pages.length) {
                                 if (pid == dashboard.landing) {
@@ -1667,6 +1702,8 @@ $(function () {
                                     $('#btn-pages-sidebar').click();
                                 }
                             }
+
+
                             // save the dashboard
                             saveDashboard();
                             renderPage(dashboard.landing);
@@ -1678,13 +1715,14 @@ $(function () {
         var pagesMenu = $("#ues-dashboard-pages");
         // load page properties
         pagesMenu.on("click", '.ues-page-list-heading', function (e) {
-            var pid = $(this).data('id')
+            var pid = $(this).data('id');
             // do not re-render if the user clicks on the current page name
             if (pid != page.id) {
                 ues.global.isSwitchToNewPage = true;
                 switchPage(pid, pageType);
                 ues.global.isSwitchToNewPage = false;
             }
+
             // render page properties
             pagesMenu.find('.ues-page-properties#pages' + pid).html(pageOptionsHbs({
                 id: page.id,
@@ -1784,29 +1822,37 @@ $(function () {
      * @return {null}
      */
     var initAddBlock = function () {
+
         var dummySizeChanged = function () {
             var dummy = $('.ues-dummy-gadget');
             var unitSize = parseInt(dummy.data('unit-size'));
+
             dummy.css({
                 width: unitSize * parseInt($('#block-width').val()),
                 height: unitSize * parseInt($('#block-height').val())
             });
         }
+
         // redraw the grid when changing the width/height values
         $('#block-height, #block-width')
             .on('change', dummySizeChanged)
             .on('keyup', dummySizeChanged)
             .on('blur', dummySizeChanged);
+
         // add block handler
         $('#ues-add-block-btn').on('click', function () {
+
             var width = $('#block-width').val() || 0;
             var height = $('#block-height').val() || 0;
             var id = guid();
+
             if (width == 0 || height == 0) {
                 return;
             }
+
             getGridstack().add_widget($(newBlockHbs({id: id})), 0, 0, width, height);
             $('.ues-component-box#' + id).html(componentBoxContentHbs())
+
             updateLayout();
             listenLayout();
         });
@@ -1883,12 +1929,15 @@ $(function () {
      * @private
      * */
     var updatePagesList = function (current, pages, landing) {
+
         current = current || page;
+
         $('#ues-dashboard-pages').html(pagesListHbs({
             current: current,
             pages: pages || dashboard.pages,
             home: landing || dashboard.landing,
         }));
+
         $('#ues-dashboard-pages #pagesButton' + current.id).click();
     };
 
@@ -1969,6 +2018,7 @@ $(function () {
      * @return {null}
      */
     var updateLayout = function () {
+
         // extract the layout from the designer and save it
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
@@ -2024,6 +2074,7 @@ $(function () {
                 .toString(16)
                 .substring(1);
         }
+
         return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
     }
 
@@ -2033,10 +2084,12 @@ $(function () {
      * @private
      */
     var showCreatePage = function () {
+
         // if the left panel is closed, click on the pages button
         if (!$('#left-sidebar').hasClass('toggled')) {
             $('#btn-pages-sidebar').click()
         }
+
         // if the select layout is closed, click on the create page button
         if (!$('#left-sidebar-sub').hasClass('toggled')) {
             $('#left-sidebar button[rel=createPage]').click();
@@ -2045,24 +2098,28 @@ $(function () {
 
     /**
      * Renders the given page in the designer view.
-     * @param {String} pid Page ID
-     * @param {function} done Callback function
+     * @param {String} pid      Page ID
+     * @param {function} done   Callback function
      * @return {null}
      * @private
      */
     var renderPage = function (pid, done) {
         gadgetIds = undefined;
-        
+
         // if no pages found, display a message
         if (!dashboard.pages.length) {
+
             $('#ues-dashboard-preview-link').hide();
+
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
                     showCreatePage();
                 });
+
             $('.page-header .page-actions').hide();
-            $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide()
+            $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
+
             showCreatePage();
             return;
         }
@@ -2071,12 +2128,14 @@ $(function () {
         $('.gadgets-grid').html('');
         $('.page-header .page-actions').show();
         $('#btn-sidebar-layouts, #btn-sidebar-gadgets').show();
+
         currentPage(findPage(dashboard, pid));
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
 
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
+
         var anonToggle = $('#designer-view-mode li[data-view-mode=anon]');
         if (page.isanon && !dashboard.isUserCustom) {
             anonToggle.removeClass('hide');
@@ -2115,6 +2174,7 @@ $(function () {
         }));
 
         ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
+
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
@@ -2148,7 +2208,9 @@ $(function () {
                         updateComponent(container.attr('id'));
                     }
                 }
+
                 updateLayout();
+
             });
 
             $('.gadgets-grid [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
@@ -2173,6 +2235,7 @@ $(function () {
         var pages = dashboard.pages;
         var length = pages.length;
         var page = prefix + pid;
+
         for (i = 0; i < length; i++) {
             if (pages[i].id === page) {
                 pid++;
@@ -2180,6 +2243,7 @@ $(function () {
                 return checkForExistingPageNames(prefix, pid);
             }
         }
+
         return pid;
     };
 
@@ -2207,7 +2271,9 @@ $(function () {
         var pid = 0;
         var prefix = 'page';
         var titlePrefix = 'Page ';
+
         pid = checkForExistingPageNames(prefix, pid);
+
         return {
             id: prefix + pid,
             title: titlePrefix + pid
@@ -2216,14 +2282,16 @@ $(function () {
 
     /**
      * Initializes the dashboard.
-     * @param {Object} db Dashboard object
+     * @param {Object} db   Dashboard object
      * @param {String} page Page ID
      * @returns {null}
      * @private
      */
     var initDashboard = function (db, page) {
+
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
+
         if (pages.length > 0) {
             renderPage(page || db.landing || pages[0].id);
         } else {
@@ -2236,6 +2304,7 @@ $(function () {
      * @return {null}
      */
     var loadBanner = function () {
+
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
                 globalBannerExists: false,
                 customBannerExists: false
@@ -2378,21 +2447,26 @@ $(function () {
         $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
             if (ues.global.dashboard.isUserCustom && !ues.global.dashboard.banner.customBannerExists) {
-                // in order to remove the global banner from a personalized dashboard, we need to save an empty resource
+                // in order to remove the global banner from a personalized dashboard, we need to save an empty resource.
                 $.ajax({
                     url: $form.attr('action'),
                     type: $form.attr('method'),
                     data: {data: ''},
                 }).success(function (d) {
+
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
                     // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.customBannerExists = false;
                     }
+
                     ues.global.dashboard.banner.cropMode = false;
+
                     loadBanner();
                 });
+
             } else {
                 // remove the banner
                 $.ajax({
@@ -2400,6 +2474,7 @@ $(function () {
                     type: 'DELETE',
                     dataType: 'json'
                 }).success(function (d) {
+
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
                         ues.global.dashboard.banner.customBannerExists = false;
@@ -2412,8 +2487,10 @@ $(function () {
             }
         });
     };
+
     initUI();
     initDashboard(ues.global.dashboard, ues.global.page);
+
     ues.dashboards.save = saveDashboard;
 });
 
@@ -2423,29 +2500,33 @@ nanoScrollerSelector.nanoScroller();
 
 /**
  * Update sidebar.
- * @param {String} view Selector of the sidebar pane
- * @param {Object} button Event source
+ * @param {String} view     Selector of the sidebar pane
+ * @param {Object} button   Event source
  * @return {null}
  */
 function updateSidebarNav(view, button) {
     var target = $(button).data('target');
     $(view).show();
     $(view).siblings().hide();
+
     if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
     } else {
         $('#left-sidebar-sub').show();
     }
+
     nanoScrollerSelector[0].nanoscroller.reset();
 }
 
 /**
  * Update the UI when closing the right sidebar.
- * @param {Object} button Event source
+ * @param {Object} button       Event source
  * @return {null}
  */
 function updateSidebarOptions(button) {
+
     var target = $(button).data('target');
+
     $('.gadget').removeClass('active');
     setTimeout(function () {
         if ($(target).hasClass('toggled')) {
@@ -2473,8 +2554,8 @@ function toggleCaret(e) {
 $('.sidebar-wrapper').on('hidden.bs.collapse', toggleCaret);
 $('.sidebar-wrapper').on('shown.bs.collapse', toggleCaret);
 
-$('#left-sidebar').on('hidden.sidebar', function (e) {
-    $(e.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
+$('#left-sidebar').on('hidden.sidebar', function (event) {
+    $(event.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
     $.sidebar_toggle('hide', '#left-sidebar-sub', '.page-content-wrapper');
 });
 
@@ -2493,8 +2574,8 @@ $('.gadgets-grid').on({
 
 /**
  * Toggle gadget heading when no heading is activated.
- * @param {Object} source Event source
- * @param {Boolean} show Flag
+ * @param {Object} source       Event source
+ * @param {Boolean} show        Flag
  * @return {null}
  */
 function toggleHeading(source, show) {
@@ -2509,25 +2590,23 @@ function toggleHeading(source, show) {
 }
 
 // Enforce min/max values of number fields
-$('input[type=number]')
-    .on('change', function () {
+$('input[type=number]').on('change', function () {
         var input = $(this);
         var max = input.attr('max');
         var min = input.attr('min');
-        if (input.val().trim() == '') {
-            return;
-        }
-        var value = parseInt(input.val());
-        if (max !== '' && !isNaN(max) && value > parseInt(max)) {
-            input.val(max);
-        }
-        if (min !== '' && !isNaN(min) && value < parseInt(min)) {
-            input.val(min);
-        }
-    })
-    .on('blur', function () {
-        var input = $(this);
-        if (input.val() == '' && input.attr('min')) {
-            input.val(input.attr('min'));
-        }
-    });
+    if (input.val().trim() == '') {
+        return;
+    }
+    var value = parseInt(input.val());
+    if (max !== '' && !isNaN(max) && value > parseInt(max)) {
+        input.val(max);
+    }
+    if (min !== '' && !isNaN(min) && value < parseInt(min)) {
+        input.val(min);
+    }
+}).on('blur', function () {
+    var input = $(this);
+    if (input.val() == '' && input.attr('min')) {
+        input.val(input.attr('min'));
+    }
+});

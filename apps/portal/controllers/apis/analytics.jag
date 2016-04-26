@@ -1,4 +1,22 @@
 <%
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
 (function () {
     var TYPE = "type";
     var TABLE_NAME = "tableName";
@@ -24,17 +42,11 @@
     var ZERO_INDEX = "0";
     var LAST_INDEX = "5000";    //Set the max value to 5000. This is to prevent accidental loading of millions of records.
     var TYPE_CLEAR_INDEX_DATA = 1;
-//    var TYPE_CREATE_TABLE = 2;
-//    var TYPE_DELETE_BY_ID = 3;
-//    var TYPE_DELETE_BY_RANGE = 4;
-//    var TYPE_DELETE_TABLE = 5;
     var TYPE_GET_RECORD_COUNT = 6;
     var TYPE_GET_BY_ID = 7;
     var TYPE_GET_BY_RANGE = 8;
     var TYPE_LIST_TABLES = 9;
     var TYPE_GET_SCHEMA = 10;
-//    var TYPE_PUT_RECORDS = 11;
-//    var TYPE_PUT_RECORDS_TO_TABLE = 12;
     var TYPE_SEARCH = 13;
     var TYPE_SEARCH_COUNT = 14;
     var TYPE_SET_SCHEMA = 15;
@@ -64,11 +76,11 @@
     var cacheTimeoutSeconds = 5;
     var loggedInUser = null;
 
-    if(configs.cacheTimeoutSeconds) {
+    if (configs.cacheTimeoutSeconds) {
         cacheTimeoutSeconds = parseInt(configs.cacheTimeoutSeconds);
     }
     var cacheSizeBytes = 1024 * 1024 * 1024; // 1GB
-    if(configs.cacheSizeBytes) {
+    if (configs.cacheSizeBytes) {
         cacheSizeBytes = parseInt(configs.cacheSizeBytes);
     }
     response.contentType = CONTENT_TYPE_JSON;
@@ -111,15 +123,9 @@
     }
 
     var tableName = request.getParameter(TABLE_NAME);
-    if (type != TYPE_LIST_TABLES &&
-        //        type != TYPE_PUT_RECORDS &&
-            type != TYPE_PAGINATION_SUPPORTED &&
-            type != TYPE_ADD_STREAM_DEFINITION &&
-            type != TYPE_GET_STREAM_DEFINITION &&
-            type != TYPE_PUBLISH_EVENTS &&
-            type != TYPE_WAIT_FOR_INDEXING &&
-            type != TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES &&
-            type != TYPE_GET_RECORDSTORES) {
+    if (type != TYPE_LIST_TABLES && type != TYPE_PAGINATION_SUPPORTED && type != TYPE_ADD_STREAM_DEFINITION
+            && type != TYPE_GET_STREAM_DEFINITION && type != TYPE_PUBLISH_EVENTS && type != TYPE_WAIT_FOR_INDEXING
+            && type != TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES && type != TYPE_GET_RECORDSTORES) {
         if (tableName == null) {
             log.error("tableName is not provided!");
             response.status = HTTP_INTERNAL_ERROR;
@@ -144,16 +150,6 @@
                 result = connector.getTableList(loggedInUser);
                 break;
             }
-            /*case TYPE_CREATE_TABLE:
-             {
-             print(connector.createTable(tableName));
-             break;
-             }
-             case TYPE_DELETE_TABLE:
-             {
-             print(connector.deleteTable(tableName));
-             break;
-             } */
             case TYPE_TABLE_EXISTS:
             {
                 result = connector.tableExists(loggedInUser, tableName);
@@ -298,7 +294,7 @@
             }
             case TYPE_GET_RECORDSTORE_BY_TABLE:
             {
-                result = connector.getRecordStoreByTable(loggedInUser,tableName);
+                result = connector.getRecordStoreByTable(loggedInUser, tableName);
                 break;
             }
             case TYPE_SEARCH_WITH_AGGREGATES:

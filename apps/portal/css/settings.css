@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#ues-dashboard-settings .ues-shared-view, #ues-dashboard-settings .ues-shared-edit {
+#ues-dashboard-settings .ues-shared-view,
+#ues-dashboard-settings .ues-shared-edit {
     margin-top: 10px;
 }
 

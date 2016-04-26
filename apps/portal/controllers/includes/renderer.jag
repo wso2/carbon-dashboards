@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 var dbRoot;
 var dest;
 var renderEngine = { };
 
 (function () {
     var log = new Log();
+
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
     var permissions = dashboard.permissions;
@@ -32,7 +32,6 @@ var renderEngine = { };
      * @const
      */
     var UNAUTHORIZED_ERROR = 'Dashboard access not authorized';
-
     if (user) {
         //identify edit/view permission for the logged user
         if (utils.allowed(user.roles, permissions.editors)) {
@@ -51,6 +50,7 @@ var renderEngine = { };
             return;
         }
 
+
         if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
@@ -62,10 +62,11 @@ var renderEngine = { };
             return;
         }
     }
-    
+
     // check whether the requested page exists and the anonymous view for
     // that page is defined
     pageId = pageId || dashboard.landing;
+
     var anonView;
     var pageExists = false;
     dashboard.pages.forEach(function(p) {
@@ -91,9 +92,12 @@ var renderEngine = { };
         }
     }
 
+
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
+
     // global reference to getBootstrapLayout() function
     renderEngine.getDashboardContent = db.getBootstrapLayout;
+
     include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>

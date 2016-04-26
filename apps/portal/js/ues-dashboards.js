@@ -86,8 +86,7 @@
     var hideGadget = function (sandbox) {
         sandbox.addClass('ues-hide-gadget');
         sandbox.find('.ues-component-body').hide();
-
-    }
+    };
 
     /**
      * Show Gadget the gadget
@@ -96,8 +95,7 @@
     var showGadget = function (sandbox) {
         sandbox.removeClass('ues-hide-gadget');
         sandbox.find('.ues-component-body').show();
-
-    }
+    };
 
     /**
      * Get a component ID.

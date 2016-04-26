@@ -133,9 +133,7 @@ var handlers = function (name) {
 };
 
 var store = function () {
-    var config = require('/configs/designer.json');
-    var storeType = config.store.type;
-    var storePath = '/extensions/stores/' + storeType + '/index.js';
+    var storePath = '/js/store.js';
     return require(storePath);
 };
 
