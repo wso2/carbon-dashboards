@@ -38,7 +38,7 @@
     if (matcher.match('/dashboards/{id}')) {
         vars = matcher.elements();
         utils.sandbox(context, function () {
-            dashboard = dashboards.findOne(vars.id);
+            dashboard = dashboards.getAsset(vars.id);
         });
         if (!dashboard) {
             response.sendError(404, JSON.stringify({
@@ -131,7 +131,7 @@
                 count = DEFAULT_COUNT;
             }
             utils.sandbox(context, function () {
-                allDashboards = dashboards.find({
+                allDashboards = dashboards.getAssets({
                     start: start,
                     count: count
                 });

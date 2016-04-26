@@ -56,7 +56,7 @@ var registryUserPath = function (id, username) {
  * @param {Boolean} originalDashboardOnly   Original dashboard only
  * @return {Object} Dashboard object
  */
-var findOne = function (id, originalDashboardOnly) {
+var getAsset = function (id, originalDashboardOnly) {
     originalDashboardOnly = originalDashboardOnly || false;
     var registry = getRegistry();
     var usr = require('/modules/user.js');
@@ -110,7 +110,7 @@ var findOne = function (id, originalDashboardOnly) {
  * @param {Object} paging                      Paging query.
  * @return {Object} dashboardz                 Array containing dashboards.
  * */
-var find = function (paging) {
+var getAssets = function (paging) {
     var registry = getRegistry();
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];

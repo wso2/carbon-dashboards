@@ -54,7 +54,7 @@ var fresh;
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');
         utils.sandbox(context, function () {
-            dashboard = dashboards.findOne(dashboardId);
+            dashboard = dashboards.getAsset(dashboardId);
         });
 
         if (!dashboard) {
@@ -68,7 +68,7 @@ var fresh;
             // Get the original dashboard
             var originalDashboard;
             utils.sandbox(context, function() {
-                originalDashboard = dashboards.findOne(dashboardId, true);
+                originalDashboard = dashboards.getAsset(dashboardId, true);
             });
         
             // If the original dashboard is deleted, returns 404
