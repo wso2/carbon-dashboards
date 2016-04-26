@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
 $(function () {
     var dashboard;
     var page;
@@ -626,7 +627,12 @@ $(function () {
      */
     var initComponentToolbar = function () {
         var designer = $('.gadgets-grid');
-
+        //event handler for custom button/function
+        designer.on('click', '.ues-custom-action', function (e) {
+            var fid = $(this).closest('.ues-component-box').find('iframe').attr('id');
+            var action = $(this).attr('data-action');
+            gadgets.rpc.call(fid, RPC_GADGET_BUTTON_CALLBACK, null, action);
+        });
         // event handler for maximize button
         designer.on('click', '.ues-component-box .ues-component-full-handle', function () {
             var id = $(this).closest('.ues-component').attr('id');
@@ -760,7 +766,32 @@ $(function () {
      * @private
      */
     var renderComponentToolbar = function (component) {
+        var configObj = {};
         if (component) {
+            //configuration for default buttons
+            if (component.content.toolbarButtons) {
+                var toolbarOpt = component.content.toolbarButtons.default;
+                configObj.isMaximize = !!(toolbarOpt.maximize || toolbarOpt.maximize == null);
+                configObj.isConfiguration = !!(toolbarOpt.configuration || toolbarOpt.configuration == null);
+                configObj.isRemove = !!(toolbarOpt.remove || toolbarOpt.remove == null);
+                component.content.defaultButtonConfigs = configObj;
+                var customtoolbarOpt = component.content.toolbarButtons.custom || {};
+                if (customtoolbarOpt.length > 0) {
+                    component.content.isDropDownView = true;
+                }
+                for (var customBtn in customtoolbarOpt) {
+                    if (customtoolbarOpt.hasOwnProperty(customBtn)) {
+                        var iconTypeCSS = 'css';
+                        var iconTypeImage = 'image';
+                        if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
+                            customtoolbarOpt[customBtn].isTypeCSS = true;
+                        }
+                        if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
+                            customtoolbarOpt[customBtn].isTypeImage = true;
+                        }
+                    }
+                }
+            }
             $('#' + component.id + ' .ues-component-actions').html($(componentToolbarHbs(component.content)));
         }
     };

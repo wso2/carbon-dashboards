@@ -60,7 +60,7 @@
  * Theme overrides
  */
 .gadget-title {
-    width: calc(100% - 110px);
+    max-width: 90%;
 }
 
 .page-title h1 span {
