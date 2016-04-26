@@ -31,7 +31,11 @@ var getAsset, getAssets, addAsset, deleteAsset;
     };
 
     var obtainAuthorizedHeaderForAPICall = function () {
-        var authenticate = post(config.authenticationApi, {"password": config.authConfiguration.password,
+        var password = config.authConfiguration.password;
+        if(config.authConfiguration.isSecureVaultEnabled){
+            password = resolvePassword(password);
+        }
+        var authenticate = post(config.authenticationApi, {"password": password,
             "username": config.authConfiguration.username }, {}, 'json');
         var header = {
             'Cookie': "JSESSIONID=" + authenticate.data.data.sessionId + ";",

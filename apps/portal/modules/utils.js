@@ -219,3 +219,18 @@ var getCarbonServerAddress = function (trans) {
 var getLocaleResourcePath = function () {
     return '/extensions/locales/';
 };
+
+var resolvePassword = function(passwordAlias){
+    var secretResolverFactory = org.wso2.securevault.SecretResolverFactory;
+    var omAbstractFactory = org.apache.axiom.om.OMAbstractFactory;
+
+    var omFactory = omAbstractFactory.getOMFactory();
+    var nameSpace = omFactory.createOMNamespace("http://org.wso2.securevault/configuration", "svns");
+    var rootElement = omFactory.createOMElement("password", nameSpace);
+
+    omFactory.createOMText(rootElement,passwordAlias);
+
+    var alias = passwordAlias.split(":");
+    var reslover = secretResolverFactory.create(rootElement,true);
+    return reslover.resolve(alias[1]); 
+};
