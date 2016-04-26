@@ -80,7 +80,6 @@ var getAsset, getAssets, addAsset, deleteAsset;
         var assetz = parent.listFiles();
         var assets = [];
         for (var j = 0; j < publishedAssets.length; j++) {
-            //log.info(publishedAssets[j]);
             query = query ? new RegExp(query, 'i') : null;
             assetz.forEach(function (file) {
                 if (publishedAssets[j] === file.getName()) {
@@ -110,7 +109,6 @@ var getAsset, getAssets, addAsset, deleteAsset;
         var end = start + count;
         end = end > assets.length ? assets.length : end;
         assets = assets.slice(start, end);
-        log.info(stringify(assets))
         return assets;
     };
 
