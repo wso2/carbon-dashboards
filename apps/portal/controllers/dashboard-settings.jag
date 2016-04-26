@@ -41,7 +41,7 @@ var dashboardId;
 
     var dashboards = require('/modules/dashboards.js');
     utils.sandbox(context, function () {
-        dashboard = dashboards.findOne(dashboardId);
+        dashboard = dashboards.getAsset(dashboardId);
     });
 
     if (!dashboard) {
