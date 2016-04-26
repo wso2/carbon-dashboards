@@ -132,4 +132,6 @@
     "block.delete.message.block": "Gadget &amp; Block",
     "delete.block.only.message": "Are you sure you want to delete the block?",
     "delete.block.only.header": "Deleting the block",
+    "settings.savebutton": "Save",
+    "settings.cancelbutton": "Cancel",
 }
