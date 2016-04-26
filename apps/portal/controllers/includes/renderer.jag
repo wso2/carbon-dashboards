@@ -37,9 +37,9 @@ var renderEngine = { };
         //identify edit/view permission for the logged user
         if (utils.allowed(user.roles, permissions.editors)) {
             user.isEditor = true;
-        } else  if(utils.allowed(user.roles, permissions.viewers)){
+        } else  if(utils.allowed(user.roles, permissions.viewers)) {
             user.isViewer = true;
-        } else{
+        } else {
             user.isEditor = false;
             user.isViewer = false;
         }
@@ -84,8 +84,8 @@ var renderEngine = { };
 
     //check whether the user has no edit/view permission and the anonymous
     // view is undefined
-    if(user){
-        if(!(user.isEditor || user.isViewer) && (anonView === undefined)){
+    if(user) {
+        if(!(user.isEditor || user.isViewer) && (anonView === undefined)) {
             response.sendError(404, "Page '" + pageId + "' not found");
             return;
         }
