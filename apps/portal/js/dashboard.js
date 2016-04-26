@@ -157,6 +157,7 @@ $(function () {
      */
     var renderComponentToolbar = function (component) {
         if (component) {
+            var configObj = {};
             var container = $('#' + component.id);
             var noOfDefaultBtn = 0;
             var userPrefsExists = false;
@@ -167,6 +168,7 @@ $(function () {
                 }
             }
             if (userPrefsExists) {
+                configObj.isConfiguration = true;
                 noOfDefaultBtn = noOfDefaultBtn + 1;
             }
             // anon dashboards doesn't have settings option
@@ -174,6 +176,8 @@ $(function () {
                 if (component.content.defaultButtonConfigs.isMaximize) {
                     noOfDefaultBtn = noOfDefaultBtn + 1;
                 }
+            } else {
+                configObj.isMaximize = true;
             }
             if (component.content.toolbarButtons) {
                 var customtoolbarOpt = component.content.toolbarButtons.custom || {};
@@ -193,6 +197,7 @@ $(function () {
             }
             component.content.isDropDownView = noOfDefaultBtn > 3;
             // anon dashboards doesn't have settings option
+            component.content.defaultButtonConfigs = configObj;
             component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
             container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
         }
