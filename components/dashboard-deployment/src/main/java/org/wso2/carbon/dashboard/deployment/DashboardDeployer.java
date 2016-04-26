@@ -75,12 +75,17 @@ public class DashboardDeployer implements AppDeploymentHandler {
             log.info("Creating directory " + tenantDomain + " for tenant related dashboard artifacts");
             try {
                 tenantDir.mkdir();
+                File storeTypeDir = new File(path + File.separator + DashboardConstants.DEFAULT_STORE_TYPE);
+                if (!storeTypeDir.exists()) {
+                    storeTypeDir.mkdir();
+                }
+                String pathToArtifacts = path + File.separator + DashboardConstants.DEFAULT_STORE_TYPE;
                 //create gadget, layout and widget directories for this tenant
-                File gadgetDir = new File(path + File.separator + "gadget");
+                File gadgetDir = new File(pathToArtifacts + File.separator + "gadget");
                 if (!gadgetDir.exists()) {
                     gadgetDir.mkdir();
                 }
-                File layoutDir = new File(path + File.separator + "layout");
+                File layoutDir = new File(pathToArtifacts + File.separator + "layout");
                 if (!layoutDir.exists()) {
                     String carbonLayoutDir = new StringBuilder(carbonRepository).append("jaggeryapps")
                             .append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
@@ -88,7 +93,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
                             .append("layout").toString();
                     FileUtils.copyDirectory(new File(carbonLayoutDir), new File(path));
                 }
-                File widgetDir = new File(path + File.separator + "widget");
+                File widgetDir = new File(pathToArtifacts + File.separator + "widget");
                 if (!widgetDir.exists()) {
                     widgetDir.mkdir();
                 }
