@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 $(function () {
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
     var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
@@ -35,7 +34,7 @@ $(function () {
 
     /**
      * Show HTML modal.
-     * @param {String} content HTML content
+     * @param {String} content      HTML content
      * @param {function} beforeShow Function to be invoked just before showing the modal
      * @return {null}
      * @private
@@ -46,14 +45,15 @@ $(function () {
         if (beforeShow && typeof beforeShow === 'function') {
             beforeShow();
         }
+
         modalElement.modal();
     };
 
     /**
      * Show confirm message with yes/no buttons.
-     * @param {String} title Title of the confirmation box
-     * @param {String} message HTML content
-     * @param {function} ok Callback function for yes button
+     * @param {String} title    Title of the confirmation box
+     * @param {String} message  HTML content
+     * @param {function} ok     Callback function for yes button
      * @return {null}
      * @private
      */
@@ -85,24 +85,25 @@ $(function () {
         var properties = {};
         properties.text = text;
         if (ok || cancel) {
-            properties.buttons = [
-                {
-                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+            properties.buttons = [{
+                addClass: 'btn btn-primary',
+                text: 'Ok',
+                onClick: function ($noty) {
                     $noty.close();
                     if (ok) {
                         ok();
                     }
                 }
-                },
-                {
-                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+            }, {
+                addClass: 'btn btn-danger',
+                text: 'Cancel',
+                onClick: function ($noty) {
                     $noty.close();
                     if (cancel) {
                         cancel();
                     }
                 }
-                }
-            ];
+            }];
         }
 
         if (timeout) {
@@ -173,7 +174,6 @@ $(function () {
             }
         }).error(function () {
             generateMessage("Error getting OAuth settings", null, null, "error", "topCenter", 2000);
-            console.log('error getting oauth settings');
         });
     };
 
