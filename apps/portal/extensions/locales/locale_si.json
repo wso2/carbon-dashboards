@@ -128,5 +128,7 @@
     "page.number.of": "of",
     "refresh": "Refresh",
     "block.delete.message.block": "ගැජට්ටුව සහ කොටස",
-    "add.block": "කලාප එකතු කරන්න"
+    "add.block": "කලාප එකතු කරන්න",
+    "settings.savebutton": "සුරකින්න",
+    "settings.cancelbutton": "ආපසු",
 }
