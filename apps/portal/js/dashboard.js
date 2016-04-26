@@ -170,20 +170,24 @@ $(function () {
                 noOfDefaultBtn = noOfDefaultBtn + 1;
             }
             // anon dashboards doesn't have settings option
-            if (component.content.defaultButtonConfigs.isMaximize) {
-                noOfDefaultBtn = noOfDefaultBtn + 1;
-            }
-            var customtoolbarOpt = component.content.toolbarButtons.custom;
-            for (var customBtn in customtoolbarOpt) {
-                if (customtoolbarOpt.hasOwnProperty(customBtn)) {
+            if (component.content.defaultButtonConfigs) {
+                if (component.content.defaultButtonConfigs.isMaximize) {
                     noOfDefaultBtn = noOfDefaultBtn + 1;
-                    var iconTypeCSS = 'css';
-                    var iconTypeImage = 'image';
-                    if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
-                        customtoolbarOpt[customBtn].isTypeCSS = true;
-                    }
-                    if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
-                        customtoolbarOpt[customBtn].isTypeImage = true;
+                }
+            }
+            if (component.content.toolbarButtons) {
+                var customtoolbarOpt = component.content.toolbarButtons.custom || {};
+                for (var customBtn in customtoolbarOpt) {
+                    if (customtoolbarOpt.hasOwnProperty(customBtn)) {
+                        noOfDefaultBtn = noOfDefaultBtn + 1;
+                        var iconTypeCSS = 'css';
+                        var iconTypeImage = 'image';
+                        if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
+                            customtoolbarOpt[customBtn].isTypeCSS = true;
+                        }
+                        if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
+                            customtoolbarOpt[customBtn].isTypeImage = true;
+                        }
                     }
                 }
             }
