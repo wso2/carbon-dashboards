@@ -19,9 +19,12 @@ var getAsset, getAssets, addAsset, deleteAsset;
     var log = new Log();
 
     var dir = '/store/';
+    var GADGET_ATTRIBUTES = 'attributes'
+    var GADGET_NAME = 'overview_name';
+    var GADGET_VERSION = 'overview_version'
 
     var utils = require('/modules/utils.js');
-    var config = require('/extensions/stores/es/config.json')
+    var config = require('/extensions/stores/es/config.json');
 
     var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
@@ -33,12 +36,23 @@ var getAsset, getAssets, addAsset, deleteAsset;
     var obtainAuthorizedHeaderForAPICall = function () {
         var authenticate = post(config.authenticationApi, {"password": config.authConfiguration.password,
             "username": config.authConfiguration.username }, {}, 'json');
-        var header = {
+        return {
             'Cookie': "JSESSIONID=" + authenticate.data.data.sessionId + ";",
             'Accept': 'application/json'
         };
-        return header;
     };
+
+    var getPublishedAssets = function () {
+        var headers = obtainAuthorizedHeaderForAPICall();
+        var assets = parse((get(config.publishedAssetApi, headers, 'application/json')).data).data;
+        var publishedAssets = [];
+        for (var i = 0; i < assets.length; i++) {
+            var asset_id = (assets[i][GADGET_ATTRIBUTES][GADGET_NAME] + config.dirNameDelimiter
+                + assets[i][GADGET_ATTRIBUTES][GADGET_VERSION]).replace(/ /g, config.dirNameDelimiter);
+            publishedAssets.push(asset_id);
+        }
+        return publishedAssets;
+    }
 
     getAsset = function (type, id) {
         if (type === 'layout') {
@@ -64,24 +78,15 @@ var getAsset, getAssets, addAsset, deleteAsset;
         if (type === 'layout') {
             return;
         }
-        //get list of published assets from ES
-        var headers = obtainAuthorizedHeaderForAPICall();
-        var assets = parse((get(config.publishedAssetApi, headers, 'application/json')).data).data;
-        var publishedAssets = [];
-        for (var i = 0; i < assets.length; i++) {
-            var asset_id = (assets[i]['attributes']['overview_name'] + config.dirNameSeperator
-                + assets[i]['attributes']['overview_version']).replace(/ /g, config.dirNameSeperator);
-            publishedAssets.push(asset_id);
-        }
+        var publishedAssets = getPublishedAssets();
 
-        // fetch published assets from ES
         var ctx = utils.currentContext();
         var parent = new File(assetsDir(ctx, type));
-        var assetz = parent.listFiles();
+        var allAssets = parent.listFiles();
         var assets = [];
         for (var j = 0; j < publishedAssets.length; j++) {
             query = query ? new RegExp(query, 'i') : null;
-            assetz.forEach(function (file) {
+            allAssets.forEach(function (file) {
                 if (publishedAssets[j] === file.getName()) {
                     if (!file.isDirectory()) {
                         return;
@@ -106,9 +111,6 @@ var getAsset, getAssets, addAsset, deleteAsset;
                 }
             });
         }
-        var end = start + count;
-        end = end > assets.length ? assets.length : end;
-        assets = assets.slice(start, end);
         return assets;
     };
 
