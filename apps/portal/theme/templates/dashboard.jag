@@ -328,7 +328,7 @@
                     {{#if defaultButtonConfigs.isConfiguration}}
                             {{#if userPrefsExists}}
                                 <li role="presentation">
-                                   <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
+                                   <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
                                          <i class="fw fw-configarations"></i>
                                    </button>
                                 </li>
@@ -357,7 +357,7 @@
                 {{/each}}
                 {{#if defaultButtonConfigs.isConfiguration}}
                    {{#if userPrefsExists}}
-                           <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
+                           <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
                                 <i class="fw fw-configarations"></i>
                            </button>
                     {{/if}}
