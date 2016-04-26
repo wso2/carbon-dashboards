@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var findOne, find,update, remove;
-var utils = require('/modules/utils.js');
+var getAsset, getAssets,addAsset, deleteAsset;
 
 (function () {
     var log = new Log();
@@ -23,16 +22,16 @@ var utils = require('/modules/utils.js');
 
     var utils = require('/modules/utils.js');
 
-    var assetsDir = function (ctx, storeType, type) {
+    var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
         var config = require('/configs/designer.json');
         var domain = config.shareStore ? carbon.server.superTenant.domain : ctx.domain;
-        return dir + domain + '/' + storeType + '/' + type + '/';
+        return dir + domain + '/fs/' + type + '/';
     };
 
-    findOne = function (storeType,type, id) {
+    getAsset = function (type, id) {
         var ctx = utils.currentContext();
-        var parent = assetsDir(ctx, storeType, type);
+        var parent = assetsDir(ctx, type);
         var file = new File(parent + id);
         if (!file.isExists()) {
             return null;
@@ -47,9 +46,9 @@ var utils = require('/modules/utils.js');
         return asset;
     };
 
-    find = function (storeType,type, query, start, count) {
+    getAssets = function (type, query, start, count) {
         var ctx = utils.currentContext();
-        var parent = new File(assetsDir(ctx, storeType, type));
+        var parent = new File(assetsDir(ctx, type));
         var assetz = parent.listFiles();
         var assets = [];
         query = query ? new RegExp(query, 'i') : null;
@@ -82,11 +81,11 @@ var utils = require('/modules/utils.js');
         return assets;
     };
 
-    update = function (asset) {
+    addAsset = function (asset) {
 
     };
 
-    remove = function (id) {
+    deleteAsset = function (id) {
 
     };
 }());
