@@ -36,7 +36,7 @@ var renderEngine = { };
         //identify edit/view permission for the logged user
         if (utils.allowed(user.roles, permissions.editors)) {
             user.isEditor = true;
-        } else  if(utils.allowed(user.roles, permissions.viewers)) {
+        } else if (utils.allowed(user.roles, permissions.viewers)) {
             user.isViewer = true;
         } else {
             user.isEditor = false;
