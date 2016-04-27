@@ -41,7 +41,7 @@
         id = matcher.elements().id;
         if (method === 'GET') {
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.findOne(assetType, id);
+                assets = store.getAsset(assetType, id);
             });
             if (!assets) {
                 response.sendError(404, JSON.stringify({
@@ -77,7 +77,7 @@
             }
             query = request.getParameter('query');
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.find(assetType, query, start, count);
+                assets = store.getAssets(assetType, query, start, count);
             });
             print(assets);
             return;

@@ -43,7 +43,7 @@
         var vars = matcher.elements();
         var dashboardId = vars.id;
         // fetch the dashboard
-        var dashboard = dashboards.findOne(dashboardId);
+        var dashboard = dashboards.getAsset(dashboardId);
         if (dashboard == null) {
             response.sendError(404, 'Unable to find the dashboard');
             return;

@@ -25,6 +25,42 @@ wso2.gadgets.controls = (function () {
      * @private
      */
     var RPC_SERVICE_SHOW_GADGET = 'RPC_SERVICE_SHOW_GADGET';
+    var RPC_GADGET_BUTTON_CALLBACK = 'RPC_GADGET_BUTTON_CALLBACK';
+    var btnCallbacks = {};
+    /**
+     * Adding button callback functions.
+     * @return {null}
+     */
+    var addButtonListener = function (action, callback) {
+        if (!btnCallbacks[action]) {
+            btnCallbacks[action] = [];
+        }
+        btnCallbacks[action].push(callback);
+    };
+
+    /**
+     * Service name to resize gadgets.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_RESIZE_GADGET = 'RPC_SERVICE_RESIZE_GADGET';
+
+    /**
+     * Service name to restore gadgets.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_RESTORE_GADGET = 'RPC_SERVICE_RESTORE_GADGET';
+
+    /**
+     * Service name for lost focus event notifications.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_LOST_FOCUS_CALLBACK = 'RPC_SERVICE_LOST_FOCUS_CALLBACK';
+
+    // Keeps handlers for lost focus event.
+    var lostFocusCallbacks = [];
 
     /**
      * Display an already hidden gadget.
@@ -34,7 +70,57 @@ wso2.gadgets.controls = (function () {
         wso2.gadgets.core.callContainerService(RPC_SERVICE_SHOW_GADGET, null, null);
     };
 
+
+    // Register callback function to trigger respective fuction to button click.
+    gadgets.rpc.register(RPC_GADGET_BUTTON_CALLBACK, function (action) {
+        if (!btnCallbacks[action]) {
+            return;
+        }
+        for (var i = 0; i < btnCallbacks[action].length; i++) {
+            btnCallbacks[action][i]();
+        }
+    });
+
+    /**
+     * Resize gadget block to a certain size.
+     * @param {Object} options Size of the gadget
+     * @return {null}
+     */
+    var resizeGadget = function (options) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_RESIZE_GADGET, options, null);
+    }
+
+    /**
+     * Restore the size of the block.
+     * @return {null}
+     */
+    var restoreGadget = function () {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_RESTORE_GADGET, null, null);
+    }
+
+    /**
+     * Add event handlers for lost focus event.
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var addLostFocusListener = function (callback) {
+        if (callback) {
+            lostFocusCallbacks.push(callback);
+        }
+    }
+
+    // Register callback function to get responses from the container.
+    gadgets.rpc.register(RPC_SERVICE_LOST_FOCUS_CALLBACK, function () {
+        for (var i = 0; i < lostFocusCallbacks.length; i++) {
+            lostFocusCallbacks[i]();
+        }
+    });
+
     return {
-        showGadget: showGadget
+        showGadget: showGadget,
+        addButtonListener: addButtonListener,
+        resizeGadget: resizeGadget,
+        restoreGadget: restoreGadget,
+        addLostFocusListener: addLostFocusListener
     };
 })();

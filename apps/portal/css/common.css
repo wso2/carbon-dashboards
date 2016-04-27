@@ -74,3 +74,36 @@
 .auth-xs li a:hover {
     background-color: #499dd5;
 }
+
+ul.dropdown-menu.more-actions-button {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 40px;
+    background: #F9F9F9;
+    border-bottom: 1px solid #EFEFEF;
+    min-width: 45px;
+
+}
+
+ul.dropdown-menu.more-actions-button > li {
+    height: 40px;
+    width: 40px;
+    border: 1px;
+}
+
+ul.dropdown-menu.more-actions-button > li > button {
+    border-bottom: 1px solid #e4e4e4;
+    border-top: 1px solid darkred;
+}
+
+.btn-group.open .dropdown-toggle {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 0px;
+}
+
+.btn-custom {
+    border-width: 1px;
+}

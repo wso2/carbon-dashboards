@@ -125,7 +125,9 @@
             var gid = gadgetId(comp.id);
             sandbox.find('.ues-component-title').text(styles.title);
             if (styles.no_heading) {
-                sandbox.addClass('ues-no-heading');
+                if(isDesigner(sandbox)){
+                    sandbox.addClass('ues-no-heading');
+                }
                 sandbox.find('.ues-component-heading').hide();
             } else {
                 sandbox.removeClass('ues-no-heading');
@@ -144,10 +146,11 @@
             
             var container = $('<div />').attr('id', cid);
             sandbox.find('.ues-component-body').html(container);
+            var hasHeading = !sandbox.closest('.ues-component').hasClass('ues-no-heading');
             var renderParams = {};
             renderParams[osapi.container.RenderParam.HEIGHT] = 
                 parseInt(sandbox.closest('.ues-component-box').height()) -
-                (sandbox.closest('.ues-component').hasClass('ues-no-heading') ? 0 : 44);
+                (hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
@@ -174,5 +177,14 @@
         ues.gadgets.remove(site.getId());
         $('.ues-component-box-gadget', sandbox).remove();
         done(false);
+    };
+
+    //check whether current mode is view or design
+    isDesigner = function(sandbox){
+        if ((sandbox.context.baseURI).indexOf("?editor=true")==-1){
+            return false;
+        } else {
+            return true;
+        }
     };
 }());

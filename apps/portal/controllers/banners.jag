@@ -28,7 +28,7 @@
     if (matcher.match('/banners/{dashboardId}')) {
         var vars = matcher.elements();
 
-        var dashboard = dashboards.findOne(vars.dashboardId);
+        var dashboard = dashboards.getAsset(vars.dashboardId);
 
         if (dashboard == null) {
             response.sendError(404, 'Unable to find the dashboard');

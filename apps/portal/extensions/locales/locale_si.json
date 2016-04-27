@@ -1,4 +1,3 @@
-{
   "edit.button": "සකසන්න",
   "logout.label": "ඉවත්වන්න",
   "login.label": "පිවිසෙන්න​",
@@ -132,5 +131,7 @@
   "ok": "හරි",
   "portal": "ද්වාරය",
   "go.to.portal": "ද්වාරය වෙත යන්න",
-  "dashboards": "පුවරු"
+  "dashboards": "පුවරු",
+  "settings.savebutton": "සුරකින්න",
+  "settings.cancelbutton": "ආපසු",
 }

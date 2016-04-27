@@ -47,7 +47,7 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
     private void createTenantDirectory (String tenantDirectory){
         File file = new File(tenantDirectory);
         if(!file.exists()){
-            file.mkdir();
+            file.mkdirs();
         }
     }
 
@@ -76,8 +76,9 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
         sb.append("jaggeryapps").append(File.separator)
                 .append(DashboardConstants.APP_NAME).append(File.separator)
                 .append("store").append(File.separator)
-                .append(tenantDomain).append(File.separator);
+                .append(tenantDomain).append(File.separator)
+                .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator);
+
         return sb.toString();
     }
-
 }

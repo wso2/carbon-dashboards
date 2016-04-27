@@ -36,7 +36,7 @@ function getApplicationKeyAndSecret(){
     if (matcher.match('/tokensettings/{id}')) {
         var vars = matcher.elements();
         var dashboardId = vars.id;
-        var dashboard = dashboards.findOne(dashboardId);
+        var dashboard = dashboards.getAsset(dashboardId);
         if (dashboard == null) {
             return "unable to find the dashboard";
         }

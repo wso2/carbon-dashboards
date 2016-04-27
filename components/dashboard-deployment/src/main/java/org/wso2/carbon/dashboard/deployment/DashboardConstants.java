@@ -23,6 +23,7 @@ import org.wso2.carbon.registry.core.RegistryConstants;
 public class DashboardConstants {
 
     public static final String APP_NAME = "portal";
+    public static final String DEFAULT_STORE_TYPE = "fs";
     public static final String SHARED_RESOURCE_LOCATION = "repository/resources/sharedstore";
     public static final String LAYOUT_TYPE = "layout";
     public static final String GADGET_TYPE = "gadget";

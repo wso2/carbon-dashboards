@@ -37,7 +37,7 @@ var dashboardId;
     dashboardId = vars.id;
     var dashboards = require('/modules/dashboards.js');
     utils.sandbox(context, function () {
-        dashboard = dashboards.findOne(dashboardId);
+        dashboard = dashboards.getAsset(dashboardId);
     });
     if (!dashboard) {
         response.sendError(404, 'requested dashboard cannot be found');
