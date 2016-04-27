@@ -17,6 +17,7 @@
  *  under the License.
  *
  */
+
 (function () {
     var TYPE = "type";
     var TABLE_NAME = "tableName";

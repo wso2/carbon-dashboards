@@ -17,6 +17,7 @@
  *  under the License.
  *
  */
+
 function getApplicationKeyAndSecret(){
     var log = new Log();
     var ws = require('ws');

@@ -17,6 +17,7 @@
  *  under the License.
  *
  */
+
 (function () {
     var log = new Log();
     var configs = require('/configs/portal.js').config();

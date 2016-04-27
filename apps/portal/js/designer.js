@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 $(function () {
     var dashboard;
     var page;
@@ -20,9 +21,9 @@ $(function () {
     var activeComponent;
     var breadcrumbs = [];
     var storeCache = {
-            gadget: [],
-            widget: [],
-            layout: []
+        gadget: [],
+        widget: [],
+        layout: []
     };
     var nonCategoryKeyWord = "null";
     var designerScrollTop = 0;
@@ -177,11 +178,11 @@ $(function () {
      * @return {String} Unique gadget ID
      * @private
      */
-    var generateGadgetId = function(gadgetName) {
+    var generateGadgetId = function (gadgetName) {
         if (!gadgetIds) {
             // If gadget Ids list is not defined, then need to read all the gadgets and re-populate the index list.
-            gadgetIds = { };
-            $('.ues-component').each(function() {
+            gadgetIds = {};
+            $('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 if (id) {
                     var parts = id.split('-');
@@ -194,12 +195,11 @@ $(function () {
                 }
             });
         }
-        
         if (!gadgetIds[gadgetName]) {
             gadgetIds[gadgetName] = 0;
         }
         return gadgetName + '-' + (gadgetIds[gadgetName]++);
-    }
+    };
 
     /**
      * Initialize the nano scroller.
@@ -704,7 +704,7 @@ $(function () {
                 hasComponent = true;
             }
 
-            showHtmlModal(confirmDeleteBlockHbs({ hasComponent: hasComponent }), function () {
+            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
@@ -779,7 +779,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id =  generateGadgetId(asset.id);
+        var id = generateGadgetId(asset.id);
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -1599,21 +1599,16 @@ $(function () {
      * @private
      * */
     var initLayoutWorkspace = function () {
-
         $('#ues-page-layouts').on('click', '.thumbnail', function (e) {
             e.preventDefault();
             var options = pageOptions();
-
             createPage(options, $(this).data('id'), function (err) {
-
                 // reload pages list
                 updatePagesList();
-
                 // hide the sidebar
                 $('#sidebarNavPages button[rel="createPage"]').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
-
             });
         });
         loadLayouts();
@@ -1626,7 +1621,6 @@ $(function () {
      */
     var initStore = function () {
         loadAssets('gadget');
-
         // initialize search options in gadgets sidebar
         $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (event) {
             if (event.which !== 13) {
@@ -1636,7 +1630,6 @@ $(function () {
             var query = $(this).val();
             loadAssets('gadget', query);
         });
-
         $('.ues-store-assets .ues-search-box button').on('click', function () {
             var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
             loadAssets('gadget', query);
@@ -1665,30 +1658,24 @@ $(function () {
                         window.open(that.attr('href'), "_self");
                     });
             });
-
         // page header functions
         $('.page-header')
             .on('click', '.ues-switch-page-prev, .ues-switch-page-next, .ues-refresh-page', function () {
                 // navigate/refresh pages
                 var pid = $(this).attr('data-page-id');
-
                 ues.global.isSwitchToNewPage = true;
                 switchPage(pid, pageType);
                 ues.global.isSwitchToNewPage = false;
             })
             .on('click', '.ues-delete-page', function () {
-
                 // delete dashboard page
                 var pid = $(this).attr('data-page-id');
-
                 showConfirm('Deleting the page',
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
                         removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                             var pages = dashboard.pages;
-
                             updatePagesList(pages);
-
                             // if the landing page was deleted, make the first page to be the landing page
                             if (dashboard.pages.length) {
                                 if (pid == dashboard.landing) {
@@ -1696,21 +1683,17 @@ $(function () {
                                 }
                             } else {
                                 dashboard.landing = null;
-
                                 // hide the sidebar if it is open
                                 if ($('#left-sidebar').hasClass('toggled')) {
                                     $('#btn-pages-sidebar').click();
                                 }
                             }
-
-
                             // save the dashboard
                             saveDashboard();
                             renderPage(dashboard.landing);
                         });
                     });
             });
-
         // dashboard pages list functions
         var pagesMenu = $("#ues-dashboard-pages");
         // load page properties
@@ -1722,7 +1705,6 @@ $(function () {
                 switchPage(pid, pageType);
                 ues.global.isSwitchToNewPage = false;
             }
-
             // render page properties
             pagesMenu.find('.ues-page-properties#pages' + pid).html(pageOptionsHbs({
                 id: page.id,
@@ -1736,13 +1718,11 @@ $(function () {
                     switchPage(page.id, pageType);
                 }
             });
-
             // bind event handlers for page properties input fields
             // sanitize the page title property
             $("#page-title").on("keypress", function (e) {
                 return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
             });
-
             // sanitize the page URL property
             $("#page-url").on("keypress", function (e) {
                 return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
@@ -1751,7 +1731,6 @@ $(function () {
                 $(this).val(sanitizedInput);
             });
         });
-
         var pageSearchFunction = function (searchQuery) {
             var pages = dashboard.pages;
             var resultPages = [];
@@ -1765,8 +1744,7 @@ $(function () {
             } else {
                 updatePagesList();
             }
-        }
-
+        };
         $('#sidebarNavPages .ues-search-box input[type=text]').on('keypress', function (e) {
             if (e.which !== 13) {
                 return;
@@ -1774,7 +1752,6 @@ $(function () {
             e.preventDefault();
             pageSearchFunction($(this).val());
         });
-
         $('#sidebarNavPages .ues-search-box button').on('click', function () {
             var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
             pageSearchFunction(query);
@@ -1789,10 +1766,8 @@ $(function () {
      */
     var registerRpc = function () {
         gadgets.rpc.register('set_pref', function (token, name, value) {
-
             //Store the gadget id in a variable
             var id = this.f.split("-")[2];
-
             var pages = dashboard.pages;
             var numberOfPages = pages.length;
             for (var i = 0; i < numberOfPages; i++) {
@@ -1812,7 +1787,6 @@ $(function () {
                     }
                 }
             }
-
             saveDashboard();
         });
     };
@@ -1822,37 +1796,29 @@ $(function () {
      * @return {null}
      */
     var initAddBlock = function () {
-
         var dummySizeChanged = function () {
             var dummy = $('.ues-dummy-gadget');
             var unitSize = parseInt(dummy.data('unit-size'));
-
             dummy.css({
                 width: unitSize * parseInt($('#block-width').val()),
                 height: unitSize * parseInt($('#block-height').val())
             });
-        }
-
+        };
         // redraw the grid when changing the width/height values
         $('#block-height, #block-width')
             .on('change', dummySizeChanged)
             .on('keyup', dummySizeChanged)
             .on('blur', dummySizeChanged);
-
         // add block handler
         $('#ues-add-block-btn').on('click', function () {
-
             var width = $('#block-width').val() || 0;
             var height = $('#block-height').val() || 0;
             var id = guid();
-
             if (width == 0 || height == 0) {
                 return;
             }
-
             getGridstack().add_widget($(newBlockHbs({id: id})), 0, 0, width, height);
             $('.ues-component-box#' + id).html(componentBoxContentHbs())
-
             updateLayout();
             listenLayout();
         });
@@ -1885,7 +1851,6 @@ $(function () {
         initComponentToolbar();
         initComponents();
         initAddBlock();
-
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
             showInformation("Received Edit Permission", "You have given edit permission for this dashboard. Please " +
                 "reset the dashboard to receive the permission.");
@@ -1929,15 +1894,12 @@ $(function () {
      * @private
      * */
     var updatePagesList = function (current, pages, landing) {
-
         current = current || page;
-
         $('#ues-dashboard-pages').html(pagesListHbs({
             current: current,
             pages: pages || dashboard.pages,
             home: landing || dashboard.landing,
         }));
-
         $('#ues-dashboard-pages #pagesButton' + current.id).click();
     };
 
@@ -1950,7 +1912,6 @@ $(function () {
      * @private
      */
     var createPage = function (options, lid, done) {
-
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
@@ -1972,7 +1933,6 @@ $(function () {
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
-
             saveDashboard();
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
@@ -2018,12 +1978,10 @@ $(function () {
      * @return {null}
      */
     var updateLayout = function () {
-
         // extract the layout from the designer and save it
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
             var node = el.data('_gridstack_node');
-
             if (node) {
                 return {
                     id: el.attr('data-id'),
@@ -2035,15 +1993,13 @@ $(function () {
                 };
             }
         });
-
         var serializedGrid = [];
         for (i = 0; i < res.length; i++) {
             if (res[i]) {
                 serializedGrid.push(res[i]);
             }
         }
-
-        var json = { blocks: serializedGrid };
+        var json = {blocks: serializedGrid};
         var id;
         var i;
         // find the current page index
@@ -2084,17 +2040,15 @@ $(function () {
      * @private
      */
     var showCreatePage = function () {
-
         // if the left panel is closed, click on the pages button
         if (!$('#left-sidebar').hasClass('toggled')) {
             $('#btn-pages-sidebar').click()
         }
-
         // if the select layout is closed, click on the create page button
         if (!$('#left-sidebar-sub').hasClass('toggled')) {
             $('#left-sidebar button[rel=createPage]').click();
         }
-    }
+    };
 
     /**
      * Renders the given page in the designer view.
@@ -2105,44 +2059,34 @@ $(function () {
      */
     var renderPage = function (pid, done) {
         gadgetIds = undefined;
-
         // if no pages found, display a message
         if (!dashboard.pages.length) {
-
             $('#ues-dashboard-preview-link').hide();
-
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
                     showCreatePage();
                 });
-
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
-
             showCreatePage();
             return;
         }
-
         $('#ues-dashboard-preview-link').show();
         $('.gadgets-grid').html('');
         $('.page-header .page-actions').show();
         $('#btn-sidebar-layouts, #btn-sidebar-gadgets').show();
-
         currentPage(findPage(dashboard, pid));
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
-
         var anonToggle = $('#designer-view-mode li[data-view-mode=anon]');
         if (page.isanon && !dashboard.isUserCustom) {
             anonToggle.removeClass('hide');
         } else {
             anonToggle.addClass('hide');
         }
-
         // if the current page doesn't have a anon view defined, render the default view
         if (!page.isanon) {
             pageType = DEFAULT_DASHBOARD_VIEW;
@@ -2150,14 +2094,12 @@ $(function () {
             $('#designer-view-mode li').removeClass('active');
             $('#designer-view-mode li[data-view-mode=default]').addClass('active');
         }
-
         // render page header
         var currentPageIndex = 0;
         for (; currentPageIndex < dashboard.pages.length && dashboard.pages[currentPageIndex].id != pid;
                currentPageIndex++);
         var hasPrevPage = currentPageIndex > 0;
         var hasNextPage = currentPageIndex < dashboard.pages.length - 1;
-
         $('.page-header').html(headerContent = designerHeadingHbs({
             id: page.id,
             title: page.title,
@@ -2174,7 +2116,6 @@ $(function () {
         }));
 
         ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
-
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
@@ -2267,13 +2208,10 @@ $(function () {
                 title: 'Login'
             };
         }
-
         var pid = 0;
         var prefix = 'page';
         var titlePrefix = 'Page ';
-
         pid = checkForExistingPageNames(prefix, pid);
-
         return {
             id: prefix + pid,
             title: titlePrefix + pid
@@ -2288,10 +2226,8 @@ $(function () {
      * @private
      */
     var initDashboard = function (db, page) {
-
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
-
         if (pages.length > 0) {
             renderPage(page || db.landing || pages[0].id);
         } else {
@@ -2304,14 +2240,12 @@ $(function () {
      * @return {null}
      */
     var loadBanner = function () {
-
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
                 globalBannerExists: false,
                 customBannerExists: false
             };
-
-        var $placeholder = $('.ues-banner-placeholder'); 
-        var customDashboard = ues.global.dashboard.isUserCustom || false; 
+        var $placeholder = $('.ues-banner-placeholder');
+        var customDashboard = ues.global.dashboard.isUserCustom || false;
         var banner = ues.global.dashboard.banner;
         var bannerExists = banner.globalBannerExists || banner.customBannerExists;
         // create the view model to be passed to handlebar
@@ -2324,11 +2258,10 @@ $(function () {
             isEditable: (pageType == DEFAULT_DASHBOARD_VIEW)
         };
         $placeholder.html(bannerHbs(data));
-
         // display the image
         var bannerImage = $placeholder.find('.banner-image');
         if (bannerExists) {
-            bannerImage.css('background-image', 
+            bannerImage.css('background-image',
                 "url('" + bannerImage.data('src') + '?rand=' + Math.floor(Math.random() * 100000) + "')").show();
         } else {
             bannerImage.hide();
@@ -2345,27 +2278,24 @@ $(function () {
         if (file.size == 0) {
             return;
         }
-
         if (!new RegExp('^image/', 'i').test(file.type)) {
             return;
         }
-
         // since a valid image is selected, render the banner in crop mode
         ues.global.dashboard.banner.cropMode = true;
         loadBanner();
         $('.ues-banner-placeholder button').prop('disabled', true);
         $('.ues-dashboard-banner-loading').show();
-
-        var $placeholder = $('.ues-banner-placeholder'); 
-        var srcCanvas = document.getElementById('src-canvas'); 
-        var $srcCanvas = $(srcCanvas); 
-        var img = new Image(); 
-        var width = $placeholder.width(); 
+        var $placeholder = $('.ues-banner-placeholder');
+        var srcCanvas = document.getElementById('src-canvas');
+        var $srcCanvas = $(srcCanvas);
+        var img = new Image();
+        var width = $placeholder.width();
         var height = $placeholder.height();
         // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
         $srcCanvas.cropper('destroy');
         // draw the selected image in the source canvas and initialize cropping
-        var srcCtx = srcCanvas.getContext('2d'); 
+        var srcCtx = srcCanvas.getContext('2d');
         var objectUrl = URL.createObjectURL(file);
         img.onload = function () {
             // draw the uploaded image on the canvas
@@ -2384,7 +2314,7 @@ $(function () {
                 cropBoxResizable: true,
                 crop: function (e) {
                     // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                    var cropData = $srcCanvas.cropper('getData'); 
+                    var cropData = $srcCanvas.cropper('getData');
                     var destCanvas = document.getElementById('dest-canvas');
                     var destCtx = destCanvas.getContext('2d');
                     destCanvas.width = width;
@@ -2416,7 +2346,6 @@ $(function () {
         $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
             $('#file-banner').val('').click();
         });
-
         // event handler for the banner save button
         $('.ues-banner-placeholder').on('click', '#btn-save-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
@@ -2435,14 +2364,12 @@ $(function () {
                 loadBanner();
             });
         });
-
         // event handler for the banner cancel button
         $('.ues-banner-placeholder').on('click', '#btn-cancel-banner', function (e) {
             ues.global.dashboard.banner.cropMode = false;
             $('#file-banner').val('');
             loadBanner();
         });
-
         // event handler for the banner remove button
         $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
@@ -2453,20 +2380,15 @@ $(function () {
                     type: $form.attr('method'),
                     data: {data: ''},
                 }).success(function (d) {
-
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
                     // therefore the following flag is set to false forcefully.
                     ues.global.dashboard.banner.globalBannerExists = false;
-
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.customBannerExists = false;
                     }
-
                     ues.global.dashboard.banner.cropMode = false;
-
                     loadBanner();
                 });
-
             } else {
                 // remove the banner
                 $.ajax({
@@ -2474,7 +2396,6 @@ $(function () {
                     type: 'DELETE',
                     dataType: 'json'
                 }).success(function (d) {
-
                     if (ues.global.dashboard.isUserCustom) {
                         ues.global.dashboard.banner.globalBannerExists = d.globalBannerExists;
                         ues.global.dashboard.banner.customBannerExists = false;
@@ -2487,13 +2408,10 @@ $(function () {
             }
         });
     };
-
     initUI();
     initDashboard(ues.global.dashboard, ues.global.page);
-
     ues.dashboards.save = saveDashboard;
 });
-
 // Initialize nano scrollers
 var nanoScrollerSelector = $(".nano");
 nanoScrollerSelector.nanoScroller();
@@ -2508,13 +2426,11 @@ function updateSidebarNav(view, button) {
     var target = $(button).data('target');
     $(view).show();
     $(view).siblings().hide();
-
     if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
     } else {
         $('#left-sidebar-sub').show();
     }
-
     nanoScrollerSelector[0].nanoscroller.reset();
 }
 
@@ -2524,9 +2440,7 @@ function updateSidebarNav(view, button) {
  * @return {null}
  */
 function updateSidebarOptions(button) {
-
     var target = $(button).data('target');
-
     $('.gadget').removeClass('active');
     setTimeout(function () {
         if ($(target).hasClass('toggled')) {
@@ -2550,19 +2464,15 @@ function toggleCaret(e) {
         .toggleClass('dropup dropdown');
     nanoScrollerSelector[0].nanoscroller.reset();
 }
-
 $('.sidebar-wrapper').on('hidden.bs.collapse', toggleCaret);
 $('.sidebar-wrapper').on('shown.bs.collapse', toggleCaret);
-
 $('#left-sidebar').on('hidden.sidebar', function (event) {
     $(event.target).find('button[data-target=#left-sidebar-sub]').removeClass('active').attr('aria-expanded', 'false');
     $.sidebar_toggle('hide', '#left-sidebar-sub', '.page-content-wrapper');
 });
-
 $('#gridGuideToggle').change(function () {
     $('body').toggleClass('grid-on');
 });
-
 $('.gadgets-grid').on({
     mouseenter: function () {
         toggleHeading($(this), true);
@@ -2591,9 +2501,9 @@ function toggleHeading(source, show) {
 
 // Enforce min/max values of number fields
 $('input[type=number]').on('change', function () {
-        var input = $(this);
-        var max = input.attr('max');
-        var min = input.attr('min');
+    var input = $(this);
+    var max = input.attr('max');
+    var min = input.attr('min');
     if (input.val().trim() == '') {
         return;
     }

@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 var dest = '/portal';
 var configs = require('/configs/portal.js').config();
-
 if (configs.authentication.activeMethod === 'sso') {
     include('sso-logout.jag');
 } else {

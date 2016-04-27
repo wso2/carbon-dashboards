@@ -14,29 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 (function () {
     if (!user) {
         sendLogin();
         return;
     }
-
     if (userDomain !== (urlDomain || superDomain)) {
         response.sendError(401, 'Designer access not authorized for this tenant');
         return;
     }
-
     var configs = require('/configs/designer.json');
-
     if (!utils.allowed(user.roles, configs.designers) && !dashboard.isUserCustom) {
         response.sendError(401, 'Designer access not authorized');
         return;
     }
-
     var permissions = dashboard.permissions;
     if (!utils.allowed(user.roles, permissions.editors) && !dashboard.isUserCustom) {
         response.sendError(401, 'Dashboard editing not authorized');
         return;
     }
-
     include(utils.resolvePath('templates/designer.jag'));
-}()); %>
+}());
+%>

@@ -1,6 +1,6 @@
 <%
-/*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
+
+(function () {
     if (!user) {
         sendLogin();
         return;
     }
-    
     var configs = require('/configs/designer.json');
-    
     if (!configs.isCreateGadgetEnable) {
         response.sendError(404, 'file not found');
         return;
     }
-
-    if(userDomain !== (urlDomain || superDomain)) {
+    if (userDomain !== (urlDomain || superDomain)) {
         response.sendError(401, 'designer access not authorized of this tenant');
         return;
     }
-
-
     if (!utils.allowed(user.roles, configs.designers)) {
         response.sendError(401, 'designer access not authorized');
         return;
     }
-
     include(utils.resolvePath('templates/create-gadget.jag'));
-} ()); %>
+}());
+%>

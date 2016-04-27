@@ -17,12 +17,12 @@
  *  under the License.
  *
  */
+
 (function () {
     if (!user) {
         response.sendError(401, 'unauthorized to access');
         return;
     }
-
     var matcher = new URIMatcher(request.getRequestURI());
     if (matcher.match('/user')) {
         var carbon = require('carbon');
@@ -31,14 +31,12 @@
         var userManager = new carbon.user.UserManager(server, tenantId);
         var adminRole = userManager.getAdminRoleName();
         user.isAdmin = false;
-
         for (var i = 0; i < user.roles.length; i++) {
             if (user.roles[i] == adminRole) {
                 user.isAdmin = true;
                 break;
             }
         }
-
         print(user);
     }
 }());

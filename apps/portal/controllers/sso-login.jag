@@ -17,6 +17,7 @@
  *  under the License.
  *
  */
+
 (function () {
     var configs = require('/configs/portal.js').config();
     var sso = require("sso");
@@ -26,7 +27,6 @@
     var destination = request.getParameter("destination");
     var referer = request.getHeader("referer");
     var ignoreReferer = request.getParameter("ignoreReferer");
-
     if (destination) {
         referer = destination;
     } else if (referer) {
@@ -38,7 +38,6 @@
     }
     var relayState = (referer ? referer : '/portal');
     //TODO: need to parameterize default value in order to support app renaming
-
     var encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
     var log = new Log();
     var postUrl = attr.identityProviderURL;
@@ -57,13 +56,13 @@
                     <input type="hidden" name="SAMLRequest" value="<%=encodedSAMLAuthRequest%>"/>
                     <input type="hidden" name="RelayState" value="<%=relayState%>"/>
                     <input type="hidden" name="SSOAuthSessionID" value="<%=sessionId%>"/>
-                    <button type="submit">Redirect manually</button>
-                </p>
-            </form>
-        </div>
-        <script type = "text/javascript" >
-            document.forms[0].submit();
-        </script>
+                            <button type="submit">Redirect manually</button>
+                        </p>
+                    </form>
+                </div>
+                <script type = "text/javascript" >
+                    document.forms[0].submit();
+                </script>
 <%
     }
 }());

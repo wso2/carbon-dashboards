@@ -17,6 +17,7 @@
  *  under the License.
  *
  */
+
 function getSamlAccessToken() {
     var dashboards = require('/modules/dashboards.js');
     var usr = require('/modules/user.js');

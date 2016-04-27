@@ -17,6 +17,7 @@
  *  under the License.
  *
  */
+
 var log = new Log();
 var utils = require('/modules/utils.js');
 var carbon = require("carbon");
@@ -24,26 +25,21 @@ var HTTPS_TRANSPORT = "https";
 var ANALYTICS_SERVICE = "/services/AnalyticsWebService";
 var EVENT_STREAM_SERVICE = "/services/EventStreamAdminService";
 var EVENT_PUBLISHER_SERVICE = "/services/EventPublisherAdminService";
-
 var HTTPConstants = Packages.org.apache.axis2.transport.http.HTTPConstants;
 var EventStreamAdminServiceStub = Packages.org.wso2.carbon.event.stream.stub.EventStreamAdminServiceStub;
 var EventPublisherAdminServiceStub = Packages.org.wso2.carbon.event.publisher.stub.EventPublisherAdminServiceStub
-
 var eventStreamAdminServiceWSUrl = utils.getCarbonServerAddress(HTTPS_TRANSPORT) + EVENT_STREAM_SERVICE;
 var eventPublisherAdminServiceWSUrl = utils.getCarbonServerAddress(HTTPS_TRANSPORT) + EVENT_PUBLISHER_SERVICE;
 var eventStreamStub = new EventStreamAdminServiceStub(eventStreamAdminServiceWSUrl);
 var eventpublisherStub = new EventPublisherAdminServiceStub(eventPublisherAdminServiceWSUrl);
 var eventsStreamServiceClient = eventStreamStub._getServiceClient();
 var eventsPublisherServiceClient = eventpublisherStub._getServiceClient();
-
 var eventStreamOption = eventsStreamServiceClient.getOptions();
 eventStreamOption.setManageSession(true);
 eventStreamOption.setProperty(HTTPConstants.COOKIE_STRING, session.get('authToken'));
-
 var eventPublisherOption = eventsPublisherServiceClient.getOptions();
 eventPublisherOption.setManageSession(true);
 eventPublisherOption.setProperty(HTTPConstants.COOKIE_STRING, session.get('authToken'));
-
 var analyticsStub;
 try {
     var AnalyticsWebServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsWebServiceConnector;
@@ -70,11 +66,9 @@ if (action === "getDatasources") {
             }
         }
     }
-
     //get system properties for distributed mode profile
     var process = require("process");
     var profile = process.getProperty("profile");
-
     if (profile === "worker") {
         print("Creating gadgets in Worker node is prohibited. Please use Manager node to create gadgets.");
     } else {
@@ -87,7 +81,6 @@ if (action === "getDatasources") {
                             .getWso2EventOutputMappingDto();
                     var publisherType = eventpublisherStub.getActiveEventPublisherConfiguration(publisherName)
                             .getToAdapterConfigurationDto().getEventAdapterType();
-
                     if (wso2EventMappingDto && publisherType.trim() == "ui") {
                         var streamName = wso2EventMappingDto.getOutputStreamName();
                         var streamVersion = wso2EventMappingDto.getOutputStreamVersion();
@@ -108,7 +101,6 @@ if (action === "getDatasources") {
                 }
             }
         }
-
         print(datasources);
     }
 } else if (action === "publisherIsExist") {
@@ -123,23 +115,16 @@ if (action === "getDatasources") {
     var datasource = request.getParameter("dataSource");
     var type = request.getParameter("type");
     var output = [];
-
     if (type == "realtime") {
-        //String streamId = request.getParameter("streamId");
         var correlationDataLength = 0;
         var metaDataLength = 0;
         var payloadDataLength = 0;
         var counter = 0;
-
         try {
-
-            var eventStreamDefinitionDto
-                    = eventStreamStub.getStreamDefinitionDto(datasource);
-
+            var eventStreamDefinitionDto = eventStreamStub.getStreamDefinitionDto(datasource);
             var metaData = eventStreamDefinitionDto.getMetaData();
             var correlationData = eventStreamDefinitionDto.getCorrelationData();
             var payloadData = eventStreamDefinitionDto.getPayloadData();
-
             if (metaData != null) {
                 metaDataLength = metaData.length;
             }
@@ -149,12 +134,10 @@ if (action === "getDatasources") {
             if (payloadData != null) {
                 payloadDataLength = payloadData.length;
             }
-
             output.push({
                 name: "TIMESTAMP",
                 type: "time"
             });
-
             var allDataLength = metaDataLength + correlationDataLength + payloadDataLength;
             for (var i = 0; i < metaDataLength; i++) {
                 output.push({
@@ -202,5 +185,4 @@ if (action === "getDatasources") {
     }
     print(output);
 }
-
 %>

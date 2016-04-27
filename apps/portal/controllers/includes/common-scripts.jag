@@ -1,6 +1,6 @@
 <%
 /**
- * Copyright 2016 WSO2, Inc. (http://wso2.com)
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 var log = new Log();
 var process = require('process');
-//TODO: fix carbon module and use it
+var carbon = require('carbon');
 var httpPort = process.getProperty('mgt.transport.http.port');
 var httpsPort = process.getProperty('mgt.transport.https.port');
-if(!urlDomain && !userDomain){
+if (!urlDomain && !userDomain) {
     urlDomain = 'carbon.super';
 }
-
 %>
 <script>
 ues.global.userDomain = <%=JSON.stringify(userDomain)%>;
@@ -30,7 +30,7 @@ ues.global.urlDomain = <%=JSON.stringify(urlDomain)%>;
 ues.global.tenantPrefix = <%=JSON.stringify(tenantPrefix)%>;
 ues.global.type = 'default';
 ues.global.anon = false;
-ues.global.host = <%=require('/configs/designer.json').host%>;
+ues.global.host = <%=carbon.server.loadConfig('host-config.json').host%>;
 ues.global.context = <%=JSON.stringify(request.getContextPath())%>;
 ues.global.server = {
     httpPort: <%=JSON.stringify(httpPort)%>,

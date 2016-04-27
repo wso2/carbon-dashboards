@@ -14,58 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 var fresh = false;
 var pageId = null;
 var dashboard;
 var dashboardId;
-(function() {
+(function () {
     if (!user) {
         sendLogin();
         return;
     }
-
     if (userDomain !== (urlDomain || superDomain)) {
         response.sendRedirect(utils.tenantedPrefix(urlPrefix, userDomain));
         return;
     }
-
     var matcher = new URIMatcher(request.getRequestURI());
-
     if (!matcher.match('/dashboard-settings/{id}')) {
         response.sendError(400, 'bad dashboard request');
         return;
     }
-
     var vars = matcher.elements();
     dashboardId = vars.id;
-
     var dashboards = require('/modules/dashboards.js');
     utils.sandbox(context, function () {
         dashboard = dashboards.findOne(dashboardId);
     });
-
     if (!dashboard) {
         response.sendError(404, 'requested dashboard cannot be found');
         return;
     }
-
     if (userDomain !== (urlDomain || superDomain)) {
         response.sendError(401, 'settings access not authorized of this tenant');
         return;
     }
-
     var configs = require('/configs/designer.json');
-
     if (!utils.allowed(user.roles, configs.designers)) {
         response.sendError(401, 'settings access not authorized');
         return;
     }
-
     var permissions = dashboard.permissions;
     if (!utils.allowed(user.roles, permissions.editors)) {
         response.sendError(401, 'dashboard editing not authorized');
         return;
     }
-
     include(utils.resolvePath('templates/dashboard-settings.jag'));
-} ()); %>
+}());
+%>

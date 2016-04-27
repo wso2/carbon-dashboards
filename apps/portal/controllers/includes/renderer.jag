@@ -1,6 +1,6 @@
 <%
-/*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 var dbRoot;
 var dest;
-var renderEngine = { };
-
+var renderEngine = {};
 (function () {
     var log = new Log();
-
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
     var permissions = dashboard.permissions;
     var anonymous = permissions.viewers.indexOf(anonRole) !== -1;
     var db = require('/modules/dashboards.js');
-
     /**
      * Unauthorized error message.
      * @const
@@ -39,46 +37,36 @@ var renderEngine = { };
             user.isEditor = false;
         }
     }
-
     if (!anonymous) {
         if (!user && !dashboard.isanon) {
             sendLogin();
             return;
         }
-
-
         if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
-
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) &&
-                !utils.allowed(user.roles, permissions.viewers)) {
+        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
     }
-    
     // check whether the requested page exists
     pageId = pageId || dashboard.landing;
-    
     var pageExists = false;
-    dashboard.pages.forEach(function(p) {
+    dashboard.pages.forEach(function (p) {
         if (p.id == pageId) {
             pageExists = true;
-        }    
+        }
     });
-    
-    if (! pageExists) {
+    if (!pageExists) {
         response.sendError(404, "Page '" + pageId + "' not found");
         return;
     }
-    
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
-
     // global reference to getBootstrapLayout() function
     renderEngine.getDashboardContent = db.getBootstrapLayout;
-
     include(utils.resolvePath('templates/dashboard.jag'));
-}()); %>
+}());
+%>
