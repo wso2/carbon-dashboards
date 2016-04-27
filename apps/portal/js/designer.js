@@ -22,9 +22,9 @@ $(function () {
     var activeComponent;
     var breadcrumbs = [];
     var storeCache = {
-            gadget: [],
-            widget: [],
-            layout: []
+        gadget: [],
+        widget: [],
+        layout: []
     };
     var nonCategoryKeyWord = "null";
     var designerScrollTop = 0;
@@ -173,11 +173,11 @@ $(function () {
      * @return {String} Unique gadget ID
      * @private
      */
-    var generateGadgetId = function(gadgetName) {
+    var generateGadgetId = function (gadgetName) {
         if (!gadgetIds) {
             // If gadget Ids list is not defined, then need to read all the gadgets and re-populate the index list.
-            gadgetIds = { };
-            $('.ues-component').each(function() {
+            gadgetIds = {};
+            $('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 if (id) {
                     var parts = id.split('-');
@@ -243,13 +243,13 @@ $(function () {
             .on('change', 'input[type=checkbox], select, textarea', function () {
                 var isCheckbox = false;
                 //if a checkbox got changed, disable it before updating properties
-                if(this.type === "checkbox"){
+                if (this.type === "checkbox") {
                     isCheckbox = true;
                     this.disabled = true;
                 }
                 updateComponentProperties($(this).closest('.ues-component-properties'));
                 //enable back the checkbox, after updating its properties
-                if(isCheckbox){
+                if (isCheckbox) {
                     this.disabled = false;
                 }
             })
@@ -692,7 +692,7 @@ $(function () {
             if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
                 hasComponent = true;
             }
-            showHtmlModal(confirmDeleteBlockHbs({ hasComponent: hasComponent }), function () {
+            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
@@ -789,7 +789,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id =  generateGadgetId(asset.id);
+        var id = generateGadgetId(asset.id);
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -1236,7 +1236,6 @@ $(function () {
                         ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
                         dashboard.isanon = true;
                         page.isanon = true;
-
                         // create the template if there is no content create before
                         page.layout.content.anon = page.layout.content.anon || page.layout.content.loggedIn;
                         $('#designer-view-mode li[data-view-mode=anon]').removeClass('hide');
@@ -1253,13 +1252,11 @@ $(function () {
                             "landing page when there are pages with anonymous views");
                     } else {
                         page.isanon = false;
-
                         // Check if the dashboard is no longer anonymous.
                         if (!checkWhetherDashboardIsAnon()) {
                             dashboard.isanon = false;
                             ues.global.dbType = DEFAULT_DASHBOARD_VIEW;
                         }
-
                         // the anon layout should not be deleted since the gadgets in this layout is already there in
                         // the content
                         $('#designer-view-mode li[data-view-mode=anon]').addClass("hide");
@@ -1739,7 +1736,7 @@ $(function () {
             } else {
                 updatePagesList();
             }
-        }
+        };
 
         $('#sidebarNavPages .ues-search-box input[type=text]').on('keypress', function (e) {
             if (e.which !== 13) {
@@ -1800,7 +1797,7 @@ $(function () {
                 width: unitSize * parseInt($('#block-width').val()),
                 height: unitSize * parseInt($('#block-height').val())
             });
-        }
+        };
         // redraw the grid when changing the width/height values
         $('#block-height, #block-width')
             .on('change', dummySizeChanged)
@@ -1995,7 +1992,7 @@ $(function () {
                 serializedGrid.push(res[i]);
             }
         }
-        var json = { blocks: serializedGrid };
+        var json = {blocks: serializedGrid};
         var id;
         var i;
         // find the current page index
@@ -2026,6 +2023,7 @@ $(function () {
                 .toString(16)
                 .substring(1);
         }
+
         return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
     }
 
@@ -2233,8 +2231,8 @@ $(function () {
                 globalBannerExists: false,
                 customBannerExists: false
             };
-        var $placeholder = $('.ues-banner-placeholder'); 
-        var customDashboard = ues.global.dashboard.isUserCustom || false; 
+        var $placeholder = $('.ues-banner-placeholder');
+        var customDashboard = ues.global.dashboard.isUserCustom || false;
         var banner = ues.global.dashboard.banner;
         var bannerExists = banner.globalBannerExists || banner.customBannerExists;
         // create the view model to be passed to handlebar
@@ -2250,7 +2248,7 @@ $(function () {
         // display the image
         var bannerImage = $placeholder.find('.banner-image');
         if (bannerExists) {
-            bannerImage.css('background-image', 
+            bannerImage.css('background-image',
                 "url('" + bannerImage.data('src') + '?rand=' + Math.floor(Math.random() * 100000) + "')").show();
         } else {
             bannerImage.hide();
@@ -2275,16 +2273,16 @@ $(function () {
         loadBanner();
         $('.ues-banner-placeholder button').prop('disabled', true);
         $('.ues-dashboard-banner-loading').show();
-        var $placeholder = $('.ues-banner-placeholder'); 
-        var srcCanvas = document.getElementById('src-canvas'); 
-        var $srcCanvas = $(srcCanvas); 
-        var img = new Image(); 
-        var width = $placeholder.width(); 
+        var $placeholder = $('.ues-banner-placeholder');
+        var srcCanvas = document.getElementById('src-canvas');
+        var $srcCanvas = $(srcCanvas);
+        var img = new Image();
+        var width = $placeholder.width();
         var height = $placeholder.height();
         // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
         $srcCanvas.cropper('destroy');
         // draw the selected image in the source canvas and initialize cropping
-        var srcCtx = srcCanvas.getContext('2d'); 
+        var srcCtx = srcCanvas.getContext('2d');
         var objectUrl = URL.createObjectURL(file);
         img.onload = function () {
             // draw the uploaded image on the canvas
@@ -2303,7 +2301,7 @@ $(function () {
                 cropBoxResizable: true,
                 crop: function (e) {
                     // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                    var cropData = $srcCanvas.cropper('getData'); 
+                    var cropData = $srcCanvas.cropper('getData');
                     var destCanvas = document.getElementById('dest-canvas');
                     var destCtx = destCanvas.getContext('2d');
                     destCanvas.width = width;
@@ -2491,9 +2489,9 @@ function toggleHeading(source, show) {
 
 // Enforce min/max values of number fields
 $('input[type=number]').on('change', function () {
-        var input = $(this);
-        var max = input.attr('max');
-        var min = input.attr('min');
+    var input = $(this);
+    var max = input.attr('max');
+    var min = input.attr('min');
     if (input.val().trim() == '') {
         return;
     }
