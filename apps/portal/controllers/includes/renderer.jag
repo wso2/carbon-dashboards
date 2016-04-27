@@ -16,7 +16,7 @@
  */
 var dbRoot;
 var dest;
-var renderEngine = { };
+var renderEngine = {};
 
 (function () {
     var log = new Log();
@@ -56,8 +56,7 @@ var renderEngine = { };
             return;
         }
 
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) &&
-                !utils.allowed(user.roles, permissions.viewers)) {
+        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
@@ -69,7 +68,7 @@ var renderEngine = { };
 
     var anonView;
     var pageExists = false;
-    dashboard.pages.forEach(function(page) {
+    dashboard.pages.forEach(function (page) {
         if (page.id == pageId) {
             pageExists = true;
             anonView = page.layout.content.anon;
@@ -79,19 +78,20 @@ var renderEngine = { };
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
     if (!pageExists || (!user && (anonView === undefined))) {
-        response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.label"));
+        response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
     }
 
     //check whether the user has no edit/view permission and the anonymous
     // view is undefined
-    if(user) {
-        if(!(user.isEditor || user.isViewer) && (anonView === undefined)) {
-            response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.label"));
+    if (user) {
+        if (!(user.isEditor || user.isViewer) && (anonView === undefined)) {
+            response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
+                    i18n.localize("page.not.found"));
             return;
         }
     }
-    
+
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
 
