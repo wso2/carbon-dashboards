@@ -355,8 +355,8 @@
                             {{/if}}
                        </button>
                 {{/each}}
-                {{#if defaultButtonConfigs.isConfiguration}}
-                   {{#if userPrefsExists}}
+                {{#if userPrefsExists}}
+                    {{#if defaultButtonConfigs.isConfiguration}}
                            <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
                                 <i class="fw fw-configarations"></i>
                            </button>
