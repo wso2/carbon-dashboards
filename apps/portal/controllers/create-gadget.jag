@@ -15,11 +15,13 @@
  * limitations under the License.
  */
 (function() {
+    var log = new Log();
     if (!user) {
         sendLogin();
         return;
     }
-    
+
+    log.info("Feature 5008 : in create-gadget")
     var configs = require('/configs/designer.json');
     
     if (!configs.isCreateGadgetEnable) {
@@ -38,5 +40,6 @@
         return;
     }
 
+    log.info
     include(utils.resolvePath('templates/create-gadget.jag'));
 } ()); %>

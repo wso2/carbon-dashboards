@@ -100,6 +100,7 @@ var currentContext = function () {
 
 var findJag = function (path) {
     var file = new File(path);
+    log.info("Feature 5008 path : " + path);
     if (file.isExists()) {
         return path;
     }

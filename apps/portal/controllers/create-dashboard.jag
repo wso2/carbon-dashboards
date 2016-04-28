@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 (function() {
+    var log = new Log();
     if (!user) {
         sendLogin();
         return;
