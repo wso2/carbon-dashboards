@@ -148,7 +148,6 @@ $(function () {
             }
         });
     };
-
     /**
      * Renders the component toolbar of a given component.
      * @param {Object} component Component object
@@ -168,41 +167,47 @@ $(function () {
                 }
             }
             if (userPrefsExists) {
-                configObj.isConfiguration = true;
                 noOfDefaultBtn = noOfDefaultBtn + 1;
             }
-            // anon dashboards doesn't have settings option
-            if (component.content.defaultButtonConfigs) {
+            if (component.content.toolbarButtons) {
+                if (component.content.toolbarButtons.default) {
+                    var toolbarOpt = component.content.toolbarButtons.default;
+                    configObj.isMaximize = !!(toolbarOpt.maximize || toolbarOpt.maximize == null);
+                    configObj.isConfiguration = !!(toolbarOpt.configuration || toolbarOpt.configuration == null);
+                    configObj.isRemove = !!(toolbarOpt.remove || toolbarOpt.remove == null);
+                    component.content.defaultButtonConfigs = configObj;
+                }
+                // anon dashboards doesn't have settings option
                 if (component.content.defaultButtonConfigs.isMaximize) {
                     noOfDefaultBtn = noOfDefaultBtn + 1;
                 }
-            } else {
-                configObj.isMaximize = true;
-            }
-            if (component.content.toolbarButtons) {
-                var customtoolbarOpt = component.content.toolbarButtons.custom || {};
-                for (var customBtn in customtoolbarOpt) {
-                    if (customtoolbarOpt.hasOwnProperty(customBtn)) {
-                        noOfDefaultBtn = noOfDefaultBtn + 1;
-                        var iconTypeCSS = 'css';
-                        var iconTypeImage = 'image';
-                        if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
-                            customtoolbarOpt[customBtn].isTypeCSS = true;
-                        }
-                        if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
-                            customtoolbarOpt[customBtn].isTypeImage = true;
+                if (component.content.toolbarButtons.custom) {
+                    var customtoolbarOpt = component.content.toolbarButtons.custom;
+                    for (var customBtn in customtoolbarOpt) {
+                        if (customtoolbarOpt.hasOwnProperty(customBtn)) {
+                            noOfDefaultBtn = noOfDefaultBtn + 1;
+                            var iconTypeCSS = 'css';
+                            var iconTypeImage = 'image';
+                            if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
+                                customtoolbarOpt[customBtn].isTypeCSS = true;
+                            }
+                            if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
+                                customtoolbarOpt[customBtn].isTypeImage = true;
+                            }
                         }
                     }
                 }
+            } else {
+                configObj.isMaximize = true;
+                configObj.isConfiguration = true;
             }
             component.content.isDropDownView = noOfDefaultBtn > 3;
             // anon dashboards doesn't have settings option
             component.content.defaultButtonConfigs = configObj;
-            component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
-            container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
         }
+        component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
+        container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
     };
-
     /**
      * Find a given component in the current page
      * @param {Number} id
