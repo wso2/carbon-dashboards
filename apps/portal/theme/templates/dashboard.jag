@@ -306,7 +306,7 @@
             </div>
         </div-->
         <!-- #page-content-wrapper -->
-        <div class="page-content-wrapper">
+        <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
             <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
@@ -324,7 +324,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        <!--/div-->
     </div><!-- /#page-content-wrapper -->
 
     <!--Footer -->
