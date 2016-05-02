@@ -63,7 +63,6 @@ var isMobileDevice = false;
     } else {
         controller += page + '.jag';
     }
-    log.info("Feature 5008 controller : " + controller);
 
     var path = utils.findJag(controller);
     if (!path) {

@@ -297,7 +297,7 @@ $(function () {
     };
 
     var renderGadget = function(){
-        var com = $('.ues-component-gadget');
+        var com = $('.embGadget');
         var id = window.location.pathname.split("/").pop();
         var allPages = ues.global.dashboard.pages;
 

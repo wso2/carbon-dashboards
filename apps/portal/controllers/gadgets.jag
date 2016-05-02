@@ -52,7 +52,6 @@ var fresh = false;
 
     var component = gadgets.findComponent(gadgetId, page);
 
-    log.info(component.content);
     if (!component) {
         response.sendError(404, i18n.localize("page.not.found"));
         return;

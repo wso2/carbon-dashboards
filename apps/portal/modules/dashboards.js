@@ -22,7 +22,6 @@ var utils = require('/modules/utils.js');
  * @return {Object} registry object
  */
 var getRegistry = function () {
-    log.info("Feature 5008 : Inside getRegistry");
     var server = new carbon.server.Server();
     return new carbon.registry.Registry(server, {
         system: true
@@ -58,7 +57,6 @@ var registryUserPath = function (id, username) {
  * @return {Object} Dashboard object
  */
 var getAsset = function (id, originalDashboardOnly) {
-    log.info("Feature 5008 getAsset : " + id);
     originalDashboardOnly = originalDashboardOnly || false;
     var registry = getRegistry();
     var usr = require('/modules/user.js');
@@ -116,7 +114,6 @@ var getAssets = function (paging) {
     var registry = getRegistry();
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
-
     dashboards.forEach(function (dashboard) {
         dashboardz.push(JSON.parse(registry.content(dashboard)));
     });

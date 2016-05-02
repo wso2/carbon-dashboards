@@ -23,14 +23,12 @@ var sandbox = function (context, fn) {
     var carbon = require('carbon');
     var options = {};
 
-    log.info("Feature 5008 urlDomain : " + context.urlDomain);
     if (context.urlDomain) {
         options.domain = context.urlDomain;
     } else {
         options.domain = String(carbon.server.superTenant.domain);
     }
 
-    log.info("Feature 5008 options domain : " + options.domain);
     if (options.domain === context.userDomain) {
         options.username = context.username;
     }
@@ -102,7 +100,6 @@ var currentContext = function () {
 
 var findJag = function (path) {
     var file = new File(path);
-    log.info("Feature 5008 path : " + path);
     if (file.isExists()) {
         return path;
     }
