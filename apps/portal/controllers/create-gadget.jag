@@ -38,5 +38,9 @@
         return;
     }
 
+    var providers = configs.providers;
+    for (var i = 0; i < provider.length; i++) {
+
+    }
     include(utils.resolvePath('templates/create-gadget.jag'));
 } ()); %>

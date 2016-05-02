@@ -1,0 +1,25 @@
+{
+    "id":"lineChart",
+    "name" : "Line Chart",
+    "config": [
+        {
+            "fieldLabel": "X axis",
+            "fieldName": "x",
+            "fieldType": "String",
+            "fieldValue" : ["$COLUMN_NAMES"]
+        },
+        {
+            "fieldLabel": "Y axis",
+            "fieldName": "y",
+            "fieldType": "Int",
+            "fieldValue" : ["$COLUMN_NAMES"]
+        },
+        {
+            "fieldLabel": "Chart Colour",
+            "fieldName": "colour",
+            "fieldType": "String"
+        }
+    ]
+
+}
+

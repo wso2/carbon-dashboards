@@ -1,0 +1,45 @@
+{
+    "id":"rdbms",
+    "name" : "Relational Database Source",
+    "image" : "",
+    "config" : [
+        {
+            "fieldLabel" : "Database URL",
+            "fieldName" :"db_url",
+            "fieldType" : "string",
+            "defaultValue" : "",
+            "isRequired" : true
+        },
+        {
+            "fieldLabel" : "Username",
+            "fieldName" :"username",
+            "fieldType" : "string",
+            "defaultValue" : "",
+            "isRequired" : true
+        },
+        {
+            "fieldLabel" : "Password",
+            "fieldName" :"password",
+            "fieldType" : "password",
+            "defaultValue" : "",
+            "isRequired" : true
+        },
+        {
+            "fieldLabel" : " Database Driver",
+            "fieldName" :"driver",
+            "fieldType" : "dropDown",
+            "valueSet" : [],
+            "isRequired" : true
+        },
+        {
+            "fieldLabel" : " Check Box",
+            "fieldName" :"checkbox",
+            "fieldType" : "checkbox",
+            "isRequired" : true
+        },
+        {
+            "fieldType" : "advanced",
+            "childPartial" : "myPartial"
+        }
+    ]
+}

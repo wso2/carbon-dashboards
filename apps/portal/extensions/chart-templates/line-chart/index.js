@@ -1,4 +1,3 @@
-<%
 /*
  * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -14,7 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var draw;
 
+(function () {
 
+    /**
+     *
+     * @param chartConfig
+     * @param data actual data
+     */
+    draw = function (chartConfig, data) {
 
-%>
+        /*
+         chartConfig
+
+         {
+            "fieldName":"value",
+            "fieldName":"value"
+         }
+         */
+
+    };
+}());
