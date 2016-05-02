@@ -155,6 +155,7 @@ var saveOptions = function (sandbox, options) {
 };
 
 var initDashboard = function (db, pageId, type) {
+    console.log("Feature 5008 : Inside initDashboard")
     dashboard = (ues.global.dashboard = db);
     page = findPage(dashboard, pageId);
     pageType = type ? type : DEFAULT_DASHBOARD_VIEW;

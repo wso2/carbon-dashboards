@@ -13,21 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+//var gadget = require('/controllers/gadgets.jag');
 
 (function () {
-    /**
-     * Find a component.
-     * @param {String} type Type of the plugin
-     * @return {Object}
-     */
-    var findPlugin = function (type) {
-        var plugin = ues.plugins.components[type];
-        if (!plugin) {
-            throw 'ues dashboard plugin for ' + type + ' cannot be found';
-        }
-        return plugin;
-    };
-
+  
     /**
      * Create a component inside a container.
      * @param {Object} container Gadget container
@@ -41,13 +30,16 @@
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
+        var id = window.location.pathname.split("/").pop();
 
-        if (component.content.styles.hide_gadget) {
-            hideGadget(sandbox);
-        } else {
-            showGadget(sandbox);
-        }
-        plugin.create(sandbox, component, ues.hub, done);
+            if (component.content.styles.hide_gadget) {
+                hideGadget(sandbox);
+            } else {
+                showGadget(sandbox);
+            }
+
+        if(id.localeCompare(component.id) == 0)
+            plugin.create(sandbox, component, ues.hub, done);
     };
 
     /**
@@ -203,6 +195,8 @@
      */
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
+        pageType = "default";
+        console.log("Feature 5008 : Inside renderpage");
         wirings = wires(page, pageType);
 
         var layout = (pageType === 'anon' ? $(page.layout.content.anon) : $(page.layout.content.loggedIn));
@@ -213,6 +207,7 @@
         
         // render gadget contents
         $('.ues-component-box').each(function (i, container) {
+            alert($(container).attr('class'));
             container = $(container);
             // Calculate the data-height field which is required to render the gadget
             var gsItem = container.closest('.grid-stack-item');
@@ -220,8 +215,11 @@
             var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
             var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
             container.attr('data-height', height);
+
             var id = container.attr('id');
+
             var hasComponent = content.hasOwnProperty(id) && content[id][0];
+
             // the component box content (the skeleton) should be added only in the designer mode and the view mode only
             // if there is a component
             if (isDesigner || hasComponent) {
@@ -238,6 +236,26 @@
             return;
         }
         done();
+    };
+
+
+    /**
+     * Render the dashboard.
+     * @param {Object} element Gadget container element
+     * @param {Object} dashboard Dashboard object
+     * @param {String} name Name of the page
+     * @param {String} pageType Type of the page
+     * @param {function} done Callback function
+     * @param {Boolean} isDesigner Flag to indicate the designer mode
+     * @return {null}
+     */
+    var renderGadget = function (element, dashboard, name, pageType, gadgetId, done) {
+        var page = findPage(dashboard, name);
+        if (!page) {
+            throw 'requested page : ' + name + ' cannot be found';
+        }
+        setDocumentTitle(dashboard, page);
+        var content = page.content[pageType];
     };
 
     /**
@@ -309,7 +327,8 @@
         render: renderDashboard,
         rewire: rewireDashboard,
         findPage: findPage,
-        resolveURI: resolveURI
+        resolveURI: resolveURI,
+        renderG  : renderGadget
     };
 
     ues.assets = {};

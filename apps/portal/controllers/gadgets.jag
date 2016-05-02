@@ -15,51 +15,47 @@
  * limitations under the License.
  */
 var fresh = false;
-var pageId = null;
-var dashboard;
-var dashboardId;
-var gadgetId;
-(function() {
-    var matcher = new URIMatcher(request.getRequestURI());
-    var log = new Log();
 
-    if (!matcher.match('/gadgets/{dashboardid}/{gadgetid}')) {
-        response.sendError(400, 'bad gadget request');
+(function () {
+    var matcher = new URIMatcher(request.getRequestURI());
+
+    // i18n
+    var i18n = require("i18n");
+   i18n.init(request, utils.getLocaleResourcePath());
+
+    if (!matcher.match('/gadgets/{id}/{pid}/{gid}')) {
+        response.sendError(400, i18n.localize("bad.request"));
         return;
     }
 
     var vars = matcher.elements();
-    dashboardId = vars.dashboardid;
-    gadgetId = vars.gadgetid;
-    log.info("Feature 5008 : Dashboard id " + dashboardId + " Gadget id " + gadgetId);
+    dashboardId = vars.id;
+    pageId = vars.pid;
+    gadgetId = vars.gid;
 
-    var dashboards = require('/modules/dashboards.js');
+    var gadgets = require('/modules/gadgets.js');
     utils.sandbox(context, function () {
-        dashboard = dashboards.getAsset(dashboardId);
+        dashboard = gadgets.getAsset(dashboardId);
     });
 
     if (!dashboard) {
-        response.sendError(404, 'requested dashboard cannot be found');
+        response.sendError(404, i18n.localize("page.not.found"));
         return;
     }
 
-    if (userDomain !== (urlDomain || superDomain)) {
-        response.sendError(401, 'settings access not authorized of this tenant');
+    var page = gadgets.findPage(dashboard, pageId);
+
+    if (!page) {
+        response.sendError(404, i18n.localize("page.not.found"));
         return;
     }
 
-    var configs = require('/configs/designer.json');
+    var component = gadgets.findComponent(gadgetId, page);
 
-    if (!utils.allowed(user.roles, configs.designers)) {
-        response.sendError(401, 'settings access not authorized');
+    if (!component) {
+        response.sendError(404, i18n.localize("page.not.found"));
         return;
     }
 
-    var permissions = dashboard.permissions;
-    if (!utils.allowed(user.roles, permissions.editors)) {
-        response.sendError(401, 'dashboard editing not authorized');
-        return;
-    }
-
-    include(utils.resolvePath('templates/dashboard-settings.jag'));
-} ()); %>
+    include(utils.resolvePath('templates/gadget.jag'));
+}()); %>
