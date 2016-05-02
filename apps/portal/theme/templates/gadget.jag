@@ -62,7 +62,7 @@ i18n.init(request, utils.getLocaleResourcePath());
         <div class="<%='container'%> body-wrapper">
             <div class="page-content">
                 <!-- Components grid -->
-                <div class="ues-components-grid gadgets-grid">
+                <div class="ues-component-gadget gadget-wrapper">
                 <!--<div class="ues-component gadget">-->
                 </div>
             </div>

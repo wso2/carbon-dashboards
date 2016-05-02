@@ -30,7 +30,7 @@
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
-        var id = window.location.pathname.split("/").pop();
+       
 
             if (component.content.styles.hide_gadget) {
                 hideGadget(sandbox);
@@ -38,8 +38,8 @@
                 showGadget(sandbox);
             }
 
-        if(id.localeCompare(component.id) == 0)
-            plugin.create(sandbox, component, ues.hub, done);
+        //if(id.localeCompare(component.id) == 0)
+          //  plugin.create(sandbox, component, ues.hub, done);
     };
 
     /**

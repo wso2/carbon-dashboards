@@ -223,6 +223,7 @@ $(function () {
         var area;
         var component;
         var components;
+
         var content = page.content.default;
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -231,9 +232,31 @@ $(function () {
                 for (i = 0; i < length; i++) {
                     component = components[i];
                     if (component.id === id) {
+                        console.log("Feature 5008 component id: "  +id);
                         return component;
                     }
                 }
+            }
+        }
+    };
+
+
+
+    /**
+     * Find a particular page within a dashboard
+     * @param {Object} dashboard Dashboard object
+     * @param {String} id Page id
+     * @return {Object} Page object
+     */
+    var findPage = function (dashboard, id) {
+        var i;
+        var page;;
+        var pages = dashboard.pages;
+        var length = pages.length;
+        for (i = 0; i < length; i++) {
+            page = pages[i];
+            if (page.id === id) {
+                return page;
             }
         }
     };
@@ -273,6 +296,54 @@ $(function () {
         });
     };
 
+    var renderGadget = function(){
+        var com = $('.ues-component-gadget');
+        var id = window.location.pathname.split("/").pop();
+        var allPages = ues.global.dashboard.pages;
+
+        console.log("Feature 5008 : " + allPages);
+        if (allPages.length > 0) {
+            page = (ues.global.page ? ues.global.page : allPages[0]);
+        }
+        for (var i = 0; i < allPages.length; i++) {
+            if (ues.global.page == allPages[i].id) {
+                page = allPages[i];
+            }
+        }
+        var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
+        com.html(componentBoxContentHbs());
+        createComponent(com,findComponent(id), function (err) {
+            if (err) {
+            }
+        });
+    }
+
+
+    /**
+     * Create a component inside a container.
+     * @param {Object} container Gadget container
+     * @param {Object} component Component object
+     * @param {function} done Callback function
+     * @return {null}
+     */
+    var createComponent = function (container, component, done) {
+        var type = component.content.type;
+        var plugin = findPlugin(type);
+
+        var sandbox = container.find('.ues-component');
+        sandbox.attr('id', component.id).attr('data-component-id', component.id);
+        var id = window.location.pathname.split("/").pop();
+
+        if (component.content.styles.hide_gadget) {
+            hideGadget(sandbox);
+        } else {
+            showGadget(sandbox);
+        }
+
+
+        plugin.create(sandbox, component, ues.hub, done);
+    };
+
     /**
      * Find a component.
      * @param {String} type Type of the plugin
@@ -285,13 +356,16 @@ $(function () {
         }
         return plugin;
     };
- 
-    var renderComponent = function(component){
 
-    }
-
-    initDashboard();
-    initComponentToolbar();
+    /**
+     * Show Gadget the gadget
+     * @param sandbox
+     */
+    var showGadget = function (sandbox) {
+        sandbox.removeClass('ues-hide-gadget');
+        sandbox.find('.ues-component-body').show();
+    };
+    renderGadget();
 });
 
 /**
