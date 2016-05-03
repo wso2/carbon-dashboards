@@ -98,6 +98,7 @@
         var settings = content.settings || {};
         var styles = content.styles || {};
         var options = content.options || (content.options = {});
+        console.log("hjdbssdhbfhsfhjfhsbf");
         ues.gadgets.preload(url, function (err, metadata) {
             var pref;
             var name;
@@ -148,9 +149,9 @@
             sandbox.find('.ues-component-body').html(container);
             var hasHeading = !sandbox.closest('.ues-component').hasClass('ues-no-heading');
             var renderParams = {};
-            renderParams[osapi.container.RenderParam.HEIGHT] = 
+            renderParams[osapi.container.RenderParam.HEIGHT] =
                 parseInt(sandbox.closest('.ues-component-box').height()) -
-                (hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
+            (hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {

@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var log = new Log();
 var carbon = require('carbon');
-var utils = require('/modules/utils.js');
 
 /**
  * Get registry reference.
  * @return {Object} registry object
  */
 var getRegistry = function () {
-    log.info("Feature 5008 : Inside getRegistry");
     var server = new carbon.server.Server();
     return new carbon.registry.Registry(server, {
         system: true
     });
 };
 
-//TODO: what happen when the context is changed or mapped via reverse proxy
 /**
  * Get the registry path for the id.
  * @param {String} id                       Id of the dashboard
@@ -43,36 +39,14 @@ var registryPath = function (id) {
 /**
  * Finds a dashboard by its ID.
  * @param {String} id                       ID of the dashboard
- * @param {Boolean} originalDashboardOnly   Original dashboard only
  * @return {Object} Dashboard object
  */
 var getAsset = function (id) {
-    log.info("Feature 5008 Start of getAsset : " + id);
     var registry = getRegistry();
 
     var path = registryPath(id);
-    var originalDB;
-
-    var originalDBPath = registryPath(id);
-    if (registry.exists(originalDBPath)) {
-        originalDB = JSON.parse(registry.content(originalDBPath));
-        log.info("Feature 5008 : originalDB exists");
-    }
-
     var content = registry.content(path);
     var dashboard = JSON.parse(content);
-    if (dashboard) {
-        dashboard.isUserCustom = false;
-        dashboard.isEditorEnable = false;
-
-        var banner = getBanner(id, null);
-        dashboard.banner = {
-            globalBannerExists: banner.globalBannerExists,
-            customBannerExists: banner.customBannerExists
-        };
-    }
-
-    log.info("Feature 5008 End of getAsset");
     return dashboard;
 };
 
@@ -96,12 +70,11 @@ var findPage = function (dashboard, id) {
 };
 
 /**
- * Find a given component in the current page
+ * Check whether component within current page
  * @param {Number} id
- * @returns {Object}
- * @private
+ * @returns {Boolean} isComponentExists
  */
-var findComponent = function (id, page) {
+var isComponentExists = function (id, page) {
     var i;
     var length;
     var area;
@@ -115,58 +88,12 @@ var findComponent = function (id, page) {
             for (i = 0; i < length; i++) {
                 component = components[i];
                 if (component.id === id) {
-                    return component;
+                    return true;
                 }
             }
         }
     }
+    return false;
 };
 
-/**
- * Path to customizations directory in registry.
- * @return {String} Path to the customization registry
- */
-var registryCustomizationsPath = function () {
-    return '/_system/config/ues/customizations';
-};
-
-/**
- * Get saved registry path for a banner.
- * @param   {String} dashboardId ID of the dashboard
- * @param   {String} username    Current user's username
- * @returns {String} Path to the banner
- */
-var registryBannerPath = function (dashboardId, username) {
-    return registryCustomizationsPath() + '/' + dashboardId + (username ? '/' + username : '')
-        + '/banner';
-};
-
-/**
- * Get banner details (banner type and the registry path).
- * @param   {String} dashboardId ID of the dashboard
- * @param   {String} username    Username
- * @returns {Object} Banner details
- */
-var getBanner = function (dashboardId, username) {
-    var registry = getRegistry();
-    var path;
-    var result = {globalBannerExists: false, customBannerExists: false, path: null};
-    // check to see whether the custom banner exists
-    path = registryBannerPath(dashboardId, username);
-    if (registry.exists(path)) {
-        var resource = registry.get(path);
-        if (!resource.content || new String(resource.content).length == 0) {
-            return result;
-        }
-        result.customBannerExists = true;
-        result.path = path;
-    }
-    // check to see if there is any global banner
-    path = registryBannerPath(dashboardId, null);
-    if (registry.exists(path)) {
-        result.globalBannerExists = true;
-        result.path = result.path || path;
-    }
-    return result;
-};
 

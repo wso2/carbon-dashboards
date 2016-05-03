@@ -24,7 +24,6 @@
     <%
         isAnonView = JSON.parse(request.getParameter('isAnonView'));
 
-        var matcher = URIMatcher(request.getRequestURI());
         if(isAnonView || !user) {
             viewType = 'anon';
         } else {

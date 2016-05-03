@@ -13,46 +13,56 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * All the requests that starts with /gadgets/ will be dealed with this controller
  */
 var fresh = false;
 
 (function () {
-    var matcher = new URIMatcher(request.getRequestURI());
     var log = new Log();
     // i18n
     var i18n = require("i18n");
    i18n.init(request, utils.getLocaleResourcePath());
 
+    var matcher = new URIMatcher(request.getRequestURI());
+
+    // Check whether the URI matches with the pattern
     if (!matcher.match('/gadgets/{id}/{pid}/{gid}')) {
         response.sendError(400, i18n.localize("bad.request"));
         return;
     }
 
+    // Get the dashboard id, page id and gadget id from url
     var vars = matcher.elements();
-    dashboardId = vars.id;
+    var dashboardId = vars.id;
     pageId = vars.pid;
-    gadgetId = vars.gid;
+    var gadgetId = vars.gid;
 
     var gadgets = require('/modules/gadgets.js');
     utils.sandbox(context, function () {
         dashboard = gadgets.getAsset(dashboardId);
     });
 
+    // If the dashboard is not available, indicate error
     if (!dashboard) {
         response.sendError(404, i18n.localize("page.not.found"));
         return;
     }
 
+    // Check whether the there is page in the dashboard with given page id
     var page = gadgets.findPage(dashboard, pageId);
 
+    // If the page is not available indicate error
     if (!page) {
         response.sendError(404, i18n.localize("page.not.found"));
         return;
     }
 
-    var component = gadgets.findComponent(gadgetId, page);
+    // Check whether a gadget exist within the page
+    var isComponentExists = gadgets.isComponentExists(gadgetId, page);
 
-    if (!component) {
+    // If there is no such gadget, send error.
+    if (!isComponentExists) {
         response.sendError(404, i18n.localize("page.not.found"));
         return;
     }
