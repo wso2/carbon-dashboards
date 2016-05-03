@@ -13,37 +13,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+body{
+    height: 100%vh;
+}*/
+body > .page-content-wrapper > .container, body > .page-content-wrapper > .container-fluid {
+    padding: 0;
+}
 
-.embGadget {
+
+.page-content-wrapper {
+    padding-left: 55px;
+}
+
+.dashboard .page-content-wrapper {
+    padding-left: 0;
+    min-height: auto;
+}
+
+.page-content-wrapper.fixed {
+    min-height: auto;
+    max-height: auto;
+}
+
+.page-content {
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -ms-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     height: calc(100% - 215px);
-    overflow-x: scroll;
-    overflow-y: scroll;
-    padding-bottom: 10px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+
 }
 
-.embGadget .page-content {
+.page-content {
     height: auto;
-    overflow: scroll;
 }
+
+/* Gadgets Styles */
+.emb-gadget {
+    background: #f5f5f5;
+    padding: 40px;
+    min-height: auto;
+}
+
+.embGadget .emb-gadget {
+    background: transparent;
+    min-height: auto;
+}
+
 
 /* Gadgets Styles */
 
 .gadget-wrapper {
     border: 1px solid #e4e4e4;
     background: #fff;
-    overflow:scroll;
     margin-bottom: 30px;
+    height:100%vh;
+    overflow : scroll;
+}
+.embGadget .gadget {
+    height: 100%vh;
 }
 
-.embGadget .gadget-wrapper {
-    border: none;
+.gadget-body {
+    height : auto;
 }
-
 
 .gadget .gadget-heading {
     border-bottom: 1px solid #e4e4e4;

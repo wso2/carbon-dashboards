@@ -27,6 +27,9 @@ i18n.init(request, utils.getLocaleResourcePath());
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="<%=urlPrefix%>libs/theme-wso2_1.0/images/favicon.png" />
+
     <!-- Font WSO2 CSS -->
     <link href="<%=urlPrefix%>libs/font-wso2_1.0.0/css/font-wso2.min.css" rel="stylesheet" type="text/css" />
 
@@ -53,11 +56,16 @@ i18n.init(request, utils.getLocaleResourcePath());
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
 </head>
 <body class="embGadget lang_<%=request.getLocale()%>">
+<div class="<%= 'container'%> body-wrapper">
+<div class="page-content">
+    <div class = "ues-component-box emb-gadget"></div>
+</div>
+</div>
+
 
     <!-- Handlebar templates -->
     <!-- Component container -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-        <div class="gadget-wrapper">
             <div class="ues-component gadget">
                 <div class="ues-component-heading gadget-heading">
                     <h4 class="ues-component-title gadget-title truncate"></h4>

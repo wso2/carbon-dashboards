@@ -18,6 +18,11 @@
  */
 var fresh = false;
 
+/* To make the dashboard view to be default as at this level, we do not make any security arrangements on embeddable
+   gadgets
+*/
+isDefault = false;
+
 (function () {
     var log = new Log();
     // i18n
@@ -67,5 +72,6 @@ var fresh = false;
         return;
     }
 
+    isDefault = true;
     include(utils.resolvePath('templates/gadget.jag'));
 }()); %>

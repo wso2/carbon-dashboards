@@ -36,7 +36,6 @@ $(function () {
                 for (i = 0; i < length; i++) {
                     component = components[i];
                     if (component.id === id) {
-                        console.log("Feature 5008 component id: " + id);
                         return component;
                     }
                 }
@@ -45,11 +44,12 @@ $(function () {
     };
 
     var renderGadget = function () {
-        var com = $('.embGadget');
+        wirings = wires(page, "default");
+        var com = $('.emb-gadget');
         var id = window.location.pathname.split("/").pop();
+        console.log(ues.global.dbType);
         var allPages = ues.global.dashboard.pages;
 
-        console.log("Feature 5008 : " + allPages);
         if (allPages.length > 0) {
             page = (ues.global.page ? ues.global.page : allPages[0]);
         }
@@ -112,6 +112,45 @@ $(function () {
     var showGadget = function (sandbox) {
         sandbox.removeClass('ues-hide-gadget');
         sandbox.find('.ues-component-body').show();
+    };
+
+    var wires = function (page, pageType) {
+        var content = page.content[pageType];
+        var area;
+        var blocks;
+        var wirez = {};
+
+        var wire = function (wirez, id, listeners) {
+            var event;
+            var listener;
+            for (event in listeners) {
+                if (listeners.hasOwnProperty(event)) {
+                    listener = listeners[event];
+                    if (!listener.on) {
+                        continue;
+                    }
+                    listener.on.forEach(function (notifier) {
+                        var channel = notifier.from + '.' + notifier.event;
+                        var wire = wirez[channel] || (wirez[channel] = []);
+                        wire.push(id + '.' + event);
+                    });
+                }
+            }
+        };
+
+        for (area in content) {
+            if (content.hasOwnProperty(area)) {
+                blocks = content[area];
+                blocks.forEach(function (block) {
+                    var listeners = block.content.listen;
+                    if (!listeners) {
+                        return;
+                    }
+                    wire(wirez, block.id, listeners);
+                });
+            }
+        }
+        return wirez;
     };
     renderGadget();
 });
