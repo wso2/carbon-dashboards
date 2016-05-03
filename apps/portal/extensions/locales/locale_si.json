@@ -120,6 +120,8 @@
   "required": "අවශ්යය",
   "yes.label": "ඔව්",
   "no.label": "නැත",
+  "page.label": "පිටුව",
+  "page.not.found": "පිටුව සොයාගැනීමට නොහැක",
   "block.delete.message": "ඔබට මැකීමට අවශ්‍ය කුමක්ද?",
   "block.delete.message.gadget": "ගැජට්ටුව පමණි",
   "no.pages.message": "පිටු නැත. කරුණාකර පිටුවක් එක් කරන්න...",
