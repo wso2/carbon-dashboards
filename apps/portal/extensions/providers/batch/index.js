@@ -23,10 +23,10 @@ var getConfig, validateData, getMode, getSchema, getData;
      * require the existing config.json and push any dynamic fields that needs to be populated in the UI
      */
     getConfig = function (){
-        var formConfig = require(PROVIDERS_LOCATION + '/rdbms/config.json');
+        var formConfig = require(PROVIDERS_LOCATION + '/batch/config.json');
         /*
-         dynamic logic goes here
-         */
+            dynamic logic goes here
+        */
         return formConfig;
     }
 
@@ -54,15 +54,15 @@ var getConfig, validateData, getMode, getSchema, getData;
         /*
          accepting data format
 
-         {
-         fieldName : aaa
-         FieldValue : bbb
-         },
-         {
-         fieldName : ccc
-         FieldValue : ddd
-         }
-         */
+             {
+                 fieldName : aaa
+                 FieldValue : bbb
+             },
+             {
+                 fieldName : ccc
+                 FieldValue : ddd
+             }
+             */
     };
 
     /**

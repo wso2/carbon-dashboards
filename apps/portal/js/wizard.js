@@ -1,4 +1,4 @@
-var datasource, datasourceType;
+var provider, datasourceType;
 var previewData = [];
 var columns = [];
 var done = false;
@@ -41,43 +41,13 @@ $('#rootwizard').bootstrapWizard({
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
         } else if (index == 1) {
-            $('#rootwizard').find('.pager .finish').show();
-            $("#previewChart").hide();
-            done = true;
-            if (datasourceType === "batch" && isPaginationSupported) {
-                fetchData();
-            }
-            renderChartConfig();
+            getDatasourceConfig();
         }
     }
 });
 
-$("#dsList").change(function() {
-    datasource = $("#dsList").val();
-    if (datasource != "-1") {
-        $('#rootwizard').find('.pager .next').removeClass("disabled");
-        datasourceType = $("#dsList option:selected").attr("data-type");
-        getColumns(datasource, datasourceType)
-
-        if(datasourceType != "realtime") {
-
-            //check whether the seleced datasource supports pagination as well
-            //first, get the recordstore for this table
-            var recordStore;
-            var tableName = datasource;
-            var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
-            $.getJSON(url, function (data) {
-                if (data.status === "success") {
-                    recordStore = data.message;
-                    //then check for pagination support on this recordstore
-                    recordStore = recordStore.replace(/"/g, "");
-                    checkPaginationSupported(recordStore);
-                }
-            });
-        }
-    } else {
-        $('#rootwizard').find('.pager .next').addClass("disabled");
-    }
+$("#provider-list").change(function() {
+    provider = $("#providers").val();
 });
 
 $("#btnPreview").click(function() {
@@ -262,7 +232,7 @@ function onRealTimeEventErrorRecieval(dataError) {
 
 function getDatasources() {
     $.ajax({
-        url: "/portal/apis/rt?action=getDatasources",
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviders',
         method: "GET",
         contentType: "application/json",
         success: function(data) {
@@ -273,25 +243,9 @@ function getDatasources() {
                 $("#rootwizard").append(template());
                 return;
             }
-            var datasources = data.map(function(element, index) {
-                var item = {
-                    name: element.name,
-                    type: element.type
-                };
-                return item;
-            });
-            $("#dsList").empty();
-            $("#dsList").append($('<option/>').val("-1")
-                    .html("--Select a table/stream--")
-                    .attr("type", "-1")
-            );
-            datasources.forEach(function(datasource, i) {
-                var item = $('<option></option>')
-                    .val(datasource.name)
-                    .html(datasource.name + " [" + datasource.type + "]")
-                    .attr("data-type", datasource.type);
-                $("#dsList").append(item);
-            });
+            var providerHbs = Handlebars.compile($('#datasource-providers-hbs').html());
+            $("#provider-list").append(providerHbs(data));
+
         },
         error: function(xhr,message,errorObj) {
 
@@ -310,6 +264,60 @@ function getDatasources() {
         }
     });
 };
+
+function getDatasourceConfig() {
+    var data = {"provider" : provider};
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
+        method: "POST",
+        data : JSON.stringify(data),
+        contentType: "application/json",
+        async:false,
+        success: function(data) {
+            registerAdvancedUI(data);
+            var providerHbs = Handlebars.compile($('#provider-config-hbs').html());
+            $("#provider-config").append(providerHbs(data));
+        },
+        error: function(xhr,message,errorObj) {
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
+            }
+            var source = $("#wizard-error-hbs").html();;
+            var template = Handlebars.compile(source);
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
+                error: xhr.responseText
+            }));
+        }
+    });
+};
+
+function registerAdvancedUI(data) {
+    for (var i = 0; i < data.length; i++) {
+        (function (config,key) {
+            if (config[key]['fieldType'].toLowerCase() === 'advanced') {
+                var data = {
+                    "provider": provider,
+                    "partial": config[key]['childPartial']
+                };
+                $.ajax({
+                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getAdvancedUI',
+                    method: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    dataType: 'text',
+                    async:false,
+                    success: function (partial) {
+                        Handlebars.registerPartial(config[key]['childPartial'], partial);
+                    }
+                });
+            }
+        })(data,i);
+    }
+
+}
 
 function getColumns(datasource, datasourceType) {
     if (datasourceType === "realtime") {

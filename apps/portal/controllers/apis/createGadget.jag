@@ -1,0 +1,82 @@
+<%
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+(function () {
+    var log = new Log();
+
+    if (!user) {
+        response.sendError(401, 'unauthorized to access assets');
+        return;
+    }
+    var utils = require('/modules/utils.js');
+    var configs = require('/configs/designer.json');
+    var PROVIDERS_LOCATION = '/extensions/providers/';
+    var PARTIAL_LOCATION = '/partials/';
+
+    response.contentType = 'application/json';
+
+    var action = request.getParameter("action");
+    var data = request.getContent();
+
+    if (action === 'getProviders') {
+        var providers = [];
+        var providerIgnoreList = configs.gadgetGeneration.ignoreProviders;
+        var parent = new File(PROVIDERS_LOCATION);
+        var allProvidersObj = parent.listFiles();
+        var allProviders = [];
+        allProvidersObj.forEach(function (file) {
+            allProviders.push(file.getName());
+        });
+
+        var requiredProviders = allProviders.filter(function (el) {
+            return providerIgnoreList.indexOf(el) < 0;
+        });
+
+        for (var i = 0; i < requiredProviders.length; i++) {
+            var configJson = require(PROVIDERS_LOCATION + requiredProviders[i] + '/config.json');
+            providers.push(configJson);
+        }
+        print(providers);
+        return;
+    }
+    else if (action === 'getProviderConfig') {
+       var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
+       print(providerApi.getConfig().config);
+       return;
+    }
+    else if (action === 'getAdvancedUI'){
+        try {
+            file = new File(PROVIDERS_LOCATION + data.provider + PARTIAL_LOCATION + data.partial + '.hbs');
+            if (!file.isExists()) {
+                return null;
+            }
+            file.open('r');
+            var customPartial = file.readAll();
+        }finally {
+            file.close();
+        }
+        print(customPartial);
+        return;
+    }
+
+    response.sendError(404, JSON.stringify({
+        error: true
+    }));
+}());
+%>

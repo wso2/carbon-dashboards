@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,193 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-
 %>
+<% include(utils.resolvePath('templates/portal-header.jag')); %>
+    <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/igviz.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/d3.geomap.css">
+    <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <title><%= i18n.localize("create.gadget.label")%></title>
+</head>
+<body>
+<% include(utils.resolvePath('templates/global-navigation.jag')); %>
+ <!-- breadcrumb -->
+    <div class="breadcrumb-wrapper">
+        <ol class="breadcrumb">
+            <li>
+                <a href="<%=tenantedUrlPrefix%>/portal/dashboards">
+                    <i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%>
+                </a>
+            </li>
+            <li class="active">
+                <%=i18n.localize("create.gadget.label")%>
+            </li>
+        </ol>
+    </div>
+
+    <!-- navbar -->
+    <div class="navbar-wrapper">
+        <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="<%=tenantedUrlPrefix%>./dashboards">
+                                <span class="fw-stack">
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    <i class="fw fw-cancel fw-stack-1x"></i>
+                                </span>
+                                <%= i18n.localize("cancel")%>
+                            </a>
+                        </li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+    </div>
+<div class="container-fluid">
+    <div class="row thumbnails ues-dashboard">
+        <div class="col-md-8 col-md-offset-2">
+            <h1 class="page-sub-title">Create a Gadget</h1>
+
+            <div class="wizard" id="rootwizard">
+                <div class="navbar">
+                  <div class="navbar-inner">
+                    <div class="container">
+                <ul>
+                    <li><a href="#tab1" data-toggle="tab"><%= i18n.localize("select.provider")%></a></li>
+                    <li><a href="#tab2" data-toggle="tab"><%= i18n.localize("configure.provider")%></a></li>
+                </ul>
+                 </div>
+                  </div>
+                </div>
+                </br>
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab1">
+                        <form class="form-horizontal">
+                        <fieldset>
+                            <div class="form-group">
+                              <label class="col-md-4 control-label" for="datasource"><%= i18n.localize("select.provider")%></label>
+                              <div id = "provider-list" class="col-md-4"></div>
+                            </div>
+                        </fieldset>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane" id="tab2">
+                        <form class="form-horizontal">
+                        <fieldset>
+                            <div class="form-group">
+                              <div id = "provider-config" class="col-md-4"></div>
+                            </div>
+                        </fieldset>
+                        </form>
+
+                    </div>
+                    <ul class="pager wizard">
+                        <li class="previous first" style="display:none;"><a href="#">First</a></li>
+                        <li class="previous"><a href="#">Previous</a></li>
+                        <li class="next last" style="display:none;"><a href="#">Last</a></li>
+                        <li class="next"><a href="#">Next</a></li>
+                        <li class="next finish" style="display:none;"><a href="#">Add to Gadget Store</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="wizard-error-hbs" type="text/x-handlebars-template">
+    <div class="alert alert-danger" role="alert">
+        <strong>Something went wrong while initiating Gadget generation wizard. Please see the detailed error message below.
+        </strong></br><br/> {{error}}
+    </div>
+</script>
+<script id="wizard-zerods-hbs" type="text/x-handlebars-template">
+    <div class="alert alert-danger" role="alert">
+       No datasources available to create a gadget. Please create a datasource to proceed.
+    </div>
+</script>
+<script id="datasource-providers-hbs" type="text/x-handlebars-template">
+     <section>
+        <select id="providers" class="form-control ues-title-position">
+             <option value="select-provider"><%= i18n.localize("select.a.provider")%></option>
+           {{#each .}}
+             <option value="{{id}}">{{name}}</option>
+           {{/each}}
+        </select>
+     </section>
+</script>
+<script id="provider-config-hbs" type="text/x-handlebars-template">
+    {{#each .}}
+       {{#equalsIgnoreCase fieldType "string"}}
+          <label>{{fieldLabel}}<input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
+          {{#if isRequired}}required{{/if}}/>
+          </label>
+       {{/equalsIgnoreCase}}
+       {{#equalsIgnoreCase fieldType "checkbox"}}
+          <label>{{fieldLabel}}<input type="checkbox" name="{{fieldName}}" {{#if isRequired}}required{{/if}}/>
+          </label>
+       {{/equalsIgnoreCase}}
+       {{#equalsIgnoreCase fieldType "password"}}
+          <label>{{fieldLabel}}<input type="password" class="form-control" name="{{fieldName}}"
+          {{#if isRequired}}required{{/if}}/>
+          </label>
+       {{/equalsIgnoreCase}}
+       {{#equalsIgnoreCase fieldType "dropdown"}}
+          <label>{{fieldLabel}}
+          <select id="{{fieldName}}" class="form-control">
+           {{#each valueSet}}
+             <option value="{{this}}">{{this}}</option>
+           {{/each}}
+        </select>
+          </label>
+       {{/equalsIgnoreCase}}
+       {{#equalsIgnoreCase fieldType "advanced"}}
+            {{> (lookup . 'childPartial')}}
+       {{/equalsIgnoreCase}}
+    {{/each}}
+</script>
+
+<script id="wizard-zeroevents-hbs" type="text/x-handlebars-template">
+    <div class="alert alert-warning" role="alert">
+       No events published. Publish events to see a preview of the selected chart.
+    </div>
+</script>
+
+<!-- Jquery JS -->
+<script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+<!-- Theme WSO2 JS -->
+<script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
+<!-- Handlebars -->
+<script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+<script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
+<script src="<%=urlPrefix%>js/ues.js"></script>
+<script src="<%=urlPrefix%>js/ues-store.js"></script>
+<script src="<%=urlPrefix%>js/create.js"></script>
+<script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+<script src="<%=urlPrefix%>js/jquery.bootstrap.wizard.min.js"></script>
+<script src="<%=urlPrefix%>js/select2.min.js"></script>
+<script src="<%=urlPrefix%>js/d3.min.js"></script>
+<script src="<%=urlPrefix%>js/topojson.js"></script>
+<script src="<%=urlPrefix%>js/vega.js"></script>
+<script src="<%=urlPrefix%>js/VizGrammar.min.js"></script>
+<script src="<%=urlPrefix%>js/charts.js"></script>
+<script src="<%=urlPrefix%>js/carbon-analytics.js"></script>
+<script src="<%=urlPrefix%>js/wizard.js"></script>
+<script src="<%=urlPrefix%>js/outputAdapterUiLibrary.js"></script>
+<% include('/controllers/includes/theme-portal-scripts.jag'); %>
+</body>
+</html>

@@ -57,6 +57,13 @@ Handlebars.registerHelper('equals', function (left, right, options) {
     return options.inverse(this);
 });
 
+Handlebars.registerHelper('equalsIgnoreCase', function (left, right, options) {
+    if (left.toLowerCase() === right.toLowerCase()) {
+        return options.fn(this);
+    }
+    return options.inverse(this);
+});
+
 // Check whether the left hand side does not equals to the right hand side.
 Handlebars.registerHelper('if_neq', function (a, b, blocks) {
     if (a != b) {

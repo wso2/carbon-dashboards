@@ -4,7 +4,7 @@
     },
     "gadgetGeneration" :{
         "isCreateGadgetEnable": false,
-        "providers": ["batch", "rdbms", "rest", "rt"]
+        "ignoreProviders": ["rt"]
     },
     "authentication": {
         "activeMethod": "basic",
