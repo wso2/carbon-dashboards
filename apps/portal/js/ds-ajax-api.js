@@ -85,6 +85,13 @@
      */
     var RPC_SERVICE_LOST_FOCUS_CALLBACK = 'RPC_SERVICE_LOST_FOCUS_CALLBACK';
 
+    /**
+     * RPC service name of finished loading event notifications.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_FINISHEDLOADING_CALL = 'RPC_SERVICE_FINISHEDLOADING_CALL';
+
     var username;
     var encodeHash = false;
 
@@ -268,6 +275,11 @@
             'z-index': ''
         });
         block.find('iframe').css('height', '');
+    });
+
+    //notifies the completion of gadget loading
+    gadgets.rpc.register(RPC_SERVICE_FINISHEDLOADING_CALL,function () {
+        ues.dashboards.finishedLoadingGadget();
     });
 
     // Notify each gadgets when the user clicks on the dashboard.

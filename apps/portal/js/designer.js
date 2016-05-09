@@ -249,7 +249,7 @@ $(function () {
 
         propertiesContainer
             .html(componentPropertiesHbs(ctx))
-            .on('change', 'input[type=checkbox], select, textarea', function () {
+            .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
                 var isCheckbox = false;
                 //if a checkbox got changed, disable it before updating properties
                 if(this.type === "checkbox"){
@@ -279,6 +279,12 @@ $(function () {
                 if ($.trim($(this).val()) == '') {
                     $(this).val('');
                 }
+            });
+
+        propertiesContainer
+            .find('#priorityPicker')
+            .on('change', function () {
+                propertiesContainer.find('#priorityValue').text(this.value);
             });
     };
 
@@ -1399,6 +1405,9 @@ $(function () {
             }
             if (type === 'checkbox') {
                 settings[name] = el.is(':checked');
+            }
+            if(type==='range'){
+                settings[name] = el.val();
             }
         });
     };
