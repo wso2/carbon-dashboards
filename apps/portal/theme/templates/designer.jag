@@ -699,20 +699,20 @@
                          <form class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-sm-12">
-				                    {{#if settings.personalize}}
+				{{#if settings.personalize}}
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" name="personalize"{{#if settings.personalize}} checked="checked"{{/if}} /> <%= i18n.localize("personalizable") %>
                                         </label>
                                     </div>
-				                    {{/if}}
+				{{/if}}
                                 </div>
                             </div>
- 			                <div class="form-group">
+ 			    <div class="form-group">
                                 <div class="col-sm-12">
-				                    <label for="input-name" class="control-label">Priority</label>
-				                        <input id="priorityPicker" name = "priority" type="range" min="0" max="10" value={{#if settings.priority}}{{settings.priority}}{{else}}5{{/if}} />
-				                        <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}5{{/if}}</span>
+				    <label for="input-name" class="control-label">Priority</label>
+				    <input id="priorityPicker" name = "priority" type="range" min="0" max="10" value={{#if settings.priority}}{{settings.priority}}{{else}}5{{/if}} />
+				    <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}5{{/if}}</span>
                                 </div>
                             </div>
                         </form>
