@@ -49,6 +49,7 @@ var responsiveTextRatio = 0.2,
 
         if (typeof markup != 'undefined') {
             if (filetype == 'js') {
+                console.log("********************theme-wso2");
                 $('html script[src*="theme-wso2.js"]').before(markup);
             } else if (filetype == 'css') {
                 $('head link[href*="main.less"]').before(markup);

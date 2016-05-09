@@ -1,4 +1,5 @@
 var log = new Log();
+var customThemePath = "/home/prabushi/Documents/Redmine(5012)/2/wso2ds-2.1.0-SNAPSHOT/repository/deployment/server/jaggeryapps/portal/store/carbon.super/fs/themes";
 
 var relativePrefix = function (path) {
     var parts = path.split('/');
@@ -139,16 +140,19 @@ var store = function () {
 var dashboardStyles = function (theme) {
     var config = require('/configs/designer.json');
     if (!theme) {
+        log.info("****************inside not theme");
         theme = config.theme;
     }
-
-    var path = 'extensions/themes/' + theme + '/css/dashboard.css';
+    log.info("********************theme: "+theme);
+    var path = 'extensions/themes/' + theme + 'custom-theme/css/dashboard.css';
     var file = new File('/' + path);
+    log.info("********************path: "+path);
     return file.isExists() ? path : null;
 };
 
 var dashboardLayouts = function () {
     var path = 'extensions/themes/';
+    log.info("************* dashboardlayout"+path);
     var folder = new File('/' + path);
     var list = folder.listFiles();
     list.forEach(function(file){
@@ -159,7 +163,8 @@ var dashboardLayouts = function () {
 var dashboardScripts = function () {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + '/js/dashboard-extensions.js';
+    var path = 'extensions/themes/' + theme + 'custom-theme/js/dashboard-extensions.js';
+    log.info("************* dashboardScripts"+path);
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -167,7 +172,8 @@ var dashboardScripts = function () {
 var portalStyles = function () {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + '/css/portal.css';
+    var path = 'extensions/themes/' + theme + 'custom-theme/css/portal.css';
+    log.info("************* portal syles"+path);
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -175,7 +181,8 @@ var portalStyles = function () {
 var portalScripts = function () {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + '/js/portal.js';
+    var path = 'extensions/themes/' + theme + 'custom-theme/js/portal.js';
+    log.info("************* portalScripts"+path);
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -183,7 +190,9 @@ var portalScripts = function () {
 var resolvePath = function (path) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var extendedPath = '/extensions/themes/' + theme + '/' + path;
+    var extendedPath = customThemePath + 'custom-theme/' + path;//'/extensions/themes/' + theme + '/' + path;
+    log.info("************* resolve path" + extendedPath);
+    log.info("************* resolve path" + path);
     var file = new File(extendedPath);
     return file.isExists() ? extendedPath : '/theme/' + path;
 };
@@ -191,7 +200,8 @@ var resolvePath = function (path) {
 var resolveUrl = function (path) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var extendedPath = 'extensions/themes/' + theme + '/' + path;
+    var extendedPath =  customThemePath + 'custom-theme/' + path;//'extensions/themes/' + theme + '/' + path;
+    log.info("************* resolve url"+extendedPath);
     var file = new File('/' + extendedPath);
     return file.isExists() ? extendedPath : 'theme/' + path;
 };
