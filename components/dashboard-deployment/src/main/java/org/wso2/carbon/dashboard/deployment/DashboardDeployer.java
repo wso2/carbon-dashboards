@@ -90,6 +90,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
                     String carbonLayoutDir = new StringBuilder(carbonRepository).append("jaggeryapps")
                             .append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
                             .append("store").append(File.separator).append("carbon.super").append(File.separator)
+                            .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator)
                             .append("layout").toString();
                     FileUtils.copyDirectory(new File(carbonLayoutDir), new File(path));
                 }
@@ -223,6 +224,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
         sb.append("jaggeryapps").append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
                 .append("store").append(File.separator)
                 .append(CarbonContext.getThreadLocalCarbonContext().getTenantDomain()).append(File.separator)
+                .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator)
                 .append(artifactName).append(File.separator);
         return sb.toString();
     }
