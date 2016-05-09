@@ -710,7 +710,7 @@
                             </div>
  			    <div class="form-group">
                                 <div class="col-sm-12">
-				    <label for="input-name" class="control-label">Priority</label>
+				    <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
 				    <input id="priorityPicker" name = "priority" type="range" min="0" max="10" value={{#if settings.priority}}{{settings.priority}}{{else}}5{{/if}} />
 				    <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}5{{/if}}</span>
                                 </div>
