@@ -190,8 +190,7 @@
         $(componentBoxListHbs(json)).appendTo(container);
         return container;
     }
-
-    var doneCallback,isDesignerView,componentBoxNum,componentBoxList,content,componentBoxContentHbs;
+    
     /**
      * Renders a page in the dashboard designer and the view modes.
      * @param {Object} element Gadget container wrapper
@@ -349,7 +348,8 @@
         render: renderDashboard,
         rewire: rewireDashboard,
         findPage: findPage,
-        resolveURI: resolveURI
+        resolveURI: resolveURI,
+        finishedLoadingGadget:finishedLoading
     };
 
     ues.assets = {};

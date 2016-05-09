@@ -37,6 +37,22 @@
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-multibindings</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.shindig</groupId>
+            <artifactId>shindig-gadgets</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shindig</groupId>
+            <artifactId>shindig-common</artifactId>
+            <version>${shindig.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
