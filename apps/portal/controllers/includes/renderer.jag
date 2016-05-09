@@ -75,6 +75,7 @@ var renderEngine = {};
         }
     });
 
+    var i18n = require("i18n");
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
     if (!pageExists || (!user && (anonView === undefined))) {
