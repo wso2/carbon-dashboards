@@ -139,5 +139,7 @@
     "settings.cancelbutton": "Cancel",
     "select.provider" :"Select Provider",
     "select.a.provider" :"Select a provider",
-    "configure.provider" :"Configure Provider"
+    "configure.provider" :"Configure Provider",
+    "configure.chart" :"Configure Chart",
+    "show.data" : "Show Data"
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getConfig, validateData, getMode, getSchema, getData;
+var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
 (function () {
 
@@ -34,8 +34,12 @@ var getConfig, validateData, getMode, getSchema, getData;
      * validate the user input of provider configuration
      * @param providerConfig
      */
-    validateData = function (providerConfig){
+    validate = function (providerConfig){
+        /*
+        validate the form and return
 
+        */
+        return true;
     }
 
     /**
@@ -50,6 +54,15 @@ var getConfig, validateData, getMode, getSchema, getData;
      * @param providerConfig
      */
     getSchema = function (providerConfig) {
+        // call provider using the providerConfig and get the schema in the below format
+        var schema = [];
+        var fieldOne = {"fieldName" : "student_name", "fieldType" : "varchar"}
+        var fieldtwo = {"fieldName" : "marks", "fieldType" : "int"}
+        var fieldthree = {"fieldName" : "grade", "fieldType" : "varchar"}
+        schema.push(fieldOne);
+        schema.push(fieldtwo);
+        schema.push(fieldthree);
+        return schema;
 
         /*
          accepting data format
@@ -70,10 +83,22 @@ var getConfig, validateData, getMode, getSchema, getData;
      * @param providerConfig
      * @param schemaPropertyList
      */
-    getData = function (providerConfig,schemaPropertyList) {
+    getData = function (providerConfig,schema, limit) {
 
+        var db = new Database("jdbc:mysql://localhost:3306/test", "root", "root");
+        return db.query("SELECT * FROM studentMarks;");
         /*
          schemaPropertyList - an array of column names
          */
     };
+
+    /**
+     *
+     * @param providerConfig
+     * @param schema
+     */
+    registerCallBackforPush = function (providerConfig, schema){
+
+    }
+
 }());

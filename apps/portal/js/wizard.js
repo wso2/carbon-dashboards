@@ -1,4 +1,5 @@
-var provider, datasourceType;
+var provider;
+var providerConfig;
 var previewData = [];
 var columns = [];
 var done = false;
@@ -7,230 +8,62 @@ var selectedTableCoulumns = [];
 var defaultTableColumns = [];
 
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
-$(document).ready(function() {
-    // $("#dsList").select2({
-    //     placeholder: "Select a datasource",
-    //     templateResult: formatDS
-    // });
-});
-
-function formatDS(item) {
-    if (!item.id) {
-        return item.text;
-    }
-    var type = $(item.element).data("type");
-    var $item;
-    if (type === "realtime") {
-        $item = $('<div><i class="fa fa-bolt"> </i> ' + item.text + '</div>');
-    } else {
-        $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
-    }
-    // var $item = $(
-    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> ' + item.text + '</span>'
-    //   );
-    return $item;
-};
 
 $('#rootwizard').bootstrapWizard({
     onTabShow: function(tab, navigation, index) {
-        //console.log("** Index : " + index);
         done = false;
         if (index == 0) {
-            getDatasources();
+            getProviders();
             $("#btnPreview").hide();
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
         } else if (index == 1) {
-            getDatasourceConfig();
+            getProviderConfig();
+        }
+        else if(index == 2){
+            providerConfig  = getProviderConfigData();
+            getChartConfig(providerConfig);
         }
     }
 });
 
-$("#provider-list").change(function() {
+$('#provider-list').change(function() {
     provider = $("#providers").val();
 });
 
-$("#btnPreview").click(function() {
-    if ($("dsList").val() != -1) {
-        fetchData(renderPreviewPane);
-    }
-});
-
-$("#previewChart").click(function() {
-
-    var chartType = $("#chartType").val();
-    var notFilled = false;
-    $("#title").css("border-color", "");
-
-    $("."+chartType).find("input[type=text]").each(function(){
-        if( $(this).attr("id") != "title" && $(this).attr("id").indexOf("cusId") == -1 && $(this).val().length == 0){
-            $(this).css("border-color", "red");
-            notFilled = true;
-        }else{
-            $(this).css("border-color", "");
+$('#show-data').click(function() {
+    var pConfig = getProviderConfigData();
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getData',
+        method: "POST",
+        data : JSON.stringify(pConfig),
+        contentType: "application/json",
+        async:false,
+        success: function(data) {
+            var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
+            $('#data-preview').append(dataPreviewHbs(data));
+        },
+        error: function(xhr,message,errorObj) {
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
+            }
+            var source = $("#wizard-error-hbs").html();;
+            var template = Handlebars.compile(source);
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
+                error: xhr.responseText
+            }));
         }
     });
 
-    $("."+chartType+" select").each(function(){
-        if( $(this).attr("id") != "color" && $(this).attr("id") != "tblColor" && $(this).attr("id") != "columns" && $(this).val() == -1){
-            $(this).css("border-color", "red");
-            notFilled = true;
-        }else{
-            $(this).css("border-color", "");
-        }
-    });
-
-    if(notFilled){
-        generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-        return;
-    }
-
-    var selectedCoulmnValue = $("#columns").val();
-
-    if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
-        generateMessage("Please select all attributes or add custom columns !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-        return;
-    }
-
-    if (datasourceType === "realtime") {
-        var streamId = $("#dsList").val();
-        var url = "/portal/apis/rt?action=publisherIsExist&streamId=" + streamId;
-        $.getJSON(url, function(data) {
-            if (!data) {
-                generateMessage("You have not deployed a Publisher adapter UI Corresponding to selected StreamID:" + streamId +
-                    " Please deploy an adapter to Preview Data.", null, null, "error", "topCenter", 3500, ['button', 'click']);
-            } else {
-                chart = null;
-                //TODO DOn't do this! read this from a config file
-                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', window.location.pathname.split('/')[3],
-                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
-                    'WEBSOCKET', "SECURED");
-                var source = $("#wizard-zeroevents-hbs").html();;
-                var template = Handlebars.compile(source);
-                $("#chartDiv").empty();
-                $("#chartDiv").append(template());
-            }
-        });
-    } else {
-        drawBatchChart(previewData);
-    }
-
 });
 
-$("#chartType").change(function() {
-    bindChartconfigs(columns,this.value);
-    selectedTableCoulumns = [];
-    $(".attr").hide();
-    var className = jQuery(this).children(":selected").val();
-    var chartType = this.value;
-
-    if(chartType == "tabular"){
-        $("#dynamicElements").empty();
-    }
-
-    $("."+chartType).find("input[type=text]").each(function(){
-        $(this).val("");
-        $(this).css("border-color", "");
-    });
-
-    $("."+chartType+" select").each(function(){
-        $(this).val(-1);
-        $(this).css("border-color", "");
-    });
-
-    $("." + className).show();
-    $("#previewChart").show();
-    $('#rootwizard').find('.pager .finish').removeClass('disabled');
-
-});
-
-$(".pager .finish").click(function() {
-    //do some validations
-    var chartType = $("#chartType").val();
-
-    if ($("#title").val() == "") {
-        $("#title").css("border-color", "red");
-        generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-        return;
-    }else {
-        var notFilled = false;
-        $("#title").css("border-color", "");
-
-
-        $("."+chartType).find("input[type=text]").each(function(){
-            if( $(this).attr("id").indexOf("cusId") == -1 && $(this).val().length == 0){
-                $(this).css("border-color", "red");
-                notFilled = true;
-            }else{
-                $(this).css("border-color", "");
-            }
-        });
-
-        $("."+chartType+" select").each(function(){
-            if( $(this).attr("id") != "color" && $(this).attr("id") != "tblColor" && $(this).attr("id") != "columns" && $(this).val() == -1){
-                $(this).css("border-color", "red");
-                notFilled = true;
-            }else{
-                $(this).css("border-color", "");
-            }
-        });
-
-        if(notFilled){
-            generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-            return;
-        }
-
-        var selectedCoulmnValue = $("#columns").val();
-
-        if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
-            generateMessage("Please select all attributes or add custom columns !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-            return;
-        }
-    }
-    if (done) {
-        console.log("*** Posting data for gadget [" + $("#title").val() + "]");
-        //building the chart config depending on the chart type
-        var config = {
-            chartType: $("#chartType").val()
-        };
-        configureChart(config);
-        config = chartConfig;
-        var request = {
-            id: $("#title").val().replace(/ /g, "_"),
-            title: $("#title").val(),
-            datasource: $("#dsList").val(),
-            type: $("#dsList option:selected").attr("data-type"),
-            filter: $("#txtFilter").val(),
-            columns: columns,
-            chartConfig: config
-
-        };
-        $.ajax({
-            url: "/portal/apis/gadgetgen",
-            method: "POST",
-            data: JSON.stringify(request),
-            contentType: "application/json",
-            success: function(d) {
-                console.log("***** Gadget [ " + $("#title").val() + " ] has been generated. " + d);
-                window.location.href = "/portal/";
-            }
-        });
-    } else {
-        //console.log("Not ready");
-    }
-});
-
-function onRealTimeEventSuccessRecieval(streamId, data) {
-    drawRealtimeChart(data);
-};
-
-function onRealTimeEventErrorRecieval(dataError) {
-    console.log(dataError);
-};
 
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
 
-function getDatasources() {
+function getProviders() {
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviders',
         method: "GET",
@@ -265,7 +98,7 @@ function getDatasources() {
     });
 };
 
-function getDatasourceConfig() {
+function getProviderConfig() {
     var data = {"provider" : provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
@@ -317,6 +150,30 @@ function registerAdvancedUI(data) {
         })(data,i);
     }
 
+}
+
+function getProviderConfigData(){
+    var formData  = $('#provider-config-form').serializeArray();
+    var configInput = {};
+    var providerConf = {};
+    $.map(formData, function(n){
+        configInput[n['name']] = n['value'];
+    });
+    providerConf[provider] = configInput;
+    return providerConf;
+}
+
+function getChartConfig(providerConfig){
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartConfig',
+        method: "POST",
+        data: JSON.stringify(providerConfig),
+        contentType: "application/json",
+        async:false,
+        success: function (chartConfig) {
+
+        }
+    })
 }
 
 function getColumns(datasource, datasourceType) {

@@ -18,6 +18,7 @@
  *
  */
 (function () {
+    var getSchema, getData;
     var log = new Log();
 
     if (!user) {
@@ -74,9 +75,57 @@
         print(customPartial);
         return;
     }
+    else if (action === 'getData'){
+        var schema;
+        var provider = Object.keys(data)[0];
+        var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
+        if (providerApi.validate(data[provider])) {
+            schema =  providerApi.getSchema();
+        }
+        if (!schema) {
+            log.error("Invalid Data for Provider Config");
+            response.sendError(500, JSON.stringify({
+                error: true,
+                message: "Invalid data"
+            }));
+            return;
+        }
+        var dataset = providerApi.getData(data[provider], schema, 5);
+        var output = {};
+
+        output.tableHeaders = Object.keys(dataset[0]);
+        output.tableRows = [];
+
+        for (var i in dataset) {
+            _obj = [];
+            for (var k in dataset[i]) {
+                _obj.push(dataset[i][k])
+            }
+            output.tableRows.push(_obj);
+        }
+        print(output);
+        return;
+    }
+    else if (action === 'getChartConfig'){
+        var provider = Object.keys(data)[0];
+        var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
+        var schema;
+        if(providerApi.validate(data[provider])){
+            schema = providerApi.getSchema();
+        }
+        return;
+    }
 
     response.sendError(404, JSON.stringify({
         error: true
     }));
+
+    getData = function (providerConfig, schema, limit){
+        var provider = Object.keys(providerConfig)[0];
+        var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
+        return providerApi.getData(providerConfig[provider], schema, limit);
+    }
 }());
+
+
 %>

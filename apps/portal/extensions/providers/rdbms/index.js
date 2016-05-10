@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getConfig, validateData, getMode, getSchema, getData;
+var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
 (function () {
 
@@ -34,8 +34,8 @@ var getConfig, validateData, getMode, getSchema, getData;
      * validate the user input of provider configuration
      * @param providerConfig
      */
-    validateData = function (providerConfig){
-
+    validate = function (providerConfig){
+        return true;
     }
 
     /**
@@ -50,6 +50,7 @@ var getConfig, validateData, getMode, getSchema, getData;
      * @param providerConfig
      */
     getSchema = function (providerConfig) {
+
 
         /*
          accepting data format
@@ -76,4 +77,14 @@ var getConfig, validateData, getMode, getSchema, getData;
          schemaPropertyList - an array of column names
          */
     };
+
+    /**
+     *
+     * @param providerConfig
+     * @param schema
+     */
+    registerCallBackforPush = function (providerConfig, schema){
+
+    }
+
 }());
