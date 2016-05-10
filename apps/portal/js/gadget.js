@@ -44,6 +44,7 @@ $(function () {
     };
 
     var renderGadget = function () {
+        window.onresize = function(){ location.reload(); }
         wirings = wires(page, "default");
         var com = $('.emb-gadget');
         var id = window.location.pathname.split("/").pop();
