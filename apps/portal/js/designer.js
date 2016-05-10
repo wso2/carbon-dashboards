@@ -1082,7 +1082,9 @@ $(function () {
             options: options,
             styles: content.styles,
             settings: content.settings,
-            listeners: wireEvents(component, notifiers)
+            listeners: wireEvents(component, notifiers),
+            maxPriority: page.maxPriority,
+            defaultPriority: page.defaultPriority
         };
     };
 
@@ -1223,6 +1225,10 @@ $(function () {
         var title = $('input[name=title]', e);
         var idVal = $.trim(id.val());
         var titleVal = $.trim(title.val());
+        var maxPriority = $('input[name=maxPriority]', e);
+        var maxPriorityVal = $.trim(maxPriority.val());
+        var defaultPriority = $('input[name=defaultPriority]', e);
+        var defaultPriorityVal = $.trim(defaultPriority.val());
 
         // validate inputs
         hideInlineError(id, idError);
@@ -1265,6 +1271,14 @@ $(function () {
                 } else {
                     page.title = titleVal;
                 }
+            },
+            maxPriority: function () {
+                page.maxPriority = maxPriorityVal;
+
+            },
+            defaultPriority: function () {
+                page.defaultPriority = defaultPriorityVal;
+
             },
             landing: function () {
                 if (landing.is(':checked')) {
@@ -1783,10 +1797,14 @@ $(function () {
                 landing: (dashboard.landing == page.id),
                 isanon: page.isanon,
                 isUserCustom: dashboard.isUserCustom,
+                maxPriority: page.maxPriority,
+                defaultPriority: page.defaultPriority,
                 fluidLayout: page.layout.fluidLayout || false
             })).on('change', 'input', function () {
                 if (updatePageProperties($(this).closest('.ues-page-properties'))) {
-                    switchPage(page.id, pageType);
+                    if(!(this.name === "maxPriority" || this.name === "defaultPriority")){
+                        switchPage(page.id, pageType);
+                    }
                 }
             });
 
@@ -1802,6 +1820,13 @@ $(function () {
             }).on("keyup", function (e) {
                 var sanitizedInput = $(this).val().replace(/[^\w]/g, '-').toLowerCase();
                 $(this).val(sanitizedInput);
+            });
+
+            //change the maximum value of priority picker
+            $("#maxPriority").on("change",function(){
+                var propertiesContainer = $('.ues-component-properties-container');
+                propertiesContainer.find('#priorityPicker').attr("max",this.value);
+                propertiesContainer.find('#priorityValue').text(this.value);
             });
         });
 
