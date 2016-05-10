@@ -1406,7 +1406,7 @@ $(function () {
             if (type === 'checkbox') {
                 settings[name] = el.is(':checked');
             }
-            if(type==='range'){
+            if(type === 'range'){
                 settings[name] = el.val();
             }
         });

@@ -136,5 +136,5 @@
     "delete.block.only.header": "Deleting the block",
     "settings.savebutton": "Save",
     "settings.cancelbutton": "Cancel",
-    "designer.componentProperties.priority":"Priority",
+    "designer.componentProperties.priority": "Priority"
 }

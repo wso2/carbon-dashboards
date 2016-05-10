@@ -232,7 +232,7 @@
         });
     };
 
-    var finishedLoading =function(){
+    var finishedLoading = function () {
         componentBoxNum++;
         renderGadget();
         if (!doneCallback) {
@@ -242,7 +242,7 @@
 
     };
 
-    var renderGadget = function(){
+    var renderGadget = function () {
         var container;
         if(componentBoxList[componentBoxNum]){
             container= $(componentBoxList[componentBoxNum]);
@@ -269,7 +269,7 @@
             if (hasComponent) {
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
-                        console.log(err);
+                        log(err);
                     }});
             }
             else{

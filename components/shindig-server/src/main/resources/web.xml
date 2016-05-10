@@ -170,20 +170,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>renderer</servlet-name>
-        <servlet-class>
-            org.wso2.carbon.dashboard.shindig.features.Renderer
-        </servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>rendererResults</servlet-name>
-        <servlet-class>
-            org.wso2.carbon.dashboard.shindig.features.RenderingResults
-        </servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>accel</servlet-name>
         <servlet-class>
             org.apache.shindig.gadgets.servlet.HtmlAccelServlet
@@ -289,16 +275,6 @@
             org.apache.shindig.gadgets.servlet.RpcSwfServlet
         </servlet-class>
     </servlet>
-
-    <servlet-mapping>
-        <servlet-name>renderer</servlet-name>
-        <url-pattern>/gadgets/render/renderer</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>rendererResults</servlet-name>
-        <url-pattern>/gadgets/render/rendererResults</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>js</servlet-name>

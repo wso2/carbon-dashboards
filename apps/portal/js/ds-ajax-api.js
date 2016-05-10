@@ -278,7 +278,7 @@
     });
 
     //notifies the completion of gadget loading
-    gadgets.rpc.register(RPC_SERVICE_FINISHEDLOADING_CALL,function () {
+    gadgets.rpc.register(RPC_SERVICE_FINISHEDLOADING_CALL, function () {
         ues.dashboards.finishedLoadingGadget();
     });
 
