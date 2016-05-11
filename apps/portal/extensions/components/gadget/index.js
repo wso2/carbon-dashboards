@@ -98,7 +98,6 @@
         var settings = content.settings || {};
         var styles = content.styles || {};
         var options = content.options || (content.options = {});
-        console.log("hjdbssdhbfhsfhjfhsbf");
         ues.gadgets.preload(url, function (err, metadata) {
             var pref;
             var name;
