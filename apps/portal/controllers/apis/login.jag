@@ -19,12 +19,22 @@
         var username = request.getParameter("username");
         var password = request.getParameter("password");
 
+        var usr = require('/modules/user.js');
+        var api = require('/modules/api.js');
+
+        var carbon = require('carbon');
         var user = carbon.server.tenantUser(username);
+
         if (user.tenantId !== -1) {
-            var api = require('/modules/api.js');
-            var authToken = api.authenticate(username, password);
-            response.addHeader("sessionId", session.getId);
-            response.content = authToken;
+            if (usr.login(username, password)) {
+                var authToken = api.authenticate(username, password);
+                new Log().info(session.get('user'));
+                session.put('authToken', authToken);
+            }
+
         }
-        response.sendError(401, "Access not authorized");
+
+        else {
+            response.sendError(401, "Access not authorized");
+        }
 }()); %>

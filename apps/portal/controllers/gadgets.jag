@@ -18,30 +18,27 @@
  */
 var fresh = false;
 
-/* To make the dashboard view to be default as at this level, we do not make any security arrangements on embeddable
-   gadgets
-*/
 isDefault = false;
 var bgcolor;
 var pageId;
 
 (function () {
     var log = new Log();
+    var matcher = new URIMatcher(request.getRequestURI());
     var vars;
     var dashboardId;
     var isStandAlone = true; //To check whether the request is for stand alone gadget/ pub-sub gadget
     // i18n
     var i18n = require("i18n");
-    var method = request.getMethod();
-    new Log().info(method);
-    var value = request.getParameter("sessionId");
+    i18n.init(request, utils.getLocaleResourcePath());
 
-    if(session.getId() == value || true) {
+    if (true) {
+        // To set the bgcolor according to client`s website template
         bgcolor = request.getParameter("bgcolor");
-        new Log().info("Correct session id");
-        var matcher = new URIMatcher(request.getRequestURI());
 
-        i18n.init(request, utils.getLocaleResourcePath());
+        if (log.isDebugEnabled()) {
+            log.debug("Session id provided from the client is " + sessionId + "Client has successfully connected.")
+        }
 
         if (matcher.match('/gadgets/{id}/{pid}')) {
             vars = matcher.elements();
@@ -92,8 +89,13 @@ var pageId;
             }
         }
 
+        // To make the user to view the the default view, since we are not authenticating by using user,
+        // but by using session id
         isDefault = true;
-        isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) : include(utils.resolvePath('templates/pubsub-gadget.jag'));
+
+        // Based on the request (Whether it is stand alone or embedded) for the gadget, decide the template to render
+        isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) :
+                include(utils.resolvePath('templates/pubsub-gadget.jag'));
     }
     else {
         response.sendError(401, i18n.localize("request.not.authorized"));
