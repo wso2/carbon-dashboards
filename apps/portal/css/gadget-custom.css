@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-body{
-    height: 100%vh;
-}*/
+
 body > .page-content-wrapper > .container, body > .page-content-wrapper > .container-fluid {
     padding: 0;
 }
-
 
 .page-content-wrapper {
     padding-left: 55px;
@@ -28,12 +24,6 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
 
 .dashboard .page-content-wrapper {
     padding-left: 0;
-    min-height: auto;
-}
-
-.page-content-wrapper.fixed {
-    min-height: auto;
-    max-height: auto;
 }
 
 .page-content {
@@ -56,12 +46,10 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
 .emb-gadget {
     background: #f5f5f5;
     padding: 40px;
-    min-height: auto;
 }
 
 .embGadget .emb-gadget {
     background: transparent;
-    min-height: auto;
 }
 
 
@@ -71,11 +59,7 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
     border: 1px solid #e4e4e4;
     background: #fff;
     margin-bottom: 30px;
-    height:100%vh;
     overflow : scroll;
-}
-.embGadget .gadget {
-    height: 100%vh;
 }
 
 .gadget-body {
