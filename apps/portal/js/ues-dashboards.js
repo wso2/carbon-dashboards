@@ -190,7 +190,7 @@
         $(componentBoxListHbs(json)).appendTo(container);
         return container;
     }
-    
+
     /**
      * Renders a page in the dashboard designer and the view modes.
      * @param {Object} element Gadget container wrapper
@@ -204,14 +204,14 @@
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
-        var layout = (pageType === 'anon' ?  $(page.layout.content.anon) : $(page.layout.content.loggedIn));
+        var layout = (pageType === 'anon' ? $(page.layout.content.anon) : $(page.layout.content.loggedIn));
         content = page.content[pageType];
         componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
         // this is to be rendered only in the designer. in the view mode, the template is rendered in the server
         element.html(getGridstackLayout(layout[0]));
         // render gadget contents
-        isDesignerView =isDesigner;
-        doneCallback=done;
+        isDesignerView = isDesigner;
+        doneCallback = done;
         componentBoxNum = 0;
         componentBoxList = $('.ues-component-box');
         sortGadgets();
@@ -223,11 +223,14 @@
     };
 
     var sortGadgets = function () {
-        componentBoxList.sort(function(a,b){
+        var defaultPriorityVal = ues.global.dashboard.defaultPriority;
+        componentBoxList.sort(function (a, b) {
             var contentA = content[$(a).attr('id')];
             var contentB = content[$(b).attr('id')];
-            if(contentA && contentB){
-                return (contentB[0].content.settings?contentB[0].content.settings['priority']:5)-(contentA[0].content.settings?contentA[0].content.settings['priority']:5);
+            if (contentA && contentB) {
+                var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                return (priorityB - priorityA);
             }
         });
     };
@@ -244,8 +247,8 @@
 
     var renderGadget = function () {
         var container;
-        if(componentBoxList[componentBoxNum]){
-            container= $(componentBoxList[componentBoxNum]);
+        if (componentBoxList[componentBoxNum]) {
+            container = $(componentBoxList[componentBoxNum]);
             // Calculate the data-height field which is required to render the gadget
             if (isDesignerView) {
                 var gsItem = $('.grid-stack-item'),
@@ -270,9 +273,10 @@
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
                         log(err);
-                    }});
+                    }
+                });
             }
-            else{
+            else {
                 finishedLoading();
             }
 
@@ -349,7 +353,7 @@
         rewire: rewireDashboard,
         findPage: findPage,
         resolveURI: resolveURI,
-        finishedLoadingGadget:finishedLoading
+        finishedLoadingGadget: finishedLoading
     };
 
     ues.assets = {};

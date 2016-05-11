@@ -39,8 +39,13 @@ public final class RenderingResults {
         contentTemp = content;
         this.errorMessage = errorMessage;
         this.httpStatusCode = httpStatusCode;
-        String contents[] = contentTemp.split("<script>gadgets\\.util\\.runOnLoadHandlers\\(\\);</script>");
-        this.content = contents[0] + "<script>wso2.gadgets.controls.finishedLoadingGadget();gadgets.util.runOnLoadHandlers();</script>" + contents[1];
+        if (!contentTemp.contains("wso2.gadgets.controls.finishedLoadingGadget()")) {
+            String contents[] = contentTemp.split("<script>gadgets\\.util\\.runOnLoadHandlers\\(\\);</script>");
+            this.content = contents[0] + "<script>wso2.gadgets.controls.finishedLoadingGadget();gadgets.util.runOnLoadHandlers();</script>" + contents[1];
+
+        } else {
+            this.content = contentTemp;
+        }
         this.redirect = redirect;
     }
 

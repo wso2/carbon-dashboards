@@ -503,18 +503,6 @@
                     </div>
                 </div>
                 <div class="form-group">
-		    <div class="col-sm-12" style="margin-bottom: inherit;">
- 			<label class="control-label" >Max Priority</label>
-                	<input id = "maxPriority" name="maxPriority" type="number" class="form-control ues-localized-title" style="float: right; width:30%" value="{{#if maxPriority}}{{maxPriority}}{{else}}10{{/if}}"/>
-                    </div>
-                </div>
-		<div class="form-group">
-		    <div  class="col-sm-12" style="margin-bottom: inherit;">
- 			<label class="control-label">Default Priority</label>
-                	<input id = "defaultPriority" name = "defaultPriority" type="number" class="form-control ues-localized-title" style="float: right; width:30%" name="title" value="{{#if defaultPriority}}{{defaultPriority}}{{else}}5{{/if}}""/>
-		    </div>
-                </div>
-                <div class="form-group">
                     <div class="col-sm-12">
                         <div class="checkbox">
                             <label>
@@ -720,12 +708,12 @@
 				{{/if}}
                                 </div>
                             </div>
- 			    <div class="form-group">
+ 			   			    <div class="form-group">
                                 <div class="col-sm-12">
-				    <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
-				   	<input id="priorityPicker" name = "priority" type="range" min="0" max="{{#if maxPriority}}{{maxPriority}}{{else}}10{{/if}}" value={{#if settings.priority}}{{settings.priority}}{{else}}{{#if defaultPriority}}{{defaultPriority}}{{else}}5{{/if}}{{/if}} />
-				    <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}{{#if defaultPriority}}{{defaultPriority}}{{else}}5{{/if}}{{/if}}</span>                                </div>
-                            </div>
+				                   <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
+				   	               <input id="priorityPicker" name = "priority" type="range" min="0" max="<%= configs.maxGadgetPriority?configs.maxGadgetPriority:10%>" value={{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5%>{{/if}} />
+				                   <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5%>{{/if}}</span>
+				                </div>
                         </form>
                     </div>
                 </div>
