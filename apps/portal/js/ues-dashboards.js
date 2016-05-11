@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var wirings;
+
 (function () {
     /**
      * Find a component.
@@ -106,6 +106,7 @@ var wirings;
         return clientId.replace('sandbox-gadget-', '');
     };
 
+    var wirings;
 
     // Overriding publish for clients method
     var publishForClient = ues.hub.publishForClient;
@@ -123,7 +124,7 @@ var wirings;
     //overriding publish method
     var publish = ues.hub.publish;
     ues.hub.publish = function (topic, data) {
-      $(".gadgets-grid").find('.ues-component').each(function () {
+        $(".gadgets-grid").find('.ues-component').each(function () {
             var id = $(this).attr('id');
             var channel = id + "." + topic;
             publish.apply(ues.hub, [channel, data]);
