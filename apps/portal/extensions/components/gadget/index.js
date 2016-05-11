@@ -150,7 +150,7 @@
             var renderParams = {};
             renderParams[osapi.container.RenderParam.HEIGHT] =
                 parseInt(sandbox.closest('.ues-component-box').height()) -
-            (hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
+                (hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
