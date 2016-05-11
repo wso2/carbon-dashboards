@@ -43,9 +43,7 @@
             <script language="javascript" type="text/javascript" src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
             <script>
                 gadgets.HubSettings.onConnect = function() {
-		    console.log("connected!");
                     gadgets.Hub.subscribe('subscriber', function(topic, data, subscriberData) {
-			
                         if(data.type === 'clear') {
                             $('.log').empty();
                             return;
