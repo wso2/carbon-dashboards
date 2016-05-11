@@ -37,6 +37,7 @@
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>features/org.wso2.carbon.dashboards.deployment.feature</module>
         <module>features/org.wso2.carbon.dashboards.sso.feature</module>
+        <module>components/shindig-wso2-extensions</module>
     </modules>
 
     <properties>
@@ -98,6 +99,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>shindig-wso2-features</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>shindig-wso2-extensions</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
             <dependency>

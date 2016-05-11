@@ -38,6 +38,10 @@
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>shindig-wso2-features</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>shindig-wso2-extensions</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

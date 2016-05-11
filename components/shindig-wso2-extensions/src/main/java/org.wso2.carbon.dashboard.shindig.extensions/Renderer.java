@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.dashboard.shindig.features;
+package org.wso2.carbon.dashboard.shindig.extensions;
 
 import com.google.inject.Inject;
 import org.apache.shindig.common.logging.i18n.MessageKeys;
@@ -68,9 +68,9 @@ public class Renderer {
      * <p>
      * TODO: Localize error messages.
      */
-    public org.wso2.carbon.dashboard.shindig.features.RenderingResults render(GadgetContext context) {
+    public org.wso2.carbon.dashboard.shindig.extensions.RenderingResults render(GadgetContext context) {
         if (!validateParent(context)) {
-            return org.wso2.carbon.dashboard.shindig.features.RenderingResults.error("Unsupported parent parameter. Check your container code.",
+            return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Unsupported parent parameter. Check your container code.",
                     HttpServletResponse.SC_BAD_REQUEST);
         }
 
@@ -79,29 +79,29 @@ public class Renderer {
             gadget.addFeature("wso2-gadgets-controls");
             GadgetSpec gadgetSpec = gadget.getSpec();
             if (gadget.getCurrentView() == null) {
-                return org.wso2.carbon.dashboard.shindig.features.RenderingResults.error("Unable to locate an appropriate view in this gadget. " +
+                return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Unable to locate an appropriate view in this gadget. " +
                         "Requested: '" + gadget.getContext().getView() +
                         "' Available: " + gadgetSpec.getViews().keySet(), HttpServletResponse.SC_NOT_FOUND);
             }
 
             if (gadget.getCurrentView().getType() == View.ContentType.URL) {
                 if (gadget.requiresCaja()) {
-                    return org.wso2.carbon.dashboard.shindig.features.RenderingResults.error("Caja does not support url type gadgets.",
+                    return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Caja does not support url type gadgets.",
                             HttpServletResponse.SC_BAD_REQUEST);
                 } else if (gadget.sanitizeOutput()) {
-                    return org.wso2.carbon.dashboard.shindig.features.RenderingResults.error("Type=url gadgets cannot be sanitized.",
+                    return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Type=url gadgets cannot be sanitized.",
                             HttpServletResponse.SC_BAD_REQUEST);
                 }
-                return org.wso2.carbon.dashboard.shindig.features.RenderingResults.mustRedirect(gadget.getCurrentView().getHref());
+                return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.mustRedirect(gadget.getCurrentView().getHref());
             }
 
             if (!lockedDomainService.isGadgetValidForHost(context.getHost(), gadget, context.getContainer())) {
-                return org.wso2.carbon.dashboard.shindig.features.RenderingResults.error("Invalid domain for host (" + context.getHost()
+                return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Invalid domain for host (" + context.getHost()
                                 + ") and gadget (" + gadgetSpec.getUrl() + ")",
                         HttpServletResponse.SC_BAD_REQUEST);
             }
 
-            return org.wso2.carbon.dashboard.shindig.features.RenderingResults.ok(renderer.render(gadget));
+            return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.ok(renderer.render(gadget));
         } catch (RenderingException e) {
             return logError("render", context.getUrl(), e.getHttpStatusCode(), e);
         } catch (ProcessingException e) {
@@ -115,11 +115,11 @@ public class Renderer {
         }
     }
 
-    private org.wso2.carbon.dashboard.shindig.features.RenderingResults logError(String methodname, Uri gadgetUrl, int statusCode, Throwable t) {
+    private org.wso2.carbon.dashboard.shindig.extensions.RenderingResults logError(String methodname, Uri gadgetUrl, int statusCode, Throwable t) {
         if (LOG.isLoggable(Level.INFO)) {
             LOG.logp(Level.INFO, classname, methodname, MessageKeys.FAILED_TO_RENDER, new Object[]{gadgetUrl, t.getMessage()});
         }
-        return org.wso2.carbon.dashboard.shindig.features.RenderingResults.error(t.getMessage(), statusCode);
+        return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error(t.getMessage(), statusCode);
     }
 
     /**

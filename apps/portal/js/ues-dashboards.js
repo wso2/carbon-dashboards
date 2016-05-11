@@ -224,9 +224,9 @@
 
     var sortGadgets = function () {
         var defaultPriorityVal = ues.global.dashboard.defaultPriority;
-        componentBoxList.sort(function (a, b) {
-            var contentA = content[$(a).attr('id')];
-            var contentB = content[$(b).attr('id')];
+        componentBoxList.sort(function (componentBoxA, componentBoxB) {
+            var contentA = content[$(componentBoxA).attr('id')];
+            var contentB = content[$(componentBoxB).attr('id')];
             if (contentA && contentB) {
                 var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
                 var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
