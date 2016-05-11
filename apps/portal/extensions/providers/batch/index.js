@@ -19,6 +19,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
     var PROVIDERS_LOCATION = '/extensions/providers/';
 
+    var PROVIDER_NAME = 'batch';
     var TYPE = "type";
     var TABLE_NAME = "tableName";
     var HTTPS_TRANSPORT = "https";
@@ -74,12 +75,11 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     }
     var connector = new AnalyticsCachedJSServiceConnector(cache);
 
-
     /**
      * require the existing config.json and push any dynamic fields that needs to be populated in the UI
      */
     getConfig = function() {
-        var formConfig = require(PROVIDERS_LOCATION + '/batch/config.json');
+        var formConfig = require(PROVIDERS_LOCATION + '/' + PROVIDER_NAME + '/config.json');
         var datasourceCfg = {
             "fieldLabel": "Datasource",
             "fieldName": "tableName",
