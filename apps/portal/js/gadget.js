@@ -42,6 +42,9 @@ $(function () {
         }
     };
 
+    /**
+     * To render the specific gadget in a certain page
+     */
     var renderGadget = function () {
         window.onresize = function(){ location.reload(); }
         var com = $('.emb-gadget');
