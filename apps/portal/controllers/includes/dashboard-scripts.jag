@@ -27,7 +27,7 @@
         if(typeof isDefault == 'undefined')
             isDefault = false;
 
-        // This is a temporary change to bypass secuirty measures
+        // This is temporary change to avoid the anon view, when the user is not authenticated
         if(isDefault){
             viewType = 'default';
         }
