@@ -51,6 +51,54 @@ var registryUserPath = function (id, username) {
 };
 
 /**
+ * Get location where to store an OAuth application credentials
+ * @param application name
+ * @returns string path
+ */
+var registryOAuthApplicationPath = function (id) {
+    var path = '/_system/config/ues/application';
+    return id ? path + '/' + id : path;
+};
+
+/**
+ * If an OAuth application already has been created get application credentials
+ * @param applicationId   resource location in the registry
+ * @param callBack
+ */
+var getOAuthApplication = function (applicationId, callBack) {
+    var registry = getRegistry();
+    var path = registryOAuthApplicationPath(applicationId);
+    if (registry.exists(path)) {
+        callBack(JSON.parse(registry.content(path)));
+    } else {
+        callBack(null);
+    }
+}
+
+/**
+ * Create an OAuth application against portal app
+ * @param applicationId          resource location in the registry
+ * @param clientCredentials      OAuth application credentials
+ * @returns {boolean}            check whether  OAuth application's credentials are stored in registry
+ */
+var createOAuthApplication = function (applicationId, clientCredentials) {
+    var server = new carbon.server.Server();
+    var registry = getRegistry();
+    var userManager = new carbon.user.UserManager(server);
+    var path = registryOAuthApplicationPath(applicationId);
+    try {
+        registry.put(path, {
+            content: JSON.stringify(clientCredentials),
+            mediaType: 'application/json'
+        });
+        userManager.denyRole('internal/everyone', path, 'read');
+        return true;
+    } catch (exception) {
+        throw "Error occurred while creating an OAuth application, " + exception;
+    }
+}
+
+/**
  * Finds a dashboard by its ID.
  * @param {String} id                       ID of the dashboard
  * @param {Boolean} originalDashboardOnly   Original dashboard only
@@ -540,7 +588,7 @@ var getBootstrapLayout = function (pageId, isAnon) {
             }
             // decrease the row span by 1 since the current row is being processed.
             rowSpan--;
-            // if the rowSpan = 0, then we can safety split the above rows from the rest
+            // if the rowSpan = 0, then we can safety split the above rows from the restservice
             if (rowSpan == 0 || y == ey) {
                 endRow = y;
                 // if the heights of each block is not varying, then the section can be
