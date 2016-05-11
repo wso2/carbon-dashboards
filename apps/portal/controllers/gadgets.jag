@@ -22,7 +22,7 @@ var fresh = false;
    gadgets
 */
 isDefault = false;
-
+var bgcolor;
 var pageId;
 
 (function () {
@@ -32,59 +32,70 @@ var pageId;
     var isStandAlone = true; //To check whether the request is for stand alone gadget/ pub-sub gadget
     // i18n
     var i18n = require("i18n");
-    var matcher = new URIMatcher(request.getRequestURI());
+    var method = request.getMethod();
+    new Log().info(method);
+    var value = request.getParameter("sessionId");
 
-    i18n.init(request, utils.getLocaleResourcePath());
+    if(session.getId() == value || true) {
+        bgcolor = request.getParameter("bgcolor");
+        new Log().info("Correct session id");
+        var matcher = new URIMatcher(request.getRequestURI());
 
-    if (matcher.match('/gadgets/{id}/{pid}')) {
-        vars = matcher.elements();
-        dashboardId = vars.id;
-        pageId = vars.pid;
-        isStandAlone = false
-    }
-    else if(matcher.match('/gadgets/{id}/{pid}/{gid}')) {
-        // Get the dashboard id, page id and gadget id from url
-        vars = matcher.elements();
-        dashboardId = vars.id;
-        pageId = vars.pid;
-        var gadgetId = vars.gid;
-    }
-    else {
-        response.sendError(400, i18n.localize("bad.request"));
-    }
-    var gadgets = require('/modules/gadgets.js');
-    utils.sandbox(context, function () {
-        dashboard = gadgets.getAsset(dashboardId);
-    });
+        i18n.init(request, utils.getLocaleResourcePath());
 
-    // If the dashboard is not available, indicate error
-    if (!dashboard) {
-        response.sendError(404, i18n.localize("page.not.found"));
-        return;
-    }
+        if (matcher.match('/gadgets/{id}/{pid}')) {
+            vars = matcher.elements();
+            dashboardId = vars.id;
+            pageId = vars.pid;
+            isStandAlone = false
+        }
+        else if (matcher.match('/gadgets/{id}/{pid}/{gid}')) {
+            // Get the dashboard id, page id and gadget id from url
+            vars = matcher.elements();
+            dashboardId = vars.id;
+            pageId = vars.pid;
+            var gadgetId = vars.gid;
+        }
+        else {
+            response.sendError(400, i18n.localize("bad.request"));
+        }
+        var gadgets = require('/modules/gadgets.js');
+        utils.sandbox(context, function () {
+            dashboard = gadgets.getAsset(dashboardId);
+        });
 
-    // Check whether the there is page in the dashboard with given page id
-    var page = gadgets.findPage(dashboard, pageId);
-
-
-    // If the page is not available indicate error
-    if (!page) {
-        response.sendError(404, i18n.localize("page.not.found"));
-        return;
-    }
-
-    // If it is a standalone gadget, check whether the required gadget exist
-    if(isStandAlone) {
-        // Check whether a gadget exist within the page
-        var isComponentExists = gadgets.isComponentExists(gadgetId, page);
-
-        // If there is no such gadget, send error.
-        if (!isComponentExists) {
+        // If the dashboard is not available, indicate error
+        if (!dashboard) {
             response.sendError(404, i18n.localize("page.not.found"));
             return;
         }
-    }
 
-    isDefault = true;
-    isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) : include(utils.resolvePath('templates/pubsub-gadget.jag'));
+        // Check whether the there is page in the dashboard with given page id
+        var page = gadgets.findPage(dashboard, pageId);
+
+
+        // If the page is not available indicate error
+        if (!page) {
+            response.sendError(404, i18n.localize("page.not.found"));
+            return;
+        }
+
+        // If it is a standalone gadget, check whether the required gadget exist
+        if (isStandAlone) {
+            // Check whether a gadget exist within the page
+            var isComponentExists = gadgets.isComponentExists(gadgetId, page);
+
+            // If there is no such gadget, send error.
+            if (!isComponentExists) {
+                response.sendError(404, i18n.localize("page.not.found"));
+                return;
+            }
+        }
+
+        isDefault = true;
+        isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) : include(utils.resolvePath('templates/pubsub-gadget.jag'));
+    }
+    else {
+        response.sendError(401, i18n.localize("request.not.authorized"));
+    }
 }()); %>

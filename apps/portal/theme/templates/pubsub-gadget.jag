@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,8 @@ var showNavigation = false;
 
     <!-- Custom theme overrides -->
     <link rel="stylesheet" href="<%=urlPrefix%><%=utils.dashboardStyles(dashboard.theme)%>">
+
+
 </head>
 <body class="dashboard lang_<%=request.getLocale()%>">
     <div class="nano">
@@ -90,7 +92,6 @@ var showNavigation = false;
 
 <!-- page content -->
 <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
-
                     <div class="page-content">
                         <!-- Components grid -->
                         <div class="ues-components-grid gadgets-grid">
@@ -101,16 +102,7 @@ var showNavigation = false;
             </div><!-- /#page-content-wrapper -->
         </div>
     </div>
-
-    <!--Footer -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <p>WSO2 Dashboard Server v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script>
-                <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
-        </div>
-    </footer>
-
-    <!-- Handlebar templates -->
+       <!-- Handlebar templates -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
         <div class="ues-component gadget">
             <div class="gadget-heading ues-component-heading">
@@ -274,6 +266,7 @@ var showNavigation = false;
         </div>
     </script>
 
+
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
@@ -328,13 +321,8 @@ var showNavigation = false;
         }
 
         $(document).ready(function() {
-            // Show banner
-            if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
-                $('.grid-stack-item[data-banner=true]')
-                    .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
-            }
-
             // Toggle component box heading
+             document.body.style.backgroundColor = "<%=bgcolor%>";
             $('.ues-component').hover(function() {
                 toggleHeading($(this), true);
             }, function() {
@@ -352,6 +340,10 @@ var showNavigation = false;
                 }
             }
         }
+
+
     </script>
+
+
 </body>
 </html>

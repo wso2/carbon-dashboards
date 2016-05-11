@@ -64,6 +64,24 @@ i18n.init(request, utils.getLocaleResourcePath());
 
 
     <!-- Handlebar templates -->
+      <!-- Handlebar templates -->
+    <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
+        <div class="ues-component gadget">
+            <div class="gadget-heading ues-component-heading">
+                <h1 class="gadget-title ues-component-title truncate">:::</h1>
+                <div class="gadget-actions ues-component-actions">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
+                                data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+                            <i class="icon fw fw-delete"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="gadget-body ues-component-body">
+            </div>
+        </div>
+    </script>
     <!-- Component container -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
             <div class="ues-component gadget">
@@ -80,6 +98,123 @@ i18n.init(request, utils.getLocaleResourcePath());
         </div>
     </script>
 
+     <!-- Component toolbar actions -->
+    <script id="ues-component-actions-hbs" type="text/x-handlebars-template">
+        <div class="btn-group">
+            {{#if dropDownView}}
+                <button class="btn btn-default dropdown-toggle" type="button" id="actionButtons" data-toggle="dropdown">
+                        <i class="icon fw fw-ellipsis fw-rotate-90"></i>
+                </button>
+                <ul class="dropdown-menu more-actions-button" role="menu" aria-labelledby="actionButtons">
+                     {{#each toolbarButtons.custom}}
+                                 <li role="presentation">
+                                       <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                                            {{#if isTypeCSS}}
+                                                <i class="icon fw {{iconClass}}"></i>
+                                            {{/if}}
+                                            {{#if isTypeIMAGE}}
+                                                 <img src="{{resolveURI this.image}}"/>
+                                            {{/if}}
+                                       </button>
+                                 </li>
+                    {{/each}}
+                    {{#if defaultButtonConfigs.isConfiguration}}
+                            {{#if userPrefsExists}}
+                                <li role="presentation">
+                                   <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                                         <i class="fw fw-configarations"></i>
+                                   </button>
+                                </li>
+                             {{/if}}
+                     {{/if}}
+                     {{#if defaultButtonConfigs.isMaximize}}
+                                <li role="presentation">
+                                     <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
+                                            data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+                                                    <i class="icon fw fw-expand"></i> <!-- todo minimize -->
+                                     </button>
+                                </li>
+                    {{/if}}
+
+                </ul>
+            {{else}}
+                {{#each toolbarButtons.custom}}
+                       <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                            {{#if isTypeCSS}}
+                                <i class="icon fw {{iconClass}}"></i>
+                            {{/if}}
+                            {{#if isTypeImage}}
+                                 <img src="{{resolveURI this.image}}"/>
+                            {{/if}}
+                       </button>
+                {{/each}}
+                {{#if userPrefsExists}}
+                    {{#if defaultButtonConfigs.isConfiguration}}
+                           <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                                <i class="fw fw-configarations"></i>
+                           </button>
+                    {{/if}}
+                {{/if}}
+                {{#if defaultButtonConfigs.isMaximize}}
+                           <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+                                <i class="icon fw fw-expand"></i>
+                           </button>
+                {{/if}}
+            {{/if}}
+        </div>
+    </script>
+
+    <!-- Gadget settings -->
+    <script id="ues-gadget-setting-hbs" type="text/x-handlebars-template">
+        <div class="ues-sandbox gadget-setting" data-component="{{id}}">
+            <form>
+                {{#has options}}
+                <div class="ues-options">
+                    <h4><%= i18n.localize("options") %></h4>
+                    {{#each options}}
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            {{#equals type "STRING"}}
+                            <label>{{title}}
+                                <input type="text" class="form-control" name="{{@key}}" placeholder="{{title}}" value="{{value}}">
+                            </label>
+                            {{/equals}}
+                            {{#equals type "BOOL"}}
+                            <label>
+                                <input type="checkbox" name="{{title}}"{{#equals value true}} checked="checked"{{/equals}}> {{title}}
+                            </label>
+                            {{/equals}}
+                            {{#equals type "ENUM"}}
+                            <label>{{title}}
+                                <select id={{title}} name={{title}} class="form-control ues-title-position">
+                                     {{#each options}}
+                                        <option value={{value}}{{#equals value ../value}} selected="selected"{{/equals}}>{{displayValue}}</option>
+                                     {{/each}}
+                                </select>
+                            </label>
+                            {{/equals}}
+                            {{#equals type "LIST"}}
+                            <label>{{title}}
+                                <textarea name="{{@key}}" class="form-control" rows="4"
+                                    placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
+                                <label><%= i18n.localize("enter.your.list.entries.label")%></label>
+                            </label>
+                            {{/equals}}
+                            {{#equals type "text"}}
+                            <label>{{title}}
+                                <textarea name="{{@key}}" class="form-control" rows="4">{{value}}</textarea>
+                            </label>
+                            {{/equals}}
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <div class="alert alert-info">No properties to configure.</div>
+                {{/has}}
+            </form>
+        </div>
+    </script>
 
 
     <!-- Jquery/Jquery UI JS -->
