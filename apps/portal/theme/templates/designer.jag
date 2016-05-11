@@ -708,14 +708,14 @@
 				{{/if}}
                                 </div>
                             </div>
- 			    <div class="form-group">
-                                <div class="col-sm-12">
-			 	    <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
-				    <input id="priorityPicker" name = "priority" type="range" min="0" max="<%= configs.maxGadgetPriority?configs.maxGadgetPriority:10%>" value={{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5%>{{/if}} />
-				    <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5%>{{/if}}</span>
-				</div>
-		            </div>
-                        </form>
+ 			     <div class="form-group">
+                                 <div class="col-sm-12">
+			 	     <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
+				     <input id="priorityPicker" name = "priority" type="range" min="0" max="<%= configs.maxGadgetPriority?configs.maxGadgetPriority:10%>" value={{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5%>{{/if}} />
+				     <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5%>{{/if}}</span>
+				 </div>
+		             </div>
+                         </form>
                     </div>
                 </div>
             </div>
