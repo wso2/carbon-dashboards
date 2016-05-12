@@ -306,7 +306,6 @@ var showNavigation = false;
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>
-
         var nanoScrollerSelector = $(".nano");
         nanoScrollerSelector.nanoScroller();
 
@@ -340,10 +339,6 @@ var showNavigation = false;
                 }
             }
         }
-
-
     </script>
-
-
 </body>
 </html>
