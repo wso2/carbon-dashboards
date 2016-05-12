@@ -1,6 +1,8 @@
 {
-    "id":"realtime",
-    "name" : "Realtime Data Source",
-    "image" : "",
-    "config" : []
+    "info": {
+        "id": "realtime",
+        "name": "Realtime Data Source",
+        "image": ""
+    },
+    "config": []
 }

@@ -1,7 +1,9 @@
 {
-    "id":"rdbms",
-    "name" : "Relational Database Source",
-    "image" : "",
+    "info": {
+        "id": "rdbms",
+        "name": "Relational Database Source",
+        "image": ""
+    },
     "config" : [
         {
             "fieldLabel" : "Database URL",
@@ -28,7 +30,7 @@
             "fieldLabel" : " Database Driver",
             "fieldName" :"driver",
             "fieldType" : "dropDown",
-            "valueSet" : [],
+            "valueSet" : ["apple","orange"],
             "isRequired" : true
         },
         {
@@ -40,6 +42,12 @@
         {
             "fieldType" : "advanced",
             "childPartial" : "myPartial"
+        },
+        {
+            "fieldLabel" : " Checkkk Box",
+            "fieldName" :"checkkkbox",
+            "fieldType" : "checkbox",
+            "isRequired" : true
         }
     ]
 }

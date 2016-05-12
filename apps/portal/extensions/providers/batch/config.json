@@ -1,7 +1,9 @@
 {
-    "id":"batch",
-    "name" : "Batch Data Source",
-    "image" : "",
+    "info": {
+        "id": "batch",
+        "name": "Batch Data Source",
+        "image": ""
+    },
     "config" : [
         {
             "fieldType" : "advanced",

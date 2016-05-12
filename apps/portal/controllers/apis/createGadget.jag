@@ -55,7 +55,7 @@
 
         for (var i = 0; i < requiredProviders.length; i++) {
             var configJson = require(PROVIDERS_LOCATION + requiredProviders[i] + '/config.json');
-            providers.push(configJson);
+            providers.push(configJson.info);
         }
         print(providers);
         return;
