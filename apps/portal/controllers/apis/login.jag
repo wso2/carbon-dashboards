@@ -16,7 +16,7 @@
  */
 
 (function () {
-        var log = new Log()
+        var log = new Log();
         var username = request.getParameter("username");
         var password = request.getParameter("password");
         var usr = require('/modules/user.js');
@@ -30,7 +30,7 @@
                 session.put('authToken', authToken);
 
                 if (log.isDebugEnabled()) {
-                    new Log().info(session.get('user') + " is authorized.");
+                    log.debug(session.get('user') + " is authorized.");
                 }
             }
             else {
