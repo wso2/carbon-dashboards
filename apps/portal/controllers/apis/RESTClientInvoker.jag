@@ -55,7 +55,10 @@ var RESTClientInvoker = function () {
                     }
                 });
             } else {
-                log.debug("OAuth hasn't been enabled yet. This will cause problems if backed is secured with OAuth");
+                if (log.isDebugEnabled()) {
+                    log.debug("OAuth hasn't been enabled yet. This will cause problems if backed is secured with" +
+                            "OAuth");
+                }
             }
             xmlHttpRequest.send(payload);
             if ((xmlHttpRequest.status >= 200 && xmlHttpRequest.status < 300) || xmlHttpRequest.status == 302) {
@@ -188,7 +191,10 @@ var RESTClientInvoker = function () {
                     }
                 });
             } else {
-                log.debug("OAuth is hasn't been enabled yet. This will cause problems if backed is secured with OAuth");
+                if (log.isDebugEnabled()) {
+                    log.debug("OAuth is hasn't been enabled yet. This will cause problems if backed is secured" +
+                            "with OAuth");
+                }
             }
             if (payload !== null) {
                 var StringRequestEntity = Packages.org.apache.commons.httpclient.methods.StringRequestEntity;
