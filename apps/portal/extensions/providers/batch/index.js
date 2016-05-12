@@ -120,33 +120,20 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     getSchema = function(providerConfig) {
-        // log.info(providerConfig);
-        // call provider using the providerConfig and get the schema in the below format
-        // var schema = [];
-        // var fieldOne = { "fieldName": "student_name", "fieldType": "varchar" }
-        // var fieldtwo = { "fieldName": "marks", "fieldType": "int" }
-        // var fieldthree = { "fieldName": "grade", "fieldType": "varchar" }
-        // schema.push(fieldOne);
-        // schema.push(fieldtwo);
-        // schema.push(fieldthree);
-        // return schema;
+        var schema = [];
+        var tableName = providerConfig["tableName"];
+        var result = connector.getTableSchema(loggedInUser, tableName).getMessage();
+        result = JSON.parse(result);
 
-        /*
-         accepting data format
-
-             {
-                 fieldName : aaa
-                 FieldValue : bbb
-             },
-             {
-                 fieldName : ccc
-                 FieldValue : ddd
-             }
-             */
-        // var tableName = providerConfig["tableName"];
-        var tableName = "SPEED";
-        var schema = connector.getTableSchema(loggedInUser, tableName);
-        return [];
+        var columns = result.columns;       
+        Object.getOwnPropertyNames(columns).forEach(function(name, idx, array) {
+          schema.push( {
+            fieldName : name,
+            fieldType: columns[name]['type']
+          });
+        });
+        // log.info(schema);
+        return schema;
     };
 
     /**
