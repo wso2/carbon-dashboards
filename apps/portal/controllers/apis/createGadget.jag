@@ -131,7 +131,7 @@
         var provider = Object.keys(data)[0];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
         if (providerApi.validate(data[provider])) {
-            schema = providerApi.getSchema();
+            schema = providerApi.getSchema(data[provider]);
         }
         var chartApi = require(CHART_LOCATION + data.chartType + '/index.js');
         var modifiedChartConfig = chartApi.getConfig(schema);
