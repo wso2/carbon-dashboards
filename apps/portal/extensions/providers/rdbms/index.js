@@ -71,7 +71,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      * @param schemaPropertyList
      */
-    getData = function (providerConfig,schemaPropertyList) {
+    getData = function (providerConfig, limit) {
 
         /*
          schemaPropertyList - an array of column names

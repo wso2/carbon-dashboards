@@ -1,30 +1,27 @@
 {
     "info": {
-        "id": "line-chart",
-        "name": "Line Chart"
+        "id": "bar-chart",
+        "name": "Bar Chart"
     },
     "config": [
         {
             "fieldLabel": "X axis",
             "fieldName": "x",
             "fieldType": "dropdown",
-            "valueSet": ["$COLUMN_NAMES"]
+            "fieldValue": ["$COLUMN_NAMES"]
         },
         {
             "fieldLabel": "Y axis",
             "fieldName": "y",
             "fieldType": "dropdown",
-            "valueSet": ["$COLUMN_NAMES"]
+            "fieldValue": ["$COLUMN_NAMES"]
         },
         {
             "fieldLabel": "Chart Colour",
             "fieldName": "colour",
-            "fieldType": "string"
-        },
-        {
-            "fieldType" : "advanced",
-            "childPartial" : "linePartial"
+            "fieldType": "String"
         }
     ]
+
 }
 

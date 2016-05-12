@@ -1,5 +1,6 @@
 var provider;
-var providerConfig;
+var chartType;
+var wizardData = {};
 var previewData = [];
 var columns = [];
 var done = false;
@@ -10,7 +11,7 @@ var defaultTableColumns = [];
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
-    onTabShow: function(tab, navigation, index) {
+    onTabShow: function (tab, navigation, index) {
         done = false;
         if (index == 0) {
             getProviders();
@@ -20,36 +21,39 @@ $('#rootwizard').bootstrapWizard({
         } else if (index == 1) {
             getProviderConfig();
         }
-        else if(index == 2){
-            providerConfig  = getProviderConfigData();
-            getChartConfig(providerConfig);
+        else if (index == 2) {
+            wizardData = getProviderConfigData();
+            getChartList();
+
+
         }
     }
 });
 
-$('#provider-list').change(function() {
+$('#provider-list').change(function () {
     provider = $("#providers").val();
 });
 
-$('#show-data').click(function() {
+$('#show-data').click(function () {
     var pConfig = getProviderConfigData();
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getData',
         method: "POST",
-        data : JSON.stringify(pConfig),
+        data: JSON.stringify(pConfig),
         contentType: "application/json",
-        async:false,
-        success: function(data) {
+        async: false,
+        success: function (data) {
             var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
             $('#data-preview').append(dataPreviewHbs(data));
         },
-        error: function(xhr,message,errorObj) {
+        error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
             }
-            var source = $("#wizard-error-hbs").html();;
+            var source = $("#wizard-error-hbs").html();
+            ;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
@@ -57,7 +61,12 @@ $('#show-data').click(function() {
             }));
         }
     });
+});
 
+$('#chart-list').change(function(){
+    chartType = $("#chart-type").val();
+    wizardData['chartType'] = chartType;
+    getChartConfig(wizardData);
 });
 
 
@@ -68,7 +77,7 @@ function getProviders() {
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviders',
         method: "GET",
         contentType: "application/json",
-        success: function(data) {
+        success: function (data) {
             if (data.length == 0) {
                 var source = $("#wizard-zerods-hbs").html();
                 var template = Handlebars.compile(source);
@@ -80,7 +89,7 @@ function getProviders() {
             $("#provider-list").append(providerHbs(data));
 
         },
-        error: function(xhr,message,errorObj) {
+        error: function (xhr, message, errorObj) {
 
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
@@ -88,7 +97,8 @@ function getProviders() {
                 location.reload();
             }
 
-            var source = $("#wizard-error-hbs").html();;
+            var source = $("#wizard-error-hbs").html();
+            ;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
@@ -99,25 +109,26 @@ function getProviders() {
 };
 
 function getProviderConfig() {
-    var data = {"provider" : provider};
+    var data = {"provider": provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
         method: "POST",
-        data : JSON.stringify(data),
+        data: JSON.stringify(data),
         contentType: "application/json",
-        async:false,
-        success: function(data) {
-            registerAdvancedUI(data);
-            var providerHbs = Handlebars.compile($('#provider-config-hbs').html());
+        async: false,
+        success: function (data) {
+            registerAdvancedProviderUI(data);
+            var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
             $("#provider-config").append(providerHbs(data));
         },
-        error: function(xhr,message,errorObj) {
+        error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
             }
-            var source = $("#wizard-error-hbs").html();;
+            var source = $("#wizard-error-hbs").html();
+            ;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
@@ -127,60 +138,99 @@ function getProviderConfig() {
     });
 };
 
-function registerAdvancedUI(data) {
+function registerAdvancedProviderUI(data) {
     for (var i = 0; i < data.length; i++) {
-        (function (config,key) {
+        (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
                 var data = {
                     "provider": provider,
                     "partial": config[key]['childPartial']
                 };
                 $.ajax({
-                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getAdvancedUI',
+                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderAdvancedUI',
                     method: "POST",
                     data: JSON.stringify(data),
                     contentType: "application/json",
                     dataType: 'text',
-                    async:false,
+                    async: false,
                     success: function (partial) {
                         Handlebars.registerPartial(config[key]['childPartial'], partial);
                     }
                 });
             }
-        })(data,i);
+        })(data, i);
     }
-
 }
 
-function getProviderConfigData(){
-    var formData  = $('#provider-config-form').serializeArray();
+function getProviderConfigData() {
+    var formData = $('#provider-config-form').serializeArray();
     var configInput = {};
     var providerConf = {};
-    $.map(formData, function(n){
+    $.map(formData, function (n) {
         configInput[n['name']] = n['value'];
     });
     providerConf[provider] = configInput;
     return providerConf;
 }
 
-function getChartConfig(providerConfig){
+function getChartList() {
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartList',
+        method: "GET",
+        contentType: "application/json",
+        async: false,
+        success: function (chartList) {
+            var chartListHbs = Handlebars.compile($('#chart-list-hbs').html());
+            $("#chart-list").append(chartListHbs(chartList));
+        }
+    });
+}
+
+function getChartConfig(providerConfig) {
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartConfig',
         method: "POST",
         data: JSON.stringify(providerConfig),
         contentType: "application/json",
-        async:false,
+        async: false,
         success: function (chartConfig) {
+            registerAdvancedChartUI(chartConfig);
+            var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
+            $("#chart-config").append(chartHbs(chartConfig));
 
         }
-    })
+    });
+}
+
+function registerAdvancedChartUI(data) {
+    for (var i = 0; i < data.length; i++) {
+        (function (config, key) {
+            if (config[key]['fieldType'].toLowerCase() === 'advanced') {
+                var data = {
+                    "chartType": chartType,
+                    "partial": config[key]['childPartial']
+                };
+                $.ajax({
+                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartAdvancedUI',
+                    method: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    dataType: 'text',
+                    async: false,
+                    success: function (partial) {
+                        Handlebars.registerPartial(config[key]['childPartial'], partial);
+                    }
+                });
+            }
+        })(data, i);
+    }
 }
 
 function getColumns(datasource, datasourceType) {
     if (datasourceType === "realtime") {
         console.log("Fetching stream definition for stream: " + datasource);
         var url = "/portal/apis/rt?action=getDatasourceMetaData&type=" + datasourceType + "&dataSource=" + datasource;
-        $.getJSON(url, function(data) {
+        $.getJSON(url, function (data) {
             if (data) {
                 columns = data;
             }
@@ -188,7 +238,7 @@ function getColumns(datasource, datasourceType) {
     } else {
         console.log("Fetching schema for table: " + datasource);
         var url = "/portal/apis/analytics?type=10&tableName=" + datasource;
-        $.getJSON(url, function(data) {
+        $.getJSON(url, function (data) {
             if (data) {
                 columns = parseColumns(JSON.parse(data.message));
             }
@@ -199,9 +249,9 @@ function getColumns(datasource, datasourceType) {
 function checkPaginationSupported(recordStore) {
     console.log("Checking pagination support on recordstore : " + recordStore);
     var url = "/portal/apis/analytics?type=18&recordStore=" + recordStore;
-    $.getJSON(url, function(data) {
-        if (data.status==="success") {
-            if(data.message==="true" && datasourceType==="batch") {
+    $.getJSON(url, function (data) {
+        if (data.status === "success") {
+            if (data.message === "true" && datasourceType === "batch") {
                 console.log("Pagination supported for recordstore: " + recordStore);
                 $("#btnPreview").show();
                 isPaginationSupported = true;
@@ -229,7 +279,7 @@ function fetchData(callback) {
         method: "GET",
         data: request,
         contentType: "application/json",
-        success: function(data) {
+        success: function (data) {
             var records = JSON.parse(data.message);
             previewData = makeRows(records);
             if (callback != null) {
@@ -251,16 +301,16 @@ function renderPreviewPane(rows) {
     var thead = jQuery("<thead/>");
     thead.appendTo(table);
     var th = jQuery("<tr/>");
-    columns.forEach(function(column, idx) {
+    columns.forEach(function (column, idx) {
         var td = jQuery('<th/>');
         td.append(column.name);
         td.appendTo(th);
     });
     th.appendTo(thead);
 
-    rows.forEach(function(row, i) {
+    rows.forEach(function (row, i) {
         var tr = jQuery('<tr/>');
-        columns.forEach(function(column, idx) {
+        columns.forEach(function (column, idx) {
             var td = jQuery('<td/>');
             td.append(row[idx]);
             td.appendTo(tr);
@@ -289,7 +339,7 @@ function getColumnIndex(columnName) {
 function parseColumns(data) {
     if (data.columns) {
         var keys = Object.getOwnPropertyNames(data.columns);
-        var columns = keys.map(function(key, i) {
+        var columns = keys.map(function (key, i) {
             return column = {
                 name: key,
                 type: data.columns[key].type
@@ -308,7 +358,8 @@ function makeRows(data) {
             row.push("" + record.values[columns[j].name]);
         }
         rows.push(row);
-    };
+    }
+    ;
     return rows;
 };
 
@@ -345,7 +396,7 @@ function drawRealtimeChart(data) {
 
     if (chart != null) {
         var persistedChartType = chart.chart.config.charts[0].type;
-        if(config.charts[0].type != persistedChartType){
+        if (config.charts[0].type != persistedChartType) {
             chart = null;
         }
     }
@@ -353,18 +404,18 @@ function drawRealtimeChart(data) {
     if (chart == null) {
         $("#chartDiv").empty();
 
-        if(config.charts[0].type == "map"){
+        if (config.charts[0].type == "map") {
             var mapType = config.charts[0].mapType;
 
-            if(mapType == "world"){
-                config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-                config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/world/';
-            }else if(mapType == "usa"){
-                config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usaInfo/';
-                config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usa/';
-            }else if(mapType == "europe"){
-                gadgetConfig.chartConfig.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-                gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/europe/';
+            if (mapType == "world") {
+                config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+                config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/world/';
+            } else if (mapType == "usa") {
+                config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usaInfo/';
+                config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usa/';
+            } else if (mapType == "europe") {
+                gadgetConfig.chartConfig.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+                gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/europe/';
             }
         }
         chart = new vizg(createDatatable(convertData(data)), config);
@@ -375,24 +426,24 @@ function drawRealtimeChart(data) {
 
 };
 
-function drawBatchChart(data){
+function drawBatchChart(data) {
     console.log("+++++++++++ drawBatchChart ");
     $("#chartDiv").empty();
 
     var config = constructChartConfigurations();
 
-    if(config.charts[0].type == "map"){
+    if (config.charts[0].type == "map") {
         var mapType = config.charts[0].mapType;
 
-        if(mapType == "world"){
-            config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-            config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/world/';
-        }else if(mapType == "usa"){
-            config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usaInfo/';
-            config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usa/';
-        }else if(mapType == "europe"){
-            gadgetConfig.chartConfig.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-            gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/europe/';
+        if (mapType == "world") {
+            config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+            config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/world/';
+        } else if (mapType == "usa") {
+            config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usaInfo/';
+            config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usa/';
+        } else if (mapType == "europe") {
+            gadgetConfig.chartConfig.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+            gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/europe/';
         }
     }
 
@@ -404,13 +455,13 @@ function createDatatable(data) {
     var names = [];
     var types = [];
 
-    for(var i =0; i < columns.length; i++) {
+    for (var i = 0; i < columns.length; i++) {
         var type;
         names.push(columns[i]["name"]);
 
         var type = columns[i]["type"].toUpperCase();
 
-        if(type === "INT" || type === "INTEGER" || type === "FLOAT" || type === "LONG" ||
+        if (type === "INT" || type === "INTEGER" || type === "FLOAT" || type === "LONG" ||
             type === "DOUBLE") {
             type = "linear";
         } else if (type == "TIME") {
@@ -422,11 +473,11 @@ function createDatatable(data) {
         types.push(type);
     }
 
-    var datatable =  [
+    var datatable = [
         {
-            "metadata" : {
-                "names" : names,
-                "types" : types
+            "metadata": {
+                "names": names,
+                "types": types
             },
             "data": data
         }
@@ -440,7 +491,7 @@ function convertData(data) {
         for (var x = 0; x < data[i].length; x++) {
 
             var type = columns[x]["type"].toUpperCase();
-            if(type != "STRING" && type != "BOOLEAN" ){
+            if (type != "STRING" && type != "BOOLEAN") {
                 data[i][x] = parseFloat(data[i][x]);
             }
         }
@@ -449,7 +500,7 @@ function convertData(data) {
     return data;
 }
 
-function constructChartConfigurations(){
+function constructChartConfigurations() {
 
     var config = {};
     var chartType = $("#chartType").val();
@@ -459,86 +510,103 @@ function constructChartConfigurations(){
 
     config.x = xAxis;
     config.maxLength = maxDataLength;
-    config.padding = {top:30,left:45,bottom:38,right:55};
+    config.padding = {top: 30, left: 45, bottom: 38, right: 55};
 
     if (chartType == "bar") {
-        config.charts = [{type: chartType,  y : yAxis}];
+        config.charts = [
+            {type: chartType, y: yAxis}
+        ];
     } else if (chartType === "line") {
         var colorAxis = $("#color").val();
 
-        if(colorAxis != -1){
-            config.charts = [{type: chartType,  y : yAxis, color:colorAxis}];
-        }else{
-            config.charts = [{type: chartType,  y : yAxis}];
+        if (colorAxis != -1) {
+            config.charts = [
+                {type: chartType, y: yAxis, color: colorAxis}
+            ];
+        } else {
+            config.charts = [
+                {type: chartType, y: yAxis}
+            ];
         }
     } else if (chartType === "area") {
-        config.charts = [{type: chartType,  y : yAxis}];
+        config.charts = [
+            {type: chartType, y: yAxis}
+        ];
     } else if (chartType === "tabular") {
         var columns = [];
         var columnTitles = [];
         var key = $("#key").val();
         var colorColumn = $("#tblColor").val();
 
-        if(selectedTableCoulumns.length != 0){
-            for(i=0;i<selectedTableCoulumns.length;i++){
-                var cusId = "#cusId"+selectedTableCoulumns[i]+"";
+        if (selectedTableCoulumns.length != 0) {
+            for (i = 0; i < selectedTableCoulumns.length; i++) {
+                var cusId = "#cusId" + selectedTableCoulumns[i] + "";
                 columns.push(selectedTableCoulumns[i]);
-                if($(cusId).val() != ""){
+                if ($(cusId).val() != "") {
                     columnTitles.push($(cusId).val());
-                }else{
+                } else {
                     columnTitles.push(selectedTableCoulumns[i]);
                 }
             }
-        }else{
-            for(i=0;i<defaultTableColumns.length;i++){
+        } else {
+            for (i = 0; i < defaultTableColumns.length; i++) {
                 columns.push(defaultTableColumns[i]);
                 columnTitles.push(defaultTableColumns[i]);
             }
         }
-        config.charts = [{type: "table", key : key, maxLength : maxDataLength, color:colorColumn, columns: columns, columnTitles:columnTitles}];
+        config.charts = [
+            {type: "table", key: key, maxLength: maxDataLength, color: colorColumn, columns: columns, columnTitles: columnTitles}
+        ];
     } else if (chartType === "scatter") {
         var pointSize = $("#pointSize").val();
         var pointColor = $("#pointColor").val();
 
-        config.charts = [{type: chartType,  y : yAxis,color: pointColor, size: pointSize,
-            "maxColor":"#ffff00","minColor":"#ff00ff"}];
+        config.charts = [
+            {type: chartType, y: yAxis, color: pointColor, size: pointSize,
+                "maxColor": "#ffff00", "minColor": "#ff00ff"}
+        ];
     } else if (chartType === "map") {
         var region;
         if ($("#region").val().trim() != "") {
             region = $("#region").val();
         }
-        config.charts = [{type: chartType, y : yAxis, mapType: region}];
+        config.charts = [
+            {type: chartType, y: yAxis, mapType: region}
+        ];
     } else if (chartType === "number") {
         var attrDescription = $("#attrDescription").val();
-        config.charts = [{type: chartType, title:attrDescription}];
+        config.charts = [
+            {type: chartType, title: attrDescription}
+        ];
     }
 
-    config.width = document.getElementById("chartDiv").offsetWidth; - 110;
+    config.width = document.getElementById("chartDiv").offsetWidth;
+    -110;
     config.height = 240 - 40;
 
     return config;
 }
 
 
-function addCustomColumns(selectedValue){
+function addCustomColumns(selectedValue) {
 
-    if(selectedValue != -1){
+    if (selectedValue != -1) {
         var index = selectedTableCoulumns.indexOf(selectedValue);
 
         if (index == -1) {
             selectedTableCoulumns.push(selectedValue);
-            $("#dynamicElements").append('<tr id="'+selectedValue+'">'+
-                '<td><div class="left"><input name="originalValue" type="text" value="'+selectedValue+'" style="width: 128px"id="title" readonly></div></td>' +
+            $("#dynamicElements").append('<tr id="' + selectedValue + '">' +
+                '<td><div class="left"><input name="originalValue" type="text" value="' + selectedValue + '" style="width: 128px"id="title" readonly></div></td>' +
                 '<td><div class="middle"><b style="padding-left: 4px;padding-right: 4px">AS</b></div></td>' +
-                '<td><div class="right"><input name="cusId'+selectedValue+'" id="cusId'+selectedValue+'" type="text" style="width: 128px"id="title" placeholder="Column Name"></div></td>' +
-                '<td><div class="buttonRemove" style="padding-left: 3px;"><input type="button" value="-" onclick="removeRow(\''+selectedValue+'\');" /></div></td>' +
+                '<td><div class="right"><input name="cusId' + selectedValue + '" id="cusId' + selectedValue + '" type="text" style="width: 128px"id="title" placeholder="Column Name"></div></td>' +
+                '<td><div class="buttonRemove" style="padding-left: 3px;"><input type="button" value="-" onclick="removeRow(\'' + selectedValue + '\');" /></div></td>' +
                 '</tr>');
         }
     }
 
 }
 
-function removeRow(rowId){
+function removeRow(rowId) {
     var arrayIndex = selectedTableCoulumns.indexOf(rowId);
     selectedTableCoulumns.splice(arrayIndex, 1);
 }
@@ -546,7 +614,6 @@ function removeRow(rowId){
 $('#dynamicElements').on('click', 'input[type="button"]', function () {
     $(this).closest('tr').remove();
 });
-
 
 
 /**
@@ -560,11 +627,11 @@ $('#dynamicElements').on('click', 'input[type="button"]', function () {
  * @return {Object}
  * @private
  * */
-var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close,mode) {
+var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close, mode) {
     var properties = {};
     properties.text = text;
 
-    if(mode == undefined){
+    if (mode == undefined) {
 
         if (funPrimary || funSecondary) {
             properties.buttons = [
@@ -587,7 +654,7 @@ var generateMessage = function (text, funPrimary, funSecondary, type, layout, ti
             ];
         }
 
-    }else if(mode == "DEL_BLOCK_OR_ALL"){
+    } else if (mode == "DEL_BLOCK_OR_ALL") {
 
         if (funPrimary || funSecondary) {
             properties.buttons = [

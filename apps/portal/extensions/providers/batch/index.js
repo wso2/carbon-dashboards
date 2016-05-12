@@ -81,9 +81,9 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     /**
      * returns the actual data
      * @param providerConfig
-     * @param schemaPropertyList
+     * @param limit
      */
-    getData = function (providerConfig,schema, limit) {
+    getData = function (providerConfig,limit) {
 
         var db = new Database("jdbc:mysql://localhost:3306/test", "root", "root");
         return db.query("SELECT * FROM studentMarks;");

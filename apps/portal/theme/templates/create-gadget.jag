@@ -80,7 +80,7 @@
                 <ul>
                     <li><a href="#tab1" data-toggle="tab"><%= i18n.localize("select.provider")%></a></li>
                     <li><a href="#tab2" data-toggle="tab"><%= i18n.localize("configure.provider")%></a></li>
-                     <li><a href="#tab3" data-toggle="tab"><%= i18n.localize("configure.chart")%></a></li>
+                    <li><a href="#tab3" data-toggle="tab"><%= i18n.localize("configure.chart")%></a></li>
                 </ul>
                  </div>
                   </div>
@@ -110,10 +110,12 @@
                         <div id="data-preview"></div>
                     </div>
                     <div class="tab-pane" id="tab3">
+                        <div id="chart-list"></div>
                         <form class="form-horizontal">
                         <fieldset>
                             <div class="form-group">
-                              <div id = "provider-config" class="col-md-4"></div>
+                              <div id = "chart-config" class="col-md-4">
+                              </div>
                             </div>
                         </fieldset>
                         </form>
@@ -152,7 +154,7 @@
         </select>
      </section>
 </script>
-<script id="provider-config-hbs" type="text/x-handlebars-template">
+<script id="ui-config-hbs" type="text/x-handlebars-template">
     {{#each .}}
        {{#equalsIgnoreCase fieldType "string"}}
           <label>{{fieldLabel}}<input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
@@ -188,7 +190,6 @@
         {{#each tableHeaders}}
         <th>{{this}}</th>
         {{/each}}
-
         {{#each tableRows}}
         <tr>
             {{#each .}}
@@ -197,6 +198,16 @@
         </tr>
         {{/each}}
 </table>
+</script>
+
+<script id="chart-list-hbs" type="text/x-handlebars-template">
+     <label><%= i18n.localize("select.chart")%></label>
+      <select id="chart-type" class="form-control">
+      <option value="select-chart"><%= i18n.localize("select.a.chart")%></option>
+        {{#each .}}
+          <option value="{{this.id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
 </script>
 
 <script id="wizard-zeroevents-hbs" type="text/x-handlebars-template">
