@@ -1,41 +1,8 @@
 {
     "id":"batch",
-    "name" : "Batch Database Source",
+    "name" : "Batch Data Source",
     "image" : "",
     "config" : [
-        {
-            "fieldLabel" : "Database URL",
-            "fieldName" :"db_url",
-            "fieldType" : "string",
-            "defaultValue" : "ttt",
-            "isRequired" : true
-        },
-        {
-            "fieldLabel" : "Username",
-            "fieldName" :"username",
-            "fieldType" : "string",
-            "defaultValue" : "",
-            "isRequired" : true
-        },
-        {
-            "fieldLabel" : "Password",
-            "fieldName" :"password",
-            "fieldType" : "password",
-            "defaultValue" : "",
-            "isRequired" : true
-        },
-        {
-            "fieldLabel" : " Database Driver",
-            "fieldName" :"driver",
-            "fieldType" : "dropDown",
-            "valueSet" : ["apple","orange","grapes"]
-        },
-        {
-            "fieldLabel" : "My Checkbox",
-            "fieldName" :"checkbox",
-            "fieldType" : "checkbox",
-            "isRequired" : false
-        },
         {
             "fieldType" : "advanced",
             "childPartial" : "myPartial"

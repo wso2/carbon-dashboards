@@ -15,18 +15,84 @@
  */
 var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
-(function () {
+(function() {
 
     var PROVIDERS_LOCATION = '/extensions/providers/';
+
+    var PROVIDER_NAME = 'batch';
+    var TYPE = "type";
+    var TABLE_NAME = "tableName";
+    var HTTPS_TRANSPORT = "https";
+    var CONTENT_TYPE_JSON = "application/json";
+    var AUTHORIZATION_HEADER = "Authorization";
+    var USER_TOKEN = "user";
+    var TENANT_DOMAIN = "domain";
+    var CONST_AT = "@";
+    var USERNAME = "username";
+    var HTTP_USER_NOT_AUTHENTICATED = 403;
+    var JS_MAX_VALUE = "9007199254740992";
+    var JS_MIN_VALUE = "-9007199254740992";
+
+    var log = new Log();
+    var carbon = require('carbon');
+    var configs = require('/configs/designer.json');
+    var utils = require('/modules/utils.js');
+    var JSUtils = Packages.org.wso2.carbon.analytics.jsservice.Utils;
+    var AnalyticsCachedJSServiceConnector = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedJSServiceConnector;
+    var AnalyticsCache = Packages.org.wso2.carbon.analytics.jsservice.AnalyticsCachedJSServiceConnector.AnalyticsCache;
+    var cacheTimeoutSeconds = 5;
+    var loggedInUser = null;
+
+    if (configs.cacheTimeoutSeconds) {
+        cacheTimeoutSeconds = parseInt(configs.cacheTimeoutSeconds);
+    }
+    var cacheSizeBytes = 1024 * 1024 * 1024; // 1GB
+    if (configs.cacheSizeBytes) {
+        cacheSizeBytes = parseInt(configs.cacheSizeBytes);
+    }
+    response.contentType = CONTENT_TYPE_JSON;
+
+    var authParam = request.getHeader(AUTHORIZATION_HEADER);
+    if (authParam != null) {
+        credentials = JSUtils.authenticate(authParam);
+        loggedInUser = credentials[0];
+    } else {
+        var token = session.get(USER_TOKEN);
+        if (token != null) {
+            loggedInUser = token[USERNAME] + CONST_AT + token[TENANT_DOMAIN];
+        } else {
+            log.error("user is not authenticated!");
+            response.status = HTTP_USER_NOT_AUTHENTICATED;
+            print('{ "status": "Failed", "message": "User is not authenticated." }');
+            return;
+        }
+    }
+
+    var cache = application.get("AnalyticsWebServiceCache");
+    if (cache == null) {
+        cache = new AnalyticsCache(cacheTimeoutSeconds, cacheSizeBytes);
+        application.put("AnalyticsWebServiceCache", cache);
+    }
+    var connector = new AnalyticsCachedJSServiceConnector(cache);
 
     /**
      * require the existing config.json and push any dynamic fields that needs to be populated in the UI
      */
-    getConfig = function (){
-        var formConfig = require(PROVIDERS_LOCATION + '/batch/config.json');
-        /*
-            dynamic logic goes here
-        */
+    getConfig = function() {
+        var formConfig = require(PROVIDERS_LOCATION + '/' + PROVIDER_NAME + '/config.json');
+        var datasourceCfg = {
+            "fieldLabel": "Datasource",
+            "fieldName": "tableName",
+            "fieldType": "dropDown"
+        };
+        var tables;
+        try {
+            tables = connector.getTableList(loggedInUser).getMessage();
+            datasourceCfg['valueSet'] = JSON.parse(tables);
+        } catch (e) {
+            log.error(e);
+        }
+        formConfig.config.push(datasourceCfg);
         return formConfig;
     }
 
@@ -34,7 +100,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * validate the user input of provider configuration
      * @param providerConfig
      */
-    validate = function (providerConfig){
+    validate = function(providerConfig) {
         /*
         validate the form and return
 
@@ -45,24 +111,25 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     /**
      * returns the data mode either push or pull
      */
-    getMode = function (){
-
+    getMode = function() {
+        return "PULL";
     }
 
     /**
      * returns an array of column names & types
      * @param providerConfig
      */
-    getSchema = function (providerConfig) {
+    getSchema = function(providerConfig) {
+        // log.info(providerConfig);
         // call provider using the providerConfig and get the schema in the below format
-        var schema = [];
-        var fieldOne = {"fieldName" : "student_name", "fieldType" : "varchar"}
-        var fieldtwo = {"fieldName" : "marks", "fieldType" : "int"}
-        var fieldthree = {"fieldName" : "grade", "fieldType" : "varchar"}
-        schema.push(fieldOne);
-        schema.push(fieldtwo);
-        schema.push(fieldthree);
-        return schema;
+        // var schema = [];
+        // var fieldOne = { "fieldName": "student_name", "fieldType": "varchar" }
+        // var fieldtwo = { "fieldName": "marks", "fieldType": "int" }
+        // var fieldthree = { "fieldName": "grade", "fieldType": "varchar" }
+        // schema.push(fieldOne);
+        // schema.push(fieldtwo);
+        // schema.push(fieldthree);
+        // return schema;
 
         /*
          accepting data format
@@ -76,6 +143,10 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                  FieldValue : ddd
              }
              */
+        // var tableName = providerConfig["tableName"];
+        var tableName = "SPEED";
+        var schema = connector.getTableSchema(loggedInUser, tableName);
+        return [];
     };
 
     /**
@@ -84,12 +155,18 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param limit
      */
     getData = function (providerConfig,limit) {
+        var tableName = providerConfig.tableName;
+        var from = JS_MIN_VALUE;
+        var to = JS_MAX_VALUE;
+        var result = connector.getRecordsByRange(loggedInUser, tableName, from, to, 0, 10, null).getMessage();
+        result = JSON.parse(result);
 
-        var db = new Database("jdbc:mysql://localhost:3306/test", "root", "root");
-        return db.query("SELECT * FROM studentMarks;");
-        /*
-         schemaPropertyList - an array of column names
-         */
+        var data = [];
+        for (var i = 0; i < result.length; i++) {
+            var values = result[i].values;
+            data.push(values);
+        }
+        return data;
     };
 
     /**
@@ -97,7 +174,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      * @param schema
      */
-    registerCallBackforPush = function (providerConfig, schema){
+    registerCallBackforPush = function(providerConfig, schema) {
 
     }
 
