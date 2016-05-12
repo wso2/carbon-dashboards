@@ -21,7 +21,6 @@ var fresh = false;
 isDefault = false;
 var bgcolor;
 var pageId;
-
 (function () {
     var log = new Log();
     var matcher = new URIMatcher(request.getRequestURI());
@@ -83,7 +82,7 @@ var pageId;
                 return;
             }
         }
-        
+
         // To make the user to view the the default view, since we are not authenticating by using user,
         // but by using session id
         isDefault = true;
