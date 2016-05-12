@@ -35,6 +35,10 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     validate = function (providerConfig){
+        /*
+         validate the form and return
+
+         */
         return true;
     }
 
@@ -50,7 +54,15 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     getSchema = function (providerConfig) {
-
+        // call provider using the providerConfig and get the schema in the below format
+        var schema = [];
+        var fieldOne = {"fieldName" : "student_name", "fieldType" : "varchar"}
+        var fieldtwo = {"fieldName" : "marks", "fieldType" : "int"}
+        var fieldthree = {"fieldName" : "grade", "fieldType" : "varchar"}
+        schema.push(fieldOne);
+        schema.push(fieldtwo);
+        schema.push(fieldthree);
+        return schema;
 
         /*
          accepting data format
@@ -69,10 +81,12 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     /**
      * returns the actual data
      * @param providerConfig
-     * @param schemaPropertyList
+     * @param limit
      */
-    getData = function (providerConfig, limit) {
+    getData = function (providerConfig,limit) {
 
+        var db = new Database("jdbc:mysql://localhost:3306/test", "root", "root");
+        return db.query("SELECT * FROM studentMarks;");
         /*
          schemaPropertyList - an array of column names
          */
