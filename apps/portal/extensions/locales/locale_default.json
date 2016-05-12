@@ -136,4 +136,6 @@
     "delete.block.only.header": "Deleting the block",
     "settings.savebutton": "Save",
     "settings.cancelbutton": "Cancel",
+    "bad.request" : "Bad request",
+    "request.not.authorized" : "Request not authorized"
 }
