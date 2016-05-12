@@ -23,7 +23,8 @@
         },
         {
             "fieldType" : "advanced",
-            "childPartial" : "linePartial"
+            "childPartial" : "linePartial",
+            "dynamicJS" : []
         }
     ]
 }

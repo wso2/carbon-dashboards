@@ -41,13 +41,8 @@
         },
         {
             "fieldType" : "advanced",
-            "childPartial" : "myPartial"
-        },
-        {
-            "fieldLabel" : " Checkkk Box",
-            "fieldName" :"checkkkbox",
-            "fieldType" : "checkbox",
-            "isRequired" : true
+            "childPartial" : "myPartial",
+            "dynamicJS" : ["test","demo"]
         }
     ]
 }

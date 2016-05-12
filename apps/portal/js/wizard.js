@@ -8,6 +8,10 @@ var isPaginationSupported = true;
 var selectedTableCoulumns = [];
 var defaultTableColumns = [];
 
+var PROVIDER_LOCATION = 'extensions/providers/';
+var CHART_LOCATION = 'extensions/chart-templates/';
+var DYNAMIC_JS_LOCATION = '/js/';
+
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
@@ -142,6 +146,12 @@ function registerAdvancedProviderUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
+                var dynamicJsList = config[key]['dynamicJS'];
+                for (var i in dynamicJsList){
+                     var js = document.createElement('script');
+                     js.src = PROVIDER_LOCATION + provider + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
+                     document.body.appendChild(js);
+                }
                 var data = {
                     "provider": provider,
                     "partial": config[key]['childPartial']
@@ -206,6 +216,12 @@ function registerAdvancedChartUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
+                var dynamicJsList = config[key]['dynamicJS'];
+                for (var i in dynamicJsList){
+                    var js = document.createElement('script');
+                    js.src = CHART_LOCATION + chartType + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
+                    document.body.appendChild(js);
+                }
                 var data = {
                     "chartType": chartType,
                     "partial": config[key]['childPartial']
