@@ -25,7 +25,7 @@ var pageId;
 (function () {
     var log = new Log();
     var matcher = new URIMatcher(request.getRequestURI());
-    var vars;
+    var uriElements;
     var dashboardId;
     var isStandAlone = true; //To check whether the request is for stand alone gadget/ pub-sub gadget
     // i18n
@@ -41,21 +41,22 @@ var pageId;
         }
 
         if (matcher.match('/gadgets/{id}/{pid}')) {
-            vars = matcher.elements();
-            dashboardId = vars.id;
-            pageId = vars.pid;
+            uriElements = matcher.elements();
+            dashboardId = uriElements.id;
+            pageId = uriElements.pid;
             isStandAlone = false
         }
         else if (matcher.match('/gadgets/{id}/{pid}/{gid}')) {
             // Get the dashboard id, page id and gadget id from url
-            vars = matcher.elements();
-            dashboardId = vars.id;
-            pageId = vars.pid;
-            var gadgetId = vars.gid;
+            uriElements = matcher.elements();
+            dashboardId = uriElements.id;
+            pageId = uriElements.pid;
+            var gadgetId = uriElements.gid;
         }
         else {
             response.sendError(400, i18n.localize("bad.request"));
         }
+
         var gadgets = require('/modules/gadgets.js');
         utils.sandbox(context, function () {
             dashboard = gadgets.getAsset(dashboardId);
@@ -79,7 +80,6 @@ var pageId;
         if (isStandAlone) {
             // Check whether a gadget exist within the page
             var isComponentExists = gadgets.isComponentExists(gadgetId, page);
-
             // If there is no such gadget, send error.
             if (!isComponentExists) {
                 response.sendError(404, i18n.localize("page.not.found"));
