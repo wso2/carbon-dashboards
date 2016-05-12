@@ -16,8 +16,8 @@
  *
  * All the requests that starts with /gadgets/ will be dealed with this controller
  */
-var fresh = false;
 
+var fresh = false;
 isDefault = false;
 var bgcolor;
 var pageId;
@@ -69,8 +69,6 @@ var pageId;
 
         // Check whether the there is page in the dashboard with given page id
         var page = gadgets.findPage(dashboard, pageId);
-
-
         // If the page is not available indicate error
         if (!page) {
             response.sendError(404, i18n.localize("page.not.found"));

@@ -31,9 +31,7 @@
                 new Log().info(session.get('user'));
                 session.put('authToken', authToken);
             }
-
         }
-
         else {
             response.sendError(401, "Access not authorized");
         }
