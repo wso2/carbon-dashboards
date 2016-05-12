@@ -19,3 +19,4 @@ wso2features/identity/feature.xml
 wso2features/state/feature.xml
 wso2features/controls/feature.xml
 wso2features/navigate/feature.xml
+wso2features/remoteClient/feature.xml
