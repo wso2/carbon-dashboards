@@ -100,7 +100,6 @@ var tokenUtil = function () {
         xhr.setRequestHeader(constants.CONTENT_TYPE_IDENTIFIER, constants.APPLICATION_X_WWW_FOR_URLENCODED);
         xhr.setRequestHeader(constants.AUTHORIZATION_HEADER, constants.BASIC_PREFIX + encodedClientKeys);
         xhr.send("grant_type=password&username=" + username + "&password=" + password + "&scope=" + scope);
-        delete password, delete clientSecret, delete encodedClientKeys;
         var tokenPair = {};
         if (xhr.status == 200) {
             var data = parse(xhr.responseText);
