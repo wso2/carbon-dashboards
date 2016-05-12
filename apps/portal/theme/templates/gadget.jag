@@ -66,12 +66,8 @@ i18n.init(request, utils.getLocaleResourcePath());
             <div class="ues-component gadget">
                 <div class="ues-component-heading gadget-heading">
                     <h4 class="ues-component-title gadget-title truncate"></h4>
-
-                    <div class="ues-component-actions gadget-actions">
-
                     </div>
                 </div>
-
                 <div class="ues-component-body gadget-body"></div>
             </div>
         </div>

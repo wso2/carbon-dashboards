@@ -95,5 +95,3 @@ var isComponentExists = function (id, page) {
     }
     return false;
 };
-
-

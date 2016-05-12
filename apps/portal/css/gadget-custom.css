@@ -52,25 +52,21 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
     background: transparent;
 }
 
-
-/* Gadgets Styles */
-
 .gadget-wrapper {
     border: 1px solid #e4e4e4;
     background: #fff;
     margin-bottom: 30px;
-    overflow : scroll;
+    overflow: scroll;
 }
 
 .gadget-body {
-    height : auto;
+    height: auto;
 }
 
 .gadget .gadget-heading {
     border-bottom: 1px solid #e4e4e4;
     height: 42px;
 }
-
 
 .embGadget .gadget .gadget-heading {
     background: #206898;
@@ -98,7 +94,6 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
     margin-bottom: 30px;
 }
 
-
 /**
  * Theme overrides
  */
@@ -109,7 +104,6 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
 .gadget-wrapper {
     background: none;
 }
-
 
 /**
  * Component styles
@@ -137,6 +131,3 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
 .ues-component {
     height: 100%;
 }
-
-
-
