@@ -8,9 +8,9 @@
       "sso": {
         "attributes": {
           "issuer": "portal",
-          "identityProviderURL": "%https.ip%/samlsso",
+          "identityProviderURL": "https://localhost:9443/samlsso",
           "responseSigningEnabled": "false",
-          "acs": "%https.ip%/portal/acs",
+          "acs": "https://localhost:9444/portal/acs",
           "identityAlias": "wso2carbon",
           "useTenantKey": false
         }
