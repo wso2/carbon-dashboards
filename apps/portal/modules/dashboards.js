@@ -588,7 +588,7 @@ var getBootstrapLayout = function (pageId, isAnon) {
             }
             // decrease the row span by 1 since the current row is being processed.
             rowSpan--;
-            // if the rowSpan = 0, then we can safety split the above rows from the restservice
+            // if the rowSpan = 0, then we can safety split the above rows from the rest
             if (rowSpan == 0 || y == ey) {
                 endRow = y;
                 // if the heights of each block is not varying, then the section can be
