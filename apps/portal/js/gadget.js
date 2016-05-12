@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 $(function () {
     /**
      * Find a given component in the current page
@@ -46,7 +47,9 @@ $(function () {
      * To render the specific gadget in a certain page
      */
     var renderGadget = function () {
-        window.onresize = function(){ location.reload(); }
+        window.onresize = function () {
+            location.reload();
+        };
         var com = $('.emb-gadget');
         var id = window.location.pathname.split("/").pop();
         console.log(ues.global.dbType);
@@ -62,11 +65,8 @@ $(function () {
         }
         var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
         com.html(componentBoxContentHbs());
-        createComponent(com, findComponent(id), function (err) {
-            if (err) {
-            }
-        });
-    }
+        createComponent(com, findComponent(id), function (err) {});
+    };
 
     /**
      * Create a component inside a container.
@@ -88,8 +88,6 @@ $(function () {
         } else {
             showGadget(sandbox);
         }
-
-
         plugin.create(sandbox, component, ues.hub, done);
     };
 

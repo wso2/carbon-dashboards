@@ -137,9 +137,7 @@ var showNavigation = false;
             <div class="ues-component gadget">
                 <div class="ues-component-heading gadget-heading">
                     <h4 class="ues-component-title gadget-title truncate"></h4>
-
                     <div class="ues-component-actions gadget-actions">
-
                     </div>
                 </div>
 
@@ -321,7 +319,7 @@ var showNavigation = false;
 
         $(document).ready(function() {
             // Toggle component box heading
-             document.body.style.backgroundColor = "<%=bgcolor%>";
+             document.body.style.backgroundColor = "<%=bgColor%>";
             $('.ues-component').hover(function() {
                 toggleHeading($(this), true);
             }, function() {

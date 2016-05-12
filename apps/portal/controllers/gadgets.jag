@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * All the requests that starts with /gadgets/ will be dealed with this controller
+ * All the requests that starts with /gadgets/ will be handled with this controller
  */
 
 var fresh = false;
 isDefault = false;
-var bgcolor;
+var bgColor;
 var pageId;
 (function () {
     var log = new Log();
     var matcher = new URIMatcher(request.getRequestURI());
     var uriElements;
     var dashboardId;
+    var page;
     var isStandAlone = true; //To check whether the request is for stand alone gadget/ pub-sub gadget
     var i18n = require("i18n");
+    var gadgets;
     i18n.init(request, utils.getLocaleResourcePath());
 
     if (true) {
         // To set the bgcolor according to client`s website template
-        bgcolor = request.getParameter("bgcolor");
+        bgColor = request.getParameter("bgcolor");
         if (log.isDebugEnabled()) {
-            log.debug("Session id provided from the client is " + sessionId + "Client has successfully connected.")
+            log.debug("Session id provided from the client is " + session.getId() + "Client has successfully connected.")
         }
         if (matcher.match('/gadgets/{id}/{pid}')) {
             uriElements = matcher.elements();
@@ -53,7 +55,7 @@ var pageId;
             response.sendError(400, i18n.localize("bad.request"));
         }
 
-        var gadgets = require('/modules/gadgets.js');
+        gadgets = require('/modules/gadgets.js');
         utils.sandbox(context, function () {
             dashboard = gadgets.getAsset(dashboardId);
         });
@@ -65,7 +67,7 @@ var pageId;
         }
 
         // Check whether the there is page in the dashboard with given page id
-        var page = gadgets.findPage(dashboard, pageId);
+        page = gadgets.findPage(dashboard, pageId);
         // If the page is not available indicate error
         if (!page) {
             response.sendError(404, i18n.localize("page.not.found"));

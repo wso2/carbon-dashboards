@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 var carbon = require('carbon');
 
 /**
@@ -43,11 +44,9 @@ var registryPath = function (id) {
  */
 var getAsset = function (id) {
     var registry = getRegistry();
-
     var path = registryPath(id);
     var content = registry.content(path);
-    var dashboard = JSON.parse(content);
-    return dashboard;
+    return JSON.parse(content);
 };
 
 /**
@@ -58,7 +57,7 @@ var getAsset = function (id) {
  */
 var findPage = function (dashboard, id) {
     var i;
-    var page;;
+    var page;
     var pages = dashboard.pages;
     var length = pages.length;
     for (i = 0; i < length; i++) {
@@ -70,9 +69,10 @@ var findPage = function (dashboard, id) {
 };
 
 /**
- * Check whether component within current page
- * @param {Number} id
- * @returns {Boolean} isComponentExists
+ * To check whether the given component exist within the page
+ * @param id
+ * @param page
+ * @returns {boolean} true if the component exist, otherwise false
  */
 var isComponentExists = function (id, page) {
     var i;
