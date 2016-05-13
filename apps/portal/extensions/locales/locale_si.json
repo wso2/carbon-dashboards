@@ -136,5 +136,6 @@
   "dashboards": "පුවරු",
   "settings.savebutton": "සුරකින්න",
   "settings.cancelbutton": "ආපසු",
-  "designer.componentProperties.priority": "පූර්වතාව"
+  "designer.componentProperties.priority": "පූර්වතාව",
+  "bad.request" : "වැරදි ඉල්ලීමකි"
 }

@@ -26,6 +26,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
 
     var STORE_EXTENSIONS_LOCATION = '/extensions/stores/';
+    var DEFAULT_THUMBNAIL = 'local://images/gadgetIcon.png';
 
     var registryPath = function (id) {
         var path = '/_system/config/ues/dashboards';
@@ -99,14 +100,17 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * @returns corrected url
      */
     var fixLegacyURL = function (url, storeType) {
-        var index = url.indexOf('://');
-        var currentStore = url.substring(0, index);
-        if (currentStore === LEGACY_STORE_TYPE) {
-            return url.replace(LEGACY_STORE_TYPE, DEFAULT_STORE_TYPE);
+        if (url) {
+            var index = url.indexOf('://');
+            var currentStore = url.substring(0, index);
+            if (currentStore === LEGACY_STORE_TYPE) {
+                return url.replace(LEGACY_STORE_TYPE, DEFAULT_STORE_TYPE);
+            }
+        } else {
+            log.error('url is not defined in asset.json file');
         }
         return storeType.concat('://' + url);
-    }
-
+    };
 
     /**
      * Find an asset based on the type and asset id
@@ -146,12 +150,21 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             var assets = specificStore.getAssets(type, query);
             if (assets) {
                 for (var j = 0; j < assets.length; j++) {
-                    assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
-                    if (type === 'gadget') {
+                    if (assets[j].thumbnail) {
+                        assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
+                    }
+                    else {
+                        log.warn('Thumbnail url is missing in ' + assets[j].title);
+                        assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                    }
+                    if (type === 'gadget' && assets[j].data && assets[j].data.url) {
                         assets[j].data.url = fixLegacyURL(assets[j].data.url,storeTypes[i]);
                     }
-                    if (type === 'layout') {
+                    else if (type === 'layout' && assets[j].url) {
                         assets[j].url = fixLegacyURL(assets[j].url,storeTypes[i]);
+                    }
+                    else{
+                        log.warn('Url is not defined for ' + assets[j].title);
                     }
                 }
                 allAssets = assets.concat(allAssets);
