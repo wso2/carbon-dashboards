@@ -7,11 +7,8 @@
     "config" : [
         {
             "fieldType" : "advanced",
-            "childPartial" : "myPartial"
-        },
-        {
-            "fieldType" : "advanced",
-            "childPartial" : "testPartial"
+            "childPartial" : "myPartial",
+            "dynamicJS" : ["foo"]
         }
     ]
 }
