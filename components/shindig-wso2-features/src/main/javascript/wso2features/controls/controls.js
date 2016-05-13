@@ -59,6 +59,13 @@ wso2.gadgets.controls = (function () {
      */
     var RPC_SERVICE_LOST_FOCUS_CALLBACK = 'RPC_SERVICE_LOST_FOCUS_CALLBACK';
 
+    /**
+     * RPC service name of finished loading event notifications.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_FINISHEDLOADING_CALL = 'RPC_SERVICE_FINISHEDLOADING_CALL';
+
     // Keeps handlers for lost focus event.
     var lostFocusCallbacks = [];
 
@@ -116,11 +123,17 @@ wso2.gadgets.controls = (function () {
         }
     });
 
+    //notifies the completion of gadget loading
+    var finishedLoadingGadget = function () {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_FINISHEDLOADING_CALL, null, null);
+    }
+
     return {
         showGadget: showGadget,
         addButtonListener: addButtonListener,
         resizeGadget: resizeGadget,
         restoreGadget: restoreGadget,
-        addLostFocusListener: addLostFocusListener
+        addLostFocusListener: addLostFocusListener,
+        finishedLoadingGadget:finishedLoadingGadget
     };
 })();
