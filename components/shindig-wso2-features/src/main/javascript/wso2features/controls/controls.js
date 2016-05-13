@@ -25,18 +25,6 @@ wso2.gadgets.controls = (function () {
      * @private
      */
     var RPC_SERVICE_SHOW_GADGET = 'RPC_SERVICE_SHOW_GADGET';
-    var RPC_GADGET_BUTTON_CALLBACK = 'RPC_GADGET_BUTTON_CALLBACK';
-    var btnCallbacks = {};
-    /**
-     * Adding button callback functions.
-     * @return {null}
-     */
-    var addButtonListener = function (action, callback) {
-        if (!btnCallbacks[action]) {
-            btnCallbacks[action] = [];
-        }
-        btnCallbacks[action].push(callback);
-    };
 
     /**
      * Service name to resize gadgets.
@@ -59,8 +47,18 @@ wso2.gadgets.controls = (function () {
      */
     var RPC_SERVICE_LOST_FOCUS_CALLBACK = 'RPC_SERVICE_LOST_FOCUS_CALLBACK';
 
+    /**
+     * Service name for gadget toolbar button callbacks.
+     * @const
+     * @private
+     */
+    var RPC_GADGET_BUTTON_CALLBACK = 'RPC_GADGET_BUTTON_CALLBACK';
+
     // Keeps handlers for lost focus event.
     var lostFocusCallbacks = [];
+
+    // Keeps handlers for gadget toolbar buttons.
+    var btnCallbacks = {};
 
     /**
      * Display an already hidden gadget.
@@ -70,6 +68,51 @@ wso2.gadgets.controls = (function () {
         wso2.gadgets.core.callContainerService(RPC_SERVICE_SHOW_GADGET, null, null);
     };
 
+    /**
+     * Resize gadget block to a certain size.
+     * @param {Object} options Size of the gadget
+     * @return {null}
+     */
+    var resizeGadget = function (options) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_RESIZE_GADGET, options, null);
+    };
+
+    /**
+     * Restore the size of the block.
+     * @return {null}
+     */
+    var restoreGadget = function () {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_RESTORE_GADGET, null, null);
+    };
+
+    /**
+     * Add event handlers for lost focus event.
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var addLostFocusListener = function (callback) {
+        if (callback) {
+            lostFocusCallbacks.push(callback);
+        }
+    };
+
+    /**
+     * Adding button callback functions.
+     * @return {null}
+     */
+    var addButtonListener = function (action, callback) {
+        if (!btnCallbacks[action]) {
+            btnCallbacks[action] = [];
+        }
+        btnCallbacks[action].push(callback);
+    };
+
+    // Register callback function to get responses from the container.
+    gadgets.rpc.register(RPC_SERVICE_LOST_FOCUS_CALLBACK, function () {
+        for (var i = 0; i < lostFocusCallbacks.length; i++) {
+            lostFocusCallbacks[i]();
+        }
+    });
 
     // Register callback function to trigger respective fuction to button click.
     gadgets.rpc.register(RPC_GADGET_BUTTON_CALLBACK, function (action) {
@@ -81,46 +124,11 @@ wso2.gadgets.controls = (function () {
         }
     });
 
-    /**
-     * Resize gadget block to a certain size.
-     * @param {Object} options Size of the gadget
-     * @return {null}
-     */
-    var resizeGadget = function (options) {
-        wso2.gadgets.core.callContainerService(RPC_SERVICE_RESIZE_GADGET, options, null);
-    }
-
-    /**
-     * Restore the size of the block.
-     * @return {null}
-     */
-    var restoreGadget = function () {
-        wso2.gadgets.core.callContainerService(RPC_SERVICE_RESTORE_GADGET, null, null);
-    }
-
-    /**
-     * Add event handlers for lost focus event.
-     * @param {function} callback Callback function
-     * @return {null}
-     */
-    var addLostFocusListener = function (callback) {
-        if (callback) {
-            lostFocusCallbacks.push(callback);
-        }
-    }
-
-    // Register callback function to get responses from the container.
-    gadgets.rpc.register(RPC_SERVICE_LOST_FOCUS_CALLBACK, function () {
-        for (var i = 0; i < lostFocusCallbacks.length; i++) {
-            lostFocusCallbacks[i]();
-        }
-    });
-
     return {
         showGadget: showGadget,
-        addButtonListener: addButtonListener,
         resizeGadget: resizeGadget,
         restoreGadget: restoreGadget,
-        addLostFocusListener: addLostFocusListener
+        addLostFocusListener: addLostFocusListener,
+        addButtonListener: addButtonListener
     };
 })();
