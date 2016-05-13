@@ -21,9 +21,9 @@ $(function () {
     var activeComponent;
     var breadcrumbs = [];
     var storeCache = {
-            gadget: [],
-            widget: [],
-            layout: []
+        gadget: [],
+        widget: [],
+        layout: []
     };
     var nonCategoryKeyWord = "null";
     var designerScrollTop = 0;
@@ -184,11 +184,11 @@ $(function () {
      * @return {String} Unique gadget ID
      * @private
      */
-    var generateGadgetId = function(gadgetName) {
+    var generateGadgetId = function (gadgetName) {
         if (!gadgetIds) {
             // If gadget Ids list is not defined, then need to read all the gadgets and re-populate the index list.
-            gadgetIds = { };
-            $('.ues-component').each(function() {
+            gadgetIds = {};
+            $('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 if (id) {
                     var parts = id.split('-');
@@ -201,7 +201,7 @@ $(function () {
                 }
             });
         }
-        
+
         if (!gadgetIds[gadgetName]) {
             gadgetIds[gadgetName] = 0;
         }
@@ -252,19 +252,20 @@ $(function () {
     var renderComponentProperties = function (component) {
         var ctx = buildPropertiesContext(component, page);
         var propertiesContainer = $('.ues-component-properties-container');
+        dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
 
         propertiesContainer
             .html(componentPropertiesHbs(ctx))
-            .on('change', 'input[type=checkbox], select, textarea', function () {
+            .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
                 var isCheckbox = false;
                 //if a checkbox got changed, disable it before updating properties
-                if(this.type === "checkbox"){
+                if (this.type === "checkbox") {
                     isCheckbox = true;
                     this.disabled = true;
                 }
                 updateComponentProperties($(this).closest('.ues-component-properties'));
                 //enable back the checkbox, after updating its properties
-                if(isCheckbox){
+                if (isCheckbox) {
                     this.disabled = false;
                 }
             })
@@ -285,6 +286,12 @@ $(function () {
                 if ($.trim($(this).val()) == '') {
                     $(this).val('');
                 }
+            });
+
+        propertiesContainer
+            .find('#priorityPicker')
+            .on('change', function () {
+                propertiesContainer.find('#priorityValue').text(this.value);
             });
     };
 
@@ -726,7 +733,7 @@ $(function () {
                 hasComponent = true;
             }
 
-            showHtmlModal(confirmDeleteBlockHbs({ hasComponent: hasComponent }), function () {
+            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
@@ -827,7 +834,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id =  generateGadgetId(asset.id);
+        var id = generateGadgetId(asset.id);
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -1403,6 +1410,9 @@ $(function () {
             }
             if (type === 'checkbox') {
                 settings[name] = el.is(':checked');
+            }
+            if (type === 'range') {
+                settings[name] = el.val();
             }
         });
     };
@@ -2091,7 +2101,7 @@ $(function () {
             }
         }
 
-        var json = { blocks: serializedGrid };
+        var json = {blocks: serializedGrid};
         var id;
         var i;
         // find the current page index
@@ -2358,8 +2368,8 @@ $(function () {
                 customBannerExists: false
             };
 
-        var $placeholder = $('.ues-banner-placeholder'); 
-        var customDashboard = ues.global.dashboard.isUserCustom || false; 
+        var $placeholder = $('.ues-banner-placeholder');
+        var customDashboard = ues.global.dashboard.isUserCustom || false;
         var banner = ues.global.dashboard.banner;
         var bannerExists = banner.globalBannerExists || banner.customBannerExists;
         // create the view model to be passed to handlebar
@@ -2376,7 +2386,7 @@ $(function () {
         // display the image
         var bannerImage = $placeholder.find('.banner-image');
         if (bannerExists) {
-            bannerImage.css('background-image', 
+            bannerImage.css('background-image',
                 "url('" + bannerImage.data('src') + '?rand=' + Math.floor(Math.random() * 100000) + "')").show();
         } else {
             bannerImage.hide();
@@ -2404,16 +2414,16 @@ $(function () {
         $('.ues-banner-placeholder button').prop('disabled', true);
         $('.ues-dashboard-banner-loading').show();
 
-        var $placeholder = $('.ues-banner-placeholder'); 
-        var srcCanvas = document.getElementById('src-canvas'); 
-        var $srcCanvas = $(srcCanvas); 
-        var img = new Image(); 
-        var width = $placeholder.width(); 
+        var $placeholder = $('.ues-banner-placeholder');
+        var srcCanvas = document.getElementById('src-canvas');
+        var $srcCanvas = $(srcCanvas);
+        var img = new Image();
+        var width = $placeholder.width();
         var height = $placeholder.height();
         // remove previous cropper bindings to the canvas (this will remove all the created controls as well)
         $srcCanvas.cropper('destroy');
         // draw the selected image in the source canvas and initialize cropping
-        var srcCtx = srcCanvas.getContext('2d'); 
+        var srcCtx = srcCanvas.getContext('2d');
         var objectUrl = URL.createObjectURL(file);
         img.onload = function () {
             // draw the uploaded image on the canvas
@@ -2432,7 +2442,7 @@ $(function () {
                 cropBoxResizable: true,
                 crop: function (e) {
                     // draw the cropped image part in the dest. canvas and get the base64 encoded string
-                    var cropData = $srcCanvas.cropper('getData'); 
+                    var cropData = $srcCanvas.cropper('getData');
                     var destCanvas = document.getElementById('dest-canvas');
                     var destCtx = destCanvas.getContext('2d');
                     destCanvas.width = width;
@@ -2639,9 +2649,9 @@ function toggleHeading(source, show) {
 
 // Enforce min/max values of number fields
 $('input[type=number]').on('change', function () {
-        var input = $(this);
-        var max = input.attr('max');
-        var min = input.attr('min');
+    var input = $(this);
+    var max = input.attr('max');
+    var min = input.attr('min');
     if (input.val().trim() == '') {
         return;
     }
