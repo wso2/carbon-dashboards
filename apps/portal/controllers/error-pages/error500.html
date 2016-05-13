@@ -16,7 +16,20 @@
     <h1>Error 500</h1>
     <h3>Something went wrong and we're trying to fix it.</h3>
     <h4>Please check back later</h4>
-    <h4><a href="/portal">Visit Portal</a></h4>
+    <div id ="portal" style="visibility: visible; display: block; ..">
+        <h4><a href="/portal">Go to Portal</a></h4>
+    </div>
+    <script type="text/javascript">
+        var link = document.getElementById('portal');
+        if (window.location.pathname.indexOf("gadgets") < 0) {
+            link.style.display='block';
+            link.style.visibility='visible';
+        }
+        else {
+            link.style.visibility='hidden';
+            link.style.display='none';
+        }
+    </script>
 </body>
 </html>
 

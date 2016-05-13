@@ -17,7 +17,20 @@
 <i class="icon-unlink error-icon"></i>
 <h1>Error 405</h1>
 <h3>Method not allowed.</h3>
-<h4><a href="/portal">Go to Login Page</a></h4>
+<div id ="portal" style="visibility: visible; display: block; ..">
+    <h4><a href="/portal">Go to Portal</a></h4>
+</div>
+<script type="text/javascript">
+    var link = document.getElementById('portal');
+    if (window.location.pathname.indexOf("gadgets") < 0) {
+        link.style.display='block';
+        link.style.visibility='visible';
+    }
+    else {
+        link.style.visibility='hidden';
+        link.style.display='none';
+    }
+</script>
 </body>
 </html>
 
