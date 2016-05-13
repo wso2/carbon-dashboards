@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
+
 $(function () {
     var dashboard;
     var page;
@@ -69,6 +69,12 @@ $(function () {
      * @const
      * */
     var HIDDEN = "HIDDEN";
+    
+    /**
+     * RPC service name for gadget callback.
+     * @const
+     */
+    var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
 
     /**
      * Show HTML modal.
@@ -772,37 +778,35 @@ $(function () {
      * @private
      */
     var renderComponentToolbar = function (component) {
-        var configObj = {};
         if (component) {
-            //configuration for default buttons
-            if (component.content.toolbarButtons) {
-                if (component.content.toolbarButtons.default) {
-                    var toolbarOpt = component.content.toolbarButtons.default;
-                    configObj.isMaximize = !!(toolbarOpt.maximize || toolbarOpt.maximize == null);
-                    configObj.isConfiguration = !!(toolbarOpt.configuration || toolbarOpt.configuration == null);
-                    configObj.isRemove = !!(toolbarOpt.remove || toolbarOpt.remove == null);
-                    component.content.defaultButtonConfigs = configObj;
-                }
-                if (component.content.toolbarButtons.custom) {
-                    var customtoolbarOpt = component.content.toolbarButtons.custom;
-                    if (customtoolbarOpt.length > 0) {
-                        component.content.isDropDownView = true;
-                    }
-                    for (var customBtn in customtoolbarOpt) {
-                        if (customtoolbarOpt.hasOwnProperty(customBtn)) {
-                            var iconTypeCSS = 'css';
-                            var iconTypeImage = 'image';
-                            if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
-                                customtoolbarOpt[customBtn].isTypeCSS = true;
-                            }
-                            if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
-                                customtoolbarOpt[customBtn].isTypeImage = true;
-                            }
-                        }
-                    }
-                }
+            // Validate and build the toolbar button options to be passed to the handlebar template
+            var toolbarButtons = component.content.toolbarButtons || {};
+            toolbarButtons.custom = toolbarButtons.custom || [];
+            toolbarButtons.default = toolbarButtons.default || {};
+            toolbarButtons.default.maximize = toolbarButtons.default.maximize || true;
+            toolbarButtons.default.configurations = toolbarButtons.default.configurations || true;
+            for (var i = 0; i < toolbarButtons.custom.length; i++) {
+                toolbarButtons.custom[i].iconTypeCSS = (toolbarButtons.custom[i].iconType.toLowerCase() == 'css');
+                toolbarButtons.custom[i].iconTypeImage = (toolbarButtons.custom[i].iconType.toLowerCase() == 'image');
             }
-            $('#' + component.id + ' .ues-component-actions').html($(componentToolbarHbs(component.content)));
+
+            // Remove button is also there in the designer mode
+            var buttonCount = toolbarButtons.custom.length + 1;
+            if (toolbarButtons.default.maximize) {
+                buttonCount++;
+            }
+            if (toolbarButtons.default.configurations) {
+                buttonCount++;
+            }
+            toolbarButtons.isDropdownView = buttonCount > 3;
+
+            var componentBox = $('#' + component.id);
+            // Set the width of the gadget heading
+            var buttonUnitWidth = 41;
+            var headingWidth = 'calc(100% - ' + ((buttonCount > 3 ? 1 : buttonCount) * buttonUnitWidth + 25)  + 'px)';
+            componentBox.find('.gadget-title').css('width', headingWidth);
+            // Render the gadget template
+            componentBox.find('.ues-component-actions').html(componentToolbarHbs(toolbarButtons));
         }
     };
 

@@ -15,6 +15,9 @@
  */
 
 (function () {
+
+    var DEFAULT_STORE = 'fs';
+    var LEGACY_STORE = 'store';
     /**
      * Find a component.
      * @param {String} type Type of the plugin
@@ -204,83 +207,40 @@
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
+
         var layout = (pageType === 'anon' ? $(page.layout.content.anon) : $(page.layout.content.loggedIn));
-        content = page.content[pageType];
-        componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
+        var content = page.content[pageType];
+        var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
         // this is to be rendered only in the designer. in the view mode, the template is rendered in the server
         element.html(getGridstackLayout(layout[0]));
+        
         // render gadget contents
-        isDesignerView = isDesigner;
-        doneCallback = done;
-        componentBoxNum = 0;
-        componentBoxList = $('.ues-component-box');
-        sortGadgets();
-        renderGadget();
-        if (!doneCallback) {
-            return;
-        }
-        doneCallback();
-    };
-
-    var sortGadgets = function () {
-        var defaultPriorityVal = ues.global.dashboard.defaultPriority;
-        componentBoxList.sort(function (componentBoxA, componentBoxB) {
-            var contentA = content[$(componentBoxA).attr('id')];
-            var contentB = content[$(componentBoxB).attr('id')];
-            if (contentA && contentB) {
-                var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                return (priorityB - priorityA);
-            }
-        });
-    };
-
-    var finishedLoading = function () {
-        componentBoxNum++;
-        renderGadget();
-        if (!doneCallback) {
-            return;
-        }
-        doneCallback();
-
-    };
-
-    var renderGadget = function () {
-        var container;
-        if (componentBoxList[componentBoxNum]) {
-            container = $(componentBoxList[componentBoxNum]);
+        $('.ues-component-box').each(function (i, container) {
+            container = $(container);
             // Calculate the data-height field which is required to render the gadget
-            if (isDesignerView) {
-                var gsItem = $('.grid-stack-item'),
-                    node = gsItem.data('_gridstack_node'),
-                    gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height')),
-                    height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-
-                container.attr('data-height', height);
-            } else {
-                container.attr('data-height', container.height());
-            }
-
-            var id = container.attr('id'),
-                hasComponent = content.hasOwnProperty(id) && content[id][0];
-
-            // the component box content (the skeleton) should be added only in the designer mode and
-            // the view mode only if there is a component
-            if (isDesignerView || hasComponent) {
+            var gsItem = container.closest('.grid-stack-item');
+            var node = gsItem.data('_gridstack_node');
+            var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+            var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+            container.attr('data-height', height);
+            var id = container.attr('id');
+            var hasComponent = content.hasOwnProperty(id) && content[id][0];
+            // the component box content (the skeleton) should be added only in the designer mode and the view mode only
+            // if there is a component
+            if (isDesigner || hasComponent) {
                 container.html(componentBoxContentHbs());
             }
             if (hasComponent) {
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
-                        log(err);
                     }
                 });
             }
-            else {
-                finishedLoading();
-            }
-
+        });
+        if (!done) {
+            return;
         }
+        done();
     };
 
     /**
@@ -334,6 +294,10 @@
     var resolveURI = function (uri) {
         var index = uri.indexOf('://');
         var scheme = uri.substring(0, index);
+        if(scheme === LEGACY_STORE){
+            uri.replace(LEGACY_STORE,DEFAULT_STORE);
+            scheme = DEFAULT_STORE; 
+        }
         var uriPlugin = ues.plugins.uris[scheme];
         if (!uriPlugin) {
             return uri;
@@ -352,8 +316,7 @@
         render: renderDashboard,
         rewire: rewireDashboard,
         findPage: findPage,
-        resolveURI: resolveURI,
-        finishedLoadingGadget: finishedLoading
+        resolveURI: resolveURI
     };
 
     ues.assets = {};
