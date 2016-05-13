@@ -263,6 +263,33 @@
     };
 
     /**
+     * Find a given component in the current page
+     * @param {Number} id
+     * @returns {Object}
+     * @private
+     */
+    var findComponent = function (id, page) {
+        var i;
+        var length;
+        var area;
+        var component;
+        var components;
+        var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
+        for (area in content) {
+            if (content.hasOwnProperty(area)) {
+                components = content[area];
+                length = components.length;
+                for (i = 0; i < length; i++) {
+                    component = components[i];
+                    if (component.id === id) {
+                        return component;
+                    }
+                }
+            }
+        }
+    };
+
+    /**
      * Render the dashboard.
      * @param {Object} element Gadget container element
      * @param {Object} dashboard Dashboard object
@@ -316,6 +343,7 @@
         render: renderDashboard,
         rewire: rewireDashboard,
         findPage: findPage,
+        findComponent : findComponent,
         resolveURI: resolveURI
     };
 
