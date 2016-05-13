@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-wso2features/mockapi/feature.xml
 wso2features/core/feature.xml
 wso2features/identity/feature.xml
 wso2features/state/feature.xml
