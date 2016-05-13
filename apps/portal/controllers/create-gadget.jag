@@ -19,7 +19,7 @@
         sendLogin();
         return;
     }
-    
+
     var configs = require('/configs/designer.json');
     
     if (!configs.isCreateGadgetEnable) {

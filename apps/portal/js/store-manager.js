@@ -21,8 +21,12 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     var carbon = require('carbon');
     var utils = require('/modules/utils.js');
     var config = require('/configs/designer.json');
+    var DEFAULT_STORE_TYPE = 'fs';
+    var LEGACY_STORE_TYPE = 'store';
+
 
     var STORE_EXTENSIONS_LOCATION = '/extensions/stores/';
+    var DEFAULT_THUMBNAIL = 'local://images/gadgetIcon.png';
 
     var registryPath = function (id) {
         var path = '/_system/config/ues/dashboards';
@@ -90,6 +94,25 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     };
 
     /**
+     * To provide backward compatibility for gadgets
+     * @param url
+     * @param storeType
+     * @returns corrected url
+     */
+    var fixLegacyURL = function (url, storeType) {
+        if (url) {
+            var index = url.indexOf('://');
+            var currentStore = url.substring(0, index);
+            if (currentStore === LEGACY_STORE_TYPE) {
+                return url.replace(LEGACY_STORE_TYPE, DEFAULT_STORE_TYPE);
+            }
+        } else {
+            log.error('url is not defined in asset.json file');
+        }
+        return storeType.concat('://' + url);
+    };
+
+    /**
      * Find an asset based on the type and asset id
      * @param type
      * @param id
@@ -127,12 +150,21 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             var assets = specificStore.getAssets(type, query);
             if (assets) {
                 for (var j = 0; j < assets.length; j++) {
-                    assets[j].thumbnail = storeTypes[i].concat('://' + assets[j].thumbnail);
-                    if (type === 'gadget') {
-                        assets[j].data.url = storeTypes[i].concat('://' + assets[j].data.url);
+                    if (assets[j].thumbnail) {
+                        assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
                     }
-                    if (type === 'layout') {
-                        assets[j].url = storeTypes[i].concat('://' + assets[j].url);
+                    else {
+                        log.warn('Thumbnail url is missing in ' + assets[j].title);
+                        assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                    }
+                    if (type === 'gadget' && assets[j].data && assets[j].data.url) {
+                        assets[j].data.url = fixLegacyURL(assets[j].data.url,storeTypes[i]);
+                    }
+                    else if (type === 'layout' && assets[j].url) {
+                        assets[j].url = fixLegacyURL(assets[j].url,storeTypes[i]);
+                    }
+                    else{
+                        log.warn('Url is not defined for ' + assets[j].title);
                     }
                 }
                 allAssets = assets.concat(allAssets);
