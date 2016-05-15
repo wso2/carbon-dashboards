@@ -141,4 +141,4 @@ var pageId;
     isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) :
             include(utils.resolvePath('templates/pubsub-gadget.jag'));
 
-}()); %>h
+}()); %>
