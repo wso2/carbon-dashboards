@@ -85,13 +85,11 @@ var pageId;
 
         // If the user doesn't have any permission on the original dashboard, returns 401
         var authorized = false;
-
         // To view personalized dashboard, the user should have logged in, in the same domain and should have either editor or viewer permissions
         if (user && user.domain == (urlDomain || superDomain) &&
                 (utils.allowed(user.roles, originalDashboard.permissions.editors) || utils.allowed(user.roles, originalDashboard.permissions.viewers))) {
             authorized = true;
         }
-
         if (!authorized) {
             // If there is no anon view defined send the unauthorized error, else return the anon view
             if (!originalDashboard.isanon) {
