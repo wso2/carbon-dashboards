@@ -26,6 +26,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shindig-wso2-extensions</artifactId>
+    <packaging>jar</packaging>
+    <name>Apache Shindig - WSO2 Extensions</name>
+    <description>Provides implementation of extensions of Shindig for Carbon Dashboards.</description>
+
 
     <dependencies>
         <dependency>

@@ -25,7 +25,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shindig-server</artifactId>
     <packaging>war</packaging>
-    <name>Apache Shindig WSO2 Server</name>
+    <name>Apache Shindig - WSO2 Server</name>
     <url>http://wso2.org</url>
 
     <dependencies>

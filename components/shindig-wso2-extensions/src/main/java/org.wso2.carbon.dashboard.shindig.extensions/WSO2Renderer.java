@@ -26,6 +26,7 @@ import org.apache.shindig.gadgets.LockedDomainService;
 import org.apache.shindig.gadgets.process.ProcessingException;
 import org.apache.shindig.gadgets.process.Processor;
 import org.apache.shindig.gadgets.render.HtmlRenderer;
+import org.apache.shindig.gadgets.render.Renderer;
 import org.apache.shindig.gadgets.render.RenderingException;
 import org.apache.shindig.gadgets.render.RenderingResults;
 import org.apache.shindig.gadgets.spec.GadgetSpec;
@@ -38,27 +39,30 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
- * Validates a rendering request parameters before calling an appropriate renderer.
+ * WSO2 Extension which validates a rendering request parameters before calling an appropriate renderer.
  */
-public class Renderer {
-    //class name for logging purpose
-    private static final String classname = org.apache.shindig.gadgets.render.Renderer.class.getName();
+
+public class WSO2Renderer extends Renderer {
+
+    private static final String classname = WSO2Renderer.class.getName();
     private static final Logger LOG = Logger.getLogger(classname, MessageKeys.MESSAGES);
+    private static final String WSO2_GADGET_CONTROL_FEATURE = "wso2-gadgets-controls";
 
     private final Processor processor;
     private final HtmlRenderer renderer;
-    private final ContainerConfig containerConfig;
     private final LockedDomainService lockedDomainService;
+    private final ContainerConfig containerConfig;
 
     @Inject
-    public Renderer(Processor processor,
-                    HtmlRenderer renderer,
-                    ContainerConfig containerConfig,
-                    LockedDomainService lockedDomainService) {
+    public WSO2Renderer(Processor processor,
+                        HtmlRenderer renderer,
+                        ContainerConfig containerConfig,
+                        LockedDomainService lockedDomainService) {
+        super(processor, renderer, containerConfig, lockedDomainService);
         this.processor = processor;
         this.renderer = renderer;
-        this.containerConfig = containerConfig;
         this.lockedDomainService = lockedDomainService;
+        this.containerConfig = containerConfig;
     }
 
     /**
@@ -68,40 +72,37 @@ public class Renderer {
      * <p>
      * TODO: Localize error messages.
      */
-    public org.wso2.carbon.dashboard.shindig.extensions.RenderingResults render(GadgetContext context) {
+    public RenderingResults render(GadgetContext context) {
         if (!validateParent(context)) {
-            return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Unsupported parent parameter. Check your container code.",
+            return RenderingResults.error("Unsupported parent parameter. Check your container code.",
                     HttpServletResponse.SC_BAD_REQUEST);
         }
-
         try {
             Gadget gadget = processor.process(context);
-            gadget.addFeature("wso2-gadgets-controls");
+            gadget.addFeature(WSO2_GADGET_CONTROL_FEATURE);
             GadgetSpec gadgetSpec = gadget.getSpec();
             if (gadget.getCurrentView() == null) {
-                return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Unable to locate an appropriate view in this gadget. " +
+                return RenderingResults.error("Unable to locate an appropriate view in this gadget. " +
                         "Requested: '" + gadget.getContext().getView() +
                         "' Available: " + gadgetSpec.getViews().keySet(), HttpServletResponse.SC_NOT_FOUND);
             }
-
             if (gadget.getCurrentView().getType() == View.ContentType.URL) {
                 if (gadget.requiresCaja()) {
-                    return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Caja does not support url type gadgets.",
+                    return RenderingResults.error("Caja does not support url type gadgets.",
                             HttpServletResponse.SC_BAD_REQUEST);
                 } else if (gadget.sanitizeOutput()) {
-                    return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Type=url gadgets cannot be sanitized.",
+                    return RenderingResults.error("Type=url gadgets cannot be sanitized.",
                             HttpServletResponse.SC_BAD_REQUEST);
                 }
-                return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.mustRedirect(gadget.getCurrentView().getHref());
+                return RenderingResults.mustRedirect(gadget.getCurrentView().getHref());
             }
-
             if (!lockedDomainService.isGadgetValidForHost(context.getHost(), gadget, context.getContainer())) {
-                return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error("Invalid domain for host (" + context.getHost()
+                return RenderingResults.error("Invalid domain for host (" + context.getHost()
                                 + ") and gadget (" + gadgetSpec.getUrl() + ")",
                         HttpServletResponse.SC_BAD_REQUEST);
             }
 
-            return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.ok(renderer.render(gadget));
+            return RenderingResults.ok(renderer.render(gadget));
         } catch (RenderingException e) {
             return logError("render", context.getUrl(), e.getHttpStatusCode(), e);
         } catch (ProcessingException e) {
@@ -115,41 +116,34 @@ public class Renderer {
         }
     }
 
-    private org.wso2.carbon.dashboard.shindig.extensions.RenderingResults logError(String methodname, Uri gadgetUrl, int statusCode, Throwable t) {
+    private RenderingResults logError(String methodname, Uri gadgetUrl, int statusCode, Throwable t) {
         if (LOG.isLoggable(Level.INFO)) {
-            LOG.logp(Level.INFO, classname, methodname, MessageKeys.FAILED_TO_RENDER, new Object[]{gadgetUrl, t.getMessage()});
+            LOG.logp(Level.INFO, classname, methodname, MessageKeys.FAILED_TO_RENDER,
+                    new Object[]{gadgetUrl, t.getMessage()});
         }
-        return org.wso2.carbon.dashboard.shindig.extensions.RenderingResults.error(t.getMessage(), statusCode);
+        return RenderingResults.error(t.getMessage(), statusCode);
     }
 
-    /**
-     * Validates that the parent parameter was acceptable.
-     *
-     * @return True if the parent parameter is valid for the current container.
-     */
     private boolean validateParent(GadgetContext context) {
         String container = context.getContainer();
         String parent = context.getParameter("parent");
-
         if (parent == null) {
             // If there is no parent parameter, we are still safe because no
             // dependent code ever has to trust it anyway.
             return true;
         }
-
         List<Object> parents = containerConfig.getList(container, "gadgets.parent");
         if (parents.isEmpty()) {
             // Allow all.
             return true;
         }
-
         // We need to check each possible parent parameter against this regex.
         for (Object pattern : parents) {
             if (Pattern.matches(pattern.toString(), parent)) {
                 return true;
             }
         }
-
         return false;
     }
+
 }

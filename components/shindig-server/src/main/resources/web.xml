@@ -165,7 +165,7 @@
     <servlet>
         <servlet-name>xml-to-html</servlet-name>
         <servlet-class>
-            org.wso2.carbon.dashboard.shindig.extensions.GadgetRenderingServlet
+            org.wso2.carbon.dashboard.shindig.extensions.WSO2GadgetRenderingServlet
         </servlet-class>
     </servlet>
 
