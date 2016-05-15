@@ -34,11 +34,10 @@ var pageId;
     var permissions;
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
-
-
     i18n.init(request, utils.getLocaleResourcePath());
     // To set the bgcolor according to client`s website template
     bgColor = request.getParameter("bgcolor");
+
     if (log.isDebugEnabled()) {
         log.debug("Session id provided from the client is " + session.getId() + "Client has successfully connected.")
     }
@@ -80,7 +79,7 @@ var pageId;
 
         // If the original dashboard is deleted, returns 404
         if (!originalDashboard) {
-            response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
+            response.sendError(404, i18n.localize("page.not.found"));
             return;
         }
 
@@ -96,10 +95,9 @@ var pageId;
         if (!authorized) {
             // If there is no anon view defined send the unauthorized error, else return the anon view
             if (!originalDashboard.isanon) {
-                response.sendError(401, "Access to dashboard '" + dashboardId + "' is denied");
+                response.sendError(401, i18n.localize("request.not.authorized"));
                 return;
             }
-
             dashboard = originalDashboard;
         }
     }
@@ -108,17 +106,15 @@ var pageId;
     anonymous = permissions.viewers.indexOf(anonRole) !== -1;
     if (!anonymous) {
         if (!user && !dashboard.isanon) {
-            response.sendError(401,i18n.localize("request.not.authorized"));
+            response.sendError(401, i18n.localize("request.not.authorized"));
             return;
         }
-
-
         if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
             response.sendError(401, i18n.localize("request.not.authorized"));
             return;
         }
-
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
+        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles,
+                        permissions.viewers)) {
             response.sendError(401, i18n.localize("request.not.authorized"));
             return;
         }
@@ -147,4 +143,4 @@ var pageId;
     isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) :
             include(utils.resolvePath('templates/pubsub-gadget.jag'));
 
-}()); %>
+}()); %>h
