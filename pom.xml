@@ -37,6 +37,7 @@
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>features/org.wso2.carbon.dashboards.deployment.feature</module>
         <module>features/org.wso2.carbon.dashboards.sso.feature</module>
+        <module>components/shindig-wso2-extensions</module>
     </modules>
 
     <properties>
@@ -46,6 +47,7 @@
         <carbon.kernel.version>4.4.2</carbon.kernel.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <apache.google.guice.version>3.0</apache.google.guice.version>
+        <javax.servlet.api.version>2.5</javax.servlet.api.version>
     </properties>
 
     <scm>
@@ -98,6 +100,27 @@
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>shindig-wso2-features</artifactId>
                 <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>shindig-wso2-extensions</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shindig</groupId>
+                <artifactId>shindig-gadgets</artifactId>
+                <version>${shindig.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shindig</groupId>
+                <artifactId>shindig-common</artifactId>
+                <version>${shindig.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${javax.servlet.api.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

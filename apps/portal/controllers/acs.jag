@@ -18,15 +18,18 @@
  *
  */
 (function () {
-    var log = new Log();
+    var log = new Log("/controllers/acs.jag");
     var configs = require('/configs/portal.js').config();
     var samlResponse = request.getParameter('SAMLResponse');
     var sessionId = session.getId();
     var samlRequest = request.getParameter('SAMLRequest');
+    var dashboards = require('/modules/dashboards.js');
     //see https://wso2.org/jira/browse/IDENTITY-3454
     var relayState = decodeURIComponent(request.getParameter('RelayState'));
     var attr = configs.authentication.methods.sso.attributes;
     var sso = require('sso');
+    var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
+    var constants = require("/controllers/constants/constants.js");
     var samlRespObj;
     var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
     var keyStorePassword = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Password");
@@ -89,10 +92,23 @@
                         user.roles = um.getRoleListOfUser(user.username);
                         session.put('user', user);
                         session.put("samlResponse", samlResponse);
-                        var saml2Cookie = require('/modules/saml-to-cookie.js');
-                        var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
-                        session.put('authToken', authToken);
-                        response.sendRedirect(relayState);
+                        var idPServer = tokenUtil.getIdPServerURL();
+                        if (tokenUtil.checkOAuthEnabled() && idPServer) {
+                            var properties = {samlToken: sessionObj.samlToken, user: username};
+                            tokenUtil.setupAccessTokenPair(constants.GRANT_TYPE_SAML, properties, idPServer,
+                                    function (status) {
+                                        if (!status) {
+                                            log.error("Error while setting up access token and refresh token");
+                                        }
+                                    });
+                            response.sendRedirect(relayState);
+                            return;
+                        } else {
+                            var saml2Cookie = require('/modules/saml-to-cookie.js');
+                            var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
+                            session.put('authToken', authToken);
+                            response.sendRedirect(relayState);
+                        }
                     }
                 }
             }

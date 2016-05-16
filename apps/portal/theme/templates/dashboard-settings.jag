@@ -212,6 +212,7 @@
         <div class="col-md-6">
             <form class="form-horizontal">
                 <div class="form-group">
+                <label for="ues-share-view" class="col-sm-3 control-label"></label>
                 <div class = "col-sm-3">
                         <button type="button" id="ues-dashboard-saveBtn" class="btn btn-default btn-bordered btn-primary"><%= i18n.localize("settings.savebutton")%></button>
                         <button type="button" id="ues-dashboard-cancelBtn" class="btn btn-default btn-bordered"><%= i18n.localize("settings.cancelbutton")%></button>

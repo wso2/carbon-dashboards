@@ -1,25 +1,23 @@
-<!--
-~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
-~
-~   Licensed under the Apache License, Version 2.0 (the "License");
-~   you may not use this file except in compliance with the License.
-~   You may obtain a copy of the License at
-~
-~        http://www.apache.org/licenses/LICENSE-2.0
-~
-~   Unless required by applicable law or agreed to in writing, software
-~   distributed under the License is distributed on an "AS IS" BASIS,
-~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~   See the License for the specific language governing permissions and
-~   limitations under the License.
--->
 <%
+/*
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
     // i18n
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
-
-    // If the pageId is null, render the landing page
-    pageId = pageId || dashboard.landing;
 
     var usr = require('/modules/user.js'),
         user = usr.current(),
@@ -35,7 +33,8 @@
         isAnonView = JSON.parse(isAnonView);
 
         if((user.domain != urlDomain && urlDomain) ||
-            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) &&
+                !utils.allowed(user.roles, dashboard.permissions.viewers))) {
             isAnonView = true;
         }
     }
@@ -48,17 +47,39 @@
             page = p;
         }
     });
+   
+    // Build the URL for the home page
+    var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
+    if (request.getParameter('isAnonView') == 'true') {
+        dashboardUrl += '?isAnonView=true';
+    }
+   
+    // Show navigation menu (There should be more than one page to show the navigation menu)
+    var showNavigation = false;
+    if (isAnonView || !user) {
+        var anonPageCount = 0;
+        pages.forEach(function(p) {
+            if (p.isanon) {
+                anonPageCount++;
+            }
+        });
+        showNavigation = (anonPageCount > 1);
+    } else {
+        showNavigation = (pages.length > 1);
+    }
 %>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="<%=urlPrefix%>libs/theme-wso2_1.0/images/favicon.png" />
+        
+    <!-- CSS Browser Selector JS -->
+    <script src="<%=urlPrefix%>libs/css-browser-selector_0.4.0/css_browser_selector.js"></script>
 
     <!-- Bootstrap CSS -->
     <link href="<%=urlPrefix%>libs/bootstrap_3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -68,9 +89,6 @@
 
     <!-- Jquery Nanoscroller CSS -->
     <link href="<%=urlPrefix%>libs/nanoscroller_0.8.7/nanoscroller.css" rel="stylesheet" type="text/css" />
-        
-    <!-- Gridstack -->
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
 
     <!-- Theme WSO2 CSS -->
     <link href="<%=urlPrefix%>libs/theme-wso2_1.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
@@ -87,250 +105,157 @@
 
     <!-- JQuery UI -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
-
-    <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
+    
+    <!-- Gridstack -->
+    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
 
     <!-- Common CSS -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
+        
+    <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
 
     <!-- Custom theme overrides -->
     <link rel="stylesheet" href="<%=urlPrefix%><%=utils.dashboardStyles(dashboard.theme)%>">
 </head>
+<body class="dashboard lang_<%=request.getLocale()%>">
+    <div class="nano">
+        <div class="nano-content">
 
-<body class="dashboard lang_<%=request.getLocale()%> dark">
-    
-    <!-- .left-sidebar -->
-    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
-        <div class="nano">
-            <div class="nano-content">
-                    
-                <div class="product-logo">
-                    <i class="icon fw fw-wso2-logo"></i>
-                </div>
-                <div class="product-name"><%=encodeHtml(dashboard.title)%></div>
-                
-                <ul class="nav nav-pills nav-stacked pages">
-                    <% if (pages.length > 1) {
-                            // render links
-                            pages.forEach(function (p) {
-                                if (isAnonView || !user) {
-                                    if (p.isanon) {
-                                        // Anonymous viewing. So render only anonymous pages links.
-                                        renderPageLink(p);
-                                    }
-                                } else {
-                                    renderPageLink(p);
-                                }
-                            });
-                        }
-
-                        function renderPageLink(p) {
-                            var queryString = isAnonView ? '?isAnonView=true' : '';
-                        %>
-                        <li class="<%= (p.id === pageId) ? 'active': '' %>"><a href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a></li>
-                    <% } %>
-                </ul>
-                
-                <hr>
-                
-                <div class="light-dark-switcher">
-                    <label>Light</label>
-                    <label class="switch">
-                        <input type="checkbox" data-toggle="theme" checked="checked">
-                        <span class="helper"></span>
-                    </label>   
-                    <label>Dark</label>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-    
-    <!-- #page-content-wrapper -->
-    <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
-
-        <div class="page-header">
-            <div class="container-fluid">
-
-                <div class="navbar-header">
-                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="true" rel="sub-nav">
-                        <span class="icon fw-stack">
-                            <i class="fw fw-menu fw-stack-1x toggle-icon-left"></i>
-                        </span>
-                    </a>
-                    <a class="sidebar-toggle-button visible-xs" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="icon fw-stack">
-                            <i class="fw fw-menu fw-stack-1x toggle-icon-up"></i>
-                        </span>
-                    </a>
-                    <div class="page-title pull-left text-center-xs display-inline-block-xs" id="product-logo" style="display:none;">
-                        <h1 class="text-center-xs"><i class="icon fw fw-wso2-logo"></i><%=encodeHtml(dashboard.title)%></h1>
+            <div class="page-header">
+				<div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%>">
+                    <div class="page-title pull-left float-remove-xs text-center-xs">
+                        <h1 class="text-center-xs"><a href="<%=dashboardUrl%>"><%=encodeHtml(dashboard.title)%></a></h1>
                     </div>
-                    <ul class="nav navbar-right float-remove-xs hidden-xs">
-                        <li class="visible-inline-block">
-                            <a class="dropdown" data-toggle="dropdown">
-                                <span class="icon fw-stack fw-lg">
-                                   <i class="fw fw-circle fw-stack-2x"></i>
-                                   <i class="fw fw-user fw-stack-1x fw-inverse"></i>
-                                </span>
-                                <span><%= user ? user.username : "anon" %> <span class="caret"></span></span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-right float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown" role="menu">
-                                <% if (user) { %>
-                                    <% if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) { %>
-                                        <% if (user.isEditor) { %>
-                                            <li class="hidden"><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
-                                        <% } else { %>
-                                            <li class="hidden"><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
-                                        <% } %>
-                                    <% } %>
-                                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><i class="icon fw fw-sign-out"></i><%= i18n.localize("logout.label")%></a></li>
-                                    <% } else { %>
-                                        <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><i class="icon fw fw-sign-in"></i><%= i18n.localize("login.label")%></a></li>       
-                                <% } %>
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul class="nav collapse-nav-sub pull-right hidden">
-                        <li class="visible-inline-block">
-                            <a data-toggle="dropdown">
-                                <span class="icon fw-stack">
-                                    <i class="fw fw-notification fw-stack-1x"></i>
-                                </span>
-                                <span class="badge">4</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right arrow alerts arrow-top-right dark add-margin-top-2x" role="menu">
-                                <ul class="sidebar-messages">
-                                    <li class="message message-success">
-                                        <h4><i class="icon fw fw-success"></i>Minor Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                    <li class="message message-info">
-                                        <h4><i class="icon fw fw-info"></i>Minor Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                    <li class="message message-warning">
-                                        <h4><i class="icon fw fw-warning"></i>Major Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                    <li class="message message-danger">
-                                        <h4><i class="icon fw fw-error"></i>Critical Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
 
-                <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
-                    
-                    <div class="text-center add-margin-bottom-2x">
-                        <span class="icon fw-stack fw-lg text-center">
-                           <i class="fw fw-circle fw-stack-2x"></i>
-                           <i class="fw fw-user fw-stack-1x fw-inverse"></i>
-                        </span>
-                    </div>
-                    <div class="text-center add-margin-bottom-3x"><%= user ? user.username : "anon" %></div>
+                    <div class="pull-right float-remove-xs clearix">
+                        <div class="auth float-remove-xs text-center-xs text-right">
+                            <div>
+                                <%
+                                   var showEdit = user && (!isAnonView && (urlDomain == user.domain || 
+                                       (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) && 
+                                       !isMobileDevice;
+                                   var isEdit = showEdit && user.isEditor;
+                                %>
+                                
+                                <!-- View for screens other than XS -->
+                                <span class="hidden-xs">
                                     
-                    <ul class="nav navbar-nav pages">
-                        <% if (pages.length > 1) {
-                                // render links
-                                pages.forEach(function (p) {
-                                    if (isAnonView || !user) {
-                                        if (p.isanon) {
-                                            // Anonymous viewing. So render only anonymous pages links.
+                                    <% if (user) { %>
+                                        
+                                    <span class="add-margin-right-2x username"><%=user.username%></span>
+                                        
+                                    <% if (showEdit && user.isEditor) { %>
+                                    <a href="<%=dbRoot%>?editor=true" class="ues-copy" 
+                                        title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>
+                                    <% } %>
+
+                                    <% if (showEdit && !user.isEditor) { %>
+                                    <a href="<%=dbRoot%>?custom=true" class="ues-copy" 
+                                        title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>
+                                    <% } %>
+                                        
+                                    <!-- auth other -->
+                                    <a href="#" class="dropdown add-margin-left-2x" data-toggle="dropdown">
+                                        <span class="fw fw-user"></span>
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-right pull-right" role="menu">
+                                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%= i18n.localize("logout.label")%></a></li>
+                                    </ul>
+                                            
+                                    <% } else { %>
+                                    
+                                    <a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><%= i18n.localize("login.label")%></a>
+                                    <span class="fw fw-user add-margin-left-2x"></span>
+                                        
+                                    <% } %>
+                                </span>
+                                        
+                                <!-- View for XS -->
+                                <span class="visible-xs auth-xs">
+                                    <% if (showEdit && user.isEditor) { %>
+                                        <a href="<%=dbRoot%>?editor=true" class="ues-copy" 
+                                            title="<%= i18n.localize("edit.button")%>"><i class="fw fw-settings"></i></a>
+                                    <% } %>
+
+                                    <% if (showEdit && !user.isEditor) { %>
+                                        <a href="<%=dbRoot%>?custom=true" class="ues-copy" 
+                                            title="<%= i18n.localize("personalize")%>"><i class="fw fw-settings"></i></a>
+                                    <% } %>
+                                        
+                                    <a href="#" class="collapsed add-margin-left-2x" data-toggle="collapse" 
+                                        data-target="#auth-menu-items" aria-expanded="false">
+                                        <span class="fw fw-user"></span>
+                                        <span class="caret"></span>
+                                    </a>
+                                    <div id="auth-menu-items" class="collapse">
+                                        <ul>
+                                            <% if (user) { %>
+                                            <li class="username"><%=user.username%></li>
+                                            <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%= i18n.localize("logout.label")%></a></li>
+                                            <% } else { %>
+                                            <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><%= i18n.localize("login.label")%></a></li>
+                                            <% } %>
+                                        </ul>
+                                    </div>
+                                </span>
+    
+                            </div>
+                        </div>
+                        <div class="page-actions  text-center-xs">
+                            <div class="btn-group">
+                                <%
+                                if (showNavigation) {
+                                    // render links
+                                    pages.forEach(function (p) {
+                                        if (isAnonView || !user) {
+                                            if (p.isanon) {
+                                                // Anonymous viewing. So render only anonymous pages links.
+                                                renderPageLink(p);
+                                            }
+                                        } else {
                                             renderPageLink(p);
                                         }
-                                    } else {
-                                        renderPageLink(p);
-                                    }
-                                });
-                            }
+                                    });
+                                }
 
-                            function renderPageLink(p) {
-                                var queryString = isAnonView ? '?isAnonView=true' : '';
-                            %>
-                            <li class="<%= (p.id === pageId) ? 'active': '' %>"><a href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a></li>
-                        <% } %>
-                    </ul>
-                                
-                    <hr>
-                
-                    <div class="light-dark-switcher">
-                        <label>Light</label>
-                        <label class="switch">
-                            <input type="checkbox" data-toggle="theme" checked="checked">
-                            <span class="helper"></span>
-                        </label>   
-                        <label>Dark</label>
+                                function renderPageLink(p) {
+                                    var queryString = (request.getParameter('isAnonView') == 'true') ? '?isAnonView=true' : '';
+
+                                %>
+                                <a class="btn btn-default btn-bordered <%= (p.id === pageId) ? 'active': '' %>" 
+                                    href="<%=dbRoot%><%=p.id%><%=queryString%>"><%=encodeHtml(p.title)%></a>
+                                <%
+                                }
+                                %>
+                            </div>
+                        </div>
                     </div>
-
-                    <ul class="nav nav-pills nav-stacked">
-                        <% if (user) { %>
-                            <% if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) { %>
-                                <% if (user.isEditor) { %>
-                                    <li class="hidden"><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
-                                <% } else { %>
-                                    <li class="hidden"><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
-                                <% } %>
-                            <% } %>
-                                <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><i class="icon fw fw-sign-out"></i><%= i18n.localize("logout.label")%></a></li>
-                            <% } else { %>
-                                <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><i class="icon fw fw-sign-in"></i><%= i18n.localize("login.label")%></a></li>       
-                        <% } %>
-                    </ul>                
-                </div><!--/.nav-collapse -->
-
+                </div>
             </div>
-        </div>
 
-        <!-- page content -->
-        <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
-            <div class="nano">
-                <div class="nano-content">
+            <!-- #page-content-wrapper -->
+            <div class="page-content-wrapper">
+
+                <!-- page content -->
+                <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
 
                     <div class="page-content">
-                        
-                        <div class="progress hidden">
-                            <div class="indeterminate"></div>
-                        </div>
-                        
-
+                        <!-- Components grid -->
                         <div class="ues-components-grid gadgets-grid">
-                            <%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div-->
-        <!-- #page-content-wrapper -->
-        <!--div class="page-content-wrapper"-->
-
-            <!-- page content -->
-            <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
-
-                <div class="nano">
-                    <div class="nano-content">
-
-                        <div class="page-content">
-                            <div class="progress hidden">
-                                    <div class="indeterminate"></div>
-                            </div>
-                            <!-- Components grid -->
-                                <div class="ues-components-grid gadgets-grid"></div>
                         </div>
                     </div>
                 </div>
-            </div>
-        <!--/div-->
-    </div><!-- /#page-content-wrapper -->
+
+            </div><!-- /#page-content-wrapper -->
+        </div>
+    </div>
 
     <!--Footer -->
     <footer class="footer">
         <div class="container-fluid">
-            <p>WSO2 Dashboard Server 2.1.0 | &copy; <script>document.write(new Date().getFullYear());</script> <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
+            <p>WSO2 Dashboard Server v.2.0.0 | &copy; <script>document.write(new Date().getFullYear());</script> 
+                <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
         </div>
     </footer>
 
@@ -383,15 +308,64 @@
     <!-- Component toolbar actions -->
     <script id="ues-component-actions-hbs" type="text/x-handlebars-template">
         <div class="btn-group">
-            {{#if userPrefsExists}}
-            <button type="button" class="btn btn-default ues-component-settings-handle" title="<%= i18n.localize("properties.label") %>">
-                <i class="icon fw fw fw-configarations"></i>
+            {{#if isDropdownView}}
+            <button class="btn btn-default dropdown-toggle" type="button" id="actionButtons" data-toggle="dropdown">
+                <i class="icon fw fw-ellipsis fw-rotate-90"></i>
+            </button>
+            <ul class="dropdown-menu more-actions-button" role="menu" aria-labelledby="actionButtons">
+                {{#each custom}}
+                <li role="presentation">
+                    <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                        {{#if iconTypeCSS}}
+                        <i class="icon fw {{iconClass}}"></i>
+                        {{/if}}
+                        {{#if iconTypeImage}}
+                        <img src="{{resolveURI this.image}}"/>
+                        {{/if}}
+                    </button>
+                </li>
+                {{/each}}
+                
+                {{#if default.configurations}}
+                <li role="presentation">
+                    <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                        <i class="fw fw-configarations"></i>
+                    </button>
+                </li>
+                {{/if}}
+                
+                {{#if defult.maximize}}
+                <li role="presentation">
+                    <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+                        <i class="icon fw fw-expand"></i>
+                    </button>
+                </li>
+                {{/if}}
+            </ul>
+            {{else}}
+            {{#each custom}}
+            <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                {{#if iconTypeCSS}}
+                <i class="icon fw {{iconClass}}"></i>
+                {{/if}}
+                {{#if iconTypeImage}}
+                <img src="{{resolveURI this.image}}"/>
+                {{/if}}
+            </button>
+            {{/each}}
+            
+            {{#if default.configurations}}
+            <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                <i class="fw fw-configarations"></i>
             </button>
             {{/if}}
-            <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
-                data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+            
+            {{#if default.maximize}}
+            <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
                 <i class="icon fw fw-expand"></i>
             </button>
+            {{/if}}
+            {{/if}}
         </div>
     </script>
 
@@ -478,56 +452,14 @@
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
-    <% include('/controllers/includes/pluggable-store-scripts.jag'); %> 
+    <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/gadget-properties.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
     <script src="<%=urlPrefix%>js/dashboard.js"></script>
     <script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
-    <!-- Scripts -->
     <script>
-        
-        function getCookie(cname) {
-            var name = cname + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0; i<ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1);
-                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-            }
-            return "";
-        }
-        
-        $(document).ready(function() {
-            if((getCookie('dashboardTheme') == 'dark') || (getCookie('dashboardTheme') == '')){
-                $('[data-toggle="theme"]').attr('checked', 'checked');
-                $('body').addClass('dark');  
-            }
-            else{
-                $('[data-toggle="theme"]').removeAttr('checked');
-                $('body').removeClass('dark');
-            }
-        });
-                
-        $('[data-toggle="theme"]').change(function(){
-            if($(this).prop('checked') == true){
-                $('[data-toggle="theme"]').each(function(){
-                    $('[data-toggle="theme"]').attr('checked', 'checked');
-                });
-                $('body').addClass('dark');
-                $('iframe').contents().find('body').addClass('dark');
-                document.cookie = "dashboardTheme=dark";
-            }
-            else{
-                $('[data-toggle="theme"]').each(function(){
-                    $(this).removeAttr('checked');
-                });
-                $('body').removeClass('dark');
-                $('iframe').contents().find('body').removeClass('dark');
-                document.cookie = "dashboardTheme=light";
-            }
-        });
 
         var nanoScrollerSelector = $(".nano");
         nanoScrollerSelector.nanoScroller();
@@ -541,56 +473,32 @@
         if (!ues.global.renderFromExtension) {
             ues.dashboards.render($('.ues-components-grid'), ues.global.dashboard, ues.global.page);
         }
-        
-        var iframesReadyInterval = setInterval(function() {
-            var done = false;
-            
-            $('.gadget-body').each(function(i){
-                if($(this).hasClass('loading')){
-                    done = false;
-                }
-                else {
-                    if($('iframe').length == (i+1)){
-                        done = true;
-                    }
-                }
-            });
-            
-            if(done == true) {
-                clearInterval(iframesReadyInterval);
-                $('[data-toggle="loading"]').loading('hide');
-            }    
-        }, 200);
 
         $(document).ready(function() {
-            $('[data-toggle="loading"]').loading('show');
-            $('.gadget-body').addClass('loading');
-            
+            // Show banner
             if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
                 $('.grid-stack-item[data-banner=true]')
                     .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
             }
+
+            // Toggle component box heading
+            $('.ues-component').hover(function() {
+                toggleHeading($(this), true);
+            }, function() {
+                toggleHeading($(this), false);
+            });
         });
-        
-        function toggleProductLogo(sidebarEventType){
-            var logo = $('#product-logo');
-            
-            if (sidebarEventType == 'hidden'){
-                logo.show();
-            }
-            else if (sidebarEventType == 'shown'){
-                logo.hide();
+
+        function toggleHeading(source, show) {
+            if (source.hasClass('ues-no-heading')) {
+                var heading = source.find('.ues-component-heading');
+                if (show) {
+                    heading.slideDown();
+                } else {
+                    heading.slideUp();
+                }
             }
         }
-        
-        $('#left-sidebar').on('hidden.sidebar', function(e){
-            toggleProductLogo(e.type)
-        });
-        
-        $('#left-sidebar').on('shown.sidebar', function(e){
-            toggleProductLogo(e.type)
-        });
-        
     </script>
 </body>
 </html>
