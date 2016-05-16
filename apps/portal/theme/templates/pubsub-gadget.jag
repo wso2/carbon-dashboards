@@ -27,10 +27,6 @@ pages.forEach(function(p) {
         page = p;
     }
 });
-
-
-// Show navigation menu (There should be more than one page to show the navigation menu)
-var showNavigation = false;
 %>
 <html lang="en">
 <head>

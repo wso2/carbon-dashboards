@@ -66,7 +66,7 @@ $(function () {
         // gadget maximization handler
         viewer.on('click', '.ues-component-full-handle', function (e) {
             var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
+            var component = ues.dashboards.findComponent(id, page);
             var componentBox = $(this).closest('.ues-component-box');
             var gsContainer = $('.grid-stack');
             var gsBlock = componentBox.parent();
@@ -106,7 +106,7 @@ $(function () {
         viewer.on('click', '.ues-component-settings-handle', function (event) {
             event.preventDefault();
             var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
+            var component = ues.dashboards.findComponent(id,page);
             var componentContainer = $('#' + CONTAINER_PREFIX + id);
             // toggle the component settings view if exists
             if (component.hasCustomUserPrefView) {
@@ -206,32 +206,6 @@ $(function () {
             componentBox.find('.ues-component-actions').html(componentToolbarHbs(toolbarButtons));
         }
     };
-    /**
-     * Find a given component in the current page
-     * @param {Number} id
-     * @returns {Object}
-     * @private
-     */
-    var findComponent = function (id) {
-        var i;
-        var length;
-        var area;
-        var component;
-        var components;
-        var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
-        for (area in content) {
-            if (content.hasOwnProperty(area)) {
-                components = content[area];
-                length = components.length;
-                for (i = 0; i < length; i++) {
-                    component = components[i];
-                    if (component.id === id) {
-                        return component;
-                    }
-                }
-            }
-        }
-    };
 
     /**
      * This is the initial call from the dashboard.js.
@@ -251,7 +225,7 @@ $(function () {
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
-                var component = findComponent($(this).attr('id'));
+                var component = ues.dashboards.findComponent($(this).attr('id'),page);
                 renderComponentToolbar(component);
             });
             $('.grid-stack').gridstack({
