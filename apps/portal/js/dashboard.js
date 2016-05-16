@@ -175,8 +175,13 @@ $(function () {
             var toolbarButtons = component.content.toolbarButtons || {};
             toolbarButtons.custom = toolbarButtons.custom || [];
             toolbarButtons.default = toolbarButtons.default || {};
-            toolbarButtons.default.maximize = toolbarButtons.default.maximize || true;
-            toolbarButtons.default.configurations = toolbarButtons.default.configurations || true;
+            if (!toolbarButtons.default.hasOwnProperty('maximize')) {
+                toolbarButtons.default.maximize = true;
+            }
+            if (!toolbarButtons.default.hasOwnProperty('configurations')) {
+                toolbarButtons.default.configurations = true;
+            }
+
             toolbarButtons.default.configurations = toolbarButtons.default.configurations  && userPrefsExists && (ues.global.dbType !== 'anon');
             for (var i = 0; i < toolbarButtons.custom.length; i++) {
                 toolbarButtons.custom[i].iconTypeCSS = (toolbarButtons.custom[i].iconType.toLowerCase() == 'css');
