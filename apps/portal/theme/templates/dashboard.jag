@@ -123,8 +123,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%><%=utils.dashboardStyles(dashboard.theme)%>">
 </head>
 <body class="dashboard lang_<%=request.getLocale()%>">
-    <div class="nano">
-        <div class="nano-content">
+
 
 <body class="dashboard lang_<%=request.getLocale()%> dark">
     
