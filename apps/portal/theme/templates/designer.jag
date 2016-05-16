@@ -132,6 +132,14 @@
                     <i class="icon fw fw-gadget"></i>
                 </a>
             </li>
+            <li>
+                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
+                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                    onclick="updateSidebarNav('#sidebarNavMenu', this)" title="<%=i18n.localize("menu")%>" 
+                    id="btn-sidebar-gadgets">
+                    <i class="icon fw fw-menu"></i>
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -228,6 +236,28 @@
                             </div>
 
                             <div class="ues-thumbnails">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Menu Creator -->
+                    <div id="sidebarNavMenu" class="ues-store-assets" data-type="gadget">
+                        <div class="sidebar-brand">Manage Menu</div>
+
+                        <div class="alert alert-info">
+                            Drag and Drop pages to create your menu.
+                        </div>
+
+                        <div class="add-padding-3x">
+
+                            <!--div class="form-group has-form-control-btn ues-search-box">
+                                <button class="form-control-btn" type="button" title="Search">
+                                    <i class="fw fw-search" aria-hidden="true"></i>
+                                </button>
+                                <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>..." />
+                            </div-->
+
+                            <div id="ues-pages">
                             </div>
                         </div>
                     </div>
@@ -485,6 +515,11 @@
             </div>
         </div>
         {{/each}}
+    </script>
+
+    <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
+        {{#traverseMenu menu true}}
+        {{/traverseMenu}}
     </script>
 
     <script id="ues-page-properties-hbs" type="text/x-handlebars-template">

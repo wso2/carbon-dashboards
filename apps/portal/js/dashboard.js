@@ -48,6 +48,7 @@ $(function () {
      */
     var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
+    var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
     /**
      * Initializes the component toolbar.
      * @return {null}
@@ -228,6 +229,16 @@ $(function () {
         }
     };
 
+    var updateMenuList = function() {
+    //console.log("adding menu: " + JSON.stringify(dashboard.menu));
+    //console.log("Getting isAnon param: " + isAnonView);
+        $('#ues-pages').html(menuListHbs({
+            menu: ues.global.dashboard.menu,
+            isAnonView: isAnonView,
+            user: user
+        }));
+    };
+
     /**
      * This is the initial call from the dashboard.js.
      * @return {null}
@@ -261,6 +272,7 @@ $(function () {
     };
 
     initDashboard();
+    updateMenuList();
     initComponentToolbar();
 });
 

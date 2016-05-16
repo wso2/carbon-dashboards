@@ -164,6 +164,8 @@ $(function () {
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
+    var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
+
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
 
     var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html());
@@ -1255,6 +1257,9 @@ $(function () {
                         "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
                 } else {
+                    //console.log(page.id);
+                    updateMenu(page.id, idVal, 'id');
+                    //change subordinates with new ID
                     page.id = idVal;
                     if (landing.is(":checked")) {
                         dashboard.landing = idVal;
@@ -1268,6 +1273,7 @@ $(function () {
                     title.val(page.title);
                     titleVal = page.title;
                 } else {
+                    updateMenu(page.id, titleVal, 'title');
                     page.title = titleVal;
                 }
             },
@@ -1288,6 +1294,8 @@ $(function () {
                         ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
                         dashboard.isanon = true;
                         page.isanon = true;
+                        updateMenu(page.id, true, 'isanon');
+
 
                         // create the template if there is no content create before
                         page.layout.content.anon = page.layout.content.anon || page.layout.content.loggedIn;
@@ -1305,6 +1313,7 @@ $(function () {
                             "landing page when there are pages with anonymous views");
                     } else {
                         page.isanon = false;
+                        updateMenu(page.id, false, 'isanon');
 
                         // Check if the dashboard is no longer anonymous.
                         if (!checkWhetherDashboardIsAnon()) {
@@ -1333,6 +1342,111 @@ $(function () {
 
         return true;
     };
+
+    //key can be id or the title
+    //todo tests the update
+    var updateMenu = function (id, newValue, key){
+
+        var menu = dashboard.menu;
+        updateSubordinates(menu, id, newValue);
+
+        function updateSubordinates(menu, id, newValue){
+            for (var i = 0; i < menu.length; i++) {
+                //console.log("key is: " + key + " found: " + menu[i][key]);
+                if (menu[i].id === id) {
+                    menu[i][key] = newValue;
+                    return;
+                }
+
+                if(menu[i].subordinates.length > 0){
+                    updateSubordinates(menu[i].subordinates, id, newValue);
+                }
+            }
+        }
+    }
+
+
+    var handleDropEvent = function( event, ui ) {
+        event.stopPropagation();
+        //event.preventDefault();
+        var draggable = ui.draggable;
+        //console.log( 'The page with ID "' + draggable.attr('id') + '" was dropped onto page ' + $(event.target).attr('id'));
+        //console.log("parent : " + $(event.target).attr('data-anon') + " typeof " + typeof($(event.target).attr('data-anon')));
+        // dropping an anon page in to a non-anon container
+        if(draggable.attr('data-anon') === 'true' && $(event.target).attr('data-anon') === 'false'){
+            console.log("unable to perform the action!");
+            showInformation("Cannot drop anonymous page in to a non anonymous page container.");
+            return;
+        }
+
+        var menu = ues.global.dashboard.menu;
+        var parentId = $(event.target).attr('id');
+        var childObj = getChild(menu, draggable.attr('id'));
+
+        //console.log("Child Object is: " + childObj);
+
+        if(childObj != null || childObj != undefined){
+            if (parentId === 'ds-menu-root') {
+                menu.push(childObj);
+                saveDashboard();
+                updateMenuList();
+            } else {
+                findAndUpdateParent(menu, parentId);
+            }
+        }
+
+        function findAndUpdateParent(menu, parentId){
+
+            for (var i = 0; i < menu.length; i++) {
+                if (menu[i].id === parentId) {
+                   console.log("childObj received: " + JSON.stringify(childObj) + " typeof: " + typeof(menu[i].subordinates));
+/*                        if (menu[i].isanon === false && childObj.isanon === true) {
+                            console.log("Unable to drop the page.");
+                            updateMenuList();
+                            return;
+                        } else {*/
+                            menu[i].subordinates.push(childObj);
+                            saveDashboard();
+                            updateMenuList();
+                            return;
+                        //}
+                }
+                else if (menu[i].subordinates.length > 0){
+                    findAndUpdateParent(menu[i].subordinates,parentId);
+                }
+            }
+        //return;
+        }
+    };
+
+    var getChild = function(menu, id){
+        var arrayT = [];
+        var childObj;
+
+        findChild(menu, id);
+
+        //console.log("getChild id: " + id);
+        function findChild(menu, id){
+            for (var i = 0; i < menu.length; i++) {
+                //arrayT.push(i);
+                //console.log("key is: " + key + " found: " + menu[i][key]);
+                if (menu[i].id === id) {
+                    //console.log("findChild : " + menu[i].id + " object: " + JSON.stringify(menu[i]));
+                    childObj = menu[i];
+                   // if(func === 'splice'){
+                        menu.splice(i, 1);
+                    //}
+                    return;
+                }
+                else if (menu[i].subordinates.length > 0){
+                    findChild(menu[i].subordinates, id);
+                }
+            }
+        }
+        //console.log("Child Object is: " + childObj);
+        //console.log(arrayT);
+        return childObj; 
+    }
 
     /**
      * Sanitize the given event's key code.
@@ -1700,6 +1814,56 @@ $(function () {
             loadAssets('gadget', query);
         });
     };
+    //todo complete @udarar
+    var updateMenuList = function() {
+        //console.log("adding menu: " + JSON.stringify(dashboard.menu));
+        $('#ues-pages').html(menuListHbs({
+            menu: dashboard.menu
+        }));
+
+        //$('.menu-hierarchy').draggable();
+
+        $(".menu-hierarchy").draggable({ 
+            revert:  function(dropped) {
+               var dropped = dropped && dropped[0].id == "droppable";
+               if(!dropped) return !dropped;
+
+            } 
+        }).each(function() {
+            var top = $(this).position().top;
+            var left = $(this).position().left;
+            $(this).data('orgTop', top);
+            $(this).data('orgLeft', left);
+        });
+
+        $('.menu-hierarchy').droppable( {
+            drop: handleDropEvent
+        });
+
+        $('.ds-menu-root').droppable( {
+            drop: handleDropEvent
+        });
+
+
+        //Handlebars.compile($('#ues-dashboard-banner-hbs').html())
+
+/*        var depth = 0;
+        var menu = dashboard.menu;
+        updateMenu(menu, "");
+
+        function updateMenu(menu, parent){
+            for (var i = 0; i < menu.length; i++) {
+                $('#ues-pages').html(menuListHbs({
+                    menu: menu[i]
+                }));
+
+                if(menu[i].subordinates.length > 0){
+                    depth++;
+                    updateMenu(menu[i].subordinates, menu[i].id);
+                }
+            }
+        }*/
+    };
 
     /**
      * Initialize the designer menu.
@@ -2031,6 +2195,18 @@ $(function () {
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
 
+            var menu = {
+                id : id,
+                isanon: false,
+                title : options.title,
+                subordinates: []
+            };
+
+            if(!dashboard.menu){
+                dashboard.menu = [];
+            }
+            dashboard.menu.push(menu);
+
             saveDashboard();
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
@@ -2278,6 +2454,7 @@ $(function () {
             done(err);
         }, true);
         updatePagesList();
+        updateMenuList();
         initBanner();
     };
 

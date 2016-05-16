@@ -75,3 +75,47 @@ Handlebars.registerHelper('dump', function (o) {
 Handlebars.registerHelper('resolveURI', function (path) {
     return ues.dashboards.resolveURI(path);
 });
+
+//return menu hierachy
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user) {
+    var div = "<div id ='ds-menu-root' class='ds-menu-root'>root</div>",
+        depth = 1,
+        padding = 10;
+
+    updateSubordinates(menu, null);
+
+    function updateSubordinates(menu, parent){
+        for (var i = 0; i < menu.length; i++) {
+                //console.log("I is: " + i + " depth is: " + depth + " parent is : " + parent + " page : " + menu[i].id);
+                div += "<div class='menu-hierarchy' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+
+                if (designer) {
+                    div +="<div data-parent='" + parent + 
+                        "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='depth" +
+                            depth +"' style='padding-left: " + (padding * depth) + "px; position: relative;'>" + 
+                                menu[i].id + "</div>";
+                } else {
+                    if (isAnonView || !user) {
+                        if (menu[i].isanon) {
+                            // Anonymous viewing. So render only anonymous pages links.
+                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) + 
+                                "px; position: relative;'>" + menu[i].title + "</a></li>"
+                        }
+                    } else {
+                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) + 
+                                "px; position: relative;'>" + menu[i].title + "</a></li>"
+                    }
+                }
+
+                if(menu[i].subordinates.length > 0){
+                    depth++;
+                    updateSubordinates(menu[i].subordinates, menu[i].id);
+                } else{
+                    div += "</div>";
+                }
+        }
+        depth--;
+        div += "</div>";
+    }
+    return div;
+});
