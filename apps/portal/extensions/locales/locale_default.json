@@ -144,5 +144,6 @@
     "show.data" : "Show Data",
     "select.chart" : "Select Chart Type",
     "select.a.chart" : ".. Select a Chart ..",
-    "chart.configuration" : "Chart Configuration"
+    "chart.configuration" : "Chart Configuration",
+    "preview" : "Preview"
 }

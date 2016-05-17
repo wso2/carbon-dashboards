@@ -8,20 +8,19 @@
             "fieldLabel": "X axis",
             "fieldName": "x",
             "fieldType": "dropdown",
-            "fieldValue": ["$COLUMN_NAMES"]
+            "valueSet": ["$COLUMN_NAMES"]
         },
         {
             "fieldLabel": "Y axis",
             "fieldName": "y",
             "fieldType": "dropdown",
-            "fieldValue": ["$COLUMN_NAMES"]
+            "valueSet": ["$COLUMN_NAMES"]
         },
         {
-            "fieldLabel": "Chart Colour",
-            "fieldName": "colour",
-            "fieldType": "String"
+            "fieldLabel": "Chart Ticks",
+            "fieldName": "tick",
+            "fieldType": "string"
         }
     ]
-
 }
 

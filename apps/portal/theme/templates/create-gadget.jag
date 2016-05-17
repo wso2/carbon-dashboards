@@ -111,14 +111,16 @@
                     </div>
                     <div class="tab-pane" id="tab3">
                         <div id="chart-list"></div>
-                        <form class="form-horizontal">
+                        <form id="chart-config-form" class="form-horizontal">
                         <fieldset>
                             <div class="form-group">
-                              <div id = "chart-config" class="col-md-4">
-                              </div>
+                              <div id = "chart-config" class="col-md-4"></div>
+                              <!--iframe src="/portal/test.jag"></iframe-->
                             </div>
                         </fieldset>
                         </form>
+                        <input type="button" id="preview" style="display:none;" value="<%= i18n.localize("preview")%>"/>
+                        <div id="preview-pane"></div>
                     </div>
                     <ul class="pager wizard">
                         <li class="previous first" style="display:none;"><a href="#">First</a></li>
@@ -208,6 +210,11 @@
           <option value="{{this.id}}">{{this.name}}</option>
         {{/each}}
       </select>
+</script>
+
+<script id="chart-preview-hbs" type="text/x-handlebars-template">
+    <input type="button" id="preview" value="<%= i18n.localize("preview")%>"/>
+    <div id="preview-pane"></div>
 </script>
 
 <script id="wizard-zeroevents-hbs" type="text/x-handlebars-template">

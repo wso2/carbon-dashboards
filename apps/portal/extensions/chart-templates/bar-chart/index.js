@@ -17,11 +17,15 @@ var getConfig, validate, isProviderRequired, draw, update;
 
 (function () {
 
+    var CHART_LOCATION = '/extensions/chart-templates/';
+
     /**
      * return the config to be populated in the chart configuration UI
      * @param schema
      */
     getConfig = function (schema){
+       var chartConf = require(CHART_LOCATION + '/bar-chart/config.json').config;
+       return chartConf;
 
     };
 

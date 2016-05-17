@@ -11,7 +11,8 @@
         },
         {
             "fieldType" : "advanced",
-            "childPartial" : "testPartial"
+            "childPartial" : "testPartial",
+            "dynamicJS" : []
         }
     ]
 }

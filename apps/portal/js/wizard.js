@@ -1,9 +1,12 @@
+var newIndex = 0;
 var provider;
 var chartType;
 var wizardData = {};
 var previewData = [];
 var columns = [];
-var done = false;
+var step0Done = false;
+var step1Done = false;
+var step2Done = false;
 var isPaginationSupported = true;
 var selectedTableCoulumns = [];
 var defaultTableColumns = [];
@@ -16,26 +19,26 @@ var DYNAMIC_JS_LOCATION = '/js/';
 
 $('#rootwizard').bootstrapWizard({
     onTabShow: function (tab, navigation, index) {
-        done = false;
-        if (index == 0) {
+        if (index == 0 && !step0Done) {
+            step0Done = true;
             getProviders();
             $("#btnPreview").hide();
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
-        } else if (index == 1) {
+        }else if (index == 1 && !step1Done) {
+            step1Done = true;
             getProviderConfig();
-        }
-        else if (index == 2) {
+        } else if (index == 2 && !step2Done) {
+            step2Done = true
             wizardData = getProviderConfigData();
             getChartList();
-
-
         }
     }
 });
 
 $('#provider-list').change(function () {
     provider = $("#providers").val();
+    getProviderConfig();
 });
 
 $('#show-data').click(function () {
@@ -72,6 +75,38 @@ $('#chart-list').change(function(){
     wizardData['chartType'] = chartType;
     getChartConfig(wizardData);
 });
+
+$("#preview").click(function () {
+    var cConfig = getChartConfigData();
+    delete wizardData['chartType'];
+    wizardData[chartType] = getChartConfigData();
+    /*$.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getData',
+        method: "POST",
+        data: JSON.stringify(pConfig),
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+            var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
+            $('#data-preview').append(dataPreviewHbs(data));
+        },
+        error: function (xhr, message, errorObj) {
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
+            }
+            var source = $("#wizard-error-hbs").html();
+            ;
+            var template = Handlebars.compile(source);
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
+                error: xhr.responseText
+            }));
+        }
+    });*/
+});
+
 
 
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
@@ -113,6 +148,7 @@ function getProviders() {
 };
 
 function getProviderConfig() {
+    step1Done = true;
     var data = {"provider": provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
@@ -132,7 +168,6 @@ function getProviderConfig() {
                 location.reload();
             }
             var source = $("#wizard-error-hbs").html();
-            ;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
@@ -206,8 +241,8 @@ function getChartConfig(providerConfig) {
         success: function (chartConfig) {
             registerAdvancedChartUI(chartConfig);
             var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#chart-config").append(chartHbs(chartConfig));
-
+            $("#chart-config").html(chartHbs(chartConfig));
+            $("#preview").removeAttr("style");
         }
     });
 }
@@ -240,6 +275,15 @@ function registerAdvancedChartUI(data) {
             }
         })(data, i);
     }
+}
+
+function getChartConfigData() {
+    var formData = $('#chart-config-form').serializeArray();
+    var configInput = {};
+    $.map(formData, function (n) {
+        configInput[n['name']] = n['value'];
+    });
+    return configInput;
 }
 
 function getColumns(datasource, datasourceType) {
