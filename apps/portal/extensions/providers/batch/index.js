@@ -81,7 +81,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     getConfig = function() {
         var formConfig = require(PROVIDERS_LOCATION + '/' + PROVIDER_NAME + '/config.json');
         var datasourceCfg = {
-            "fieldLabel": "Datasource",
+            "fieldLabel": "Event Table",
             "fieldName": "tableName",
             "fieldType": "dropDown"
         };
