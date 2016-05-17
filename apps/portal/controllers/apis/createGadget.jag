@@ -34,6 +34,11 @@
     var VALUE_SET = 'valueSet';
     var SCHEME_NOTIFIER = '$COLUMN_NAMES';
 
+    var PROVIDER_CONF = 'provider-conf';
+    var PROVIDER_NAME = 'provider-name';
+    var CHART_CONF = 'chart-conf';
+    var CHART_NAME = 'chart-name';
+
     response.contentType = 'application/json';
 
     var action = request.getParameter("action");
@@ -81,10 +86,10 @@
     }
     else if (action === 'getData') {
         var schema;
-        var provider = Object.keys(data)[0];
+        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
-        if (providerApi.validate(data[provider])) {
-            var dataSet = providerApi.getData(data[provider], 5);
+        if (providerApi.validate(data[PROVIDER_CONF])) {
+            var dataSet = providerApi.getData(data[PROVIDER_CONF], 5);
             var output = {};
 
             output.tableHeaders = Object.keys(dataSet[0]);
@@ -128,7 +133,7 @@
     }
     else if (action === 'getChartConfig') {
         var schema;
-        var provider = Object.keys(data)[0];
+        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
         if (providerApi.validate(data[provider])) {
             schema = providerApi.getSchema(data[provider]);
@@ -143,7 +148,6 @@
                 }
             }
         }
-        log.info(stringify(modifiedChartConfig));
         print(modifiedChartConfig);
         return;
     }
@@ -166,11 +170,6 @@
         error: true
     }));
 
-    getData = function (providerConfig, schema, limit) {
-        var provider = Object.keys(providerConfig)[0];
-        var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
-        return providerApi.getData(providerConfig[provider], schema, limit);
-    }
 }());
 
 

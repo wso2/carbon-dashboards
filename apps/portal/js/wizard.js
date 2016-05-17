@@ -15,6 +15,11 @@ var PROVIDER_LOCATION = 'extensions/providers/';
 var CHART_LOCATION = 'extensions/chart-templates/';
 var DYNAMIC_JS_LOCATION = '/js/';
 
+var PROVIDER_CONF = 'provider-conf';
+var PROVIDER_NAME = 'provider-name'
+var CHART_CONF = 'chart-conf';
+var CHART_NAME = 'chart-name';
+
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
@@ -79,7 +84,7 @@ $('#chart-list').change(function(){
 $("#preview").click(function () {
     var cConfig = getChartConfigData();
     delete wizardData['chartType'];
-    wizardData[chartType] = getChartConfigData();
+    wizardData[CHART_CONF] = getChartConfigData();
     /*$.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getData',
         method: "POST",
@@ -214,7 +219,8 @@ function getProviderConfigData() {
     $.map(formData, function (n) {
         configInput[n['name']] = n['value'];
     });
-    providerConf[provider] = configInput;
+    configInput[PROVIDER_NAME] = provider ;
+    providerConf[PROVIDER_CONF] = configInput;
     return providerConf;
 }
 
@@ -283,6 +289,7 @@ function getChartConfigData() {
     $.map(formData, function (n) {
         configInput[n['name']] = n['value'];
     });
+    configInput[CHART_NAME] = chartType ;
     return configInput;
 }
 
