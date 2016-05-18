@@ -27,7 +27,7 @@ var dest;
     var method = request.getMethod();
     var configs = require('/configs/portal.js').config();
     var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
-    var constants = require("/controllers/constants/constants.js");
+    var constants = require("/modules/constants.js");
     var dashboards = require('/modules/dashboards.js');
     dest = request.getParameter('destination');
 
