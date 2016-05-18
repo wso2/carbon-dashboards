@@ -27,13 +27,15 @@
     }
     var utils = require('/modules/utils.js');
     var configs = require('/configs/designer.json');
+
     var PROVIDERS_LOCATION = '/extensions/providers/';
     var PARTIAL_LOCATION = '/partials/';
     var CHART_LOCATION = '/extensions/chart-templates/';
+    var GADGET_LOCATION = '/store/' + session.get('user').domain + '/fs/gadget/'
+
     var FIELD_NAME = 'fieldName';
     var VALUE_SET = 'valueSet';
     var SCHEME_NOTIFIER = '$COLUMN_NAMES';
-
     var PROVIDER_CONF = 'provider-conf';
     var PROVIDER_NAME = 'provider-name';
     var CHART_CONF = 'chart-conf';
@@ -64,13 +66,11 @@
         }
         print(providers);
         return;
-    }
-    else if (action === 'getProviderConfig') {
+    } else if (action === 'getProviderConfig') {
         var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
         print(providerApi.getConfig().config);
         return;
-    }
-    else if (action === 'getProviderAdvancedUI') {
+    } else if (action === 'getProviderAdvancedUI') {
         try {
             file = new File(PROVIDERS_LOCATION + data.provider + PARTIAL_LOCATION + data.partial + '.hbs');
             if (!file.isExists()) {
@@ -83,8 +83,7 @@
         }
         print(customPartial);
         return;
-    }
-    else if (action === 'getData') {
+    } else if (action === 'getData') {
         var schema;
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
@@ -114,8 +113,7 @@
             return;
         }
 
-    }
-    else if (action === 'getChartList') {
+    } else if (action === 'getChartList') {
         var chartDirList = [];
         var chartList = [];
         var chartDir = new File(CHART_LOCATION);
@@ -130,13 +128,13 @@
         }
         print(chartList);
         return;
-    }
-    else if (action === 'getChartConfig') {
+    } else if (action === 'getChartConfig') {
         var schema;
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
-        if (providerApi.validate(data[provider])) {
-            schema = providerApi.getSchema(data[provider]);
+        if (providerApi.validate(data[PROVIDER_CONF])) {
+            log.info('@@@@@@@@@@@@@@@ '+stringify(data[PROVIDER_CONF]))
+            schema = providerApi.getSchema(data[PROVIDER_CONF]);
         }
         var chartApi = require(CHART_LOCATION + data.chartType + '/index.js');
         var modifiedChartConfig = chartApi.getConfig(schema);
@@ -150,8 +148,7 @@
         }
         print(modifiedChartConfig);
         return;
-    }
-    else if (action === 'getChartAdvancedUI') {
+    } else if (action === 'getChartAdvancedUI') {
         try {
             file = new File(CHART_LOCATION + data.chartType + PARTIAL_LOCATION + data.partial + '.hbs');
             if (!file.isExists()) {
@@ -163,6 +160,19 @@
             file.close();
         }
         print(customPartial);
+        return;
+    } else if (action === 'generateGadget') {
+        try {
+            var file = new File(GADGET_LOCATION + 'temp');
+            file.mkdir();
+            file = new File(GADGET_LOCATION + 'temp/' + 'conf.json');
+            file.open("w");
+            file.write(data);
+        }
+        finally{
+            file.close();
+        }
+
         return;
     }
 
