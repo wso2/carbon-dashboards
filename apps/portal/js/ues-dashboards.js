@@ -231,9 +231,14 @@
             var contentA = content[$(componentBoxA).attr('id')];
             var contentB = content[$(componentBoxB).attr('id')];
             if (contentA && contentB) {
-                var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                return (priorityB - priorityA);
+                if(contentA[0] && contentB[0]){
+                    var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                    var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                    return (priorityB - priorityA);
+                }
+                else{
+                    return 1;
+                }
             }
         });
     };
