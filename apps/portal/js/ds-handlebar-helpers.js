@@ -87,23 +87,23 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
                 //console.log("I is: " + i + " depth is: " + depth + " parent is : " + parent + " page : " + menu[i].id);
-                div += "<div class='menu-hierarchy' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+                div += "<ul class='menu-hierarchy' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
 
                 if (designer) {
-                    div +="<div data-parent='" + parent + 
+                    div +="<li data-parent='" + parent +
                         "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='depth" +
-                            depth +"' style='padding-left: " + (padding * depth) + "px; position: relative;'>" + 
-                                menu[i].id + "</div>";
+                            depth +" panel panel-default ' position: relative;'>" +
+                                menu[i].id;
                 } else {
                     if (isAnonView || !user) {
                         if (menu[i].isanon) {
                             // Anonymous viewing. So render only anonymous pages links.
-                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) + 
-                                "px; position: relative;'>" + menu[i].title + "</a></li>"
+                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) +
+                                "px; position: relative;'>" + menu[i].title + "</a>"
                         }
                     } else {
-                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) + 
-                                "px; position: relative;'>" + menu[i].title + "</a></li>"
+                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) +
+                                "px; position: relative;'>" + menu[i].title + "</a>"
                     }
                 }
 
@@ -111,11 +111,11 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                     depth++;
                     updateSubordinates(menu[i].subordinates, menu[i].id);
                 } else{
-                    div += "</div>";
+                    div += "</li></ul>";
                 }
         }
         depth--;
-        div += "</div>";
+        div += "</ul>";
     }
     return div;
 });

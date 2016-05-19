@@ -241,7 +241,7 @@
                     </div>
 
                     <!-- Menu Creator -->
-                    <div id="sidebarNavMenu" class="ues-store-assets" data-type="gadget">
+                    <!-- div id="sidebarNavMenu" class="ues-store-assets" data-type="gadget">
                         <div class="sidebar-brand">Manage Menu</div>
 
                         <div class="alert alert-info">
@@ -250,7 +250,7 @@
 
                         <div class="add-padding-3x">
 
-                            <!--div class="form-group has-form-control-btn ues-search-box">
+                            <div class="form-group has-form-control-btn ues-search-box">
                                 <button class="form-control-btn" type="button" title="Search">
                                     <i class="fw fw-search" aria-hidden="true"></i>
                                 </button>
@@ -260,7 +260,7 @@
                             <div id="ues-pages">
                             </div>
                         </div>
-                    </div>
+                    </div-->
                 </div>
             </div>
         </div>
@@ -284,7 +284,12 @@
         </div>
 
         <!-- page content -->
-        <div class="container-fluid body-wrapper">
+        <div class="container-fluid body-wrapper menu" data-view="menu" style="display: none;">
+            <div class="page-content">
+            <div id="ues-pages"></div>
+            </div>
+        </div>
+        <div class="container-fluid body-wrapper content" data-view="layout">
 
             <div class="page-header"></div>
 
