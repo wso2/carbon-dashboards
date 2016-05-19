@@ -255,7 +255,7 @@
                                     <i class="fw fw-search" aria-hidden="true"></i>
                                 </button>
                                 <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>..." />
-                            </div-->
+                            </div>
 
                             <div id="ues-pages">
                             </div>
