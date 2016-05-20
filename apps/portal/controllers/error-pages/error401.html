@@ -17,6 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js" />
     <meta charset="utf-8">
     <title>Unauthorized - Error 401</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,26 +28,20 @@
         a{color: #2578ff}
         body{border-top:solid 20px #444;padding:0;margin:0;}
     </style>
+    <script>
+        $(document).ready(function(){
+            if (window.location.pathname.indexOf("/gadgets/") >= 0)
+                $("#link").hide();
+        });
+    </script>
+
 </head>
 
 <body>
 <i class="icon-unlink error-icon"></i>
 <h1>Error 401</h1>
 <h3>You do not have permission to access this page.Please contact your administrator and request permission.</h3>
-<div id="portal" style="visibility: visible; display: block; ..">
-    <h4><a href="/portal">Go to Portal</a></h4>
-</div>
-<script type="text/javascript">
-    var link = document.getElementById('portal');
-    if (window.location.pathname.indexOf("/gadgets/") < 0) {
-        link.style.display = 'block';
-        link.style.visibility = 'visible';
-    }
-    else {
-        link.style.visibility = 'hidden';
-        link.style.display = 'none';
-    }
-</script>
+<h4 id="link"><a href="/portal">Go to Portal</a></h4>
 </body>
 </html>
 

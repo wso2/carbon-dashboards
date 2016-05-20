@@ -16,11 +16,12 @@
  */
 
 var message;
+var dest;
 (function () {
     var log = new Log();
 
     if(session.get('user')){
-        var user = session.get('user');
+        user = session.get('user');
         if (dest) {
             response.sendRedirect(dest);
             return;
