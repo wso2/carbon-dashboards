@@ -15,14 +15,6 @@
  * limitations under the License.
  */
 %>
-<%
-var process = require('process');
-
-var config = require('/configs/portal.js').config();
-var hostName = config.host.hostname ? config.host.hostname : window.location.hostname;
-var httpsPort = process.getProperty('mgt.transport.https.port');
-var url = "https://" + hostName + ":" + httpsPort + '/portal';
-%>
 <% include(utils.resolvePath('templates/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
@@ -49,7 +41,7 @@ var url = "https://" + hostName + ":" + httpsPort + '/portal';
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
                 <!-- login form -->
-                <form class="ues-signin-form" action="<%= url%>/apis/login" method="post">
+                <form class="ues-signin-form" action="<%= tenantedUrlPrefix%>apis/login" method="post">
                     <h2 class="ues-signin-heading"><%= i18n.localize("login.label")%></h2>
                     <div class="form-group">
                         <label for="ues-username" class="sr-only"><%= i18n.localize("username")%></label>

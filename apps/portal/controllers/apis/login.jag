@@ -17,10 +17,10 @@
 
 (function () {
     var log = new Log();
+    var configs = require('/configs/portal.js').config();
     var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
     var constants = require("/modules/constants.js");
     var dashboards = require('/modules/dashboards.js');
-    var configs = require('/configs/portal.js').config();
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 

@@ -20,7 +20,7 @@ var dest;
 (function () {
     var log = new Log();
 
-    if(session.get('user')){
+    if (session.get('user')) {
         var user = session.get('user');
         if (dest) {
             response.sendRedirect(dest);
@@ -34,10 +34,10 @@ var dest;
         return;
     }
     else {
-        if(request.getParameter("loginAttempt")) {
+        if (request.getParameter("loginAttempt")) {
             message = 'incorrect.login.message';
 
-            if(log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug("Login attempt failed.");
             }
         }

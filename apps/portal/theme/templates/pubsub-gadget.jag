@@ -303,12 +303,6 @@ pages.forEach(function(p) {
         var nanoScrollerSelector = $(".nano");
         nanoScrollerSelector.nanoScroller();
 
-        function updateSidebarNav(target) {
-            $(target).show();
-            $(target).siblings().hide();
-            nanoScrollerSelector[0].nanoscroller.reset();
-        }
-
         if (!ues.global.renderFromExtension) {
             ues.dashboards.render($('.ues-components-grid'), ues.global.dashboard, ues.global.page);
         }
