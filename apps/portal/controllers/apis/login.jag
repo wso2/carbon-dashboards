@@ -21,6 +21,8 @@
     var constants = require("/modules/constants.js");
     var dashboards = require('/modules/dashboards.js');
     var configs = require('/configs/portal.js').config();
+    var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
 
     if (request.getMethod() === 'POST') {
         var dest = request.getParameter("destination");
@@ -65,8 +67,9 @@
                 if (log.isDebugEnabled()) {
                     log.debug(session.get('user') + " is authorized.");
                 }
-                if (dest)
+                if (dest) {
                     response.sendRedirect(dest);
+                }
             }
             else {
                 if (dest) {
@@ -81,7 +84,6 @@
         }
     }
     else {
-        response.sendError(403, "Forbidden");
+        response.sendError(403, i18n.localize("forbidden"));
     }
-
 }()); %>

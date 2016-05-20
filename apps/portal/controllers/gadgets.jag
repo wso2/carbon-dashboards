@@ -40,10 +40,13 @@ var pageId;
 
     if(bgColor) {
         bgColor = "#"+bgColor;
+        // Sanitizing the background colour parameter
         if(!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(bgColor))){
             bgColor ='transparent';
         }
     }
+
+    // If background colour is not set, set it to transparent
     if (bgColor === null)
             bgColor ='transparent';
     if (log.isDebugEnabled()) {

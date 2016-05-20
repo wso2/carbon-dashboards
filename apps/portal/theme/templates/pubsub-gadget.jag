@@ -314,8 +314,9 @@ pages.forEach(function(p) {
         }
 
         $(document).ready(function() {
-            // Toggle component box heading
+            // To add background colour as per the request
              document.body.style.backgroundColor = "<%=bgColor%>";
+             // Toggle component box heading
             $('.ues-component').hover(function() {
                 toggleHeading($(this), true);
             }, function() {
