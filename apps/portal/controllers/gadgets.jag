@@ -38,6 +38,8 @@ var pageId;
     // To set the bgcolor according to client`s website template
     bgColor = request.getParameter("bgcolor");
 
+    if (bgColor === null)
+            bgColor ='transparent';
     if (log.isDebugEnabled()) {
         log.debug("Session id provided from the client is " + session.getId() + "Client has successfully connected.")
     }
