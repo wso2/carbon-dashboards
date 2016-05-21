@@ -67,6 +67,7 @@ var pageId;
     }
     else {
         response.sendError(400, i18n.localize("bad.request"));
+        return;
     }
 
     dashboards = require('/modules/dashboards.js');
