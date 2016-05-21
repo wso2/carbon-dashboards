@@ -82,40 +82,42 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
         depth = 1,
         padding = 10;
 
+    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'><li class='ds-menu-root' id='ds-menu-root'>root</li>";
     updateSubordinates(menu, null);
+    divTree += "</ul>"
 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
                 //console.log("I is: " + i + " depth is: " + depth + " parent is : " + parent + " page : " + menu[i].id);
-                div += "<ul class='menu-hierarchy' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+                //div += "<ul class='menu-hierarchy' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
 
                 if (designer) {
-                    div +="<li data-parent='" + parent +
+                    divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
                         "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='depth" +
-                            depth +" panel panel-default ' position: relative;'>" +
-                                menu[i].id;
+                            depth +" menu-hierarchy' style=''>" +
+                                "<span>" + menu[i].id + "<span class='controls'><i class='fw fw-view'></i></span></span>";
                 } else {
                     if (isAnonView || !user) {
                         if (menu[i].isanon) {
                             // Anonymous viewing. So render only anonymous pages links.
-                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) +
-                                "px; position: relative;'>" + menu[i].title + "</a>"
+                            divTree += "<li style='list-style-type: none;'><a href='" + menu[i].id + "' style='position: relative;'>" + menu[i].title + "</a>"
                         }
                     } else {
-                            div += "<li><a href='" + menu[i].id + "' style='padding-left: " + (padding * depth) +
-                                "px; position: relative;'>" + menu[i].title + "</a>"
+                            divTree += "<li style='list-style-type: none;'><a href='" + menu[i].id + "' style='position: relative;'>" + menu[i].title + "</a>"
                     }
                 }
 
                 if(menu[i].subordinates.length > 0){
                     depth++;
+                    divTree += "<ul class='' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
                     updateSubordinates(menu[i].subordinates, menu[i].id);
+                    divTree += "</ul>";
                 } else{
-                    div += "</li></ul>";
+                    divTree += "</li>";
                 }
         }
         depth--;
-        div += "</ul>";
+        //divTree += "</ul>";
     }
-    return div;
+    return divTree;
 });

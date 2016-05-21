@@ -133,10 +133,9 @@
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
-                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
-                    onclick="updateSidebarNav('#sidebarNavMenu', this)" title="<%=i18n.localize("menu")%>" 
-                    id="btn-sidebar-gadgets">
+                <a  rel="sub-nav"
+                    onclick="menuCreator('#sidebarNavGadgets', this)" title="<%=i18n.localize("menu")%>"
+                    id="btn-sidebar-menu">
                     <i class="icon fw fw-menu"></i>
                 </a>
             </li>
@@ -286,7 +285,9 @@
         <!-- page content -->
         <div class="container-fluid body-wrapper menu" data-view="menu" style="display: none;">
             <div class="page-content">
-            <div id="ues-pages"></div>
+                <div class="well add-padding-5x">
+                    <div id="ues-pages"></div>
+                </div>
             </div>
         </div>
         <div class="container-fluid body-wrapper content" data-view="layout">
