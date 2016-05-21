@@ -137,5 +137,6 @@
   "settings.savebutton": "සුරකින්න",
   "settings.cancelbutton": "ආපසු",
   "designer.componentProperties.priority": "පූර්වතාව",
-  "bad.request" : "වැරදි ඉල්ලීමකි"
+  "bad.request" : "වැරදි ඉල්ලීමකි",
+  "forbidden" : "Forbiden"
 }

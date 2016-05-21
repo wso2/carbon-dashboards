@@ -22,30 +22,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <style>
-        h1,h3,h4{text-align: center;font-weight: 200;}
-        a{color: #2578ff}
-        body{border-top:solid 20px #444;padding:0;margin:0;}
-    </style>
-<body>
-    <i class="icon-ambulance error-icon"></i>
-    <h1>Error 500</h1>
-    <h3>Something went wrong and we're trying to fix it.</h3>
-    <h4>Please check back later</h4>
-    <div id="portal" style="visibility: visible; display: block; ..">
-        <h4><a href="/portal">Go to Portal</a></h4>
-    </div>
-    <script type="text/javascript">
-        var link = document.getElementById('portal');
-        if (window.location.pathname.indexOf("/gadgets/") < 0) {
-            link.style.display = 'block';
-            link.style.visibility = 'visible';
-        }
-        else {
-            link.style.visibility = 'hidden';
-            link.style.display = 'none';
-        }
+    <link rel="stylesheet" href="/portal/css/error.css">
+    <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="/portal/js/error.js"></script>
+    <script>
+        $(document).ready(function () {
+            showHidePortalLink();
+        });
     </script>
+<body>
+<i class="icon-ambulance error-icon"></i>
+<h1>Error 500</h1>
+<h3>Something went wrong and we're trying to fix it.</h3>
+<h4 id="link"><a href="/portal">Go to Portal</a></h4>
 </body>
 </html>
 

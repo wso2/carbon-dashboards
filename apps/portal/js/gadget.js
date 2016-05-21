@@ -22,13 +22,13 @@ $(function () {
         window.onresize = function () {
             location.reload();
         };
-        var com = $('.emb-gadget');
+        var componentBox = $('.emb-gadget');
         var id = window.location.pathname.split("/").pop();
         var page = ues.dashboards.findPage(ues.global.dashboard, ues.global.page);
         var component = ues.dashboards.findComponent(id, page);
         var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
-        com.html(componentBoxContentHbs());
-        ues.components.create(com, component, function (err) {
+        componentBox.html(componentBoxContentHbs());
+        ues.components.create(componentBox, component, function (err) {
             if (err)
                 throw err;
         });

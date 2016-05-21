@@ -38,6 +38,17 @@ var pageId;
     // To set the bgcolor according to client`s website template
     bgColor = request.getParameter("bgcolor");
 
+    if (bgColor) {
+        bgColor = "#" + bgColor;
+        // Sanitizing the background colour parameter
+        if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(bgColor))) {
+            bgColor = 'transparent';
+        }
+    }
+
+    // If background colour is not set, set it to transparent
+    if (bgColor === null)
+        bgColor = 'transparent';
     if (log.isDebugEnabled()) {
         log.debug("Session id provided from the client is " + session.getId() + "Client has successfully connected.")
     }
@@ -56,6 +67,7 @@ var pageId;
     }
     else {
         response.sendError(400, i18n.localize("bad.request"));
+        return;
     }
 
     dashboards = require('/modules/dashboards.js');
