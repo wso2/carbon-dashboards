@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-var showHidePortalLink = function() {
+/**
+ * To show or hide link to portal in error page depending on the location of page requested
+ */
+var showHidePortalLink = function () {
     if (window.location.pathname.indexOf("/gadgets/") >= 0) {
         $("#link").hide();
     }
