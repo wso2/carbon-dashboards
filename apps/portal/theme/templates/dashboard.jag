@@ -183,65 +183,63 @@
     <!-- Component toolbar actions -->
     <script id="ues-component-actions-hbs" type="text/x-handlebars-template">
         <div class="btn-group">
-            {{#if dropDownView}}
-                <button class="btn btn-default dropdown-toggle" type="button" id="actionButtons" data-toggle="dropdown">
-                        <i class="icon fw fw-ellipsis fw-rotate-90"></i>
-                </button>
-                <ul class="dropdown-menu more-actions-button" role="menu" aria-labelledby="actionButtons">
-                     {{#each toolbarButtons.custom}}
-                                 <li role="presentation">
-                                       <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
-                                            {{#if isTypeCSS}}
-                                                <i class="icon fw {{iconClass}}"></i>
-                                            {{/if}}
-                                            {{#if isTypeIMAGE}}
-                                                 <img src="{{resolveURI this.image}}"/>
-                                            {{/if}}
-                                       </button>
-                                 </li>
-                    {{/each}}
-                    {{#if defaultButtonConfigs.isConfiguration}}
-                            {{#if userPrefsExists}}
-                                <li role="presentation">
-                                   <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
-                                         <i class="fw fw-configarations"></i>
-                                   </button>
-                                </li>
-                             {{/if}}
-                     {{/if}}
-                     {{#if defaultButtonConfigs.isMaximize}}
-                                <li role="presentation">
-                                     <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
-                                            data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
-                                                    <i class="icon fw fw-expand"></i> <!-- todo minimize -->
-                                     </button>
-                                </li>
-                    {{/if}}
-
-                </ul>
-            {{else}}
-                {{#each toolbarButtons.custom}}
-                       <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
-                            {{#if isTypeCSS}}
-                                <i class="icon fw {{iconClass}}"></i>
-                            {{/if}}
-                            {{#if isTypeImage}}
-                                 <img src="{{resolveURI this.image}}"/>
-                            {{/if}}
-                       </button>
+            {{#if isDropdownView}}
+            <button class="btn btn-default dropdown-toggle" type="button" id="actionButtons" data-toggle="dropdown">
+                <i class="icon fw fw-ellipsis fw-rotate-90"></i>
+            </button>
+            <ul class="dropdown-menu more-actions-button" role="menu" aria-labelledby="actionButtons">
+                {{#each custom}}
+                <li role="presentation">
+                    <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                        {{#if iconTypeCSS}}
+                        <i class="icon fw {{iconClass}}"></i>
+                        {{/if}}
+                        {{#if iconTypeImage}}
+                        <img src="{{resolveURI this.image}}"/>
+                        {{/if}}
+                    </button>
+                </li>
                 {{/each}}
-                {{#if userPrefsExists}}
-                    {{#if defaultButtonConfigs.isConfiguration}}
-                           <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
-                                <i class="fw fw-configarations"></i>
-                           </button>
-                    {{/if}}regarding
+
+                {{#if default.configurations}}
+                <li role="presentation">
+                    <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                        <i class="fw fw-configarations"></i>
+                    </button>
+                </li>
                 {{/if}}
-                {{#if defaultButtonConfigs.isMaximize}}
-                           <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
-                                <i class="icon fw fw-expand"></i>
-                           </button>
+
+                {{#if defult.maximize}}
+                <li role="presentation">
+                    <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+                        <i class="icon fw fw-expand"></i>
+                    </button>
+                </li>
                 {{/if}}
+            </ul>
+            {{else}}
+            {{#each custom}}
+            <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                {{#if iconTypeCSS}}
+                <i class="icon fw {{iconClass}}"></i>
+                {{/if}}
+                {{#if iconTypeImage}}
+                <img src="{{resolveURI this.image}}"/>
+                {{/if}}
+            </button>
+            {{/each}}
+
+            {{#if default.configurations}}
+            <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                <i class="fw fw-configarations"></i>
+            </button>
+            {{/if}}
+
+            {{#if default.maximize}}
+            <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+                <i class="icon fw fw-expand"></i>
+            </button>
+            {{/if}}
             {{/if}}
         </div>
     </script>
