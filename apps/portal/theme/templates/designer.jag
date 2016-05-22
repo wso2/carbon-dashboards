@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
+<% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
@@ -314,7 +314,7 @@
     </div><!-- /#page-content-wrapper -->
 
     <!-- footer -->
-    <% include(utils.resolvePath('templates/portal-footer.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Banner upload form -->
     <form method="post" id="ues-dashboard-upload-banner-form" action="<%=tenantedUrlPrefix%>apis/banners/<%=dashboard.id%>" class="hidden">

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
+<% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <style type="text/css">
@@ -57,7 +57,7 @@
                     <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">
                         <%= i18n.localize("login.label")%></button>
                 </form>
-                <% if (message) { %>
+                <% if (message) { %>Ndash
                 <div class="alert alert-danger" role="alert"><%= i18n.localize(message)%></div>
                 <% } %>
             </div>
@@ -65,7 +65,7 @@
     </div>
 
     <!-- Footer -->
-    <% include(utils.resolvePath('templates/portal-footer.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Jquery JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>

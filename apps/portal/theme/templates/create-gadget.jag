@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
+<% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/create.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/igviz.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">

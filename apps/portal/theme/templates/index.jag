@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
+<% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
@@ -88,7 +88,7 @@
     </div>
 
     <!-- Footer -->
-    <% include(utils.resolvePath('templates/portal-footer.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Handlebar templates -->
     <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">

@@ -1,5 +1,4 @@
 var log = new Log();
-var customThemePath = "/home/prabushi/Documents/Redmine(5012)/2/wso2ds-2.1.0-SNAPSHOT/repository/deployment/server/jaggeryapps/portal/store/carbon.super/fs/themes";
 
 var relativePrefix = function (path) {
     var parts = path.split('/');
@@ -137,22 +136,55 @@ var store = function () {
     return require('/js/store-manager.js');
 };
 
-var dashboardStyles = function (theme) {
-    var config = require('/configs/designer.json');
-    if (!theme) {
-        log.info("****************inside not theme");
-        theme = config.theme;
+/**
+ * If there is a custom theme defined for the dashboard,
+ * this method returns the file path to the custom theme folder
+ * @returns {String} path to custom themes
+ */
+var getStylesPath = function () {
+    var theme = "";
+    if (dashboard.theme) {
+        theme = dashboard.theme;
     }
-    log.info("********************theme: "+theme);
-    var path = 'extensions/themes/' + theme + 'custom-theme/css/dashboard.css';
+    var stylesPath = getCustomThemePath() + theme + '/css';
+    var folder = new File('/' + stylesPath);
+    var list = folder.listFiles();
+    if (list.length > 0) {
+        return stylesPath;
+    }
+    return null;
+}
+
+/**
+ * If there is a custom theme script, this returns the path of
+ * custom script file, else returns the default file path
+ * @param fileName name of the script file
+ * @returns {String} path to custom script file
+ */
+var getScriptPath = function (fileName) {
+    var theme = "";
+    if (dashboard.theme) {
+        theme = dashboard.theme;
+    }
+    var path = getCustomThemePath() + theme + '/js/' + fileName + '.js';
+    var defaultPath = 'js/' + fileName + '.js';
     var file = new File('/' + path);
-    log.info("********************path: "+path);
-    return file.isExists() ? path : null;
-};
+    return file.isExists() ? path : defaultPath ;
+}
+
+var getTemplatePath = function (path) {
+    var theme = "";
+    if (dashboard.theme) {
+        theme = dashboard.theme;
+    }
+    var extendedPath = getCustomThemePath() + theme + '/' + path;
+    var defaultPath = '/theme/' + path;
+    var file = new File(extendedPath);
+    return file.isExists() ? extendedPath : defaultPath ;
+}
 
 var dashboardLayouts = function () {
     var path = 'extensions/themes/';
-    log.info("************* dashboardlayout"+path);
     var folder = new File('/' + path);
     var list = folder.listFiles();
     list.forEach(function(file){
@@ -160,39 +192,26 @@ var dashboardLayouts = function () {
     });
 };
 
-var dashboardScripts = function () {
+var getScript = function (fileName) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + 'custom-theme/js/dashboard-extensions.js';
-    log.info("************* dashboardScripts"+path);
+    var path = 'extensions/themes/' + theme + '/js/' + fileName + '.js';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
-};
+}
 
-var portalStyles = function () {
+var getStyle = function (fileName) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + 'custom-theme/css/portal.css';
-    log.info("************* portal syles"+path);
+    var path = 'extensions/themes/' + theme + '/css/' + fileName + '.css';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
-};
-
-var portalScripts = function () {
-    var config = require('/configs/designer.json');
-    var theme = config.theme;
-    var path = 'extensions/themes/' + theme + 'custom-theme/js/portal.js';
-    log.info("************* portalScripts"+path);
-    var file = new File('/' + path);
-    return file.isExists() ? path : null;
-};
+}
 
 var resolvePath = function (path) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var extendedPath = customThemePath + 'custom-theme/' + path;//'/extensions/themes/' + theme + '/' + path;
-    log.info("************* resolve path" + extendedPath);
-    log.info("************* resolve path" + path);
+    var extendedPath = 'extensions/themes/' + theme + '/' + path;
     var file = new File(extendedPath);
     return file.isExists() ? extendedPath : '/theme/' + path;
 };
@@ -200,8 +219,7 @@ var resolvePath = function (path) {
 var resolveUrl = function (path) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var extendedPath =  customThemePath + 'custom-theme/' + path;//'extensions/themes/' + theme + '/' + path;
-    log.info("************* resolve url"+extendedPath);
+    var extendedPath = 'extensions/themes/' + theme + '/' + path;
     var file = new File('/' + extendedPath);
     return file.isExists() ? extendedPath : 'theme/' + path;
 };
@@ -243,3 +261,12 @@ var resolvePassword = function(passwordAlias){
     var reslover = secretResolverFactory.create(rootElement,true);
     return reslover.resolve(alias[1]); 
 };
+
+/**
+ * Returns the custom path after appending the current user domain
+ * @returns {string} path to custom themes
+ */
+var getCustomThemePath = function () {
+    var carbon = require('carbon');
+    return '/store/' + carbon.userDomain + '/fs/themes/';
+}
