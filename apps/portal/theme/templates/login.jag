@@ -57,7 +57,7 @@
                     <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">
                         <%= i18n.localize("login.label")%></button>
                 </form>
-                <% if (message) { %>Ndash
+                <% if (message) { %>
                 <div class="alert alert-danger" role="alert"><%= i18n.localize(message)%></div>
                 <% } %>
             </div>
