@@ -421,8 +421,6 @@
                 data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
                 <i class="icon fw fw-expand"></i>
             </button>
-            {{/if}}
-            {{/if}}
         </div>
     </script>
 
