@@ -153,13 +153,13 @@ var getStylesPath = function () {
         return stylesPath;
     }
     return null;
-}
+};
 
 /**
  * If there is a custom theme script, this returns the path of
  * custom script file, else returns the default file path
  * @param fileName name of the script file
- * @returns {String} path to custom script file
+ * @returns {String} path to script file
  */
 var getScriptPath = function (fileName) {
     var theme = "";
@@ -170,8 +170,14 @@ var getScriptPath = function (fileName) {
     var defaultPath = 'js/' + fileName + '.js';
     var file = new File('/' + path);
     return file.isExists() ? path : defaultPath ;
-}
+};
 
+/**
+ * If there is a custom theme template, this returns the path of
+ * custom template file, else returns the default file path
+ * @param fileName name of the template file
+ * @returns {String} path to template file
+ */
 var getTemplatePath = function (path) {
     var theme = "";
     if (dashboard.theme) {
@@ -181,7 +187,7 @@ var getTemplatePath = function (path) {
     var defaultPath = '/theme/' + path;
     var file = new File(extendedPath);
     return file.isExists() ? extendedPath : defaultPath ;
-}
+};
 
 var dashboardLayouts = function () {
     var path = 'extensions/themes/';
@@ -198,7 +204,7 @@ var getScript = function (fileName) {
     var path = 'extensions/themes/' + theme + '/js/' + fileName + '.js';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
-}
+};
 
 var getStyle = function (fileName) {
     var config = require('/configs/designer.json');
@@ -206,12 +212,12 @@ var getStyle = function (fileName) {
     var path = 'extensions/themes/' + theme + '/css/' + fileName + '.css';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
-}
+};
 
 var resolvePath = function (path) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var extendedPath = 'extensions/themes/' + theme + '/' + path;
+    var extendedPath = '/extensions/themes/' + theme + '/' + path;
     var file = new File(extendedPath);
     return file.isExists() ? extendedPath : '/theme/' + path;
 };
@@ -269,4 +275,4 @@ var resolvePassword = function(passwordAlias){
 var getCustomThemePath = function () {
     var carbon = require('carbon');
     return '/store/' + carbon.userDomain + '/fs/themes/';
-}
+};

@@ -166,10 +166,10 @@ public class DashboardDeployer implements AppDeploymentHandler {
                 } else if (DashboardConstants.THEME_ARTIFACT_TYPE.equals(artifact.getType())) {
                     try {
                         if (file.isDirectory()) {
-                            String storePath = getArtifactPath("themes");
                             String themeName = file.getName();
+                            String storePath = getArtifactPath("themes");
                             File destination = new File(storePath + themeName);
-                            if (destination.exists()) {
+                            if (destination.exists() || themeName.equals("Default Theme")) {
                                 String errorMsg = "A theme already exists with the name " + themeName;
                                 log.error(errorMsg);
                             } else {
