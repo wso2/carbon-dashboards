@@ -17,11 +17,14 @@ $(function () {
     var conf;
     var schema;
     var providerData;
+    // gadgetLocation will be dynamically injected 
+    var gadgetLocation = '/portal/store/carbon.super/fs/gadget/my_gadget/';
     var init = function () {
+
         var CHART_CONF = 'chart-conf';
         var GADGET_NAME = 'gadget-name';
         $.ajax({
-            url: '/portal/store/carbon.super/fs/gadget/my_gadget/conf.json',
+            url: gadgetLocation + 'conf.json',
             method: "GET",
             contentType: "application/json",
             async: false,
@@ -30,7 +33,7 @@ $(function () {
                 console.log(JSON.stringify(conf));
                 console.log(conf[CHART_CONF][GADGET_NAME]);
                 $.ajax({
-                    url: '/portal/store/carbon.super/fs/gadget/' + conf[CHART_CONF][GADGET_NAME] + '/gadget-controller.jag?action=getSchema',
+                    url: gadgetLocation +  '/gadget-controller.jag?action=getSchema',
                     method: "POST",
                     data: JSON.stringify(conf),
                     contentType: "application/json",
@@ -41,7 +44,7 @@ $(function () {
                     }
                 });
                 $.ajax({
-                    url: '/portal/store/carbon.super/fs/gadget/'  + conf[CHART_CONF][GADGET_NAME] +'/gadget-controller.jag?action=getData',
+                    url: gadgetLocation +'/gadget-controller.jag?action=getData',
                     method: "POST",
                     data: JSON.stringify(conf),
                     contentType: "application/json",
