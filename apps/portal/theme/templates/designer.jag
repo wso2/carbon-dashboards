@@ -133,8 +133,8 @@
                 </a>
             </li>
             <li>
-                <a  rel="sub-nav"
-                    onclick="menuCreator('#sidebarNavGadgets', this)" title="<%=i18n.localize("menu")%>"
+                <a rel="sub-nav"
+                    onclick="menuCreator(this)" title="<%=i18n.localize("menu")%>"
                     id="btn-sidebar-menu">
                     <i class="icon fw fw-menu"></i>
                 </a>

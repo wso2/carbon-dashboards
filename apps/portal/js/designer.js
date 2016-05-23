@@ -1285,6 +1285,8 @@ $(function () {
                             "Please add an anonymous view to this page before select it as the landing page");
                     } else {
                         dashboard.landing = idVal;
+                        var menuItem = getChild(dashboard.menu, idVal);
+                        dashboard.menu.unshift(menuItem);
                     }
                 }
             },
@@ -1821,13 +1823,10 @@ $(function () {
             menu: dashboard.menu
         }));
 
-        //$('.menu-hierarchy').draggable();
-
         $(".menu-hierarchy").draggable({ 
             revert:  function(dropped) {
                var dropped = dropped && dropped[0].id == "droppable";
                if(!dropped) return !dropped;
-
             } 
         }).each(function() {
             var top = $(this).position().top;
@@ -1844,25 +1843,8 @@ $(function () {
             drop: handleDropEvent
         });
 
-
-        //Handlebars.compile($('#ues-dashboard-banner-hbs').html())
-
-/*        var depth = 0;
-        var menu = dashboard.menu;
-        updateMenu(menu, "");
-
-        function updateMenu(menu, parent){
-            for (var i = 0; i < menu.length; i++) {
-                $('#ues-pages').html(menuListHbs({
-                    menu: menu[i]
-                }));
-
-                if(menu[i].subordinates.length > 0){
-                    depth++;
-                    updateMenu(menu[i].subordinates, menu[i].id);
-                }
-            }
-        }*/
+        //Disable draggable state for landing page
+        $("ul.menu-customize li:nth-child(3)").draggable('disable');
     };
 
     /**
@@ -1906,30 +1888,38 @@ $(function () {
                 showConfirm('Deleting the page',
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
-                        removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
-                            var pages = dashboard.pages;
+                        //check whether there are any subordinates
+                        var isRemovable = isRemovablePage(pid);
+                        console.log("Page removable state: " + isRemovable);
+                        if(isRemovable){
+                            removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
+                                var pages = dashboard.pages;
+                                getChild(dashboard.menu, pid);
+                                updatePagesList(pages);
 
-                            updatePagesList(pages);
+                                // if the landing page was deleted, make the first page(in menu) to be the landing page
+                                if (dashboard.menu.length) {
+                                    if (pid == dashboard.landing) {
+                                        dashboard.landing = dashboard.menu[0].id;
+                                    }
+                                } else {
+                                    dashboard.landing = null;
 
-                            // if the landing page was deleted, make the first page to be the landing page
-                            if (dashboard.pages.length) {
-                                if (pid == dashboard.landing) {
-                                    dashboard.landing = pages[0].id;
+                                    // hide the sidebar if it is open
+                                    if ($('#left-sidebar').hasClass('toggled')) {
+                                        $('#btn-pages-sidebar').click();
+                                    }
                                 }
-                            } else {
-                                dashboard.landing = null;
 
-                                // hide the sidebar if it is open
-                                if ($('#left-sidebar').hasClass('toggled')) {
-                                    $('#btn-pages-sidebar').click();
-                                }
-                            }
+                                // save the dashboard
+                                saveDashboard();
+                                renderPage(dashboard.landing);
+                            }); 
+                        } else {
+                            showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates before deleteing.");
 
+                        }
 
-                            // save the dashboard
-                            saveDashboard();
-                            renderPage(dashboard.landing);
-                        });
                     });
             });
 
@@ -2002,6 +1992,14 @@ $(function () {
             pageSearchFunction(query);
         });
     };
+
+    var isRemovablePage = function (pid) {
+        var menuItem = getChild(dashboard.menu, pid);
+        if(menuItem.subordinates.length === 0){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Register the "set_pref" rpc function. When user set the user preferences using
@@ -2745,9 +2743,7 @@ function updateSidebarNav(view, button) {
     $(view).siblings().hide();
     $('.content').show();
     $('.menu').hide();
-
-    //$('.menu').hide();
-    //$('.content').show();
+    $('#left-sidebar').show();
 
     if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
@@ -2759,31 +2755,12 @@ function updateSidebarNav(view, button) {
 }
 
 
-function menuCreator(view, button) {
-
+function menuCreator(button) {
+    //$(button).addClass("active");
     $('.menu').show();
     $('.content').hide();
-    $('#sidebarNavPages').siblings.hide();
-    //$('#left-sidebar').hide();
-    // var target = $(button).data('target');
-    // $(view).show();
-    // $(view).siblings().hide();
-    //
-    // if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
-    //     $('#left-sidebar-sub').hide();
-    // } else {
-    //     $('#left-sidebar-sub').show();
-    // }
-    //
-    // if ($(button).attr('id') === 'btn-sidebar-menu') {
-    //     //$('.page-content').hide();
-    //     $('#left-sidebar').hide();
-    // } else {
-    //     //$('.page-content').show();
-    //     //$('#left-sidebar').show();
-    // }
-    //
-    // nanoScrollerSelector[0].nanoscroller.reset();
+    $('.page-content-wrapper').css('padding-left',50);
+    $('#left-sidebar').hide();
 }
 
 /**
