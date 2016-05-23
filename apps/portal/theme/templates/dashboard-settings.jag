@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 %>
-<% var utils = require('/modules/utils.js'); %>
-<% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
+    <% var utils = require('/modules/utils.js'); %>
+    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
