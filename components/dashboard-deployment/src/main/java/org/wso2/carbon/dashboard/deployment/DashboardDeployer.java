@@ -167,9 +167,9 @@ public class DashboardDeployer implements AppDeploymentHandler {
                     try {
                         if (file.isDirectory()) {
                             String themeName = file.getName();
-                            String storePath = getArtifactPath("themes");
+                            String storePath = getArtifactPath(DashboardConstants.THEME_TYPE);
                             File destination = new File(storePath + themeName);
-                            if (destination.exists() || themeName.equals("Default Theme")) {
+                            if (destination.exists() || themeName.equalsIgnoreCase(DashboardConstants.DEFAULT_THEME)) {
                                 String errorMsg = "A theme already exists with the name " + themeName;
                                 log.error(errorMsg);
                             } else {
@@ -230,11 +230,10 @@ public class DashboardDeployer implements AppDeploymentHandler {
                 deleteFile(file);
                 log.info("Artifact [" + file.getName() + "] has been deleted from layouts directory.");
             } else if (DashboardConstants.THEME_ARTIFACT_TYPE.equals(artifact.getType())) {
-                deleteFile(file);
-                String storePath = getArtifactPath("themes");
+                String storePath = getArtifactPath(DashboardConstants.THEME_TYPE);
                 File storedPath = new File(storePath + file.getName());
                 deleteFile(storedPath);
-                log.info("Artifact [" + file.getName() + "] has been deleted from themes directory.");
+                log.info("Artifact [" + file.getName() + "] has been deleted from theme directory.");
             }
         }
     }

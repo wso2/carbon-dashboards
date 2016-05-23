@@ -141,7 +141,7 @@ var store = function () {
  * this method returns the file path to the custom theme folder
  * @returns {String} path to custom themes
  */
-var getStylesPath = function () {
+var getThemeStylesPath = function () {
     var theme = "";
     if (dashboard.theme) {
         theme = dashboard.theme;
@@ -161,7 +161,7 @@ var getStylesPath = function () {
  * @param fileName name of the script file
  * @returns {String} path to script file
  */
-var getScriptPath = function (fileName) {
+var getThemeScriptPath = function (fileName) {
     var theme = "";
     if (dashboard.theme) {
         theme = dashboard.theme;
@@ -178,7 +178,7 @@ var getScriptPath = function (fileName) {
  * @param fileName name of the template file
  * @returns {String} path to template file
  */
-var getTemplatePath = function (path) {
+var getThemeTemplatePath = function (path) {
     var theme = "";
     if (dashboard.theme) {
         theme = dashboard.theme;
@@ -270,7 +270,7 @@ var resolvePassword = function(passwordAlias){
 
 /**
  * Returns the custom path after appending the current user domain
- * @returns {string} path to custom themes
+ * @returns {String} path to custom themes
  */
 var getCustomThemePath = function () {
     var carbon = require('carbon');
@@ -283,12 +283,12 @@ var getCustomThemePath = function () {
  * @param dashboardTheme dashboard theme name
  * @returns {String} dashboard theme
  */
-var getDashboardTheme = function (dashboardTheme) {
-    var themePath = getCustomThemePath() + dashboardTheme;
+var getDashboardTheme = function (dashboardThemeName) {
+    var themePath = getCustomThemePath() + dashboardThemeName;
     var folder = new File(themePath);
-    if(dashboardTheme !== undefined || folder.isExists()) {
-        return dashboardTheme;
+    if(dashboardThemeName !== undefined || folder.isExists()) {
+        return dashboardThemeName;
     } else {
         return "Default Theme";
     }
-}
+};

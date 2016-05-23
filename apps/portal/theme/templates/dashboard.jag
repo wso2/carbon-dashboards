@@ -72,7 +72,7 @@
 <html lang="en">
 <head>
      <%
-    include(utils.getTemplatePath('templates/includes/portal-header.jag')); %>
+    include(utils.getThemeTemplatePath('templates/includes/portal-header.jag')); %>
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
     <!-- JQuery UI -->
@@ -85,7 +85,7 @@
 
     <!-- Custom theme overrides -->
     <%
-        var path = utils.getStylesPath();
+        var path = utils.getThemeStylesPath();
         var folder = new File('/' + path);
         var filePath = "";
         var fileList = folder.listFiles();
@@ -105,11 +105,11 @@
             <div class="page-header">
 				<div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%>">
 
-                    <% include(utils.getTemplatePath('templates/includes/project-title.jag')); %>
+                    <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
 
                     <div class="pull-right float-remove-xs clearix">
-                        <% include(utils.getTemplatePath('templates/includes/control-panel.jag')); %>
-                        <% include(utils.getTemplatePath('templates/includes/page-navigation.jag')); %>
+                        <% include(utils.getThemeTemplatePath('templates/includes/control-panel.jag')); %>
+                        <% include(utils.getThemeTemplatePath('templates/includes/page-navigation.jag')); %>
                     </div>
                 </div>
             </div>
@@ -132,7 +132,7 @@
     </div>
 
     <!--Footer -->
-    <% include(utils.getTemplatePath('templates/includes/portal-footer.jag')); %>
+    <% include(utils.getThemeTemplatePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Handlebar templates -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
@@ -319,20 +319,20 @@
 
     <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('ues')%>"></script>
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('ues-prefs')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-prefs')%>"></script>
     <% include('/controllers/includes/common-scripts.jag'); %>
     <% include('/controllers/includes/dashboard-scripts.jag'); %>
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('ues-gadgets')%>"></script>
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('ues-dashboards')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-gadgets')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-dashboards')%>"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
     <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('gadget-properties')%>"></script>
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('ds-handlebar-helpers')%>"></script>
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('dashboard')%>"></script>
-    <script src="<%=urlPrefix%><%=utils.getScriptPath('ds-ajax-api')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('gadget-properties')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-handlebar-helpers')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-ajax-api')%>"></script>
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>

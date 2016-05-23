@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 %>
-<%var utils = require('/modules/utils.js');%>
+<% var utils = require('/modules/utils.js'); %>
 <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
@@ -126,7 +126,7 @@
                     </label>
                     <div class="col-sm-3">
                         <div class="input-group-btn select" id="ues-dashboard-theme">
-                            <button name="d-theme" class="btn btn-default dropdown-toggle" type="button"
+                            <button class="btn btn-default dropdown-toggle" type="button"
                                 data-toggle="dropdown" aria-expanded="false">
                                 <span class="selected"><%=utils.getDashboardTheme(dashboard.theme)%></span><span class="caret"></span>
                             </button>
@@ -241,8 +241,8 @@
         <div class="col-md-6">
             <form class="form-horizontal">
                 <div class="form-group">
-                    <label for="ues-share-view" class="col-sm-3 control-label"></label>
-                    <div class = "col-sm-12">
+                <label for="ues-share-view" class="col-sm-3 control-label"></label>
+                    <div class = "col-sm-3">
                         <button type="button" id="ues-dashboard-saveBtn" class="btn btn-default btn-bordered btn-primary"><%= i18n.localize("settings.savebutton")%></button>
                         <button type="button" id="ues-dashboard-cancelBtn" class="btn btn-default btn-bordered"><%= i18n.localize("settings.cancelbutton")%></button>
                     </div>
