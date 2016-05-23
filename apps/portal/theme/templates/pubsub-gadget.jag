@@ -75,7 +75,7 @@ pages.forEach(function(p) {
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
 
     <!-- Custom theme overrides -->
-    <link rel="stylesheet" href="<%=urlPrefix%><%=utils.dashboardStyles(dashboard.theme)%>">
+    <link rel="stylesheet" href="<%=urlPrefix%><%=utils.getStyle('dashboard')%>">
 
 
 </head>
