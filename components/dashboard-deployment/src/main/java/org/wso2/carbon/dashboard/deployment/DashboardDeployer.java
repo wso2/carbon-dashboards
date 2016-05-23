@@ -231,6 +231,9 @@ public class DashboardDeployer implements AppDeploymentHandler {
                 log.info("Artifact [" + file.getName() + "] has been deleted from layouts directory.");
             } else if (DashboardConstants.THEME_ARTIFACT_TYPE.equals(artifact.getType())) {
                 deleteFile(file);
+                String storePath = getArtifactPath("themes");
+                File storedPath = new File(storePath + file.getName());
+                deleteFile(storedPath);
                 log.info("Artifact [" + file.getName() + "] has been deleted from themes directory.");
             }
         }
