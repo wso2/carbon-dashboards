@@ -78,37 +78,35 @@ Handlebars.registerHelper('resolveURI', function (path) {
 
 //return menu hierachy
 Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user) {
-    var div = "<div id ='ds-menu-root' class='ds-menu-root'>root</div>",
-        depth = 1,
-        padding = 10;
+    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'>";
 
-    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'><li class='ds-menu-root' id='ds-menu-root'>root</li>";
+        if(designer){
+            divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'><i class='fw fw-up'></i> Make Root</li>" + 
+                "<li class='hide-all' style='margin: 0 0 10px 0;' id='ds-menu-hide'><input type='checkbox' name='ds-menu-hide' value='hide'> <i class='fw fw-view'></i> Hide All</li>";
+        }
+
     updateSubordinates(menu, null);
     divTree += "</ul>"
 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
-                //console.log("I is: " + i + " depth is: " + depth + " parent is : " + parent + " page : " + menu[i].id);
-                //div += "<ul class='menu-hierarchy' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
-
                 if (designer) {
                     divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
-                        "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='depth" +
-                            depth +" menu-hierarchy' style=''>" +
+                        "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
                                 "<span>" + menu[i].id + "<span class='controls'><i class='fw fw-view'></i></span></span>";
                 } else {
+                    var divLi = "<li><a href='" + menu[i].id + "'>" + menu[i].title + "</a>";
                     if (isAnonView || !user) {
                         if (menu[i].isanon) {
                             // Anonymous viewing. So render only anonymous pages links.
-                            divTree += "<li style='list-style-type: none;'><a href='" + menu[i].id + "' style='position: relative;'>" + menu[i].title + "</a>"
+                            divTree += divLi;
                         }
                     } else {
-                            divTree += "<li style='list-style-type: none;'><a href='" + menu[i].id + "' style='position: relative;'>" + menu[i].title + "</a>"
+                        divTree += divLi;
                     }
                 }
 
                 if(menu[i].subordinates.length > 0){
-                    depth++;
                     divTree += "<ul class='' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
                     updateSubordinates(menu[i].subordinates, menu[i].id);
                     divTree += "</ul>";
@@ -116,8 +114,6 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                     divTree += "</li>";
                 }
         }
-        depth--;
-        //divTree += "</ul>";
     }
     return divTree;
 });
