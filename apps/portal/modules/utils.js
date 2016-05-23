@@ -276,3 +276,19 @@ var getCustomThemePath = function () {
     var carbon = require('carbon');
     return '/store/' + carbon.userDomain + '/fs/themes/';
 };
+
+/**
+ * If the dashboard theme defined in the json file is available,
+ * returns the theme name, else return "Default Theme"
+ * @param dashboardTheme dashboard theme name
+ * @returns {String} dashboard theme
+ */
+var getDashboardTheme = function (dashboardTheme) {
+    var themePath = getCustomThemePath() + dashboardTheme;
+    var folder = new File(themePath);
+    if(dashboardTheme !== undefined || folder.isExists()) {
+        return dashboardTheme;
+    } else {
+        return "Default Theme";
+    }
+}

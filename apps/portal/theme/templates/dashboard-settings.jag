@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 %>
+<%var utils = require('/modules/utils.js');%>
 <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
@@ -127,12 +128,11 @@
                         <div class="input-group-btn select" id="ues-dashboard-theme">
                             <button name="d-theme" class="btn btn-default dropdown-toggle" type="button"
                                 data-toggle="dropdown" aria-expanded="false">
-                                <span class="selected"><%=dashboard.theme%></span><span class="caret"></span>
+                                <span class="selected"><%=utils.getDashboardTheme(dashboard.theme)%></span><span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu option" role="menu">
                                <li><a href="#"><%=i18n.localize("theme.default")%></a></li>
                                <%
-                                var utils = require('/modules/utils.js');
                                 var path = utils.getCustomThemePath();
                                 var folder = new File('/' + path);
                                 var themeName = "";
