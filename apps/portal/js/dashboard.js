@@ -237,6 +237,12 @@ $(function () {
             isAnonView: isAnonView,
             user: user
         }));
+
+        $('#ues-pages-col').html(menuListHbs({
+            menu: ues.global.dashboard.menu,
+            isAnonView: isAnonView,
+            user: user
+        }));
     };
 
     /**
