@@ -71,8 +71,7 @@
 %>
 <html lang="en">
 <head>
-     <%
-    include(utils.getThemeTemplatePath('templates/includes/portal-header.jag')); %>
+    <% include(utils.getThemeTemplatePath('templates/includes/portal-header.jag')); %>
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
     <!-- JQuery UI -->

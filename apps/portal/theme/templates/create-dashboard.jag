@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
-
+    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("create.dashboard")%></title>
