@@ -1,0 +1,1 @@
+{"provider-conf" : {"db_url" : "asdasd", "username" : "asdasd", "password" : "sdasdsa", "driver" : "orange", "control1" : "demo value", "provider-name" : "rdbms"}, "chart-conf" : {"x" : "student_name", "y" : "marks", "colour" : "asdasd", "control1" : "default valuesadasdas", "gadget-name" : "my_gadget", "chart-name" : "line-chart"}}

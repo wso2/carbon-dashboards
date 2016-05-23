@@ -115,7 +115,6 @@
                         <fieldset>
                             <div class="form-group">
                               <div id = "chart-config" class="col-md-4"></div>
-                              <!--iframe src="/portal/test.jag"></iframe-->
                             </div>
                         </fieldset>
                         </form>
@@ -203,6 +202,8 @@
 </script>
 
 <script id="chart-list-hbs" type="text/x-handlebars-template">
+     <label><%= i18n.localize("gadget.name")%></label>
+     <input type="text" id="gadget-name" class="form-control" name="gadget-name" />
      <label><%= i18n.localize("select.chart")%></label>
       <select id="chart-type" class="form-control">
       <option value="select-chart"><%= i18n.localize("select.a.chart")%></option>
@@ -212,9 +213,8 @@
       </select>
 </script>
 
-<script id="chart-preview-hbs" type="text/x-handlebars-template">
-    <input type="button" id="preview" value="<%= i18n.localize("preview")%>"/>
-    <div id="preview-pane"></div>
+<script id="preview-hbs" type="text/x-handlebars-template">
+     <iframe src= "theme/templates/preview.jag"></iframe>
 </script>
 
 <script id="wizard-zeroevents-hbs" type="text/x-handlebars-template">

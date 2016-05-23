@@ -31,7 +31,7 @@
     var PROVIDERS_LOCATION = '/extensions/providers/';
     var PARTIAL_LOCATION = '/partials/';
     var CHART_LOCATION = '/extensions/chart-templates/';
-    var GADGET_LOCATION = '/store/' + session.get('user').domain + '/fs/gadget/'
+    var GADGETS_LOCATION = '/store/' + session.get('user').domain + '/fs/gadget/'
 
     var FIELD_NAME = 'fieldName';
     var VALUE_SET = 'valueSet';
@@ -133,7 +133,6 @@
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
         if (providerApi.validate(data[PROVIDER_CONF])) {
-            log.info('@@@@@@@@@@@@@@@ '+stringify(data[PROVIDER_CONF]))
             schema = providerApi.getSchema(data[PROVIDER_CONF]);
         }
         var chartApi = require(CHART_LOCATION + data.chartType + '/index.js');
@@ -162,17 +161,47 @@
         print(customPartial);
         return;
     } else if (action === 'generateGadget') {
+        log.info('inside generate gadget')
+        /*
+        var gadgetName = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
+        var existingGadgetLocation = new File(GADGETS_LOCATION);
+        var existingGadgets = existingGadgetLocation.listFiles();
+        log.info(stringify(existingGadgets));
+        existingGadgets.forEach(function (file) {
+            if(gadgetName === file.getName()){
+                response.sendError(500, 'Gadget name already exists');
+            }
+        });
         try {
-            var file = new File(GADGET_LOCATION + 'temp');
+            var gadgetLocation = GADGETS_LOCATION + gadgetName ;
+            var file = new File(gadgetLocation);
             file.mkdir();
-            file = new File(GADGET_LOCATION + 'temp/' + 'conf.json');
+            file = new File(gadgetLocation + '/conf.json');
             file.open("w");
             file.write(data);
+
+            var file = new File(gadgetLocation + '/js/');
+            file.mkdir(); */
+
+            /*
+            var provider = data[PROVIDER_CONF][PROVIDER_NAME];
+            var file = new File(gadgetLocation +'/js/' + provider);
+            file.mkdir();
+            var file = new File(PROVIDERS_LOCATION + provider + '/index.js');
+            file.saveAs(gadgetLocation + '/js/' + provider + '/index.js');
+
+            var chart = data[CHART_CONF][CHART_NAME];
+            var file = new File(CHART_LOCATION + chart + '/index.js');
+            file.mkdir();
+            file.saveAs(gadgetLocation + '/js/' + chart + '/index.js');
+            */
+/*
         }
         finally{
             file.close();
         }
-
+*/
+        print({"chartName " : "my_gadget"});
         return;
     }
 

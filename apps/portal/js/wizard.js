@@ -82,18 +82,17 @@ $('#chart-list').change(function(){
 });
 
 $("#preview").click(function () {
-    var cConfig = getChartConfigData();
     delete wizardData['chartType'];
     wizardData[CHART_CONF] = getChartConfigData();
-    /*$.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getData',
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=generateGadget',
         method: "POST",
-        data: JSON.stringify(pConfig),
+        data: JSON.stringify(wizardData),
         contentType: "application/json",
         async: false,
         success: function (data) {
-            var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
-            $('#data-preview').append(dataPreviewHbs(data));
+            var previewHbs = Handlebars.compile($('#preview-hbs').html());
+            $('#preview-pane').html(previewHbs);
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
@@ -109,7 +108,7 @@ $("#preview").click(function () {
                 error: xhr.responseText
             }));
         }
-    });*/
+    });
 });
 
 
@@ -289,6 +288,7 @@ function getChartConfigData() {
     $.map(formData, function (n) {
         configInput[n['name']] = n['value'];
     });
+    configInput[$('#gadget-name').attr("name")] = $('#gadget-name').val();
     configInput[CHART_NAME] = chartType ;
     return configInput;
 }

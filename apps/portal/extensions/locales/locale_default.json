@@ -145,5 +145,6 @@
     "select.chart" : "Select Chart Type",
     "select.a.chart" : ".. Select a Chart ..",
     "chart.configuration" : "Chart Configuration",
-    "preview" : "Preview"
+    "preview" : "Preview",
+    "gadget.name" : "Gadget Name"
 }

@@ -1,0 +1,12 @@
+<div id='my-placeholder'></div>
+
+<script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
+<script src="/portal/js/ues.js"></script>
+<script src="/portal/js/ues-gadgets.js"></script>
+<script>
+var elem = document.getElementById("my-placeholder");
+var gadget = "https://localhost:9443/portal/store/carbon.super/fs/gadget/my_gadget/index.xml";
+var container = new osapi.container.Container();
+var site = container.newGadgetSite(elem);
+container.navigateGadget(site, gadget, {}, {});
+</script>
