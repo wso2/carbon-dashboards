@@ -1820,7 +1820,8 @@ $(function () {
     var updateMenuList = function() {
         //console.log("adding menu: " + JSON.stringify(dashboard.menu));
         $('#ues-pages').html(menuListHbs({
-            menu: dashboard.menu
+            menu: dashboard.menu,
+            ishiddenMenu : dashboard.hideAllMenuItems
         }));
 
         $(".menu-hierarchy").draggable({ 
@@ -2174,6 +2175,7 @@ $(function () {
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
+            var ishidden = dashboard.hideAllMenuItems ? true: false;
             var page = {
                 id: id,
                 title: options.title,
@@ -2196,6 +2198,7 @@ $(function () {
             var menu = {
                 id : id,
                 isanon: false,
+                ishidden: ishidden,
                 title : options.title,
                 subordinates: []
             };
@@ -2725,6 +2728,77 @@ $(function () {
     initDashboard(ues.global.dashboard, ues.global.page);
 
     ues.dashboards.save = saveDashboard;
+
+    $('#ds-menu-hide-all').change(function () {
+        console.log("checkbox id ds-menu-hide changed");
+        if ($(this).is(":checked")) {
+            //do the stuff that you would do when 'checked'
+            console.log("checked! " + $(this).attr("id"));
+            hideAllMenuItems(true);
+            dashboard.hideAllMenuItems = true;
+            saveDashboard();
+            return;
+        } else {
+            hideAllMenuItems(false);
+            dashboard.hideAllMenuItems = false;
+            saveDashboard();
+            return;
+        }
+        //Here do the stuff you want to do when 'unchecked'
+    });
+
+    $('.hide-menu-item').click(function (){
+        console.log("Hide page id: " + $(this).attr('id'));
+        hideMenuItem($(this).attr('id'));
+    });
+
+    var hideAllMenuItems = function(bool){
+        var menu = dashboard.menu;
+        var landing = dashboard.landing;
+        hideSubordinates(menu, landing);
+
+        function hideSubordinates(menu, landing){
+            for (var i = 0; i < menu.length; i++) {
+                    if(menu[i].id !== landing){
+                        menu[i].ishidden = bool;
+                    }
+
+                if(menu[i].subordinates.length > 0){
+                    hideSubordinates(menu[i].subordinates, landing);
+                }
+            }
+        }
+
+    }
+
+    var hideMenuItem = function(pageId){
+        var menu = dashboard.menu;
+        var landing = dashboard.landing;
+        hideSubordinates(menu, landing);
+
+        function hideSubordinates(menu, landing){
+            for (var i = 0; i < menu.length; i++) {
+                    if(menu[i].id !== landing && menu[i].id === pageId){
+                        console.log("Hiding page: " + menu[i].id);
+                        if(menu[i].ishidden){
+                            menu[i].ishidden = false;
+                        }else{
+                            if(menu[i].subordinates.length === 0){
+                                menu[i].ishidden = true;
+                            }
+                        }
+                        //menu[i].ishidden = bool;
+                        saveDashboard();
+                        return;
+                    }
+
+                if(menu[i].subordinates.length > 0){
+                    hideSubordinates(menu[i].subordinates, landing);
+                }
+            }
+        }
+
+    }
 });
 
 // Initialize nano scrollers

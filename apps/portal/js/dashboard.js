@@ -235,13 +235,15 @@ $(function () {
         $('#ues-pages').html(menuListHbs({
             menu: ues.global.dashboard.menu,
             isAnonView: isAnonView,
-            user: user
+            user: user,
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
         }));
 
         $('#ues-pages-col').html(menuListHbs({
             menu: ues.global.dashboard.menu,
             isAnonView: isAnonView,
-            user: user
+            user: user,
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
         }));
     };
 

@@ -459,7 +459,7 @@
     </script>
 
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu}}{{/traverseMenu}}
     </script>
 
     <!-- Jquery/Jquery UI JS -->
