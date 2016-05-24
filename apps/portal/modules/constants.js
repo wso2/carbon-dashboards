@@ -25,7 +25,7 @@ var APPLICATION_ZIP = "application/zip";
 //directory paths
 var EXTENSIONS_THEMES_PATH = "extensions/themes/";
 var STORE_PATH = "/store/";
-var FS_THEME_PATH = "/fs/themes/";
+var FS_THEME_PATH = "/fs/theme/";
 var EXTENSIONS_LOCALES_PATH = "/extensions/locales/";
 var JS_PATH = "js/";
 var CSS_PATH = "/css";
