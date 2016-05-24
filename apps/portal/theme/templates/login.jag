@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <style type="text/css">
@@ -64,7 +64,7 @@
     </div>
 
     <!-- Footer -->
-    <% include(utils.resolvePath('templates/portal-footer.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Jquery JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>

@@ -29,13 +29,15 @@ public class DashboardConstants {
     public static final String GADGET_TYPE = "gadget";
     public static final String LAYOUT_DEPLOYMENT_DIR = "layout";
     public static final String GADGET_DEPLOYMENT_DIR = "gadget";
+    public static final String THEME_TYPE = "theme";
 
     public static final String DASHBOARD_ARTIFACT_TYPE = "dashboards/dashboard";
     public static final String LAYOUT_ARTIFACT_TYPE = "dashboards/layout";
     public static final String GADGET_ARTIFACT_TYPE = "dashboards/gadget";
+    public static final String THEME_ARTIFACT_TYPE = "dashboards/theme";
 
     public static final String DASHBOARD_EXTENSION = ".json";
-
+    public static final String DEFAULT_THEME = "Default Theme";
     public static  final String DASHBOARDS_RESOURCE_PATH = RegistryConstants.PATH_SEPARATOR +
             "ues" + RegistryConstants.PATH_SEPARATOR +  "dashboards" + RegistryConstants.PATH_SEPARATOR;
 }

@@ -139,5 +139,7 @@
     "designer.componentProperties.priority": "Priority",
     "bad.request" : "Bad request",
     "request.not.authorized" : "Request not authorized",
-    "forbidden" : "Forbiden"
+    "forbidden" : "Forbidden",
+    "theme.label": "Theme",
+    "theme.default": "Default Theme"
 }

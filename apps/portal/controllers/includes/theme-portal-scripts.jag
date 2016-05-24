@@ -17,7 +17,7 @@
  *  under the License.
  *
  */
-var scripts = utils.portalScripts();
+var scripts = utils.getScript('portal');
 %>
 <% if (scripts) {
     %>

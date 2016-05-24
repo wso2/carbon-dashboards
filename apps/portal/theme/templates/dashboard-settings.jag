@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
+    <% var utils = require('/modules/utils.js'); %>
+    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/settings.css">
@@ -119,6 +120,34 @@
                             placeholder="<%= i18n.localize("description")%>"><%=dashboard.description%></textarea>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="ues-dashboard-theme" class="col-sm-3 control-label">
+                        <%= i18n.localize("theme.label")%>
+                    </label>
+                    <div class="col-sm-3">
+                        <div class="input-group-btn select" id="ues-dashboard-theme">
+                            <button class="btn btn-default dropdown-toggle" type="button"
+                                data-toggle="dropdown" aria-expanded="false">
+                                <span class="selected"><%=utils.getDashboardTheme(dashboard.theme)%></span><span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu option" role="menu">
+                               <li><a href="#"><%=i18n.localize("theme.default")%></a></li>
+                               <%
+                                var path = utils.getCustomThemePath();
+                                var folder = new File('/' + path);
+                                var themeName = "";
+                                var list = folder.listFiles();
+                                list.forEach(function(file){
+                                    themeName =  file.getName();
+                               %>
+                                <li><a href="#"><%=themeName%></a></li>
+                               <%
+                                });
+                               %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -213,7 +242,7 @@
             <form class="form-horizontal">
                 <div class="form-group">
                 <label for="ues-share-view" class="col-sm-3 control-label"></label>
-                <div class = "col-sm-3">
+                    <div class = "col-sm-3">
                         <button type="button" id="ues-dashboard-saveBtn" class="btn btn-default btn-bordered btn-primary"><%= i18n.localize("settings.savebutton")%></button>
                         <button type="button" id="ues-dashboard-cancelBtn" class="btn btn-default btn-bordered"><%= i18n.localize("settings.cancelbutton")%></button>
                     </div>
@@ -223,7 +252,7 @@
     </div>
 </div>
 
-<% include(utils.resolvePath('templates/portal-footer.jag')); %>
+<% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
 <!-- Jquery JS/Jquery UI JS -->
 <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>

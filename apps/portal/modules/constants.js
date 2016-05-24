@@ -22,6 +22,15 @@ var APPLICATION_JSON = "application/json";
 var APPLICATION_X_WWW_FOR_URLENCODED = "application/x-www-form-urlencoded";
 var APPLICATION_ZIP = "application/zip";
 
+//directory paths
+var EXTENSIONS_THEMES_PATH = "extensions/themes/";
+var STORE_PATH = "/store/";
+var FS_THEME_PATH = "/fs/themes/";
+var EXTENSIONS_LOCALES_PATH = "/extensions/locales/";
+var JS_PATH = "js/";
+var CSS_PATH = "/css";
+var THEME_PATH = "theme/";
+
 var ACCESS_TOKEN_PAIR_IDENTIFIER = "accessTokenPair";
 var ENCODED_CLIENT_KEYS_IDENTIFIER = "encodedClientKey";
 var AUTHORIZATION_HEADER = "Authorization";
@@ -35,6 +44,7 @@ var AUTHORIZATION_TYPE_OAUTH = "oauth";
 var LOGIN_MESSAGE = "true";
 var GRANT_TYPE_PASSWORD = "password";
 var GRANT_TYPE_SAML = "saml";
+var DEFAULT_THEME = "Default Theme";
 
 var HTTP_GET = "GET";
 var HTTP_POST = "POST";
