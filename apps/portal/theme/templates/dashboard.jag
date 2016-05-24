@@ -126,7 +126,7 @@
 
 
 <body class="dashboard lang_<%=request.getLocale()%> dark">
-    
+      <% if(typeof  bgColor === 'undefined'){ %>
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
@@ -174,10 +174,10 @@
             </div>
         </div>
     </div>
-    
+      <% } %>
     <!-- #page-content-wrapper -->
     <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
-
+          <% if(typeof  bgColor === 'undefined'){ %>
         <div class="page-header">
             <div class="container-fluid">
 
@@ -295,7 +295,7 @@
 
             </div>
         </div>
-
+         <% } %>
         <!-- page content -->
         <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
             <div class="nano">
@@ -338,12 +338,15 @@
         <!--/div-->
     </div><!-- /#page-content-wrapper -->
 
+
+ <% if(typeof  bgColor === 'undefined'){ %>
     <!--Footer -->
     <footer class="footer">
         <div class="container-fluid">
             <p>WSO2 Dashboard Server 2.1.0 | &copy; <script>document.write(new Date().getFullYear());</script> <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
         </div>
     </footer>
+    <% } %>
 
     <!-- Handlebar templates -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
@@ -394,15 +397,63 @@
     <!-- Component toolbar actions -->
     <script id="ues-component-actions-hbs" type="text/x-handlebars-template">
         <div class="btn-group">
-            {{#if userPrefsExists}}
-            <button type="button" class="btn btn-default ues-component-settings-handle" title="<%= i18n.localize("properties.label") %>">
-                <i class="icon fw fw fw-configarations"></i>
+            {{#if isDropdownView}}
+            <button class="btn btn-default dropdown-toggle" type="button" id="actionButtons" data-toggle="dropdown">
+                <i class="icon fw fw-ellipsis fw-rotate-90"></i>
+            </button>
+            <ul class="dropdown-menu more-actions-button" role="menu" aria-labelledby="actionButtons">
+                {{#each custom}}
+                <li role="presentation">
+                    <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                        {{#if iconTypeCSS}}
+                        <i class="icon fw {{iconClass}}"></i>
+                        {{/if}}
+                        {{#if iconTypeImage}}
+                        <img src="{{resolveURI this.image}}"/>
+                        {{/if}}
+                    </button>
+                </li>
+                {{/each}}
+
+                {{#if default.configurations}}
+                <li role="presentation">
+                    <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                        <i class="fw fw-configarations"></i>
+                    </button>
+                {{/if}}
+
+                {{#if defult.maximize}}
+                <li role="presentation">
+                    <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+                        <i class="icon fw fw-expand"></i>
+                    </button>
+                </li>
+                {{/if}}
+            </ul>
+            {{else}}
+            {{#each custom}}
+            <button class="btn btn-default ues-custom-action" data-action="{{action}}" type="button" title="{{toolTip}}">
+                {{#if iconTypeCSS}}
+                <i class="icon fw {{iconClass}}"></i>
+                {{/if}}
+                {{#if iconTypeImage}}
+                <img src="{{resolveURI this.image}}"/>
+                {{/if}}
+            </button>
+            {{/each}}
+
+            {{#if default.configurations}}
+            <button type="button" class="btn btn-default ues-component-settings-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" title="<%=i18n.localize("gadget.configuration.label")%>">
+                <i class="fw fw-configarations"></i>
             </button>
             {{/if}}
-            <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>"
-                data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
+
+            {{#if default.maximize}}
+            <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
                 <i class="icon fw fw-expand"></i>
             </button>
+            {{/if}}
+            {{/if}}
         </div>
     </script>
 
@@ -522,6 +573,11 @@
                 $('[data-toggle="theme"]').removeAttr('checked');
                 $('body').removeClass('dark');
             }
+
+            <% if(typeof  bgColor != 'undefined'){ %>
+                $('.dashboard').css({'background-color': '<%=bgColor%>'});
+           <% } %>
+
         });
                 
         $('[data-toggle="theme"]').change(function(){
