@@ -110,6 +110,8 @@
                         <div id="data-preview"></div>
                     </div>
                     <div class="tab-pane" id="tab3">
+                        <label><%= i18n.localize("gadget.name")%></label>
+                        <input type="text" id="gadget-name" class="form-control" name="gadget-name" />
                         <div id="chart-list"></div>
                         <form id="chart-config-form" class="form-horizontal">
                         <fieldset>
@@ -119,6 +121,8 @@
                         </fieldset>
                         </form>
                         <input type="button" id="preview" style="display:none;" value="<%= i18n.localize("preview")%>"/>
+                        <input type="button" id="add.to.gadget.store" style="display:none;"
+                        value="<%= i18n.localize("add.to.gadget.store")%>"/>
                         <div id="preview-pane"></div>
                     </div>
                     <ul class="pager wizard">
@@ -202,8 +206,6 @@
 </script>
 
 <script id="chart-list-hbs" type="text/x-handlebars-template">
-     <label><%= i18n.localize("gadget.name")%></label>
-     <input type="text" id="gadget-name" class="form-control" name="gadget-name" />
      <label><%= i18n.localize("select.chart")%></label>
       <select id="chart-type" class="form-control">
       <option value="select-chart"><%= i18n.localize("select.a.chart")%></option>

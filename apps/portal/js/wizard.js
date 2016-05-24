@@ -82,10 +82,13 @@ $('#chart-list').change(function(){
 });
 
 $("#preview").click(function () {
+    $("#generate").removeAttr("style");
+    $('#rootwizard').find('.pager .finish').show();
+    $('#rootwizard').find('.pager .finish').removeClass('disabled');
     delete wizardData['chartType'];
     wizardData[CHART_CONF] = getChartConfigData();
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=generateGadget',
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=preview',
         method: "POST",
         data: JSON.stringify(wizardData),
         contentType: "application/json",
@@ -109,6 +112,35 @@ $("#preview").click(function () {
             }));
         }
     });
+});
+
+$(".pager .finish").click(function() {
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=addGadgetToStore',
+        method: "POST",
+        data: JSON.stringify(wizardData),
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+
+            window.location.href = "/portal/";
+        },
+        error: function (xhr, message, errorObj) {
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
+            }
+            var source = $("#wizard-error-hbs").html();
+            ;
+            var template = Handlebars.compile(source);
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
+                error: xhr.responseText
+            }));
+        }
+    });
+
 });
 
 

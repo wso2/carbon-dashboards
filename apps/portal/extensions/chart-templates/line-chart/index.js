@@ -54,16 +54,38 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param schema
      * @param data
      */
-    draw = function (chartConfig, schema, data) {
+    draw = function (placeholder, chartConfig, schema, data) {
 
-        /*
-         chartConfig
+        var views = [{
+            id: "chart-0",
+            schema: [{
+                "metadata": {
+                    "names": ["fruits", "count"],
+                    "types": ["ordinal", "linear"]
+                }
+            }],
+            chartConfig: {
+                x: "fruits",
+                charts: [{ type: "line", y: "count" }],
+                padding: { "top": 20, "left": 50, "bottom": 20, "right": 80 },
+                range: false,
+                height: 300
+            },
+            data: function() {
+                var results = [
+                    ['apple',3],['orange',13],['melon',4],['avacado',1],['grapes',6]
+                ];
+                wso2gadgets.onDataReady(results);
 
-         {
-            "fieldName":"value",
-            "fieldName":"value"
-         }
-         */
+            }
+        }];
+
+        try {
+            wso2gadgets.init("#canvas",views);
+            var view = wso2gadgets.load("chart-0");
+        } catch (e) {
+            console.error(e);
+        }
 
     };
 

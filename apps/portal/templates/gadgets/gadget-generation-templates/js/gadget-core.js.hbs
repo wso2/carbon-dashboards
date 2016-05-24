@@ -14,37 +14,32 @@
  * limitations under the License.
  */
 $(function () {
+    var gadgetLocation = '{{gadget_location}}';
     var conf;
     var schema;
     var providerData;
-    // gadgetLocation will be dynamically injected 
-    var gadgetLocation = '/portal/store/carbon.super/fs/gadget/my_gadget/';
-    var init = function () {
-
+var init = function () {
         var CHART_CONF = 'chart-conf';
         var GADGET_NAME = 'gadget-name';
         $.ajax({
-            url: gadgetLocation + 'conf.json',
+            url: gadgetLocation + '/conf.json',
             method: "GET",
             contentType: "application/json",
             async: false,
             success: function (data) {
                 conf = JSON.parse(data);
-                console.log(JSON.stringify(conf));
-                console.log(conf[CHART_CONF][GADGET_NAME]);
                 $.ajax({
-                    url: gadgetLocation +  '/gadget-controller.jag?action=getSchema',
+                    url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                     method: "POST",
                     data: JSON.stringify(conf),
                     contentType: "application/json",
                     async: false,
                     success: function (data) {
-                        console.log(JSON.stringify(data));
                         schema = data;
                     }
                 });
                 $.ajax({
-                    url: gadgetLocation +'/gadget-controller.jag?action=getData',
+                    url: gadgetLocation + '/gadget-controller.jag?action=getData',
                     method: "POST",
                     data: JSON.stringify(conf),
                     contentType: "application/json",

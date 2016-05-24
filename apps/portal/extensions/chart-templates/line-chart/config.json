@@ -26,6 +26,8 @@
             "childPartial" : "linePartial",
             "dynamicJS" : []
         }
-    ]
+    ],
+    "common-libs" : ["wso2gadgets"],
+    "chart-libs" : ["d3.min","vega","VizGrammar.min"]
 }
 

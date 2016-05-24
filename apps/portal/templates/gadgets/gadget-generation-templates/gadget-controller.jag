@@ -27,11 +27,11 @@
     var data = request.getContent();
 
     if (action === 'getSchema') {
-        var providerAPI = require('js/providerApi.js');
+        var providerAPI = require('js/provider-api.js');
         print(providerAPI.getSchema(data[PROVIDER_CONF]));
         return;
     } else if(action === 'getData'){
-        var providerAPI = require('js/providerApi.js');
+        var providerAPI = require('js/provider-api.js');
         print(providerAPI.getData(data[PROVIDER_CONF]));
     }
 

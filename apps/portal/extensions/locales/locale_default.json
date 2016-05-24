@@ -146,5 +146,6 @@
     "select.a.chart" : ".. Select a Chart ..",
     "chart.configuration" : "Chart Configuration",
     "preview" : "Preview",
-    "gadget.name" : "Gadget Name"
+    "gadget.name" : "Gadget Name",
+    "add.to.gadget.store" : "Add to Gadget Store"
 }

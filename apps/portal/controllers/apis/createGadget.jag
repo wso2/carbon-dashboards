@@ -18,7 +18,6 @@
  *
  */
 (function () {
-    var getSchema, getData;
     var log = new Log();
 
     if (!user) {
@@ -27,19 +26,23 @@
     }
     var utils = require('/modules/utils.js');
     var configs = require('/configs/designer.json');
+    var fileUtils = require('/modules/file-utils.js');
 
+    var CONTEXT = '/portal';
     var PROVIDERS_LOCATION = '/extensions/providers/';
     var PARTIAL_LOCATION = '/partials/';
     var CHART_LOCATION = '/extensions/chart-templates/';
-    var GADGETS_LOCATION = '/store/' + session.get('user').domain + '/fs/gadget/'
+    var GADGETS_LOCATION = '/store/' + session.get('user').domain + '/fs/gadget/';
+    var GADGET_TEMPLATE_LOCATION = '/templates/gadgets/gadget-generation-templates/';
+    var TEMP_GADGET_LOCATION = '/templates/';
 
-    var FIELD_NAME = 'fieldName';
     var VALUE_SET = 'valueSet';
     var SCHEME_NOTIFIER = '$COLUMN_NAMES';
     var PROVIDER_CONF = 'provider-conf';
     var PROVIDER_NAME = 'provider-name';
     var CHART_CONF = 'chart-conf';
     var CHART_NAME = 'chart-name';
+    var GADGET_NAME = 'gadget-name';
 
     response.contentType = 'application/json';
 
@@ -49,12 +52,7 @@
     if (action === 'getProviders') {
         var providers = [];
         var providerIgnoreList = configs.gadgetGeneration.ignoreProviders;
-        var parent = new File(PROVIDERS_LOCATION);
-        var allProvidersObj = parent.listFiles();
-        var allProviders = [];
-        allProvidersObj.forEach(function (file) {
-            allProviders.push(file.getName());
-        });
+        var allProviders = fileUtils.getFileNameList(PROVIDERS_LOCATION);
 
         var requiredProviders = allProviders.filter(function (el) {
             return providerIgnoreList.indexOf(el) < 0;
@@ -114,13 +112,8 @@
         }
 
     } else if (action === 'getChartList') {
-        var chartDirList = [];
         var chartList = [];
-        var chartDir = new File(CHART_LOCATION);
-        var allCharts = chartDir.listFiles();
-        allCharts.forEach(function (file) {
-            chartDirList.push(file.getName());
-        });
+        var chartDirList = fileUtils.getFileNameList(CHART_LOCATION);
 
         for (var i = 0; i < chartDirList.length; i++) {
             var chartConfigJson = require(CHART_LOCATION + chartDirList[i] + '/config.json');
@@ -160,48 +153,81 @@
         }
         print(customPartial);
         return;
-    } else if (action === 'generateGadget') {
-        log.info('inside generate gadget')
-        /*
-        var gadgetName = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
-        var existingGadgetLocation = new File(GADGETS_LOCATION);
-        var existingGadgets = existingGadgetLocation.listFiles();
-        log.info(stringify(existingGadgets));
-        existingGadgets.forEach(function (file) {
-            if(gadgetName === file.getName()){
-                response.sendError(500, 'Gadget name already exists');
-            }
+    } else if (action === 'preview') {
+        var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
+
+        var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
+        if(gadgetDir) {
+            gadgetDir.del();
+        }
+
+        var gadgetJsonData = {};
+        gadgetJsonData['gadget_id'] = gadgetID;
+        gadgetJsonData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
+        gadgetJsonData['gadget_url'] = 'gadget/'+ gadgetID + '/index.xml';
+        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.json.hbs',
+                        TEMP_GADGET_LOCATION + gadgetID +'/gadget.json', gadgetJsonData );
+
+        var gadgetCoreData = {};
+        gadgetCoreData['gadget_location'] = CONTEXT + TEMP_GADGET_LOCATION + gadgetID;
+        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
+                        TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
+
+        var gadgetXmlData = {};
+        gadgetXmlData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
+
+        var chart = data[CHART_CONF][CHART_NAME];
+        var chartConf = require(CHART_LOCATION + chart + '/config.json');
+        var commonLibs = chartConf['common-libs'];
+        gadgetXmlData['common-libs'] = commonLibs;
+
+        gadgetXmlData['chart-libs'] = chartConf['chart-libs'];
+        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'index.xml.hbs',
+                        TEMP_GADGET_LOCATION + gadgetID +'/index.xml', gadgetXmlData);
+
+        var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
+        fileUtils.copyFile(gadgetControllerFile, TEMP_GADGET_LOCATION + gadgetID + '/gadget-controller.jag');
+
+        var chartLibsDir = new File(CHART_LOCATION + chart + '/chart-libs/');
+        fileUtils.copyDir(chartLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
+
+        var providerApiFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js');
+        fileUtils.copyFile(providerApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-api.js');
+
+        var chartApiFile = new File(CHART_LOCATION + chart + '/index.js');
+        fileUtils.copyFile(chartApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/chart-api.js');
+
+        var previewData = {};
+        previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + TEMP_GADGET_LOCATION +
+                gadgetID + '/index.xml';
+        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
+                        '/theme/templates/preview.jag', previewData);
+
+        var file = new File(TEMP_GADGET_LOCATION + gadgetID + '/conf.json');
+        file.open("w");
+        file.write(data);
+        file.close();
+        print({
+            error: false
         });
-        try {
-            var gadgetLocation = GADGETS_LOCATION + gadgetName ;
-            var file = new File(gadgetLocation);
-            file.mkdir();
-            file = new File(gadgetLocation + '/conf.json');
-            file.open("w");
-            file.write(data);
+        return;
+    } else if(action === 'addGadgetToStore'){
+        var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
+        var gadgetCoreData = {};
+        gadgetCoreData['gadget_location'] = CONTEXT + GADGETS_LOCATION + gadgetID;
+        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
+                        TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
 
-            var file = new File(gadgetLocation + '/js/');
-            file.mkdir(); */
+        var gadget = new File(TEMP_GADGET_LOCATION + gadgetID);
+        fileUtils.copyDir(gadget, GADGETS_LOCATION);
 
-            /*
-            var provider = data[PROVIDER_CONF][PROVIDER_NAME];
-            var file = new File(gadgetLocation +'/js/' + provider);
-            file.mkdir();
-            var file = new File(PROVIDERS_LOCATION + provider + '/index.js');
-            file.saveAs(gadgetLocation + '/js/' + provider + '/index.js');
-
-            var chart = data[CHART_CONF][CHART_NAME];
-            var file = new File(CHART_LOCATION + chart + '/index.js');
-            file.mkdir();
-            file.saveAs(gadgetLocation + '/js/' + chart + '/index.js');
-            */
-/*
+        var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
+        if(gadgetDir) {
+            gadgetDir.del();
         }
-        finally{
-            file.close();
-        }
-*/
-        print({"chartName " : "my_gadget"});
+        print({
+            error: false
+        });
         return;
     }
 
