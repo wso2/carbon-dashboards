@@ -1,4 +1,5 @@
 var log = new Log();
+var constants = require("/modules/constants.js");
 
 var relativePrefix = function (path) {
     var parts = path.split('/');
@@ -169,7 +170,7 @@ var getThemeScriptPath = function (fileName) {
     var path = getCustomThemePath() + theme + '/js/' + fileName + '.js';
     var defaultPath = 'js/' + fileName + '.js';
     var file = new File('/' + path);
-    return file.isExists() ? path : defaultPath ;
+    return file.isExists() ? path : defaultPath;
 };
 
 /**
@@ -186,14 +187,14 @@ var getThemeTemplatePath = function (path) {
     var extendedPath = getCustomThemePath() + theme + '/' + path;
     var defaultPath = '/theme/' + path;
     var file = new File(extendedPath);
-    return file.isExists() ? extendedPath : defaultPath ;
+    return file.isExists() ? extendedPath : defaultPath;
 };
 
 var dashboardLayouts = function () {
-    var path = 'extensions/themes/';
+    var path = constants.EXTENSIONS_THEMES_PATH;
     var folder = new File('/' + path);
     var list = folder.listFiles();
-    list.forEach(function(file){
+    list.forEach(function (file) {
 
     });
 };
@@ -201,7 +202,7 @@ var dashboardLayouts = function () {
 var getScript = function (fileName) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + '/js/' + fileName + '.js';
+    var path = constants.EXTENSIONS_THEMES_PATH + theme + constants.JS_PATH + fileName + '.js';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -209,7 +210,7 @@ var getScript = function (fileName) {
 var getStyle = function (fileName) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = 'extensions/themes/' + theme + '/css/' + fileName + '.css';
+    var path = constants.EXTENSIONS_THEMES_PATH + theme + constants.CSS_PATH + fileName + '.css';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -217,17 +218,17 @@ var getStyle = function (fileName) {
 var resolvePath = function (path) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var extendedPath = '/extensions/themes/' + theme + '/' + path;
+    var extendedPath = constants.EXTENSIONS_THEMES_PATH + theme + '/' + path;
     var file = new File(extendedPath);
-    return file.isExists() ? extendedPath : '/theme/' + path;
+    return file.isExists() ? extendedPath : '/' + constants.THEME_PATH + path;
 };
 
 var resolveUrl = function (path) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var extendedPath = 'extensions/themes/' + theme + '/' + path;
+    var extendedPath = constants.EXTENSIONS_THEMES_PATH + theme + '/' + path;
     var file = new File('/' + extendedPath);
-    return file.isExists() ? extendedPath : 'theme/' + path;
+    return file.isExists() ? extendedPath : constants.THEME_PATH + path;
 };
 
 var getCarbonServerAddress = function (trans) {
@@ -250,10 +251,10 @@ var getCarbonServerAddress = function (trans) {
 };
 
 var getLocaleResourcePath = function () {
-    return '/extensions/locales/';
+    return constants.EXTENSIONS_LOCALES_PATH;
 };
 
-var resolvePassword = function(passwordAlias){
+var resolvePassword = function (passwordAlias) {
     var secretResolverFactory = org.wso2.securevault.SecretResolverFactory;
     var omAbstractFactory = org.apache.axiom.om.OMAbstractFactory;
 
@@ -261,11 +262,11 @@ var resolvePassword = function(passwordAlias){
     var nameSpace = omFactory.createOMNamespace("http://org.wso2.securevault/configuration", "svns");
     var rootElement = omFactory.createOMElement("password", nameSpace);
 
-    omFactory.createOMText(rootElement,passwordAlias);
+    omFactory.createOMText(rootElement, passwordAlias);
 
     var alias = passwordAlias.split(":");
-    var reslover = secretResolverFactory.create(rootElement,true);
-    return reslover.resolve(alias[1]); 
+    var reslover = secretResolverFactory.create(rootElement, true);
+    return reslover.resolve(alias[1]);
 };
 
 /**
@@ -274,7 +275,7 @@ var resolvePassword = function(passwordAlias){
  */
 var getCustomThemePath = function () {
     var carbon = require('carbon');
-    return '/store/' + carbon.userDomain + '/fs/themes/';
+    return constants.STORE_PATH + carbon.userDomain + constants.FS_THEME_PATH;
 };
 
 /**
@@ -286,9 +287,9 @@ var getCustomThemePath = function () {
 var getDashboardTheme = function (dashboardThemeName) {
     var themePath = getCustomThemePath() + dashboardThemeName;
     var folder = new File(themePath);
-    if(dashboardThemeName !== undefined || folder.isExists()) {
+    if (dashboardThemeName !== undefined && folder.isExists()) {
         return dashboardThemeName;
     } else {
-        return "Default Theme";
+        return constants.DEFAULT_THEME;
     }
 };
