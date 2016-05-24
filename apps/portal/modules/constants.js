@@ -27,8 +27,8 @@ var EXTENSIONS_THEMES_PATH = "extensions/themes/";
 var STORE_PATH = "/store/";
 var FS_THEME_PATH = "/fs/themes/";
 var EXTENSIONS_LOCALES_PATH = "/extensions/locales/";
-var JS_PATH = "/js/";
-var CSS_PATH = "/css/";
+var JS_PATH = "js/";
+var CSS_PATH = "/css";
 var THEME_PATH = "theme/";
 
 var ACCESS_TOKEN_PAIR_IDENTIFIER = "accessTokenPair";

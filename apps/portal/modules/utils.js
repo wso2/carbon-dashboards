@@ -147,7 +147,7 @@ var getThemeStylesPath = function () {
     if (dashboard.theme) {
         theme = dashboard.theme;
     }
-    var stylesPath = getCustomThemePath() + theme + '/css';
+    var stylesPath = getCustomThemePath() + theme + constants.CSS_PATH;
     var folder = new File('/' + stylesPath);
     var list = folder.listFiles();
     if (list.length > 0) {
@@ -167,8 +167,8 @@ var getThemeScriptPath = function (fileName) {
     if (dashboard.theme) {
         theme = dashboard.theme;
     }
-    var path = getCustomThemePath() + theme + '/js/' + fileName + '.js';
-    var defaultPath = 'js/' + fileName + '.js';
+    var path = getCustomThemePath() + theme + '/' + constants.JS_PATH + fileName + '.js';
+    var defaultPath = constants.JS_PATH + fileName + '.js';
     var file = new File('/' + path);
     return file.isExists() ? path : defaultPath;
 };
@@ -202,7 +202,7 @@ var dashboardLayouts = function () {
 var getScript = function (fileName) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = constants.EXTENSIONS_THEMES_PATH + theme + constants.JS_PATH + fileName + '.js';
+    var path = constants.EXTENSIONS_THEMES_PATH + theme + '/' + constants.JS_PATH + fileName + '.js';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
@@ -210,7 +210,7 @@ var getScript = function (fileName) {
 var getStyle = function (fileName) {
     var config = require('/configs/designer.json');
     var theme = config.theme;
-    var path = constants.EXTENSIONS_THEMES_PATH + theme + constants.CSS_PATH + fileName + '.css';
+    var path = constants.EXTENSIONS_THEMES_PATH + theme + constants.CSS_PATH + '/' + fileName + '.css';
     var file = new File('/' + path);
     return file.isExists() ? path : null;
 };
