@@ -16,11 +16,12 @@
 var gadgetLocation = '{{gadget_location}}';
 $(function () {
 var init = function () {
-    var chartConfig = getChartConfig();
-    var schema = getProviderSchema();
-    var providerData = getProviderData();
+    var CHART_CONF = 'chart-conf';
+    var config = getConfig();
+    var schema = getProviderSchema(config);
+    var providerData = getProviderData(config);
 
-    draw('#canvas', chartConfig, schema, providerData);
+    draw('#canvas', config[CHART_CONF], schema, providerData);
     };
 init();
 });

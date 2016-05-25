@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getChartConfig, getProviderSchema,getProviderData;
+var getConfig, getProviderSchema,getProviderData;
 $(function () {
     var conf;
     var schema;
     var providerData;
-    getChartConfig = function () {
+    getConfig = function () {
         $.ajax({
             url: gadgetLocation + '/conf.json',
             method: "GET",
