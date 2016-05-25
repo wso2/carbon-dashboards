@@ -138,5 +138,8 @@
     "settings.cancelbutton": "Cancel",
     "designer.componentProperties.priority": "Priority",
     "bad.request" : "Bad request",
-    "request.not.authorized" : "Request not authorized"
+    "request.not.authorized" : "Request not authorized",
+    "forbidden" : "Forbidden",
+    "theme.label": "Theme",
+    "theme.default": "Default Theme"
 }

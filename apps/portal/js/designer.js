@@ -785,21 +785,19 @@ $(function () {
             var toolbarButtons = component.content.toolbarButtons || {};
             toolbarButtons.custom = toolbarButtons.custom || [];
             toolbarButtons.default = toolbarButtons.default || {};
-            toolbarButtons.default.maximize = toolbarButtons.default.maximize || true;
-            toolbarButtons.default.configurations = toolbarButtons.default.configurations || true;
+            if (!toolbarButtons.default.hasOwnProperty('maximize')) {
+                toolbarButtons.default.maximize = true;
+            }
+            if (!toolbarButtons.default.hasOwnProperty('configurations')) {
+                toolbarButtons.default.configurations = true;
+            }
+
             for (var i = 0; i < toolbarButtons.custom.length; i++) {
                 toolbarButtons.custom[i].iconTypeCSS = (toolbarButtons.custom[i].iconType.toLowerCase() == 'css');
                 toolbarButtons.custom[i].iconTypeImage = (toolbarButtons.custom[i].iconType.toLowerCase() == 'image');
             }
 
-            // Remove button is also there in the designer mode
-            var buttonCount = toolbarButtons.custom.length + 1;
-            if (toolbarButtons.default.maximize) {
-                buttonCount++;
-            }
-            if (toolbarButtons.default.configurations) {
-                buttonCount++;
-            }
+            var buttonCount = toolbarButtons.custom.length + 3;
             toolbarButtons.isDropdownView = buttonCount > 3;
 
             var componentBox = $('#' + component.id);

@@ -29,7 +29,7 @@
     var attr = configs.authentication.methods.sso.attributes;
     var sso = require('sso');
     var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
-    var constants = require("/controllers/constants/constants.js");
+    var constants = require("/modules/constants.js");
     var samlRespObj;
     var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
     var keyStorePassword = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Password");

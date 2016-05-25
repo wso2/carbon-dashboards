@@ -17,7 +17,7 @@
  *  under the License.
  *
  */
-var scripts = utils.dashboardScripts();
+var scripts = utils.getScript('dashboard-extensions');
 %>
 <% if (scripts) {
     %>

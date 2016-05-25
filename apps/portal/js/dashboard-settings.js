@@ -563,6 +563,13 @@ $(function () {
             dashboard.description = $(this).val();
         });
 
+        //Dashboard theme
+        $('#ues-dashboard-theme').on("click", '.option li', function (e) {
+            var text = $(this).children().text();
+            $('#ues-dashboard-theme .selected').text(text);
+            dashboard.theme = text;
+        });
+
         // Enable Oauth settings
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");

@@ -146,8 +146,8 @@ var fresh;
             accessTokenUrl: "",
             apiKey: "",
             apiSecret: "",
-            theme: ""
-        };
+            theme: request.getParameter('select-theme')
+    };
 
         utils.sandbox(context, function() {
             dashboards.create(dashboard);
