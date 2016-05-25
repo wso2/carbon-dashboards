@@ -99,6 +99,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab2">
+                        <div id="validation-errors"></div>
                         <form id="provider-config-form" class="form-horizontal">
                         <fieldset>
                             <div class="form-group">
@@ -162,8 +163,8 @@
 <script id="ui-config-hbs" type="text/x-handlebars-template">
     {{#each .}}
        {{#equalsIgnoreCase fieldType "string"}}
-          <label>{{fieldLabel}}<input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
-          {{#if isRequired}}required{{/if}}/>
+          <label>{{fieldLabel}}<input type="text" class="form-control" name="{{fieldName}}"
+          placeholder="{{placeholderText}}" {{#if isRequired}}required{{/if}}/>
           </label>
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "checkbox"}}

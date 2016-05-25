@@ -55,22 +55,28 @@ $('#show-data').click(function () {
         contentType: "application/json",
         async: false,
         success: function (data) {
-            var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
-            $('#data-preview').append(dataPreviewHbs(data));
+            if(!data.error) {
+                $('#validation-errors').html('');
+                var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
+                $('#data-preview').html(dataPreviewHbs(data));
+                $('#rootwizard').find('.pager .next').removeClass("disabled");
+            } else {
+                $('#validation-errors').html(data.message);
+                $('#data-preview').html('');
+                $('#rootwizard').find('.pager .next').addClass("disabled");
+            }
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
+            } else if(xhr.status === 500){
+
+
             }
-            var source = $("#wizard-error-hbs").html();
-            ;
-            var template = Handlebars.compile(source);
-            $("#rootwizard").empty();
-            $("#rootwizard").append(template({
-                error: xhr.responseText
-            }));
+            console.log('asdasda');
+
         }
     });
 });

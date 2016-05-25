@@ -10,7 +10,9 @@
             "fieldName" :"db_url",
             "fieldType" : "string",
             "defaultValue" : "",
-            "isRequired" : true
+            "isRequired" : true,
+            "hint": "This is a sample hint",
+            "placeholderText" : "test"
         },
         {
             "fieldLabel" : "Username",

@@ -46,7 +46,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * returns the data mode either push or pull
      */
     getMode = function (){
-
+        return 'pull';
     }
 
     /**

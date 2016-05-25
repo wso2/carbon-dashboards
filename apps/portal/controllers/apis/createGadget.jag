@@ -66,7 +66,28 @@
         return;
     } else if (action === 'getProviderConfig') {
         var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
-        print(providerApi.getConfig().config);
+        var providerConfig = providerApi.getConfig().config;
+        var mode = providerApi.getMode();
+        if(mode.toLowerCase() === 'pull'){
+          var refreshInterval = {
+              "fieldLabel" : "Refresh Interval",
+              "fieldName" :"refreshInterval",
+              "fieldType" : "string",
+              "defaultValue" : 10,
+              "isRequired" : true
+          };
+          providerConfig.push(refreshInterval);
+        } else {
+            var windowSize = {
+                "fieldLabel" : "Window Size",
+                "fieldName" :"windowSize",
+                "fieldType" : "string",
+                "defaultValue" : 10,
+                "isRequired" : true
+            }
+            providerConfig.push(windowSize);
+        }
+        print(providerConfig);
         return;
     } else if (action === 'getProviderAdvancedUI') {
         try {
@@ -85,8 +106,9 @@
         var schema;
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
-        if (providerApi.validate(data[PROVIDER_CONF])) {
-            var dataSet = providerApi.getData(data[PROVIDER_CONF], 5);
+        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        if (!validate.error) {
+            var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
             var output = {};
 
             output.tableHeaders = Object.keys(dataSet[0]);
@@ -103,11 +125,8 @@
             return;
         }
         else {
-            log.error("Invalid Data for Provider Config");
-            response.sendError(500, JSON.stringify({
-                error: true,
-                message: "Invalid data"
-            }));
+            log.error("Data validation failed for Provider Configuration");
+            print(validate);
             return;
         }
 
@@ -125,8 +144,13 @@
         var schema;
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
-        if (providerApi.validate(data[PROVIDER_CONF])) {
+        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        if (!validate.error) {
             schema = providerApi.getSchema(data[PROVIDER_CONF]);
+        } else {
+            log.error("Data validation failed for Provider Configuration");
+            print(validate);
+            return;
         }
         var chartApi = require(CHART_LOCATION + data.chartType + '/index.js');
         var modifiedChartConfig = chartApi.getConfig(schema);
@@ -175,24 +199,22 @@
 
         var gadgetXmlData = {};
         gadgetXmlData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
-
         var chart = data[CHART_CONF][CHART_NAME];
         var chartConf = require(CHART_LOCATION + chart + '/config.json');
         var commonLibs = chartConf['common-libs'];
         gadgetXmlData['common-libs'] = commonLibs;
-
         gadgetXmlData['chart-libs'] = chartConf['chart-libs'];
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'index.xml.hbs',
                         TEMP_GADGET_LOCATION + gadgetID +'/index.xml', gadgetXmlData);
-
-        var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
-        fileUtils.copyFile(gadgetControllerFile, TEMP_GADGET_LOCATION + gadgetID + '/gadget-controller.jag');
 
         var chartLibsDir = new File(CHART_LOCATION + chart + '/chart-libs/');
         fileUtils.copyDir(chartLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
 
         var providerApiFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js');
         fileUtils.copyFile(providerApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-api.js');
+
+        var providerClientFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/client.js');
+        fileUtils.copyFile(providerClientFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-client.js');
 
         var chartApiFile = new File(CHART_LOCATION + chart + '/index.js');
         fileUtils.copyFile(chartApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/chart-api.js');
