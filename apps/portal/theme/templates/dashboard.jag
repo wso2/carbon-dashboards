@@ -20,6 +20,9 @@
     var utils = require('/modules/utils.js');
     i18n.init(request, utils.getLocaleResourcePath());
 
+    // If the pageId is null, render the landing page
+    pageId = pageId || dashboard.landing;
+
     var usr = require('/modules/user.js'),
         user = usr.current(),
         isAnonView = request.getParameter('isAnonView');
@@ -76,7 +79,6 @@
 
     <!-- JQuery UI -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
-    
     <!-- Gridstack -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
         
@@ -98,40 +100,177 @@
 
 </head>
 <body class="dashboard lang_<%=request.getLocale()%>">
-    <div class="nano">
-        <div class="nano-content">
 
-            <div class="page-header">
-				<div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%>">
 
-                    <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
-
-                    <div class="pull-right float-remove-xs clearix">
-                        <% include(utils.getThemeTemplatePath('templates/includes/control-panel.jag')); %>
-                        <% include(utils.getThemeTemplatePath('templates/includes/page-navigation.jag')); %>
-                    </div>
+<body class="dashboard lang_<%=request.getLocale()%> dark">
+      <% if(typeof  bgColor === 'undefined'){ %>
+    <!-- .left-sidebar -->
+    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
+        <div class="nano">
+            <div class="nano-content">
+                    
+                <div class="product-logo">
+                    <i class="icon fw fw-wso2-logo"></i>
                 </div>
+                <div class="product-name">
+                    <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
+                </div>
+                
+                <ul class="nav nav-pills nav-stacked pages">
+                    <div id="ues-pages">
+                    </div>
+                </ul>
+                
+                <hr>
+                
+                <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
+                
             </div>
+        </div>
+    </div>
+      <% } %>
+    <!-- #page-content-wrapper -->
+    <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
+          <% if(typeof  bgColor === 'undefined'){ %>
+        <div class="page-header">
+            <div class="container-fluid">
 
-            <!-- #page-content-wrapper -->
-            <div class="page-content-wrapper">
+                <div class="navbar-header">
+                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="true" rel="sub-nav">
+                        <span class="icon fw-stack">
+                            <i class="fw fw-menu fw-stack-1x toggle-icon-left"></i>
+                        </span>
+                    </a>
+                    <a class="sidebar-toggle-button visible-xs" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="icon fw-stack">
+                            <i class="fw fw-menu fw-stack-1x toggle-icon-up"></i>
+                        </span>
+                    </a>
+                    <div class="page-title pull-left text-center-xs display-inline-block-xs" id="product-logo" style="display:none;">
+                        <h1 class="text-center-xs"><i class="icon fw fw-wso2-logo"></i>
+                            <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
+                        </h1>
+                    </div>
+                    <ul class="nav navbar-right float-remove-xs hidden-xs">
+                        <li class="visible-inline-block">
+                            <a class="dropdown" data-toggle="dropdown">
+                                <span class="icon fw-stack fw-lg">
+                                   <i class="fw fw-circle fw-stack-2x"></i>
+                                   <i class="fw fw-user fw-stack-1x fw-inverse"></i>
+                                </span>
+                                <span><%= user ? user.username : "anon" %> <span class="caret"></span></span>
+                            </a>
 
-                <!-- page content -->
-                <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
+                            <ul class="dropdown-menu dropdown-menu-right float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown" role="menu">
+                                <% include(utils.getThemeTemplatePath('templates/includes/control-panel.jag')); %>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav collapse-nav-sub pull-right hidden">
+                        <li class="visible-inline-block">
+                            <a data-toggle="dropdown">
+                                <span class="icon fw-stack">
+                                    <i class="fw fw-notification fw-stack-1x"></i>
+                                </span>
+                                <span class="badge">4</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right arrow alerts arrow-top-right dark add-margin-top-2x" role="menu">
+                                <ul class="sidebar-messages">
+                                    <li class="message message-success">
+                                        <h4><i class="icon fw fw-success"></i>Minor Information Message</h4>
+                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                                    </li>
+                                    <li class="message message-info">
+                                        <h4><i class="icon fw fw-info"></i>Minor Information Message</h4>
+                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                                    </li>
+                                    <li class="message message-warning">
+                                        <h4><i class="icon fw fw-warning"></i>Major Information Message</h4>
+                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                                    </li>
+                                    <li class="message message-danger">
+                                        <h4><i class="icon fw fw-error"></i>Critical Information Message</h4>
+                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
+                    
+                    <div class="text-center add-margin-bottom-2x">
+                        <span class="icon fw-stack fw-lg text-center">
+                           <i class="fw fw-circle fw-stack-2x"></i>
+                           <i class="fw fw-user fw-stack-1x fw-inverse"></i>
+                        </span>
+                    </div>
+                    <div class="text-center add-margin-bottom-3x"><%= user ? user.username : "anon" %></div>
+                                    
+                    <ul class="nav navbar-nav pages">
+                        <div id="ues-pages-col"></div>
+                    </ul>
+
+                    <hr>
+
+                    <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
+
+                    <ul class="nav nav-pills nav-stacked">
+                        <% include(utils.getThemeTemplatePath('templates/includes/control-panel.jag')); %>
+                    </ul>
+                </div><!--/.nav-collapse -->
+
+            </div>
+        </div>
+         <% } %>
+        <!-- page content -->
+        <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
+            <div class="nano">
+                <div class="nano-content">
 
                     <div class="page-content">
-                        <!-- Components grid -->
+                        
+                        <div class="progress hidden">
+                            <div class="indeterminate"></div>
+                        </div>
+                        
+
                         <div class="ues-components-grid gadgets-grid">
+                            <%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div-->
+        <!-- #page-content-wrapper -->
+        <!--div class="page-content-wrapper"-->
+
+            <!-- page content -->
+            <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
+
+                <div class="nano">
+                    <div class="nano-content">
+
+                        <div class="page-content">
+                            <div class="progress hidden">
+                                    <div class="indeterminate"></div>
+                            </div>
+                            <!-- Components grid -->
+                                <div class="ues-components-grid gadgets-grid"></div>
                         </div>
                     </div>
                 </div>
+            </div>
+        <!--/div-->
+    </div><!-- /#page-content-wrapper -->
 
-            </div><!-- /#page-content-wrapper -->
-        </div>
-    </div>
 
+ <% if(typeof  bgColor === 'undefined'){ %>
     <!--Footer -->
     <% include(utils.getThemeTemplatePath('templates/includes/portal-footer.jag')); %>
+    <% } %>
 
     <!-- Handlebar templates -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
@@ -295,6 +434,10 @@
         </div>
     </script>
 
+    <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
+        {{#traverseMenu menu false isAnonView user isHiddenMenu}}{{/traverseMenu}}
+    </script>
+
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
@@ -335,6 +478,52 @@
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>
+        
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+        
+        $(document).ready(function() {
+            if((getCookie('dashboardTheme') == 'dark') || (getCookie('dashboardTheme') == '')){
+                $('[data-toggle="theme"]').attr('checked', 'checked');
+                $('body').addClass('dark');  
+            }
+            else{
+                $('[data-toggle="theme"]').removeAttr('checked');
+                $('body').removeClass('dark');
+            }
+
+            <% if(typeof  bgColor != 'undefined'){ %>
+                $('.dashboard').css({'background-color': '<%=bgColor%>'});
+           <% } %>
+
+        });
+                
+        $('[data-toggle="theme"]').change(function(){
+            if($(this).prop('checked') == true){
+                $('[data-toggle="theme"]').each(function(){
+                    $('[data-toggle="theme"]').attr('checked', 'checked');
+                });
+                $('body').addClass('dark');
+                $('iframe').contents().find('body').addClass('dark');
+                document.cookie = "dashboardTheme=dark";
+            }
+            else{
+                $('[data-toggle="theme"]').each(function(){
+                    $(this).removeAttr('checked');
+                });
+                $('body').removeClass('dark');
+                $('iframe').contents().find('body').removeClass('dark');
+                document.cookie = "dashboardTheme=light";
+            }
+        });
 
         var nanoScrollerSelector = $(".nano");
         nanoScrollerSelector.nanoScroller();
@@ -348,9 +537,31 @@
         if (!ues.global.renderFromExtension) {
             ues.dashboards.render($('.ues-components-grid'), ues.global.dashboard, ues.global.page);
         }
+        
+        var iframesReadyInterval = setInterval(function() {
+            var done = false;
+            
+            $('.gadget-body').each(function(i){
+                if($(this).hasClass('loading')){
+                    done = false;
+                }
+                else {
+                    if($('iframe').length == (i+1)){
+                        done = true;
+                    }
+                }
+            });
+            
+            if(done == true) {
+                clearInterval(iframesReadyInterval);
+                $('[data-toggle="loading"]').loading('hide');
+            }    
+        }, 200);
 
         $(document).ready(function() {
-            // Show banner
+            $('[data-toggle="loading"]').loading('show');
+            $('.gadget-body').addClass('loading');
+            
             if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
                 $('.grid-stack-item[data-banner=true]')
                     .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
@@ -363,6 +574,17 @@
                 toggleHeading($(this), false);
             });
         });
+        
+        function toggleProductLogo(sidebarEventType){
+            var logo = $('#product-logo');
+            
+            if (sidebarEventType == 'hidden'){
+                logo.show();
+            }
+            else if (sidebarEventType == 'shown'){
+                logo.hide();
+            }
+        }
 
         function toggleHeading(source, show) {
             if (source.hasClass('ues-no-heading')) {
@@ -374,6 +596,18 @@
                 }
             }
         }
+
+        $('#left-sidebar').on('hidden.sidebar', function(e){
+            toggleProductLogo(e.type)
+        });
+        
+        $('#left-sidebar').on('shown.sidebar', function(e){
+            toggleProductLogo(e.type)
+        });
+
+        //usage : in traverseMenu helper
+        var user = <%= user %>,
+            isAnonView = <%= isAnonView %>;    
     </script>
 </body>
 </html>

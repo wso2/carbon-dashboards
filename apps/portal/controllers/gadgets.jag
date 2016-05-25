@@ -20,6 +20,10 @@
 var fresh = false;
 var bgColor;
 var pageId;
+var dbRoot;
+var dest;
+var renderEngine = {};
+
 (function () {
     var log = new Log();
     var matcher = new URIMatcher(request.getRequestURI());
@@ -149,9 +153,13 @@ var pageId;
             return;
         }
     }
-
+    else {
+        dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
+        // global reference to getBootstrapLayout() function
+        renderEngine.getDashboardContent = dashboards.getBootstrapLayout;
+    }
     // Based on the request (Whether it is stand alone or embedded) for the gadget,
     // decide the template to render
     isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) :
-            include(utils.resolvePath('templates/pubsub-gadget.jag'));
+            include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>

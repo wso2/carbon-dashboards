@@ -164,6 +164,8 @@ $(function () {
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
+    var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
+
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
 
     var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html());
@@ -1253,6 +1255,9 @@ $(function () {
                         "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
                 } else {
+                    //console.log(page.id);
+                    updateMenu(page.id, idVal, 'id');
+                    //change subordinates with new ID
                     page.id = idVal;
                     if (landing.is(":checked")) {
                         dashboard.landing = idVal;
@@ -1266,6 +1271,7 @@ $(function () {
                     title.val(page.title);
                     titleVal = page.title;
                 } else {
+                    updateMenu(page.id, titleVal, 'title');
                     page.title = titleVal;
                 }
             },
@@ -1277,6 +1283,8 @@ $(function () {
                             "Please add an anonymous view to this page before select it as the landing page");
                     } else {
                         dashboard.landing = idVal;
+                        var menuItem = getChild(dashboard.menu, idVal);
+                        dashboard.menu.unshift(menuItem);
                     }
                 }
             },
@@ -1286,6 +1294,8 @@ $(function () {
                         ues.global.dbType = ANONYMOUS_DASHBOARD_VIEW;
                         dashboard.isanon = true;
                         page.isanon = true;
+                        updateMenu(page.id, true, 'isanon');
+
 
                         // create the template if there is no content create before
                         page.layout.content.anon = page.layout.content.anon || page.layout.content.loggedIn;
@@ -1303,6 +1313,7 @@ $(function () {
                             "landing page when there are pages with anonymous views");
                     } else {
                         page.isanon = false;
+                        updateMenu(page.id, false, 'isanon');
 
                         // Check if the dashboard is no longer anonymous.
                         if (!checkWhetherDashboardIsAnon()) {
@@ -1331,6 +1342,111 @@ $(function () {
 
         return true;
     };
+
+    //key can be id or the title
+    //todo tests the update
+    var updateMenu = function (id, newValue, key){
+
+        var menu = dashboard.menu;
+        updateSubordinates(menu, id, newValue);
+
+        function updateSubordinates(menu, id, newValue){
+            for (var i = 0; i < menu.length; i++) {
+                //console.log("key is: " + key + " found: " + menu[i][key]);
+                if (menu[i].id === id) {
+                    menu[i][key] = newValue;
+                    return;
+                }
+
+                if(menu[i].subordinates.length > 0){
+                    updateSubordinates(menu[i].subordinates, id, newValue);
+                }
+            }
+        }
+    }
+
+
+    var handleDropEvent = function( event, ui ) {
+        event.stopPropagation();
+        //event.preventDefault();
+        var draggable = ui.draggable;
+        //console.log( 'The page with ID "' + draggable.attr('id') + '" was dropped onto page ' + $(event.target).attr('id'));
+        //console.log("parent : " + $(event.target).attr('data-anon') + " typeof " + typeof($(event.target).attr('data-anon')));
+        // dropping an anon page in to a non-anon container
+        if(draggable.attr('data-anon') === 'true' && $(event.target).attr('data-anon') === 'false'){
+            console.log("unable to perform the action!");
+            showInformation("Cannot drop anonymous page in to a non anonymous page container.");
+            return;
+        }
+
+        var menu = ues.global.dashboard.menu;
+        var parentId = $(event.target).attr('id');
+        var childObj = getChild(menu, draggable.attr('id'));
+
+        //console.log("Child Object is: " + childObj);
+
+        if(childObj != null || childObj != undefined){
+            if (parentId === 'ds-menu-root') {
+                menu.push(childObj);
+                saveDashboard();
+                updateMenuList();
+            } else {
+                findAndUpdateParent(menu, parentId);
+            }
+        }
+
+        function findAndUpdateParent(menu, parentId){
+
+            for (var i = 0; i < menu.length; i++) {
+                if (menu[i].id === parentId) {
+                   console.log("childObj received: " + JSON.stringify(childObj) + " typeof: " + typeof(menu[i].subordinates));
+/*                        if (menu[i].isanon === false && childObj.isanon === true) {
+                            console.log("Unable to drop the page.");
+                            updateMenuList();
+                            return;
+                        } else {*/
+                            menu[i].subordinates.push(childObj);
+                            saveDashboard();
+                            updateMenuList();
+                            return;
+                        //}
+                }
+                else if (menu[i].subordinates.length > 0){
+                    findAndUpdateParent(menu[i].subordinates,parentId);
+                }
+            }
+        //return;
+        }
+    };
+
+    var getChild = function(menu, id){
+        var arrayT = [];
+        var childObj;
+
+        findChild(menu, id);
+
+        //console.log("getChild id: " + id);
+        function findChild(menu, id){
+            for (var i = 0; i < menu.length; i++) {
+                //arrayT.push(i);
+                //console.log("key is: " + key + " found: " + menu[i][key]);
+                if (menu[i].id === id) {
+                    //console.log("findChild : " + menu[i].id + " object: " + JSON.stringify(menu[i]));
+                    childObj = menu[i];
+                   // if(func === 'splice'){
+                        menu.splice(i, 1);
+                    //}
+                    return;
+                }
+                else if (menu[i].subordinates.length > 0){
+                    findChild(menu[i].subordinates, id);
+                }
+            }
+        }
+        //console.log("Child Object is: " + childObj);
+        //console.log(arrayT);
+        return childObj; 
+    }
 
     /**
      * Sanitize the given event's key code.
@@ -1698,6 +1814,60 @@ $(function () {
             loadAssets('gadget', query);
         });
     };
+    //todo complete @udarar
+    var updateMenuList = function() {
+        //console.log("adding menu: " + JSON.stringify(dashboard.menu));
+        $('#ues-pages').html(menuListHbs({
+            menu: dashboard.menu,
+            ishiddenMenu : dashboard.hideAllMenuItems
+        }));
+
+        $(".menu-hierarchy").draggable({ 
+            revert:  function(dropped) {
+               var dropped = dropped && dropped[0].id == "droppable";
+               if(!dropped) return !dropped;
+            } 
+        }).each(function() {
+            var top = $(this).position().top;
+            var left = $(this).position().left;
+            $(this).data('orgTop', top);
+            $(this).data('orgLeft', left);
+        });
+
+        $('.menu-hierarchy').droppable( {
+            drop: handleDropEvent
+        });
+
+        $('.ds-menu-root').droppable( {
+            drop: handleDropEvent
+        });
+
+        //Disable draggable state for landing page
+        $("ul.menu-customize li:nth-child(3)").draggable('disable');
+
+        $('#ds-menu-hide-all').change(function () {
+            console.log("checkbox id ds-menu-hide changed");
+            if ($(this).is(":checked")) {
+                //do the stuff that you would do when 'checked'
+                console.log("checked! " + $(this).attr("id"));
+                hideAllMenuItems(true);
+                dashboard.hideAllMenuItems = true;
+                saveDashboard();
+                return;
+            } else {
+                hideAllMenuItems(false);
+                dashboard.hideAllMenuItems = false;
+                saveDashboard();
+                return;
+            }
+            //Here do the stuff you want to do when 'unchecked'
+        });
+
+        $('.hide-menu-item').click(function (){
+            console.log("Hide page id: " + $(this).attr('id'));
+            hideMenuItem($(this).attr('id'));
+        });
+    };
 
     /**
      * Initialize the designer menu.
@@ -1740,30 +1910,38 @@ $(function () {
                 showConfirm('Deleting the page',
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
-                        removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
-                            var pages = dashboard.pages;
+                        //check whether there are any subordinates
+                        var isRemovable = isRemovablePage(pid);
+                        console.log("Page removable state: " + isRemovable);
+                        if(isRemovable){
+                            removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
+                                var pages = dashboard.pages;
+                                getChild(dashboard.menu, pid);
+                                updatePagesList(pages);
 
-                            updatePagesList(pages);
+                                // if the landing page was deleted, make the first page(in menu) to be the landing page
+                                if (dashboard.menu.length) {
+                                    if (pid == dashboard.landing) {
+                                        dashboard.landing = dashboard.menu[0].id;
+                                    }
+                                } else {
+                                    dashboard.landing = null;
 
-                            // if the landing page was deleted, make the first page to be the landing page
-                            if (dashboard.pages.length) {
-                                if (pid == dashboard.landing) {
-                                    dashboard.landing = pages[0].id;
+                                    // hide the sidebar if it is open
+                                    if ($('#left-sidebar').hasClass('toggled')) {
+                                        $('#btn-pages-sidebar').click();
+                                    }
                                 }
-                            } else {
-                                dashboard.landing = null;
 
-                                // hide the sidebar if it is open
-                                if ($('#left-sidebar').hasClass('toggled')) {
-                                    $('#btn-pages-sidebar').click();
-                                }
-                            }
+                                // save the dashboard
+                                saveDashboard();
+                                renderPage(dashboard.landing);
+                            }); 
+                        } else {
+                            showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates before deleteing.");
 
+                        }
 
-                            // save the dashboard
-                            saveDashboard();
-                            renderPage(dashboard.landing);
-                        });
                     });
             });
 
@@ -1836,6 +2014,14 @@ $(function () {
             pageSearchFunction(query);
         });
     };
+
+    var isRemovablePage = function (pid) {
+        var menuItem = getChild(dashboard.menu, pid);
+        if(menuItem.subordinates.length === 0){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Register the "set_pref" rpc function. When user set the user preferences using
@@ -2010,6 +2196,7 @@ $(function () {
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
+            var ishidden = dashboard.hideAllMenuItems ? true: false;
             var page = {
                 id: id,
                 title: options.title,
@@ -2028,6 +2215,19 @@ $(function () {
             dashboard.landing = dashboard.landing || id;
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
+
+            var menu = {
+                id : id,
+                isanon: false,
+                ishidden: ishidden,
+                title : options.title,
+                subordinates: []
+            };
+
+            if(!dashboard.menu){
+                dashboard.menu = [];
+            }
+            dashboard.menu.push(menu);
 
             saveDashboard();
             if (ues.global.page) {
@@ -2276,6 +2476,7 @@ $(function () {
             done(err);
         }, true);
         updatePagesList();
+        updateMenuList();
         initBanner();
     };
 
@@ -2548,6 +2749,54 @@ $(function () {
     initDashboard(ues.global.dashboard, ues.global.page);
 
     ues.dashboards.save = saveDashboard;
+
+    var hideAllMenuItems = function(bool){
+        var menu = dashboard.menu;
+        var landing = dashboard.landing;
+        hideSubordinates(menu, landing);
+
+        function hideSubordinates(menu, landing){
+            for (var i = 0; i < menu.length; i++) {
+                    if(menu[i].id !== landing){
+                        menu[i].ishidden = bool;
+                    }
+
+                if(menu[i].subordinates.length > 0){
+                    hideSubordinates(menu[i].subordinates, landing);
+                }
+            }
+        }
+
+    }
+
+    var hideMenuItem = function(pageId){
+        var menu = dashboard.menu;
+        var landing = dashboard.landing;
+        hideSubordinates(menu, landing);
+
+        function hideSubordinates(menu, landing){
+            for (var i = 0; i < menu.length; i++) {
+                    if(menu[i].id !== landing && menu[i].id === pageId){
+                        console.log("Hiding page: " + menu[i].id);
+                        if(menu[i].ishidden){
+                            menu[i].ishidden = false;
+                        }else{
+                            if(menu[i].subordinates.length === 0){
+                                menu[i].ishidden = true;
+                            }
+                        }
+                        //menu[i].ishidden = bool;
+                        saveDashboard();
+                        return;
+                    }
+
+                if(menu[i].subordinates.length > 0){
+                    hideSubordinates(menu[i].subordinates, landing);
+                }
+            }
+        }
+
+    }
 });
 
 // Initialize nano scrollers
@@ -2564,6 +2813,9 @@ function updateSidebarNav(view, button) {
     var target = $(button).data('target');
     $(view).show();
     $(view).siblings().hide();
+    $('.content').show();
+    $('.menu').hide();
+    $('#left-sidebar').show();
 
     if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
@@ -2572,6 +2824,15 @@ function updateSidebarNav(view, button) {
     }
 
     nanoScrollerSelector[0].nanoscroller.reset();
+}
+
+
+function menuCreator(button) {
+    //$(button).addClass("active");
+    $('.menu').show();
+    $('.content').hide();
+    $('.page-content-wrapper').css('padding-left',50);
+    $('#left-sidebar').hide();
 }
 
 /**
