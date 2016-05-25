@@ -15,5 +15,11 @@
  * limitations under the License.
  */
 %>
-<script src="<%=urlPrefix%><%=utils.getThemeScriptPath('gadget-properties')%>"></script>
-<%=encodeHtml(dashboard.title)%>
+<div class="light-dark-switcher">
+    <label>Light</label>
+    <label class="switch">
+        <input type="checkbox" data-toggle="theme" checked="checked">
+        <span class="helper"></span>
+    </label>
+    <label>Dark</label>
+</div>

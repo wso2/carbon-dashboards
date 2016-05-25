@@ -15,96 +15,15 @@
  * limitations under the License.
  */
 %>
-<div class="auth float-remove-xs text-center-xs text-right">
-    <div>
-        <%
-        var showEdit = user && (!isAnonView && (urlDomain == user.domain ||
-            (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) && !isMobileDevice;
-        var isEdit = showEdit && user.isEditor;
-        %>
-        <!-- View for screens other than XS -->
-        <span class="hidden-xs">
-
-        <%
-        if (user) {
-        %>
-
-            <span class="add-margin-right-2x username"><%=user.username%></span>
-             <%
-            if (showEdit && user.isEditor) {
-            %>
-                <a href="<%=dbRoot%>?editor=true" class="ues-copy" title="<%=i18n.localize("edit.button")%>">
-                    <i class="fw fw-settings"></i></a>
-            <%
-            }
-            %>
-
-            <%
-            if (showEdit && !user.isEditor) {
-            %>
-            <a href="<%=dbRoot%>?custom=true" class="ues-copy" title="<%=i18n.localize("personalize")%>">
-                <i class="fw fw-settings"></i></a>
-            <%
-            }
-            %>
-
-            <!-- auth other -->
-            <a href="#" class="dropdown add-margin-left-2x" data-toggle="dropdown"><span class="fw fw-user"></span>
-                <span class="caret"></span></a>
-            <ul class="dropdown-menu dropdown-menu-right pull-right" role="menu">
-                <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%=i18n.localize("logout.label")%></a></li>
-            </ul>
-
-        <%
-        } else {
-        %>
-            <a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><%=i18n.localize("login.label")%></a>
-                <span class="fw fw-user add-margin-left-2x"></span>
-
-            <%
-            }
-            %>
-        </span>
-
-        <!-- View for XS -->
-        <span class="visible-xs auth-xs">
-        <%
-            if (showEdit && user.isEditor) {
-        %>
-            <a href="<%=dbRoot%>?editor=true" class="ues-copy" title="<%=i18n.localize("edit.button")%>">
-            <i class="fw fw-settings"></i></a>
-        <%
-        }
-        %>
-        <%
-            if (showEdit && !user.isEditor) {
-        %>
-            <a href="<%=dbRoot%>?custom=true" class="ues-copy" title="<%=i18n.localize("personalize")%>">
-            <i class="fw fw-settings"></i></a>
-        <%
-        }
-        %>
-
-            <a href="#" class="collapsed add-margin-left-2x" data-toggle="collapse" data-target="#auth-menu-items"
-                aria-expanded="false"><span class="fw fw-user"></span><span class="caret"></span></a>
-            <div id="auth-menu-items" class="collapse">
-                <ul>
-                <%
-                    if (user) {
-                %>
-                        <li class="username"><%=user.username%></li>
-                        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><%=i18n.localize("logout.label")%>
-                            </a></li>
-                <%
-                    } else {
-                %>
-                        <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>">
-                            <%=i18n.localize("login.label")%></a></li>
-                <%
-                    }
-                %>
-                </ul>
-            </div>
-        </span>
-    </div>
-</div>
+<% if (user) { %>
+    <% if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) { %>
+        <% if (user.isEditor) { %>
+            <li><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
+        <% } else { %>
+            <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
+        <% } %>
+    <% } %>
+        <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><i class="icon fw fw-sign-out"></i><%= i18n.localize("logout.label")%></a></li>
+    <% } else { %>
+        <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><i class="icon fw fw-sign-in"></i><%= i18n.localize("login.label")%></a></li>
+<% } %>

@@ -208,6 +208,24 @@ $(function () {
         }
     };
 
+    var updateMenuList = function() {
+    //console.log("adding menu: " + JSON.stringify(dashboard.menu));
+    //console.log("Getting isAnon param: " + isAnonView);
+        $('#ues-pages').html(menuListHbs({
+            menu: ues.global.dashboard.menu,
+            isAnonView: isAnonView,
+            user: user,
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
+        }));
+
+        $('#ues-pages-col').html(menuListHbs({
+            menu: ues.global.dashboard.menu,
+            isAnonView: isAnonView,
+            user: user,
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
+        }));
+    };
+
     /**
      * This is the initial call from the dashboard.js.
      * @return {null}
