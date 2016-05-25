@@ -1846,6 +1846,29 @@ $(function () {
 
         //Disable draggable state for landing page
         $("ul.menu-customize li:nth-child(3)").draggable('disable');
+
+        $('#ds-menu-hide-all').change(function () {
+            console.log("checkbox id ds-menu-hide changed");
+            if ($(this).is(":checked")) {
+                //do the stuff that you would do when 'checked'
+                console.log("checked! " + $(this).attr("id"));
+                hideAllMenuItems(true);
+                dashboard.hideAllMenuItems = true;
+                saveDashboard();
+                return;
+            } else {
+                hideAllMenuItems(false);
+                dashboard.hideAllMenuItems = false;
+                saveDashboard();
+                return;
+            }
+            //Here do the stuff you want to do when 'unchecked'
+        });
+
+        $('.hide-menu-item').click(function (){
+            console.log("Hide page id: " + $(this).attr('id'));
+            hideMenuItem($(this).attr('id'));
+        });
     };
 
     /**
@@ -2728,29 +2751,6 @@ $(function () {
     initDashboard(ues.global.dashboard, ues.global.page);
 
     ues.dashboards.save = saveDashboard;
-
-    $('#ds-menu-hide-all').change(function () {
-        console.log("checkbox id ds-menu-hide changed");
-        if ($(this).is(":checked")) {
-            //do the stuff that you would do when 'checked'
-            console.log("checked! " + $(this).attr("id"));
-            hideAllMenuItems(true);
-            dashboard.hideAllMenuItems = true;
-            saveDashboard();
-            return;
-        } else {
-            hideAllMenuItems(false);
-            dashboard.hideAllMenuItems = false;
-            saveDashboard();
-            return;
-        }
-        //Here do the stuff you want to do when 'unchecked'
-    });
-
-    $('.hide-menu-item').click(function (){
-        console.log("Hide page id: " + $(this).attr('id'));
-        hideMenuItem($(this).attr('id'));
-    });
 
     var hideAllMenuItems = function(bool){
         var menu = dashboard.menu;
