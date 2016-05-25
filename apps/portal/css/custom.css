@@ -543,3 +543,37 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
         height: 85px;
     }
 }
+
+.menu-customize.nav.nav-stacked li,
+.menu-customize.nav.nav-stacked ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.menu-customize.nav.nav-stacked li ul {
+    margin-left: 20px;
+}
+
+.menu-customize.nav.nav-stacked li > span {
+    padding: 10px 15px;
+    background: #e4e4e4;
+    width: 300px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.menu-customize.nav.nav-stacked li > span:hover {
+    background: #444;
+    color: #fff;
+    cursor: move;
+}
+
+.menu-customize.nav.nav-stacked li > span > .controls {
+    display: none;
+    float: right;
+}
+
+.menu-customize.nav.nav-stacked li > span:hover > .controls {
+    display: block;
+}
