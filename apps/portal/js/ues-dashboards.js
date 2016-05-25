@@ -231,9 +231,14 @@
             var contentA = content[$(componentBoxA).attr('id')];
             var contentB = content[$(componentBoxB).attr('id')];
             if (contentA && contentB) {
-                var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                return (priorityB - priorityA);
+                if(contentA[0] && contentB[0]){
+                    var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                    var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                    return (priorityB - priorityA);
+                }
+                else{
+                    return 1;
+                }
             }
         });
     };
@@ -306,6 +311,33 @@
     };
 
     /**
+     * Find a given component in the current page
+     * @param {Number} id
+     * @returns {Object}
+     * @private
+     */
+    var findComponent = function (id, page) {
+        var i;
+        var length;
+        var area;
+        var component;
+        var components;
+        var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
+        for (area in content) {
+            if (content.hasOwnProperty(area)) {
+                components = content[area];
+                length = components.length;
+                for (i = 0; i < length; i++) {
+                    component = components[i];
+                    if (component.id === id) {
+                        return component;
+                    }
+                }
+            }
+        }
+    };
+
+    /**
      * Render the dashboard.
      * @param {Object} element Gadget container element
      * @param {Object} dashboard Dashboard object
@@ -360,7 +392,8 @@
         rewire: rewireDashboard,
         findPage: findPage,
         resolveURI: resolveURI,
-        finishedLoadingGadget: finishedLoading
+        finishedLoadingGadget: finishedLoading,
+        findComponent : findComponent
     };
 
     ues.assets = {};

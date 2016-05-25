@@ -27,7 +27,7 @@ var RESTClientInvoker = function () {
     var privateMethods = {};
     var TOKEN_EXPIRED = "Access token expired";
     var TOKEN_INVALID = "Invalid input. Access token validation failed";
-    var constants = require("/controllers/constants/constants.js");
+    var constants = require("/modules/constants.js");
     var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
 
     /**

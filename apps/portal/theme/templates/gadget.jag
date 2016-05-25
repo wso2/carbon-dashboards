@@ -18,7 +18,6 @@
 // i18n
 var i18n = require("i18n");
 i18n.init(request, utils.getLocaleResourcePath());
-
 %>
 <html lang="en">
 <head>

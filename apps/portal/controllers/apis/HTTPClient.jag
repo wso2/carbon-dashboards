@@ -25,7 +25,7 @@
     var log = new Log("/controllers/apis/HTTPClient.jag");
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
-    var constants = require("/controllers/constants/constants.js");
+    var constants = require("/modules/constants.js");
     var RESTClientInvoker = require("/controllers/apis/RESTClientInvoker.jag").RESTClientInvoker;
     var utils = require('/modules/utils.js');
     var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
