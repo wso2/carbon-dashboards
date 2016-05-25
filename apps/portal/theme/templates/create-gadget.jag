@@ -163,7 +163,7 @@
 <script id="ui-config-hbs" type="text/x-handlebars-template">
     {{#each .}}
        {{#equalsIgnoreCase fieldType "string"}}
-          <label>{{fieldLabel}}<input type="text" class="form-control" name="{{fieldName}}"
+          <label>{{fieldLabel}}<input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
           placeholder="{{placeholderText}}" {{#if isRequired}}required{{/if}}/>
           </label>
        {{/equalsIgnoreCase}}

@@ -13,15 +13,70 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-var gadgetLocation = '{{gadget_location}}';
 $(function () {
-var init = function () {
+var gadgetLocation = '{{gadget_location}}';
+    var conf;
+    var schema;
+    {{#if isPullMode}}
+    var providerData;
+    {{/if}}
     var CHART_CONF = 'chart-conf';
-    var config = getConfig();
-    var schema = getProviderSchema(config);
-    var providerData = getProviderData(config);
+    var PROVIDER_CONF = 'provider-conf';
+    {{#if isPullMode}}
+    var REFRESH_INTERVAL = 'refreshInterval';
+    {{/if}}
+var init = function () {
+    $.ajax({
+        url: gadgetLocation + '/conf.json',
+        method: "GET",
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+            conf = JSON.parse(data);
+            $.ajax({
+                url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
+                method: "POST",
+                data: JSON.stringify(conf),
+                contentType: "application/json",
+                async: false,
+                success: function (data) {
+                    schema = data;
+                }
+            });
+            {{#if isPullMode}}
+            getProviderData();
+            {{/if}}
+           }
+       });
+}
+{{#if isPullMode}}
+var getProviderData = function (){
+    $.ajax({
+        url: gadgetLocation + '/gadget-controller.jag?action=getData',
+        method: "POST",
+        data: JSON.stringify(conf),
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+        providerData = data;
+        }
+    });
+}
+{{/if}}
 
-    draw('#canvas', config[CHART_CONF], schema, providerData);
-    };
+var drawGadget = function (){
+    {{#if isPullMode}}
+    var refreshInterval = conf[PROVIDER_CONF][REFRESH_INTERVAL];
+    draw('#canvas', conf[CHART_CONF], schema, providerData);
+    setInterval(function() {
+        update(getProviderData);
+    },refreshInterval);
+    {{else}}
+    registerCallBackforPush(conf[PROVIDER_CONF], schema , function(providerData){
+       draw('#canvas', conf[CHART_CONF], schema, providerData);
+    });
+    {{/if}}
+}
 init();
+    drawGadget();
 });

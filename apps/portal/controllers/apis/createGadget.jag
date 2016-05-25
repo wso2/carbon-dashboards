@@ -184,6 +184,17 @@
         if(gadgetDir) {
             gadgetDir.del();
         }
+        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js';
+        var providerApi = require(providerApiLocation);
+        var isPushMode = false;
+        if(providerApi.getMode() === 'push'){
+            isPushMode = true;
+        }
+
+        if(isPushMode){
+            var providerClient = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/client.js');
+            fileUtils.copyFile(providerClient, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-client.js');
+        }
 
         var gadgetJsonData = {};
         gadgetJsonData['gadget_id'] = gadgetID;
@@ -194,11 +205,13 @@
 
         var gadgetCoreData = {};
         gadgetCoreData['gadget_location'] = CONTEXT + TEMP_GADGET_LOCATION + gadgetID;
+        gadgetCoreData['isPullMode'] = !isPushMode;
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
                         TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
 
         var gadgetXmlData = {};
         gadgetXmlData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
+        gadgetXmlData['isPushMode'] = isPushMode;
         var chart = data[CHART_CONF][CHART_NAME];
         var chartConf = require(CHART_LOCATION + chart + '/config.json');
         var commonLibs = chartConf['common-libs'];
@@ -207,14 +220,13 @@
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'index.xml.hbs',
                         TEMP_GADGET_LOCATION + gadgetID +'/index.xml', gadgetXmlData);
 
+        var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
+        fileUtils.copyFile(gadgetControllerFile, TEMP_GADGET_LOCATION + gadgetID + '/gadget-controller.jag');
         var chartLibsDir = new File(CHART_LOCATION + chart + '/chart-libs/');
         fileUtils.copyDir(chartLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
 
-        var providerApiFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js');
+        var providerApiFile = new File(providerApiLocation);
         fileUtils.copyFile(providerApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-api.js');
-
-        var providerClientFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/client.js');
-        fileUtils.copyFile(providerClientFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-client.js');
 
         var chartApiFile = new File(CHART_LOCATION + chart + '/index.js');
         fileUtils.copyFile(chartApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/chart-api.js');
@@ -235,8 +247,16 @@
         return;
     } else if(action === 'addGadgetToStore'){
         var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
+        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js';
+        var providerApi = require(providerApiLocation);
+        var isPushMode = false;
+        if(providerApi.getMode() === 'push'){
+            isPushMode = true;
+        }
+
         var gadgetCoreData = {};
         gadgetCoreData['gadget_location'] = CONTEXT + GADGETS_LOCATION + gadgetID;
+        gadgetCoreData['isPullMode'] = !isPushMode;
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
                         TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
 

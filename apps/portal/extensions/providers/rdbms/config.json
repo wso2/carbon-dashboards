@@ -11,6 +11,7 @@
             "fieldType" : "string",
             "defaultValue" : "",
             "isRequired" : true,
+            "isRequired" : true,
             "hint": "This is a sample hint",
             "placeholderText" : "test"
         },

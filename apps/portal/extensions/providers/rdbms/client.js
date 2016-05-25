@@ -13,48 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getConfig, getProviderSchema,getProviderData;
-$(function () {
-    var conf;
-    var schema;
-    var providerData;
-    getConfig = function () {
-        $.ajax({
-            url: gadgetLocation + '/conf.json',
-            method: "GET",
-            contentType: "application/json",
-            async: false,
-            success: function (data) {
-                conf = JSON.parse(data);
-            }
-        });
-        return conf;
+var registerCallBackforPush;
+(function () {
+    /**
+     *
+     * @param providerConfig
+     * @param schema
+     */
+    registerCallBackforPush = function (providerConfig, schema, callback){
+        //callback(providerData);
     };
-
-    getProviderSchema = function (providerConfig) {
-        $.ajax({
-            url: gadgetLocation + '/js/provider-api.js?action=getSchema',
-            method: "POST",
-            data: JSON.stringify(providerConfig),
-            contentType: "application/json",
-            async: false,
-            success: function (data) {
-                schema = data;
-            }
-        });
-        return schema;
-    }
-
-    getProviderData = function (providerConfig) {
-        $.ajax({
-            url: gadgetLocation + '/js/provider-api.js?action=getData',
-            method: "POST",
-            data: JSON.stringify(providerConfig),
-            contentType: "application/json",
-            async: false,
-            success: function (data) {
-                return providerData = data;
-            }
-        });
-    }
-});
+  
+}());

@@ -71,11 +71,14 @@ $('#show-data').click(function () {
             if (xhr.status == 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
-            } else if(xhr.status === 500){
-
-
             }
-            console.log('asdasda');
+            var source = $("#wizard-error-hbs").html();
+            ;
+            var template = Handlebars.compile(source);
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
+                error: xhr.responseText
+            }));
 
         }
     });

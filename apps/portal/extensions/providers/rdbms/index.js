@@ -28,7 +28,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
          dynamic logic goes here
          */
         return formConfig;
-    }
+    };
 
     /**
      * validate the user input of provider configuration
@@ -40,14 +40,14 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 
          */
         return true;
-    }
+    };
 
     /**
      * returns the data mode either push or pull
      */
     getMode = function (){
         return 'pull';
-    }
+    };
 
     /**
      * returns an array of column names & types
@@ -99,6 +99,6 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      */
     registerCallBackforPush = function (providerConfig, schema){
 
-    }
+    };
 
 }());
