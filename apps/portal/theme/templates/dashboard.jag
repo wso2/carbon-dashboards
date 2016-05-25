@@ -659,6 +659,17 @@
                 logo.hide();
             }
         }
+
+        function toggleHeading(source, show) {
+            if (source.hasClass('ues-no-heading')) {
+                var heading = source.find('.ues-component-heading');
+                if (show) {
+                    heading.slideDown();
+                } else {
+                    heading.slideUp();
+                }
+            }
+        }
         
         $('#left-sidebar').on('hidden.sidebar', function(e){
             toggleProductLogo(e.type)
