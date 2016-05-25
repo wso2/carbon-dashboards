@@ -27,7 +27,7 @@
             "dynamicJS" : []
         }
     ],
-    "common-libs" : ["wso2gadgets"],
+    "common-libs" : ["wso2gadgets","chart-utils"],
     "chart-libs" : ["d3.min","vega","VizGrammar.min"]
 }
 

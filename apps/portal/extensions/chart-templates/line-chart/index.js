@@ -15,7 +15,7 @@
  */
 var getConfig, validate, isProviderRequired, draw, update;
 
-(function () {
+(function() {
 
     var CHART_LOCATION = '/extensions/chart-templates/';
 
@@ -23,7 +23,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      * return the config to be populated in the chart configuration UI
      * @param schema
      */
-    getConfig = function (schema){
+    getConfig = function(schema) {
         var chartConf = require(CHART_LOCATION + '/line-chart/config.json').config;
         /*
          dynamic logic goes here
@@ -36,14 +36,14 @@ var getConfig, validate, isProviderRequired, draw, update;
      * validate the user inout for the chart configuration
      * @param chartConfig
      */
-    validate = function (chartConfig){
+    validate = function(chartConfig) {
 
     };
 
     /**
      * TO be used when provider configuration steps need to be skipped
      */
-    isProviderRequired = function (){
+    isProviderRequired = function() {
 
     }
 
@@ -54,34 +54,28 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param schema
      * @param data
      */
-    draw = function (placeholder, chartConfig, schema, data) {
-
-        var views = [{
+    draw = function(placeholder, chartConfig, _schema, data) {
+        var schema = toVizGrammarSchema(_schema);
+        var view = {
             id: "chart-0",
-            schema: [{
-                "metadata": {
-                    "names": ["fruits", "count"],
-                    "types": ["ordinal", "linear"]
-                }
-            }],
-            chartConfig: {
-                x: "fruits",
-                charts: [{ type: "line", y: "count" }],
-                padding: { "top": 20, "left": 50, "bottom": 20, "right": 80 },
-                range: false,
-                height: 300
-            },
+            schema: schema,
+            chartConfig: buildChartConfig(chartConfig),
             data: function() {
-                var results = [
-                    ['apple',3],['orange',13],['melon',4],['avacado',1],['grapes',6]
-                ];
-                wso2gadgets.onDataReady(results);
-
+                var result = [];
+                data.forEach(function(item) {
+                    var row = [];
+                    schema[0].metadata.names.forEach(function(name) {
+                        row.push(item[name]);
+                    });
+                    result.push(row);
+                });
+                wso2gadgets.onDataReady(result);
             }
-        }];
+
+        };
 
         try {
-            wso2gadgets.init("#canvas",views);
+            wso2gadgets.init(placeholder, view);
             var view = wso2gadgets.load("chart-0");
         } catch (e) {
             console.error(e);
@@ -93,7 +87,20 @@ var getConfig, validate, isProviderRequired, draw, update;
      *
      * @param data
      */
-    update = function (data){
+    update = function(data) {
 
     }
+
+    buildChartConfig = function (_chartConfig) {
+        var conf = {};
+        conf.x = _chartConfig.x;
+        conf.charts = [];
+        conf.charts[0] = {
+            type : "line",
+            y: _chartConfig.y
+        };
+        return conf;
+    };
+
+    
 }());
