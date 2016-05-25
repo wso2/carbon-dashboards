@@ -22,7 +22,7 @@ var tokenUtil = function () {
     var String = Packages.java.lang.String;
     var carbon = require('carbon');
     var sso = require("sso");
-    var constants = require("/controllers/constants/constants.js");
+    var constants = require("/modules/constants.js");
     var configs = require('/configs/portal.js').config();
     var dashboards = require('/modules/dashboards.js');
     var log = new Log("/utils/tokenUtil.js");
@@ -327,7 +327,7 @@ var tokenUtil = function () {
                 if (credentials == null) {
                     clientCredentials = module.getDynamicCredentials(dynamicClientProperties);
                     if (dashboards.createOAuthApplication(applicationId, clientCredentials)) {
-                        log.info("An OAuth application has been created ageist this portal application");
+                        log.info("An OAuth application has been created against this portal application");
                     }
                 } else {
                     clientCredentials = credentials;
