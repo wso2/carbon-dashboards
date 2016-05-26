@@ -77,7 +77,7 @@
                 <div class="navbar">
                   <div class="navbar-inner">
                     <div class="container">
-                <ul>
+                <ul class = "nav navbar-nav">
                     <li><a href="#tab1" data-toggle="tab"><%= i18n.localize("select.provider")%></a></li>
                     <li><a href="#tab2" data-toggle="tab"><%= i18n.localize("configure.provider")%></a></li>
                     <li><a href="#tab3" data-toggle="tab"><%= i18n.localize("configure.chart")%></a></li>
@@ -89,41 +89,51 @@
                 <div class="tab-content">
                     <div class="tab-pane" id="tab1">
                         <div id="tab1-validation-errors"></div>
-                        <form id="provider-list-form" class="form-horizontal">
-                        <fieldset>
-                            <div class="form-group">
-                              <label class="col-md-4 control-label" for="datasource"><%= i18n.localize("select.provider")%></label>
-                              <div id = "provider-list" class="col-md-4"></div>
+                        <form id="provider-list-form">
+                              <label class="control-label" for="datasource"><%= i18n.localize("select.provider")%> <span class="required">*</span></label>
+                              <div id = "provider-list">
                             </div>
-                        </fieldset>
                         </form>
                     </div>
 
                     <div class="tab-pane" id="tab2">
                         <div id="tab2-validation-errors"></div>
-                        <form id="provider-config-form" class="form-horizontal">
+                        <form id="provider-config-form">
                         <fieldset>
                             <div class="form-group">
-                              <div id = "provider-config" class="col-md-4"></div>
+                              <div id = "provider-config"></div>
                             </div>
                         </fieldset>
                         </form>
-                         <input type="button" id="show-data" value="<%= i18n.localize("show.data")%>"/>
-                        <div id="data-preview"></div>
+                        <span class="fw-stack">
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    <i class="fw fw-display fw-stack-1x"></i>
+                                </span>
+                         <input type="button" id="show-data" class="btn btn-primary btn-bordered" value="<%= i18n.localize("show.data")%>"/>
+                        <p></p><div id="data-preview"></div>
                     </div>
                     <div class="tab-pane" id="tab3">
                         <div id="tab3-validation-errors"></div>
-                        <label><%= i18n.localize("gadget.name")%></label>
+                        <div class="form-group">
+                        <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
                         <input type="text" id="gadget-name" class="form-control" name="gadget-name" />
-                        <div id="chart-list"></div>
-                        <form id="chart-config-form" class="form-horizontal">
-                        <fieldset>
+                        </div>
+                        <div class="form-group">
+                        <div id="chart-list"></div></div>
+                        <form id="chart-config-form">
+
                             <div class="form-group">
-                              <div id = "chart-config" class="col-md-4"></div>
+                              <div id = "chart-config"></div>
                             </div>
-                        </fieldset>
+
                         </form>
-                        <input type="button" id="preview" style="display:none;" value="<%= i18n.localize("preview")%>"/>
+                         <span class="fw-stack">
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    <i class="fw fw-display fw-stack-1x"></i>
+                                </span>
+
+                        <input type="button" id="preview"  class="btn btn-primary btn-bordered" style="display:none;" value="<%= i18n.localize("preview")%>"/>
+                        <p></p>
                         <input type="button" id="add.to.gadget.store" style="display:none;"
                         value="<%= i18n.localize("add.to.gadget.store")%>"/>
                         <div id="preview-pane"></div>
@@ -163,32 +173,30 @@
 </script>
 <script id="ui-config-hbs" type="text/x-handlebars-template">
     {{#each .}}
+    <div class="form-group">
        {{#equalsIgnoreCase fieldType "string"}}
-          <label>{{fieldLabel}}<input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
+          <label>{{fieldLabel}}</label><input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
           placeholder="{{placeholderText}}" {{#if isRequired}}required{{/if}}/>
-          </label>
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "checkbox"}}
-          <label>{{fieldLabel}}<input type="checkbox" name="{{fieldName}}"/>
-          </label>
+          <label><input type="checkbox" name="{{fieldName}}"/>{{fieldLabel}}</label>
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "password"}}
-          <label>{{fieldLabel}}<input type="password" class="form-control" name="{{fieldName}}"
+          <label>{{fieldLabel}}</label><input type="password" class="form-control" name="{{fieldName}}"
           {{#if isRequired}}required{{/if}}/>
-          </label>
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "dropdown"}}
-          <label>{{fieldLabel}}
+          <label>{{fieldLabel}}</label>
           <select name="{{fieldName}}" class="form-control">
            {{#each valueSet}}
              <option value="{{this}}">{{this}}</option>
            {{/each}}
         </select>
-          </label>
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "advanced"}}
             {{> (lookup . 'childPartial')}}
        {{/equalsIgnoreCase}}
+       </div>
     {{/each}}
 </script>
 
@@ -217,7 +225,7 @@
 </script>
 
 <script id="preview-hbs" type="text/x-handlebars-template">
-     <iframe src= "theme/templates/preview.jag"></iframe>
+     <iframe id = "idIframe" src= "theme/templates/preview.jag" width="100%" height="inherit"  scrolling="no" ></iframe>
 </script>
 
 <script id="success-hbs" type="text/x-handlebars-template">
