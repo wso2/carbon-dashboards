@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,54 @@ var registryPath = function (id) {
 var registryUserPath = function (id, username) {
     var path = '/_system/config/ues/' + username + '/dashboards';
     return id ? path + '/' + id : path;
+};
+
+/**
+ * Get location where to store an OAuth application credentials
+ * @param id
+ * @returns string path
+ */
+var registryOAuthApplicationPath = function (id) {
+    var path = '/_system/config/ues/application';
+    return id ? path + '/' + id : path;
+};
+
+/**
+ * If an OAuth application already has been created get application credentials
+ * @param applicationId   resource location in the registry
+ * @param callBack
+ */
+var getOAuthApplication = function (applicationId, callBack) {
+    var registry = getRegistry();
+    var path = registryOAuthApplicationPath(applicationId);
+    if (registry.exists(path)) {
+        callBack(JSON.parse(registry.content(path)));
+    } else {
+        callBack(null);
+    }
+};
+
+/**
+ * Create an OAuth application against portal app
+ * @param applicationId          resource location in the registry
+ * @param clientCredentials      OAuth application credentials
+ * @returns {boolean}            check whether  OAuth application's credentials are stored in registry
+ */
+var createOAuthApplication = function (applicationId, clientCredentials) {
+    var server = new carbon.server.Server();
+    var registry = getRegistry();
+    var userManager = new carbon.user.UserManager(server);
+    var path = registryOAuthApplicationPath(applicationId);
+    try {
+        registry.put(path, {
+            content: JSON.stringify(clientCredentials),
+            mediaType: 'application/json'
+        });
+        userManager.denyRole('internal/everyone', path, 'read');
+        return true;
+    } catch (exception) {
+        throw "Error occurred while creating an OAuth application, " + exception;
+    }
 };
 
 /**
@@ -233,6 +281,59 @@ var allowed = function (dashboard, permission) {
     }
     if (permission.view) {
         return utils.allowed(user.roles, permissions.viewers);
+    }
+};
+
+/**
+ * Find a particular page within a dashboard
+ * @param {Object} dashboard Dashboard object
+ * @param {String} id Page id
+ * @return {Object} Page object
+ */
+var findPage = function (dashboard, id) {
+    var i;
+    var page;
+    var pages = dashboard.pages;
+    var length = pages.length;
+    for (i = 0; i < length; i++) {
+        page = pages[i];
+        if (page.id === id) {
+            return page;
+        }
+    }
+};
+
+/**
+ * Find a given component in the current page
+ * @param {Number} id
+ * @returns {Object}
+ * @private
+ */
+var findComponent = function (id, page) {
+    var i;
+    var length;
+    var area;
+    var component;
+    var components;
+    var type;
+
+    if ((user.domain != superDomain && user.domain != urlDomain) ||
+        (urlDomain && user.domain == superDomain && urlDomain != superDomain)) {
+        type = 'anon';
+    }
+
+    var content = (type === 'anon' ? page.content.anon : page.content.default)
+    for (area in content) {
+        if (content.hasOwnProperty(area)) {
+            components = content[area];
+            length = components.length;
+            for (i = 0; i < length; i++) {
+                component = components[i];
+                if (component.id === id) {
+                    return component;
+                }
+            }
+        }
     }
 };
 

@@ -90,7 +90,8 @@ public class DashboardDeployer implements AppDeploymentHandler {
                     String carbonLayoutDir = new StringBuilder(carbonRepository).append("jaggeryapps")
                             .append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
                             .append("store").append(File.separator).append("carbon.super").append(File.separator)
-                            .append("layout").toString();
+                            .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator).append("layout")
+                            .toString();
                     FileUtils.copyDirectory(new File(carbonLayoutDir), new File(path));
                 }
                 File widgetDir = new File(pathToArtifacts + File.separator + "widget");
@@ -162,6 +163,30 @@ public class DashboardDeployer implements AppDeploymentHandler {
                         log.error(errorMsg, e);
                         throw new DashboardDeploymentException(errorMsg, e);
                     }
+                } else if (DashboardConstants.THEME_ARTIFACT_TYPE.equals(artifact.getType())) {
+                    try {
+                        if (file.isDirectory()) {
+                            String themeName = file.getName();
+                            String storePath = getArtifactPath(DashboardConstants.THEME_TYPE);
+                            File themeFolder = new File(storePath);
+                            if (!themeFolder.exists()) {
+                                themeFolder.mkdir();
+                            }
+                            File destination = new File(storePath + themeName);
+                            if (destination.exists() || themeName.equalsIgnoreCase(DashboardConstants.DEFAULT_THEME)) {
+                                String errorMsg = "A theme already exists with the name " + themeName;
+                                log.error(errorMsg);
+                            } else {
+                                DeploymentUtil.copyFolder(file, destination);
+                                log.info("Theme directory [" + file.getName() + "] has been copied to path " +
+                                        destination.getAbsolutePath());
+                            }
+                        }
+                    } catch (IOException e) {
+                        String errorMsg = "Error while reading from the file : " + file.getAbsolutePath();
+                        log.error(errorMsg, e);
+                        throw new DashboardDeploymentException(errorMsg, e);
+                    }
                 }
             }
         }
@@ -208,14 +233,20 @@ public class DashboardDeployer implements AppDeploymentHandler {
             } else if (DashboardConstants.LAYOUT_ARTIFACT_TYPE.equals(artifact.getType())) {
                 deleteFile(file);
                 log.info("Artifact [" + file.getName() + "] has been deleted from layouts directory.");
+            } else if (DashboardConstants.THEME_ARTIFACT_TYPE.equals(artifact.getType())) {
+                String storePath = getArtifactPath(DashboardConstants.THEME_TYPE);
+                File storedPath = new File(storePath + file.getName());
+                deleteFile(storedPath);
+                log.info("Artifact [" + file.getName() + "] has been deleted from theme directory.");
             }
         }
     }
+
     /**
      * Returns the absolute path for the artifact store location.
      *
      * @param artifactName name of the artifact.
-     * @return  path of the artifact
+     * @return path of the artifact
      */
     protected String getArtifactPath(String artifactName) {
         String carbonRepository = CarbonUtils.getCarbonRepository();
@@ -223,7 +254,8 @@ public class DashboardDeployer implements AppDeploymentHandler {
         sb.append("jaggeryapps").append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
                 .append("store").append(File.separator)
                 .append(CarbonContext.getThreadLocalCarbonContext().getTenantDomain()).append(File.separator)
-                .append(artifactName).append(File.separator);
+                .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator).append(artifactName)
+                .append(File.separator);
         return sb.toString();
     }
 

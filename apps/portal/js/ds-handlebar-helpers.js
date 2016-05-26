@@ -82,3 +82,49 @@ Handlebars.registerHelper('dump', function (o) {
 Handlebars.registerHelper('resolveURI', function (path) {
     return ues.dashboards.resolveURI(path);
 });
+
+//return menu hierachy
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden) {
+    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'>";
+    var checked = isHidden ? "checked=''": "" ;
+    //var iClass = ishidden ? "fw fw-view": "fw fw-view";
+
+        if(designer){
+            divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'><i class='fw fw-up'></i> Make Root</li>" + 
+                "<li class='hide-all' style='margin: 0 0 10px 0;'><input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'> <i class='fw fw-view'></i> Hide All</li>";
+        }
+
+    updateSubordinates(menu, null);
+    divTree += "</ul>"
+
+    function updateSubordinates(menu, parent){
+        for (var i = 0; i < menu.length; i++) {
+                if (designer) {
+                    divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
+                        "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
+                                "<span>" + menu[i].id + "<span class='controls hide-menu-item' id='" +menu[i].id + "'><i class='fw fw-view'></i></span></span>";
+                } else {
+                    var divLi = "<li><a href='" + menu[i].id + "'>" + menu[i].title + "</a>";
+                    if(!menu[i].ishidden){
+                        if (isAnonView || !user) {
+                            if (menu[i].isanon) {
+                                // Anonymous viewing. So render only anonymous pages links.
+                                divTree += divLi;
+                            }
+                        } else {
+                            divTree += divLi;
+                        }
+                    }
+                }
+
+                if(menu[i].subordinates.length > 0){
+                    divTree += "<ul class='' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+                    updateSubordinates(menu[i].subordinates, menu[i].id);
+                    divTree += "</ul>";
+                } else{
+                    divTree += "</li>";
+                }
+        }
+    }
+    return divTree;
+});

@@ -24,6 +24,26 @@
             }
         }
     },
+    "authorization": {
+        "activeMethod": "",
+        "methods": {
+            "oauth": {
+                "attributes": {
+                    "idPServer": "%https.ip%/oauth2/token",
+                    "dynamicClientProperties": {
+                        "callbackUrl": "%https.ip%/portal",
+                        "clientName": "portal",
+                        "owner": "admin",
+                        "applicationType": "JaggeryApp",
+                        "grantType": "password refresh_token urn:ietf:params:oauth:grant-type:saml2-bearer",
+                        "saasApp": false,
+                        "dynamicClientRegistrationEndPoint": "%https.ip%/dynamic-client-web/register/",
+                        "tokenScope": "Production"
+                    }
+                }
+            }
+        }
+    },
     "designers": [
         "Internal/everyone"
     ],
@@ -33,7 +53,7 @@
     "cacheTimeoutSeconds": "5",
     "cacheSizeBytes": "1073741824",
     "defaultDashboardRedirect": false,
-    "isCreateGadgetEnable": true,
+    "isCreateGadgetEnable": false,
     "oauth": {
         "username": "admin",
         "password": "admin"

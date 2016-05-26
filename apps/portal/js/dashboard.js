@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
+
 $(function () {
     /**
      * Gadget default view mode.
@@ -35,12 +35,20 @@ $(function () {
      * @const
      */
     var CONTAINER_PREFIX = 'gadget-';
+    
+    /**
+     * RPC service name for gadget button callback.
+     * @const
+     */
+    var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
+    
     var page;
     /**
      * Pre-compiling Handlebar templates
      */
     var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
+    var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
     /**
      * Initializes the component toolbar.
      * @return {null}
@@ -49,8 +57,7 @@ $(function () {
     var initComponentToolbar = function () {
         var viewer = $('.ues-components-grid');
 
-
-        //gadget title bar custom button function handler
+        // gadget title bar custom button function handler
         viewer.on('click', '.ues-custom-action', function (e) {
             var fid = $(this).closest('.ues-component-box').find('iframe').attr('id');
             var action = $(this).attr('data-action');
@@ -60,7 +67,7 @@ $(function () {
         // gadget maximization handler
         viewer.on('click', '.ues-component-full-handle', function (e) {
             var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
+            var component = ues.dashboards.findComponent(id, page);
             var componentBox = $(this).closest('.ues-component-box');
             var gsContainer = $('.grid-stack');
             var gsBlock = componentBox.parent();
@@ -100,7 +107,7 @@ $(function () {
         viewer.on('click', '.ues-component-settings-handle', function (event) {
             event.preventDefault();
             var id = $(this).closest('.ues-component').attr('id');
-            var component = findComponent(id);
+            var component = ues.dashboards.findComponent(id,page);
             var componentContainer = $('#' + CONTAINER_PREFIX + id);
             // toggle the component settings view if exists
             if (component.hasCustomUserPrefView) {
@@ -156,9 +163,7 @@ $(function () {
      */
     var renderComponentToolbar = function (component) {
         if (component) {
-            var configObj = {};
-            var container = $('#' + component.id);
-            var noOfDefaultBtn = 0;
+            // Check whether any user preferences are exists
             var userPrefsExists = false;
             for (var key in component.content.options) {
                 if (component.content.options[key].type.toUpperCase() != 'HIDDEN') {
@@ -166,73 +171,59 @@ $(function () {
                     break;
                 }
             }
-            if (userPrefsExists) {
-                noOfDefaultBtn = noOfDefaultBtn + 1;
+
+            // Validate and build the toolbar button options to be passed to the handlebar template
+            var toolbarButtons = component.content.toolbarButtons || {};
+            toolbarButtons.custom = toolbarButtons.custom || [];
+            toolbarButtons.default = toolbarButtons.default || {};
+            if (!toolbarButtons.default.hasOwnProperty('maximize')) {
+                toolbarButtons.default.maximize = true;
             }
-            if (component.content.toolbarButtons) {
-                if (component.content.toolbarButtons.default) {
-                    var toolbarOpt = component.content.toolbarButtons.default;
-                    configObj.isMaximize = !!(toolbarOpt.maximize || toolbarOpt.maximize == null);
-                    configObj.isConfiguration = !!(toolbarOpt.configuration || toolbarOpt.configuration == null);
-                    configObj.isRemove = !!(toolbarOpt.remove || toolbarOpt.remove == null);
-                    component.content.defaultButtonConfigs = configObj;
-                }
-                // anon dashboards doesn't have settings option
-                if (component.content.defaultButtonConfigs.isMaximize) {
-                    noOfDefaultBtn = noOfDefaultBtn + 1;
-                }
-                if (component.content.toolbarButtons.custom) {
-                    var customtoolbarOpt = component.content.toolbarButtons.custom;
-                    for (var customBtn in customtoolbarOpt) {
-                        if (customtoolbarOpt.hasOwnProperty(customBtn)) {
-                            noOfDefaultBtn = noOfDefaultBtn + 1;
-                            var iconTypeCSS = 'css';
-                            var iconTypeImage = 'image';
-                            if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeCSS.toUpperCase()) {
-                                customtoolbarOpt[customBtn].isTypeCSS = true;
-                            }
-                            if (customtoolbarOpt[customBtn].iconType.toUpperCase() === iconTypeImage.toUpperCase()) {
-                                customtoolbarOpt[customBtn].isTypeImage = true;
-                            }
-                        }
-                    }
-                }
-            } else {
-                configObj.isMaximize = true;
-                configObj.isConfiguration = true;
+            if (!toolbarButtons.default.hasOwnProperty('configurations')) {
+                toolbarButtons.default.configurations = true;
             }
-            component.content.isDropDownView = noOfDefaultBtn > 3;
-            // anon dashboards doesn't have settings option
-            component.content.defaultButtonConfigs = configObj;
+
+            toolbarButtons.default.configurations = toolbarButtons.default.configurations  && userPrefsExists && (ues.global.dbType !== 'anon');
+            for (var i = 0; i < toolbarButtons.custom.length; i++) {
+                toolbarButtons.custom[i].iconTypeCSS = (toolbarButtons.custom[i].iconType.toLowerCase() == 'css');
+                toolbarButtons.custom[i].iconTypeImage = (toolbarButtons.custom[i].iconType.toLowerCase() == 'image');
+            }
+
+            var buttonCount = toolbarButtons.custom.length;
+            if (toolbarButtons.default.maximize) {
+                buttonCount++;
+            }
+            if (toolbarButtons.default.configurations) {
+                buttonCount++;
+            }
+            toolbarButtons.isDropdownView = buttonCount > 3;
+
+            var componentBox = $('#' + component.id);
+            // Set the width of the gadget heading
+            var buttonUnitWidth = 41;
+            var headingWidth = 'calc(100% - ' + ((buttonCount > 3 ? 1 : buttonCount) * buttonUnitWidth + 25)  + 'px)';
+            componentBox.find('.gadget-title').css('width', headingWidth);
+            // Render the gadget template
+            componentBox.find('.ues-component-actions').html(componentToolbarHbs(toolbarButtons));
         }
-        component.content.userPrefsExists = userPrefsExists && (ues.global.dbType !== 'anon');
-        container.find('.ues-component-actions').html($(componentToolbarHbs(component.content)));
     };
-    /**
-     * Find a given component in the current page
-     * @param {Number} id
-     * @returns {Object}
-     * @private
-     */
-    var findComponent = function (id) {
-        var i;
-        var length;
-        var area;
-        var component;
-        var components;
-        var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
-        for (area in content) {
-            if (content.hasOwnProperty(area)) {
-                components = content[area];
-                length = components.length;
-                for (i = 0; i < length; i++) {
-                    component = components[i];
-                    if (component.id === id) {
-                        return component;
-                    }
-                }
-            }
-        }
+
+    var updateMenuList = function() {
+    //console.log("adding menu: " + JSON.stringify(dashboard.menu));
+    //console.log("Getting isAnon param: " + isAnonView);
+        $('#ues-pages').html(menuListHbs({
+            menu: ues.global.dashboard.menu,
+            isAnonView: isAnonView,
+            user: user,
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
+        }));
+
+        $('#ues-pages-col').html(menuListHbs({
+            menu: ues.global.dashboard.menu,
+            isAnonView: isAnonView,
+            user: user,
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
+        }));
     };
 
     /**
@@ -253,7 +244,7 @@ $(function () {
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
-                var component = findComponent($(this).attr('id'));
+                var component = ues.dashboards.findComponent($(this).attr('id'),page);
                 renderComponentToolbar(component);
             });
             $('.grid-stack').gridstack({
@@ -268,6 +259,7 @@ $(function () {
     };
 
     initDashboard();
+    updateMenuList();
     initComponentToolbar();
 });
 
