@@ -67,7 +67,6 @@
     } else if (action === 'getProviderConfig') {
         var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
         var providerConfig = providerApi.getConfig().config;
-        var mode = providerApi.getMode();
         print(providerApi.getConfig().config);
         return;
     } else if (action === 'getProviderAdvancedUI') {
@@ -182,7 +181,7 @@
         var providerApiLocation = PROVIDERS_LOCATION + provider + '/index.js';
         var providerApi = require(providerApiLocation);
         var isPushMode = false;
-        if(providerApi.getMode() === 'push'){
+        if(providerApi.getMode().toLowerCase() === 'push'){
             isPushMode = true;
         }
 
@@ -253,7 +252,7 @@
         var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js';
         var providerApi = require(providerApiLocation);
         var isPushMode = false;
-        if(providerApi.getMode() === 'push'){
+        if(providerApi.getMode().toLowerCase() === 'push'){
             isPushMode = true;
         }
 
