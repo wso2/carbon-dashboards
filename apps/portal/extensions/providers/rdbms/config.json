@@ -47,5 +47,6 @@
             "childPartial" : "myPartial",
             "dynamicJS" : ["test","demo"]
         }
-    ]
+    ],
+    "provider-libs" : ["test"]
 }

@@ -19,6 +19,10 @@
             <!-- jQuery -->
             <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
 
+            <!-- provider libs -->
+            {{#each provider-libs}}
+                <script src="js/provider-libs/{{this}}.js"></script>
+            {{/each}}
             <!-- chart libs -->
             {{#each chart-libs}}
                 <script src="js/chart-libs/{{this}}.js"></script>

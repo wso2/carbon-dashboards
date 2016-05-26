@@ -178,7 +178,8 @@
         if(gadgetDir.isExists()) {
             gadgetDir.del();
         }
-        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js';
+        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
+        var providerApiLocation = PROVIDERS_LOCATION + provider + '/index.js';
         var providerApi = require(providerApiLocation);
         var isPushMode = false;
         if(providerApi.getMode() === 'push'){
@@ -186,7 +187,7 @@
         }
 
         if(isPushMode){
-            var providerClient = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/client.js');
+            var providerClient = new File(PROVIDERS_LOCATION + provider + '/client.js');
             fileUtils.copyFile(providerClient, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-client.js');
         }
 
@@ -211,13 +212,21 @@
         var commonLibs = chartConf['common-libs'];
         gadgetXmlData['common-libs'] = commonLibs;
         gadgetXmlData['chart-libs'] = chartConf['chart-libs'];
+
+        var providerConf = require(PROVIDERS_LOCATION + provider + '/config.json');
+        var providerLibs = providerConf['provider-libs'];
+        gadgetXmlData['provider-libs'] = providerLibs;
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'index.xml.hbs',
                         TEMP_GADGET_LOCATION + gadgetID +'/index.xml', gadgetXmlData);
 
         var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
         fileUtils.copyFile(gadgetControllerFile, TEMP_GADGET_LOCATION + gadgetID + '/gadget-controller.jag');
+
         var chartLibsDir = new File(CHART_LOCATION + chart + '/chart-libs/');
         fileUtils.copyDir(chartLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
+
+        var providerLibsDir = new File(PROVIDERS_LOCATION + provider + '/provider-libs/');
+        fileUtils.copyDir(providerLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
 
         var providerApiFile = new File(providerApiLocation);
         fileUtils.copyFile(providerApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-api.js');
