@@ -576,4 +576,5 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
 
 .menu-customize.nav.nav-stacked li > span:hover > .controls {
     display: block;
+    cursor: pointer;
 }
