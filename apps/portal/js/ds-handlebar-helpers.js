@@ -98,7 +98,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 if (designer) {
                     divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
                         "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
-                                "<span>" + menu[i].id + "<span class='controls hide-menu-item' id='" +menu[i].id + 
+                                "<span>" + menu[i].title + "<span class='controls hide-menu-item' id='" +menu[i].id + 
                                 "'><i class='fw fw-view'></i></span></span>";
                 } else {
                     var divLi = "<li><a href='" + menu[i].id + "'>" + menu[i].title + "</a>";
