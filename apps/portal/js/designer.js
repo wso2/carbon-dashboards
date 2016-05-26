@@ -2380,6 +2380,7 @@ $(function () {
         $('.gadgets-grid').html('');
         $('.page-header .page-actions').show();
         $('#btn-sidebar-layouts, #btn-sidebar-gadgets').show();
+        $('#btn-sidebar-layouts, #btn-sidebar-menu').show();
 
         currentPage(findPage(dashboard, pid));
         if (!page) {
