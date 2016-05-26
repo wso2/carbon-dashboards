@@ -2370,6 +2370,7 @@ $(function () {
 
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
+            $('#btn-sidebar-layouts, #btn-sidebar-menu').hide();
 
             showCreatePage();
             return;
