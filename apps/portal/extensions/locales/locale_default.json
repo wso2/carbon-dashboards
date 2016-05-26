@@ -150,7 +150,7 @@
     "gadget.name" : "Gadget Name",
     "add.to.gadget.store" : "Add to Gadget Store",
     "invalid.data" : "Data entered is invalid",
-    "gadget.add.success" : "Gadget is added to the store successfully"
+    "gadget.add.success" : "Gadget is added to the store successfully",
     "designer.componentProperties.priority": "Priority",
     "bad.request" : "Bad request",
     "request.not.authorized" : "Request not authorized",
