@@ -34,7 +34,7 @@
     var CHART_LOCATION = '/extensions/chart-templates/';
     var GADGETS_LOCATION = '/store/' + session.get('user').domain + '/fs/gadget/';
     var GADGET_TEMPLATE_LOCATION = '/templates/gadgets/gadget-generation-templates/';
-    var TEMP_GADGET_LOCATION = '/templates/';
+    var TEMP_GADGET_LOCATION = '/temp/';
 
     var VALUE_SET = 'valueSet';
     var SCHEME_NOTIFIER = '$COLUMN_NAMES';
@@ -68,26 +68,7 @@
         var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
         var providerConfig = providerApi.getConfig().config;
         var mode = providerApi.getMode();
-        if(mode.toLowerCase() === 'pull'){
-          var refreshInterval = {
-              "fieldLabel" : "Refresh Interval",
-              "fieldName" :"refreshInterval",
-              "fieldType" : "string",
-              "defaultValue" : 10,
-              "isRequired" : true
-          };
-          providerConfig.push(refreshInterval);
-        } else {
-            var windowSize = {
-                "fieldLabel" : "Window Size",
-                "fieldName" :"windowSize",
-                "fieldType" : "string",
-                "defaultValue" : 10,
-                "isRequired" : true
-            }
-            providerConfig.push(windowSize);
-        }
-        print(providerConfig);
+        print(providerApi.getConfig().config);
         return;
     } else if (action === 'getProviderAdvancedUI') {
         try {
@@ -179,9 +160,22 @@
         return;
     } else if (action === 'preview') {
         var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
+        var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
+        if(gadgetStoreFile.isExists()){
+            print({
+                error: true,
+                message: "Gadget with the same name already exists"
+            });
+            return;
+        }
+
+        var tempDir = new File(TEMP_GADGET_LOCATION);
+        if(!tempDir.isExists()){
+            tempDir.mkdir();
+        }
 
         var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
-        if(gadgetDir) {
+        if(gadgetDir.isExists()) {
             gadgetDir.del();
         }
         var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js';
@@ -264,7 +258,7 @@
         fileUtils.copyDir(gadget, GADGETS_LOCATION);
 
         var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
-        if(gadgetDir) {
+        if(gadgetDir.isExists()) {
             gadgetDir.del();
         }
         print({
