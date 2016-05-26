@@ -71,7 +71,7 @@
 <div class="container-fluid">
     <div class="row thumbnails ues-dashboard">
         <div class="col-md-8 col-md-offset-2">
-            <h1 class="page-sub-title">Create a Gadget</h1>
+            <h1 class="page-sub-title"><%= i18n.localize("create.a.gadget")%></h1>
 
             <div class="wizard" id="rootwizard">
                 <div class="navbar">
@@ -88,6 +88,7 @@
                 </br>
                 <div class="tab-content">
                     <div class="tab-pane" id="tab1">
+                        <div id="tab1-validation-errors"></div>
                         <form id="provider-list-form" class="form-horizontal">
                         <fieldset>
                             <div class="form-group">
@@ -99,7 +100,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab2">
-                        <div id="validation-errors"></div>
+                        <div id="tab2-validation-errors"></div>
                         <form id="provider-config-form" class="form-horizontal">
                         <fieldset>
                             <div class="form-group">
@@ -111,6 +112,7 @@
                         <div id="data-preview"></div>
                     </div>
                     <div class="tab-pane" id="tab3">
+                        <div id="tab3-validation-errors"></div>
                         <label><%= i18n.localize("gadget.name")%></label>
                         <input type="text" id="gadget-name" class="form-control" name="gadget-name" />
                         <div id="chart-list"></div>
@@ -153,7 +155,6 @@
 <script id="datasource-providers-hbs" type="text/x-handlebars-template">
      <section>
         <select id="providers" class="form-control ues-title-position">
-             <option value="select-provider"><%= i18n.localize("select.a.provider")%></option>
            {{#each .}}
              <option value="{{id}}">{{name}}</option>
            {{/each}}
@@ -209,8 +210,7 @@
 <script id="chart-list-hbs" type="text/x-handlebars-template">
      <label><%= i18n.localize("select.chart")%></label>
       <select id="chart-type" class="form-control">
-      <option value="select-chart"><%= i18n.localize("select.a.chart")%></option>
-        {{#each .}}
+      {{#each .}}
           <option value="{{this.id}}">{{this.name}}</option>
         {{/each}}
       </select>
@@ -218,6 +218,11 @@
 
 <script id="preview-hbs" type="text/x-handlebars-template">
      <iframe src= "theme/templates/preview.jag"></iframe>
+</script>
+
+<script id="success-hbs" type="text/x-handlebars-template">
+     <h3><%= i18n.localize("gadget.add.success")%></h3>
+     <h4><i><ins><a href="/portal">Go to Portal</a></ins></i></h4>
 </script>
 
 <script id="wizard-zeroevents-hbs" type="text/x-handlebars-template">

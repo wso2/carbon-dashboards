@@ -32,18 +32,18 @@ $('#rootwizard').bootstrapWizard({
             $('#rootwizard').find('.pager .finish').hide();
         }else if (index == 1 && !step1Done) {
             step1Done = true;
-            getProviderConfig();
+                getProviderConfig();
         } else if (index == 2 && !step2Done) {
             step2Done = true
             wizardData = getProviderConfigData();
             getChartList();
+            $('#chart-list').change();
         }
     }
 });
 
 $('#provider-list').change(function () {
     provider = $("#providers").val();
-    getProviderConfig();
 });
 
 $('#show-data').click(function () {
@@ -56,12 +56,12 @@ $('#show-data').click(function () {
         async: false,
         success: function (data) {
             if(!data.error) {
-                $('#validation-errors').html('');
+                $('#tab2-validation-errors').html('');
                 var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
                 $('#data-preview').html(dataPreviewHbs(data));
                 $('#rootwizard').find('.pager .next').removeClass("disabled");
             } else {
-                $('#validation-errors').html(data.message);
+                $('#tab2-validation-errors').html(data.message);
                 $('#data-preview').html('');
                 $('#rootwizard').find('.pager .next').addClass("disabled");
             }
@@ -103,8 +103,14 @@ $("#preview").click(function () {
         contentType: "application/json",
         async: false,
         success: function (data) {
-            var previewHbs = Handlebars.compile($('#preview-hbs').html());
-            $('#preview-pane').html(previewHbs);
+            if(!data.error) {
+                $('#tab3-validation-errors').html('');
+                $('#preview-pane').html($('#preview-hbs').html());
+            } else {
+                $('#tab3-validation-errors').html(data.message);
+                $('#preview-pane').html('');
+                $('#rootwizard').find('.pager .finish').hide();
+            }
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
@@ -131,8 +137,7 @@ $(".pager .finish").click(function() {
         contentType: "application/json",
         async: false,
         success: function (data) {
-
-            window.location.href = "/portal/";
+            $('#rootwizard').html($('#success-hbs').html());
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
@@ -194,6 +199,7 @@ function getProviders() {
 
 function getProviderConfig() {
     step1Done = true;
+    provider = $("#providers").val();
     var data = {"provider": provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
