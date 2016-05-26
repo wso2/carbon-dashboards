@@ -80,11 +80,14 @@ Handlebars.registerHelper('resolveURI', function (path) {
 Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden) {
     var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'>";
     var checked = isHidden ? "checked=''": "" ;
+    //TODO shift iclass according to the state
     //var iClass = ishidden ? "fw fw-view": "fw fw-view";
 
         if(designer){
-            divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'><i class='fw fw-up'></i> Make Root</li>" + 
-                "<li class='hide-all' style='margin: 0 0 10px 0;'><input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'> <i class='fw fw-view'></i> Hide All</li>";
+            divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'>" +
+            "<i class='fw fw-up'></i> Make Root</li>" + 
+                "<li class='hide-all' style='margin: 0 0 10px 0;'><input type='checkbox' " + checked +
+                    " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'> <i class='fw fw-view'></i> Hide All</li>";
         }
 
     updateSubordinates(menu, null);
@@ -95,7 +98,8 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 if (designer) {
                     divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
                         "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
-                                "<span>" + menu[i].id + "<span class='controls hide-menu-item' id='" +menu[i].id + "'><i class='fw fw-view'></i></span></span>";
+                                "<span>" + menu[i].id + "<span class='controls hide-menu-item' id='" +menu[i].id + 
+                                "'><i class='fw fw-view'></i></span></span>";
                 } else {
                     var divLi = "<li><a href='" + menu[i].id + "'>" + menu[i].title + "</a>";
                     if(!menu[i].ishidden){

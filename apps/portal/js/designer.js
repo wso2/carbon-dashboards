@@ -1255,7 +1255,6 @@ $(function () {
                         "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
                 } else {
-                    //console.log(page.id);
                     updateMenu(page.id, idVal, 'id');
                     //change subordinates with new ID
                     page.id = idVal;
@@ -1352,7 +1351,6 @@ $(function () {
 
         function updateSubordinates(menu, id, newValue){
             for (var i = 0; i < menu.length; i++) {
-                //console.log("key is: " + key + " found: " + menu[i][key]);
                 if (menu[i].id === id) {
                     menu[i][key] = newValue;
                     return;
@@ -1370,11 +1368,8 @@ $(function () {
         event.stopPropagation();
         //event.preventDefault();
         var draggable = ui.draggable;
-        //console.log( 'The page with ID "' + draggable.attr('id') + '" was dropped onto page ' + $(event.target).attr('id'));
-        //console.log("parent : " + $(event.target).attr('data-anon') + " typeof " + typeof($(event.target).attr('data-anon')));
         // dropping an anon page in to a non-anon container
         if(draggable.attr('data-anon') === 'true' && $(event.target).attr('data-anon') === 'false'){
-            console.log("unable to perform the action!");
             showInformation("Cannot drop anonymous page in to a non anonymous page container.");
             return;
         }
@@ -1382,8 +1377,6 @@ $(function () {
         var menu = ues.global.dashboard.menu;
         var parentId = $(event.target).attr('id');
         var childObj = getChild(menu, draggable.attr('id'));
-
-        //console.log("Child Object is: " + childObj);
 
         if(childObj != null || childObj != undefined){
             if (parentId === 'ds-menu-root') {
@@ -1396,26 +1389,16 @@ $(function () {
         }
 
         function findAndUpdateParent(menu, parentId){
-
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === parentId) {
-                   console.log("childObj received: " + JSON.stringify(childObj) + " typeof: " + typeof(menu[i].subordinates));
-/*                        if (menu[i].isanon === false && childObj.isanon === true) {
-                            console.log("Unable to drop the page.");
-                            updateMenuList();
-                            return;
-                        } else {*/
-                            menu[i].subordinates.push(childObj);
-                            saveDashboard();
-                            updateMenuList();
-                            return;
-                        //}
-                }
-                else if (menu[i].subordinates.length > 0){
+                    menu[i].subordinates.push(childObj);
+                    saveDashboard();
+                    updateMenuList();
+                    return;
+                } else if (menu[i].subordinates.length > 0){
                     findAndUpdateParent(menu[i].subordinates,parentId);
                 }
             }
-        //return;
         }
     };
 
@@ -1425,26 +1408,17 @@ $(function () {
 
         findChild(menu, id);
 
-        //console.log("getChild id: " + id);
         function findChild(menu, id){
             for (var i = 0; i < menu.length; i++) {
-                //arrayT.push(i);
-                //console.log("key is: " + key + " found: " + menu[i][key]);
                 if (menu[i].id === id) {
-                    //console.log("findChild : " + menu[i].id + " object: " + JSON.stringify(menu[i]));
                     childObj = menu[i];
-                   // if(func === 'splice'){
-                        menu.splice(i, 1);
-                    //}
+                    menu.splice(i, 1);
                     return;
-                }
-                else if (menu[i].subordinates.length > 0){
+                } else if (menu[i].subordinates.length > 0){
                     findChild(menu[i].subordinates, id);
                 }
             }
         }
-        //console.log("Child Object is: " + childObj);
-        //console.log(arrayT);
         return childObj; 
     }
 
@@ -1814,9 +1788,8 @@ $(function () {
             loadAssets('gadget', query);
         });
     };
-    //todo complete @udarar
+
     var updateMenuList = function() {
-        //console.log("adding menu: " + JSON.stringify(dashboard.menu));
         $('#ues-pages').html(menuListHbs({
             menu: dashboard.menu,
             ishiddenMenu : dashboard.hideAllMenuItems
@@ -1846,10 +1819,7 @@ $(function () {
         $("ul.menu-customize li:nth-child(3)").draggable('disable');
 
         $('#ds-menu-hide-all').change(function () {
-            console.log("checkbox id ds-menu-hide changed");
             if ($(this).is(":checked")) {
-                //do the stuff that you would do when 'checked'
-                console.log("checked! " + $(this).attr("id"));
                 hideAllMenuItems(true);
                 dashboard.hideAllMenuItems = true;
                 saveDashboard();
@@ -1860,11 +1830,9 @@ $(function () {
                 saveDashboard();
                 return;
             }
-            //Here do the stuff you want to do when 'unchecked'
         });
 
         $('.hide-menu-item').click(function (){
-            console.log("Hide page id: " + $(this).attr('id'));
             hideMenuItem($(this).attr('id'));
         });
     };
@@ -1912,7 +1880,6 @@ $(function () {
                     function () {
                         //check whether there are any subordinates
                         var isRemovable = isRemovablePage(pid);
-                        console.log("Page removable state: " + isRemovable);
                         if(isRemovable){
                             removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                                 var pages = dashboard.pages;
@@ -2777,7 +2744,6 @@ $(function () {
         function hideSubordinates(menu, landing){
             for (var i = 0; i < menu.length; i++) {
                     if(menu[i].id !== landing && menu[i].id === pageId){
-                        console.log("Hiding page: " + menu[i].id);
                         if(menu[i].ishidden){
                             menu[i].ishidden = false;
                         }else{
@@ -2785,7 +2751,6 @@ $(function () {
                                 menu[i].ishidden = true;
                             }
                         }
-                        //menu[i].ishidden = bool;
                         saveDashboard();
                         return;
                     }
