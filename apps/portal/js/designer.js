@@ -1342,10 +1342,15 @@ $(function () {
         return true;
     };
 
-    //key can be id or the title
-    //todo tests the update
+    /**
+     * Update menu item based on the given key
+     * @param {String} id
+     * @param {String} newvalue
+     * @param {String} key
+     * @return {null}
+     * @private
+     */
     var updateMenu = function (id, newValue, key){
-
         var menu = dashboard.menu;
         updateSubordinates(menu, id, newValue);
 
@@ -1355,7 +1360,6 @@ $(function () {
                     menu[i][key] = newValue;
                     return;
                 }
-
                 if(menu[i].subordinates.length > 0){
                     updateSubordinates(menu[i].subordinates, id, newValue);
                 }
@@ -1363,8 +1367,14 @@ $(function () {
         }
     }
 
-
-    var handleDropEvent = function( event, ui ) {
+    /**
+     * Handles menu item drop event
+     * @param {Object} event
+     * @param {Object} ui
+     * @return {null}
+     * @private
+     */
+    var handleDropEvent = function(event, ui) {
         event.stopPropagation();
         //event.preventDefault();
         var draggable = ui.draggable;
@@ -1402,6 +1412,13 @@ $(function () {
         }
     };
 
+    /**
+     * Splice and return the child object
+     * @param {Object} menu object
+     * @param {String} id
+     * @return {Object}
+     * @private
+     */
     var getChild = function(menu, id){
         var arrayT = [];
         var childObj;
@@ -1789,6 +1806,11 @@ $(function () {
         });
     };
 
+    /**
+     * update hierarchical menu creation page.
+     * @return {null}
+     * @private
+     */
     var updateMenuList = function() {
         $('#ues-pages').html(menuListHbs({
             menu: dashboard.menu,
@@ -1820,12 +1842,12 @@ $(function () {
 
         $('#ds-menu-hide-all').change(function () {
             if ($(this).is(":checked")) {
-                hideAllMenuItems(true);
+                manipulateAllMenuItems(true);
                 dashboard.hideAllMenuItems = true;
                 saveDashboard();
                 return;
             } else {
-                hideAllMenuItems(false);
+                manipulateAllMenuItems(false);
                 dashboard.hideAllMenuItems = false;
                 saveDashboard();
                 return;
@@ -1833,7 +1855,7 @@ $(function () {
         });
 
         $('.hide-menu-item').click(function (){
-            hideMenuItem($(this).attr('id'));
+            manipulateMenuItem($(this).attr('id'));
         });
     };
 
@@ -1880,7 +1902,7 @@ $(function () {
                     function () {
                         //check whether there are any subordinates
                         var isRemovable = isRemovablePage(pid);
-                        if(isRemovable){
+                        if (isRemovable) {
                             removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                                 var pages = dashboard.pages;
                                 getChild(dashboard.menu, pid);
@@ -1888,7 +1910,7 @@ $(function () {
 
                                 // if the landing page was deleted, make the first page(in menu) to be the landing page
                                 if (dashboard.menu.length) {
-                                    if (pid == dashboard.landing) {
+                                    if (pid === dashboard.landing) {
                                         dashboard.landing = dashboard.menu[0].id;
                                     }
                                 } else {
@@ -1982,6 +2004,12 @@ $(function () {
         });
     };
 
+    /**
+     * Check whether page is deletable based on subordinates
+     * @param {String} page ID
+     * @return {boolean}
+     * @private
+     */
     var isRemovablePage = function (pid) {
         var menuItem = getChild(dashboard.menu, pid);
         if(menuItem.subordinates.length === 0){
@@ -2717,46 +2745,57 @@ $(function () {
 
     ues.dashboards.save = saveDashboard;
 
-    var hideAllMenuItems = function(bool){
+    /**
+     * Hide/show all menu items except landing page
+     * @param {Boolean} state
+     * @return {null}
+     */
+    var manipulateAllMenuItems = function(bool){
         var menu = dashboard.menu;
         var landing = dashboard.landing;
-        hideSubordinates(menu, landing);
+        manipulateSubordinates(menu, landing);
 
-        function hideSubordinates(menu, landing){
+        function manipulateSubordinates(menu, landing){
             for (var i = 0; i < menu.length; i++) {
-                    if(menu[i].id !== landing){
+                    if (menu[i].id !== landing) {
                         menu[i].ishidden = bool;
                     }
-
-                if(menu[i].subordinates.length > 0){
-                    hideSubordinates(menu[i].subordinates, landing);
+                if (menu[i].subordinates.length > 0) {
+                    manipulateSubordinates(menu[i].subordinates, landing);
                 }
             }
         }
 
     }
 
-    var hideMenuItem = function(pageId){
+    /**
+     * Hide/show particular menu item.
+     * @param {String} pageID
+     * @return {null}
+     */
+    var manipulateMenuItem = function(pageId){
         var menu = dashboard.menu;
         var landing = dashboard.landing;
-        hideSubordinates(menu, landing);
+        manipulateSubordinates(menu, landing);
 
-        function hideSubordinates(menu, landing){
+        function manipulateSubordinates(menu, landing){
             for (var i = 0; i < menu.length; i++) {
-                    if(menu[i].id !== landing && menu[i].id === pageId){
-                        if(menu[i].ishidden){
+                    //page should not be current landing page
+                    if (menu[i].id !== landing && menu[i].id === pageId) {
+                        //TODO get state from the UI
+                        if (menu[i].ishidden) {
                             menu[i].ishidden = false;
-                        }else{
-                            if(menu[i].subordinates.length === 0){
+                        } else {
+                            // hide if there are no subordinates
+                            if (menu[i].subordinates.length === 0) {
                                 menu[i].ishidden = true;
                             }
                         }
                         saveDashboard();
                         return;
                     }
-
                 if(menu[i].subordinates.length > 0){
-                    hideSubordinates(menu[i].subordinates, landing);
+                    manipulateSubordinates(menu[i].subordinates, landing);
                 }
             }
         }
@@ -2791,9 +2830,12 @@ function updateSidebarNav(view, button) {
     nanoScrollerSelector[0].nanoscroller.reset();
 }
 
-
-function menuCreator(button) {
-    //$(button).addClass("active");
+/**
+ * Loads hierarchical menu creation page
+ * @param {Object} button   Event source
+ * @return {null}
+ */
+function loadMenuCreator(button) {
     $('.menu').show();
     $('.content').hide();
     $('.page-content-wrapper').css('padding-left',50);
