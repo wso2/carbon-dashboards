@@ -53,7 +53,7 @@
     "cacheTimeoutSeconds": "5",
     "cacheSizeBytes": "1073741824",
     "defaultDashboardRedirect": false,
-    "isCreateGadgetEnable": false,
+    "isCreateGadgetEnable": true,
     "oauth": {
         "username": "admin",
         "password": "admin"
