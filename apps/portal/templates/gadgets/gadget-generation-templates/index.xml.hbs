@@ -2,7 +2,17 @@
 <Module>
     <ModulePrefs title="{{gadget_title}}" description="This is a template gadget">
         <Require feature="dynamic-height"/>
+        <Require feature="setprefs"/>
     </ModulePrefs>
+    {{#if isPushMode}}
+    <UserPref name="windowSize"
+              display_name="Window Size"
+              default_value=10/>
+    {{else}}
+    <UserPref name="refreshInterval"
+              display_name="Refresh Interval"
+              default_value="10"/>
+     {{/if}}
     <Content type="html">
         <![CDATA[
         <head>

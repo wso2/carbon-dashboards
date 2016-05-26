@@ -17,7 +17,9 @@ $(function () {
 var gadgetLocation = '{{gadget_location}}';
     var conf;
     var schema;
+    var pref = new gadgets.Prefs();
     {{#if isPullMode}}
+    var refreshInterval;
     var providerData;
     {{/if}}
     var CHART_CONF = 'chart-conf';
@@ -66,11 +68,10 @@ var getProviderData = function (){
 
 var drawGadget = function (){
     {{#if isPullMode}}
-    var refreshInterval = conf[PROVIDER_CONF][REFRESH_INTERVAL];
     draw('#canvas', conf[CHART_CONF], schema, providerData);
     setInterval(function() {
         update(getProviderData);
-    },refreshInterval);
+    },pref.getInt(REFRESH_INTERVAL));
     {{else}}
     registerCallBackforPush(conf[PROVIDER_CONF], schema , function(providerData){
        draw('#canvas', conf[CHART_CONF], schema, providerData);
