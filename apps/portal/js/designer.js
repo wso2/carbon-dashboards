@@ -1839,6 +1839,8 @@ $(function () {
 
         //Disable draggable state for landing page
         $("ul.menu-customize li:nth-child(3)").draggable('disable');
+        //Disable menu hide option for landing page
+        $("ul.menu-customize li:nth-child(3) .hide-menu-item:first").hide();
 
         $('#ds-menu-hide-all').change(function () {
             if ($(this).is(":checked")) {

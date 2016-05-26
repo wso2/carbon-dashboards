@@ -563,7 +563,7 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
     display: block;
 }
 
-.menu-customize.nav.nav-stacked li > span:hover {
+.menu-customize.nav.nav-stacked li:not(.ui-draggable-disabled) > span:hover {
     background: #444;
     color: #fff;
     cursor: move;
