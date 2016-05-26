@@ -2821,7 +2821,7 @@ function updateSidebarNav(view, button) {
     $(view).siblings().hide();
     $('.content').show();
     $('.menu').hide();
-    $('#left-sidebar').show();
+    $('#btn-sidebar-menu').closest('li').removeClass('active');
 
     if ($(view).find('button[data-target=#left-sidebar-sub]').length == 0) {
         $('#left-sidebar-sub').hide();
@@ -2840,8 +2840,7 @@ function updateSidebarNav(view, button) {
 function loadMenuCreator(button) {
     $('.menu').show();
     $('.content').hide();
-    $('.page-content-wrapper').css('padding-left',50);
-    $('#left-sidebar').hide();
+    $(button).closest('li').addClass('active');
 }
 
 /**
