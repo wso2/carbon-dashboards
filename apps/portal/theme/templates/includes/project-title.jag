@@ -15,5 +15,4 @@
  * limitations under the License.
  */
 %>
-<script src="<%=urlPrefix%><%=utils.getThemeScriptPath('gadget-properties')%>"></script>
 <%=encodeHtml(dashboard.title)%>
