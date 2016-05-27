@@ -15,16 +15,6 @@
             "fieldName": "y",
             "fieldType": "dropdown",
             "valueSet": ["$COLUMN_NAMES"]
-        },
-        {
-            "fieldLabel": "Chart Colour",
-            "fieldName": "colour",
-            "fieldType": "string"
-        },
-        {
-            "fieldType" : "advanced",
-            "childPartial" : "linePartial",
-            "dynamicJS" : []
         }
     ],
     "common-libs" : ["wso2gadgets","chart-utils"],

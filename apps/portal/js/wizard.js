@@ -273,7 +273,6 @@ function getProviders() {
 function getProviderConfig() {
     step1Done = true;
     provider = $("#providers").val();
-    console.log('@@@@@@@ '+ provider);
     var data = {"provider": provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
