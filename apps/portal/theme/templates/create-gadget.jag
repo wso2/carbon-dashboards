@@ -225,7 +225,7 @@
 </script>
 
 <script id="preview-hbs" type="text/x-handlebars-template">
-     <iframe id = "idIframe" src= "theme/templates/preview.jag" width="100%" height="inherit"  scrolling="no" ></iframe>
+     <iframe src= "theme/templates/preview.jag" width="100%" height="inherit"  scrolling="no" ></iframe>
 </script>
 
 <script id="success-hbs" type="text/x-handlebars-template">
