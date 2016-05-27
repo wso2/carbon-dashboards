@@ -20,6 +20,33 @@ var PROVIDER_NAME = 'provider-name'
 var CHART_CONF = 'chart-conf';
 var CHART_NAME = 'chart-name';
 
+/**
+ * Show error style for given element
+ * @param1 element
+ * @param2 errorElement
+ * @private
+ * */
+var showInlineError = function (element, errorElement, message) {
+    element.val('');
+    element.parent().addClass("has-error");
+    element.addClass("has-error");
+    errorElement.removeClass("hide");
+    errorElement.html(message);
+    errorElement.addClass("show");
+};
+
+/**
+ * Hide error style for given element
+ * @param1 element
+ * @param2 errorElement
+ * @private
+ * */
+var hideInlineError = function (element, errorElement) {
+    element.parent().removeClass("has-error");
+    element.removeClass("has-error");
+    errorElement.removeClass("show");
+    errorElement.addClass("hide");
+};
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
@@ -104,10 +131,12 @@ $("#preview").click(function () {
         async: false,
         success: function (data) {
             if(!data.error) {
-                $('#tab3-validation-errors').html('');
+             //   $('#tab3-validation-errors').html('');
+                hideInlineError($("#gadget-name"),$("#title-error"));
                 $('#preview-pane').html($('#preview-hbs').html());
             } else {
-                $('#tab3-validation-errors').html(data.message);
+                //$('#tab3-validation-errors').html(data.message);
+                showInlineError($("#gadget-name"),$("#title-error"), data.message);
                 $('#preview-pane').html('');
                 $('#rootwizard').find('.pager .finish').hide();
             }
