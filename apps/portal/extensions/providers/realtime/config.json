@@ -4,5 +4,6 @@
         "name": "Realtime Data Source",
         "image": ""
     },
-    "config": []
+    "config" : [],
+    "provider-libs" : ["ws-client"]
 }

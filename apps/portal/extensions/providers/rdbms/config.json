@@ -11,9 +11,22 @@
             "fieldType" : "string",
             "defaultValue" : "",
             "isRequired" : true,
-            "isRequired" : true,
             "hint": "This is a sample hint",
-            "placeholderText" : "test"
+            "placeholderText" : "jdbc:mysql://localhost:3306/dbname"
+        },
+        {
+            "fieldLabel" : "Database Name",
+            "fieldName" :"db_name",
+            "fieldType" : "string",
+            "defaultValue" : "",
+            "isRequired" : true
+        },
+        {
+            "fieldLabel" : "Table Name",
+            "fieldName" :"table_name",
+            "fieldType" : "string",
+            "defaultValue" : "",
+            "isRequired" : true
         },
         {
             "fieldLabel" : "Username",
@@ -30,22 +43,10 @@
             "isRequired" : true
         },
         {
-            "fieldLabel" : " Database Driver",
-            "fieldName" :"driver",
-            "fieldType" : "dropDown",
-            "valueSet" : ["apple","orange"],
+            "fieldLabel" : " SQL Query",
+            "fieldName" :"query",
+            "fieldType" : "string",
             "isRequired" : true
-        },
-        {
-            "fieldLabel" : " Check Box",
-            "fieldName" :"checkbox",
-            "fieldType" : "checkbox",
-            "isRequired" : true
-        },
-        {
-            "fieldType" : "advanced",
-            "childPartial" : "myPartial",
-            "dynamicJS" : ["test","demo"]
         }
     ],
     "provider-libs" : ["test"]

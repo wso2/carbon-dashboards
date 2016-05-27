@@ -156,13 +156,4 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         return data;
     };
 
-    /**
-     *
-     * @param providerConfig
-     * @param schema
-     */
-    registerCallBackforPush = function(providerConfig, schema) {
-
-    }
-
 }());

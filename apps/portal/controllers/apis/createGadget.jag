@@ -65,6 +65,7 @@
         print(providers);
         return;
     } else if (action === 'getProviderConfig') {
+        log.info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ '+data.provider);
         var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
         var providerConfig = providerApi.getConfig().config;
         print(providerApi.getConfig().config);
@@ -83,7 +84,6 @@
         print(customPartial);
         return;
     } else if (action === 'getData') {
-        var schema;
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
         var validate = providerApi.validate(data[PROVIDER_CONF]);
@@ -133,17 +133,23 @@
             return;
         }
         var chartApi = require(CHART_LOCATION + data.chartType + '/index.js');
-        var modifiedChartConfig = chartApi.getConfig(schema);
-        for (var i in modifiedChartConfig) {
-            if (modifiedChartConfig[i][VALUE_SET] && SCHEME_NOTIFIER === modifiedChartConfig[i][VALUE_SET][0]) {
-                modifiedChartConfig[i][VALUE_SET].splice(0);
-                for (var j in schema) {
-                    modifiedChartConfig[i][VALUE_SET].push(schema[j]['fieldName']);
+        if (!schema.error) {
+            var modifiedChartConfig = chartApi.getConfig(schema);
+            for (var i in modifiedChartConfig) {
+                if (modifiedChartConfig[i][VALUE_SET] && SCHEME_NOTIFIER === modifiedChartConfig[i][VALUE_SET][0]) {
+                    modifiedChartConfig[i][VALUE_SET].splice(0);
+                    for (var j in schema) {
+                        modifiedChartConfig[i][VALUE_SET].push(schema[j]['fieldName']);
+                    }
                 }
             }
+            print(modifiedChartConfig);
+            return;
+        } else {
+            log.error("Schema Retrieval Failed");
+            print(schema);
+            return;
         }
-        print(modifiedChartConfig);
-        return;
     } else if (action === 'getChartAdvancedUI') {
         try {
             file = new File(CHART_LOCATION + data.chartType + PARTIAL_LOCATION + data.partial + '.hbs');

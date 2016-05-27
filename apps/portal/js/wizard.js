@@ -58,7 +58,7 @@ $('#rootwizard').bootstrapWizard({
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
         }else if (index == 1 && !step1Done) {
-            step1Done = true;
+                step1Done = true;
                 getProviderConfig();
         } else if (index == 2 && !step2Done) {
             step2Done = true
@@ -70,6 +70,7 @@ $('#rootwizard').bootstrapWizard({
 });
 
 $('#provider-list').change(function () {
+    step1Done = false;
     provider = $("#providers").val();
 });
 
@@ -205,7 +206,7 @@ function getProviders() {
                 return;
             }
             var providerHbs = Handlebars.compile($('#datasource-providers-hbs').html());
-            $("#provider-list").append(providerHbs(data));
+            $("#provider-list").html(providerHbs(data));
 
         },
         error: function (xhr, message, errorObj) {
@@ -230,6 +231,7 @@ function getProviders() {
 function getProviderConfig() {
     step1Done = true;
     provider = $("#providers").val();
+    console.log('@@@@@@@ '+ provider);
     var data = {"provider": provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
@@ -240,7 +242,7 @@ function getProviderConfig() {
         success: function (data) {
             registerAdvancedProviderUI(data);
             var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#provider-config").append(providerHbs(data));
+            $("#provider-config").html(providerHbs(data));
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
@@ -308,7 +310,7 @@ function getChartList() {
         async: false,
         success: function (chartList) {
             var chartListHbs = Handlebars.compile($('#chart-list-hbs').html());
-            $("#chart-list").append(chartListHbs(chartList));
+            $("#chart-list").html(chartListHbs(chartList));
         }
     });
 }
@@ -321,10 +323,15 @@ function getChartConfig(providerConfig) {
         contentType: "application/json",
         async: false,
         success: function (chartConfig) {
-            registerAdvancedChartUI(chartConfig);
-            var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#chart-config").html(chartHbs(chartConfig));
-            $("#preview").removeAttr("style");
+            if(!chartConfig.error) {
+                registerAdvancedChartUI(chartConfig);
+                var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
+                $("#chart-config").html(chartHbs(chartConfig));
+                $("#preview").removeAttr("style");
+            }else {
+                $('#tab3-validation-errors').html(chartConfig.message);
+                $('#rootwizard').find('.pager .next').addClass("disabled");
+            }
         }
     });
 }

@@ -22,11 +22,8 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     /**
      * require the existing config.json and push any dynamic fields that needs to be populated in the UI
      */
-    getConfig = function (){
+    getConfig = function () {
         var formConfig = require(PROVIDERS_LOCATION + '/rdbms/config.json');
-        /*
-         dynamic logic goes here
-         */
         return formConfig;
     };
 
@@ -34,18 +31,24 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * validate the user input of provider configuration
      * @param providerConfig
      */
-    validate = function (providerConfig){
-        /*
-         validate the form and return
-
-         */
+    validate = function (providerConfig) {
+        try {
+            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+        } catch (e) {
+            return {
+                "error" : true,
+                "message" : "Database connection failed"
+            }
+        } finally{
+            db.close();
+        }
         return true;
     };
 
     /**
      * returns the data mode either push or pull
      */
-    getMode = function (){
+    getMode = function () {
         return 'pull';
     };
 
@@ -54,28 +57,35 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     getSchema = function (providerConfig) {
-        // call provider using the providerConfig and get the schema in the below format
-        var schema = [];
-        var fieldOne = {"fieldName" : "student_name", "fieldType" : "varchar"}
-        var fieldtwo = {"fieldName" : "marks", "fieldType" : "int"}
-        var fieldthree = {"fieldName" : "grade", "fieldType" : "varchar"}
-        schema.push(fieldOne);
-        schema.push(fieldtwo);
-        schema.push(fieldthree);
-        return schema;
-
-        /*
-         accepting data format
-
-         {
-         fieldName : aaa
-         FieldValue : bbb
-         },
-         {
-         fieldName : ccc
-         FieldValue : ddd
-         }
-         */
+        try {
+            var databaseName = providerConfig['db_name'];
+            var tableName = providerConfig['table_name'];
+            var db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
+                databaseName + "' and table_name='" + tableName + "';";
+            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            var schema = db.query(db_query);
+        } catch (e) {
+            return {
+                "error": true,
+                "message": "Schema Retrieval Failed"
+            }
+        } finally {
+            db.close();
+        }
+        if(schema.length != 0) {
+            for (var i in schema) {
+                schema[i].fieldName = schema[i].column_name;
+                schema[i].fieldType = schema[i].column_type;
+                delete schema[i].column_name;
+                delete schema[i].column_type;
+            }
+            return schema;
+        } else {
+            return {
+                "error": true,
+                "message": "Schema retrieval failed"
+            }
+        }
     };
 
     /**
@@ -83,22 +93,14 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      * @param limit
      */
-    getData = function (providerConfig,limit) {
+    getData = function (providerConfig, limit) {
 
-        var db = new Database("jdbc:mysql://localhost:3306/test", "root", "root");
-        return db.query("SELECT * FROM studentMarks;");
-        /*
-         schemaPropertyList - an array of column names
-         */
-    };
-
-    /**
-     *
-     * @param providerConfig
-     * @param schema
-     */
-    registerCallBackforPush = function (providerConfig, schema){
-
+        var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+        var query = providerConfig['query'];
+        if(limit){
+            query =query.replace(/^\s\s*/, '').replace(/\s\s*$/, '') + ' limit ' + limit;
+        }
+        return db.query(query);
     };
 
 }());
