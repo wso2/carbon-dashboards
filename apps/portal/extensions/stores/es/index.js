@@ -19,9 +19,9 @@ var getAsset, getAssets, addAsset, deleteAsset;
     var log = new Log();
 
     var dir = '/store/';
-    var GADGET_ATTRIBUTES = 'attributes'
-    var GADGET_NAME = 'overview_name';
-    var GADGET_VERSION = 'overview_version'
+    var GADGET_ATTRIBUTES = 'attributes';
+    var GADGET_ID = 'overview_id';
+    var GADGET_VERSION = 'overview_version';
 
     var utils = require('/modules/utils.js');
     var config = require('/extensions/stores/es/config.json');
@@ -51,7 +51,7 @@ var getAsset, getAssets, addAsset, deleteAsset;
         var assets = parse((get(config.publishedAssetApi, headers, 'application/json')).data).data;
         var publishedAssets = [];
         for (var i = 0; i < assets.length; i++) {
-            var asset_id = (assets[i][GADGET_ATTRIBUTES][GADGET_NAME] + config.dirNameDelimiter
+            var asset_id = (assets[i][GADGET_ATTRIBUTES][GADGET_ID] + config.dirNameDelimiter
                 + assets[i][GADGET_ATTRIBUTES][GADGET_VERSION]).replace(/ /g, config.dirNameDelimiter);
             publishedAssets.push(asset_id);
         }
