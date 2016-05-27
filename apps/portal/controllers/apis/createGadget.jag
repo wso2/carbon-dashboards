@@ -65,7 +65,6 @@
         print(providers);
         return;
     } else if (action === 'getProviderConfig') {
-        log.info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ '+data.provider);
         var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
         var providerConfig = providerApi.getConfig().config;
         print(providerApi.getConfig().config);
