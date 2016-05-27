@@ -1,271 +1,245 @@
-var datasource, datasourceType;
+var newIndex = 0;
+var provider;
+var chartType;
+var wizardData = {};
 var previewData = [];
 var columns = [];
-var done = false;
+var step0Done = false;
+var step1Done = false;
+var step2Done = false;
 var isPaginationSupported = true;
 var selectedTableCoulumns = [];
 var defaultTableColumns = [];
 
-///////////////////////////////////////////// event handlers //////////////////////////////////////////
-$(document).ready(function() {
-    // $("#dsList").select2({
-    //     placeholder: "Select a datasource",
-    //     templateResult: formatDS
-    // });
-});
+var PROVIDER_LOCATION = 'extensions/providers/';
+var CHART_LOCATION = 'extensions/chart-templates/';
+var DYNAMIC_JS_LOCATION = '/js/';
 
-function formatDS(item) {
-    if (!item.id) {
-        return item.text;
-    }
-    var type = $(item.element).data("type");
-    var $item;
-    if (type === "realtime") {
-        $item = $('<div><i class="fa fa-bolt"> </i> ' + item.text + '</div>');
-    } else {
-        $item = $('<div><i class="fa fa-clock-o"> </i> ' + item.text + '</div>');
-    }
-    // var $item = $(
-    //     '<span><img src="vendor/images/flags/' + item.element.value.toLowerCase() + '.png" class="img-flag" /> ' + item.text + '</span>'
-    //   );
-    return $item;
+var PROVIDER_CONF = 'provider-conf';
+var PROVIDER_NAME = 'provider-name'
+var CHART_CONF = 'chart-conf';
+var CHART_NAME = 'chart-name';
+
+/**
+ * Show error style for given element
+ * @param1 element
+ * @param2 errorElement
+ * @private
+ * */
+var showInlineError = function (element, errorElement, message) {
+    element.val('');
+    element.parent().addClass("has-error");
+    element.addClass("has-error");
+    errorElement.removeClass("hide");
+    if (message != null)
+        errorElement.html(message);
+    errorElement.addClass("show");
 };
 
+/**
+ * Hide error style for given element
+ * @param1 element
+ * @param2 errorElement
+ * @private
+ * */
+var hideInlineError = function (element, errorElement) {
+    element.parent().removeClass("has-error");
+    element.removeClass("has-error");
+    errorElement.removeClass("show");
+    errorElement.addClass("hide");
+};
+///////////////////////////////////////////// event handlers //////////////////////////////////////////
+
 $('#rootwizard').bootstrapWizard({
-    onTabShow: function(tab, navigation, index) {
-        //console.log("** Index : " + index);
-        done = false;
-        if (index == 0) {
-            getDatasources();
+    onNext: function(tab, navigation, index) {
+        var isRequiredFieldsFilled = true;
+        if(index == 2) {
+            $('input[required="true"]').each(function () {
+                if (!$.trim($(this).val())) {
+                    isRequiredFieldsFilled = false;
+                    showInlineError($(this), $("#" + $(this).attr("name") + "-error"));
+                }
+                else{
+                    hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
+                }
+            });
+            if(isRequiredFieldsFilled){
+                $('#lastTab').removeClass("tab-link-disabled");
+            }
+        }
+        
+        
+        return isRequiredFieldsFilled;
+    },
+    onTabShow: function (tab, navigation, index) {
+        if (index == 0 && !step0Done) {
+            step0Done = true;
+            getProviders();
             $("#btnPreview").hide();
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
-        } else if (index == 1) {
-            $('#rootwizard').find('.pager .finish').show();
-            $("#previewChart").hide();
-            done = true;
-            if (datasourceType === "batch" && isPaginationSupported) {
-                fetchData();
-            }
-            renderChartConfig();
+        }else if (index == 1 && !step1Done) {
+                step1Done = true;
+                getProviderConfig();
+        } else if (index == 2 && !step2Done) {
+            step2Done = true
+            wizardData = getProviderConfigData();
+            getChartList();
+            $('#chart-list').change();
         }
     }
 });
 
-$("#dsList").change(function() {
-    datasource = $("#dsList").val();
-    if (datasource != "-1") {
-        $('#rootwizard').find('.pager .next').removeClass("disabled");
-        datasourceType = $("#dsList option:selected").attr("data-type");
-        getColumns(datasource, datasourceType)
-
-        if(datasourceType != "realtime") {
-
-            //check whether the seleced datasource supports pagination as well
-            //first, get the recordstore for this table
-            var recordStore;
-            var tableName = datasource;
-            var url = "/portal/apis/analytics?type=27&tableName=" + tableName;
-            $.getJSON(url, function (data) {
-                if (data.status === "success") {
-                    recordStore = data.message;
-                    //then check for pagination support on this recordstore
-                    recordStore = recordStore.replace(/"/g, "");
-                    checkPaginationSupported(recordStore);
-                }
-            });
-        }
-    } else {
-        $('#rootwizard').find('.pager .next').addClass("disabled");
-    }
+$('#provider-list').change(function () {
+    step1Done = false;
+    provider = $("#providers").val();
 });
 
-$("#btnPreview").click(function() {
-    if ($("dsList").val() != -1) {
-        fetchData(renderPreviewPane);
-    }
-});
-
-$("#previewChart").click(function() {
-
-    var chartType = $("#chartType").val();
-    var notFilled = false;
-    $("#title").css("border-color", "");
-
-    $("."+chartType).find("input[type=text]").each(function(){
-        if( $(this).attr("id") != "title" && $(this).attr("id").indexOf("cusId") == -1 && $(this).val().length == 0){
-            $(this).css("border-color", "red");
-            notFilled = true;
-        }else{
-            $(this).css("border-color", "");
-        }
-    });
-
-    $("."+chartType+" select").each(function(){
-        if( $(this).attr("id") != "color" && $(this).attr("id") != "tblColor" && $(this).attr("id") != "columns" && $(this).val() == -1){
-            $(this).css("border-color", "red");
-            notFilled = true;
-        }else{
-            $(this).css("border-color", "");
-        }
-    });
-
-    if(notFilled){
-        generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-        return;
-    }
-
-    var selectedCoulmnValue = $("#columns").val();
-
-    if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
-        generateMessage("Please select all attributes or add custom columns !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-        return;
-    }
-
-    if (datasourceType === "realtime") {
-        var streamId = $("#dsList").val();
-        var url = "/portal/apis/rt?action=publisherIsExist&streamId=" + streamId;
-        $.getJSON(url, function(data) {
-            if (!data) {
-                generateMessage("You have not deployed a Publisher adapter UI Corresponding to selected StreamID:" + streamId +
-                    " Please deploy an adapter to Preview Data.", null, null, "error", "topCenter", 3500, ['button', 'click']);
+$('#show-data').click(function () {
+    var pConfig = getProviderConfigData();
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getData',
+        method: "POST",
+        data: JSON.stringify(pConfig),
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+            if(!data.error) {
+                $('#sample-data-message').show();
+                $('#tab2-validation-errors').html('');
+                var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
+                $('#data-preview').html(dataPreviewHbs(data));
+                $('#rootwizard').find('.pager .next').removeClass("disabled");
             } else {
-                chart = null;
-                //TODO DOn't do this! read this from a config file
-                subscribe(streamId.split(":")[0], streamId.split(":")[1], '10', window.location.pathname.split('/')[3],
-                    onRealTimeEventSuccessRecieval, onRealTimeEventErrorRecieval,  location.hostname, location.port,
-                    'WEBSOCKET', "SECURED");
-                var source = $("#wizard-zeroevents-hbs").html();;
-                var template = Handlebars.compile(source);
-                $("#chartDiv").empty();
-                $("#chartDiv").append(template());
+                $('#tab2-validation-errors').html(data.message);
+                $('#data-preview').html('');
+                $('#rootwizard').find('.pager .next').addClass("disabled");
+            }
+        },
+        error: function (xhr, message, errorObj) {
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
+            }
+            var source = $("#wizard-error-hbs").html();
+            ;
+            var template = Handlebars.compile(source);
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
+                error: xhr.responseText
+            }));
+
+        }
+    });
+});
+
+$('#chart-list').change(function(){
+    chartType = $("#chart-type").val();
+    wizardData['chartType'] = chartType;
+    getChartConfig(wizardData);
+});
+
+$('#gadget-name').on('keyup', function () {
+    if ($(this).val()) {
+        hideInlineError($(this), $("#gadget-name-error"));
+    }
+
+});
+
+$('#tab2').on('keypress', function() {
+    $('input[required="true"]').each(function () {
+        $(this).on('keyup', function (e) {
+            if ($(this).val()) {
+                hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
             }
         });
-    } else {
-        drawBatchChart(previewData);
-    }
-
+    });
 });
 
-$("#chartType").change(function() {
-    bindChartconfigs(columns,this.value);
-    selectedTableCoulumns = [];
-    $(".attr").hide();
-    var className = jQuery(this).children(":selected").val();
-    var chartType = this.value;
-
-    if(chartType == "tabular"){
-        $("#dynamicElements").empty();
-    }
-
-    $("."+chartType).find("input[type=text]").each(function(){
-        $(this).val("");
-        $(this).css("border-color", "");
-    });
-
-    $("."+chartType+" select").each(function(){
-        $(this).val(-1);
-        $(this).css("border-color", "");
-    });
-
-    $("." + className).show();
-    $("#previewChart").show();
+$("#preview").click(function () {
+    $("#generate").removeAttr("style");
+    $('#rootwizard').find('.pager .finish').show();
     $('#rootwizard').find('.pager .finish').removeClass('disabled');
+    delete wizardData['chartType'];
+    wizardData[CHART_CONF] = getChartConfigData();
 
+    if (!$.trim($("#gadget-name").val())) {
+        showInlineError($("#gadget-name"),$("#gadget-name-error"),null);
+    }
+    else {
+        $.ajax({
+            url: ues.utils.relativePrefix() + 'apis/createGadget?action=preview',
+            method: "POST",
+            data: JSON.stringify(wizardData),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                if (!data.error) {
+                    hideInlineError($("#gadget-name"), $("#gadget-name-error"));
+                    $('#preview-pane').html($('#preview-hbs').html());
+                } else {
+                    showInlineError($("#gadget-name"), $("#gadget-name-error"), data.message);
+                    $('#preview-pane').html('');
+                    $('#rootwizard').find('.pager .finish').hide();
+                }
+            },
+            error: function (xhr, message, errorObj) {
+                //When 401 Unauthorized occurs user session has been log out
+                if (xhr.status == 401) {
+                    //reload() will redirect request to login page with set current page to redirect back page
+                    location.reload();
+                }
+                var source = $("#wizard-error-hbs").html();
+                ;
+                var template = Handlebars.compile(source);
+                $("#rootwizard").empty();
+                $("#rootwizard").append(template({
+                    error: xhr.responseText
+                }));
+            }
+        });
+    }
 });
 
 $(".pager .finish").click(function() {
-    //do some validations
-    var chartType = $("#chartType").val();
-
-    if ($("#title").val() == "") {
-        $("#title").css("border-color", "red");
-        generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-        return;
-    }else {
-        var notFilled = false;
-        $("#title").css("border-color", "");
-
-
-        $("."+chartType).find("input[type=text]").each(function(){
-            if( $(this).attr("id").indexOf("cusId") == -1 && $(this).val().length == 0){
-                $(this).css("border-color", "red");
-                notFilled = true;
-            }else{
-                $(this).css("border-color", "");
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=addGadgetToStore',
+        method: "POST",
+        data: JSON.stringify(wizardData),
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+            $('#top-rootwizard').html($('#success-hbs').html());
+        },
+        error: function (xhr, message, errorObj) {
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
             }
-        });
-
-        $("."+chartType+" select").each(function(){
-            if( $(this).attr("id") != "color" && $(this).attr("id") != "tblColor" && $(this).attr("id") != "columns" && $(this).val() == -1){
-                $(this).css("border-color", "red");
-                notFilled = true;
-            }else{
-                $(this).css("border-color", "");
-            }
-        });
-
-        if(notFilled){
-            generateMessage("Please Provide Required Fields !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-            return;
+            var source = $("#wizard-error-hbs").html();
+            ;
+            var template = Handlebars.compile(source);
+            $("#top-rootwizard").empty();
+            $("#top-rootwizard").append(template({
+                error: xhr.responseText
+            }));
         }
+    });
 
-        var selectedCoulmnValue = $("#columns").val();
-
-        if(chartType == "tabular" && selectedCoulmnValue != -1 && selectedTableCoulumns.length == 0){
-            generateMessage("Please select all attributes or add custom columns !", null, null, "error", "topCenter", 3500, ['button', 'click']);
-            return;
-        }
-    }
-    if (done) {
-        console.log("*** Posting data for gadget [" + $("#title").val() + "]");
-        //building the chart config depending on the chart type
-        var config = {
-            chartType: $("#chartType").val()
-        };
-        configureChart(config);
-        config = chartConfig;
-        var request = {
-            id: $("#title").val().replace(/ /g, "_"),
-            title: $("#title").val(),
-            datasource: $("#dsList").val(),
-            type: $("#dsList option:selected").attr("data-type"),
-            filter: $("#txtFilter").val(),
-            columns: columns,
-            chartConfig: config
-
-        };
-        $.ajax({
-            url: "/portal/apis/gadgetgen",
-            method: "POST",
-            data: JSON.stringify(request),
-            contentType: "application/json",
-            success: function(d) {
-                console.log("***** Gadget [ " + $("#title").val() + " ] has been generated. " + d);
-                window.location.href = "/portal/";
-            }
-        });
-    } else {
-        //console.log("Not ready");
-    }
 });
 
-function onRealTimeEventSuccessRecieval(streamId, data) {
-    drawRealtimeChart(data);
-};
 
-function onRealTimeEventErrorRecieval(dataError) {
-    console.log(dataError);
-};
 
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
 
-function getDatasources() {
+function getProviders() {
     $.ajax({
-        url: "/portal/apis/rt?action=getDatasources",
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviders',
         method: "GET",
         contentType: "application/json",
-        success: function(data) {
+        success: function (data) {
             if (data.length == 0) {
                 var source = $("#wizard-zerods-hbs").html();
                 var template = Handlebars.compile(source);
@@ -273,27 +247,11 @@ function getDatasources() {
                 $("#rootwizard").append(template());
                 return;
             }
-            var datasources = data.map(function(element, index) {
-                var item = {
-                    name: element.name,
-                    type: element.type
-                };
-                return item;
-            });
-            $("#dsList").empty();
-            $("#dsList").append($('<option/>').val("-1")
-                    .html("--Select a table/stream--")
-                    .attr("type", "-1")
-            );
-            datasources.forEach(function(datasource, i) {
-                var item = $('<option></option>')
-                    .val(datasource.name)
-                    .html(datasource.name + " [" + datasource.type + "]")
-                    .attr("data-type", datasource.type);
-                $("#dsList").append(item);
-            });
+            var providerHbs = Handlebars.compile($('#datasource-providers-hbs').html());
+            $("#provider-list").html(providerHbs(data));
+
         },
-        error: function(xhr,message,errorObj) {
+        error: function (xhr, message, errorObj) {
 
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
@@ -301,7 +259,8 @@ function getDatasources() {
                 location.reload();
             }
 
-            var source = $("#wizard-error-hbs").html();;
+            var source = $("#wizard-error-hbs").html();
+            ;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
@@ -311,11 +270,159 @@ function getDatasources() {
     });
 };
 
+function getProviderConfig() {
+    step1Done = true;
+    provider = $("#providers").val();
+    var data = {"provider": provider};
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
+        method: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+            registerAdvancedProviderUI(data);
+            var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
+            $("#provider-config").html(providerHbs(data));
+        },
+        error: function (xhr, message, errorObj) {
+            //When 401 Unauthorized occurs user session has been log out
+            if (xhr.status == 401) {
+                //reload() will redirect request to login page with set current page to redirect back page
+                location.reload();
+            }
+            var source = $("#wizard-error-hbs").html();
+            var template = Handlebars.compile(source);
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
+                error: xhr.responseText
+            }));
+        }
+    });
+};
+
+function registerAdvancedProviderUI(data) {
+    for (var i = 0; i < data.length; i++) {
+        (function (config, key) {
+            if (config[key]['fieldType'].toLowerCase() === 'advanced') {
+                var dynamicJsList = config[key]['dynamicJS'];
+                for (var i in dynamicJsList){
+                     var js = document.createElement('script');
+                     js.src = PROVIDER_LOCATION + provider + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
+                     document.body.appendChild(js);
+                }
+                var data = {
+                    "provider": provider,
+                    "partial": config[key]['childPartial']
+                };
+                $.ajax({
+                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderAdvancedUI',
+                    method: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    dataType: 'text',
+                    async: false,
+                    success: function (partial) {
+                        Handlebars.registerPartial(config[key]['childPartial'], partial);
+                    }
+                });
+            }
+        })(data, i);
+    }
+}
+
+function getProviderConfigData() {
+    var formData = $('#provider-config-form').serializeArray();
+    var configInput = {};
+    var providerConf = {};
+    $.map(formData, function (n) {
+        configInput[n['name']] = n['value'];
+    });
+    configInput[PROVIDER_NAME] = provider ;
+    providerConf[PROVIDER_CONF] = configInput;
+    return providerConf;
+}
+
+function getChartList() {
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartList',
+        method: "GET",
+        contentType: "application/json",
+        async: false,
+        success: function (chartList) {
+            var chartListHbs = Handlebars.compile($('#chart-list-hbs').html());
+            $("#chart-list").html(chartListHbs(chartList));
+        }
+    });
+}
+
+function getChartConfig(providerConfig) {
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartConfig',
+        method: "POST",
+        data: JSON.stringify(providerConfig),
+        contentType: "application/json",
+        async: false,
+        success: function (chartConfig) {
+            if(!chartConfig.error) {
+                registerAdvancedChartUI(chartConfig);
+                var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
+                $("#chart-config").html(chartHbs(chartConfig));
+                $("#preview").removeAttr("style");
+            }else {
+                $('#tab3-validation-errors').html(chartConfig.message);
+                $('#rootwizard').find('.pager .next').addClass("disabled");
+            }
+        }
+    });
+}
+
+function registerAdvancedChartUI(data) {
+    for (var i = 0; i < data.length; i++) {
+        (function (config, key) {
+            if (config[key]['fieldType'].toLowerCase() === 'advanced') {
+                var dynamicJsList = config[key]['dynamicJS'];
+                for (var i in dynamicJsList){
+                    var js = document.createElement('script');
+                    js.src = CHART_LOCATION + chartType + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
+                    document.body.appendChild(js);
+                }
+                var data = {
+                    "chartType": chartType,
+                    "partial": config[key]['childPartial']
+                };
+                $.ajax({
+                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartAdvancedUI',
+                    method: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    dataType: 'text',
+                    async: false,
+                    success: function (partial) {
+                        Handlebars.registerPartial(config[key]['childPartial'], partial);
+                    }
+                });
+            }
+        })(data, i);
+    }
+}
+
+function getChartConfigData() {
+    var formData = $('#chart-config-form').serializeArray();
+    var configInput = {};
+    $.map(formData, function (n) {
+        configInput[n['name']] = n['value'];
+    });
+    configInput[$('#gadget-name').attr("name")] = $('#gadget-name').val();
+    configInput[CHART_NAME] = chartType ;
+    return configInput;
+}
+
 function getColumns(datasource, datasourceType) {
     if (datasourceType === "realtime") {
         console.log("Fetching stream definition for stream: " + datasource);
         var url = "/portal/apis/rt?action=getDatasourceMetaData&type=" + datasourceType + "&dataSource=" + datasource;
-        $.getJSON(url, function(data) {
+        $.getJSON(url, function (data) {
             if (data) {
                 columns = data;
             }
@@ -323,7 +430,7 @@ function getColumns(datasource, datasourceType) {
     } else {
         console.log("Fetching schema for table: " + datasource);
         var url = "/portal/apis/analytics?type=10&tableName=" + datasource;
-        $.getJSON(url, function(data) {
+        $.getJSON(url, function (data) {
             if (data) {
                 columns = parseColumns(JSON.parse(data.message));
             }
@@ -334,9 +441,9 @@ function getColumns(datasource, datasourceType) {
 function checkPaginationSupported(recordStore) {
     console.log("Checking pagination support on recordstore : " + recordStore);
     var url = "/portal/apis/analytics?type=18&recordStore=" + recordStore;
-    $.getJSON(url, function(data) {
-        if (data.status==="success") {
-            if(data.message==="true" && datasourceType==="batch") {
+    $.getJSON(url, function (data) {
+        if (data.status === "success") {
+            if (data.message === "true" && datasourceType === "batch") {
                 console.log("Pagination supported for recordstore: " + recordStore);
                 $("#btnPreview").show();
                 isPaginationSupported = true;
@@ -364,7 +471,7 @@ function fetchData(callback) {
         method: "GET",
         data: request,
         contentType: "application/json",
-        success: function(data) {
+        success: function (data) {
             var records = JSON.parse(data.message);
             previewData = makeRows(records);
             if (callback != null) {
@@ -386,16 +493,16 @@ function renderPreviewPane(rows) {
     var thead = jQuery("<thead/>");
     thead.appendTo(table);
     var th = jQuery("<tr/>");
-    columns.forEach(function(column, idx) {
+    columns.forEach(function (column, idx) {
         var td = jQuery('<th/>');
         td.append(column.name);
         td.appendTo(th);
     });
     th.appendTo(thead);
 
-    rows.forEach(function(row, i) {
+    rows.forEach(function (row, i) {
         var tr = jQuery('<tr/>');
-        columns.forEach(function(column, idx) {
+        columns.forEach(function (column, idx) {
             var td = jQuery('<td/>');
             td.append(row[idx]);
             td.appendTo(tr);
@@ -424,7 +531,7 @@ function getColumnIndex(columnName) {
 function parseColumns(data) {
     if (data.columns) {
         var keys = Object.getOwnPropertyNames(data.columns);
-        var columns = keys.map(function(key, i) {
+        var columns = keys.map(function (key, i) {
             return column = {
                 name: key,
                 type: data.columns[key].type
@@ -443,7 +550,8 @@ function makeRows(data) {
             row.push("" + record.values[columns[j].name]);
         }
         rows.push(row);
-    };
+    }
+    ;
     return rows;
 };
 
@@ -480,7 +588,7 @@ function drawRealtimeChart(data) {
 
     if (chart != null) {
         var persistedChartType = chart.chart.config.charts[0].type;
-        if(config.charts[0].type != persistedChartType){
+        if (config.charts[0].type != persistedChartType) {
             chart = null;
         }
     }
@@ -488,18 +596,18 @@ function drawRealtimeChart(data) {
     if (chart == null) {
         $("#chartDiv").empty();
 
-        if(config.charts[0].type == "map"){
+        if (config.charts[0].type == "map") {
             var mapType = config.charts[0].mapType;
 
-            if(mapType == "world"){
-                config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-                config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/world/';
-            }else if(mapType == "usa"){
-                config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usaInfo/';
-                config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usa/';
-            }else if(mapType == "europe"){
-                gadgetConfig.chartConfig.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-                gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/europe/';
+            if (mapType == "world") {
+                config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+                config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/world/';
+            } else if (mapType == "usa") {
+                config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usaInfo/';
+                config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usa/';
+            } else if (mapType == "europe") {
+                gadgetConfig.chartConfig.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+                gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/europe/';
             }
         }
         chart = new vizg(createDatatable(convertData(data)), config);
@@ -510,24 +618,24 @@ function drawRealtimeChart(data) {
 
 };
 
-function drawBatchChart(data){
+function drawBatchChart(data) {
     console.log("+++++++++++ drawBatchChart ");
     $("#chartDiv").empty();
 
     var config = constructChartConfigurations();
 
-    if(config.charts[0].type == "map"){
+    if (config.charts[0].type == "map") {
         var mapType = config.charts[0].mapType;
 
-        if(mapType == "world"){
-            config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-            config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/world/';
-        }else if(mapType == "usa"){
-            config.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usaInfo/';
-            config.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/usa/';
-        }else if(mapType == "europe"){
-            gadgetConfig.chartConfig.helperUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/countryInfo/';
-            gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol+"//"+document.location.host + '/portal/geojson/europe/';
+        if (mapType == "world") {
+            config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+            config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/world/';
+        } else if (mapType == "usa") {
+            config.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usaInfo/';
+            config.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/usa/';
+        } else if (mapType == "europe") {
+            gadgetConfig.chartConfig.helperUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/countryInfo/';
+            gadgetConfig.chartConfig.geoCodesUrl = document.location.protocol + "//" + document.location.host + '/portal/geojson/europe/';
         }
     }
 
@@ -539,13 +647,13 @@ function createDatatable(data) {
     var names = [];
     var types = [];
 
-    for(var i =0; i < columns.length; i++) {
+    for (var i = 0; i < columns.length; i++) {
         var type;
         names.push(columns[i]["name"]);
 
         var type = columns[i]["type"].toUpperCase();
 
-        if(type === "INT" || type === "INTEGER" || type === "FLOAT" || type === "LONG" ||
+        if (type === "INT" || type === "INTEGER" || type === "FLOAT" || type === "LONG" ||
             type === "DOUBLE") {
             type = "linear";
         } else if (type == "TIME") {
@@ -557,11 +665,11 @@ function createDatatable(data) {
         types.push(type);
     }
 
-    var datatable =  [
+    var datatable = [
         {
-            "metadata" : {
-                "names" : names,
-                "types" : types
+            "metadata": {
+                "names": names,
+                "types": types
             },
             "data": data
         }
@@ -575,7 +683,7 @@ function convertData(data) {
         for (var x = 0; x < data[i].length; x++) {
 
             var type = columns[x]["type"].toUpperCase();
-            if(type != "STRING" && type != "BOOLEAN" ){
+            if (type != "STRING" && type != "BOOLEAN") {
                 data[i][x] = parseFloat(data[i][x]);
             }
         }
@@ -584,7 +692,7 @@ function convertData(data) {
     return data;
 }
 
-function constructChartConfigurations(){
+function constructChartConfigurations() {
 
     var config = {};
     var chartType = $("#chartType").val();
@@ -594,86 +702,103 @@ function constructChartConfigurations(){
 
     config.x = xAxis;
     config.maxLength = maxDataLength;
-    config.padding = {top:30,left:45,bottom:38,right:55};
+    config.padding = {top: 30, left: 45, bottom: 38, right: 55};
 
     if (chartType == "bar") {
-        config.charts = [{type: chartType,  y : yAxis}];
+        config.charts = [
+            {type: chartType, y: yAxis}
+        ];
     } else if (chartType === "line") {
         var colorAxis = $("#color").val();
 
-        if(colorAxis != -1){
-            config.charts = [{type: chartType,  y : yAxis, color:colorAxis}];
-        }else{
-            config.charts = [{type: chartType,  y : yAxis}];
+        if (colorAxis != -1) {
+            config.charts = [
+                {type: chartType, y: yAxis, color: colorAxis}
+            ];
+        } else {
+            config.charts = [
+                {type: chartType, y: yAxis}
+            ];
         }
     } else if (chartType === "area") {
-        config.charts = [{type: chartType,  y : yAxis}];
+        config.charts = [
+            {type: chartType, y: yAxis}
+        ];
     } else if (chartType === "tabular") {
         var columns = [];
         var columnTitles = [];
         var key = $("#key").val();
         var colorColumn = $("#tblColor").val();
 
-        if(selectedTableCoulumns.length != 0){
-            for(i=0;i<selectedTableCoulumns.length;i++){
-                var cusId = "#cusId"+selectedTableCoulumns[i]+"";
+        if (selectedTableCoulumns.length != 0) {
+            for (i = 0; i < selectedTableCoulumns.length; i++) {
+                var cusId = "#cusId" + selectedTableCoulumns[i] + "";
                 columns.push(selectedTableCoulumns[i]);
-                if($(cusId).val() != ""){
+                if ($(cusId).val() != "") {
                     columnTitles.push($(cusId).val());
-                }else{
+                } else {
                     columnTitles.push(selectedTableCoulumns[i]);
                 }
             }
-        }else{
-            for(i=0;i<defaultTableColumns.length;i++){
+        } else {
+            for (i = 0; i < defaultTableColumns.length; i++) {
                 columns.push(defaultTableColumns[i]);
                 columnTitles.push(defaultTableColumns[i]);
             }
         }
-        config.charts = [{type: "table", key : key, maxLength : maxDataLength, color:colorColumn, columns: columns, columnTitles:columnTitles}];
+        config.charts = [
+            {type: "table", key: key, maxLength: maxDataLength, color: colorColumn, columns: columns, columnTitles: columnTitles}
+        ];
     } else if (chartType === "scatter") {
         var pointSize = $("#pointSize").val();
         var pointColor = $("#pointColor").val();
 
-        config.charts = [{type: chartType,  y : yAxis,color: pointColor, size: pointSize,
-            "maxColor":"#ffff00","minColor":"#ff00ff"}];
+        config.charts = [
+            {type: chartType, y: yAxis, color: pointColor, size: pointSize,
+                "maxColor": "#ffff00", "minColor": "#ff00ff"}
+        ];
     } else if (chartType === "map") {
         var region;
         if ($("#region").val().trim() != "") {
             region = $("#region").val();
         }
-        config.charts = [{type: chartType, y : yAxis, mapType: region}];
+        config.charts = [
+            {type: chartType, y: yAxis, mapType: region}
+        ];
     } else if (chartType === "number") {
         var attrDescription = $("#attrDescription").val();
-        config.charts = [{type: chartType, title:attrDescription}];
+        config.charts = [
+            {type: chartType, title: attrDescription}
+        ];
     }
 
-    config.width = document.getElementById("chartDiv").offsetWidth; - 110;
+    config.width = document.getElementById("chartDiv").offsetWidth;
+    -110;
     config.height = 240 - 40;
 
     return config;
 }
 
 
-function addCustomColumns(selectedValue){
+function addCustomColumns(selectedValue) {
 
-    if(selectedValue != -1){
+    if (selectedValue != -1) {
         var index = selectedTableCoulumns.indexOf(selectedValue);
 
         if (index == -1) {
             selectedTableCoulumns.push(selectedValue);
-            $("#dynamicElements").append('<tr id="'+selectedValue+'">'+
-                '<td><div class="left"><input name="originalValue" type="text" value="'+selectedValue+'" style="width: 128px"id="title" readonly></div></td>' +
+            $("#dynamicElements").append('<tr id="' + selectedValue + '">' +
+                '<td><div class="left"><input name="originalValue" type="text" value="' + selectedValue + '" style="width: 128px"id="title" readonly></div></td>' +
                 '<td><div class="middle"><b style="padding-left: 4px;padding-right: 4px">AS</b></div></td>' +
-                '<td><div class="right"><input name="cusId'+selectedValue+'" id="cusId'+selectedValue+'" type="text" style="width: 128px"id="title" placeholder="Column Name"></div></td>' +
-                '<td><div class="buttonRemove" style="padding-left: 3px;"><input type="button" value="-" onclick="removeRow(\''+selectedValue+'\');" /></div></td>' +
+                '<td><div class="right"><input name="cusId' + selectedValue + '" id="cusId' + selectedValue + '" type="text" style="width: 128px"id="title" placeholder="Column Name"></div></td>' +
+                '<td><div class="buttonRemove" style="padding-left: 3px;"><input type="button" value="-" onclick="removeRow(\'' + selectedValue + '\');" /></div></td>' +
                 '</tr>');
         }
     }
 
 }
 
-function removeRow(rowId){
+function removeRow(rowId) {
     var arrayIndex = selectedTableCoulumns.indexOf(rowId);
     selectedTableCoulumns.splice(arrayIndex, 1);
 }
@@ -681,7 +806,6 @@ function removeRow(rowId){
 $('#dynamicElements').on('click', 'input[type="button"]', function () {
     $(this).closest('tr').remove();
 });
-
 
 
 /**
@@ -695,11 +819,11 @@ $('#dynamicElements').on('click', 'input[type="button"]', function () {
  * @return {Object}
  * @private
  * */
-var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close,mode) {
+var generateMessage = function (text, funPrimary, funSecondary, type, layout, timeout, close, mode) {
     var properties = {};
     properties.text = text;
 
-    if(mode == undefined){
+    if (mode == undefined) {
 
         if (funPrimary || funSecondary) {
             properties.buttons = [
@@ -722,7 +846,7 @@ var generateMessage = function (text, funPrimary, funSecondary, type, layout, ti
             ];
         }
 
-    }else if(mode == "DEL_BLOCK_OR_ALL"){
+    } else if (mode == "DEL_BLOCK_OR_ALL") {
 
         if (funPrimary || funSecondary) {
             properties.buttons = [

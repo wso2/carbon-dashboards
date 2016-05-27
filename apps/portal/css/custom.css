@@ -578,3 +578,7 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
     display: block;
     cursor: pointer;
 }
+
+.tab-link-disabled {
+    pointer-events: none;
+}
