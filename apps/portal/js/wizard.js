@@ -63,7 +63,12 @@ $('#rootwizard').bootstrapWizard({
                     hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
                 }
             });
+            if(isRequiredFieldsFilled){
+                $('#lastTab').removeClass("tab-link-disabled");
+            }
         }
+        
+        
         return isRequiredFieldsFilled;
     },
     onTabShow: function (tab, navigation, index) {

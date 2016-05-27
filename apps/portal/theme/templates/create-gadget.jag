@@ -80,7 +80,7 @@
                 <ul class = "nav navbar-nav">
                     <li><a href="#tab1" data-toggle="tab"><strong><%= i18n.localize("select.provider")%></strong></a></li>
                     <li><a href="#tab2" data-toggle="tab"><strong><%= i18n.localize("configure.provider")%></strong></a></li>
-                    <li><a href="#tab3" data-toggle="tab"><strong><%= i18n.localize("configure.chart")%></strong></a></li>
+                    <li id = "lastTab" class = "tab-link-disabled"><a href="#tab3" data-toggle="tab"><strong><%= i18n.localize("configure.chart")%></strong></a></li>
                 </ul>
                  </div>
                   </div>
