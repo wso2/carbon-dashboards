@@ -83,6 +83,7 @@ $('#show-data').click(function () {
         async: false,
         success: function (data) {
             if(!data.error) {
+                $('#sample-data-message').show();
                 $('#tab2-validation-errors').html('');
                 var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
                 $('#data-preview').html(dataPreviewHbs(data));
@@ -166,7 +167,7 @@ $(".pager .finish").click(function() {
         contentType: "application/json",
         async: false,
         success: function (data) {
-            $('#rootwizard').html($('#success-hbs').html());
+            $('#top-rootwizard').html($('#success-hbs').html());
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
@@ -177,8 +178,8 @@ $(".pager .finish").click(function() {
             var source = $("#wizard-error-hbs").html();
             ;
             var template = Handlebars.compile(source);
-            $("#rootwizard").empty();
-            $("#rootwizard").append(template({
+            $("#top-rootwizard").empty();
+            $("#top-rootwizard").append(template({
                 error: xhr.responseText
             }));
         }
