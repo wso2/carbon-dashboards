@@ -84,7 +84,7 @@
     wso2gadgets.onDataReady = function(data, drawMode) {
         try {
             if (data.length == 0) {
-                $(canvas).html(gadgetUtil.getEmptyRecordsText());
+                $(canvas).html("No records found.");
                 return;
             }
             //setting the data for the underlying VizGrammar chart
@@ -131,7 +131,7 @@
 
     wso2gadgets.onError = function(e) {
         console.error(e);
-        $(canvas).html(gadgetUtil.getErrorText(e));
+        $(canvas).html("An error occurred while rendering the gadget.");
     };
 
 
