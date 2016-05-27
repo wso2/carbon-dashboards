@@ -205,7 +205,7 @@ function getProviders() {
                 return;
             }
             var providerHbs = Handlebars.compile($('#datasource-providers-hbs').html());
-            $("#provider-list").append(providerHbs(data));
+            $("#provider-list").html(providerHbs(data));
 
         },
         error: function (xhr, message, errorObj) {
@@ -241,7 +241,7 @@ function getProviderConfig() {
         success: function (data) {
             registerAdvancedProviderUI(data);
             var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#provider-config").append(providerHbs(data));
+            $("#provider-config").html(providerHbs(data));
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
@@ -309,7 +309,7 @@ function getChartList() {
         async: false,
         success: function (chartList) {
             var chartListHbs = Handlebars.compile($('#chart-list-hbs').html());
-            $("#chart-list").append(chartListHbs(chartList));
+            $("#chart-list").html(chartListHbs(chartList));
         }
     });
 }
