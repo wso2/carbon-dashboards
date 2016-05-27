@@ -65,13 +65,6 @@ public class WSO2Renderer extends Renderer {
         this.containerConfig = containerConfig;
     }
 
-    /**
-     * Attempts to render the requested gadget.
-     *
-     * @return The results of the rendering attempt.
-     * <p>
-     * TODO: Localize error messages.
-     */
     public RenderingResults render(GadgetContext context) {
         if (!validateParent(context)) {
             return RenderingResults.error("Unsupported parent parameter. Check your container code.",
