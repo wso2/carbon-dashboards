@@ -158,5 +158,7 @@
     "theme.label": "Theme",
     "theme.default": "Default Theme",
     "only.sample.data": "Only a sample set of data is shown here.",
-    "success.label": "Success"
+    "success.label": "Success",
+    "pages.menu.label": "Menu"
+
 }

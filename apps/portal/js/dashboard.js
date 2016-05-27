@@ -208,16 +208,16 @@ $(function () {
         }
     };
 
+    //compile handlebar for the menu list
     var updateMenuList = function() {
-    //console.log("adding menu: " + JSON.stringify(dashboard.menu));
-    //console.log("Getting isAnon param: " + isAnonView);
+        //menulist for big res
         $('#ues-pages').html(menuListHbs({
             menu: ues.global.dashboard.menu,
             isAnonView: isAnonView,
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems
         }));
-
+        //menulist for small res
         $('#ues-pages-col').html(menuListHbs({
             menu: ues.global.dashboard.menu,
             isAnonView: isAnonView,

@@ -133,8 +133,8 @@
                 </a>
             </li>
             <li>
-                <a rel="sub-nav"
-                    onclick="menuCreator(this)" title="<%=i18n.localize("menu")%>"
+                <a data-container-divide="true" aria-expanded="true" data-container=".page-content-wrapper" data-target="#left-sidebar" data-toggle="sidebar" data-handle="close" rel="sub-nav"
+                    onclick="loadMenuCreator(this)" title="<%=i18n.localize("pages.menu.label")%>"
                     id="btn-sidebar-menu">
                     <i class="icon fw fw-menu"></i>
                 </a>
