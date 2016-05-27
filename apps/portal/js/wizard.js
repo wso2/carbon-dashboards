@@ -58,7 +58,7 @@ $('#rootwizard').bootstrapWizard({
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
         }else if (index == 1 && !step1Done) {
-            step1Done = true;
+                step1Done = true;
                 getProviderConfig();
         } else if (index == 2 && !step2Done) {
             step2Done = true
@@ -70,6 +70,7 @@ $('#rootwizard').bootstrapWizard({
 });
 
 $('#provider-list').change(function () {
+    step1Done = false;
     provider = $("#providers").val();
 });
 
@@ -229,6 +230,7 @@ function getProviders() {
 function getProviderConfig() {
     step1Done = true;
     provider = $("#providers").val();
+    console.log('@@@@@@@ '+ provider);
     var data = {"provider": provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
