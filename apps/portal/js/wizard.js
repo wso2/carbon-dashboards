@@ -31,7 +31,8 @@ var showInlineError = function (element, errorElement, message) {
     element.parent().addClass("has-error");
     element.addClass("has-error");
     errorElement.removeClass("hide");
-    errorElement.html(message);
+    if (message != null)
+        errorElement.html(message);
     errorElement.addClass("show");
 };
 
@@ -50,6 +51,26 @@ var hideInlineError = function (element, errorElement) {
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
+    onNext: function(tab, navigation, index) {
+        var isRequiredFieldsFilled = true;
+        if(index == 2) {
+            $('input[required="true"]').each(function () {
+                if (!$.trim($(this).val())) {
+                    isRequiredFieldsFilled = false;
+                    showInlineError($(this), $("#" + $(this).attr("name") + "-error"));
+                }
+                else{
+                    hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
+                }
+            });
+            if(isRequiredFieldsFilled){
+                $('#lastTab').removeClass("tab-link-disabled");
+            }
+        }
+        
+        
+        return isRequiredFieldsFilled;
+    },
     onTabShow: function (tab, navigation, index) {
         if (index == 0 && !step0Done) {
             step0Done = true;
@@ -119,45 +140,66 @@ $('#chart-list').change(function(){
     getChartConfig(wizardData);
 });
 
+$('#gadget-name').on('keyup', function () {
+    if ($(this).val()) {
+        hideInlineError($(this), $("#gadget-name-error"));
+    }
+
+});
+
+$('#tab2').on('keypress', function() {
+    $('input[required="true"]').each(function () {
+        $(this).on('keyup', function (e) {
+            if ($(this).val()) {
+                hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
+            }
+        });
+    });
+});
+
 $("#preview").click(function () {
     $("#generate").removeAttr("style");
     $('#rootwizard').find('.pager .finish').show();
     $('#rootwizard').find('.pager .finish').removeClass('disabled');
     delete wizardData['chartType'];
     wizardData[CHART_CONF] = getChartConfigData();
-    $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=preview',
-        method: "POST",
-        data: JSON.stringify(wizardData),
-        contentType: "application/json",
-        async: false,
-        success: function (data) {
-            if(!data.error) {
-             //   $('#tab3-validation-errors').html('');
-                hideInlineError($("#gadget-name"),$("#title-error"));
-                $('#preview-pane').html($('#preview-hbs').html());
-            } else {
-                //$('#tab3-validation-errors').html(data.message);
-                showInlineError($("#gadget-name"),$("#title-error"), data.message);
-                $('#preview-pane').html('');
-                $('#rootwizard').find('.pager .finish').hide();
+
+    if (!$.trim($("#gadget-name").val())) {
+        showInlineError($("#gadget-name"),$("#gadget-name-error"),null);
+    }
+    else {
+        $.ajax({
+            url: ues.utils.relativePrefix() + 'apis/createGadget?action=preview',
+            method: "POST",
+            data: JSON.stringify(wizardData),
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                if (!data.error) {
+                    hideInlineError($("#gadget-name"), $("#gadget-name-error"));
+                    $('#preview-pane').html($('#preview-hbs').html());
+                } else {
+                    showInlineError($("#gadget-name"), $("#gadget-name-error"), data.message);
+                    $('#preview-pane').html('');
+                    $('#rootwizard').find('.pager .finish').hide();
+                }
+            },
+            error: function (xhr, message, errorObj) {
+                //When 401 Unauthorized occurs user session has been log out
+                if (xhr.status == 401) {
+                    //reload() will redirect request to login page with set current page to redirect back page
+                    location.reload();
+                }
+                var source = $("#wizard-error-hbs").html();
+                ;
+                var template = Handlebars.compile(source);
+                $("#rootwizard").empty();
+                $("#rootwizard").append(template({
+                    error: xhr.responseText
+                }));
             }
-        },
-        error: function (xhr, message, errorObj) {
-            //When 401 Unauthorized occurs user session has been log out
-            if (xhr.status == 401) {
-                //reload() will redirect request to login page with set current page to redirect back page
-                location.reload();
-            }
-            var source = $("#wizard-error-hbs").html();
-            ;
-            var template = Handlebars.compile(source);
-            $("#rootwizard").empty();
-            $("#rootwizard").append(template({
-                error: xhr.responseText
-            }));
-        }
-    });
+        });
+    }
 });
 
 $(".pager .finish").click(function() {

@@ -79,7 +79,7 @@
                     <ul class = "nav navbar-nav">
                         <li><a href="#tab1" data-toggle="tab"><h4><%= i18n.localize("select.provider")%></h4></a></li>
                         <li><a href="#tab2" data-toggle="tab"><h4><%= i18n.localize("configure.provider")%></h4></a></li>
-                        <li><a href="#tab3" data-toggle="tab"><h4><%= i18n.localize("configure.chart")%></h4></a></li>
+                        <li id = "lastTab" class = "tab-link-disabled"><a href="#tab3" data-toggle="tab"><h4><%= i18n.localize("configure.chart")%></h4></a></li>
                     </ul>
                     </div>
                   </div>
@@ -89,8 +89,8 @@
                     <div class="tab-pane" id="tab1">
                         <div id="tab1-validation-errors"></div>
                         <form id="provider-list-form">
-                            <label for="datasource"><%= i18n.localize("select.provider")%><span class="required">*</span></label>
-                            <div id = "provider-list">
+                              <label for="datasource"><%= i18n.localize("select.provider")%> <span class="required">*</span></label>
+                              <div id = "provider-list">
                             </div>
                         </form>
                     </div>
@@ -115,7 +115,7 @@
                                 <label id="sample-data-message" class="label-important" hidden>
                                     <%= i18n.localize("only.sample.data")%></label>
                             </div>
-                            <br><br><br>
+                            <br><br>
                         </div>
                         <div class="form-group">
                             <div id="data-preview"></div>
@@ -126,7 +126,7 @@
                         <div class="form-group">
                         <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
                         <input type="text" id="gadget-name" class="form-control" name="gadget-name" />
-                           <label id="title-error" class="required-error hide" for="title"></label>
+                           <label id="gadget-name-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
                         </div>
                         <div class="form-group">
                         <div id="chart-list"></div></div>
@@ -193,15 +193,17 @@
     {{#each .}}
     <div class="form-group">
        {{#equalsIgnoreCase fieldType "string"}}
-          <label>{{fieldLabel}}</label><input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
-          placeholder="{{placeholderText}}" {{#if isRequired}}required{{/if}}/>
+          <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label><input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
+          placeholder="{{placeholderText}}" {{#if isRequired}}required="true"{{/if}}/>
+          {{#if isRequired}} <label id="{{fieldName}}-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>{{/if}}
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "checkbox"}}
           <label><input type="checkbox" name="{{fieldName}}"/>{{fieldLabel}}</label>
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "password"}}
-          <label>{{fieldLabel}}</label><input type="password" class="form-control" name="{{fieldName}}"
-          {{#if isRequired}}required{{/if}}/>
+          <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label><input type="password" class="form-control" name="{{fieldName}}"
+          {{#if isRequired}}required="true"{{/if}}/>
+          {{#if isRequired}} <label id="{{fieldName}}-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>{{/if}}
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "dropdown"}}
           <label>{{fieldLabel}}</label>
