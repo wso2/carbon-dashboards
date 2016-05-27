@@ -49,6 +49,7 @@ var hideInlineError = function (element, errorElement) {
     errorElement.addClass("hide");
 };
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
+
 $('#rootwizard').bootstrapWizard({
     onNext: function(tab, navigation, index) {
         var isRequiredFieldsFilled = true;
@@ -70,24 +71,22 @@ $('#rootwizard').bootstrapWizard({
             step0Done = true;
             getProviders();
             $("#btnPreview").hide();
-            //$('#rootwizard').find('.pager .next').addClass("disabled");;
+            $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
         }else if (index == 1 && !step1Done) {
-            step1Done = true;
-            getProviderConfig();
+                step1Done = true;
+                getProviderConfig();
         } else if (index == 2 && !step2Done) {
-            step2Done = true;
+            step2Done = true
             wizardData = getProviderConfigData();
             getChartList();
             $('#chart-list').change();
         }
-        return false;
     }
 });
 
-
-
 $('#provider-list').change(function () {
+    step1Done = false;
     provider = $("#providers").val();
 });
 
@@ -151,7 +150,6 @@ $('#tab2').on('keypress', function() {
         });
     });
 });
-
 
 $("#preview").click(function () {
     $("#generate").removeAttr("style");
@@ -227,6 +225,7 @@ $(".pager .finish").click(function() {
 });
 
 
+
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
 
 function getProviders() {
@@ -268,6 +267,7 @@ function getProviders() {
 function getProviderConfig() {
     step1Done = true;
     provider = $("#providers").val();
+    console.log('@@@@@@@ '+ provider);
     var data = {"provider": provider};
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
@@ -359,10 +359,15 @@ function getChartConfig(providerConfig) {
         contentType: "application/json",
         async: false,
         success: function (chartConfig) {
-            registerAdvancedChartUI(chartConfig);
-            var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#chart-config").html(chartHbs(chartConfig));
-            $("#preview").removeAttr("style");
+            if(!chartConfig.error) {
+                registerAdvancedChartUI(chartConfig);
+                var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
+                $("#chart-config").html(chartHbs(chartConfig));
+                $("#preview").removeAttr("style");
+            }else {
+                $('#-validation-errors').html(chartConfig.message);
+                $('#rootwizard').find('.pager .next').addClass("disabled");
+            }
         }
     });
 }
