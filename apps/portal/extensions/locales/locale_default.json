@@ -156,5 +156,6 @@
     "request.not.authorized" : "Request not authorized",
     "forbidden" : "Forbidden",
     "theme.label": "Theme",
-    "theme.default": "Default Theme"
+    "theme.default": "Default Theme",
+    "only.sample.data": "Only a sample set of data will be shown here."
 }

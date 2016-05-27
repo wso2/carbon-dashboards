@@ -105,11 +105,15 @@
                             </div>
                         </fieldset>
                         </form>
-                        <span class="fw-stack">
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                    <i class="fw fw-display fw-stack-1x"></i>
-                                </span>
-                         <input type="button" id="show-data" class="btn btn-primary btn-bordered" value="<%= i18n.localize("show.data")%>"/>
+                        <div class="form-group">
+                        <button type="button" id="show-data" class="btn btn-primary btn-bordered btn-md" height="100" width="200">
+                            <span class="fw-stack fw-lg">
+                            <i class="fw fw-circle-outline fw-stack-2x"></i>
+                            <i class="fw fw-database fw-stack-1x"></i>
+                            </span><%= i18n.localize("show.data")%>
+                        </button>
+                        <label>Test</label>
+                        </div>
                         <p></p><div id="data-preview"></div>
                     </div>
                     <div class="tab-pane" id="tab3">
@@ -201,18 +205,26 @@
 </script>
 
 <script id="data-preview-hbs" type="text/x-handlebars-template">
-<table>
-        {{#each tableHeaders}}
-        <th>{{this}}</th>
+<div class="form-group">
+    <table class="table table-bordered">
+    <thead>
+    <tr >
+    {{#each tableHeaders}}
+        <th style="text-align:center"> <strong>{{this}}</strong></th>
         {{/each}}
+        </tr>
+    </thead>
+         <tbody>
         {{#each tableRows}}
-        <tr>
+        <tr align="center">
             {{#each .}}
-            <td>{{this}}</td>
+            <td >{{this}}</td>
             {{/each}}
         </tr>
         {{/each}}
-</table>
+        </tbody>
+    </table>
+</div>
 </script>
 
 <script id="chart-list-hbs" type="text/x-handlebars-template">
