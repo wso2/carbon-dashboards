@@ -1280,10 +1280,15 @@ $(function () {
                         landing.prop("checked", false);
                         showInformation("Cannot Select This Page As Landing",
                             "Please add an anonymous view to this page before select it as the landing page");
+                    } else if (ishiddenPage(idVal)) {
+                        landing.prop("checked", false);
+                        showInformation("Cannot Select This Page As Landing",
+                            "This page is hidden in the menu, please select a different page");
                     } else {
                         dashboard.landing = idVal;
                         var menuItem = getChild(dashboard.menu, idVal);
                         dashboard.menu.unshift(menuItem);
+                        spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
                     }
                 }
             },
@@ -1343,6 +1348,31 @@ $(function () {
     };
 
     /**
+     * Check whether the given page is hidden within menu
+     * @param {String} idVal
+     * @return {boolean}
+     * @private
+     */
+    var ishiddenPage = function (idVal) {
+        var menu = dashboard.menu;
+        var ret = false;
+        getStateOfSubordinates(menu, idVal);
+
+        function getStateOfSubordinates(menu, idVal){
+            for (var i = 0; i < menu.length; i++) {
+                if (menu[i].id === idVal) {
+                    ret = menu[i].ishidden;
+                    return;
+                }
+                if(menu[i].subordinates.length > 0){
+                    getStateOfSubordinates(menu[i].subordinates, idVal);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
      * Update menu item based on the given key
      * @param {String} id
      * @param {String} newvalue
@@ -1391,6 +1421,7 @@ $(function () {
         if(childObj != null || childObj != undefined){
             if (parentId === 'ds-menu-root') {
                 menu.push(childObj);
+                spliceOrDiscardChild(dashboard.menu, childObj.id, 'perform');
                 saveDashboard();
                 updateMenuList();
             } else {
@@ -1402,6 +1433,7 @@ $(function () {
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === parentId) {
                     menu[i].subordinates.push(childObj);
+                    spliceOrDiscardChild(dashboard.menu, childObj.id, 'perform');
                     saveDashboard();
                     updateMenuList();
                     return;
@@ -1413,7 +1445,7 @@ $(function () {
     };
 
     /**
-     * Splice and return the child object
+     * Return the child object
      * @param {Object} menu object
      * @param {String} id
      * @return {Object}
@@ -1428,8 +1460,9 @@ $(function () {
         function findChild(menu, id){
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === id) {
-                    childObj = menu[i];
-                    menu.splice(i, 1);
+                    //clone the object before decorating
+                    childObj = JSON.parse(JSON.stringify(menu[i]));
+                    menu[i].deletable = true;
                     return;
                 } else if (menu[i].subordinates.length > 0){
                     findChild(menu[i].subordinates, id);
@@ -1438,6 +1471,34 @@ $(function () {
         }
         return childObj; 
     }
+
+
+    /**
+     * Splice the child object
+     * @param {Object} menu object
+     * @param {String} id
+     * @return {Object}
+     * @private
+     */
+    var spliceOrDiscardChild = function(menu, id, func){
+        findChild(menu, id, func);
+
+        function findChild(menu, id, func){
+            for (var i = 0; i < menu.length; i++) {
+                if (menu[i].id === id && menu[i].deletable) {
+                    if(func === 'perform'){
+                        menu.splice(i, 1);
+                        return;
+                    }
+                    delete menu[i].deletable;
+                    return;
+                } else if (menu[i].subordinates.length > 0){
+                    findChild(menu[i].subordinates, id, func);
+                }
+            }
+        }
+    }
+
 
     /**
      * Sanitize the given event's key code.
@@ -1903,21 +1964,24 @@ $(function () {
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
                         //check whether there are any subordinates
-                        var isRemovable = isRemovablePage(pid);
-                        if (isRemovable) {
+                        if (isRemovablePage(pid)) {
                             removePage(pid, DEFAULT_DASHBOARD_VIEW, function (err) {
                                 var pages = dashboard.pages;
-                                getChild(dashboard.menu, pid);
-                                updatePagesList(pages);
+                                var childObj = getChild(dashboard.menu, pid);
+                                //updatePagesList(pages);
 
                                 // if the landing page was deleted, make the first page(in menu) to be the landing page
                                 if (dashboard.menu.length) {
                                     if (pid === dashboard.landing) {
-                                        dashboard.landing = dashboard.menu[0].id;
+                                        //get next possible landing page from the menu
+                                        var nextLandingpage = getNextLandingPage(pid, dashboard.menu);
+                                        dashboard.landing = nextLandingpage;//dashboard.menu[0].id;
+                                        var menuItem = getChild(dashboard.menu, nextLandingpage);
+                                        dashboard.menu.unshift(menuItem);
+                                        spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
                                     }
                                 } else {
                                     dashboard.landing = null;
-
                                     // hide the sidebar if it is open
                                     if ($('#left-sidebar').hasClass('toggled')) {
                                         $('#btn-pages-sidebar').click();
@@ -1925,11 +1989,12 @@ $(function () {
                                 }
 
                                 // save the dashboard
+                                spliceOrDiscardChild(dashboard.menu, childObj.id, 'perform');
                                 saveDashboard();
                                 renderPage(dashboard.landing);
                             }); 
                         } else {
-                            showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates before deleteing.");
+                            showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates or all pages are hidden.");
 
                         }
 
@@ -2007,6 +2072,23 @@ $(function () {
     };
 
     /**
+     * Find and return the next possible landing page
+     * @param {String} pid- current landing page
+     * @param {Object} menu
+     * @return {String} pid- next landing page
+     * @private
+     */
+    var getNextLandingPage = function (pid, menu) {
+        var nextLandingpage = null;
+        for(var i = 0; i < menu.length; i++){
+            if(menu[i].id !== pid && menu[i].ishidden === false && nextLandingpage == null){
+                nextLandingpage = menu[i].id;
+            }
+        }
+        return nextLandingpage;
+    }
+
+    /**
      * Check whether page is deletable based on subordinates
      * @param {String} page ID
      * @return {boolean}
@@ -2014,10 +2096,11 @@ $(function () {
      */
     var isRemovablePage = function (pid) {
         var menuItem = getChild(dashboard.menu, pid);
-        if(menuItem.subordinates.length === 0){
-            return true;
-        }
-        return false;
+        spliceOrDiscardChild(dashboard.menu, menuItem.id, 'discard');
+        if ((pid === dashboard.landing && dashboard.hideAllMenuItems) || menuItem.subordinates.length > 0) {
+            return false;
+        } 
+        return true;
     }
 
     /**
@@ -2781,29 +2864,54 @@ $(function () {
         var menu = dashboard.menu;
         var landing = dashboard.landing;
         manipulateSubordinates(menu, landing);
+        updateHideAllMenuItemsState();
 
         function manipulateSubordinates(menu, landing){
             for (var i = 0; i < menu.length; i++) {
-                    //page should not be current landing page
-                    if (menu[i].id !== landing && menu[i].id === pageId) {
-                        //TODO get state from the UI
-                        if (menu[i].ishidden) {
-                            menu[i].ishidden = false;
-                        } else {
-                            // hide if there are no subordinates
-                            if (menu[i].subordinates.length === 0) {
-                                menu[i].ishidden = true;
-                            }
+                //page should not be current landing page
+                if (menu[i].id !== landing && menu[i].id === pageId) {
+                    //TODO get state from the UI
+                    if (menu[i].ishidden) {
+                        menu[i].ishidden = false;
+                    } else {
+                        // hide if there are no subordinates
+                        if (menu[i].subordinates.length === 0) {
+                            menu[i].ishidden = true;
                         }
-                        saveDashboard();
-                        return;
                     }
+                    saveDashboard();
+                    return;
+                }
+
                 if(menu[i].subordinates.length > 0){
                     manipulateSubordinates(menu[i].subordinates, landing);
                 }
             }
         }
+    }
 
+    /**
+     * update dashboard.hideAllMenuItems state 
+     * @return {null}
+     */
+    var updateHideAllMenuItemsState = function () {
+        var menu = dashboard.menu;
+        var visibleMenuItems = [];
+        traverseSubordinates(menu);
+        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1) ? true: false;
+        saveDashboard();
+        updateMenuList();
+
+        function traverseSubordinates(menu){
+            for (var i = 0; i < menu.length; i++) {
+                    if (!menu[i].ishidden) {
+                        visibleMenuItems.push(menu[i].id);
+                    }
+                if (menu[i].subordinates.length > 0) {
+                    traverseSubordinates(menu[i].subordinates);
+                }
+            }
+        }
     }
 });
 
