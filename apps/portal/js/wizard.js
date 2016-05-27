@@ -320,10 +320,15 @@ function getChartConfig(providerConfig) {
         contentType: "application/json",
         async: false,
         success: function (chartConfig) {
-            registerAdvancedChartUI(chartConfig);
-            var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#chart-config").html(chartHbs(chartConfig));
-            $("#preview").removeAttr("style");
+            if(!chartConfig.error) {
+                registerAdvancedChartUI(chartConfig);
+                var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
+                $("#chart-config").html(chartHbs(chartConfig));
+                $("#preview").removeAttr("style");
+            }else {
+                $('#tab3-validation-errors').html(chartConfig.message);
+                $('#rootwizard').find('.pager .next').addClass("disabled");
+            }
         }
     });
 }
