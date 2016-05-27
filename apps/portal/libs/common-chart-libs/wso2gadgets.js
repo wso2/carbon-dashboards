@@ -72,7 +72,6 @@
         //         });
         //     }
         // };
-        console.log("View [" + id + "] has been loaded."); 
     };
 
     /*
@@ -84,7 +83,7 @@
     wso2gadgets.onDataReady = function(data, drawMode) {
         try {
             if (data.length == 0) {
-                $(canvas).html("No records found.");
+                $(canvas).html();
                 return;
             }
             //setting the data for the underlying VizGrammar chart
@@ -122,7 +121,6 @@
 
     wso2gadgets.update = function(data) {
         if (chart) {
-            console.log(data); 
             chart.insert(data);
         } else {
             wso2gadgets.draw(currentView);  //if this is the very first time we render the chart. E.g CEP usecase
@@ -130,8 +128,7 @@
     };
 
     wso2gadgets.onError = function(e) {
-        console.error(e);
-        $(canvas).html("An error occurred while rendering the gadget.");
+        $(canvas).html();
     };
 
 
