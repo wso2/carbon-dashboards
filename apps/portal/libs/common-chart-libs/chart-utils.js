@@ -30,15 +30,19 @@ var toVizGrammarSchema;
             "float": "linear",
             "INTEGER": "linear",
             "int": "linear",
+            "double": "linear",
             "STRING": "ordinal",
+            "varchar": "ordinal",
             "string": "ordinal"
         };
 
         _schema.forEach(function(field) {
             var fieldName = field["fieldName"];
             var fieldType = field["fieldType"];
+            var typeKey = fieldType.split("(")[0];
+
             schema[0].metadata.names.push(fieldName);
-            schema[0].metadata.types.push(types[fieldType]);
+            schema[0].metadata.types.push(types[typeKey]);
         });
         return schema;
     };
