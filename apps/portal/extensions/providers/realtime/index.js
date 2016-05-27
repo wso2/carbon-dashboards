@@ -83,29 +83,31 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         return formConfig;
     };
 
+    /**
+     * validate the user input of provider configuration
+     * @param providerConfig
+     */
+    validate = function (providerConfig){
+        /*
+         validate the form and return
+
+         */
+        return true;
+    };
+
+    /**
+     * returns the data mode either push or pull
+     */
+    getMode = function (){
+        return 'push';
+    };
 
     /**
      * returns an array of column names & types
      * @param providerConfig
      */
     getSchema = function(providerConfig) {
-
-        /*
-         accepting data format
-
-             {
-                 fieldName : aaa
-                 FieldValue : bbb
-             },
-             {
-                 fieldName : ccc
-                 FieldValue : ddd
-             }
-
-        validate the data and return the column names
-         */
-
-        var datasource = ""
+        var datasource = providerConfig["streamName"];
         var output = [];
 
         var correlationDataLength = 0;
@@ -130,33 +132,32 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         }
 
         output.push({
-            name: "TIMESTAMP",
-            type: "time"
+            fieldName: "TIMESTAMP",
+            fieldType: "time"
         });
 
         var allDataLength = metaDataLength + correlationDataLength + payloadDataLength;
         for (var i = 0; i < metaDataLength; i++) {
             output.push({
-                name: metaData[i].getAttributeName(),
-                type: metaData[i].getAttributeType()
+                fieldName: metaData[i].getAttributeName(),
+                fieldType: metaData[i].getAttributeType()
             });
             counter++;
         }
         for (var i = 0; i < correlationDataLength; i++) {
             output.push({
-                name: correlationData[i].getAttributeName(),
-                type: correlationData[i].getAttributeType()
+                fieldName: correlationData[i].getAttributeName(),
+                fieldType: correlationData[i].getAttributeType()
             });
             counter++;
         }
         for (var i = 0; i < payloadDataLength; i++) {
             output.push({
-                name: payloadData[i].getAttributeName(),
-                type: payloadData[i].getAttributeType()
+                fieldName: payloadData[i].getAttributeName(),
+                fieldType: payloadData[i].getAttributeType()
             });
             counter++;
         }
-
         return output;
     };
 
@@ -171,4 +172,5 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
          schemaPropertyList - an array of column names
          */
     };
+
 }());

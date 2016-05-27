@@ -27,8 +27,11 @@ var toVizGrammarSchema;
         }];
         var types = {
             "FLOAT": "linear",
+            "float": "linear",
             "INTEGER": "linear",
-            "STRING": "ordinal"
+            "int": "linear",
+            "STRING": "ordinal",
+            "string": "ordinal"
         };
 
         _schema.forEach(function(field) {

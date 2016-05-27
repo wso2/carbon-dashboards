@@ -61,15 +61,19 @@ var getConfig, validate, isProviderRequired, draw, update;
             schema: schema,
             chartConfig: buildChartConfig(chartConfig),
             data: function() {
-                var result = [];
-                data.forEach(function(item) {
-                    var row = [];
-                    schema[0].metadata.names.forEach(function(name) {
-                        row.push(item[name]);
+                if(data) {
+                    var result = [];
+                    console.log(data);
+                    data.forEach(function(item) {
+                        var row = [];
+                        schema[0].metadata.names.forEach(function(name) {
+                            row.push(item[name]);
+                        });
+                        result.push(row);
                     });
-                    result.push(row);
-                });
-                wso2gadgets.onDataReady(result);
+                    console.log(result);
+                    wso2gadgets.onDataReady(result);
+                }
             }
 
         };
@@ -88,7 +92,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param data
      */
     update = function(data) {
-
+        wso2gadgets.onDataReady(data,"append");
     }
 
     buildChartConfig = function (_chartConfig) {

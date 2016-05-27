@@ -65,13 +65,13 @@
             currentView.data(context);
         }
         //initialize inter-gadget subscriptions
-        gadgets.HubSettings.onConnect = function() {
-            if (currentView.subscriptions) {
-                currentView.subscriptions.forEach(function(subscription) {
-                    gadgets.Hub.subscribe(subscription.topic, subscription.callback);
-                });
-            }
-        };
+        // gadgets.HubSettings.onConnect = function() {
+        //     if (currentView.subscriptions) {
+        //         currentView.subscriptions.forEach(function(subscription) {
+        //             gadgets.Hub.subscribe(subscription.topic, subscription.callback);
+        //         });
+        //     }
+        // };
         console.log("View [" + id + "] has been loaded."); 
     };
 
