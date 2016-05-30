@@ -74,6 +74,7 @@ $(function () {
             if (component.fullViewPoped) {
                 // render normal view
                 $('.ues-component-box').show();
+                $('.sidebar-wrapper').show();
                 // restore the original height and remove the temporary attribute
                 gsContainer.height(gsContainer.attr('data-orig-height')).removeAttr('data-orig-height');
                 gsBlock.removeClass('ues-component-fullview');
@@ -88,6 +89,7 @@ $(function () {
             } else {
                 // render max view
                 $('.ues-component-box:not([id="' + componentBox.attr('id') + '"])').hide();
+                $('.sidebar-wrapper').hide();
                 // backup the origin height and render the max view
                 gsContainer.attr('data-orig-height', gsContainer.height()).height('auto');
                 gsBlock.addClass('ues-component-fullview');
