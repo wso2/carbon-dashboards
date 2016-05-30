@@ -612,9 +612,11 @@ $(function () {
      * @private
      */
     var saveDashboard = function () {
+        console.log("Save dashboard");
         var method = 'PUT';
         var url = dashboardsApi + '/' + dashboard.id;
         var isRedirect = false;
+        
         $.ajax({
             url: url,
             method: method,
@@ -2443,6 +2445,7 @@ $(function () {
      */
     var renderPage = function (pid, done) {
         gadgetIds = undefined;
+
 
         // if no pages found, display a message
         if (!dashboard.pages.length) {

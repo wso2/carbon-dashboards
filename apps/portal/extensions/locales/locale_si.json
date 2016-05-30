@@ -140,5 +140,6 @@
   "bad.request" : "වැරදි ඉල්ලීමකි",
   "forbidden" : "Forbiden"
   "theme.label": "තේමාව",
-  "theme.default": "පෙරනිමි තේමාව"
+  "theme.default": "පෙරනිමි තේමාව",
+  "share.dashboard" : "Share Dashboard"
 }

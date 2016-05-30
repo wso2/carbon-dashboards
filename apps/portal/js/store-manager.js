@@ -53,7 +53,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (!ctx.username) {
             return [];
         }
-
         var server = new carbon.server.Server();
         var registry = new carbon.registry.Registry(server, {
             system: true
@@ -62,34 +61,80 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var userRoles = um.getRoleListOfUser(ctx.username);
 
         var dashboards = getDashboardsFromRegistry(start, count);
-        if (!dashboards) {
+        var superTenantDashboards = null;
+        var superTenantRegistry = null;
+
+        if(ctx.domain != superDomain){
+            superTenantRegistry = new carbon.registry.Registry(server, {
+                system: true,
+                tenantId: carbon.server.superTenant.tenantId
+            });
+            superTenantDashboards = superTenantRegistry.content(registryPath(), {
+                start: start,
+                count: count
+            });
+        }
+
+        if (!dashboards && !superTenantDashboards) {
             return [];
         }
-        var allDashboards = [];
-        dashboards.forEach(function (dashboard) {
-            allDashboards.push(JSON.parse(registry.content(dashboard)));
-        });
 
         var userDashboards = [];
-        allDashboards.forEach(function (dashboard) {
-            var permissions = dashboard.permissions,
-                data = {
-                    id: dashboard.id,
-                    title: dashboard.title,
-                    description: dashboard.description,
-                    pagesAvailable: dashboard.pages.length > 0,
-                    editable: true
-                };
+        if(dashboards) {
+            var allDashboards = [];
+            dashboards.forEach(function (dashboard) {
+                allDashboards.push(JSON.parse(registry.content(dashboard)));
+            });
 
-            if (utils.allowed(userRoles, permissions.editors)) {
-                userDashboards.push(data);
-                return;
+            allDashboards.forEach(function (dashboard) {
+                var permissions = dashboard.permissions,
+                    data = {
+                        id: dashboard.id,
+                        title: dashboard.title,
+                        description: dashboard.description,
+                        pagesAvailable: dashboard.pages.length > 0,
+                        editable: true
+                    };
+                if (utils.allowed(userRoles, permissions.editors)) {
+                    userDashboards.push(data);
+                    return;
+                }
+                if (utils.allowed(userRoles, permissions.viewers)) {
+                    data.editable = false;
+                    userDashboards.push(data);
+                }
+            });
+        }
+
+        if(superTenantDashboards) {
+            var allDashboards = [];
+            superTenantDashboards.forEach(function (dashboard) {
+                var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
+                if(parsedDashboards.shareDashboard) {
+                    allDashboards.push(parsedDashboards);
+                }
+            });
+            if(allDashboards) {
+                allDashboards.forEach(function (dashboard) {
+                    var permissions = dashboard.permissions,
+                        data = {
+                            id: dashboard.id,
+                            title: dashboard.title,
+                            description: dashboard.description,
+                            pagesAvailable: dashboard.pages.length > 0,
+                            editable: true
+                        };
+                    if (utils.allowed(userRoles, permissions.editors)) {
+                        userDashboards.push(data);
+                        return;
+                    }
+                    if (utils.allowed(userRoles, permissions.viewers)) {
+                        data.editable = false;
+                        userDashboards.push(data);
+                    }
+                });
             }
-            if (utils.allowed(userRoles, permissions.viewers)) {
-                data.editable = false;
-                userDashboards.push(data);
-            }
-        });
+        }
         return userDashboards;
     };
 

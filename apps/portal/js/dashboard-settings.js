@@ -570,6 +570,10 @@ $(function () {
             dashboard.theme = text;
         });
 
+        $('#share-dashboard').on('click', function () {
+            dashboard.shareDashboard = $(this).is(":checked");
+        });
+
         // Enable Oauth settings
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");

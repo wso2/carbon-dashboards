@@ -148,6 +148,22 @@
                         </div>
                     </div>
                 </div>
+                <% if(userDomain === superDomain) {%>
+                <div class="form-group">
+                    <label for="share-dashboard" class="col-sm-3 control-label"><%= i18n.localize("share.dashboard")%></label>
+                    <div class="col-sm-9">
+
+                        <label class="switch">
+                            <input id="share-dashboard" type="checkbox" value="enable" data-toggle="collapse"
+                                data-target="share-dashboard"
+                                aria-expanded="<% if (dashboard.shareDashboard == true) { print("true"); } else { print("false"); } %>"
+                                aria-controls="ues-oauth-settings-inputs" <% if (dashboard.shareDashboard == true) { print("checked"); } %>>
+                            <span class="helper"></span>
+                        </label>
+
+                    </div>
+                </div>
+                <% } %>
             </form>
         </div>
     </div>

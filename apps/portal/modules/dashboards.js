@@ -105,6 +105,7 @@ var createOAuthApplication = function (applicationId, clientCredentials) {
  * @return {Object} Dashboard object
  */
 var getAsset = function (id, originalDashboardOnly) {
+   
     originalDashboardOnly = originalDashboardOnly || false;
     var registry = getRegistry();
     var usr = require('/modules/user.js');
@@ -149,6 +150,23 @@ var getAsset = function (id, originalDashboardOnly) {
             globalBannerExists: banner.globalBannerExists,
             customBannerExists: banner.customBannerExists
         };
+    }
+    else {
+        var carbon = require('carbon');
+        var server = new carbon.server.Server();
+        var superTenantRegistry = new carbon.registry.Registry(server, {
+            system: true,
+            tenantId: carbon.server.superTenant.tenantId
+        });
+        var content = superTenantRegistry.content(path);
+
+        if(content) {
+            var dashboard = JSON.parse(content);
+
+            if (dashboard.shareDashboard) {
+                return dashboard;
+            }
+        }
     }
     return dashboard;
 };
@@ -204,7 +222,31 @@ var update = function (dashboard) {
     if (!registry.exists(path) && !dashboard.isUserCustom) {
         path = registryPath(dashboard.id);
         if (!registry.exists(path)) {
-            throw 'a dashboard cannot be found with the id ' + dashboard.id;
+            var carbon = require('carbon');
+            var server = new carbon.server.Server();
+            var superTenantRegistry = new carbon.registry.Registry(server, {
+                system: true,
+                tenantId: carbon.server.superTenant.tenantId
+            });
+            var content = superTenantRegistry.content(path);
+
+            if(content) {
+                if (dashboard.shareDashboard) {
+                    superTenantRegistry.put(path, {
+                        content: JSON.stringify(dashboard),
+                        mediaType: 'application/json'
+                    });
+                    return;
+                }
+                else {
+                    throw 'a dashboard cannot be found with the id ' + dashboard.id;
+                    return;
+                }
+            }
+            else {
+                throw 'a dashboard cannot be found with the id ' + dashboard.id;
+                return;
+            }
         }
     }
     registry.put(path, {

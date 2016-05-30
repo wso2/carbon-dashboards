@@ -40,7 +40,6 @@ var fresh;
             response.sendError(401, 'Designer access not authorized of this tenant');
             return;
         }
-
         include(utils.resolvePath("templates/index.jag"));
         return;
     }
@@ -146,7 +145,8 @@ var fresh;
             accessTokenUrl: "",
             apiKey: "",
             apiSecret: "",
-            theme: request.getParameter('select-theme')
+            theme: request.getParameter('select-theme'),
+            shareDashboard : false
     };
 
         utils.sandbox(context, function() {
