@@ -66,7 +66,6 @@
         return;
     } else if (action === 'getProviderConfig') {
         var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
-        var providerConfig = providerApi.getConfig().config;
         print(providerApi.getConfig().config);
         return;
     } else if (action === 'getProviderAdvancedUI') {
