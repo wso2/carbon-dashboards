@@ -122,7 +122,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                             title: dashboard.title,
                             description: dashboard.description,
                             pagesAvailable: dashboard.pages.length > 0,
-                            editable: true
+                            editable: false
                         };
                     if (utils.allowed(userRoles, permissions.editors)) {
                         userDashboards.push(data);
