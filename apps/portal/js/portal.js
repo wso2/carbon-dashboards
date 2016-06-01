@@ -79,7 +79,6 @@ $(function () {
      * @private
      * */
     var loadDashboards = function () {
-
         isStillLoading = true;
 
         if (!hasMore) {
