@@ -160,7 +160,7 @@ var getAsset = function (id, originalDashboardOnly) {
         });
         var content = superTenantRegistry.content(path);
 
-        if(content) {
+        if (content) {
             var dashboard = JSON.parse(content);
 
             if (dashboard.shareDashboard) {
@@ -230,7 +230,7 @@ var update = function (dashboard) {
             });
             var content = superTenantRegistry.content(path);
 
-            if(content) {
+            if (content) {
                 if (dashboard.shareDashboard) {
                     superTenantRegistry.put(path, {
                         content: JSON.stringify(dashboard),
