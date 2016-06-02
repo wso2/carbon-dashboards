@@ -16,6 +16,7 @@
                     "responseSigningEnabled": false,
                     "acs": "https://localhost:9444/portal/acs",
                     "identityAlias": "wso2carbon",
+                    "defaultNameIDPolicy": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
                     "useTenantKey": false
                 }
             },

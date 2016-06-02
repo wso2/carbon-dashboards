@@ -39,7 +39,12 @@
     var relayState = (referer ? referer : '/portal');
     //TODO: need to parameterize default value in order to support app renaming
 
-    var encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
+    var encodedSAMLAuthRequest;
+    if(attr.responseSigningEnabled){
+        encodedSAMLAuthRequest = sso.client.getEncodedSignedSAMLAuthRequest(attr.issuer, attr.identityProviderURL, attr.acs, false, -1234, 'carbon.super', attr.defaultNameIDPolicy);
+    } else {
+        encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
+    }
     var log = new Log();
     var postUrl = attr.identityProviderURL;
     if (log.isDebugEnabled()) {
