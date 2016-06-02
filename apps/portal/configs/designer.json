@@ -13,7 +13,7 @@
                 "attributes": {
                     "issuer": "portal",
                     "identityProviderURL": "https://localhost:9443/samlsso",
-                    "responseSigningEnabled": "false",
+                    "responseSigningEnabled": false,
                     "acs": "https://localhost:9444/portal/acs",
                     "identityAlias": "wso2carbon",
                     "useTenantKey": false

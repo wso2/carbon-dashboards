@@ -69,47 +69,45 @@
 
             // validating the signature
             if (attr.responseSigningEnabled) {
+                sso.client.validateSignature(samlRespObj, keyStoreProps);
+            }
+            var sessionObj = sso.client.decodeSAMLLoginResponse(samlRespObj, samlResponse, sessionId);
 
-                if (sso.client.validateSignature(samlRespObj, keyStoreProps)) {
-                    var sessionObj = sso.client.decodeSAMLLoginResponse(samlRespObj, samlResponse, sessionId);
+            if (sessionObj.sessionIndex != null || sessionObj.sessionIndex != 'undefined') {
+                loadTenant(sessionObj.loggedInUser);
+                session.put("LOGGED_IN_USER", sessionObj.loggedInUser);
+                session.put("Loged", "true");
 
-                    if (sessionObj.sessionIndex != null || sessionObj.sessionIndex != 'undefined') {
-                        loadTenant(sessionObj.loggedInUser);
-                        session.put("LOGGED_IN_USER", sessionObj.loggedInUser);
-                        session.put("Loged", "true");
-
-                        sso_sessions[sessionObj.sessionId] = sessionObj.sessionIndex;
-                        if (log.isDebugEnabled()) {
-                            log.debug("RELAYSTATE: " + relayState);
-                        }
-                        //var user = require('store').user;
-                        var username = sessionObj.loggedInUser;
-                        var carbon = require('carbon');
-                        var user = carbon.server.tenantUser(username);
-                        var utils = require('/modules/utils.js');
-                        var server = new carbon.server.Server();
-                        var um = new carbon.user.UserManager(server, user.tenantId);
-                        user.roles = um.getRoleListOfUser(user.username);
-                        session.put('user', user);
-                        session.put("samlResponse", samlResponse);
-                        var idPServer = tokenUtil.getIdPServerURL();
-                        if (tokenUtil.checkOAuthEnabled() && idPServer) {
-                            var properties = {samlToken: sessionObj.samlToken, user: username};
-                            tokenUtil.setupAccessTokenPair(constants.GRANT_TYPE_SAML, properties, idPServer,
-                                    function (status) {
-                                        if (!status) {
-                                            log.error("Error while setting up access token and refresh token");
-                                        }
-                                    });
-                            response.sendRedirect(relayState);
-                            return;
-                        } else {
-                            var saml2Cookie = require('/modules/saml-to-cookie.js');
-                            var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
-                            session.put('authToken', authToken);
-                            response.sendRedirect(relayState);
-                        }
-                    }
+                sso_sessions[sessionObj.sessionId] = sessionObj.sessionIndex;
+                if (log.isDebugEnabled()) {
+                    log.debug("RELAYSTATE: " + relayState);
+                }
+                //var user = require('store').user;
+                var username = sessionObj.loggedInUser;
+                var carbon = require('carbon');
+                var user = carbon.server.tenantUser(username);
+                var utils = require('/modules/utils.js');
+                var server = new carbon.server.Server();
+                var um = new carbon.user.UserManager(server, user.tenantId);
+                user.roles = um.getRoleListOfUser(user.username);
+                session.put('user', user);
+                session.put("samlResponse", samlResponse);
+                var idPServer = tokenUtil.getIdPServerURL();
+                if (tokenUtil.checkOAuthEnabled() && idPServer) {
+                    var properties = {samlToken: sessionObj.samlToken, user: username};
+                    tokenUtil.setupAccessTokenPair(constants.GRANT_TYPE_SAML, properties, idPServer,
+                            function (status) {
+                                if (!status) {
+                                    log.error("Error while setting up access token and refresh token");
+                                }
+                            });
+                    response.sendRedirect(relayState);
+                    return;
+                } else {
+                    var saml2Cookie = require('/modules/saml-to-cookie.js');
+                    var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
+                    session.put('authToken', authToken);
+                    response.sendRedirect(relayState);
                 }
             }
 
