@@ -65,6 +65,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var superTenantRegistry = null;
 
         if (ctx.domain != superDomain) {
+            utils.startTenantFlow(carbon.server.superTenant.tenantId);
             superTenantRegistry = new carbon.registry.Registry(server, {
                 system: true,
                 tenantId: carbon.server.superTenant.tenantId
@@ -73,6 +74,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                 start: start,
                 count: count
             });
+            utils.endTenantFlow();
         }
 
         if (!dashboards && !superTenantDashboards) {
@@ -108,12 +110,14 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
         if (superTenantDashboards) {
             var allDashboards = [];
+            utils.startTenantFlow(carbon.server.superTenant.tenantId);
             superTenantDashboards.forEach(function (dashboard) {
                 var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
                 if (parsedDashboards.shareDashboard) {
                     allDashboards.push(parsedDashboards);
                 }
             });
+            utils.endTenantFlow();
             if (allDashboards) {
                 allDashboards.forEach(function (dashboard) {
                     var permissions = dashboard.permissions,

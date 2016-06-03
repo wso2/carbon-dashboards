@@ -99,6 +99,18 @@ var currentContext = function () {
     };
 };
 
+var startTenantFlow = function (tenantId) {
+    var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
+    PrivilegedCarbonContext.startTenantFlow();
+    var context = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+    context.setTenantId(tenantId, true);
+};
+
+var endTenantFlow = function () {
+    var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
+    PrivilegedCarbonContext.endTenantFlow();
+};
+
 var findJag = function (path) {
     var file = new File(path);
     if (file.isExists()) {

@@ -154,12 +154,13 @@ var getAsset = function (id, originalDashboardOnly) {
     else {
         var carbon = require('carbon');
         var server = new carbon.server.Server();
+        utils.startTenantFlow(carbon.server.superTenant.tenantId);
         var superTenantRegistry = new carbon.registry.Registry(server, {
             system: true,
             tenantId: carbon.server.superTenant.tenantId
         });
         var content = superTenantRegistry.content(path);
-
+        utils.endTenantFlow();
         if (content) {
             var dashboard = JSON.parse(content);
 
