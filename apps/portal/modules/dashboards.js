@@ -105,7 +105,6 @@ var createOAuthApplication = function (applicationId, clientCredentials) {
  * @return {Object} Dashboard object
  */
 var getAsset = function (id, originalDashboardOnly) {
-   
     originalDashboardOnly = originalDashboardOnly || false;
     var registry = getRegistry();
     var usr = require('/modules/user.js');
@@ -159,14 +158,16 @@ var getAsset = function (id, originalDashboardOnly) {
             system: true,
             tenantId: carbon.server.superTenant.tenantId
         });
-        var content = superTenantRegistry.content(path);
+        var content = superTenantRegistry.content(registryPath(id));
         utils.endTenantFlow();
         if (content) {
             var dashboard = JSON.parse(content);
-
+            
             if (dashboard.shareDashboard) {
                 return dashboard;
             }
+            else
+                return null;
         }
     }
     return dashboard;
@@ -223,31 +224,7 @@ var update = function (dashboard) {
     if (!registry.exists(path) && !dashboard.isUserCustom) {
         path = registryPath(dashboard.id);
         if (!registry.exists(path)) {
-            var carbon = require('carbon');
-            var server = new carbon.server.Server();
-            var superTenantRegistry = new carbon.registry.Registry(server, {
-                system: true,
-                tenantId: carbon.server.superTenant.tenantId
-            });
-            var content = superTenantRegistry.content(path);
-
-            if (content) {
-                if (dashboard.shareDashboard) {
-                    superTenantRegistry.put(path, {
-                        content: JSON.stringify(dashboard),
-                        mediaType: 'application/json'
-                    });
-                    return;
-                }
-                else {
-                    throw 'a dashboard cannot be found with the id ' + dashboard.id;
-                    return;
-                }
-            }
-            else {
-                throw 'a dashboard cannot be found with the id ' + dashboard.id;
-                return;
-            }
+            throw 'a dashboard cannot be found with the id ' + dashboard.id;
         }
     }
     registry.put(path, {
