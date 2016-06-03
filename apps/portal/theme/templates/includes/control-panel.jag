@@ -21,7 +21,6 @@
             <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy" title="<%= i18n.localize("view.button")%>"></i>Dashboard Portal</a></li>
         <% } else { %>
             <% if (user.isEditor) { %>
-                {{#if editable}}
                 <li><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
             <% } else { %>
                 <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>

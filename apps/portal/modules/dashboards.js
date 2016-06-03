@@ -162,12 +162,13 @@ var getAsset = function (id, originalDashboardOnly) {
         utils.endTenantFlow();
         if (content) {
             var dashboard = JSON.parse(content);
-            
+
             if (dashboard.shareDashboard) {
                 return dashboard;
             }
-            else
-                return null;
+            else {
+                dashboard = null;
+            }
         }
     }
     return dashboard;
