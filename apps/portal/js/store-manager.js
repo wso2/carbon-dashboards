@@ -88,7 +88,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             dashboards.forEach(function (dashboard) {
                 allDashboards.push(JSON.parse(registry.content(dashboard)));
             });
-
         }
         if (superTenantDashboards) {
             utils.startTenantFlow(carbon.server.superTenant.tenantId);
