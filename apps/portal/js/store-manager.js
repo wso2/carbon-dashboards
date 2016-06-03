@@ -82,12 +82,25 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         }
 
         var userDashboards = [];
+        var allDashboards = [];
+
         if (dashboards) {
-            var allDashboards = [];
             dashboards.forEach(function (dashboard) {
                 allDashboards.push(JSON.parse(registry.content(dashboard)));
             });
 
+        }
+        if (superTenantDashboards) {
+            utils.startTenantFlow(carbon.server.superTenant.tenantId);
+            superTenantDashboards.forEach(function (dashboard) {
+                var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
+                if (parsedDashboards.shareDashboard) {
+                    allDashboards.push(parsedDashboards);
+                }
+            });
+            utils.endTenantFlow();
+        }
+        if (allDashboards) {
             allDashboards.forEach(function (dashboard) {
                 var permissions = dashboard.permissions,
                     data = {
@@ -95,7 +108,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                         title: dashboard.title,
                         description: dashboard.description,
                         pagesAvailable: dashboard.pages.length > 0,
-                        editable: true
+                        editable: (dashboard.shareDashboard && ctx.tenantId != carbon.server.superTenant.tenantId) ? false : true
                     };
                 if (utils.allowed(userRoles, permissions.editors)) {
                     userDashboards.push(data);
@@ -106,38 +119,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                     userDashboards.push(data);
                 }
             });
-        }
-
-        if (superTenantDashboards) {
-            var allDashboards = [];
-            utils.startTenantFlow(carbon.server.superTenant.tenantId);
-            superTenantDashboards.forEach(function (dashboard) {
-                var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
-                if (parsedDashboards.shareDashboard) {
-                    allDashboards.push(parsedDashboards);
-                }
-            });
-            utils.endTenantFlow();
-            if (allDashboards) {
-                allDashboards.forEach(function (dashboard) {
-                    var permissions = dashboard.permissions,
-                        data = {
-                            id: dashboard.id,
-                            title: dashboard.title,
-                            description: dashboard.description,
-                            pagesAvailable: dashboard.pages.length > 0,
-                            editable: false
-                        };
-                    if (utils.allowed(userRoles, permissions.editors)) {
-                        userDashboards.push(data);
-                        return;
-                    }
-                    if (utils.allowed(userRoles, permissions.viewers)) {
-                        data.editable = false;
-                        userDashboards.push(data);
-                    }
-                });
-            }
         }
         return userDashboards;
     };
