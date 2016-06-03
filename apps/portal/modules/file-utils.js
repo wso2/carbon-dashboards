@@ -53,7 +53,11 @@ function copyFile(file, destinationPath) {
     outFile.close();
 }
 
-
+/**
+ * copy the given directory to the destination
+ * @param sourceFile
+ * @param destinationPath
+ */
 function copyDir(sourceFile, destinationPath) {
     if (sourceFile.isExists()) {
         if (sourceFile.isDirectory()) {
@@ -87,7 +91,11 @@ function transformCopyFile(sourceFilePath, destinationPath, data) {
     outFile.close();
 }
 
-
+/**
+ * return list of file names in the given directory
+ * @param dirPath
+ * @returns {Array}
+ */
 function getFileNameList(dirPath) {
     var Dir = new File(dirPath);
     var files = Dir.listFiles();
@@ -96,4 +104,11 @@ function getFileNameList(dirPath) {
         fileNameList.push(file.getName());
     });
     return fileNameList;
+}
+
+function writeToFile (content, destinationPath){
+    var file = new File(destinationPath);
+    file.open("w");
+    file.write(content);
+    file.close();
 }
