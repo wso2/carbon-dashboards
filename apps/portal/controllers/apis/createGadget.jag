@@ -244,6 +244,9 @@
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
                         '/theme/templates/preview.jag', previewData);
 
+        var thumbnail = new File(GADGET_TEMPLATE_LOCATION + 'index.png');
+        fileUtils.copyFile(thumbnail,gadgetDirLocation + '/index.png');
+
         fileUtils.writeToFile(data, gadgetDirLocation + '/conf.json');
         print({
             error: false
