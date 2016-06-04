@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <style type="text/css">
@@ -41,7 +41,7 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
                 <!-- login form -->
-                <form class="ues-signin-form" action="<%=tenantedUrlPrefix%>login" method="post">
+                <form class="ues-signin-form" action="<%= tenantedUrlPrefix%>apis/login" method="post">
                     <h2 class="ues-signin-heading"><%= i18n.localize("login.label")%></h2>
                     <div class="form-group">
                         <label for="ues-username" class="sr-only"><%= i18n.localize("username")%></label>
@@ -51,9 +51,8 @@
                         <label for="ues-password" class="sr-only"><%= i18n.localize("password")%></label>
                         <input type="password" name="password" class="form-control ues-password" placeholder="<%= i18n.localize("password")%>" required>
                     </div>
-                    <% if (dest) { %>
-                    <input type="hidden" name="destination" value="<%=dest%>">
-                    <% } %>
+                    <input type="hidden" name="destination" value="/portal/">
+
                     <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">
                         <%= i18n.localize("login.label")%></button>
                 </form>
@@ -65,7 +64,7 @@
     </div>
 
     <!-- Footer -->
-    <% include(utils.resolvePath('templates/portal-footer.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Jquery JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>

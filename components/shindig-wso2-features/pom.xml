@@ -18,14 +18,14 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>1.0.17-SNAPSHOT</version>
+        <version>1.0.19-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shindig-wso2-features</artifactId>
     <packaging>jar</packaging>
-    <name>Apache Shindig WSO2 Extra Features</name>
+    <name>Apache Shindig - WSO2 Extra Features</name>
     <description>Provides extra, deprecated or extended functionality for Carbon Dashboards.</description>
 
     <dependencies>

@@ -140,12 +140,14 @@ var fresh;
                 editors: ['Internal/everyone']
             },
             pages: [],
+            menu:[],
+            hideAllMenuItems: false,
             identityServerUrl: "",
             accessTokenUrl: "",
             apiKey: "",
             apiSecret: "",
-            theme: ""
-        };
+            theme: request.getParameter('select-theme')
+    };
 
         utils.sandbox(context, function() {
             dashboards.create(dashboard);

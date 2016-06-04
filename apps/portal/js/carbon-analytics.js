@@ -471,7 +471,6 @@ function AnalyticsClient() {
      *                {
      *                  field : "timestamp",
      *                  sortType : "ASC", // This can be ASC, DESC
-     *                  reversed : "false" //optional
      *                }
      *              ],
      *              columns : [column1, column2]
@@ -811,7 +810,6 @@ function AnalyticsClient() {
      *                {
      *                  field : "timestamp",
      *                  sortType : "ASC", // This can be ASC, DESC
-     *                  reversed : "false" //optional
      *                }
      *              ],
      *              columns : [column1, column2]

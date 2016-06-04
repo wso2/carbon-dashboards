@@ -17,7 +17,7 @@
  *  under the License.
  *
  */
-var styles = utils.dashboardStyles();
+var styles = utils.getStyle('dashboard');
 %>
 <% if (styles) {
     %>

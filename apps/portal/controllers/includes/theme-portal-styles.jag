@@ -17,7 +17,7 @@
  *  under the License.
  *
  */
-var styles = utils.portalStyles();
+var styles = utils.getStyle('portal');
 %>
 <% if (styles) {
     %>

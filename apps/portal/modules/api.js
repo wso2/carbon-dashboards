@@ -23,7 +23,7 @@ var authenticate = function (username, password) {
     if (authAdminClient.login(username, password, "localhost")) {
         var serviceContext = authAdminClient._getServiceClient().getLastOperationContext().getServiceContext();
         var sessionCookie = serviceContext.getProperty(HTTPConstants.COOKIE_STRING);
-        log.info('Session cookie ' + sessionCookie);
+        log.debug('Session cookie ' + sessionCookie);
         return sessionCookie;
     } else {
         log.info('Authentication failure');

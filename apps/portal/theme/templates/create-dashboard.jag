@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 %>
-<% include(utils.resolvePath('templates/portal-header.jag')); %>
-
+    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("create.dashboard")%></title>
@@ -108,7 +107,30 @@
                         <textarea name="description" maxlength="500" class="form-control" id="ues-dashboard-description"
                             placeholder="<%=i18n.localize("e.g.monthly.sales.statistics")%>" rows="3"></textarea>
                     </div>
+
+                    <div class="form-group">
+                        <label for="ues-theme-list"><%=i18n.localize("theme.label")%></label>
+                        <select name="select-theme" class="form-control selectpicker dropdown" id="ues-theme-list"
+                            data-style="btn-default" data-width="100px">
+                            <option selected="selected"><%=i18n.localize("theme.default")%></option>
+                        <%
+                            var utils = require('/modules/utils.js');
+                            var path = utils.getCustomThemePath();
+                            var folder = new File('/' + path);
+                            var themeName = "";
+                            var fileList = folder.listFiles();
+                            fileList.forEach(function(file) {
+                                themeName =  file.getName();
+                        %>
+                            <option><%=themeName%></option>
+                        <%
+                            });
+                        %>
+                        </select>
+                    </div>
+
                     <button type="button" class="btn btn-default btn-bordered" id="ues-dashboard-create"><%=i18n.localize("next")%></button>
+
                 </form>
             </div>
 
@@ -116,7 +138,7 @@
     </div>
 
     <!-- Footer -->
-    <% include(utils.resolvePath('templates/portal-footer.jag')); %>
+    <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <script id="ues-modal-info-hbs" type="text/x-handlebars-template">
         <div class="modal-header">

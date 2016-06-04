@@ -57,6 +57,13 @@ Handlebars.registerHelper('equals', function (left, right, options) {
     return options.inverse(this);
 });
 
+Handlebars.registerHelper('equalsIgnoreCase', function (left, right, options) {
+    if (left.toLowerCase() === right.toLowerCase()) {
+        return options.fn(this);
+    }
+    return options.inverse(this);
+});
+
 // Check whether the left hand side does not equals to the right hand side.
 Handlebars.registerHelper('if_neq', function (a, b, blocks) {
     if (a != b) {
@@ -74,4 +81,54 @@ Handlebars.registerHelper('dump', function (o) {
 // Resolve a URI.
 Handlebars.registerHelper('resolveURI', function (path) {
     return ues.dashboards.resolveURI(path);
+});
+
+//handlebar helper which returns menu hierachy
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden) {
+    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'>";
+    var checked = isHidden ? "checked=''": "" ;
+
+    if(designer){
+        divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'>" +
+        "<i class='fw fw-up'></i> Make Root</li>" + 
+            "<li class='hide-all' style='margin: 0 0 10px 0;'><input type='checkbox' " + checked +
+                " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'> <i class='fw fw-view'></i> Hide All</li>";
+    }
+
+    updateSubordinates(menu, null);
+    divTree += "</ul>"
+
+    function updateSubordinates(menu, parent){
+        for (var i = 0; i < menu.length; i++) {
+                if (designer) {
+                    //todo use fw-hide class once latest wso2 icon project released
+                    var iClass = menu[i].ishidden ? "<i class='fw fw-block'></i>" : "<i class='fw fw-view'></i>";
+                    divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
+                        "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
+                                "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" +menu[i].id + 
+                                "'>" + iClass + "</span></span>";
+                } else {
+                    var divLi = "<li><a href='" + menu[i].id + "'>" + menu[i].title + "</a>";
+                    if(!menu[i].ishidden){
+                        if (isAnonView || !user) {
+                            if (menu[i].isanon) {
+                                // Anonymous viewing. So render only anonymous pages links.
+                                divTree += divLi;
+                            }
+                        } else {
+                            divTree += divLi;
+                        }
+                    }
+                }
+
+                if(menu[i].subordinates.length > 0){
+                    divTree += "<ul class='' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+                    updateSubordinates(menu[i].subordinates, menu[i].id);
+                    divTree += "</ul>";
+                } else{
+                    divTree += "</li>";
+                }
+        }
+    }
+    return divTree;
 });
