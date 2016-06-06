@@ -106,6 +106,11 @@ function getFileNameList(dirPath) {
     return fileNameList;
 }
 
+/**
+ * write the given content to destination file
+ * @param content
+ * @param destinationPath
+ */
 function writeToFile (content, destinationPath){
     var file = new File(destinationPath);
     file.open("w");
