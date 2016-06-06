@@ -44,6 +44,7 @@
   "here.label": "මෙහි",
   "dashboards.manage.description": "* පුවරු කළමනාකරණය",
   "no.dashboards.found.description": "No dashboards found. To create a dashboard click",
+  "no.gadgets.found.description": "No gadgets found. To create a gadget click",
   "create.a.dashboard": "පුවරුවක් සකසන්න​",
   "create.gadget.label": "ගැජට්ටුවක් සකසන්න",
   "name.of.your.dashboard": "ඔබේ පුවරුවෙහි නම​",
@@ -143,5 +144,7 @@
   "theme.default": "පෙරනිමි තේමාව",
   "upload.gadget.label" : "Upload Gadget",
   "create.layout.label" : "Create Layout",
-  "upload.layout.label" : "Upload Layout"
+  "upload.layout.label" : "Upload Layout",
+  "delete.gadget" : "Delete Gadget",
+  "delete.layout" : "Delete Layout"
 }

@@ -18,7 +18,7 @@
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/gadget.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("dashboards.label")%></title>
     <% var config = require('/configs/designer.json'); %>
@@ -97,14 +97,13 @@
         </div>
     <% } %>
 
-    <div id="ues-portal" class="container-fluid">
+    <div id="ues-gadgets-portal" class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <h1 class="page-sub-title"><%= i18n.localize("gadgets") %></h1>
-                <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
             </div>
         </div>
-        <div class="row thumbnails ues-dashboards"></div>
+        <div class="row thumbnails ues-gadgets"></div>
     </div>
 
     <!-- Footer -->
@@ -112,13 +111,47 @@
 
     <!-- Handlebar templates -->
 
-    <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
+        <!-- Handlebar templates -->
+    <script id="ues-gadgets-list-hbs" type="text/x-handlebars-template">
+        {{#each .}}
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="thumbnail ues-gadget" id="{{id}}" data-id="{{id}}" abc = "{{thumbnail}}">
+
+                {{>ues-gadget-thumbnail-hbs}}
+            </div>
+        </div>
+        {{/each}}
+    </script>
+
+    <script id="ues-gadgets-empty-hbs" type="text/x-handlebars-template">
+        <div class="col-md-12">
+            <div class="caption">
+                <h4>
+                    <%= i18n.localize("no.dashboards.found.description") %>
+                    <a href="<%=tenantedUrlPrefix%>create-gadget"><%= i18n.localize("here.label") %></a>.
+                </h4>
+            </div>
+        </div>
+    </script>
+
+    <script id="ues-gadget-thumbnail-hbs" type="text/x-handlebars-template">
+         <div class="thumbnail ues-thumbnail" data-id="{{id}}" abc = "{{thumbnail}}">
+            <h5 class="title">{{title}}</h5>
+             <a href="#" class="ues-gadget-trash-handle">
+            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.gadget")%>"></i>
+        </a>
+            <img src="{{resolveURI thumbnail}}" style="width: 192px; height : 100px;"/>
+        </div>
+
+    </script>
+
+    <script id="ues-gadget-confirm-hbs" type="text/x-handlebars-template">
         <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="ues-trash-actions">
-            <a href="#" class="btn btn-danger ladda-button ues-dashboard-trash-confirm" role="button" data-style="expand-left" data-size="l">
+            <a href="#" class="btn btn-danger ladda-button ues-gadget-trash-confirm" role="button" data-style="expand-left" data-size="l">
                 <span class="ladda-label"><%= i18n.localize("delete")%></span>
             </a>
-            <a href="#" class="btn btn-default ues-dashboard-trash-cancel" role="button" ><%= i18n.localize("cancel")%></a>
+            <a href="#" class="btn btn-default ues-gadget-trash-cancel" role="button" ><%= i18n.localize("cancel")%></a>
         </div>
     </script>
 
@@ -129,14 +162,20 @@
     <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
 
     <!-- Handlebars -->
-    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+   <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
 
     <script src="<%=urlPrefix%>js/spin.min.js"></script>
     <script src="<%=urlPrefix%>js/ladda.min.js"></script>
     <script src="<%=urlPrefix%>js/ues.js"></script>
     <% include('/controllers/includes/common-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
-    <script src="<%=urlPrefix%>js/portal.js"></script>
+    <script src="<%=urlPrefix%>js/gadgets.js"></script>
+    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
+    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
+    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
+    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+    <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
+
 </body>
 </html>

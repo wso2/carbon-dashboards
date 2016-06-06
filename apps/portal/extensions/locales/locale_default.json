@@ -45,6 +45,7 @@
     "here.label": "here",
     "dashboards.manage.description": "* View, Modify and Delete dashboards",
     "no.dashboards.found.description": "No dashboards found. To create a dashboard click",
+    "no.gadgets.found.description": "No gadgets found. To create a gadget click",
     "create.a.dashboard": "Create a Dashboard",
     "create.gadget.label": "Create Gadget",
     "select.datasource" : "Select Datasource",
@@ -162,6 +163,8 @@
     "pages.menu.label": "Menu",
     "upload.gadget.label" : "Upload Gadget",
     "create.layout.label" : "Create Layout",
-    "upload.layout.label" : "Upload Layout"
+    "upload.layout.label" : "Upload Layout",
+    "delete.gadget" : "Delete Gadget",
+    "delete.layout" : "Delete Layout"
 
 }
