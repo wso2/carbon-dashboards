@@ -96,7 +96,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
     }
 
     updateSubordinates(menu, null);
-    divTree += "</ul>"
+    divTree += "</ul>";
 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
