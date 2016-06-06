@@ -29,7 +29,7 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li class="active"><i class="icon fw fw-home"></i> <%=i18n.localize("dashboards.label")%></li>
+            <li class="active"><i class="icon fw fw-home"></i> <%=i18n.localize("layouts")%></li>
         </ol>
     </div>
 
@@ -54,23 +54,24 @@
                     </div>
                     <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0px;">
                         <ul class="nav navbar-nav collapse-nav-sub">
-                            <% if (! isMobileDevice) { %>
-                        <li>
-                            <a href="<%=tenantedUrlPrefix%>create-dashboard">
+                         <% if (! isMobileDevice) { %>
+                         <li>
+                            <a href="#">
                                 <span class="fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                    <i class="fw fw-add fw-stack-1x"></i>
-                                </span> <%= i18n.localize("create.dashboard")%>
+                                    <i class="fw fw-upload fw-stack-1x"></i>
+                                </span> <%= i18n.localize("upload.layout.label")%>
                             </a>
                         </li>
                         <% } %>
+
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
                 <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true"><!-- nav-collapse -->
                     <ul class="nav navbar-nav collapse-nav-sub">
                         <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="#"><i class="fw fw-dashboard"></i><%= i18n.localize("dashboards.label")%></a>
+                            <a href="<%=tenantedUrlPrefix%>dashboards/"><i class="fw fw-dashboard"></i><%= i18n.localize("dashboards.label")%></a>
                         </li>
                         <li data-absolute-position="145" style="left: 145px; position: absolute; display: block;" aria-expanded="false">
                             <a href="<%=tenantedUrlPrefix%>gadget/">
@@ -78,7 +79,7 @@
                             </a>
                         </li>
                         <li data-absolute-position="275" style="left: 275px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="<%=tenantedUrlPrefix%>layouts/"><i class="fw fw-layout"></i><%= i18n.localize("layouts")%></a>
+                            <a href="#"><i class="fw fw-layout"></i><%= i18n.localize("layouts")%></a>
                         </li>
                     </ul>
                 </div><!--/ .nav-collapse -->
@@ -89,7 +90,7 @@
     <div id="ues-portal" class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="page-sub-title"><%= i18n.localize("dashboards.label") %></h1>
+                <h1 class="page-sub-title"><%= i18n.localize("gadgets") %></h1>
                 <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
             </div>
         </div>
@@ -100,68 +101,6 @@
     <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Handlebar templates -->
-    <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
-        {{#each .}}
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="thumbnail ues-dashboard" id="{{id}}" data-id="{{id}}">
-                {{>ues-dashboard-thumbnail-hbs}}
-            </div>
-        </div>
-        {{/each}}
-    </script>
-
-    <script id="ues-dashboards-empty-hbs" type="text/x-handlebars-template">
-        <div class="col-md-12">
-            <div class="caption">
-                <h4>
-                    <%= i18n.localize("no.dashboards.found.description") %>
-                    <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.label") %></a>.
-                </h4>
-            </div>
-        </div>
-    </script>
-
-    <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-        <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
-        <p id="ues-dashboard-url" class="ues-dashboard-url truncate">
-            <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a>
-        </p>
-        <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
-        <div class="ues-actions">
-            <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
-                data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
-                href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-view fw-stack-1x"></i>
-                </span>
-                 <%= i18n.localize("view") %>
-            </a>
-            <% if (! isMobileDevice) { %>
-            {{#if editable}}
-            <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-edit fw-stack-1x"></i>
-                </span>
-                <%= i18n.localize("design") %>
-            </a>
-            <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-settings fw-stack-1x"></i>
-                </span>
-                <%= i18n.localize("settings") %>
-            </a>
-            {{/if}}
-            <% } %>
-        </div>
-        {{#if editable}}
-        <a href="#" class="ues-dashboard-trash-handle">
-            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.dashboard")%>"></i>
-        </a>
-        {{/if}}
-    </script>
 
     <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
         <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
