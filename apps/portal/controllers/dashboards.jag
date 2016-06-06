@@ -54,7 +54,7 @@ var fresh;
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');
 
-        if(!request.getParameter("shared")) {
+        if (!request.getParameter("shared")) {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getAsset(dashboardId);
             });
@@ -124,7 +124,7 @@ var fresh;
                 return;
             }
         }
-        else  {
+        else {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getSharedAsset(dashboardId);
             });

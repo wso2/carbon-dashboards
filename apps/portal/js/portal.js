@@ -149,7 +149,6 @@ $(function () {
             window.open($(this).attr('href'), '_blank');
         });
 
-
         portal.on('click', '#filter-dashboards', function (e) {
             $('a[data-column="2"]').on('click', function (e) {
                 $('.ues-dashboard').each(function (i, obj) {
@@ -175,7 +174,6 @@ $(function () {
                 });
             });
         });
-
 
         $(window).scroll(function () {
             var win = $(window);

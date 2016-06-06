@@ -570,6 +570,7 @@ $(function () {
             dashboard.theme = text;
         });
 
+        //Share dashboard among tenants
         $('#share-dashboard').on('click', function () {
             dashboard.shareDashboard = $(this).is(":checked");
         });
