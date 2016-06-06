@@ -32,15 +32,19 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     validate = function (providerConfig) {
+        var db = null;
         try {
-            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
         } catch (e) {
+            var wizard = require('/js/wizard.js');
             return {
                 "error" : true,
                 "message" : "Database connection failed"
             }
         } finally{
-            db.close();
+            if(db != null) {
+                db.close();
+            }
         }
         return true;
     };
@@ -57,12 +61,14 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     getSchema = function (providerConfig) {
+        var db = null;
         try {
-            var databaseName = providerConfig['db_name'];
+            var databseUrl = providerConfig['db_url'];
+            var databaseName = databseUrl.substring(databseUrl.lastIndexOf("/") + 1);
             var tableName = providerConfig['table_name'];
             var db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
                 databaseName + "' and table_name='" + tableName + "';";
-            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
             var schema = db.query(db_query);
         } catch (e) {
             return {
@@ -70,7 +76,9 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                 "message": "Schema Retrieval Failed"
             }
         } finally {
-            db.close();
+            if(db != null) {
+                db.close();
+            }
         }
         if(schema.length != 0) {
             for (var i in schema) {

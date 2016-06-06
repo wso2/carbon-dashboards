@@ -15,13 +15,6 @@
             "placeholderText" : "jdbc:mysql://localhost:3306/dbname"
         },
         {
-            "fieldLabel" : "Database Name",
-            "fieldName" :"db_name",
-            "fieldType" : "string",
-            "defaultValue" : "",
-            "isRequired" : true
-        },
-        {
             "fieldLabel" : "Table Name",
             "fieldName" :"table_name",
             "fieldType" : "string",

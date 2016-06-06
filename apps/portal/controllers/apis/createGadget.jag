@@ -278,6 +278,31 @@
             error: false
         });
         return;
+    } else if (action === 'testConfiguration') {
+        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
+        var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
+        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        var schema = providerApi.getSchema(data[PROVIDER_CONF]);
+        var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
+        if (validate.error) {
+            print({
+                error: true,
+                message: "Database configuration error"
+            });
+            return;
+        } else if(dataSet.error) {
+            print({
+                error: true,
+                message: "Database schema validation error"
+            });
+            return;
+        }
+        else {
+            print({
+                error: false
+            });
+            return;
+        }
     }
 
     response.sendError(404, JSON.stringify({
