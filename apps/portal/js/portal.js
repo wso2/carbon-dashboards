@@ -147,7 +147,35 @@ $(function () {
         portal.on('click', '.ues-view:not(.disable)', function(e) {
             e.preventDefault();
             window.open($(this).attr('href'), '_blank');
-        })
+        });
+
+
+        portal.on('click', '#filter-dashboards', function (e) {
+            $('a[data-column="2"]').on('click', function (e) {
+                $('.ues-dashboard').each(function (i, obj) {
+                    if (!$(this).find('.ues-dashboard-share').length) {
+                        $(this).hide();
+                    }
+                    else
+                        $(this).show();
+                });
+            });
+            $('a[data-column="1"]').on('click', function (e) {
+                $('.ues-dashboard').each(function (i, obj) {
+                    $(this).show();
+                });
+            });
+            $('a[data-column="3"]').on('click', function (e) {
+                $('.ues-dashboard').each(function (i, obj) {
+                    if ($(this).find('.ues-dashboard-share').length) {
+                        $(this).hide();
+                    }
+                    else
+                        $(this).show();
+                });
+            });
+        });
+
 
         $(window).scroll(function () {
             var win = $(window);

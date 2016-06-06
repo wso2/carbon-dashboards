@@ -49,6 +49,25 @@
     font-size: 13px;
 }
 
+#ues-portal .ues-dashboard .shared-url {
+    font-size: 13px;
+    padding-top: 8px;
+}
+
+#ues-portal .ues-dashboard .ues-dashboard-share {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 20px;
+    font-size: 12px;
+    color: #fff;
+    text-align: right;
+}
+
+#ues-portal .ues-dashboard .shared {
+    padding-left: 25px;
+}
+
 #ues-portal .ues-dashboard .ues-dashboard-trash-handle {
     position: absolute;
     top: 10px;

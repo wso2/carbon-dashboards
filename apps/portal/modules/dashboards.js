@@ -150,29 +150,36 @@ var getAsset = function (id, originalDashboardOnly) {
             customBannerExists: banner.customBannerExists
         };
     }
-    else {
-        var carbon = require('carbon');
-        var server = new carbon.server.Server();
-        utils.startTenantFlow(carbon.server.superTenant.tenantId);
-        var superTenantRegistry = new carbon.registry.Registry(server, {
-            system: true,
-            tenantId: carbon.server.superTenant.tenantId
-        });
-        var content = superTenantRegistry.content(registryPath(id));
-        utils.endTenantFlow();
-        if (content) {
-            var dashboard = JSON.parse(content);
+    return dashboard;
+};
 
-            if (dashboard.shareDashboard) {
-                return dashboard;
-            }
-            else {
-                dashboard = null;
-            }
+/**
+ * To get the shared dashboard
+ * @param id ID of the dashboard
+ */
+var getSharedAsset = function (id){
+    var carbon = require('carbon');
+    var server = new carbon.server.Server();
+    utils.startTenantFlow(carbon.server.superTenant.tenantId);
+    var superTenantRegistry = new carbon.registry.Registry(server, {
+        system: true,
+        tenantId: carbon.server.superTenant.tenantId
+    });
+    var content = superTenantRegistry.content(registryPath(id));
+    utils.endTenantFlow();
+
+    var dashboard = JSON.parse(content);
+
+    if(dashboard) {
+        if (dashboard.shareDashboard) {
+            return dashboard;
         }
+        else
+            return null;
     }
     return dashboard;
 };
+
 
 /**
  * Find dashboards available in the registry.

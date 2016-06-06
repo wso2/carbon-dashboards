@@ -141,5 +141,8 @@
   "forbidden" : "Forbiden"
   "theme.label": "තේමාව",
   "theme.default": "පෙරනිමි තේමාව",
-  "share.dashboard" : "Share Dashboard"
-}
+  "share.dashboard" : "Share Dashboard",
+  "all.dashboards" : "All Dashboards",
+  "shared.dashboards" : "Shared Dashboards",
+  "tenant.dashboards" : "Tenant Specific Dashboards"
+  }

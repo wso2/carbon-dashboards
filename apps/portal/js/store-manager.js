@@ -107,7 +107,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                         title: dashboard.title,
                         description: dashboard.description,
                         pagesAvailable: dashboard.pages.length > 0,
-                        editable: (dashboard.shareDashboard && ctx.tenantId != carbon.server.superTenant.tenantId) ? false : true
+                        editable: (dashboard.shareDashboard && ctx.tenantId != carbon.server.superTenant.tenantId) ? false : true,
+                        shared: (dashboard.shareDashboard && ctx.tenantId != carbon.server.superTenant.tenantId) ? true : false
                     };
                 if (utils.allowed(userRoles, permissions.editors)) {
                     userDashboards.push(data);

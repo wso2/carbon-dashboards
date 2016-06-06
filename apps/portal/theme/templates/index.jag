@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <link href="<%=urlPrefix%>libs/theme-wso2_1.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("dashboards.label")%></title>
     <% var config = require('/configs/designer.json'); %>
@@ -83,6 +84,18 @@
                 <h1 class="page-sub-title"><%= i18n.localize("dashboards.label") %></h1>
                 <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
             </div>
+            <% if (userDomain != superDomain) { %>
+            <ul class="nav nav-pills navbar-right remove-margin" role="tablist">
+                <li>Filter : <button id = "filter-dashboards" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-sort"></i></button>
+                <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x">
+                <li class="dropdown-header">Show</li>
+                <li><a href="#" data-column="1" class="sorting_asc"><%= i18n.localize("all.dashboards") %></a></li>
+                <li><a href="#" data-column="2"><%= i18n.localize("shared.dashboards") %></a></li>
+                <li><a href="#" data-column="3"><%= i18n.localize("tenant.dashboards") %></a></li>
+                </ul>
+                </li>
+            </ul>
+            <% } %>
         </div>
         <div class="row thumbnails ues-dashboards"></div>
     </div>
@@ -113,15 +126,23 @@
     </script>
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-        <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
-        <p id="ues-dashboard-url" class="ues-dashboard-url truncate">
+        {{#if shared}}
+        <div class = "ues-dashboard-share">
+        <span class="fw-stack">
+            <i class="fw fw-circle-outline fw-stack-2x"></i>
+            <i class="fw fw-share fw-stack-1x"></i>
+        </span>
+        </div>
+        {{/if}}
+        <h2 id="ues-dashboard-title" class="truncate {{#if shared}}shared{{/if}}">{{title}}</h2>
+        <p id="ues-dashboard-url" class="ues-dashboard-url truncate {{#if shared}}shared-url{{/if}}">
             <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a>
         </p>
         <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
         <div class="ues-actions">
             <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
                 data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
-                href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
+                href="<%=tenantedUrlPrefix%>dashboards/{{id}}{{#if shared}}?shared=true{{/if}}" target="_blank">
                 <span class="fw-stack">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-view fw-stack-1x"></i>
