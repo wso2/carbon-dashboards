@@ -87,8 +87,6 @@ Handlebars.registerHelper('resolveURI', function (path) {
 Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden) {
     var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'>";
     var checked = isHidden ? "checked=''": "" ;
-    //TODO shift iclass according to the state
-    //var iClass = ishidden ? "fw fw-view": "fw fw-view";
 
     if(designer){
         divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'>" +
@@ -103,10 +101,12 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
                 if (designer) {
+                    //todo use fw-hide class once latest wso2 icon project released
+                    var iClass = menu[i].ishidden ? "<i class='fw fw-block'></i>" : "<i class='fw fw-view'></i>";
                     divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
                         "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
-                                "<span>" + menu[i].title + "<span class='controls hide-menu-item' id='" +menu[i].id + 
-                                "'><i class='fw fw-view'></i></span></span>";
+                                "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" +menu[i].id + 
+                                "'>" + iClass + "</span></span>";
                 } else {
                     var divLi = "<li><a href='" + menu[i].id + "'>" + menu[i].title + "</a>";
                     if(!menu[i].ishidden){

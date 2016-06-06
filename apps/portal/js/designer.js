@@ -1908,11 +1908,13 @@ $(function () {
                 manipulateAllMenuItems(true);
                 dashboard.hideAllMenuItems = true;
                 saveDashboard();
+                updateMenuList();
                 return;
             } else {
                 manipulateAllMenuItems(false);
                 dashboard.hideAllMenuItems = false;
                 saveDashboard();
+                updateMenuList();
                 return;
             }
         });
