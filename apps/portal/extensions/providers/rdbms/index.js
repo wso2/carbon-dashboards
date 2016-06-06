@@ -36,13 +36,12 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         try {
             db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
         } catch (e) {
-            var wizard = require('/js/wizard.js');
             return {
                 "error" : true,
                 "message" : "Database connection failed"
             }
-        } finally{
-            if(db != null) {
+        } finally {
+            if (db != null) {
                 db.close();
             }
         }
@@ -76,11 +75,11 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                 "message": "Schema Retrieval Failed"
             }
         } finally {
-            if(db != null) {
+            if (db != null) {
                 db.close();
             }
         }
-        if(schema.length != 0) {
+        if (schema.length != 0) {
             for (var i in schema) {
                 schema[i].fieldName = schema[i].column_name;
                 schema[i].fieldType = schema[i].column_type;

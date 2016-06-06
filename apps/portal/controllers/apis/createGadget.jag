@@ -281,7 +281,6 @@
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
         var validate = providerApi.validate(data[PROVIDER_CONF]);
-        var schema = providerApi.getSchema(data[PROVIDER_CONF]);
         var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
         if (validate.error) {
             print({
@@ -289,7 +288,7 @@
                 message: "Database configuration error"
             });
             return;
-        } else if(dataSet.error) {
+        } else if (dataSet.error) {
             print({
                 error: true,
                 message: "Database schema validation error"
