@@ -154,32 +154,20 @@ $(function () {
             window.open($(this).attr('href'), '_blank');
         });
 
-        portal.on('click', '#filter-dashboards', function (e) {
-            $('a[data-filter="Shared"]').on('click', function (e) {
-                $('#filter').html($(this).attr("name"));
-                $('.col-lg-3').each(function (i, obj) {
-                    if (!$(this).find('.ues-dashboard-share').length) {
-                        $(this).hide();
-                    }
-                    else
-                        $(this).show();
-                });
-            });
-            $('a[data-filter="All"]').on('click', function (e) {
-                $('#filter').html($(this).attr("name"));
-                $('.col-lg-3').each(function (i, obj) {
+        $('#filter-dashboards a').on('click', function () {
+            $('#filter').html($(this).text());
+            var filter = $(this).data('filter');
+
+            $('.ues-dashboard-container').each(function (i, obj) {
+                if (filter === "All") {
                     $(this).show();
-                });
-            });
-            $('a[data-filter="Tenant"]').on('click', function (e) {
-                $('#filter').html($(this).attr("name"));
-                $('.col-lg-3').each(function (i, obj) {
+                } else {
                     if ($(this).find('.ues-dashboard-share').length) {
-                        $(this).hide();
+                        filter === "Shared" ? $(this).show() : $(this).hide();
+                    } else {
+                        filter === "Shared" ? $(this).hide() : $(this).show();
                     }
-                    else
-                        $(this).show();
-                });
+                }
             });
         });
 

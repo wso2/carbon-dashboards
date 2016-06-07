@@ -157,7 +157,7 @@ var getAsset = function (id, originalDashboardOnly) {
  * To get the shared dashboard
  * @param id ID of the dashboard
  */
-var getSharedAsset = function (id) {
+var getSharedDashboard = function (id) {
     var carbon = require('carbon');
     var server = new carbon.server.Server();
     utils.startTenantFlow(carbon.server.superTenant.tenantId);
@@ -169,15 +169,9 @@ var getSharedAsset = function (id) {
     utils.endTenantFlow();
 
     var dashboard = JSON.parse(content);
-
-    if (dashboard) {
-        if (dashboard.shareDashboard) {
-            return dashboard;
-        }
-        else
-            return null;
+    if (dashboard && dashboard.shareDashboard) {
+        return dashboard;
     }
-    return dashboard;
 };
 
 /**

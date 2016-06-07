@@ -123,10 +123,9 @@ var fresh;
                 response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain) + "dashboards/" + dashboardId);
                 return;
             }
-        }
-        else {
+        } else {
             utils.sandbox(context, function () {
-                dashboard = dashboards.getSharedAsset(dashboardId);
+                dashboard = dashboards.getSharedDashboard(dashboardId);
             });
 
             if (!dashboard) {

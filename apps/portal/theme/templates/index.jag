@@ -83,17 +83,18 @@
                 <h1 class="page-sub-title"><%= i18n.localize("dashboards.label") %></h1>
             </div>
             <% if (userDomain !== superDomain) { %>
-            <div class="col-md-4">
-            <ul class="nav nav-pills navbar-right remove-margin filter-dropdown" role="tablist">
-                <li>Filtered By <span id = "filter"><%= i18n.localize("all.dashboards") %></span> : <button id = "filter-dashboards" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-filter"></i></button>
-                <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x">
-                 <li><a href="#" data-filter="All" name="<%= i18n.localize("all.dashboards") %>"><%= i18n.localize("all.dashboards") %></a></li>
-                <li><a href="#" data-filter="Shared" name="<%= i18n.localize("shared.dashboards") %>"><%= i18n.localize("shared.dashboards") %></a></li>
-                <li><a href="#" data-filter="Tenant" name="<%= i18n.localize("tenant.dashboards") %>"><%= i18n.localize("tenant.dashboards") %></a></li>
-                </ul>
-                </li>
-            </ul>
-            </div>
+                <div class="col-md-4">
+                    <ul class="nav nav-pills navbar-right remove-margin filter-dropdown" role="tablist">
+                        <li>Filtered By <span id = "filter"><%= i18n.localize("all.dashboards") %></span> :
+                            <button class="btn btn-default" data-toggle="dropdown" aria-expanded="false" ><i class="fw fw-filter"></i></button>
+                            <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x" id="filter-dashboards">
+                                 <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
+                                <li><a href="#" data-filter="Shared"><%= i18n.localize("shared.dashboards") %></a></li>
+                                <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %></a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             <% } %>
         </div>
         <div class="row thumbnails ues-dashboards"></div>
@@ -130,12 +131,12 @@
             <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
         </p>
         <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
-        {{#if shared}}
-            <span class="fw-stack ues-dashboard-share">
-                <i class="fw fw-share fw-stack-1x"></i>
-            </span>
-            <p id = "shared-description"><%= i18n.localize("shared.by.supertenant") %></p>
-        {{/if}}
+            {{#if shared}}
+                <span class="fw-stack ues-dashboard-share">
+                    <i class="fw fw-share fw-stack-1x"></i>
+                </span>
+                <p id = "shared-description"><%= i18n.localize("shared.by.supertenant") %></p>
+            {{/if}}
         <div class="ues-actions">
             <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
                 data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 

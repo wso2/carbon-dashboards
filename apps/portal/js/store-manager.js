@@ -64,7 +64,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var superTenantDashboards = null;
         var superTenantRegistry = null;
 
-        if (ctx.domain != superDomain) {
+        if (ctx.domain !== superDomain) {
             utils.startTenantFlow(carbon.server.superTenant.tenantId);
             superTenantRegistry = new carbon.registry.Registry(server, {
                 system: true,
@@ -107,8 +107,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                         title: dashboard.title,
                         description: dashboard.description,
                         pagesAvailable: dashboard.pages.length > 0,
-                        editable: (dashboard.shareDashboard && ctx.tenantId != carbon.server.superTenant.tenantId) ? false : true,
-                        shared: (dashboard.shareDashboard && ctx.tenantId != carbon.server.superTenant.tenantId) ? true : false
+                        editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                        shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId)
                     };
                 if (utils.allowed(userRoles, permissions.editors)) {
                     userDashboards.push(data);
