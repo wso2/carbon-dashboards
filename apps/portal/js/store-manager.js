@@ -173,6 +173,9 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (type === 'dashboard') {
             return findDashboards(ctx, type, query, start, count);
         }
+        var server = new carbon.server.Server();
+        var um = new carbon.user.UserManager(server, ctx.tenantId);
+        var userRoles = um.getRoleListOfUser(ctx.username);
         var allAssets = [];
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
@@ -180,21 +183,26 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             var assets = specificStore.getAssets(type, query);
             if (assets) {
                 for (var j = 0; j < assets.length; j++) {
-                    if (assets[j].thumbnail) {
-                        assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
-                    }
-                    else {
-                        log.warn('Thumbnail url is missing in ' + assets[j].title);
-                        assets[j].thumbnail = DEFAULT_THUMBNAIL;
-                    }
-                    if (type === 'gadget' && assets[j].data && assets[j].data.url) {
-                        assets[j].data.url = fixLegacyURL(assets[j].data.url,storeTypes[i]);
-                    }
-                    else if (type === 'layout' && assets[j].url) {
-                        assets[j].url = fixLegacyURL(assets[j].url,storeTypes[i]);
-                    }
-                    else{
-                        log.warn('Url is not defined for ' + assets[j].title);
+                    var allowedRoles = assets[j].allowedRoles;
+                    if (allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                        assets.splice(j, 1);
+                    } else {
+                        if (assets[j].thumbnail) {
+                            assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
+                        }
+                        else {
+                            log.warn('Thumbnail url is missing in ' + assets[j].title);
+                            assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                        }
+                        if (type === 'gadget' && assets[j].data && assets[j].data.url) {
+                            assets[j].data.url = fixLegacyURL(assets[j].data.url, storeTypes[i]);
+                        }
+                        else if (type === 'layout' && assets[j].url) {
+                            assets[j].url = fixLegacyURL(assets[j].url, storeTypes[i]);
+                        }
+                        else {
+                            log.warn('Url is not defined for ' + assets[j].title);
+                        }
                     }
                 }
                 allAssets = assets.concat(allAssets);
