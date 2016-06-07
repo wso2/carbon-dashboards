@@ -80,21 +80,23 @@
 
     <div id="ues-portal" class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <h1 class="page-sub-title"><%= i18n.localize("dashboards.label") %></h1>
                 <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
             </div>
             <% if (userDomain != superDomain) { %>
+            <div class="col-md-4">
             <ul class="nav nav-pills navbar-right remove-margin" role="tablist">
-                <li>Filter : <button id = "filter-dashboards" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-sort"></i></button>
+                <li>Filtered By <span id = "filter"><%= i18n.localize("all.dashboards") %></span> : <button id = "filter-dashboards" class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-filter"></i></button>
                 <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x">
                 <li class="dropdown-header">Show</li>
-                <li><a href="#" data-column="1" class="sorting_asc"><%= i18n.localize("all.dashboards") %></a></li>
-                <li><a href="#" data-column="2"><%= i18n.localize("shared.dashboards") %></a></li>
-                <li><a href="#" data-column="3"><%= i18n.localize("tenant.dashboards") %></a></li>
+                <li><a href="#" data-column="1" name="<%= i18n.localize("all.dashboards") %>"><%= i18n.localize("all.dashboards") %></a></li>
+                <li><a href="#" data-column="2" name="<%= i18n.localize("shared.dashboards") %>"><%= i18n.localize("shared.dashboards") %></a></li>
+                <li><a href="#" data-column="3" name="<%= i18n.localize("tenant.dashboards") %>"><%= i18n.localize("tenant.dashboards") %></a></li>
                 </ul>
                 </li>
             </ul>
+            </div>
             <% } %>
         </div>
         <div class="row thumbnails ues-dashboards"></div>

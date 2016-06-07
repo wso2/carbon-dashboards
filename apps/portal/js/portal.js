@@ -151,7 +151,8 @@ $(function () {
 
         portal.on('click', '#filter-dashboards', function (e) {
             $('a[data-column="2"]').on('click', function (e) {
-                $('.ues-dashboard').each(function (i, obj) {
+                $('#filter').html($(this).attr("name"));
+                $('.col-lg-3').each(function (i, obj) {
                     if (!$(this).find('.ues-dashboard-share').length) {
                         $(this).hide();
                     }
@@ -160,12 +161,14 @@ $(function () {
                 });
             });
             $('a[data-column="1"]').on('click', function (e) {
-                $('.ues-dashboard').each(function (i, obj) {
+                $('#filter').html($(this).attr("name"));
+                $('.col-lg-3').each(function (i, obj) {
                     $(this).show();
                 });
             });
             $('a[data-column="3"]').on('click', function (e) {
-                $('.ues-dashboard').each(function (i, obj) {
+                $('#filter').html($(this).attr("name"));
+                $('.col-lg-3').each(function (i, obj) {
                     if ($(this).find('.ues-dashboard-share').length) {
                         $(this).hide();
                     }
