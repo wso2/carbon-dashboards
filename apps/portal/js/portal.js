@@ -83,6 +83,11 @@ $(function () {
 
         if (!hasMore) {
             isStillLoading = false;
+            $('.ues-dashboard').each(function (i, obj) {
+                if ($(this).find('.ues-dashboard-share').length) {
+                    $(this).addClass("shared");
+                }
+            });
             return;
         }
         ues.store.assets('dashboard', {
@@ -150,7 +155,7 @@ $(function () {
         });
 
         portal.on('click', '#filter-dashboards', function (e) {
-            $('a[data-column="2"]').on('click', function (e) {
+            $('a[data-filter="Shared"]').on('click', function (e) {
                 $('#filter').html($(this).attr("name"));
                 $('.col-lg-3').each(function (i, obj) {
                     if (!$(this).find('.ues-dashboard-share').length) {
@@ -160,13 +165,13 @@ $(function () {
                         $(this).show();
                 });
             });
-            $('a[data-column="1"]').on('click', function (e) {
+            $('a[data-filter="All"]').on('click', function (e) {
                 $('#filter').html($(this).attr("name"));
                 $('.col-lg-3').each(function (i, obj) {
                     $(this).show();
                 });
             });
-            $('a[data-column="3"]').on('click', function (e) {
+            $('a[data-filter="Tenant"]').on('click', function (e) {
                 $('#filter').html($(this).attr("name"));
                 $('.col-lg-3').each(function (i, obj) {
                     if ($(this).find('.ues-dashboard-share').length) {
