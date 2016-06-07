@@ -25,7 +25,8 @@
 
     var usr = require('/modules/user.js'),
         user = usr.current(),
-        isAnonView = request.getParameter('isAnonView');
+        isAnonView = request.getParameter('isAnonView'),
+        queryString = request.getQueryString();
 
     // Get the anon view
     if (!user) {
@@ -435,7 +436,7 @@
     </script>
 
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
     </script>
 
     <!-- Jquery/Jquery UI JS -->
@@ -607,6 +608,7 @@
 
         //usage : in traverseMenu helper
         var user = <%= user %>,
+            queryString = <%= stringify(queryString) %>,
             isAnonView = <%= isAnonView %>;    
     </script>
 </body>

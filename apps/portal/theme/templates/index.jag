@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
-    <link href="<%=urlPrefix%>libs/theme-wso2_1.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("dashboards.label")%></title>
     <% var config = require('/configs/designer.json'); %>
@@ -128,7 +127,7 @@
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
         <p id="ues-dashboard-url" class="ues-dashboard-url truncate">
-            <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
+            <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
         </p>
         <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
         {{#if shared}}
@@ -140,7 +139,7 @@
         <div class="ues-actions">
             <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
                 data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
-                href="<%=tenantedUrlPrefix%>dashboards/{{id}}{{#if shared}}?shared=true{{/if}}" target="_blank">
+                href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">
                 <span class="fw-stack">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-view fw-stack-1x"></i>
