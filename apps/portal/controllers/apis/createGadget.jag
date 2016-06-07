@@ -214,6 +214,7 @@
         gadgetXmlData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
         gadgetXmlData['isPushMode'] = isPushMode;
         var chart = data[CHART_CONF][CHART_NAME];
+        gadgetXmlData['chart-type'] = chart;
         var chartConf = require(CHART_LOCATION + chart + '/config.json');
         var commonLibs = chartConf['common-libs'];
         gadgetXmlData['common-libs'] = commonLibs;
@@ -237,10 +238,15 @@
         fileUtils.copyFile(providerApiFile, gadgetDirLocation + '/js/provider-api.js');
 
         var chartApiFile = new File(CHART_LOCATION + chart + '/index.js');
-        fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/chart-api.js');
+        fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/' + chart + '-api.js');
 
+        var previewFile = new File('/theme/templates/preview.jag');
+        if(previewFile.isExists()){
+            previewFile.del();
+        }
         var previewData = {};
-        previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + gadgetDirLocation + '/index.xml';
+        previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + gadgetDirLocation +
+                '/index.xml?' + new Date().getTime();
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
                         '/theme/templates/preview.jag', previewData);
 
