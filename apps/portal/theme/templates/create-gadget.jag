@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/d3.geomap.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title><%= i18n.localize("create.gadget.label")%></title>
+    <title><%= i18n.localize("generate.gadget.label")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -34,7 +34,7 @@
                 </a>
             </li>
             <li class="active">
-                <%=i18n.localize("create.gadget.label")%>
+                <%=i18n.localize("generate.gadget.label")%>
             </li>
         </ol>
     </div>
@@ -71,7 +71,7 @@
 <div class="container-fluid">
     <div class="row thumbnails ues-dashboard">
         <div class="col-md-8 col-md-offset-2" id="top-rootwizard">
-            <h1 class="page-sub-title"><%= i18n.localize("create.a.gadget")%></h1>
+            <h1 class="page-sub-title"><%= i18n.localize("generate.a.gadget")%></h1>
             <div class="wizard" id="rootwizard">
                 <div class="navbar">
                   <div class="navbar-inner">

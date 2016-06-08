@@ -43,17 +43,39 @@ $(function () {
             isStillLoading = false;
             return;
         }
-
         ues.store.assets('gadget', {
             start: 0,
             count: 20
         }, function (err, data) {
-
+            gadgets = gadgets.concat(data);
             var dashboardsEl = $('#ues-gadgets-portal').find('.ues-gadgets');
             dashboardsEl.html(gadgetsListHbs(data));
         });
     };
 
+    /**
+     * Find the gadget using gadget id.
+     * @param id
+     * @return {object}
+     * @private
+     * */
+    var findGadget = function (id) {
+        var index;
+        var gadget;
+        var length = gadgets.length;
+        for (index = 0; index < length; index++) {
+            gadget = gadgets[index];
+            if (gadget.id === id) {
+                return gadget;
+            }
+        }
+    };
+
+    var deleteGadget = function(id) {
+        ues.store.deleteAsset('gadget', id, function (err, data) {
+        });
+        location.reload();
+    };
     /**
      * Initialize the UI functionality such as binding events.
      * @private
@@ -63,30 +85,24 @@ $(function () {
         portal.on('click', '.ues-gadgets .ues-gadget-trash-handle', function (e) {
             e.preventDefault();
             var thiz = $(this);
-            var dashboardEl = thiz.closest('.ues-gadget');
-            console.log("here");
-            var id = dashboardEl.data('id');
-            var dashboard = findDashboard(id);
-            dashboardEl.html(gadgetConfirmHbs(dashboard));
+            var gadgetElement = thiz.closest('.ues-gadget');
+            var id = gadgetElement.data('id');
+            var gadget = findGadget(id);
+            gadgetElement.html(gadgetConfirmHbs(gadget));
         });
 
         portal.on('click', '.ues-gadgets .ues-gadget-trash-confirm', function (e) {
             e.preventDefault();
-            deleteDashboard($(this));
+            deleteGadget($(this).closest('.ues-gadget').data('id'));
         });
 
         portal.on('click', '.ues-gadgets .ues-gadget-trash-cancel', function (e) {
             e.preventDefault();
             var thiz = $(this);
-            var dashboardEl = thiz.closest('.ues-gadget');
-            var id = dashboardEl.data('id');
-            var dashboard = findDashboard(id);
-            dashboardEl.html(gadgetThumbnailHbs(dashboard));
-        });
-
-        portal.on('click', '.ues-view:not(.disable)', function(e) {
-            e.preventDefault();
-            window.open($(this).attr('href'), '_blank');
+            var gadgetElement = thiz.closest('.ues-gadget');
+            var id = gadgetElement.data('id');
+            var dashboard = findGadget(id);
+            gadgetElement.html(gadgetThumbnailHbs(dashboard));
         });
 
         $(window).scroll(function () {

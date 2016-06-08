@@ -81,7 +81,13 @@ var getAsset, getAssets, addAsset, deleteAsset;
 
     };
 
-    deleteAsset = function (id) {
-
+    deleteAsset = function (type,id) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var file = new File(parent + id);
+        if (!file.isExists()) {
+            return null;
+        }
+        file.del();
     };
 }());

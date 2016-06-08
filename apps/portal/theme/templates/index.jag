@@ -125,14 +125,13 @@
 
     <script id="ues-dashboards-empty-hbs" type="text/x-handlebars-template">
         <div class="col-md-12">
-            <div class="caption">
-                <h4>
-                    <%= i18n.localize("no.dashboards.found.description") %>
-                    <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.label") %></a>.
-                </h4>
+            <div class="message message-info">
+                    <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.dashboards.found.description") %></h4>
+                    <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.label") %></p>
             </div>
         </div>
     </script>
+
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>

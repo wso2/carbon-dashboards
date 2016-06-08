@@ -160,6 +160,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         return asset;
     };
 
+    
     /**
      * Fetch assets from all the plugged in stores and aggregate
      * @param type
@@ -218,7 +219,14 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
     };
 
-    deleteAsset = function (id) {
-
+    deleteAsset = function (type, id) {
+        var storeTypes = config.store.types;
+        for (var i = 0; i < storeTypes.length; i++) {
+            var specificStore = require(storeExtension(storeTypes[i]));
+            var asset = specificStore.deleteAsset(type, id);
+            if (asset) {
+                break;
+            }
+        }
     };
 }());

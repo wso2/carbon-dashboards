@@ -65,7 +65,7 @@
                                 <span class="fw-stack">
                                     <i class="fw fw-add fw-stack-1x"></i>
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                </span> <%=i18n.localize("create.gadget.label")%>
+                                </span> <%=i18n.localize("generate.gadget.label")%>
                             </a>
                         </li>
                         <%}%>

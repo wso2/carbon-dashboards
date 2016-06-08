@@ -23,3 +23,22 @@
     font-size: 12px;
     text-align: right;
 }
+
+#ues-gadgets-portal .ues-gadget {
+    height: 200px;
+}
+
+.ues-gadget-trash-cancel {
+    background-color: #5bb75b;
+}
+.ues-trash-actions {
+    right: 8px;
+    bottom: 7px;
+    position: absolute;
+    padding-bottom: 20px;
+    padding-right: 20px;
+}
+
+#ues-gadgets-portal .ues-gadget h2 {
+    font-size: 14px;
+}
