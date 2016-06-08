@@ -130,7 +130,7 @@
         <div class="ues-actions">
             <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
                 data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
-                href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">
+                href="<%=tenantedUrlPrefix%>dashboards/{{id}}/" target="_blank">
                 <span class="fw-stack">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-view fw-stack-1x"></i>

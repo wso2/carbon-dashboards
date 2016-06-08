@@ -217,14 +217,16 @@ $(function () {
             menu: ues.global.dashboard.menu,
             isAnonView: isAnonView,
             user: user,
-            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
+            queryString: queryString
         }));
         //menulist for small res
         $('#ues-pages-col').html(menuListHbs({
             menu: ues.global.dashboard.menu,
             isAnonView: isAnonView,
             user: user,
-            isHiddenMenu: ues.global.dashboard.hideAllMenuItems
+            isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
+            queryString: queryString
         }));
     };
 
