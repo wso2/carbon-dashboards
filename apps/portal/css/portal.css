@@ -22,6 +22,13 @@
     color: #fff;
 }
 
+/*
+TODO : This is temporary. We will later change this color
+*/
+#ues-portal .shared {
+    background: #678ea9;
+}
+
 #ues-portal .ues-dashboard .ues-actions {
     position: absolute;
     bottom: 10px;
@@ -47,6 +54,27 @@
 
 #ues-portal .ues-dashboard .ues-dashboard-url {
     font-size: 13px;
+}
+
+
+#ues-portal .ues-dashboard .ues-dashboard-share {
+    position: absolute;
+    left: 10px;
+    width: 10px;
+    font-size: 12px;
+    color: #fff;
+    text-align: right;
+}
+
+
+#ues-portal .ues-dashboard #shared-description {
+    padding-left: 15px;
+    padding-top : 2px;
+}
+
+.filter-dropdown {
+    padding-top  :20px;
+    font-weight: bold;
 }
 
 #ues-portal .ues-dashboard .ues-dashboard-trash-handle {

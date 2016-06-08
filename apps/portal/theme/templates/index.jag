@@ -79,10 +79,23 @@
 
     <div id="ues-portal" class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <h1 class="page-sub-title"><%= i18n.localize("dashboards.label") %></h1>
-                <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
             </div>
+            <% if (userDomain !== superDomain) { %>
+                <div class="col-md-4">
+                    <ul class="nav nav-pills navbar-right remove-margin filter-dropdown" role="tablist">
+                        <li>Filtered By <span id = "filter"><%= i18n.localize("all.dashboards") %></span> :
+                            <button class="btn btn-default" data-toggle="dropdown" aria-expanded="false" ><i class="fw fw-filter"></i></button>
+                            <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x" id="filter-dashboards">
+                                 <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
+                                <li><a href="#" data-filter="Shared"><%= i18n.localize("shared.dashboards") %></a></li>
+                                <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %></a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            <% } %>
         </div>
         <div class="row thumbnails ues-dashboards"></div>
     </div>
@@ -93,7 +106,7 @@
     <!-- Handlebar templates -->
     <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
             <div class="thumbnail ues-dashboard" id="{{id}}" data-id="{{id}}">
                 {{>ues-dashboard-thumbnail-hbs}}
             </div>
@@ -115,13 +128,19 @@
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
         <p id="ues-dashboard-url" class="ues-dashboard-url truncate">
-            <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}" target="_blank">{{id}}</a>
+            <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
         </p>
         <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
+            {{#if shared}}
+                <span class="fw-stack ues-dashboard-share">
+                    <i class="fw fw-share fw-stack-1x"></i>
+                </span>
+                <p id = "shared-description"><%= i18n.localize("shared.by.supertenant") %></p>
+            {{/if}}
         <div class="ues-actions">
             <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
                 data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
-                href="<%=tenantedUrlPrefix%>dashboards/{{id}}/" target="_blank">
+                href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">
                 <span class="fw-stack">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-view fw-stack-1x"></i>
