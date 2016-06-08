@@ -64,7 +64,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var superTenantDashboards = null;
         var superTenantRegistry = null;
 
-        if (ctx.domain !== superDomain) {
+        if (ctx.tenantId !== carbon.server.superTenant.tenantId) {
             utils.startTenantFlow(carbon.server.superTenant.tenantId);
             superTenantRegistry = new carbon.registry.Registry(server, {
                 system: true,
