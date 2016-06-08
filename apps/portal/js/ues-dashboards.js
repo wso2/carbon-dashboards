@@ -378,7 +378,13 @@
             return uri;
         }
         var path = uri.substring(index + 3);
-        return uriPlugin(path);
+
+        path = uriPlugin(path);
+        if ((typeof(dashboard) !== 'undefined') && dashboard.shareDashboard) {
+            path = path.replace(user.domain, "carbon.super");
+        }
+        
+        return path;
     };
 
     ues.components = {
