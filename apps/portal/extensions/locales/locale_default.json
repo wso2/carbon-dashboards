@@ -161,6 +161,12 @@
     "only.sample.data": "Only a sample set of data is shown here.",
     "success.label": "Success",
     "pages.menu.label": "Menu",
+    "share.dashboard" : "Share Dashboard",
+    "all.dashboards" : "All Dashboards",
+    "shared.dashboards" : "Shared Dashboards",
+    "tenant.dashboards" : "Tenant Specific Dashboards",
+    "shared.by.supertenant" : "Shared By Super-Tenant",
+    "share.information.message" : "This dashboard is visible to all the tenants"
     "upload.gadget.label" : "Upload Gadget",
     "create.layout.label" : "Create Layout",
     "upload.layout.label" : "Upload Layout",

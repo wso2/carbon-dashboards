@@ -61,23 +61,28 @@ var renderEngine = {};
         dashboardId = uriElements.id;
         pageId = uriElements.pid;
         isStandAlone = false
-    }
-    else if (matcher.match('/gadgets/{id}/{pid}/{gid}')) {
+    } else if (matcher.match('/gadgets/{id}/{pid}/{gid}')) {
         // Get the dashboard id, page id and gadget id from url
         uriElements = matcher.elements();
         dashboardId = uriElements.id;
         pageId = uriElements.pid;
         var gadgetId = uriElements.gid;
-    }
-    else {
+    } else {
         response.sendError(400, i18n.localize("bad.request"));
         return;
     }
 
     dashboards = require('/modules/dashboards.js');
-    utils.sandbox(context, function () {
-        dashboard = dashboards.getAsset(dashboardId);
-    });
+
+    if (!request.getParameter("shared")) {
+        utils.sandbox(context, function () {
+            dashboard = dashboards.getAsset(dashboardId);
+        });
+    } else {
+        utils.sandbox(context, function () {
+            dashboard = dashboards.getSharedDashboard(dashboardId);
+        });
+    }
 
     // If the dashboard is not available, indicate error
     if (!dashboard) {
@@ -152,8 +157,7 @@ var renderEngine = {};
             response.sendError(404, i18n.localize("page.not.found"));
             return;
         }
-    }
-    else {
+    } else {
         dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
         // global reference to getBootstrapLayout() function
         renderEngine.getDashboardContent = dashboards.getBootstrapLayout;

@@ -142,6 +142,12 @@
   "forbidden" : "Forbidden",
   "theme.label": "තේමාව",
   "theme.default": "පෙරනිමි තේමාව",
+  "share.dashboard" : "Share Dashboard",
+  "all.dashboards" : "All Dashboards",
+  "shared.dashboards" : "Shared Dashboards",
+  "tenant.dashboards" : "Tenant Specific Dashboards",
+  "shared.by.supertenant" : "Shared By Super-Tenant",
+  "share.information.message" : "This dashboard is visible to all the tenants"
   "upload.gadget.label" : "Upload Gadget",
   "create.layout.label" : "Create Layout",
   "upload.layout.label" : "Upload Layout",

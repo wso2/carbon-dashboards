@@ -53,7 +53,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (!ctx.username) {
             return [];
         }
-
         var server = new carbon.server.Server();
         var registry = new carbon.registry.Registry(server, {
             system: true
@@ -62,34 +61,65 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var userRoles = um.getRoleListOfUser(ctx.username);
 
         var dashboards = getDashboardsFromRegistry(start, count);
-        if (!dashboards) {
+        var superTenantDashboards = null;
+        var superTenantRegistry = null;
+
+        if (ctx.tenantId !== carbon.server.superTenant.tenantId) {
+            utils.startTenantFlow(carbon.server.superTenant.tenantId);
+            superTenantRegistry = new carbon.registry.Registry(server, {
+                system: true,
+                tenantId: carbon.server.superTenant.tenantId
+            });
+            superTenantDashboards = superTenantRegistry.content(registryPath(), {
+                start: start,
+                count: count
+            });
+            utils.endTenantFlow();
+        }
+
+        if (!dashboards && !superTenantDashboards) {
             return [];
         }
-        var allDashboards = [];
-        dashboards.forEach(function (dashboard) {
-            allDashboards.push(JSON.parse(registry.content(dashboard)));
-        });
 
         var userDashboards = [];
-        allDashboards.forEach(function (dashboard) {
-            var permissions = dashboard.permissions,
-                data = {
-                    id: dashboard.id,
-                    title: dashboard.title,
-                    description: dashboard.description,
-                    pagesAvailable: dashboard.pages.length > 0,
-                    editable: true
-                };
+        var allDashboards = [];
 
-            if (utils.allowed(userRoles, permissions.editors)) {
-                userDashboards.push(data);
-                return;
-            }
-            if (utils.allowed(userRoles, permissions.viewers)) {
-                data.editable = false;
-                userDashboards.push(data);
-            }
-        });
+        if (dashboards) {
+            dashboards.forEach(function (dashboard) {
+                allDashboards.push(JSON.parse(registry.content(dashboard)));
+            });
+        }
+        if (superTenantDashboards) {
+            utils.startTenantFlow(carbon.server.superTenant.tenantId);
+            superTenantDashboards.forEach(function (dashboard) {
+                var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
+                if (parsedDashboards.shareDashboard) {
+                    allDashboards.push(parsedDashboards);
+                }
+            });
+            utils.endTenantFlow();
+        }
+        if (allDashboards) {
+            allDashboards.forEach(function (dashboard) {
+                var permissions = dashboard.permissions,
+                    data = {
+                        id: dashboard.id,
+                        title: dashboard.title,
+                        description: dashboard.description,
+                        pagesAvailable: dashboard.pages.length > 0,
+                        editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                        shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId)
+                    };
+                if (utils.allowed(userRoles, permissions.editors)) {
+                    userDashboards.push(data);
+                    return;
+                }
+                if (utils.allowed(userRoles, permissions.viewers)) {
+                    data.editable = false;
+                    userDashboards.push(data);
+                }
+            });
+        }
         return userDashboards;
     };
 
