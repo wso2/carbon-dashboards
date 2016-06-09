@@ -53,7 +53,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (!ctx.username) {
             return [];
         }
-
         var server = new carbon.server.Server();
         var registry = new carbon.registry.Registry(server, {
             system: true
@@ -62,34 +61,65 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var userRoles = um.getRoleListOfUser(ctx.username);
 
         var dashboards = getDashboardsFromRegistry(start, count);
-        if (!dashboards) {
+        var superTenantDashboards = null;
+        var superTenantRegistry = null;
+
+        if (ctx.tenantId !== carbon.server.superTenant.tenantId) {
+            utils.startTenantFlow(carbon.server.superTenant.tenantId);
+            superTenantRegistry = new carbon.registry.Registry(server, {
+                system: true,
+                tenantId: carbon.server.superTenant.tenantId
+            });
+            superTenantDashboards = superTenantRegistry.content(registryPath(), {
+                start: start,
+                count: count
+            });
+            utils.endTenantFlow();
+        }
+
+        if (!dashboards && !superTenantDashboards) {
             return [];
         }
-        var allDashboards = [];
-        dashboards.forEach(function (dashboard) {
-            allDashboards.push(JSON.parse(registry.content(dashboard)));
-        });
 
         var userDashboards = [];
-        allDashboards.forEach(function (dashboard) {
-            var permissions = dashboard.permissions,
-                data = {
-                    id: dashboard.id,
-                    title: dashboard.title,
-                    description: dashboard.description,
-                    pagesAvailable: dashboard.pages.length > 0,
-                    editable: true
-                };
+        var allDashboards = [];
 
-            if (utils.allowed(userRoles, permissions.editors)) {
-                userDashboards.push(data);
-                return;
-            }
-            if (utils.allowed(userRoles, permissions.viewers)) {
-                data.editable = false;
-                userDashboards.push(data);
-            }
-        });
+        if (dashboards) {
+            dashboards.forEach(function (dashboard) {
+                allDashboards.push(JSON.parse(registry.content(dashboard)));
+            });
+        }
+        if (superTenantDashboards) {
+            utils.startTenantFlow(carbon.server.superTenant.tenantId);
+            superTenantDashboards.forEach(function (dashboard) {
+                var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
+                if (parsedDashboards.shareDashboard) {
+                    allDashboards.push(parsedDashboards);
+                }
+            });
+            utils.endTenantFlow();
+        }
+        if (allDashboards) {
+            allDashboards.forEach(function (dashboard) {
+                var permissions = dashboard.permissions,
+                    data = {
+                        id: dashboard.id,
+                        title: dashboard.title,
+                        description: dashboard.description,
+                        pagesAvailable: dashboard.pages.length > 0,
+                        editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                        shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId)
+                    };
+                if (utils.allowed(userRoles, permissions.editors)) {
+                    userDashboards.push(data);
+                    return;
+                }
+                if (utils.allowed(userRoles, permissions.viewers)) {
+                    data.editable = false;
+                    userDashboards.push(data);
+                }
+            });
+        }
         return userDashboards;
     };
 
@@ -143,6 +173,9 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (type === 'dashboard') {
             return findDashboards(ctx, type, query, start, count);
         }
+        var server = new carbon.server.Server();
+        var um = new carbon.user.UserManager(server, ctx.tenantId);
+        var userRoles = um.getRoleListOfUser(ctx.username);
         var allAssets = [];
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
@@ -150,21 +183,26 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             var assets = specificStore.getAssets(type, query);
             if (assets) {
                 for (var j = 0; j < assets.length; j++) {
-                    if (assets[j].thumbnail) {
-                        assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
-                    }
-                    else {
-                        log.warn('Thumbnail url is missing in ' + assets[j].title);
-                        assets[j].thumbnail = DEFAULT_THUMBNAIL;
-                    }
-                    if (type === 'gadget' && assets[j].data && assets[j].data.url) {
-                        assets[j].data.url = fixLegacyURL(assets[j].data.url,storeTypes[i]);
-                    }
-                    else if (type === 'layout' && assets[j].url) {
-                        assets[j].url = fixLegacyURL(assets[j].url,storeTypes[i]);
-                    }
-                    else{
-                        log.warn('Url is not defined for ' + assets[j].title);
+                    var allowedRoles = assets[j].allowedRoles;
+                    if (allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                        assets.splice(j, 1);
+                    } else {
+                        if (assets[j].thumbnail) {
+                            assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
+                        }
+                        else {
+                            log.warn('Thumbnail url is missing in ' + assets[j].title);
+                            assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                        }
+                        if (type === 'gadget' && assets[j].data && assets[j].data.url) {
+                            assets[j].data.url = fixLegacyURL(assets[j].data.url, storeTypes[i]);
+                        }
+                        else if (type === 'layout' && assets[j].url) {
+                            assets[j].url = fixLegacyURL(assets[j].url, storeTypes[i]);
+                        }
+                        else {
+                            log.warn('Url is not defined for ' + assets[j].title);
+                        }
                     }
                 }
                 allAssets = assets.concat(allAssets);

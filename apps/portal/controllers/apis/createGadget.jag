@@ -163,6 +163,7 @@
         return;
     } else if (action === 'preview') {
         var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
+
         var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
         if(gadgetStoreFile.isExists()){
             print({
@@ -177,10 +178,12 @@
             tempDir.mkdir();
         }
 
-        var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
+        var gadgetDirLocation = TEMP_GADGET_LOCATION + gadgetID;
+        var gadgetDir = new File(gadgetDirLocation);
         if(gadgetDir.isExists()) {
             gadgetDir.del();
         }
+
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApiLocation = PROVIDERS_LOCATION + provider + '/index.js';
         var providerApi = require(providerApiLocation);
@@ -191,7 +194,7 @@
 
         if(isPushMode){
             var providerClient = new File(PROVIDERS_LOCATION + provider + '/client.js');
-            fileUtils.copyFile(providerClient, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-client.js');
+            fileUtils.copyFile(providerClient, gadgetDirLocation + '/js/provider-client.js');
         }
 
         var gadgetJsonData = {};
@@ -199,54 +202,58 @@
         gadgetJsonData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
         gadgetJsonData['gadget_url'] = 'gadget/'+ gadgetID + '/index.xml';
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.json.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/gadget.json', gadgetJsonData );
+                        gadgetDirLocation +'/gadget.json', gadgetJsonData );
 
-        var gadgetCoreData = {};
-        gadgetCoreData['gadget_location'] = CONTEXT + TEMP_GADGET_LOCATION + gadgetID;
-        gadgetCoreData['isPullMode'] = !isPushMode;
+        var gadgetCoreJsData = {};
+        gadgetCoreJsData['gadget_location'] = CONTEXT + gadgetDirLocation;
+        gadgetCoreJsData['isPullMode'] = !isPushMode;
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
+                        gadgetDirLocation +'/js/gadget-core.js', gadgetCoreJsData);
 
         var gadgetXmlData = {};
         gadgetXmlData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
         gadgetXmlData['isPushMode'] = isPushMode;
         var chart = data[CHART_CONF][CHART_NAME];
+        gadgetXmlData['chart-type'] = chart;
         var chartConf = require(CHART_LOCATION + chart + '/config.json');
         var commonLibs = chartConf['common-libs'];
         gadgetXmlData['common-libs'] = commonLibs;
         gadgetXmlData['chart-libs'] = chartConf['chart-libs'];
-
         var providerConf = require(PROVIDERS_LOCATION + provider + '/config.json');
         var providerLibs = providerConf['provider-libs'];
         gadgetXmlData['provider-libs'] = providerLibs;
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'index.xml.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/index.xml', gadgetXmlData);
+                        gadgetDirLocation +'/index.xml', gadgetXmlData);
 
         var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
-        fileUtils.copyFile(gadgetControllerFile, TEMP_GADGET_LOCATION + gadgetID + '/gadget-controller.jag');
+        fileUtils.copyFile(gadgetControllerFile, gadgetDirLocation + '/gadget-controller.jag');
 
         var chartLibsDir = new File(CHART_LOCATION + chart + '/chart-libs/');
-        fileUtils.copyDir(chartLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
+        fileUtils.copyDir(chartLibsDir, gadgetDirLocation + '/js/');
 
         var providerLibsDir = new File(PROVIDERS_LOCATION + provider + '/provider-libs/');
-        fileUtils.copyDir(providerLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
+        fileUtils.copyDir(providerLibsDir, gadgetDirLocation + '/js/');
 
         var providerApiFile = new File(providerApiLocation);
-        fileUtils.copyFile(providerApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-api.js');
+        fileUtils.copyFile(providerApiFile, gadgetDirLocation + '/js/provider-api.js');
 
         var chartApiFile = new File(CHART_LOCATION + chart + '/index.js');
-        fileUtils.copyFile(chartApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/chart-api.js');
+        fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/' + chart + '-api.js');
 
+        var previewFile = new File('/theme/templates/preview.jag');
+        if(previewFile.isExists()){
+            previewFile.del();
+        }
         var previewData = {};
-        previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + TEMP_GADGET_LOCATION +
-                gadgetID + '/index.xml';
+        previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + gadgetDirLocation +
+                '/index.xml?' + new Date().getTime();
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
                         '/theme/templates/preview.jag', previewData);
 
-        var file = new File(TEMP_GADGET_LOCATION + gadgetID + '/conf.json');
-        file.open("w");
-        file.write(data);
-        file.close();
+        var thumbnail = new File(GADGET_TEMPLATE_LOCATION + 'index.png');
+        fileUtils.copyFile(thumbnail,gadgetDirLocation + '/index.png');
+
+        fileUtils.writeToFile(data, gadgetDirLocation + '/conf.json');
         print({
             error: false
         });
@@ -260,16 +267,15 @@
             isPushMode = true;
         }
 
-        var gadgetCoreData = {};
-        gadgetCoreData['gadget_location'] = CONTEXT + GADGETS_LOCATION + gadgetID;
-        gadgetCoreData['isPullMode'] = !isPushMode;
+        var gadgetCoreJsData = {};
+        gadgetCoreJsData['gadget_location'] = CONTEXT + GADGETS_LOCATION + gadgetID;
+        gadgetCoreJsData['isPullMode'] = !isPushMode;
         fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
-
-        var gadget = new File(TEMP_GADGET_LOCATION + gadgetID);
-        fileUtils.copyDir(gadget, GADGETS_LOCATION);
+                        TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreJsData);
 
         var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
+        fileUtils.copyDir(gadgetDir, GADGETS_LOCATION);
+
         if(gadgetDir.isExists()) {
             gadgetDir.del();
         }
