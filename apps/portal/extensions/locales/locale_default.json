@@ -49,6 +49,8 @@
      "to.create.dashboard" : "To create a dashboard click",
     "no.gadgets.found.description": "No gadgets found.",
     "to.generate.gadget" : "To generate a gadget click",
+    "no.layouts.found.description": "No layouts found.",
+    "to.upload.gadget" : "To upload a gadget click",
     "create.a.dashboard": "Create a Dashboard",
     "generate.gadget.label": "Generate Gadget",
     "select.datasource" : "Select Datasource",

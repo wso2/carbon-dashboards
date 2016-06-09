@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/gadget.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title><%= i18n.localize("dashboards.label")%></title>
+    <title><%= i18n.localize("gadgets")%></title>
     <% var config = require('/configs/designer.json'); %>
 </head>
 <body>
@@ -115,7 +115,7 @@
     <script id="ues-gadgets-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="thumbnail ues-gadget" id="{{id}}" data-id="{{id}}" abc = "{{thumbnail}}">
+            <div class="thumbnail ues-gadget" id="{{id}}" data-id="{{id}}">
 
                 {{>ues-gadget-thumbnail-hbs}}
             </div>
@@ -125,11 +125,9 @@
 
     <script id="ues-gadgets-empty-hbs" type="text/x-handlebars-template">
         <div class="col-md-12">
-            <div class="caption">
-                <h4>
-                    <%= i18n.localize("no.dashboards.found.description") %>
-                    <a href="<%=tenantedUrlPrefix%>create-gadget"><%= i18n.localize("here.label") %></a>.
-                </h4>
+            <div class="message message-info">
+                    <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.gadgets.found.description") %></h4>
+                    <p><%= i18n.localize("to.generate.gadget") %> <a href="<%=tenantedUrlPrefix%>create-gadget"><%= i18n.localize("here.label") %></p>
             </div>
         </div>
     </script>
