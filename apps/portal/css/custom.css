@@ -388,6 +388,12 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
     height: 42px;
 }
 
+.view .view-heading {
+    border-bottom: 1px solid #e4e4e4;
+    height: 42px;
+    width: 200px;
+}
+
 .gadget.active .gadget-heading {
     background: #363f44;
     color: #fff;

@@ -160,7 +160,11 @@ $(function () {
 
     var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html());
 
-    var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
+    var gadgetComponentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
+
+    var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
+
+    //var newView = Handlebars.compile($('#add-new-view-hds').html());
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
@@ -253,11 +257,11 @@ $(function () {
      */
     var renderComponentProperties = function (component) {
         var ctx = buildPropertiesContext(component, page);
-        var propertiesContainer = $('.ues-component-properties-container');
+        var propertiesContainer = $('#gadget-configuration')//$('.ues-component-properties-container');
         dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
-
+        propertiesContainer.empty();
         propertiesContainer
-            .html(componentPropertiesHbs(ctx))
+            .html(gadgetComponentPropertiesHbs(ctx))
             .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
                 var isCheckbox = false;
                 //if a checkbox got changed, disable it before updating properties
@@ -612,6 +616,7 @@ $(function () {
      * @private
      */
     var saveDashboard = function () {
+        console.log("save successfully");
         var method = 'PUT';
         var url = dashboardsApi + '/' + dashboard.id;
         var isRedirect = false;
@@ -722,9 +727,109 @@ $(function () {
 
         // event handler for properties button
         designer.on('click', '.ues-component-box .ues-component-properties-handle', function () {
+            console.log("in gadget");
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
         });
+
+        $('.ues-view-component-properties-handle').on('click', function () {
+            console.log("IN VIEW");
+            var id = $(this).closest('.ues-component').attr('id');
+            //var ctx = buildPropertiesContext(component, page);
+            var propertiesContainer = $('#view-configuration')//$('.ues-component-properties-container');
+            dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
+
+            //propertiesContainer.html(viewComponentPropertiesHbs(ctx));
+            //var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
+            $('#view-configuration').empty();
+            $('#view-configuration').html(viewComponentPropertiesHbs);
+                // .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
+                //     var isCheckbox = false;
+                //     //if a checkbox got changed, disable it before updating properties
+                //     if (this.type === "checkbox") {
+                //         isCheckbox = true;
+                //         this.disabled = true;
+                //     }
+                //     updateComponentProperties($(this).closest('.ues-component-properties'));
+                //     //enable back the checkbox, after updating its properties
+                //     if (isCheckbox) {
+                //         this.disabled = false;
+                //     }
+                // })
+                // .on('keypress', 'input[type=text], select, textarea', function (e) {
+                //     if (e.which === 13) {
+                //         updateComponentProperties($(this).closest('.ues-component-properties'));
+                //         e.preventDefault();
+                //         return;
+                //     }
+                // });
+
+            // propertiesContainer
+            //     .find('.ues-localized-title')
+            //     .on("keypress", function (e) {
+            //         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
+            //     })
+            //     .on('change', function (e) {
+            //         if ($.trim($(this).val()) == '') {
+            //             $(this).val('');
+            //         }
+            //     });
+            //
+            // propertiesContainer
+            //     .find('#priorityPicker')
+            //     .on('change', function () {
+            //         propertiesContainer.find('#priorityValue').text(this.value);
+            //     });
+        });
+
+        //event hanlder for adding a new view
+        $('#add-view').on('click', function () {
+            var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
+            $('.gadgets-grid').html(viewCreationOptions);
+            console.log("Add new view");
+            $(".gadgets-grid input[type=radio]").click(function(){
+                console.log( $("input[type=radio][name="+ this.name + "]").val() );
+                if(this.value==="new-view") {
+                    console.log("If"+this.value);
+                    if (!$('#left-sidebar').hasClass('toggled')) {
+                        $('#btn-sidebar-dashboard-layout').click();
+                    }
+                    var newView = Handlebars.compile($('#add-new-view-hds').html());
+                    $('#designer-view-mode').append(newView);
+                    $('#designer-view-mode li[data-view-mode=default] a').click();
+                } else if (this.value==="copy-view") {
+                    console.log("Else");
+                    if (!$('#left-sidebar').hasClass('toggled')) {
+                        $('#left-sidebar').hide();
+                    }
+                    var viewcopyingOption = Handlebars.compile($('#select-copying-view-hbs').html());
+                    $('.gadgets-grid').empty();
+                    $('.gadgets-grid').html(viewcopyingOption);
+                    $('#copy-view').prop( "checked", true );
+                }
+            });
+
+
+        });
+
+        // $('input[type="radio"]').change(function() {
+        //     console.log("New view1");
+        //     if (this.checked) {
+        //         console.log("New view");
+        //     }
+        // });
+        //
+        // $("input[type=radio]").click(function () {
+        //     console.log("checked!11");
+        //     if($(this).prop("checked")) { console.log("checked!"); }
+        // });
+        // $("input[name=new-view]:radio").click(function() {
+        // console.log("New view");
+        // });
+
+        // $("input[type=radio]").click(function(){
+        //     console.log( $("input[type=radio][name="+ this.name + "]").val() );
+        // });
 
         // event handler for trash button
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
@@ -739,7 +844,8 @@ $(function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-component-box');
+                    var componentBox = that.closest('.ues-compone' +
+                        'nt-box');
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
 
@@ -764,6 +870,27 @@ $(function () {
             });
         });
     };
+
+    // $("input[type=radio]").click(function(){
+    //    console.log( $("input[type=radio][name="+ this.name + "]").val() );
+    // });
+
+    // $('input[name=view]').change(function() {
+    //     console.log("New view**1");
+    //     if (this.checked) {
+    //         console.log("New vi**");
+    //     }
+    // });
+    //
+    // $("input[type=radio]").click(function () {
+    //     console.log("checked!11222");
+    //     if($(this).prop("checked")) { console.log("checked!"); }
+    // });
+
+    // $('#myForm input').on('change', function() {
+    //     console.log("**!");
+    //     console.log($('input[name="myRadio"]:checked', '#myForm').val());
+    // });
 
     /**
      * Return the ID of the page.
@@ -1813,6 +1940,7 @@ $(function () {
         }, function (err, data) {
             storeCache.layout = data;
             $('#ues-page-layouts').html(layoutsListHbs(data));
+            $('#ues-view-layouts').html(layoutsListHbs(data));
             initNanoScroller();
         });
     };
@@ -1839,8 +1967,82 @@ $(function () {
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
 
             });
+        }),
+        $('#ues-view-layouts').on('click', '.thumbnail', function (e) {
+            e.preventDefault();
+            console.log("In view-layout click"+page.id);
+            //display message 'evrything will be replaced'
+            console.log(page.layout.content);
+
+            var viewOptions = getNewViewOptions(page);
+            var viewId = viewOptions.id;
+            var viewName = viewOptions.name;
+
+            var layout = findStoreCache('layout', $(this).data('id'));
+            var pg = currentPage(findPage(dashboard, page.id));
+            console.log("current Page"+pg);
+            $.get(resolveURI(layout.url), function (data, status) {
+                console.log("In side get"+data);
+                console.log(JSON.parse(data));
+                var x = JSON.parse(data);
+                console.log("##"+x.blocks);
+                var viewLayoutContent = {
+                        blocks : x.blocks,
+                        name : viewName,
+                        roles : []
+                };
+                console.log(viewLayoutContent);
+                page.layout.content[viewId] = viewLayoutContent;
+                saveDashboard();
+            });
+
+            var viewContent = {};
+            page.content[viewId] = viewContent;
+            saveDashboard();
+
+
+            console.log("New cntent");
+            console.log(page.layout.content);
+            //render view
+            // if (ues.global.page) {
+            //     currentPage(findPage(dashboard, ues.global.page.id));
+            //     switchPage(id, pageType);
+            //     done();
+            // } else {
+            //     renderPage(id, done);
+            // }
+            //
+            //     // reload pages list
+            //     updatePagesList();
+            //
+            //     // hide the sidebar
+            //     //$('#sidebarNavPages button[rel="createPage"]').click();
+            //     // open page options
+            //     //$('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
+            //
+            // });
+            if (!$('#left-sidebar').hasClass('toggled')) {
+                console.log("Left not toggle");
+                $('#left-sidebar').hide();
+            } else {
+                console.log("Left not toggle");
+            }
         });
         loadLayouts();
+        //$('#left-sidebar').hide();
+    };
+
+    var getNewViewOptions = function(page){
+
+        var viewId = 1;
+        //check in the page array and get id
+        var prefix = 'view';
+        var titlePrefix = 'View ';
+
+        return {
+            id: prefix + viewId,
+            name: titlePrefix + viewId
+        };
     };
 
     /**
@@ -2458,6 +2660,7 @@ $(function () {
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-menu').hide();
+            $('#btn-sidebar-dashboard-layout').hide();
 
             showCreatePage();
             return;
@@ -2468,6 +2671,7 @@ $(function () {
         $('.page-header .page-actions').show();
         $('#btn-sidebar-layouts, #btn-sidebar-gadgets').show();
         $('#btn-sidebar-layouts, #btn-sidebar-menu').show();
+        $('#btn-sidebar-dashboard-layout').show();
 
         currentPage(findPage(dashboard, pid));
         if (!page) {
