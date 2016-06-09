@@ -98,10 +98,10 @@ $('#provider-list').change(function () {
 /**
  * Handle event of clicking on the test configuration button
  */
-$('#test').click(function () {
+$('#test-connection').click(function () {
     var providerConfig = getProviderConfigData();
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=testConfiguration',
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=testConnection',
         method: "POST",
         data: JSON.stringify(providerConfig),
         contentType: "application/json",

@@ -277,7 +277,7 @@
             error: false
         });
         return;
-    } else if (action === 'testConfiguration') {
+    } else if (action === 'testConnection') {
         var provider = data[PROVIDER_CONF][PROVIDER_NAME];
         var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
         var validate = providerApi.validate(data[PROVIDER_CONF]);
