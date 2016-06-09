@@ -90,8 +90,7 @@
     <div id="ues-portal" class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="page-sub-title"><%= i18n.localize("gadgets") %></h1>
-                <p class="page-description"><%= i18n.localize("dashboards.manage.description") %></p>
+                <h1 class="page-sub-title"><%= i18n.localize("layouts") %></h1>
             </div>
         </div>
         <div class="row thumbnails ues-dashboards"></div>

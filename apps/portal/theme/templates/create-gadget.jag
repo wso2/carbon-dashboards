@@ -29,7 +29,7 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li>
-                <a href="<%=tenantedUrlPrefix%>/portal/gadget">
+                <a href="<%=tenantedUrlPrefix%>gadget">
                     <i class="icon fw fw-home"></i> <%=i18n.localize("gadgets")%>
                 </a>
             </li>
