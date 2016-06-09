@@ -308,7 +308,7 @@ function registerAdvancedProviderUI(data) {
                 var wizardJsList = config[key]['wizardJs'];
                 for (var i in wizardJsList){
                      var js = document.createElement('script');
-                     js.src = PROVIDER_LOCATION + provider + WIZARD_JS_LOCATION + wizardJsList[i] + '.js';
+                     js.src = PROVIDER_LOCATION + provider + WIZARD_JS_LOCATION + wizardJsList[i];
                      document.body.appendChild(js);
                 }
                 var data = {
@@ -384,7 +384,7 @@ function registerAdvancedChartUI(data) {
                 var wizardJsList = config[key]['wizardJs'];
                 for (var i in wizardJsList){
                     var js = document.createElement('script');
-                    js.src = CHART_LOCATION + chartType + WIZARD_JS_LOCATION + wizardJsList[i] + '.js';
+                    js.src = CHART_LOCATION + chartType + WIZARD_JS_LOCATION + wizardJsList[i];
                     document.body.appendChild(js);
                 }
                 var data = {
