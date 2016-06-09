@@ -133,27 +133,28 @@
                             <ul class="dropdown-menu option" role="menu">
                                <li><a href="#"><%=i18n.localize("theme.default")%></a></li>
                                <%
-                                var path = utils.getCustomThemePath();
-                                var folder = new File('/' + path);
-                                var themeName = "";
-                                var list = folder.listFiles();
-                                list.forEach(function(file){
-                                    themeName =  file.getName();
-                               %>
-                                <li><a href="#"><%=themeName%></a></li>
-                               <%
-                                });
-                               %>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <h3><%= i18n.localize("permissions")%></h3>
+var path = utils.getCustomThemePath();
+var folder = new File('/' + path);
+var themeName = "";
+var list = folder.listFiles();
+list.forEach(function (file) {
+    themeName = file.getName();
+    %>
+     <li><a href="#"><%=themeName
+    %></a></li>
+                                   <%
+});
+%>
+</ul>
+</div>
+</div>
+</div>
+</form>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+<h3><%= i18n.localize("permissions")%></h3>
             <form class="form-horizontal">
                 <div class="form-group">
                     <label for="ues-share-view" class="col-sm-3 control-label"><%= i18n.localize("viewers")%></label>
@@ -170,6 +171,14 @@
                         <div class="ues-shared-edit"></div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="ues-share-owner" class="col-sm-3 control-label"><%= i18n.localize("owners")%></label>
+                    <div class="col-sm-9">
+                        <input id="ues-share-owner" type="text" class="form-control typeahead"
+                        placeholder="<%= i18n.localize("roles")%>">
+                        <div class="ues-shared-owner"></div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -182,36 +191,44 @@
                     <div class="col-sm-9">
 
                         <label class="switch">
-                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" 
-                                data-target="#ues-oauth-settings-inputs" 
-                                aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
-                                aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
+                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse"
+                                data-target="#ues-oauth-settings-inputs"
+                                aria-expanded="<% if (dashboard.enableOauth == true) {
+    print("true");
+} else {
+    print("false");
+} %>"
+                                aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) {
+    print("checked");
+} %>>
                             <span class="helper"></span>
                         </label>
 
                     </div>
                 </div>
-                <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) { print("in"); } %>" >
+                <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) {
+    print("in");
+} %>" >
                     <div class="form-group">
                         <label for="ues-is-url" class="col-sm-3 control-label"><%= i18n.localize("identity.server.url")%></label>
                         <div class="col-sm-6">
                             <%
-                            function endsWith(str, suffix){
-                                return str.indexOf(suffix, str.length - suffix.length) != -1;
-                            }
-                            var idpURL = require('/configs/designer.json').authentication.methods.sso.attributes.identityProviderURL;
-                            var isURL = "";
-                            if (endsWith(idpURL, "samlsso/")) {
-                                isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso/"));
-                            } else if (endsWith(idpURL, "samlsso")) {
-                                isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso"));
-                            }
-                            isURL = endsWith(isURL, "/") ? isURL : isURL + "/";
-                            %>
-                            <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) != -1;
+}
+var idpURL = require('/configs/designer.json').authentication.methods.sso.attributes.identityProviderURL;
+var isURL = "";
+if (endsWith(idpURL, "samlsso/")) {
+    isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso/"));
+} else if (endsWith(idpURL, "samlsso")) {
+    isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso"));
+}
+isURL = endsWith(isURL, "/") ? isURL : isURL + "/";
+%>
+<p id="ues-is-url" class="form-control-static"><%=isURL%></p>
                         </div>
                         <div class="col-sm-3" style="text-align: right;">
-                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" 
+                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered"
                                 title="<%=i18n.localize("refresh")%>"><i class="fw fw-refresh"></i></button>
                         </div>
                     </div>

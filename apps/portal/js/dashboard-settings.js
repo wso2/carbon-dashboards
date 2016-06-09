@@ -24,6 +24,7 @@ $(function () {
     var permissions = dashboard.permissions;
     var viewers = permissions.viewers;
     var editors = permissions.editors;
+    var owners = permissions.owners;
     var url = dashboardsApi + '/' + dashboard.id;
     var user = null;
 
@@ -206,6 +207,16 @@ $(function () {
         el.typeahead('val', '');
     };
 
+    var owner = function (el, role) {
+        var permissions = dashboard.permissions;
+        var owners = permissions.owners;
+        if (!isExistingPermission(owners, role)) {
+            owners.push(role);
+            $('#ues-dashboard-settings').find('.ues-shared-owner').append(sharedRoleHbs(role));
+        }
+        el.typeahead('val', '');
+    };
+
     /**
      * Add the available editor permission for the dashboard in to permission list.
      * @param1 el {Object} element of the list.
@@ -297,6 +308,14 @@ $(function () {
             html += sharedRoleHbs(role);
         }
         settings.find('.ues-shared-edit').append(html);
+
+        html = '';
+        length = owners.length;
+        for (i = 0; i < length; i++) {
+            role = owners[i];
+            html += sharedRoleHbs(role);
+        }
+        settings.find('.ues-shared-owner').append(html);
     };
 
     /**
@@ -501,6 +520,69 @@ $(function () {
             editor($(this), role.name);
         });
 
+
+        var ownerRoles = new Bloodhound({
+            name: 'roles',
+            limit: 10,
+            prefetch: {
+                url: rolesApi,
+                filter: function (roles) {
+                    return $.map(roles, function (role) {
+                        return {name: role};
+                    });
+                },
+                ttl: 60
+            },
+            sufficient: 10,
+            remote: {
+                url: searchRolesApi + '?maxLimit=' + maxLimit + '&query=' + viewerSearchQuery,
+                filter: function (searchRoles) {
+                    return $.map(searchRoles, function (searchRole) {
+                        return {name: searchRole};
+                    });
+                },
+                prepare: function (query, settings) {
+                    viewerSearchQuery = query;
+                    var currentURL = settings.url;
+                    settings.url = currentURL + query;
+                    return settings;
+                },
+                ttl: 60
+            },
+            datumTokenizer: function (d) {
+                return d.name.split(/[\s\/.]+/) || [];
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace
+        });
+
+        ownerRoles.initialize();
+
+        $('#ues-share-owner').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 0
+        }, {
+            name: 'roles',
+            displayKey: 'name',
+            limit: 10,
+            source: ownerRoles.ttAdapter(),
+            extraInfo: ues.global.dashboard,
+            templates: {
+                empty: [
+                    '<div class="empty-message">',
+                    'No Result Available',
+                    '</div>'
+                ].join('\n'),
+                suggestion: permissionMenuHbs
+            }
+        }).on('typeahead:selected', function (e, role, roles) {
+            owner($(this), role.name);
+        }).on('typeahead:autocomplete', function (e, role) {
+            owner($(this), role.name);
+        });
+
+
+
         $('#ues-dashboard-settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
             var el = $(this).closest('.ues-shared-role');
             var role = el.data('role');
@@ -534,6 +616,26 @@ $(function () {
             };
 
             if ((viewers.length == 1 || (getNumberOfUserRolesInDashboard(viewers) == 1
+                && isExistingPermission(user.roles, role)))
+                && !user.isAdmin) {
+                showConfirm("Removing Permission",
+                    "After this permission removal only administrator will be able to view this dashboard." +
+                    " Do you want to continue?", removePermission);
+            } else {
+                removePermission();
+            }
+        }).end().find('.ues-shared-owner').on('click', '.remove-button', function () {
+            var el = $(this).closest('.ues-shared-role');
+            var role = el.data('role');
+            var removePermission = function () {
+                owners.splice(owners.indexOf(role), 1);
+                var removeElement = function () {
+                    el.remove();
+                };
+                removeElement();
+            };
+
+            if ((owners.length == 1 || (getNumberOfUserRolesInDashboard(owners) == 1
                 && isExistingPermission(user.roles, role)))
                 && !user.isAdmin) {
                 showConfirm("Removing Permission",

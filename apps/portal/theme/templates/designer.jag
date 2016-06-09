@@ -16,6 +16,8 @@
  */
 %>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
+    <% var permissionCheck = require('/modules/permission-check.js'); %>
+    <% var constants = require('/modules/constants.js'); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
@@ -69,6 +71,7 @@
                             </a>
                         </li>
                         <%}%>
+                        <% if (permissionCheck.isAllowed(constants.SETTINGS)) { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
                                 <span class="icon fw-stack">
@@ -78,6 +81,7 @@
                                 <%=i18n.localize("settings")%>
                             </a>
                         </li>
+                         <% } %>
                         <% } else { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard.id%>?reset=true" class="ues-copy">

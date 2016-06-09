@@ -78,17 +78,25 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                     title: dashboard.title,
                     description: dashboard.description,
                     pagesAvailable: dashboard.pages.length > 0,
-                    editable: true
+                    editable: true,
+                    owner: true
                 };
 
+            if (utils.allowed(userRoles, permissions.owners)) {
+                userDashboards.push(data);
+                return;
+            }
             if (utils.allowed(userRoles, permissions.editors)) {
+                data.owner = false;
                 userDashboards.push(data);
                 return;
             }
             if (utils.allowed(userRoles, permissions.viewers)) {
                 data.editable = false;
+                data.owner = false;
                 userDashboards.push(data);
             }
+
         });
         return userDashboards;
     };

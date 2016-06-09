@@ -17,7 +17,7 @@
 -->
 
 <component xmlns="http://products.wso2.org/carbon">
-	<!-- <deployers>
+    <!-- <deployers>
         <deployer>
             <directory>eventstreams</directory>
             <extension>json</extension>
@@ -26,12 +26,24 @@
     </deployers> -->
     <ManagementPermissions>
         <ManagementPermission>
-            <DisplayName>Analytics</DisplayName>
-            <ResourceId>/permission/admin/manage/analytics</ResourceId>
+            <DisplayName>Portal</DisplayName>
+            <ResourceId>/permission/admin/manage/portal</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Analytics Dashboard</DisplayName>
-            <ResourceId>/permission/admin/manage/analytics/dashboard</ResourceId>
+            <DisplayName>Login</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/login</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Dashboard</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/dashboard</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Create</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/dashboard/create</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Settings</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/dashboard/settings</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>
 </component>

@@ -1,4 +1,4 @@
-<%
+3<%
 /*
  * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
@@ -22,6 +22,7 @@ var dest;
 
     if (session.get('user')) {
         var user = session.get('user');
+
         if (dest) {
             response.sendRedirect(dest);
             return;

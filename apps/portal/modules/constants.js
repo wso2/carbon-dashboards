@@ -58,3 +58,11 @@ var HTTP_UNAUTHORIZED = 401;
 var HTTP_USER_NOT_AUTHENTICATED = 403;
 var HTTP_INTERNAL_ERROR = 500;
 var HTTP_ACCEPTED = 200;
+
+
+// All the permission related constants
+var PORTAL = '/permission/admin/manage/portal';
+var LOGIN = '/permission/admin/manage/portal/login';
+var DASHBOARD = '/permission/admin/manage/portal/dashboard';
+var CREATE = '/permission/admin/manage/portal/dashboard/create';
+var SETTINGS = '/permission/admin/manage/portal/dashboard/settings';

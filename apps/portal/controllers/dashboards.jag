@@ -61,38 +61,38 @@ var fresh;
             response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
             return;
         }
-        
+
         // Verify the original dashboard when returning a custom dashboard
         if (dashboard.isUserCustom) {
-            
+
             // Get the original dashboard
             var originalDashboard;
             utils.sandbox(context, function() {
                 originalDashboard = dashboards.getAsset(dashboardId, true);
             });
-        
+
             // If the original dashboard is deleted, returns 404
             if (! originalDashboard) {
                 response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
                 return;
             }
-            
+
             // If the user doesn't have any permission on the original dashboard, returns 401
             var authorized = false;
-            
+
             // To view personalized dashboard, the user should have logged in, in the same domain and should have either editor or viewer permissions
-            if (user && user.domain == (urlDomain || superDomain) && 
-                (utils.allowed(user.roles, originalDashboard.permissions.editors) || utils.allowed(user.roles, originalDashboard.permissions.viewers))) {
-                authorized = true;                
+            if (user && user.domain == (urlDomain || superDomain) &&
+                    (utils.allowed(user.roles, originalDashboard.permissions.editors) || utils.allowed(user.roles, originalDashboard.permissions.viewers))) {
+                authorized = true;
             }
-            
+
             if (! authorized) {
                 // If there is no anon view defined send the unauthorized error, else return the anon view
                 if (!originalDashboard.isanon) {
                     response.sendError(401, "Access to dashboard '" + dashboardId + "' is denied");
-                    return;   
+                    return;
                 }
-                
+
                 dashboard = originalDashboard;
             }
         }
@@ -136,8 +136,9 @@ var fresh;
             title: request.getParameter('title'),
             description: request.getParameter('description'),
             permissions: {
-                viewers: ['Internal/everyone'],
-                editors: ['Internal/everyone']
+                viewers: ["Internal/"+dashboardId+"-viewer"],
+                editors: ["Internal/"+dashboardId+"-editor"],
+                owners: ["Internal/"+dashboardId+"-owner"]
             },
             pages: [],
             menu:[],
@@ -147,7 +148,7 @@ var fresh;
             apiKey: "",
             apiSecret: "",
             theme: request.getParameter('select-theme')
-    };
+        };
 
         utils.sandbox(context, function() {
             dashboards.create(dashboard);

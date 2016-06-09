@@ -19,6 +19,11 @@ var pageId = null;
 var dashboard;
 var dashboardId;
 (function() {
+    var permissionCheck = require('/modules/permission-check.js');
+    var constants = require('/modules/constants.js');
+    var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
+
     if (!user) {
         sendLogin();
         return;
@@ -54,18 +59,16 @@ var dashboardId;
         return;
     }
 
-    var configs = require('/configs/designer.json');
-
-    if (!utils.allowed(user.roles, configs.designers)) {
-        response.sendError(401, 'settings access not authorized');
-        return;
-    }
-
     var permissions = dashboard.permissions;
-    if (!utils.allowed(user.roles, permissions.editors)) {
-        response.sendError(401, 'dashboard editing not authorized');
-        return;
+    // Check whether the user has global permissions to access the dashboard settings.
+    if (permissionCheck.isAllowed(constants.SETTINGS)) {
+        include(utils.resolvePath('templates/dashboard-settings.jag'));
+    } else {
+        if (!utils.allowed(user.roles, permissions.owners)) {
+            response.sendError(401, 'dashboard editing not authorized');
+            return;
+        }else{
+            include(utils.resolvePath('templates/dashboard-settings.jag'));
+        }
     }
-
-    include(utils.resolvePath('templates/dashboard-settings.jag'));
 } ()); %>

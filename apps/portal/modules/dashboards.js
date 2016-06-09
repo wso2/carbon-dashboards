@@ -16,6 +16,7 @@
 var log = new Log();
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
+var usr = require('/modules/user.js');
 
 /**
  * Get registry reference.
@@ -185,6 +186,7 @@ var create = function (dashboard) {
         content: JSON.stringify(dashboard),
         mediaType: 'application/json'
     });
+    usr.createRoles(dashboard.id);
     userManager.denyRole('internal/everyone', path, 'read');
 };
 

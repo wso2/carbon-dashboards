@@ -8,6 +8,9 @@ var maxRolesLimit;
 
 (function () {
     var log = new Log();
+    var editorRole = "editor";
+    var viewerRole = "viewer";
+    var ownerRole = "owner";
 
     current = function () {
         var user = session.get('user');
@@ -86,5 +89,20 @@ var maxRolesLimit;
         var um = new carbon.user.UserManager(server, user.tenantId);
         var map = um.getMaxLimit('MaxRoleNameListLength');
         return map.get("PRIMARY");
+    };
+
+    createRoles = function (id) {
+        var carbon = require('carbon');
+        var server = new carbon.server.Server();
+        var user = session.get('user');
+        var userManager = new carbon.user.UserManager(server, user.tenantId);
+        try {
+            var users = [user.username];
+            userManager.addRole("Internal/"+id+"-"+editorRole, users, null);
+            userManager.addRole("Internal/"+id+"-"+viewerRole, users, null);
+            userManager.addRole("Internal/"+id+"-"+ownerRole, users, null);
+        } catch (e) {
+            throw e;
+        }
     };
 }());
