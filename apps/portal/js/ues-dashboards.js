@@ -18,6 +18,7 @@
 
     var DEFAULT_STORE = 'fs';
     var LEGACY_STORE = 'store';
+    var SUPER_DOMAIN = 'carbon.super';
     /**
      * Find a component.
      * @param {String} type Type of the plugin
@@ -381,7 +382,7 @@
 
         path = uriPlugin(path);
         if ((typeof(dashboard) !== 'undefined') && dashboard.shareDashboard) {
-            path = path.replace(user.domain, "carbon.super");
+            path = path.replace(user.domain, SUPER_DOMAIN);
         }
         
         return path;
