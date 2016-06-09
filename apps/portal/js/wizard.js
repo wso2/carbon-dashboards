@@ -13,7 +13,7 @@ var defaultTableColumns = [];
 
 var PROVIDER_LOCATION = 'extensions/providers/';
 var CHART_LOCATION = 'extensions/chart-templates/';
-var DYNAMIC_JS_LOCATION = '/js/';
+var WIZARD_JS_LOCATION = '/wizard-js/';
 
 var PROVIDER_CONF = 'provider-conf';
 var PROVIDER_NAME = 'provider-name'
@@ -305,10 +305,10 @@ function registerAdvancedProviderUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
-                var dynamicJsList = config[key]['dynamicJS'];
-                for (var i in dynamicJsList){
+                var wizardJsList = config[key]['wizardJs'];
+                for (var i in wizardJsList){
                      var js = document.createElement('script');
-                     js.src = PROVIDER_LOCATION + provider + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
+                     js.src = PROVIDER_LOCATION + provider + WIZARD_JS_LOCATION + wizardJsList[i] + '.js';
                      document.body.appendChild(js);
                 }
                 var data = {
@@ -381,10 +381,10 @@ function registerAdvancedChartUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
-                var dynamicJsList = config[key]['dynamicJS'];
-                for (var i in dynamicJsList){
+                var wizardJsList = config[key]['wizardJs'];
+                for (var i in wizardJsList){
                     var js = document.createElement('script');
-                    js.src = CHART_LOCATION + chartType + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
+                    js.src = CHART_LOCATION + chartType + WIZARD_JS_LOCATION + wizardJsList[i] + '.js';
                     document.body.appendChild(js);
                 }
                 var data = {
