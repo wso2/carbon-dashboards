@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 $(function () {
-    var gadgets = [];
+    var layouts = [];
     var isStillLoading = false;
     var nextStart = 0;
     var hasMore = true;
@@ -23,69 +23,69 @@ $(function () {
      * Page count.
      * @const
      */
-    var GADGET_COUNT = 10;
+    var layout_COUNT = 10;
 
     // Pre-compiling handlebar templates
-    var gadgetsListHbs = Handlebars.compile($("#ues-gadgets-list-hbs").html());
-    var gadgetThumbnailHbs = Handlebars.compile($("#ues-gadget-thumbnail-hbs").html());
-    var gadgetConfirmHbs = Handlebars.compile($("#ues-gadget-confirm-hbs").html());
-    var gadgetsEmptyHbs = Handlebars.compile($("#ues-gadgets-empty-hbs").html());
-    Handlebars.registerPartial('ues-gadget-thumbnail-hbs', gadgetThumbnailHbs);
+    var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html());
+    var layoutThumbnailHbs = Handlebars.compile($("#ues-layout-thumbnail-hbs").html());
+    var layoutConfirmHbs = Handlebars.compile($("#ues-layout-confirm-hbs").html());
+    var layoutsEmptyHbs = Handlebars.compile($("#ues-layouts-empty-hbs").html());
+    Handlebars.registerPartial('ues-layout-thumbnail-hbs', layoutThumbnailHbs);
 
     /**
-     * Load the list of gadgets available.
+     * Load the list of layouts available.
      * @private
      * */
-    var loadGadgets = function () {
+    var loadlayouts = function () {
         isStillLoading = true;
 
         if (!hasMore) {
             isStillLoading = false;
             return;
         }
-        ues.store.assets('gadget', {
+        ues.store.assets('layout', {
             start: nextStart,
-            count: GADGET_COUNT
+            count: layout_COUNT
         }, function (err, data) {
-            var gadgetsEl = $('#ues-gadgets-portal').find('.ues-gadgets');
+            var layoutsEl = $('#ues-layouts-portal').find('.ues-layouts');
             hasMore = data.length;
             if (!hasMore && nextStart === 0) {
-                gadgetsEl.append(gadgetsEmptyHbs());
+                layoutsEl.append(layoutsEmptyHbs());
                 return;
             }
-            nextStart += GADGET_COUNT;
-            gadgets = gadgets.concat(data);
-            gadgetsEl.append(gadgetsListHbs(data));
+            nextStart += layout_COUNT;
+            layouts = layouts.concat(data);
+            layoutsEl.append(layoutsListHbs(data));
             var win = $(window);
             var doc = $(document);
             isStillLoading = false;
             if (doc.height() > win.height()) {
                 return;
             }
-            loadGadgets();
+            loadlayouts();
         });
     };
 
     /**
-     * Find the gadget using gadget id.
+     * Find the layout using layout id.
      * @param id
      * @return {object}
      * @private
      * */
-    var findGadget = function (id) {
+    var findlayout = function (id) {
         var index;
-        var gadget;
-        var length = gadgets.length;
+        var layout;
+        var length = layouts.length;
         for (index = 0; index < length; index++) {
-            gadget = gadgets[index];
-            if (gadget.id === id) {
-                return gadget;
+            layout = layouts[index];
+            if (layout.id === id) {
+                return layout;
             }
         }
     };
 
-    var deleteGadget = function(id) {
-        ues.store.deleteAsset('gadget', id, function (err, data) {
+    var deletelayout = function(id) {
+        ues.store.deleteAsset('layout', id, function (err, data) {
         });
         location.reload();
     };
@@ -94,28 +94,28 @@ $(function () {
      * @private
      * */
     var initUI = function () {
-        var portal = $('#ues-gadgets-portal');
-        portal.on('click', '.ues-gadgets .ues-gadget-trash-handle', function (e) {
+        var portal = $('#ues-layouts-portal');
+        portal.on('click', '.ues-layouts .ues-layout-trash-handle', function (e) {
             e.preventDefault();
             var thiz = $(this);
-            var gadgetElement = thiz.closest('.ues-gadget');
-            var id = gadgetElement.data('id');
-            var gadget = findGadget(id);
-            gadgetElement.html(gadgetConfirmHbs(gadget));
+            var layoutElement = thiz.closest('.ues-layout');
+            var id = layoutElement.data('id');
+            var layout = findlayout(id);
+            layoutElement.html(layoutConfirmHbs(layout));
         });
 
-        portal.on('click', '.ues-gadgets .ues-gadget-trash-confirm', function (e) {
+        portal.on('click', '.ues-layouts .ues-layout-trash-confirm', function (e) {
             e.preventDefault();
-            deleteGadget($(this).closest('.ues-gadget').data('id'));
+            deletelayout($(this).closest('.ues-layout').data('id'));
         });
 
-        portal.on('click', '.ues-gadgets .ues-gadget-trash-cancel', function (e) {
+        portal.on('click', '.ues-layouts .ues-layout-trash-cancel', function (e) {
             e.preventDefault();
             var thiz = $(this);
-            var gadgetElement = thiz.closest('.ues-gadget');
-            var id = gadgetElement.data('id');
-            var dashboard = findGadget(id);
-            gadgetElement.html(gadgetThumbnailHbs(dashboard));
+            var layoutElement = thiz.closest('.ues-layout');
+            var id = layoutElement.data('id');
+            var dashboard = findlayout(id);
+            layoutElement.html(layoutThumbnailHbs(dashboard));
         });
 
         $(window).scroll(function () {
@@ -126,11 +126,11 @@ $(function () {
             }
 
             if (!isStillLoading) {
-                loadGadgets();
+                loadlayouts();
             }
         });
     };
 
     initUI();
-    loadGadgets();
+    loadlayouts();
 });

@@ -15,7 +15,7 @@
  */
 
 
-#ues-gadgets-portal .ues-gadget .ues-gadget-trash-handle {
+#ues-layouts-portal .ues-layout .ues-layout-trash-handle {
     position: absolute;
     top: 10px;
     right: 25px;
@@ -24,11 +24,12 @@
     text-align: right;
 }
 
-#ues-gadgets-portal .ues-gadget {
+#ues-layouts-portal .ues-layout {
+    background-color:#edeeef;
     height: 200px;
 }
 
-.ues-gadget-trash-cancel {
+.ues-layout-trash-cancel {
     background-color: #5bb75b;
 }
 .ues-trash-actions {
@@ -39,6 +40,6 @@
     padding-right: 20px;
 }
 
-#ues-gadgets-portal .ues-gadget h2 {
+#ues-layouts-portal .ues-layout h2 {
     font-size: 14px;
 }
