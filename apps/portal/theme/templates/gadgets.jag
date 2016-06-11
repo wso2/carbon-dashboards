@@ -66,7 +66,7 @@
                         </li>
                         <% }  %>
                          <li>
-                            <a href="#">
+                             <a href="<%=tenantedUrlPrefix%>upload-gadget">
                                 <span class="fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-upload fw-stack-1x"></i>

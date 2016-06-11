@@ -16,12 +16,16 @@
  */
 (function () {
     var utils = require('/modules/utils.js');
-    var configs = require('/configs/designer.json');
-    var store = utils.store();
-    var dashboardCountPerUser = 0;
-    var dashboardCountPerPortal = 0;
-    var assetsForUser = [];
-    var assetsForPortal = [];
+    var method = request.getMethod();
+    var tempGadgetPath = '/store/'+userDomain+'/fs/temp-gadget/';
+    var InputStreamReader = Packages.java.io.InputStreamReader;
+    var BufferedReader = Packages.java.io.BufferedReader;
+    var ZipFile = Packages.java.util.zip.ZipFile;
+    var StringBuilder = Packages.java.lang.StringBuilder;
+    var process = require('process');
+    var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal'+tempGadgetPath;
+    var gadgetPath = '/store/'+userDomain+'/fs/gadget/';
+    var isUserPermitted = request.getParameter("isUserAllowed");
 
     if (!user) {
         sendLogin();
@@ -33,6 +37,53 @@
         return;
     }
 
-    include(utils.resolvePath("templates/gadgets.jag"));
-    return;
+    if(method === "GET") {
+        include(utils.resolvePath("templates/gadgets.jag"));
+    }
+    else if (method === "POST") {
+        var fileRequest = request.getFile("selected-file");
+        var fileName = fileRequest.getName().replace(".zip","");
+        var dir = new File(tempGadgetPath);
+
+        if(!dir.isExists()) {
+            dir.mkdir();
+        }
+
+        var gadget = new File(tempGadgetPath+fileName);
+        gadget.open('w');
+        gadget.write(fileRequest.getStream());
+        gadget.close();
+
+        try {
+            // Extract the zip file and read the content of the gadget.json file.
+            var zip = new ZipFile(zipFile+fileName);
+            var fileInZip = zip.entries();
+
+            for (var entries = fileInZip; entries.hasMoreElements();) {
+                var entry = entries.nextElement();
+                new Log().info(typeof(entry.getName()));
+                if (String(entry.getName().toLowerCase()) === "gadget.json") {
+
+                    var gadgetDirectory = new File(gadgetPath);
+                    var files = gadgetDirectory.listFiles();
+
+                    for(var index = 0; index < files.length; index++){
+                        new Log().info(typeof(fileName) + " " + fileName + " sdds " + + " " +files[0].getName());
+                        if(files[index].getName() === fileName) {
+                            gadget.del();
+                            new Log().info("here");
+                            response.sendRedirect(tenantedUrlPrefix + 'upload-gadget');
+                            return;
+                        }
+                    }
+                    var path = tempGadgetPath+fileName;
+                    var file = new File(path);
+                    var isSaved = file.saveAs(gadgetPath+fileRequest.getName());
+                }
+            }
+        } catch (e) {
+            log.error('Error occurred while extracting the zip file.', e);
+        }
+    }
+
 }()); %>

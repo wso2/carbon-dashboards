@@ -157,5 +157,8 @@
   "create.layout.label" : "Create Layout",
   "upload.layout.label" : "Upload Layout",
   "delete.gadget" : "Delete Gadget",
-  "delete.layout" : "Delete Layout"
+  "delete.layout" : "Delete Layout",
+  "file.upload" : "Select File to Upload (Select a zip file)",
+  "browse" : "Browse",
+  "upload" : "Upload"
 }
