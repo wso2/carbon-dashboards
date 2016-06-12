@@ -166,5 +166,11 @@
     "ok": "Ok",
     "delete.unauthorized.message": "You do not have necessary permissions to delete the dashboard",
     "login.unauthorized.message": "You do not have necessary permissions to login the portal",
-    "owners": "Owners"
+    "owners": "Owners",
+    "share.dashboard" : "Share Dashboard",
+    "all.dashboards" : "All Dashboards",
+    "shared.dashboards" : "Shared Dashboards",
+    "tenant.dashboards" : "Tenant Specific Dashboards",
+    "shared.by.supertenant" : "Shared By Super-Tenant",
+    "share.information.message" : "This dashboard is visible to all the tenants"
 }

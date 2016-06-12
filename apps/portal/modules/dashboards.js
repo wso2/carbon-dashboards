@@ -155,6 +155,27 @@ var getAsset = function (id, originalDashboardOnly) {
 };
 
 /**
+ * To get the shared dashboard
+ * @param id ID of the dashboard
+ */
+var getSharedDashboard = function (id) {
+    var carbon = require('carbon');
+    var server = new carbon.server.Server();
+    utils.startTenantFlow(carbon.server.superTenant.tenantId);
+    var superTenantRegistry = new carbon.registry.Registry(server, {
+        system: true,
+        tenantId: carbon.server.superTenant.tenantId
+    });
+    var content = superTenantRegistry.content(registryPath(id));
+    utils.endTenantFlow();
+
+    var dashboard = JSON.parse(content);
+    if (dashboard && dashboard.shareDashboard) {
+        return dashboard;
+    }
+};
+
+/**
  * Find dashboards available in the registry.
  * @param {Object} paging                      Paging query.
  * @return {Object} dashboardz                 Array containing dashboards.

@@ -28,6 +28,11 @@
     background-color: #ffffff;
 }
 
+#share-info {
+    padding-top: 8px;
+    font-weight: bold;
+}
+
 /**
  * Theme overrides
  */
