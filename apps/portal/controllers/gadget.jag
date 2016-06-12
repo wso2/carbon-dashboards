@@ -63,7 +63,7 @@
                     var gadgetDirectory = new File(gadgetPath);
                     var files = gadgetDirectory.listFiles();
 
-                    // Check whether is there is another 
+                    // Check whether is there is another gadget with same id
                     for (var index = 0; index < files.length; index++) {
                         if (files[index].getName() === fileName) {
                             tempDirectory.del();
