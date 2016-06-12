@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+var errorMessage;
 (function() {
+    errorMessage = request.getParameter("message");
     if (!user) {
         sendLogin();
         return;
@@ -30,6 +33,10 @@
     if (!utils.allowed(user.roles, configs.designers)) {
         response.sendError(401, 'designer access not authorized');
         return;
+    }
+
+    if(!(errorMessage === "0" || errorMessage === "1" || errorMessage === "2")) {
+        errorMessage = null;
     }
 
     include(utils.resolvePath('templates/upload-gadget.jag'));
