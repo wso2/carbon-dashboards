@@ -16,12 +16,13 @@
  */
 (function () {
     var utils = require('/modules/utils.js');
-    var configs = require('/configs/designer.json');
-    var store = utils.store();
-    var dashboardCountPerUser = 0;
-    var dashboardCountPerPortal = 0;
-    var assetsForUser = [];
-    var assetsForPortal = [];
+    var method = request.getMethod();
+    var tempLayoutPath = '/store/' + userDomain + '/fs/temp-layout/';
+    var ZipFile = Packages.java.util.zip.ZipFile;
+    var process = require('process');
+    var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal' + tempLayoutPath;
+    var layoutPath = '/store/' + userDomain + '/fs/layout/';
+    var configurationFileName = "layout.json";
 
     if (!user) {
         sendLogin();
@@ -33,6 +34,61 @@
         return;
     }
 
-    include(utils.resolvePath("templates/layouts.jag"));
-    return;
+    if (method === "GET") {
+        include(utils.resolvePath("templates/layouts.jag"));
+    }
+    else if (method === "POST") {
+        // Before checking the required conditions, in order to avoid zip file being deployed
+        // Remove the .zip extension
+        var fileRequest = request.getFile("selected-file");
+        var fileName = fileRequest.getName().replace(".zip", "");
+        var tempDirectory = new File(tempLayoutPath);
+
+        if (!tempDirectory.isExists()) {
+            tempDirectory.mkdir();
+        }
+
+        var gadget = new File(tempLayoutPath + fileName);
+        gadget.open('w');
+        gadget.write(fileRequest.getStream());
+        gadget.close();
+
+        try {
+            // Extract the zip file and check whether there is a gadget.json file
+            var zip = new ZipFile(zipFile + fileName);
+            var fileInZip = zip.entries();
+
+            for (var entries = fileInZip; entries.hasMoreElements();) {
+                var entry = entries.nextElement();
+                if (String(entry.getName().toLowerCase()) === configurationFileName) {
+                    var layoutDirectory = new File(layoutPath);
+                    var files = layoutDirectory.listFiles();
+
+                    // Check whether is there is another gadget with same id
+                    for (var index = 0; index < files.length; index++) {
+                        if (files[index].getName() === fileName) {
+                            tempDirectory.del();
+                            response.sendRedirect(tenantedUrlPrefix + 'upload-layout?message=idAlreadyExists');
+                            return;
+                        }
+                    }
+                    // If there is a gadget.json and no other gadget with same id, deploy the gadget
+                    var layoutDir = new File(layoutPath+fileRequest.getName());
+                    layoutDir.open('w');
+                    layoutDir.write(fileRequest.getStream());
+                    layoutDir.close();
+                    tempDirectory.del();
+                    response.sendRedirect(tenantedUrlPrefix + 'upload-layout?message=success');
+                    return;
+                }
+            }
+            tempDirectory.del();
+            response.sendRedirect(tenantedUrlPrefix + 'upload-layout?message=confgurationFileMissing');
+            return;
+
+        } catch (e) {
+            log.error('Error occurred while extracting the zip file.', e);
+        }
+    }
+
 }()); %>

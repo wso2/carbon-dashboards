@@ -18,7 +18,7 @@
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title><%= i18n.localize("upload.gadget.label")%></title>
+    <title><%= i18n.localize("upload.layout.label")%></title>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -26,12 +26,12 @@
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
             <li>
-                <a href="<%=tenantedUrlPrefix%>gadget">
-                    <i class="icon fw fw-home"></i> <%=i18n.localize("gadgets")%>
+                <a href="<%=tenantedUrlPrefix%>layouts">
+                    <i class="icon fw fw-home"></i> <%=i18n.localize("layouts")%>
                 </a>
             </li>
             <li class="active">
-                <%=i18n.localize("upload.gadget.label")%>
+                <%=i18n.localize("upload.layout.label")%>
             </li>
         </ol>
     </div>
@@ -52,7 +52,7 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li>
-                            <a href="<%=tenantedUrlPrefix%>./gadget">
+                            <a href="<%=tenantedUrlPrefix%>./layouts">
                                 <span class="fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-cancel fw-stack-1x"></i>
@@ -70,14 +70,14 @@
         <div class="row">
 
             <div class="col-md-8 col-md-offset-2">
-                <form action="<%=tenantedUrlPrefix%>gadget" method="post" id="gadget-upload-form" data-action="<%=tenantedUrlPrefix%>gadget" enctype="multipart/form-data" >
-                    <h1 class="page-sub-title"><%= i18n.localize("upload.gadget.label")%></h1>
+                <form action="<%=tenantedUrlPrefix%>layouts" method="post" id="layout-upload-form" data-action="<%=tenantedUrlPrefix%>layouts" enctype="multipart/form-data" >
+                    <h1 class="page-sub-title"><%= i18n.localize("upload.layout.label")%></h1>
                     <br>
                     <div class="alert alert-success upload-success hide" role="alert">
                     <i class="icon fw fw-success"></i><strong><%= i18n.localize("success.label")%>!</strong>
-                    <%= i18n.localize("upload.success")%>
-                    <a href="<%=tenantedUrlPrefix%>gadget"><u><%= i18n.localize("here.label") %></u></a>
-                    <%= i18n.localize("go.gadget.store")%>
+                    <%= i18n.localize("upload.success.layout")%>
+                    <a href="<%=tenantedUrlPrefix%>layouts"><u><%= i18n.localize("here.label") %></u></a>
+                    <%= i18n.localize("go.layout.store")%>
                     <button type="button" class="close" aria-label="close" data-dismiss="alert">
                         <span aria-hidden="true">
                             <i class="fw fw-cancel"></i>
@@ -99,7 +99,7 @@
                                     </button>
                                 </div>
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default btn-primary gadget-upload" type="button" title="Upload">
+                                    <button class="btn btn-default btn-primary layout-upload" type="button" title="Upload">
                                         <i class="fw fw-upload" aria-hidden="true"></i>
                                         <span class="hidden-xs"><%= i18n.localize("upload")%></span>
                                     </button>
@@ -116,17 +116,6 @@
 
         </div>
     </div>
-
-    <script id="success-hbs" type="text/x-handlebars-template">
-    <br><br><br>
-    <div class="alert alert-success" role="alert">
-        <i class="icon fw fw-success"></i>
-        <strong><%= i18n.localize("success.label")%>!!</strong>
-        <%= i18n.localize("gadget.add.success")%>
-    </div>
-    <i><ins><a href="/portal"><font color="blue">Go to Portal</font></a></ins></i>
-    </script>
-
     <!-- Footer -->
     <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
     <!-- Jquery JS -->
@@ -144,16 +133,16 @@
     <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
     <script src="<%=urlPrefix%>js/ues.js"></script>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
-    <script src="<%=urlPrefix%>js/upload-gadget.js"></script>
+    <script src="<%=urlPrefix%>js/upload-layout.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
     <script>
        $(document).ready(function() {
-        <%if(errorMessage  === "1") {%>
-            showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("configuration.file.missing")%>")
-        <%} else if(errorMessage  === "0")  { %>
-             showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("gadget.exist")%>");
-        <% } else if(errorMessage  === "2")  { %>
+        <%if(errorMessage  === "confgurationFileMissing") {%>
+            showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("layout.configuration.file.missing")%>")
+        <%} else if(errorMessage  === "idAlreadyExists")  { %>
+             showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("layout.exist")%>");
+        <% } else if(errorMessage  === "success")  { %>
              $('.upload-success').addClass("show");
          <% } %>
     });

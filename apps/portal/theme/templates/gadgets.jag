@@ -127,7 +127,7 @@
         <div class="col-md-12">
             <div class="message message-info">
                     <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.gadgets.found.description") %></h4>
-                    <p><%= i18n.localize("to.generate.gadget") %> <a href="<%=tenantedUrlPrefix%>create-gadget"><%= i18n.localize("here.label") %></p>
+                    <p><%= i18n.localize("to.generate.gadget") %> <a href="<%=tenantedUrlPrefix%>create-gadget"><u><%= i18n.localize("here.label") %></u></p>
             </div>
         </div>
     </script>

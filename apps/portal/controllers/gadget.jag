@@ -22,6 +22,7 @@
     var process = require('process');
     var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal' + tempGadgetPath;
     var gadgetPath = '/store/' + userDomain + '/fs/gadget/';
+    var configurationFileName = "gadget.json";
 
     if (!user) {
         sendLogin();
@@ -59,7 +60,7 @@
 
             for (var entries = fileInZip; entries.hasMoreElements();) {
                 var entry = entries.nextElement();
-                if (String(entry.getName().toLowerCase()) === "gadget.json") {
+                if (String(entry.getName().toLowerCase()) === configurationFileName) {
                     var gadgetDirectory = new File(gadgetPath);
                     var files = gadgetDirectory.listFiles();
 

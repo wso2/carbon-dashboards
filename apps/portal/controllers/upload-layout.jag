@@ -35,7 +35,7 @@ var errorMessage;
         return;
     }
 
-    if(!(errorMessage === "0" || errorMessage === "1" || errorMessage === "2")) {
+    if(!(errorMessage === "idAlreadyExists" || errorMessage === "success" || errorMessage === "confgurationFileMissing")) {
         errorMessage = null;
     }
 

@@ -127,7 +127,7 @@
         <div class="col-md-12">
             <div class="message message-info">
                     <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.dashboards.found.description") %></h4>
-                    <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.label") %></p>
+                    <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><u><%= i18n.localize("here.label") %></u></p>
             </div>
         </div>
     </script>

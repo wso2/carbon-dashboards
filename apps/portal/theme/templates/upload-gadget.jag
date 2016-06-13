@@ -75,7 +75,7 @@
                     <br>
                     <div class="alert alert-success upload-success hide" role="alert">
                     <i class="icon fw fw-success"></i><strong><%= i18n.localize("success.label")%>!</strong>
-                    <%= i18n.localize("upload.success")%>
+                    <%= i18n.localize("upload.success.gadget")%>
                     <a href="<%=tenantedUrlPrefix%>gadget"><u><%= i18n.localize("here.label") %></u></a>
                     <%= i18n.localize("go.gadget.store")%>
                     <button type="button" class="close" aria-label="close" data-dismiss="alert">
@@ -116,17 +116,6 @@
 
         </div>
     </div>
-
-    <script id="success-hbs" type="text/x-handlebars-template">
-    <br><br><br>
-    <div class="alert alert-success" role="alert">
-        <i class="icon fw fw-success"></i>
-        <strong><%= i18n.localize("success.label")%>!!</strong>
-        <%= i18n.localize("gadget.add.success")%>
-    </div>
-    <i><ins><a href="/portal"><font color="blue">Go to Portal</font></a></ins></i>
-    </script>
-
     <!-- Footer -->
     <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
     <!-- Jquery JS -->
@@ -150,7 +139,7 @@
     <script>
        $(document).ready(function() {
         <%if(errorMessage  === "1") {%>
-            showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("configuration.file.missing")%>")
+            showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("gadget.configuration.file.missing")%>")
         <%} else if(errorMessage  === "0")  { %>
              showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("gadget.exist")%>");
         <% } else if(errorMessage  === "2")  { %>

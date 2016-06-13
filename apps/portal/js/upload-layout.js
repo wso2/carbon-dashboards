@@ -26,25 +26,26 @@ $(function () {
     var validateGadgetUpload = function() {
         var selectFileElement = $("#selected-file");
         var uploadErrorElement = $("#upload-error");
-        var gadgetFile = selectFileElement[0].files[0];
+        var layoutUploadFile = selectFileElement[0].files[0];
         var zipFileType = "application/zip";
 
-        if(!gadgetFile) {
+        if(! layoutUploadFile) {
             showInlineError(selectFileElement, uploadErrorElement, "Please selet a zip file to upload");
             return;
         }
 
-        if (gadgetFile.type !== zipFileType) {
-            showInlineError(selectFileElement, uploadErrorElement, "Please select a zip file to upload. " + gadgetFile.type +" format is not supported");
+        if ( layoutUploadFile.type !== zipFileType) {
+            showInlineError(selectFileElement, uploadErrorElement, "Please select a zip file to upload. " +  layoutUploadFile.type +" format is not supported");
             return;
+            
         }
 
         return true;
     };
 
-    $(".gadget-upload").on('click', function () {
+    $(".layout-upload").on('click', function () {
         if(validateGadgetUpload()) {
-            $('#gadget-upload-form').submit();
+            $('#layout-upload-form').submit();
         }
     });
 
