@@ -13,6 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This is the template file for layouts home page
  */
 %>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
@@ -113,8 +115,8 @@
     <script id="ues-layouts-empty-hbs" type="text/x-handlebars-template">
         <div class="col-md-12">
             <div class="message message-info">
-                    <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.layouts.found.description") %></h4>
-                    <p><%= i18n.localize("to.upload.layout") %> <a href="<%=tenantedUrlPrefix%>upload-layout"><u><%= i18n.localize("here.label") %></u></p>
+                <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.layouts.found.description") %></h4>
+                <p><%= i18n.localize("to.upload.layout") %> <a href="<%=tenantedUrlPrefix%>upload-layout"><u><%= i18n.localize("here.label") %></u></p>
             </div>
         </div>
     </script>
@@ -131,9 +133,8 @@
     <script id="ues-layout-confirm-hbs" type="text/x-handlebars-template">
         <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
-                    <i class="icon fw fw-error"></i><strong>Warning!</strong>
-                    <%= i18n.localize("layout.delete.warning")%>
-                </div>
+            <i class="icon fw fw-error"></i><strong>Warning!</strong> <%= i18n.localize("layout.delete.warning")%>
+        </div>
         <div class="ues-trash-actions" >
             <a href="#" class="btn btn-danger ladda-button ues-layout-trash-confirm" role="button" data-style="expand-left" data-size="l">
                 <span class="ladda-label"><%= i18n.localize("delete")%></span>
@@ -163,6 +164,5 @@
     <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
     <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
     <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
-
 </body>
 </html>

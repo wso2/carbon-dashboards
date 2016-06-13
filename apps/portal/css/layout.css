@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 #ues-layouts-portal .ues-layout .ues-layout-trash-handle {
     position: absolute;
     top: 10px;
@@ -25,13 +24,14 @@
 }
 
 #ues-layouts-portal .ues-layout {
-    background-color:#edeeef;
+    background-color: #edeeef;
     height: 200px;
 }
 
 .ues-layout-trash-cancel {
     background-color: #5bb75b;
 }
+
 .ues-trash-actions {
     right: 8px;
     bottom: 7px;

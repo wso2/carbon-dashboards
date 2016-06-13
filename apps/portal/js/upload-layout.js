@@ -12,10 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Functionality of upload-layout is defined here
  */
-/**
- * Functionality of the Create Dashboard defined in create.js.
- * */
+
 $(function () {
     /**
      * Read gadget configurations from the gadget.json file.
@@ -23,35 +23,41 @@ $(function () {
      * @returns {*}
      * @private
      */
-    var validateGadgetUpload = function() {
+    var validateLayoutUpload = function () {
         var selectFileElement = $("#selected-file");
         var uploadErrorElement = $("#upload-error");
         var layoutUploadFile = selectFileElement[0].files[0];
         var zipFileType = "application/zip";
 
-        if(! layoutUploadFile) {
+        if (!layoutUploadFile) {
             showInlineError(selectFileElement, uploadErrorElement, "Please selet a zip file to upload");
             return;
         }
 
-        if ( layoutUploadFile.type !== zipFileType) {
-            showInlineError(selectFileElement, uploadErrorElement, "Please select a zip file to upload. " +  layoutUploadFile.type +" format is not supported");
+        if (layoutUploadFile.type !== zipFileType) {
+            showInlineError(selectFileElement, uploadErrorElement, "Please select a zip file to upload. " + layoutUploadFile.type + " format is not supported");
             return;
-            
+
         }
 
         return true;
     };
 
+    /**
+     * When upload button is clicked verify the upload and submit the upload form
+     */
     $(".layout-upload").on('click', function () {
-        if(validateGadgetUpload()) {
+        if (validateLayoutUpload()) {
             $('#layout-upload-form').submit();
         }
     });
 
 
+    /**
+     * When the browse button is clicked, hide the error messages if there are any
+     */
     $('.browse').on("click", function () {
-        hideInlineError($("#selected-file"),$("#upload-error"));
+        hideInlineError($("#selected-file"), $("#upload-error"));
     });
 });
 
@@ -70,7 +76,7 @@ var showInlineError = function (element, errorElement, message) {
     element.addClass("has-error");
     errorElement.removeClass("hide");
 
-    if(message)
+    if (message)
         errorElement.html(message);
     errorElement.addClass("show");
 };

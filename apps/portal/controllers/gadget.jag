@@ -13,7 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This is the controller for gadgets main page.
  */
+
 (function () {
     var utils = require('/modules/utils.js');
     var method = request.getMethod();
@@ -36,8 +39,7 @@
 
     if (method === "GET") {
         include(utils.resolvePath("templates/gadgets.jag"));
-    }
-    else if (method === "POST") {
+    } else if (method === "POST") {
         // Before checking the required conditions, in order to avoid zip file being deployed
         // Remove the .zip extension
         var fileRequest = request.getFile("selected-file");
@@ -68,27 +70,26 @@
                     for (var index = 0; index < files.length; index++) {
                         if (files[index].getName() === fileName) {
                             tempDirectory.del();
-                            response.sendRedirect(tenantedUrlPrefix + 'upload-gadget?message=0');
+                            response.sendRedirect(tenantedUrlPrefix + 'upload-gadget?message=idAlreadyExists');
                             return;
                         }
                     }
                     // If there is a gadget.json and no other gadget with same id, deploy the gadget
-                    var gadgetDir = new File(gadgetPath+fileRequest.getName());
+                    var gadgetDir = new File(gadgetPath + fileRequest.getName());
                     gadgetDir.open('w');
                     gadgetDir.write(fileRequest.getStream());
                     gadgetDir.close();
                     tempDirectory.del();
-                    response.sendRedirect(tenantedUrlPrefix + 'upload-gadget?message=2');
+                    response.sendRedirect(tenantedUrlPrefix + 'upload-gadget?message=success');
                     return;
                 }
             }
+            // If configuration file is missing indicate the error
             tempDirectory.del();
-            response.sendRedirect(tenantedUrlPrefix + 'upload-gadget?message=1');
+            response.sendRedirect(tenantedUrlPrefix + 'upload-gadget?message=confgurationFileMissing');
             return;
-
         } catch (e) {
             log.error('Error occurred while extracting the zip file.', e);
         }
     }
-
 }()); %>

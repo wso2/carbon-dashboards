@@ -97,7 +97,7 @@
                         <li>Filtered By <span id = "filter"><%= i18n.localize("all.dashboards") %></span> :
                             <button class="btn btn-default" data-toggle="dropdown" aria-expanded="false" ><i class="fw fw-filter"></i></button>
                             <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x" id="filter-dashboards">
-                                 <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
+                                <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
                                 <li><a href="#" data-filter="Shared"><%= i18n.localize("shared.dashboards") %></a></li>
                                 <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %></a></li>
                             </ul>
@@ -126,12 +126,11 @@
     <script id="ues-dashboards-empty-hbs" type="text/x-handlebars-template">
         <div class="col-md-12">
             <div class="message message-info">
-                    <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.dashboards.found.description") %></h4>
-                    <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><u><%= i18n.localize("here.label") %></u></p>
+                <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.dashboards.found.description") %></h4>
+                <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><u><%= i18n.localize("here.label") %></u></p>
             </div>
         </div>
     </script>
-
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>

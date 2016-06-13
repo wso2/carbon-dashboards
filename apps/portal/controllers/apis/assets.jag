@@ -45,18 +45,18 @@
     if (matcher.match('/assets/{id}')) {
         id = matcher.elements().id;
         if (method === 'GET') {
-            if(isDelete){
+            // Check whether it is a delete request. If it is a delete request, delete the asset
+            if (isDelete) {
                 utils.sandbox(utils.context(user, urlDomain), function () {
                     assets = store.deleteAsset(assetType, id);
                 });
-                    if (!assets) {
-                        response.sendError(404, JSON.stringify({
-                            error: true
-                        }));
-                        return;
-                    }
+                if (!assets) {
+                    response.sendError(404, JSON.stringify({
+                        error: true
+                    }));
                     return;
-
+                }
+                return;
             } else {
                 utils.sandbox(utils.context(user, urlDomain), function () {
                     assets = store.getAsset(assetType, id);

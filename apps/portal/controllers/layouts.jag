@@ -13,7 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This is the controller for layouts main page.
  */
+
 (function () {
     var utils = require('/modules/utils.js');
     var method = request.getMethod();
@@ -36,8 +39,7 @@
 
     if (method === "GET") {
         include(utils.resolvePath("templates/layouts.jag"));
-    }
-    else if (method === "POST") {
+    } else if (method === "POST") {
         // Before checking the required conditions, in order to avoid zip file being deployed
         // Remove the .zip extension
         var fileRequest = request.getFile("selected-file");
@@ -54,7 +56,7 @@
         gadget.close();
 
         try {
-            // Extract the zip file and check whether there is a gadget.json file
+            // Extract the zip file and check whether there is a layout.json file
             var zip = new ZipFile(zipFile + fileName);
             var fileInZip = zip.entries();
 
@@ -72,8 +74,8 @@
                             return;
                         }
                     }
-                    // If there is a gadget.json and no other gadget with same id, deploy the gadget
-                    var layoutDir = new File(layoutPath+fileRequest.getName());
+                    // If there is a layout.json and no other layouts with same id, deploy the layout
+                    var layoutDir = new File(layoutPath + fileRequest.getName());
                     layoutDir.open('w');
                     layoutDir.write(fileRequest.getStream());
                     layoutDir.close();
@@ -82,6 +84,7 @@
                     return;
                 }
             }
+            // If the layout.json is not inside the zip file, indicate the error
             tempDirectory.del();
             response.sendRedirect(tenantedUrlPrefix + 'upload-layout?message=confgurationFileMissing');
             return;
@@ -90,5 +93,4 @@
             log.error('Error occurred while extracting the zip file.', e);
         }
     }
-
 }()); %>

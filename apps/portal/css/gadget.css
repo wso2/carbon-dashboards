@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 #ues-gadgets-portal .ues-gadget .ues-gadget-trash-handle {
     position: absolute;
     top: 10px;
@@ -31,6 +30,7 @@
 .ues-gadget-trash-cancel {
     background-color: #5bb75b;
 }
+
 .ues-trash-actions {
     right: 8px;
     bottom: 7px;

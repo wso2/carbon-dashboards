@@ -13,17 +13,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This is the controller for upload-gadget functionality
  */
 
 var errorMessage;
-(function() {
+(function () {
     errorMessage = request.getParameter("message");
     if (!user) {
         sendLogin();
         return;
     }
 
-    if(userDomain !== (urlDomain || superDomain)) {
+    if (userDomain !== (urlDomain || superDomain)) {
         response.sendError(401, 'designer access not authorized of this tenant');
         return;
     }
@@ -35,9 +37,10 @@ var errorMessage;
         return;
     }
 
-    if(!(errorMessage === "0" || errorMessage === "1" || errorMessage === "2")) {
+    // Sanitize the input before passing it to the template file
+    if (!(errorMessage === "success" || errorMessage === "confgurationFileMissing" || errorMessage === "idAlreadyExists")) {
         errorMessage = null;
     }
 
     include(utils.resolvePath('templates/upload-gadget.jag'));
-} ()); %>
+}()); %>

@@ -160,7 +160,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         return asset;
     };
 
-    
     /**
      * Fetch assets from all the plugged in stores and aggregate
      * @param type
@@ -219,6 +218,11 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
     };
 
+    /**
+     * To delete a asset
+     * @param type Type of the asset to be deleted
+     * @param id ID of the asset
+     */
     deleteAsset = function (type, id) {
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {

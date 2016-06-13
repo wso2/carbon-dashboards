@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ $(function () {
     var isStillLoading = false;
     var nextStart = 0;
     var hasMore = true;
+    var log = new Log();
 
     /**
-     * Page count.
+     * Layout count
      * @const
      */
     var layout_COUNT = 10;
@@ -84,15 +85,24 @@ $(function () {
         }
     };
 
-    var deletelayout = function(id) {
+    /**
+     * To delete the layout with given id
+     * @param id ID of the layout to be deleted
+     */
+    var deletelayout = function (id) {
         ues.store.deleteAsset('layout', id, function (err, data) {
+            if (err) {
+                log.error(err);
+            }
         });
         location.reload();
     };
+
     /**
      * Initialize the UI functionality such as binding events.
      * @private
-     * */
+     *
+     */
     var initUI = function () {
         var portal = $('#ues-layouts-portal');
         portal.on('click', '.ues-layouts .ues-layout-trash-handle', function (e) {

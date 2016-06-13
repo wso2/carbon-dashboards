@@ -74,20 +74,19 @@
                     <h1 class="page-sub-title"><%= i18n.localize("upload.layout.label")%></h1>
                     <br>
                     <div class="alert alert-success upload-success hide" role="alert">
-                    <i class="icon fw fw-success"></i><strong><%= i18n.localize("success.label")%>!</strong>
-                    <%= i18n.localize("upload.success.layout")%>
-                    <a href="<%=tenantedUrlPrefix%>layouts"><u><%= i18n.localize("here.label") %></u></a>
-                    <%= i18n.localize("go.layout.store")%>
-                    <button type="button" class="close" aria-label="close" data-dismiss="alert">
-                        <span aria-hidden="true">
-                            <i class="fw fw-cancel"></i>
-                        </span>
-                    </button>
-                </div>
+                        <i class="icon fw fw-success"></i><strong><%= i18n.localize("success.label")%>!</strong>
+                        <%= i18n.localize("upload.success.layout")%>
+                        <a href="<%=tenantedUrlPrefix%>layouts"><u><%= i18n.localize("here.label") %></u></a>
+                        <%= i18n.localize("go.layout.store")%>
+                        <button type="button" class="close" aria-label="close" data-dismiss="alert">
+                            <span aria-hidden="true">
+                                <i class="fw fw-cancel"></i>
+                            </span>
+                        </button>
+                    </div>
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label class="control-label"><%= i18n.localize("file.upload")%></label>
-
                             <div class="input-group input-wrap file-upload-control">
                                 <input type="text" class="form-control" readonly="">
                                 <input type="file" class="form-control" accept=".zip" id = "selected-file" name="selected-file">
@@ -104,16 +103,12 @@
                                         <span class="hidden-xs"><%= i18n.localize("upload")%></span>
                                     </button>
                                 </div>
-                                <input type="hidden" name="replace" value="false">
                             </div>
                              <label id="upload-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
                         </div>
                     </div>
-
                 </form>
-
             </div>
-
         </div>
     </div>
     <!-- Footer -->
@@ -138,14 +133,14 @@
 
     <script>
        $(document).ready(function() {
-        <%if(errorMessage  === "confgurationFileMissing") {%>
-            showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("layout.configuration.file.missing")%>")
-        <%} else if(errorMessage  === "idAlreadyExists")  { %>
-             showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("layout.exist")%>");
-        <% } else if(errorMessage  === "success")  { %>
-             $('.upload-success').addClass("show");
-         <% } %>
-    });
+            <% if (errorMessage === "confgurationFileMissing") { %>
+                showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("layout.configuration.file.missing")%>")
+            <% } else if (errorMessage === "idAlreadyExists")  { %>
+                 showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("layout.exist")%>");
+            <% } else if (errorMessage === "success")  { %>
+                 $('.upload-success').addClass("show");
+             <% } %>
+        });
     </script>
 </body>
 </html>

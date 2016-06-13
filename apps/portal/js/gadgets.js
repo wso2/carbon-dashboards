@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 $(function () {
     var gadgets = [];
     var isStillLoading = false;
     var nextStart = 0;
     var hasMore = true;
+    var log = new Log();
 
     /**
-     * Page count.
+     * gadget count.
      * @const
      */
     var GADGET_COUNT = 10;
@@ -84,11 +86,20 @@ $(function () {
         }
     };
 
-    var deleteGadget = function(id) {
+    /**
+     * To delete the gadget with the given id
+     * @param id Id of the gadget to be deleted
+     * @private
+     */
+    var deleteGadget = function (id) {
         ues.store.deleteAsset('gadget', id, function (err, data) {
+            if (err) {
+                log.error(err);
+            }
         });
         location.reload();
     };
+
     /**
      * Initialize the UI functionality such as binding events.
      * @private
