@@ -19,7 +19,6 @@ $(function () {
     var isStillLoading = false;
     var nextStart = 0;
     var hasMore = true;
-    var log = new Log();
 
     /**
      * gadget count.
@@ -94,7 +93,7 @@ $(function () {
     var deleteGadget = function (id) {
         ues.store.deleteAsset('gadget', id, function (err, data) {
             if (err) {
-                log.error(err);
+                console.log(err);
             }
         });
         location.reload();

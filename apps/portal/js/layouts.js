@@ -18,7 +18,6 @@ $(function () {
     var isStillLoading = false;
     var nextStart = 0;
     var hasMore = true;
-    var log = new Log();
 
     /**
      * Layout count
@@ -92,7 +91,7 @@ $(function () {
     var deletelayout = function (id) {
         ues.store.deleteAsset('layout', id, function (err, data) {
             if (err) {
-                log.error(err);
+                console.log(err);
             }
         });
         location.reload();
