@@ -98,9 +98,35 @@ var maxRolesLimit;
         var userManager = new carbon.user.UserManager(server, user.tenantId);
         try {
             var users = [user.username];
-            userManager.addRole("Internal/"+id+"-"+editorRole, users, null);
-            userManager.addRole("Internal/"+id+"-"+viewerRole, users, null);
-            userManager.addRole("Internal/"+id+"-"+ownerRole, users, null);
+            if (!userManager.roleExists("Internal/"+id+"-"+editorRole)) {
+                userManager.addRole("Internal/"+id+"-"+editorRole, users, null);
+            }
+            if (!userManager.roleExists("Internal/"+id+"-"+viewerRole)) {
+                userManager.addRole("Internal/"+id+"-"+viewerRole, users, null);
+            }
+            if (!userManager.roleExists("Internal/"+id+"-"+ownerRole)) {
+                userManager.addRole("Internal/"+id+"-"+ownerRole, users, null);
+            }
+        } catch (e) {
+            throw e;
+        }
+    };
+
+    removeRoles = function (id) {
+        var carbon = require('carbon');
+        var server = new carbon.server.Server();
+        var user = session.get('user');
+        var userManager = new carbon.user.UserManager(server, user.tenantId);
+        try {
+            if (!userManager.roleExists("Internal/"+id+"-"+editorRole)) {
+                userManager.removeRole("Internal/"+id+"-"+editorRole);
+            }
+            if (!userManager.roleExists("Internal/"+id+"-"+viewerRole)) {
+                userManager.removeRole("Internal/"+id+"-"+viewerRole);
+            }
+            if (!userManager.roleExists("Internal/"+id+"-"+ownerRole)) {
+                userManager.removeRole("Internal/"+id+"-"+ownerRole);
+            }
         } catch (e) {
             throw e;
         }

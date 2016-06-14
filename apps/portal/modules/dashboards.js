@@ -287,6 +287,7 @@ var remove = function (id) {
     if (registry.exists(path)) {
         registry.remove(path);
     }
+    usr.removeRoles(id);
 };
 
 /**
