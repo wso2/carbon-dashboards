@@ -50,7 +50,7 @@
                         </button>
                         <a class="navbar-menu-toggle" data-toggle="collapse" data-target="#navbar2" aria-expanded="true" aria-controls="navbar2">
                             <span class="icon fw-stack">
-                                <i class="fw fw-down fw-stack-1x toggle-icon-up"></i>
+                                <i class="fw fw-tiles fw-stack-1x"></i>
                             </span>
                         </a>
                     </div>

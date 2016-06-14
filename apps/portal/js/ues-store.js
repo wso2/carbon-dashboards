@@ -39,8 +39,13 @@
     };
 
     store.deleteAsset = function (type, id, cb) {
-        $.get(assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type + '&delete=true', function (data) {
-            cb(false, data);
-        }, 'json');
+        $.ajax({
+            url: assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            method: "DELETE",
+            contentType: "application/json",
+            success: function (data) {
+                cb(false, data);
+            },
+        });
     };
 }());

@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <link href="<%=urlPrefix%>libs/font-wso2_1.0.0/css/font-wso2.min.css" rel="stylesheet" type="text/css" />
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("dashboards.label")%></title>
     <% var config = require('/configs/designer.json'); %>
@@ -48,7 +49,7 @@
                         </button>
                         <a class="navbar-menu-toggle" data-toggle="collapse" data-target="#navbar2" aria-expanded="true" aria-controls="navbar2">
                             <span class="icon fw-stack">
-                                <i class="fw fw-down fw-stack-1x toggle-icon-up"></i>
+                                <i class="fw fw-tiles fw-stack-1x"></i>
                             </span>
                         </a>
                     </div>

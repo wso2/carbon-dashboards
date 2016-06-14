@@ -95,5 +95,6 @@ var getAsset, getAssets, addAsset, deleteAsset;
             return null;
         }
         file.del();
+        return true;
     };
 }());
