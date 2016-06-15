@@ -160,7 +160,11 @@ $(function () {
 
     var pageOptionsHbs = Handlebars.compile($("#ues-page-properties-hbs").html());
 
-    var componentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
+    var gadgetComponentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
+
+    //var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
+
+    //var newView = Handlebars.compile($('#add-new-view-hds').html());
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
@@ -253,11 +257,11 @@ $(function () {
      */
     var renderComponentProperties = function (component) {
         var ctx = buildPropertiesContext(component, page);
-        var propertiesContainer = $('.ues-component-properties-container');
+        var propertiesContainer = $('#gadget-configuration');//$('.ues-component-properties-container');
         dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
-
+        propertiesContainer.empty();
         propertiesContainer
-            .html(componentPropertiesHbs(ctx))
+            .html(gadgetComponentPropertiesHbs(ctx))
             .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
                 var isCheckbox = false;
                 //if a checkbox got changed, disable it before updating properties
@@ -612,6 +616,7 @@ $(function () {
      * @private
      */
     var saveDashboard = function () {
+        console.log("save successfully");
         var method = 'PUT';
         var url = dashboardsApi + '/' + dashboard.id;
         var isRedirect = false;
@@ -722,8 +727,377 @@ $(function () {
 
         // event handler for properties button
         designer.on('click', '.ues-component-box .ues-component-properties-handle', function () {
+            console.log("in gadget");
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
+        });
+
+        designer.on('click', '.option li', function () {
+            console.log('+++++++++++1');
+            var text = $(this).children().text();
+            console.log('constent: '+text);
+            $('#view-layout-select .selected').text(text);
+
+            //display message 'evrything will be replaced'
+            console.log(page.layout.content);
+            console.log(page.content);
+            var viewOptions = getNewViewOptions(page.content);
+            var newViewId = viewOptions.id;
+            var newViewName = viewOptions.name;
+
+
+            var layout = page.layout.content[text];
+
+                var viewLayoutContent = {
+                    blocks : layout.blocks,
+                    name : newViewName,
+                    roles : layout.roles
+                };
+                console.log(viewLayoutContent);
+                page.layout.content[newViewId] = viewLayoutContent;
+                saveDashboard();
+
+
+            var viewContent = page.content[text];
+            page.content[newViewId] = viewContent;
+            saveDashboard();
+            page = findPage(dashboard, page.id);
+            console.log("New cntent");
+            console.log(page.layout.content);
+            pageType = newViewId;
+
+            $('button[data-target=#left-sidebar]').click();
+            renderPage(page.id);
+            $('#designer-view-mode li[data-view-mode='+newViewId+'] a').click();
+
+        });
+
+       // $('.ues-view-component-properties-handle').on('click', function () {
+        $('#designer-view-mode').on('click', '.ues-view-component-properties-handle', function () {
+            console.log("IN VIEW");
+
+            //init
+            var currentPageType = pageType;
+
+            var tempName = this.parentElement.parentElement.parentElement.textContent;
+            tempName = tempName.trim();
+            var ctx = {
+                name: tempName
+            };
+            var viewId = getViewId(tempName);
+            if(viewId===null || viewId===undefined){
+                viewId = tempName;
+            }
+            pageType = viewId;
+
+            var mode = viewId;
+            // if (mode === 'default') {
+            //     pageType = DEFAULT_DASHBOARD_VIEW;
+            //     ues.global.type = DEFAULT_DASHBOARD_VIEW;
+            // } else if (mode === 'anon'){
+            //     pageType = ANONYMOUS_DASHBOARD_VIEW;
+            //     ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
+            //     ues.global.anon = true;
+            // } else {
+            //     pageType = mode;
+            //     ues.global.type = mode;
+            // }
+            console.log('$$$$$$$$$'+pageType);
+            loadGadgetsWithViewRoles(pageType);
+            switchPage(getPageId(), currentPageType);
+
+            //buildViewPropertiesContext(component, page);
+
+            var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
+            $('#view-configuration').empty();
+            $('#view-configuration').html(viewComponentPropertiesHbs(ctx)).on('keypress', function (event) {
+                if(event.keyCode===13 || event.which===13){
+                    //var temp = this.parentElement.parentElement.parentElement.textContent;
+                    //var x = this.findComponent('.ds-view-title');
+                    //temp = temp.trim();
+                    var temp = $(this).find('.ds-view-title').val();
+                    temp = temp.trim();
+                    console.log('New View name'+temp);
+                    if(page.layout.content[viewId].name === undefined){
+                        console.log('No view name');
+                        page.layout.content[viewId].name = temp;
+                        // if(page.layout.content[viewId].id === undefined){
+                        //     console.log('no view id');
+                        //     var tempId = temp.replace(/\s/g, '');
+                        //     page.layout.content[viewId].id = tempId;
+                        // }
+                    } else {
+                        page.layout.content[viewId].name = temp;
+                    }
+                    saveDashboard();
+                    renderPage(page.id);
+
+                }
+                console.log(event.keyCode);
+                console.log(event.which);
+                console.log("View Properties change");
+
+            });
+
+            console.log('View Id **'+viewId);
+
+            //set roles of the view
+           var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
+            console.log('Pagetype at properties'+pageType);
+            var i;
+            var role;
+            console.log(page.layout.content[viewId]);
+            var viewers = page.layout.content[viewId].roles;//ues.global.dashboard.permissions.viewers; //page.layout.content[viewId].roles;
+            if(viewers === undefined){
+                if(pageType ==='default'){
+                    viewers = ["Internal/everyone"];
+                }else if(pageType ==='anon'){
+                    viewers = ["Anonymous"];
+                }
+            }
+            console.log('**'+viewers);
+            var html = '';
+            var length = viewers.length;
+            for (i = 0; i < length; i++) {
+                role = viewers[i];
+                html += viewRoleHbs(role);
+            }
+
+            $('#view-configuration').find('.ues-view-roles').append(html);
+
+
+            var viewerSearchQuery = '';
+            var maxLimit = 10;
+            var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
+            var rolesApi = ues.utils.relativePrefix() + 'apis/roles';
+            var searchRolesApi = ues.utils.relativePrefix() + 'apis/roles/search';
+            var userApi = ues.utils.relativePrefix() + 'apis/user';
+            var user;
+            $.ajax({
+                url: userApi,
+                type: "GET",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data) {
+                        user = data;
+                    }
+                }
+            });
+
+            $.ajax({
+                url: maxLimitApi,
+                type: "GET",
+                async: false,
+                dataType: "json"
+            }).success(function (data) {
+                maxLimit = data;
+            }).error(function () {
+                console.log('Error calling max roles limit');
+            });
+
+            var viewerRoles = new Bloodhound({
+                name: 'roles',
+                limit: 10,
+                prefetch: {
+                    url: rolesApi,
+                    filter: function (roles) {
+                        return $.map(roles, function (role) {
+                            return {name: role};
+                        });
+                    },
+                    ttl: 60
+                },
+                sufficient: 10,
+                remote: {
+                    url: searchRolesApi + '?maxLimit=' + maxLimit + '&query=' + viewerSearchQuery,
+                    filter: function (searchRoles) {
+                        return $.map(searchRoles, function (searchRole) {
+                            return {name: searchRole};
+                        });
+                    },
+                    prepare: function (query, settings) {
+                        viewerSearchQuery = query;
+                        var currentURL = settings.url;
+                        settings.url = currentURL + query;
+                        return settings;
+                    },
+                    ttl: 60
+                },
+                datumTokenizer: function (d) {
+                    return d.name.split(/[\s\/.]+/) || [];
+                },
+                queryTokenizer: Bloodhound.tokenizers.whitespace
+            });
+
+            viewerRoles.initialize();
+            var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
+            
+            $('#ues-share-view').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 0
+            }, {
+                name: 'roles',
+                displayKey: 'name',
+                limit: 10,
+                source: viewerRoles.ttAdapter(),
+                templates: {
+                    empty: [
+                        '<div class="empty-message">',
+                        'No Result Available',
+                        '</div>'
+                    ].join('\n'),
+                    suggestion: permissionMenuHbs
+                }
+            }).on('typeahead:selected', function (e, role, roles) {
+                viewer($(this), role.name, viewId);
+            }).on('typeahead:autocomplete', function (e, role) {
+                viewer($(this), role.name, viewId);
+            });
+
+
+            $('#right-sidebar').toggleClass("toggled");
+        });
+
+        var viewer = function (el, role, viewId) {
+            var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
+
+            var viewers = page.layout.content[viewId].roles;
+            if(viewers === undefined){
+                if(pageType === 'default'){
+                    page.layout.content[pageType].roles = ["Internal/everyone"];
+                } else if(pageType === 'anon'){
+                    page.layout.content[pageType].roles = ["Anonymous"];
+                }
+            }
+           if (!isExistingPermission(viewers, role)) {
+               page.layout.content[viewId].roles.push(role);
+               saveDashboard();
+                $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
+            }
+            el.typeahead('val', '');
+        };
+
+        $('#designer-view-mode').on('click', '.ues-trash-handle', function () {
+            var tempName = this.parentElement.parentElement.parentElement.textContent;
+            tempName = tempName.trim();
+            showConfirm('Deleting the view',
+                'This will remove the view and all its content. Do you want to continue?',
+                function () {
+
+                    var viewId = getViewId(tempName);
+                    if(viewId===null || viewId===undefined){
+                        viewId = tempName;
+                    }
+                    pageType = viewId;
+                    console.log('View Id **'+viewId);
+                    delete page.layout.content[viewId];
+                    if(viewId==='loggedIn'){
+                        viewId = 'default';
+                    }
+                    delete page.content[viewId];
+                    renderPage(page.id);
+                });
+        });
+
+        //$('#view-configuration').find('.ues-view-roles').on('click', '.remove-button', function () {
+        $('#view-configuration').on('click', '.remove-button', function () {
+            //remove
+            console.log('remove role');
+            var el = $(this).closest('.ues-shared-role');
+            var role = el.data('role');
+            var viewers = page.layout.content[pageType].roles;
+            if(viewers ===undefined){
+                if(pageType === 'default'){
+                    page.layout.content[pageType].roles = ["Internal/everyone"];
+                } else if(pageType === 'anon'){
+                    page.layout.content[pageType].roles = ["Anonymous"];
+                }
+            }
+            var removePermission = function () {
+                viewers.splice(viewers.indexOf(role), 1);
+                var removeElement = function () {
+                    el.remove();
+                };
+                removeElement();
+                saveDashboard();
+            };
+
+            if (viewers.length == 1) {
+                showConfirm("Removing Permission",
+                    "After this permission removal, this view will e no longer visible to anyone." +
+                    " Do you want to continue?", removePermission);
+            } else {
+                removePermission();
+           }
+        });
+
+        var isExistingPermission = function (permissions, role) {
+            var isExist = false;
+            for (var i = 0; i < permissions.length; i++) {
+                if (permissions[i] == role) {
+                    isExist = true;
+                    break;
+                }
+            }
+            return isExist;
+        };
+
+        var getNumberOfUserRolesInDashboard = function (permission) {
+            var userRoles = 0;
+            // for (var i = 0; i < user.roles.length; i++) {
+            //     for (var j = 0; j < permission.length; j++) {
+            //         if (user.roles[i] == permission[j]) {
+            //             userRoles += 1;
+            //         }
+            //     }
+            // }
+            //return userRoles;
+            return dashboard.permissions.viewers.length;
+        };
+
+        //event hanlder for adding a new view
+        $('#add-view').on('click', function () {
+            var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
+            $('.gadgets-grid').empty();
+            $('.gadgets-grid').html(viewCreationOptions);
+            console.log("Add new view");
+            $(".gadgets-grid input[type=radio]").click(function(){
+                console.log( $("input[type=radio][name="+ this.name + "]").val() );
+                if(this.value==="new-view") {
+                    console.log("If"+this.value);
+                    if (!$('#left-sidebar').hasClass('toggled')) {
+                        $('#btn-sidebar-dashboard-layout').click();
+                    }
+                    // var newView = Handlebars.compile($('#add-new-view-hds').html());
+                    // $('#designer-view-mode').append(newView);
+                    // $('#designer-view-mode li[data-view-mode=default] a').click();
+                } else if (this.value==="copy-view") {
+                    console.log("Else");
+                    if (!$('#left-sidebar').hasClass('toggled')) {
+                        $('#left-sidebar').hide();
+                    }
+                    var viewcopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
+                    $('.gadgets-grid').empty();
+                    $('.gadgets-grid').html(viewcopyingSelection);
+                    $('#copy-view').prop( "checked", true );
+                    $('#page-views-menu').empty();
+
+                    var js = JSON.parse(JSON.stringify(page.content));
+                    var viewKeysArray = Object.keys(js);
+
+                    var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
+                    var temp;
+                    for(var i=0; i<viewKeysArray.length; i++){
+                        var temp = {
+                            viewName: viewKeysArray[i]
+                        };
+                        $('#page-views-menu').append(viewCopyingOptions(temp));
+                    };
+
+                }
+            });
         });
 
         // event handler for trash button
@@ -739,7 +1113,8 @@ $(function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-component-box');
+                    var componentBox = that.closest('.ues-compone' +
+                        'nt-box');
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
 
@@ -1091,6 +1466,25 @@ $(function () {
         };
     };
 
+    var getViewId = function (viewName) {
+        var layoutContent = page.layout.content;
+        var js = JSON.parse(JSON.stringify(page.layout.content));
+        var array = Object.keys(js);
+        viewName = viewName.trim();
+
+        for(var i = 0; i <array.length; i++){
+
+            if(page.layout.content[array[i]].name !== undefined) {
+                if(page.layout.content[array[i]].name === viewName) {
+                    return array[i];
+                }
+            } else {
+                console.log('Name Not defined for the view');
+            }
+        }
+
+        return null;
+    };
     /**
      * Check whether current landing page is anonymous or not.
      * @param {String} landing  Current landing page
@@ -1497,7 +1891,7 @@ $(function () {
                 }
             }
         }
-    }
+    };
 
 
     /**
@@ -1733,7 +2127,11 @@ $(function () {
             var assets = $('.ues-store-assets').find('.ues-thumbnails');
             var fresh = !paging.start;
             var assetz = storeCache[type];
+            console.log('^^^^^^2^1*'+data.length+'@@@');
+            //data = filterValidGadgets(data, viewId);
+            console.log('^^^^^2^2*'+data.length+'@@@');
             storeCache[type] = assetz.concat(data);
+            console.log('^^^^^2^3*'+storeCache[type].length+'@@@');
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
             if (!fresh) {
@@ -1760,6 +2158,135 @@ $(function () {
         });
     };
 
+    var loadGadgetsWithViewRoles = function (viewId) {
+        var type = 'gadget';
+        $('.ues-thumbnails').empty();
+        console.log('Load gadget +'+ type);
+        var paging = pagingHistory[type] || (pagingHistory[type] = {
+                start: 0,
+                count: COMPONENTS_PAGE_SIZE
+            });
+        // var buildPaging = function (paging, query) {
+        //     if (paging.query === query) {
+        //         return;
+        //     }
+        //     paging.end = false;
+        //     paging.query = query;
+        //     paging.start = 0;
+        //     paging.count = COMPONENTS_PAGE_SIZE;
+        // };
+        // buildPaging(paging, query);
+        if (paging.loading) {
+            return;
+        }
+        // if (paging.end) {
+        //     return;
+        // }
+        paging.loading = true;
+
+
+        ues.store.assets(type, paging, function (err, data) {
+            paging.loading = false;
+
+            if (err) {
+                console.log('error...');
+                return;
+            }
+
+            var assets = $('.ues-store-assets').find('.ues-thumbnails');
+            var fresh = !paging.start;
+            var assetz = storeCache[type];
+            storeCache[type] = assetz.concat(data);
+
+            paging.start += COMPONENTS_PAGE_SIZE;
+            paging.end = !data.length;
+            console.log('^^^^^^^1*'+storeCache[type].length+'@@@');
+            data = filterValidGadgets(type, viewId);
+            console.log('^^^^^^2*'+data.length+'@@@');
+            // if (!fresh) {
+            //     console.log('Not fresh');
+            //     assets.append(componentsListHbs({
+            //         type: type,
+            //         assets: data,
+            //         lang: lang
+            //     }));
+            //     initNanoScroller();
+            //     return;
+            // }
+            if (data.length) {
+                console.log('Has Length');
+                assets.html(componentsListHbs({
+                    type: type,
+                    assets: sortComponentsByCategory(nonCategoryKeyWord, filterComponentByCategories(data)),
+                    lang: lang
+                }));
+                initNanoScroller();
+                return;
+            }
+            assets.html(noComponentsHbs());
+        });
+        //location.reload();
+        // $('#designer-view-mode li[data-view-mode='+viewId+'] a').click();
+        // $('#btn-sidebar-gadgets').click();
+    };
+
+    var filterValidGadgets = function (type,viewId) {
+        var data = [];
+        var storeArrayLength = storeCache[type].length;
+        console.log('Storecache length: '+storeArrayLength);
+        console.log(viewId);
+        if(viewId === 'default'){
+            viewId = 'loggedIn';
+        }
+        var viewRoles = page.layout.content[viewId].roles;
+        console.log('viewRoles: '+viewRoles);
+        if(viewRoles===undefined){
+            if(pageType ==='default'){
+            viewRoles = ["Internal/everyone"];
+            }else if(pageType ==='anon'){
+                viewRoles = ["Anonymous"];
+            }
+        }
+        var viewRolesLength = viewRoles.length;
+        var gadgetRoles;
+        var isValid;
+
+        for(var i=0; i<storeArrayLength; i++){
+            gadgetRoles = storeCache[type][i].allowedRoles;
+            console.log('Gadgetrole '+i+'  '+gadgetRoles);
+            isValid = false;
+            for(var j=0;j<viewRolesLength;j++){
+                isValid = isRoleExistInView(gadgetRoles, viewRoles[j]);
+                console.log(isValid);
+                if(!isValid){
+                    console.log('break');
+                    break;
+                }
+            }
+            if(isValid){
+                data.push(storeCache[type][i]);//.splice(i, 1);
+                console.log(data);
+            }
+        }
+        console.log('return data'+data.length);
+        return data;
+    };
+
+    var isRoleExistInView = function (gadgetRoles, viewRole) {
+        var gadgetRolesLength ;
+        if(gadgetRoles === undefined){
+            gadgetRolesLength =0;
+        } else{
+            gadgetRolesLength = gadgetRoles.length;
+        }
+
+        for(var i=0; i<gadgetRolesLength;i++){
+            if(gadgetRoles[i]===viewRole){
+                return true;
+            }
+        }
+        return false;
+    };
     /**
      * Initializes the components.
      * @return {null}
@@ -1786,17 +2313,22 @@ $(function () {
     var initDesigner = function () {
 
         $('#designer-view-mode').on('click', 'li', function () {
+            console.log("Init Designer");
             var currentPageType = pageType;
             var mode = $(this).data('view-mode');
             if (mode === 'default') {
                 pageType = DEFAULT_DASHBOARD_VIEW;
                 ues.global.type = DEFAULT_DASHBOARD_VIEW;
-            } else {
+            } else if (mode === 'anon'){
                 pageType = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.anon = true;
+            } else {
+                pageType = mode;
+                ues.global.type = mode;
             }
-
+            console.log('$$$$$$$$$'+pageType);
+            loadGadgetsWithViewRoles(pageType);
             switchPage(getPageId(), currentPageType);
         });
     };
@@ -1813,6 +2345,7 @@ $(function () {
         }, function (err, data) {
             storeCache.layout = data;
             $('#ues-page-layouts').html(layoutsListHbs(data));
+            $('#ues-view-layouts').html(layoutsListHbs(data));
             initNanoScroller();
         });
     };
@@ -1839,8 +2372,80 @@ $(function () {
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
 
             });
+        }),
+        $('#ues-view-layouts').on('click', '.thumbnail', function (e) {
+            e.preventDefault();
+            //display message 'evrything will be replaced'
+            console.log(page.layout.content);
+            console.log(page.content)
+            var viewOptions = getNewViewOptions(page.content);
+            var newViewId = viewOptions.id;
+            var newViewName = viewOptions.name;
+
+            
+            var layout = findStoreCache('layout', $(this).data('id'));
+
+            var viewContent = {};
+            page.content[newViewId] = viewContent;
+
+            $.get(resolveURI(layout.url), function (data, status) {
+                console.log("In side get"+data);
+                console.log(JSON.parse(data));
+                var x = JSON.parse(data);
+                console.log("##"+x.blocks);
+                var viewLayoutContent = {
+                        blocks : x.blocks,
+                        name : newViewName,
+                        roles : ["Internal/everyone"]
+                };
+                console.log(viewLayoutContent);
+                page.layout.content[newViewId] = viewLayoutContent;
+                saveDashboard();
+            });
+
+            page = findPage(dashboard, page.id);
+            console.log("New cntent");
+            console.log(page.layout.content);
+            pageType = newViewId;
+
+            $('button[data-target=#left-sidebar]').click();
+            renderPage(page.id);
+            $('#designer-view-mode li[data-view-mode='+newViewId+'] a').click();
         });
         loadLayouts();
+        //$('#left-sidebar').hide();
+    };
+
+
+    var getNewViewOptions = function() {
+        var js = JSON.parse(JSON.stringify(page.content));
+        console.log(js);
+        var arr = [];
+        for (var x in js) {
+            arr.push(js[x]);
+        }
+        console.log(arr);
+        var tempViewId = 2;
+        //check in the page array and get id
+        var prefix = 'view';
+        var titlePrefix = 'View ';
+        console.log("In view options: ");
+        console.log("In view options: " + page.content['default']);
+
+        var gettingNewId = true;
+        while(gettingNewId) {
+            try {
+                Object.keys(js[prefix+tempViewId]);
+                tempViewId++;
+            }catch(Exception){
+                gettingNewId = false;
+            }
+        }
+        console.log("Newest id : "+tempViewId);
+        return {
+            id: prefix + tempViewId,
+            name: titlePrefix + tempViewId
+        };
     };
 
     /**
@@ -1849,7 +2454,7 @@ $(function () {
      * @private
      */
     var initStore = function () {
-        loadAssets('gadget');
+        //loadAssets('gadget');
 
         // initialize search options in gadgets sidebar
         $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (event) {
@@ -2284,14 +2889,13 @@ $(function () {
                 title: options.title,
                 layout: {
                     content: {
-                        loggedIn: JSON.parse(data),
+                        view1: JSON.parse(data),
                     },
                     fluidLayout: false
                 },
                 isanon: false,
                 content: {
-                    default: {},
-                    anon: {}
+                    view1: {}
                 }
             };
             dashboard.landing = dashboard.landing || id;
@@ -2310,7 +2914,8 @@ $(function () {
                 dashboard.menu = [];
             }
             dashboard.menu.push(menu);
-
+            page.layout.content['view1'].name = 'View 1';
+            page.layout.content['view1'].roles = ["Internal/everyone"];
             saveDashboard();
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
@@ -2339,11 +2944,11 @@ $(function () {
      * @return {null}
      * @private
      */
-    var switchPage = function (pid, pageType) {
+    var switchPage = function (pid, currentPageType) {
         if (!page) {
             return renderPage(pid);
         }
-        destroyPage(page, pageType, function (err) {
+        destroyPage(page, currentPageType, function (err) {
             if (err) {
                 throw err;
             }
@@ -2432,7 +3037,7 @@ $(function () {
         if (!$('#left-sidebar-sub').hasClass('toggled')) {
             $('#left-sidebar button[rel=createPage]').click();
         }
-    }
+    };
 
     /**
      * Renders the given page in the designer view.
@@ -2442,8 +3047,12 @@ $(function () {
      * @private
      */
     var renderPage = function (pid, done) {
+        $('#designer-view-mode').empty();
+        $('.gadgets-grid').empty();
         gadgetIds = undefined;
-
+        if(page!==undefined){
+        console.log("RENDER PAGE:" + JSON.parse(JSON.stringify(page.layout.content)));
+        }
         // if no pages found, display a message
         if (!dashboard.pages.length) {
 
@@ -2457,7 +3066,8 @@ $(function () {
 
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
-            $('#btn-sidebar-layouts, #btn-sidebar-menu').hide();
+            $('#btn-sidebar-menu').hide();
+            $('#btn-sidebar-dashboard-layout').hide();
 
             showCreatePage();
             return;
@@ -2468,28 +3078,88 @@ $(function () {
         $('.page-header .page-actions').show();
         $('#btn-sidebar-layouts, #btn-sidebar-gadgets').show();
         $('#btn-sidebar-layouts, #btn-sidebar-menu').show();
+        $('#btn-sidebar-dashboard-layout').show();
 
         currentPage(findPage(dashboard, pid));
+
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
 
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
-
-        var anonToggle = $('#designer-view-mode li[data-view-mode=anon]');
-        if (page.isanon && !dashboard.isUserCustom) {
-            anonToggle.removeClass('hide');
-        } else {
-            anonToggle.addClass('hide');
+        if(page.content[pageType]===undefined){
+            pageType = 'view1';
         }
+        console.log('pagetype for rendering'+pageType);
+        // var anonToggle = $('#designer-view-mode li[data-view-mode=anon]');
+        // if (page.isanon && !dashboard.isUserCustom) {
+        //     anonToggle.removeClass('hide');
+        // } else {
+        //     anonToggle.addClass('hide');
+        // }
 
         // if the current page doesn't have a anon view defined, render the default view
-        if (!page.isanon) {
-            pageType = DEFAULT_DASHBOARD_VIEW;
-            ues.global.type = DEFAULT_DASHBOARD_VIEW;
-            $('#designer-view-mode li').removeClass('active');
-            $('#designer-view-mode li[data-view-mode=default]').addClass('active');
-        }
+        // if (!page.isanon) {
+        //     pageType = DEFAULT_DASHBOARD_VIEW;
+        //     ues.global.type = DEFAULT_DASHBOARD_VIEW;
+        //     $('#designer-view-mode li').removeClass('active');
+        //     $('#designer-view-mode li[data-view-mode=default]').addClass('active');
+        // }
+
+
+        var newView = Handlebars.compile($('#add-new-view-hds').html());
+
+
+        var js = JSON.parse(JSON.stringify(page.content));
+        var viewLength = Object.keys(js).length;
+        var viewKeysArray = Object.keys(js);
+        console.log("Keys array : "+viewKeysArray);
+        var tempViewId = 2;
+        var prefix = 'view';
+        var titlePrefix = 'View ';
+        console.log("Render view: ");
+
+        for(var i = 0; i < viewKeysArray.length ; i++){
+
+            try {
+                var viewtemp = viewKeysArray[i];
+                console.log(viewtemp);
+                $('#designer-view-mode').append(newView);
+                document.getElementById("new-view-id").setAttribute('data-view-mode', viewtemp);
+                var viewTempName;
+
+                // if(page.layout.content[viewtemp].name===undefined){
+                //     if((viewKeysArray[i] === 'loggedIn')){
+                //             viewTempName = 'loggedIn';
+                //
+                //     } else if(viewKeysArray[i] === 'anon') {
+                //         viewTempName = 'Anon';
+                //     }
+                // } else{
+                //     viewTempName = page.layout.content[viewtemp].name;
+                // }
+                 if((viewKeysArray[i] === 'loggedIn') || (viewKeysArray[i] === 'default')){
+                     if(page.layout.content['loggedIn'].name===undefined){
+                         console.log('Name undefined****');
+                         viewTempName = 'loggedIn';
+                      } else{
+                          viewTempName = page.layout.content['loggedIn'].name;
+                      }
+
+                 } else if(viewKeysArray[i] === 'anon') {
+                     viewTempName = 'Anon';
+                 } else{
+                     viewTempName = page.layout.content[viewtemp].name;
+                 }
+                 document.getElementById("view-name").innerHTML = viewTempName;
+                 console.log("##### set name"+viewTempName);
+                 document.getElementById("new-view-id").setAttribute('id', 'nav-tab-' + viewtemp);
+                 document.getElementById("view-name").setAttribute('id', viewtemp)
+
+            }catch(Exception){
+                console.log("View not available "+viewtemp);
+            }
+        };
 
         // render page header
         var currentPageIndex = 0;
@@ -2512,7 +3182,7 @@ $(function () {
                 id: (hasNextPage ? dashboard.pages[currentPageIndex + 1].id : '')
             }
         }));
-
+        //$('#designer-view-mode li[data-view-mode='+pageType+']').click();
         ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
 
             $('.gadgets-grid').find('.ues-component').each(function () {
