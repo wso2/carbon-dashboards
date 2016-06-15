@@ -94,13 +94,20 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param limit
      */
     getData = function (providerConfig, limit) {
-
-        var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
-        var query = providerConfig['query'];
-        if(limit){
-            query =query.replace(/^\s\s*/, '').replace(/\s\s*$/, '') + ' limit ' + limit;
+        var data;
+        try {
+            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            var query = providerConfig['query'];
+            if (limit) {
+                query = query.replace(/^\s\s*/, '').replace(/\s\s*$/, '') + ' limit ' + limit;
+            }
+            data = db.query(query);
         }
-        return db.query(query);
+        finally {
+            db.close();
+        }
+        return data;
+
     };
 
 }());
