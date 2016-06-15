@@ -11,7 +11,7 @@
     {{else}}
     <UserPref name="refreshInterval"
               display_name="Refresh Interval"
-              default_value="10"/>
+              default_value="1000"/>
      {{/if}}
     <Content type="html">
         <![CDATA[
@@ -22,11 +22,11 @@
             {{/each}}
             <!-- chart vendor css -->
             {{#each chart-vendor-css}}
-            <link href="libs/{{this}}" rel="stylesheet">
+            <link href="{{../gadget_location}}/libs/{{this}}" rel="stylesheet">
             {{/each}}
             <!-- chart specific css -->
             {{#each chart-css}}
-            <link href="css/{{this}}" rel="stylesheet" >
+            <link href="{{../gadget_location}}/css/{{this}}" rel="stylesheet" >
             {{/each}}
 
             <!-- jQuery -->
