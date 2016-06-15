@@ -570,6 +570,19 @@ $(function () {
             dashboard.theme = text;
         });
 
+        //Share dashboard among tenants
+        $('#share-dashboard').on('click', function () {
+            dashboard.shareDashboard = $(this).is(":checked");
+            if(dashboard.shareDashboard) {
+                $('#share-info').removeClass("hide");
+                $('#share-info').addClass("show");
+            } else {
+                $('#share-info').removeClass("show");
+                $('#share-info').addClass("hide");
+            }
+
+        });
+
         // Enable Oauth settings
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");

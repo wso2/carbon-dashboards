@@ -18,6 +18,7 @@
 
     var DEFAULT_STORE = 'fs';
     var LEGACY_STORE = 'store';
+    var SUPER_DOMAIN = 'carbon.super';
     /**
      * Find a component.
      * @param {String} type Type of the plugin
@@ -379,7 +380,13 @@
             return uri;
         }
         var path = uri.substring(index + 3);
-        return uriPlugin(path);
+
+        path = uriPlugin(path);
+        if ((typeof(dashboard) !== 'undefined') && dashboard.shareDashboard) {
+            path = path.replace(user.domain, SUPER_DOMAIN);
+        }
+        
+        return path;
     };
 
     ues.components = {
