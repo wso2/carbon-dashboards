@@ -207,6 +207,12 @@ $(function () {
         el.typeahead('val', '');
     };
 
+    /**
+     * Add the available owner permission for dashboard in to permission list.
+     * @param1 el {Object} element of the list.
+     * @param2 role {String}
+     * @private
+     * */
     var owner = function (el, role) {
         var permissions = dashboard.permissions;
         var owners = permissions.owners;
@@ -378,8 +384,7 @@ $(function () {
         }
         return userRoles;
     };
-
-
+    
     /**
      * Initialize the UI functionality.
      * @private
@@ -520,7 +525,6 @@ $(function () {
             editor($(this), role.name);
         });
 
-
         var ownerRoles = new Bloodhound({
             name: 'roles',
             limit: 10,
@@ -580,8 +584,6 @@ $(function () {
         }).on('typeahead:autocomplete', function (e, role) {
             owner($(this), role.name);
         });
-
-
 
         $('#ues-dashboard-settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
             var el = $(this).closest('.ues-shared-role');
@@ -675,7 +677,7 @@ $(function () {
         //Share dashboard among tenants
         $('#share-dashboard').on('click', function () {
             dashboard.shareDashboard = $(this).is(":checked");
-            if(dashboard.shareDashboard) {
+            if (dashboard.shareDashboard) {
                 $('#share-info').removeClass("hide");
                 $('#share-info').addClass("show");
             } else {
@@ -712,7 +714,7 @@ $(function () {
         });
 
         // Reset the changes
-        $('#ues-dashboard-cancelBtn').on('click', function(){
+        $('#ues-dashboard-cancelBtn').on('click', function () {
             location.reload();
         });
     };

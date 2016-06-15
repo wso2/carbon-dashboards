@@ -211,39 +211,31 @@
                         <label class="switch">
                             <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse"
                                 data-target="#ues-oauth-settings-inputs"
-                                aria-expanded="<% if (dashboard.enableOauth == true) {
-    print("true");
-} else {
-    print("false");
-} %>"
-                                aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) {
-    print("checked");
-} %>>
+                                aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
+                                aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); %>>
                             <span class="helper"></span>
                         </label>
 
                     </div>
                 </div>
-                <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) {
-    print("in");
-} %>" >
+                <div id="ues-oauth-settings-inputs" class="collapse <% if (dashboard.enableOauth == true) { print("in"); } %>" >
                     <div class="form-group">
                         <label for="ues-is-url" class="col-sm-3 control-label"><%= i18n.localize("identity.server.url")%></label>
                         <div class="col-sm-6">
                             <%
-function endsWith(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) != -1;
-}
-var idpURL = require('/configs/designer.json').authentication.methods.sso.attributes.identityProviderURL;
-var isURL = "";
-if (endsWith(idpURL, "samlsso/")) {
-    isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso/"));
-} else if (endsWith(idpURL, "samlsso")) {
-    isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso"));
-}
-isURL = endsWith(isURL, "/") ? isURL : isURL + "/";
-%>
-<p id="ues-is-url" class="form-control-static"><%=isURL%></p>
+                            function endsWith(str, suffix) {
+                                return str.indexOf(suffix, str.length - suffix.length) != -1;
+                            }
+                            var idpURL = require('/configs/designer.json').authentication.methods.sso.attributes.identityProviderURL;
+                            var isURL = "";
+                            if (endsWith(idpURL, "samlsso/")) {
+                                isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso/"));
+                            } else if (endsWith(idpURL, "samlsso")) {
+                                isURL = idpURL.substr(0, idpURL.lastIndexOf("samlsso"));
+                            }
+                            isURL = endsWith(isURL, "/") ? isURL : isURL + "/";
+                            %>
+                            <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
                         </div>
                         <div class="col-sm-3" style="text-align: right;">
                             <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered"
