@@ -18,6 +18,7 @@
  */
 
 var errorMessage;
+var assetType = "layout";
 (function () {
     errorMessage = request.getParameter("message");
     if (!user) {
@@ -42,5 +43,5 @@ var errorMessage;
         errorMessage = null;
     }
 
-    include(utils.resolvePath('templates/upload-layout.jag'));
+    include(utils.resolvePath('templates/upload-asset.jag'));
 }()); %>

@@ -79,7 +79,7 @@
                             </a>
                         </li>
                         <li data-absolute-position="275" style="left: 275px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="<%=tenantedUrlPrefix%>layouts/"><i class="fw fw-layout"></i><%= i18n.localize("layouts")%></a>
+                            <a href="<%=tenantedUrlPrefix%>layout/"><i class="fw fw-layout"></i><%= i18n.localize("layouts")%></a>
                         </li>
                     </ul>
                 </div><!--/ .nav-collapse -->

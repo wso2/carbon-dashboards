@@ -20,7 +20,7 @@
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/gadget.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("gadgets")%></title>
     <% var config = require('/configs/designer.json'); %>
@@ -31,11 +31,12 @@
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li class="active"><i class="icon fw fw-home"></i> <%=i18n.localize("gadgets")%></li>
+            <li class="active"><i class="icon fw fw-home"></i> <%=i18n.localize(assetType+"s")%></li>
         </ol>
     </div>
 
-	<% var showNavigation = !isMobileDevice || config.isCreateGadgetEnable; %>
+
+	<% var showNavigation = !isMobileDevice || (config.isCreateGadgetEnable || assetType !== "gadget"); %>
     <% if (showNavigation) { %>
     <!-- navbar -->
     <div class="navbar-wrapper">
@@ -57,7 +58,7 @@
                     <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0px;">
                         <ul class="nav navbar-nav collapse-nav-sub">
                          <% if (! isMobileDevice) { %>
-                        <% if (config.isCreateGadgetEnable) { %>
+                        <% if (config.isCreateGadgetEnable && assetType === "gadget") { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-gadget">
                                 <span class="fw-stack">
@@ -68,11 +69,11 @@
                         </li>
                         <% }  %>
                          <li>
-                             <a href="<%=tenantedUrlPrefix%>upload-gadget">
+                             <a href="<%=tenantedUrlPrefix%>upload-<%= assetType%>">
                                 <span class="fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-upload fw-stack-1x"></i>
-                                </span> <%= i18n.localize("upload.gadget.label")%>
+                                </span> <%= i18n.localize("upload."+assetType+".label")%>
                             </a>
                         </li>
                         <% } %>
@@ -81,17 +82,18 @@
                     </div><!--/.nav-collapse -->
                 </div>
                 <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true"><!-- nav-collapse -->
-                    <ul class="nav navbar-nav collapse-nav-sub">
+                     <ul class="nav navbar-nav collapse-nav-sub">
                         <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="<%=tenantedUrlPrefix%>dashboards/"><i class="fw fw-dashboard"></i><%= i18n.localize("dashboards.label")%></a>
+                            <a href="<%=tenantedUrlPrefix%>dashboards/"><i class="fw fw-dashboard"></i>
+                            <%= i18n.localize("dashboards.label")%></a>
                         </li>
                         <li data-absolute-position="145" style="left: 145px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="#">
-                                <i class="fw fw-gadget"></i><%= i18n.localize("gadgets")%>
-                            </a>
+                            <a href="<%=tenantedUrlPrefix%>gadget/">
+                                <i class="fw fw-gadget"></i><%= i18n.localize("gadgets")%></a>
                         </li>
                         <li data-absolute-position="275" style="left: 275px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="<%=tenantedUrlPrefix%>layout/"><i class="fw fw-layout"></i><%= i18n.localize("layouts")%></a>
+                            <a href="<%=tenantedUrlPrefix%>layout/"><i class="fw fw-layout"></i>
+                            <%= i18n.localize("layouts")%></a>
                         </li>
                     </ul>
                 </div><!--/ .nav-collapse -->
@@ -99,56 +101,56 @@
         </div>
     <% } %>
 
-    <div id="ues-gadgets-portal" class="container-fluid">
+    <div id="ds-assets-portal" class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="page-sub-title"><%= i18n.localize("gadgets") %></h1>
+                <h1 class="page-sub-title"><%= i18n.localize(assetType+"s") %></h1>
             </div>
         </div>
-        <div class="row thumbnails ues-gadgets"></div>
+        <div class="row thumbnails ds-assets"></div>
     </div>
 
     <!-- Footer -->
     <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
 
     <!-- Handlebar templates -->
-    <script id="ues-gadgets-list-hbs" type="text/x-handlebars-template">
+    <script id="ds-assets-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="thumbnail ues-gadget" id="{{id}}" data-id="{{id}}">
-                {{>ues-gadget-thumbnail-hbs}}
+            <div class="thumbnail ds-asset" id="{{id}}" data-id="{{id}}">
+                {{>ds-asset-thumbnail-hbs}}
             </div>
         </div>
         {{/each}}
     </script>
 
-    <script id="ues-gadgets-empty-hbs" type="text/x-handlebars-template">
+    <script id="ds-assets-empty-hbs" type="text/x-handlebars-template">
         <div class="col-md-12">
             <div class="message message-info">
-                <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.gadgets.found.description") %></h4>
-                <p><%= i18n.localize("to.generate.gadget") %> <a href="<%=tenantedUrlPrefix%>create-gadget"><u><%= i18n.localize("here.label") %></u></p>
+                <h4><i class="icon fw fw-info"></i><%= i18n.localize("no."+assetType+"s.found.description") %></h4>
+                <p><%= i18n.localize("to.upload."+assetType) %> <a href="<%=tenantedUrlPrefix%>upload-<%= assetType%>"><u><%= i18n.localize("here.label") %></u></p>
             </div>
         </div>
     </script>
 
-    <script id="ues-gadget-thumbnail-hbs" type="text/x-handlebars-template">
+    <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
         <h5 class="title">{{title}}</h5>
-         <a href="#" class="ues-gadget-trash-handle">
-            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.gadget")%>"></i>
+         <a href="#" class="ds-asset-trash-handle">
+            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete."+assetType)%>"></i>
         </a>
         <img src="{{resolveURI thumbnail}}" style="height : 150px;"/>
     </script>
 
-    <script id="ues-gadget-confirm-hbs" type="text/x-handlebars-template">
+    <script id="ds-asset-confirm-hbs" type="text/x-handlebars-template">
         <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
-            <i class="icon fw fw-error"></i><strong>Warning!</strong> <%= i18n.localize("gadget.delete.warning")%>
+            <i class="icon fw fw-error"></i><strong>Warning!</strong> <%= i18n.localize(assetType+".delete.warning")%>
         </div>
-        <div class="ues-trash-actions" >
-            <a href="#" class="btn btn-danger ladda-button ues-gadget-trash-confirm" role="button" data-style="expand-left" data-size="l">
+        <div class="ds-trash-actions" >
+            <a href="#" class="btn btn-danger ladda-button ds-asset-trash-confirm" role="button" data-style="expand-left" data-size="l">
                 <span class="ladda-label"><%= i18n.localize("delete")%></span>
             </a>
-            <a href="#" class="btn btn-default ues-gadget-trash-cancel" role="button" ><%= i18n.localize("cancel")%></a>
+            <a href="#" class="btn btn-default ds-asset-trash-cancel" role="button" ><%= i18n.localize("cancel")%></a>
         </div>
     </script>
 
@@ -166,7 +168,7 @@
     <script src="<%=urlPrefix%>js/ues.js"></script>
     <% include('/controllers/includes/common-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
-    <script src="<%=urlPrefix%>js/gadgets.js"></script>
+    <script src="<%=urlPrefix%>js/assets.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
     <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>

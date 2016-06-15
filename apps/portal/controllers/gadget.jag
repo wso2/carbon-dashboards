@@ -17,6 +17,7 @@
  * This is the controller for gadgets main page.
  */
 
+var assetType = "gadget";
 (function () {
     var utils = require('/modules/utils.js');
     var method = request.getMethod();
@@ -38,7 +39,7 @@
     }
 
     if (method === "GET") {
-        include(utils.resolvePath("templates/gadgets.jag"));
+        include(utils.resolvePath("templates/assets.jag"));
     } else if (method === "POST") {
         // Before checking the required conditions, in order to avoid zip file being deployed
         // Remove the .zip extension

@@ -15,7 +15,7 @@
  */
 
 $(function () {
-    var gadgets = [];
+    var assets = [];
     var isStillLoading = false;
     var nextStart = 0;
     var hasMore = true;
@@ -24,46 +24,48 @@ $(function () {
      * gadget count.
      * @const
      */
-    var GADGET_COUNT = 10;
+    var ASSET_COUNT = 10;
+    var assetType = (window.location.pathname.indexOf("/gadget") > -1) ? "gadget" : "layout";
 
     // Pre-compiling handlebar templates
-    var gadgetsListHbs = Handlebars.compile($("#ues-gadgets-list-hbs").html());
-    var gadgetThumbnailHbs = Handlebars.compile($("#ues-gadget-thumbnail-hbs").html());
-    var gadgetConfirmHbs = Handlebars.compile($("#ues-gadget-confirm-hbs").html());
-    var gadgetsEmptyHbs = Handlebars.compile($("#ues-gadgets-empty-hbs").html());
-    Handlebars.registerPartial('ues-gadget-thumbnail-hbs', gadgetThumbnailHbs);
+    var assetsListHbs = Handlebars.compile($("#ds-assets-list-hbs").html());
+    var assetThumbnailHbs = Handlebars.compile($("#ds-asset-thumbnail-hbs").html());
+    var assetConfirmHbs = Handlebars.compile($("#ds-asset-confirm-hbs").html());
+    var assetsEmptyHbs = Handlebars.compile($("#ds-assets-empty-hbs").html());
+    Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
+
 
     /**
-     * Load the list of gadgets available.
+     * Load the list of assets available.
      * @private
      * */
-    var loadGadgets = function () {
+    var loadAssets = function () {
         isStillLoading = true;
 
         if (!hasMore) {
             isStillLoading = false;
             return;
         }
-        ues.store.assets('gadget', {
+        ues.store.assets(assetType, {
             start: nextStart,
-            count: GADGET_COUNT
+            count: ASSET_COUNT
         }, function (err, data) {
-            var gadgetsEl = $('#ues-gadgets-portal').find('.ues-gadgets');
+            var assetsEl = $('#ds-assets-portal').find('.ds-assets');
             hasMore = data.length;
             if (!hasMore && nextStart === 0) {
-                gadgetsEl.append(gadgetsEmptyHbs());
+                assetsEl.append(assetsEmptyHbs());
                 return;
             }
-            nextStart += GADGET_COUNT;
-            gadgets = gadgets.concat(data);
-            gadgetsEl.append(gadgetsListHbs(data));
+            nextStart += ASSET_COUNT;
+            assets = assets.concat(data);
+            assetsEl.append(assetsListHbs(data));
             var win = $(window);
             var doc = $(document);
             isStillLoading = false;
             if (doc.height() > win.height()) {
                 return;
             }
-            loadGadgets();
+            loadAssets();
         });
     };
 
@@ -73,14 +75,11 @@ $(function () {
      * @return {object}
      * @private
      * */
-    var findGadget = function (id) {
-        var index;
-        var gadget;
-        var length = gadgets.length;
-        for (index = 0; index < length; index++) {
-            gadget = gadgets[index];
-            if (gadget.id === id) {
-                return gadget;
+    var findAsset = function (id) {
+        for (var index = 0; index < assets.length; index++) {
+            var asset = assets[index];
+            if (asset.id === id) {
+                return asset;
             }
         }
     };
@@ -90,8 +89,8 @@ $(function () {
      * @param id Id of the gadget to be deleted
      * @private
      */
-    var deleteGadget = function (id) {
-        ues.store.deleteAsset('gadget', id, function (err, data) {
+    var deleteAsset = function (id) {
+        ues.store.deleteAsset(assetType, id, function (err, data) {
             if (err) {
                 console.log(err);
             }
@@ -104,28 +103,27 @@ $(function () {
      * @private
      * */
     var initUI = function () {
-        var portal = $('#ues-gadgets-portal');
-        portal.on('click', '.ues-gadgets .ues-gadget-trash-handle', function (e) {
+        console.log(window.location);
+        var portal = $('#ds-assets-portal');
+        portal.on('click', '.ds-assets .ds-asset-trash-handle', function (e) {
             e.preventDefault();
-            var thiz = $(this);
-            var gadgetElement = thiz.closest('.ues-gadget');
-            var id = gadgetElement.data('id');
-            var gadget = findGadget(id);
-            gadgetElement.html(gadgetConfirmHbs(gadget));
+            var assetElement = $(this).closest('.ds-asset');
+            var id = assetElement.data('id');
+            var asset = findAsset(id);
+            assetElement.html(assetConfirmHbs(asset));
         });
 
-        portal.on('click', '.ues-gadgets .ues-gadget-trash-confirm', function (e) {
+        portal.on('click', '.ds-assets .ds-asset-trash-confirm', function (e) {
             e.preventDefault();
-            deleteGadget($(this).closest('.ues-gadget').data('id'));
+            deleteAsset($(this).closest('.ds-asset').data('id'));
         });
 
-        portal.on('click', '.ues-gadgets .ues-gadget-trash-cancel', function (e) {
+        portal.on('click', '.ds-assets .ds-asset-trash-cancel', function (e) {
             e.preventDefault();
-            var thiz = $(this);
-            var gadgetElement = thiz.closest('.ues-gadget');
-            var id = gadgetElement.data('id');
-            var dashboard = findGadget(id);
-            gadgetElement.html(gadgetThumbnailHbs(dashboard));
+            var assetElement = $(this).closest('.ds-asset');
+            var id = assetElement.data('id');
+            var asset = findAsset(id);
+            assetElement.html(assetThumbnailHbs(asset));
         });
 
         $(window).scroll(function () {
@@ -136,11 +134,11 @@ $(function () {
             }
 
             if (!isStillLoading) {
-                loadGadgets();
+                loadAssets();
             }
         });
     };
 
     initUI();
-    loadGadgets();
+    loadAssets();
 });

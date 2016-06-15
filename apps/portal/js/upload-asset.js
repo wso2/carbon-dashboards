@@ -13,48 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Functionality of upload-layout is defined here
+ * Functionality of upload gadget is defined in this file
  */
 
 $(function () {
+
     /**
-     * Read gadget configurations from the gadget.json file.
-     * @param {String} id GUID
+     * Validate whether the user hase uploaded a zip file.
      * @returns {*}
      * @private
      */
-    var validateLayoutUpload = function () {
+    var validateAssetUpload = function () {
         var selectFileElement = $("#selected-file");
         var uploadErrorElement = $("#upload-error");
-        var layoutUploadFile = selectFileElement[0].files[0];
+        var assetFile = selectFileElement[0].files[0];
         var zipFileType = "application/zip";
 
-        if (!layoutUploadFile) {
+        if (!assetFile) {
             showInlineError(selectFileElement, uploadErrorElement, "Please selet a zip file to upload");
             return;
         }
-
-        if (layoutUploadFile.type !== zipFileType) {
-            showInlineError(selectFileElement, uploadErrorElement, "Please select a zip file to upload. " + layoutUploadFile.type + " format is not supported");
+        if (assetFile.type !== zipFileType) {
+            showInlineError(selectFileElement, uploadErrorElement, "Please select a zip file to upload. " + assetFile.type + " format is not supported");
             return;
-
         }
-
         return true;
     };
 
     /**
-     * When upload button is clicked verify the upload and submit the upload form
+     * When user clicks upload button, validate the user upload and submit the form
      */
-    $(".layout-upload").on('click', function () {
-        if (validateLayoutUpload()) {
-            $('#layout-upload-form').submit();
+    $(".asset-upload").on('click', function () {
+        if (validateAssetUpload()) {
+            $('#asset-upload-form').submit();
         }
     });
 
-
     /**
-     * When the browse button is clicked, hide the error messages if there are any
+     * When user clicks browse button, hide the error, if there are any
      */
     $('.browse').on("click", function () {
         hideInlineError($("#selected-file"), $("#upload-error"));
@@ -66,7 +62,6 @@ $(function () {
  * @param1 element
  * @param2 errorElement
  * @param3 message
- * @private
  * */
 var showInlineError = function (element, errorElement, message) {
     $('.upload-success').removeClass("show");
@@ -85,7 +80,6 @@ var showInlineError = function (element, errorElement, message) {
  * Hide error style for given element
  * @param1 element
  * @param2 errorElement
- * @private
  * */
 var hideInlineError = function (element, errorElement) {
     element.parent().removeClass("has-error");
