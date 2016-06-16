@@ -2328,6 +2328,7 @@ $(function () {
                 ues.global.type = mode;
             }
             console.log('$$$$$$$$$'+pageType);
+            ues.global.dbType = pageType;
             loadGadgetsWithViewRoles(pageType);
             switchPage(getPageId(), currentPageType);
         });
