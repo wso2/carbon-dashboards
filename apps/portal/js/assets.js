@@ -39,7 +39,7 @@ $(function () {
      * Load the list of assets available.
      * @private
      * */
-    var loadAssets = function () {
+    var listAssets = function () {
         isStillLoading = true;
 
         if (!hasMore) {
@@ -65,7 +65,7 @@ $(function () {
             if (doc.height() > win.height()) {
                 return;
             }
-            loadAssets();
+            listAssets();
         });
     };
 
@@ -133,11 +133,11 @@ $(function () {
             }
 
             if (!isStillLoading) {
-                loadAssets();
+                listAssets();
             }
         });
     };
 
     initUI();
-    loadAssets();
+    listAssets();
 });
