@@ -616,7 +616,6 @@ $(function () {
      * @private
      */
     var saveDashboard = function () {
-        console.log("save successfully");
         var method = 'PUT';
         var url = dashboardsApi + '/' + dashboard.id;
         var isRedirect = false;
@@ -727,20 +726,14 @@ $(function () {
 
         // event handler for properties button
         designer.on('click', '.ues-component-box .ues-component-properties-handle', function () {
-            console.log("in gadget");
             var id = $(this).closest('.ues-component').attr('id');
             renderComponentProperties(findComponent(id));
         });
 
         designer.on('click', '.option li', function () {
-            console.log('+++++++++++1');
             var text = $(this).children().text();
-            console.log('constent: '+text);
             $('#view-layout-select .selected').text(text);
 
-            //display message 'evrything will be replaced'
-            console.log(page.layout.content);
-            console.log(page.content);
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
@@ -753,7 +746,6 @@ $(function () {
                     name : newViewName,
                     roles : layout.roles
                 };
-                console.log(viewLayoutContent);
                 page.layout.content[newViewId] = viewLayoutContent;
                 saveDashboard();
 
@@ -762,8 +754,6 @@ $(function () {
             page.content[newViewId] = viewContent;
             saveDashboard();
             page = findPage(dashboard, page.id);
-            console.log("New cntent");
-            console.log(page.layout.content);
             pageType = newViewId;
 
             $('button[data-target=#left-sidebar]').click();
@@ -774,7 +764,6 @@ $(function () {
 
        // $('.ues-view-component-properties-handle').on('click', function () {
         $('#designer-view-mode').on('click', '.ues-view-component-properties-handle', function () {
-            console.log("IN VIEW");
 
             //init
             var currentPageType = pageType;
@@ -802,7 +791,6 @@ $(function () {
             //     pageType = mode;
             //     ues.global.type = mode;
             // }
-            console.log('$$$$$$$$$'+pageType);
             loadGadgetsWithViewRoles(pageType);
             switchPage(getPageId(), currentPageType);
 
@@ -817,9 +805,7 @@ $(function () {
                     //temp = temp.trim();
                     var temp = $(this).find('.ds-view-title').val();
                     temp = temp.trim();
-                    console.log('New View name'+temp);
                     if(page.layout.content[viewId].name === undefined){
-                        console.log('No view name');
                         page.layout.content[viewId].name = temp;
                         // if(page.layout.content[viewId].id === undefined){
                         //     console.log('no view id');
@@ -833,20 +819,12 @@ $(function () {
                     renderPage(page.id);
 
                 }
-                console.log(event.keyCode);
-                console.log(event.which);
-                console.log("View Properties change");
-
             });
-
-            console.log('View Id **'+viewId);
 
             //set roles of the view
            var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
-            console.log('Pagetype at properties'+pageType);
             var i;
             var role;
-            console.log(page.layout.content[viewId]);
             var viewers = page.layout.content[viewId].roles;//ues.global.dashboard.permissions.viewers; //page.layout.content[viewId].roles;
             if(viewers === undefined){
                 if(pageType ==='default'){
@@ -855,7 +833,6 @@ $(function () {
                     viewers = ["Anonymous"];
                 }
             }
-            console.log('**'+viewers);
             var html = '';
             var length = viewers.length;
             for (i = 0; i < length; i++) {
@@ -991,7 +968,6 @@ $(function () {
                         viewId = tempName;
                     }
                     pageType = viewId;
-                    console.log('View Id **'+viewId);
                     delete page.layout.content[viewId];
                     if(viewId==='loggedIn'){
                         viewId = 'default';
@@ -1004,7 +980,6 @@ $(function () {
         //$('#view-configuration').find('.ues-view-roles').on('click', '.remove-button', function () {
         $('#view-configuration').on('click', '.remove-button', function () {
             //remove
-            console.log('remove role');
             var el = $(this).closest('.ues-shared-role');
             var role = el.data('role');
             var viewers = page.layout.content[pageType].roles;
@@ -1062,11 +1037,8 @@ $(function () {
             var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
             $('.gadgets-grid').empty();
             $('.gadgets-grid').html(viewCreationOptions);
-            console.log("Add new view");
             $(".gadgets-grid input[type=radio]").click(function(){
-                console.log( $("input[type=radio][name="+ this.name + "]").val() );
                 if(this.value==="new-view") {
-                    console.log("If"+this.value);
                     if (!$('#left-sidebar').hasClass('toggled')) {
                         $('#btn-sidebar-dashboard-layout').click();
                     }
@@ -1074,7 +1046,6 @@ $(function () {
                     // $('#designer-view-mode').append(newView);
                     // $('#designer-view-mode li[data-view-mode=default] a').click();
                 } else if (this.value==="copy-view") {
-                    console.log("Else");
                     if (!$('#left-sidebar').hasClass('toggled')) {
                         $('#left-sidebar').hide();
                     }
@@ -2127,11 +2098,7 @@ $(function () {
             var assets = $('.ues-store-assets').find('.ues-thumbnails');
             var fresh = !paging.start;
             var assetz = storeCache[type];
-            console.log('^^^^^^2^1*'+data.length+'@@@');
-            //data = filterValidGadgets(data, viewId);
-            console.log('^^^^^2^2*'+data.length+'@@@');
             storeCache[type] = assetz.concat(data);
-            console.log('^^^^^2^3*'+storeCache[type].length+'@@@');
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
             if (!fresh) {
@@ -2161,7 +2128,6 @@ $(function () {
     var loadGadgetsWithViewRoles = function (viewId) {
         var type = 'gadget';
         $('.ues-thumbnails').empty();
-        console.log('Load gadget +'+ type);
         var paging = pagingHistory[type] || (pagingHistory[type] = {
                 start: 0,
                 count: COMPONENTS_PAGE_SIZE
@@ -2200,9 +2166,7 @@ $(function () {
 
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
-            console.log('^^^^^^^1*'+storeCache[type].length+'@@@');
             data = filterValidGadgets(type, viewId);
-            console.log('^^^^^^2*'+data.length+'@@@');
             // if (!fresh) {
             //     console.log('Not fresh');
             //     assets.append(componentsListHbs({
@@ -2214,7 +2178,6 @@ $(function () {
             //     return;
             // }
             if (data.length) {
-                console.log('Has Length');
                 assets.html(componentsListHbs({
                     type: type,
                     assets: sortComponentsByCategory(nonCategoryKeyWord, filterComponentByCategories(data)),
@@ -2233,13 +2196,10 @@ $(function () {
     var filterValidGadgets = function (type,viewId) {
         var data = [];
         var storeArrayLength = storeCache[type].length;
-        console.log('Storecache length: '+storeArrayLength);
-        console.log(viewId);
         if(viewId === 'default'){
             viewId = 'loggedIn';
         }
         var viewRoles = page.layout.content[viewId].roles;
-        console.log('viewRoles: '+viewRoles);
         if(viewRoles===undefined){
             if(pageType ==='default'){
             viewRoles = ["Internal/everyone"];
@@ -2253,22 +2213,17 @@ $(function () {
 
         for(var i=0; i<storeArrayLength; i++){
             gadgetRoles = storeCache[type][i].allowedRoles;
-            console.log('Gadgetrole '+i+'  '+gadgetRoles);
             isValid = false;
             for(var j=0;j<viewRolesLength;j++){
                 isValid = isRoleExistInView(gadgetRoles, viewRoles[j]);
-                console.log(isValid);
                 if(!isValid){
-                    console.log('break');
                     break;
                 }
             }
             if(isValid){
-                data.push(storeCache[type][i]);//.splice(i, 1);
-                console.log(data);
+                data.push(storeCache[type][i]);
             }
         }
-        console.log('return data'+data.length);
         return data;
     };
 
@@ -2313,7 +2268,6 @@ $(function () {
     var initDesigner = function () {
 
         $('#designer-view-mode').on('click', 'li', function () {
-            console.log("Init Designer");
             var currentPageType = pageType;
             var mode = $(this).data('view-mode');
             if (mode === 'default') {
@@ -2327,7 +2281,7 @@ $(function () {
                 pageType = mode;
                 ues.global.type = mode;
             }
-            console.log('$$$$$$$$$'+pageType);
+            ues.global.dbType = pageType;
             loadGadgetsWithViewRoles(pageType);
             switchPage(getPageId(), currentPageType);
         });
@@ -2376,8 +2330,6 @@ $(function () {
         $('#ues-view-layouts').on('click', '.thumbnail', function (e) {
             e.preventDefault();
             //display message 'evrything will be replaced'
-            console.log(page.layout.content);
-            console.log(page.content)
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
@@ -2389,23 +2341,17 @@ $(function () {
             page.content[newViewId] = viewContent;
 
             $.get(resolveURI(layout.url), function (data, status) {
-                console.log("In side get"+data);
-                console.log(JSON.parse(data));
                 var x = JSON.parse(data);
-                console.log("##"+x.blocks);
                 var viewLayoutContent = {
                         blocks : x.blocks,
                         name : newViewName,
                         roles : ["Internal/everyone"]
                 };
-                console.log(viewLayoutContent);
                 page.layout.content[newViewId] = viewLayoutContent;
                 saveDashboard();
             });
 
             page = findPage(dashboard, page.id);
-            console.log("New cntent");
-            console.log(page.layout.content);
             pageType = newViewId;
 
             $('button[data-target=#left-sidebar]').click();
@@ -2419,18 +2365,14 @@ $(function () {
 
     var getNewViewOptions = function() {
         var js = JSON.parse(JSON.stringify(page.content));
-        console.log(js);
         var arr = [];
         for (var x in js) {
             arr.push(js[x]);
         }
-        console.log(arr);
         var tempViewId = 2;
         //check in the page array and get id
         var prefix = 'view';
         var titlePrefix = 'View ';
-        console.log("In view options: ");
-        console.log("In view options: " + page.content['default']);
 
         var gettingNewId = true;
         while(gettingNewId) {
@@ -2441,7 +2383,6 @@ $(function () {
                 gettingNewId = false;
             }
         }
-        console.log("Newest id : "+tempViewId);
         return {
             id: prefix + tempViewId,
             name: titlePrefix + tempViewId
@@ -3090,7 +3031,6 @@ $(function () {
         if(page.content[pageType]===undefined){
             pageType = 'view1';
         }
-        console.log('pagetype for rendering'+pageType);
         // var anonToggle = $('#designer-view-mode li[data-view-mode=anon]');
         // if (page.isanon && !dashboard.isUserCustom) {
         //     anonToggle.removeClass('hide');
@@ -3113,17 +3053,14 @@ $(function () {
         var js = JSON.parse(JSON.stringify(page.content));
         var viewLength = Object.keys(js).length;
         var viewKeysArray = Object.keys(js);
-        console.log("Keys array : "+viewKeysArray);
         var tempViewId = 2;
         var prefix = 'view';
         var titlePrefix = 'View ';
-        console.log("Render view: ");
 
         for(var i = 0; i < viewKeysArray.length ; i++){
 
             try {
                 var viewtemp = viewKeysArray[i];
-                console.log(viewtemp);
                 $('#designer-view-mode').append(newView);
                 document.getElementById("new-view-id").setAttribute('data-view-mode', viewtemp);
                 var viewTempName;
@@ -3152,7 +3089,6 @@ $(function () {
                      viewTempName = page.layout.content[viewtemp].name;
                  }
                  document.getElementById("view-name").innerHTML = viewTempName;
-                 console.log("##### set name"+viewTempName);
                  document.getElementById("new-view-id").setAttribute('id', 'nav-tab-' + viewtemp);
                  document.getElementById("view-name").setAttribute('id', viewtemp)
 

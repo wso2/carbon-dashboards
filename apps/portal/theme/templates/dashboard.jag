@@ -28,6 +28,13 @@
         isAnonView = request.getParameter('isAnonView'),
         queryString = request.getQueryString();
 
+    var userRoles = usr.roles();
+
+    if(!user || userRoles===undefined) {
+        //get all views for anon
+        userRoles.push('anon');
+    }
+
     // Get the anon view
     if (!user) {
         if (isAnonView) {
@@ -248,6 +255,11 @@
         <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
+            <div class="form-group hide" id="list-user-views">
+                <select name="select-theme" class="form-control selectpicker dropdown" id="ds-allowed-view-list"
+                data-style="btn-default" data-width="100px">
+                </select>
+            </div>
             <% if(typeof  bgColor === 'undefined'){ %>
                 <div class="container-fluid body-wrapper">
                 <div class="nano" >
@@ -436,9 +448,17 @@
             </form>
         </div>
     </script>
+    <script>
+    X = <%=userRoles%>
+    //["admin", "sub-admin"];
+    </script>
 
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
         {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
+    </script>
+
+    <script id="view-option-hbs" type="text/x-handlebars-template">
+        <option>{{viewName}}</option>
     </script>
 
     <!-- Jquery/Jquery UI JS -->
