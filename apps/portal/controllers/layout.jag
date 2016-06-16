@@ -19,17 +19,18 @@
 
 var assetType = "layout";
 (function () {
-    var utils = require('/modules/utils.js');
     var method = request.getMethod();
+    var utils = require('/modules/utils.js');
     var assets = require('/modules/assets.js');
+    var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
 
     if (!user) {
         sendLogin();
         return;
     }
-
     if (userDomain !== (urlDomain || superDomain)) {
-        response.sendRedirect(utils.tenantedPrefix(urlPrefix, userDomain));
+        response.sendError(401, i18n.localize("designer.access.not.authorized.for.tenant"));
         return;
     }
 

@@ -54,12 +54,12 @@
     "cacheSizeBytes": "1073741824",
     "defaultDashboardRedirect": false,
     "isCreateGadgetEnable": true,
-    "assets" : {
-        "gadget" : {
-            "fileSizeLimit" : 10
+    "assets": {
+        "gadget": {
+            "fileSizeLimit": 5
         },
-        "layout" : {
-            "fileSizeLimit" : 10
+        "layout": {
+            "fileSizeLimit": 1
         }
     },
     "oauth": {

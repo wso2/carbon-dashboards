@@ -85,7 +85,7 @@ var getAsset, getAssets, addAsset, deleteAsset;
      * To delete an asset
      * @param type Type of the asset
      * @param id Id of the asset
-     * @returns {null}
+     * @returns true if the asset is deleted otherwise null
      */
     deleteAsset = function (type, id) {
         var ctx = utils.currentContext();

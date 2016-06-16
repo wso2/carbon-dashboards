@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Functionality of upload gadget is defined in this file
+ * Functionality of upload asset(gadget/layout) is defined in this file
  */
 
 $(function () {
     /**
      * Validate whether the user hase uploaded a zip file.
-     * @returns {*}
+     * @returns true if the asset upload validation succeeds
      * @private
      */
     var validateAssetUpload = function () {
@@ -29,7 +29,6 @@ $(function () {
         var zipFileType = "application/zip";
         var bytesToMB = 1048576;
         var fileSizeLimit = (window.location.pathname.indexOf("gadget") > -1) ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
-
 
         if (!assetFile) {
             showInlineError(selectFileElement, uploadErrorElement, i18n_data_json["select.zip.file.to.upload"]);
@@ -64,31 +63,29 @@ $(function () {
 
 /**
  * Show error style for given element
- * @param1 element
- * @param2 errorElement
- * @param3 message
+ * @param1 {Object} element UI element under which error should be shown
+ * @param2 {Object} errorElement UI error element to show
+ * @param3 {String} message Error message
  * */
 var showInlineError = function (element, errorElement, message) {
-    $('.upload-success').removeClass("show");
-    $('.upload-success').addClass("hide");
+    $('.upload-success').addClass("hide").removeClass("show");
     element.val('');
     element.parent().addClass("has-error");
     element.addClass("has-error");
-    errorElement.removeClass("hide");
-
-    if (message)
+    errorElement.removeClass("hide").addClass("show");
+    if (message) {
         errorElement.html(message);
-    errorElement.addClass("show");
+    }
 };
 
 /**
  * Hide error style for given element
- * @param1 element
- * @param2 errorElement
+ * @param1 {Object} element UI element under which error should be hidden
+ * @param2 {Object} errorElement UI error element to hide
  * */
 var hideInlineError = function (element, errorElement) {
+    $('.upload-success').addClass("hide").removeClass("show");
     element.parent().removeClass("has-error");
     element.removeClass("has-error");
-    errorElement.removeClass("show");
-    errorElement.addClass("hide");
+    errorElement.removeClass("show").addClass("hide");
 };

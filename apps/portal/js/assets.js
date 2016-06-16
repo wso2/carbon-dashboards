@@ -71,8 +71,8 @@ $(function () {
 
     /**
      * Find the gadget using gadget id.
-     * @param id
-     * @return {object}
+     * @param {String} id ID of the asset of interest
+     * @return {object} Asset requested
      * @private
      * */
     var findAsset = function (id) {
@@ -85,8 +85,8 @@ $(function () {
     };
 
     /**
-     * To delete the gadget with the given id
-     * @param id Id of the gadget to be deleted
+     * To delete the asset with the given id
+     * @param {String} id Id of the asset to be deleted
      * @private
      */
     var deleteAsset = function (id) {

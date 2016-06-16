@@ -220,12 +220,12 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
     /**
      * To delete a asset
-     * @param type Type of the asset to be deleted
-     * @param id ID of the asset
+     * @param {String} type Type of the asset to be deleted
+     * @param {String} id ID of the asset
      */
     deleteAsset = function (type, id) {
-        var storeTypes = config.store.types;
-        for (var i = 0; i < storeTypes.length; i++) {
+        var storeTypesLength = config.store.types.length;
+        for (var i = 0; i < storeTypesLength; i++) {
             var specificStore = require(storeExtension(storeTypes[i]));
             var asset = specificStore.deleteAsset(type, id);
             if (asset) {

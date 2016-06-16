@@ -24,18 +24,19 @@ var configs = require('/configs/designer.json');
     errorMessage = request.getParameter("message");
     var possibleErrorMessages = ["success", "confgurationFileMissing", "idAlreadyExists", "fileNotFound",
         "MaxFileLimitExceeded", "notaZipFile"];
+    var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
 
     if (!user) {
         sendLogin();
         return;
     }
-
     if (userDomain !== (urlDomain || superDomain)) {
-        response.sendError(401, 'designer access not authorized of this tenant');
+        response.sendError(401, i18n.localize("designer.access.not.authorized.for.tenant"));
         return;
     }
     if (!utils.allowed(user.roles, configs.designers)) {
-        response.sendError(401, 'designer access not authorized');
+        response.sendError(401, i18n.localize("designer.access.not.authorized"));
         return;
     }
 

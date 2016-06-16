@@ -45,7 +45,7 @@
             contentType: "application/json",
             success: function (data) {
                 cb(false, data);
-            },
+            }
         });
     };
 }());

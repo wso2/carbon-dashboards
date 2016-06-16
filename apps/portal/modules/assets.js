@@ -32,8 +32,9 @@ var addAsset = function (type, fileRequest) {
     var configurationFileName = type + ".json";
     var config = require('/configs/designer.json');
     var bytesToMB = 1048576;
-    var fileSizeLimit = type === "gadget" ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit
-
+    var fileSizeLimit = type === "gadget" ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
+    var log = new Log();
+    
     // Before copying the file to temporary location, check whether the given file exist and
     // the file size and whether it is a zip file
     if (fileRequest === null) {
@@ -65,7 +66,7 @@ var addAsset = function (type, fileRequest) {
 
         for (var entries = fileInZip; entries.hasMoreElements();) {
             var entry = entries.nextElement();
-            if (String(entry.getName().toLowerCase()) === configurationFileName) {
+            if ((entry.getName().toLowerCase() + "") === configurationFileName) {
                 var assetDirectory = new File(assetPath);
                 var files = assetDirectory.listFiles();
 
