@@ -30,6 +30,8 @@ $(function () {
         var bytesToMB = 1048576;
         var fileSizeLimit = (window.location.pathname.indexOf("gadget") > -1) ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
 
+        $('.upload-success').addClass("hide").removeClass("show");
+
         if (!assetFile) {
             showInlineError(selectFileElement, uploadErrorElement, i18n_data_json["select.zip.file.to.upload"]);
             return;
@@ -57,35 +59,7 @@ $(function () {
      * When user clicks browse button, hide the error, if there are any
      */
     $('.browse').on("click", function () {
+        $('.upload-success').addClass("hide").removeClass("show");
         hideInlineError($("#selected-file"), $("#upload-error"));
     });
 });
-
-/**
- * Show error style for given element
- * @param1 {Object} element UI element under which error should be shown
- * @param2 {Object} errorElement UI error element to show
- * @param3 {String} message Error message
- * */
-var showInlineError = function (element, errorElement, message) {
-    $('.upload-success').addClass("hide").removeClass("show");
-    element.val('');
-    element.parent().addClass("has-error");
-    element.addClass("has-error");
-    errorElement.removeClass("hide").addClass("show");
-    if (message) {
-        errorElement.html(message);
-    }
-};
-
-/**
- * Hide error style for given element
- * @param1 {Object} element UI element under which error should be hidden
- * @param2 {Object} errorElement UI error element to hide
- * */
-var hideInlineError = function (element, errorElement) {
-    $('.upload-success').addClass("hide").removeClass("show");
-    element.parent().removeClass("has-error");
-    element.removeClass("has-error");
-    errorElement.removeClass("show").addClass("hide");
-};

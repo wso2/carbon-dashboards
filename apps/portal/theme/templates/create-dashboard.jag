@@ -168,6 +168,7 @@
     <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
     <script src="<%=urlPrefix%>js/ues.js"></script>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
+    <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
     <script src="<%=urlPrefix%>js/create.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 </body>

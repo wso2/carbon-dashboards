@@ -293,6 +293,7 @@
 <script src="<%=urlPrefix%>js/VizGrammar.min.js"></script>
 <script src="<%=urlPrefix%>js/charts.js"></script>
 <script src="<%=urlPrefix%>js/carbon-analytics.js"></script>
+<script src="<%=urlPrefix%>js/show-hide-error.js"></script>
 <script src="<%=urlPrefix%>js/wizard.js"></script>
 <script src="<%=urlPrefix%>js/outputAdapterUiLibrary.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>

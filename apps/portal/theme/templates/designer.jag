@@ -881,6 +881,7 @@
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
     <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
     <script src="<%=urlPrefix%>js/designer.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>

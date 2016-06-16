@@ -135,6 +135,9 @@
         var config = <%= configs%>;
 
        $(document).ready(function() {
+            <% if (errorMessage) { %>
+                $('.upload-success').addClass("hide").removeClass("show");
+            <% } %>
             <% if (errorMessage === "fileNotFound") { %>
                 showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("select.zip.file.to.upload")%>");
             <% } else if (errorMessage === "confgurationFileMissing") { %>
@@ -153,6 +156,7 @@
 
     <script src="<%=urlPrefix%>js/ues.js"></script>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
+    <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
     <script src="<%=urlPrefix%>js/upload-asset.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
