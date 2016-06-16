@@ -334,7 +334,8 @@
             </div>
 
             <div class="page-content">
-
+                <div class="view-container1" style="">
+                <div style="display:inline-block;margin:5px;height:50px">
                 <ul class="nav nav-tabs" id="designer-view-mode">
 
                     <!--<li role="dashboard-view" data-view-mode="default" class="active">-->
@@ -361,14 +362,15 @@
                     <!--</li>-->
 
                 </ul>
-
-                <div>
+                </div>
+                <div class ="ds-add-view-btn" style="display:inline-block;margin:5px;position:relative;top:-25px;">
                     <button id="add-view">
-                            <span class="fw-stack">
+                            <span class="fw-stack" >
                                 <i class="fw fw-add fw-stack-1x"></i>
                                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                             </span>
                     </button>
+                </div>
                 </div>
                 <div class="nano">
                     <div class="gird-guide">
