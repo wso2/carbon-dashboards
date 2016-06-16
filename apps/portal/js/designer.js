@@ -749,7 +749,6 @@ $(function () {
                 page.layout.content[newViewId] = viewLayoutContent;
                 saveDashboard();
 
-
             var viewContent = page.content[text];
             page.content[newViewId] = viewContent;
             saveDashboard();
@@ -758,7 +757,7 @@ $(function () {
 
             $('button[data-target=#left-sidebar]').click();
             renderPage(page.id);
-            $('#designer-view-mode li[data-view-mode='+newViewId+'] a').click();
+            $('#designer-view-mode li[data-view-mode='+newViewId+']').click();
 
         });
 
@@ -962,7 +961,6 @@ $(function () {
             showConfirm('Deleting the view',
                 'This will remove the view and all its content. Do you want to continue?',
                 function () {
-
                     var viewId = getViewId(tempName);
                     if(viewId===null || viewId===undefined){
                         viewId = tempName;
@@ -973,6 +971,7 @@ $(function () {
                         viewId = 'default';
                     }
                     delete page.content[viewId];
+                    saveDashboard();
                     renderPage(page.id);
                 });
         });
@@ -1084,8 +1083,7 @@ $(function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-compone' +
-                        'nt-box');
+                    var componentBox = that.closest('.ues-component-box');
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
 
@@ -2284,6 +2282,7 @@ $(function () {
             ues.global.dbType = pageType;
             loadGadgetsWithViewRoles(pageType);
             switchPage(getPageId(), currentPageType);
+           // $('#designer-view-mode li[data-view-mode='+pageType+']').click();
         });
     };
 
@@ -2356,7 +2355,7 @@ $(function () {
 
             $('button[data-target=#left-sidebar]').click();
             renderPage(page.id);
-            $('#designer-view-mode li[data-view-mode='+newViewId+'] a').click();
+            $('#designer-view-mode li[data-view-mode='+newViewId+']').click();
         });
         loadLayouts();
         //$('#left-sidebar').hide();
@@ -2991,9 +2990,9 @@ $(function () {
         $('#designer-view-mode').empty();
         $('.gadgets-grid').empty();
         gadgetIds = undefined;
-        if(page!==undefined){
-        console.log("RENDER PAGE:" + JSON.parse(JSON.stringify(page.layout.content)));
-        }
+        // if(page!==undefined){
+        // console.log("RENDER PAGE:" + JSON.parse(JSON.stringify(page.layout.content)));
+        // }
         // if no pages found, display a message
         if (!dashboard.pages.length) {
 
@@ -3077,7 +3076,6 @@ $(function () {
                 // }
                  if((viewKeysArray[i] === 'loggedIn') || (viewKeysArray[i] === 'default')){
                      if(page.layout.content['loggedIn'].name===undefined){
-                         console.log('Name undefined****');
                          viewTempName = 'loggedIn';
                       } else{
                           viewTempName = page.layout.content['loggedIn'].name;
