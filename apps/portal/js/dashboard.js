@@ -229,8 +229,6 @@ $(function () {
                     var selectedView = $('#ds-allowed-view-list option:selected').text();
                     console.log('click on view'+this.selectedOptions + page.id);
                     selectedView = selectedView.trim();
-                    selectedView = 'view2';
-                    //$('.gadgets-grid').empty();
                     ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, selectedView, function () {
                         console.log('in view rendering');
                         $('.ues-component-box .ues-component').each(function () {
