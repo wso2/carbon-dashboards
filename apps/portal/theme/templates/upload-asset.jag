@@ -108,11 +108,11 @@
             </div>
         </div>
     </div>
+
     <!-- Footer -->
     <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
     <!-- Jquery JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
-
     <!-- Bootstrap JS -->
     <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
 
@@ -121,17 +121,28 @@
 
     <!-- Theme WSO2 JS -->
     <script src="<%=urlPrefix%>libs/theme-wso2_1.0/js/theme-wso2.js"></script>
-
     <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
-    <script src="<%=urlPrefix%>js/ues.js"></script>
-    <script src="<%=urlPrefix%>js/ues-store.js"></script>
-    <script src="<%=urlPrefix%>js/upload-asset.js"></script>
-    <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
     <script>
+       var i18n_data = '{ ' +
+                        ' "select.zip.file.to.upload" : "<%= i18n.localize("select.zip.file.to.upload")%>",' +
+                        ' "file.format.is.not.supported" : "<%= i18n.localize("file.format.is.not.supported")%>",' +
+                        ' "file.size.exceeded" : "<%= i18n.localize("file.size.exceeded")%>"' +
+                        ' }';
+        var i18n_data_json = JSON.parse(i18n_data);
+
+
+        var config = <%= configs%>;
+
        $(document).ready(function() {
-            <% if (errorMessage === "confgurationFileMissing") { %>
-                showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize(assetType+".configuration.file.missing")%>")
+            <% if (errorMessage === "fileNotFound") { %>
+                showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("select.zip.file.to.upload")%>");
+            <% } else if (errorMessage === "confgurationFileMissing") { %>
+                showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize(assetType+".configuration.file.missing")%>");
+            <% } else if (errorMessage === "notaZipFile") { %>
+            showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("select.zip.file.to.upload")%> <%= i18n.localize("file.format.is.not.supported")%>");
+            <% } else if (errorMessage === "MaxFileLimitExceeded") { %>
+                showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("file.size.exceeded")%>");
             <% } else if (errorMessage === "idAlreadyExists") { %>
                  showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize(assetType+".exist")%>");
             <% } else if (errorMessage === "success") { %>
@@ -139,5 +150,11 @@
             <% } %>
         });
     </script>
+
+    <script src="<%=urlPrefix%>js/ues.js"></script>
+    <script src="<%=urlPrefix%>js/ues-store.js"></script>
+    <script src="<%=urlPrefix%>js/upload-asset.js"></script>
+    <% include('/controllers/includes/theme-portal-scripts.jag'); %>
+
 </body>
 </html>

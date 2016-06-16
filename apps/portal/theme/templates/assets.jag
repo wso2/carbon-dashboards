@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <title><%= i18n.localize("gadgets")%></title>
+    <title><%= i18n.localize(assetType+"s")%></title>
     <% var config = require('/configs/designer.json'); %>
 </head>
 <body>

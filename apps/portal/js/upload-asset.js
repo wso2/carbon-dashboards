@@ -17,7 +17,6 @@
  */
 
 $(function () {
-
     /**
      * Validate whether the user hase uploaded a zip file.
      * @returns {*}
@@ -28,13 +27,19 @@ $(function () {
         var uploadErrorElement = $("#upload-error");
         var assetFile = selectFileElement[0].files[0];
         var zipFileType = "application/zip";
+        var bytesToMB = 1048576;
+        var fileSizeLimit = (window.location.pathname.indexOf("gadget") > -1) ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
+
 
         if (!assetFile) {
-            showInlineError(selectFileElement, uploadErrorElement, "Please selet a zip file to upload");
+            showInlineError(selectFileElement, uploadErrorElement, i18n_data_json["select.zip.file.to.upload"]);
             return;
-        }
-        if (assetFile.type !== zipFileType) {
-            showInlineError(selectFileElement, uploadErrorElement, "Please select a zip file to upload. " + assetFile.type + " format is not supported");
+        } else if (assetFile.type !== zipFileType) {
+            showInlineError(selectFileElement, uploadErrorElement, i18n_data_json["select.zip.file.to.upload"] + " " +
+                assetFile.type + " " + i18n_data_json["file.format.is.not.supported"]);
+            return;
+        } else if (assetFile.size / bytesToMB > fileSizeLimit) {
+            showInlineError(selectFileElement, uploadErrorElement, i18n_data_json["file.size.exceeded"]);
             return;
         }
         return true;

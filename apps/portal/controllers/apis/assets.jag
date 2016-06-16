@@ -35,7 +35,6 @@
     var store = utils.store();
     var assetType = request.getParameter('type');
     var method = request.getMethod();
-    var isDelete = request.getParameter('delete');
 
     response.contentType = 'application/json';
 
@@ -69,7 +68,6 @@
                 response.sendError(404, JSON.stringify({
                     error: true
                 }));
-                return;
             }
             return;
         }

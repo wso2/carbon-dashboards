@@ -103,7 +103,6 @@ $(function () {
      * @private
      * */
     var initUI = function () {
-        console.log(window.location);
         var portal = $('#ds-assets-portal');
         portal.on('click', '.ds-assets .ds-asset-trash-handle', function (e) {
             e.preventDefault();

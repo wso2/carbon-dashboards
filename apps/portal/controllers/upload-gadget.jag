@@ -19,8 +19,12 @@
 
 var errorMessage;
 var assetType = "gadget";
+var configs = require('/configs/designer.json');
 (function () {
     errorMessage = request.getParameter("message");
+    var possibleErrorMessages = ["success", "confgurationFileMissing", "idAlreadyExists", "fileNotFound",
+        "MaxFileLimitExceeded", "notaZipFile"];
+
     if (!user) {
         sendLogin();
         return;
@@ -30,17 +34,19 @@ var assetType = "gadget";
         response.sendError(401, 'designer access not authorized of this tenant');
         return;
     }
-
-    var configs = require('/configs/designer.json');
-
     if (!utils.allowed(user.roles, configs.designers)) {
         response.sendError(401, 'designer access not authorized');
         return;
     }
 
     // Sanitize the input before passing it to the template file
-    if (!(errorMessage === "success" || errorMessage === "confgurationFileMissing" || errorMessage === "idAlreadyExists")) {
-        errorMessage = null;
+    for (var index = 0; index < possibleErrorMessages.length; index++) {
+        if (errorMessage === possibleErrorMessages[index]) {
+            break;
+        }
+        if (index === possibleErrorMessages.length - 1) {
+            errorMessage = null;
+        }
     }
 
     include(utils.resolvePath('templates/upload-asset.jag'));

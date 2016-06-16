@@ -25,12 +25,28 @@
 var addAsset = function (type, fileRequest) {
     var tempAssetPath = '/store/' + userDomain + '/fs/temp-' + type + '/';
     var ZipFile = Packages.java.util.zip.ZipFile;
+    var zipExtension = ".zip";
     var process = require('process');
     var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal' + tempAssetPath;
     var assetPath = '/store/' + userDomain + '/fs/' + type + '/';
     var configurationFileName = type + ".json";
+    var config = require('/configs/designer.json');
+    var bytesToMB = 1048576;
+    var fileSizeLimit = type === "gadget" ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit
 
-    var fileName = fileRequest.getName().replace(".zip", "");
+    // Before copying the file to temporary location, check whether the given file exist and
+    // the file size and whether it is a zip file
+    if (fileRequest === null) {
+        return 'fileNotFound';
+    } else if (fileRequest.getLength() / bytesToMB > fileSizeLimit) {
+        return 'MaxFileLimitExceeded';
+    } else if (fileRequest.getName().indexOf(zipExtension) < 0) {
+        return 'notaZipFile';
+    }
+
+    // If it passes all the initial validations remove the zip file extensions to avoid the zip file being deployed
+    // before other validations
+    var fileName = fileRequest.getName().replace(zipExtension, "");
     var tempDirectory = new File(tempAssetPath);
 
     if (!tempDirectory.isExists()) {
@@ -50,8 +66,8 @@ var addAsset = function (type, fileRequest) {
         for (var entries = fileInZip; entries.hasMoreElements();) {
             var entry = entries.nextElement();
             if (String(entry.getName().toLowerCase()) === configurationFileName) {
-                var gadgetDirectory = new File(assetPath);
-                var files = gadgetDirectory.listFiles();
+                var assetDirectory = new File(assetPath);
+                var files = assetDirectory.listFiles();
 
                 // Check whether is there is another asset with same id
                 for (var index = 0; index < files.length; index++) {
@@ -60,7 +76,7 @@ var addAsset = function (type, fileRequest) {
                         return 'idAlreadyExists';
                     }
                 }
-                // If there is a configuration file and no other assets with same id, deploy the gadget
+                // If there is a configuration file and no other assets with same id, deploy the asset
                 var assetDir = new File(assetPath + fileRequest.getName());
                 assetDir.open('w');
                 assetDir.write(fileRequest.getStream());

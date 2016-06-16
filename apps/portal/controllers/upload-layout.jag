@@ -19,28 +19,33 @@
 
 var errorMessage;
 var assetType = "layout";
+var configs = require('/configs/designer.json');
 (function () {
     errorMessage = request.getParameter("message");
+    var possibleErrorMessages = ["success", "confgurationFileMissing", "idAlreadyExists", "fileNotFound",
+        "MaxFileLimitExceeded", "notaZipFile"];
+
     if (!user) {
         sendLogin();
         return;
     }
-
     if (userDomain !== (urlDomain || superDomain)) {
         response.sendError(401, 'designer access not authorized of this tenant');
         return;
     }
-
-    var configs = require('/configs/designer.json');
-
     if (!utils.allowed(user.roles, configs.designers)) {
         response.sendError(401, 'designer access not authorized');
         return;
     }
 
-    // Sanitize the input before sending it to template file
-    if (!(errorMessage === "idAlreadyExists" || errorMessage === "success" || errorMessage === "confgurationFileMissing")) {
-        errorMessage = null;
+    // Sanitize the input before passing it to the template file
+    for (var index = 0; index < possibleErrorMessages.length; index++) {
+        if (errorMessage === possibleErrorMessages[index]) {
+            break;
+        }
+        if (index === possibleErrorMessages.length - 1) {
+            errorMessage = null;
+        }
     }
 
     include(utils.resolvePath('templates/upload-asset.jag'));
