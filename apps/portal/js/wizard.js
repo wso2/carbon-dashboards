@@ -13,41 +13,13 @@ var defaultTableColumns = [];
 
 var PROVIDER_LOCATION = 'extensions/providers/';
 var CHART_LOCATION = 'extensions/chart-templates/';
-var WIZARD_JS_LOCATION = '/wizard-js/';
+var WIZARD_LIB_LOCATION = '/wizard-libs/';
 
 var PROVIDER_CONF = 'provider-conf';
 var PROVIDER_NAME = 'provider-name'
 var CHART_CONF = 'chart-conf';
 var CHART_NAME = 'chart-name';
 
-/**
- * Show error style for given element
- * @param1 element
- * @param2 errorElement
- * @private
- * */
-var showInlineError = function (element, errorElement, message) {
-    element.val('');
-    element.parent().addClass("has-error");
-    element.addClass("has-error");
-    errorElement.removeClass("hide");
-    if (message != null)
-        errorElement.html(message);
-    errorElement.addClass("show");
-};
-
-/**
- * Hide error style for given element
- * @param1 element
- * @param2 errorElement
- * @private
- * */
-var hideInlineError = function (element, errorElement) {
-    element.parent().removeClass("has-error");
-    element.removeClass("has-error");
-    errorElement.removeClass("show");
-    errorElement.addClass("hide");
-};
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
@@ -305,11 +277,20 @@ function registerAdvancedProviderUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
-                var wizardJsList = config[key]['wizardJs'];
-                for (var i in wizardJsList){
-                     var js = document.createElement('script');
-                     js.src = PROVIDER_LOCATION + provider + WIZARD_JS_LOCATION + wizardJsList[i];
-                     document.body.appendChild(js);
+                if (config[key]['wizard-imports']) {
+                    var wizardCssList = config[key]['wizard-imports']["css"];
+                    for (var i in wizardCssList) {
+                        var link = document.createElement('link')
+                        link.rel = 'stylesheet';
+                        link.href = PROVIDER_LOCATION + provider + WIZARD_LIB_LOCATION + wizardCssList[i];
+                        document.body.appendChild(link);
+                    }
+                    var wizardJsList = config[key]['wizard-imports']["js"];
+                    for (var i in wizardJsList) {
+                        var js = document.createElement('script');
+                        js.src = PROVIDER_LOCATION + provider + WIZARD_LIB_LOCATION + wizardJsList[i];
+                        document.body.appendChild(js);
+                    }
                 }
                 var data = {
                     "provider": provider,
@@ -381,11 +362,20 @@ function registerAdvancedChartUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
-                var wizardJsList = config[key]['wizardJs'];
-                for (var i in wizardJsList){
-                    var js = document.createElement('script');
-                    js.src = CHART_LOCATION + chartType + WIZARD_JS_LOCATION + wizardJsList[i];
-                    document.body.appendChild(js);
+                if (config[key]['wizard-imports']) {
+                    var wizardCssList = config[key]['wizard-imports']["css"];
+                    for (var i in wizardCssList) {
+                        var link = document.createElement('link')
+                        link.rel = 'stylesheet';
+                        link.href = CHART_LOCATION + chartType + WIZARD_LIB_LOCATION+ wizardCssList[i];
+                        document.body.appendChild(link);
+                    }
+                    var wizardJsList = config[key]['wizard-imports']["js"];
+                    for (var i in wizardJsList) {
+                        var js = document.createElement('script');
+                        js.src = CHART_LOCATION + chartType + WIZARD_LIB_LOCATION + wizardJsList[i];
+                        document.body.appendChild(js);
+                    }
                 }
                 var data = {
                     "chartType": chartType,
