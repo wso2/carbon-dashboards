@@ -174,7 +174,9 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
     height: 18px;
 }
 
-
+.nav-tabs>li.active{
+    background: #f5f5f5;
+}
 
 .page-content-wrapper.fixed .sidebar-wrapper.sidebar-nav, .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
     width: 250px;

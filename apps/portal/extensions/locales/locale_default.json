@@ -168,5 +168,9 @@
     "shared.dashboards" : "Shared Dashboards",
     "tenant.dashboards" : "Tenant Specific Dashboards",
     "shared.by.supertenant" : "Shared By Super-Tenant",
-    "share.information.message" : "This dashboard is visible to all the tenants"
+    "share.information.message" : "This dashboard is visible to all the tenants",
+    "create.new.view": "Create New view",
+    "copy.existing.view": "Copy Existing View",
+    "available.views": "Available Views",
+    "new.view": "New View"
 }
