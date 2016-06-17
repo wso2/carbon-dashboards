@@ -37,4 +37,15 @@
             cb(false, data);
         }, 'json');
     };
+
+    store.deleteAsset = function (type, id, cb) {
+        $.ajax({
+            url: assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            method: "DELETE",
+            contentType: "application/json",
+            success: function (data) {
+                cb(false, data);
+            }
+        });
+    };
 }());
