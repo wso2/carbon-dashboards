@@ -26,6 +26,8 @@
     var destination = request.getParameter("destination");
     var referer = request.getHeader("referer");
     var ignoreReferer = request.getParameter("ignoreReferer");
+    var carbon = require('carbon');
+    var superTenant = carbon.server.superTenant;
 
     if (destination) {
         referer = destination;
@@ -41,7 +43,7 @@
 
     var encodedSAMLAuthRequest;
     if(attr.responseSigningEnabled){
-        encodedSAMLAuthRequest = sso.client.getEncodedSignedSAMLAuthRequest(attr.issuer, attr.identityProviderURL, attr.acs, false, -1234, 'carbon.super', attr.defaultNameIDPolicy);
+        encodedSAMLAuthRequest = sso.client.getEncodedSignedSAMLAuthRequest(attr.issuer, attr.identityProviderURL, attr.acs, attr.isPassive, superTenant.tenantId, superTenant.domain, attr.defaultNameIDPolicy);
     } else {
         encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
     }
