@@ -162,9 +162,9 @@ $(function () {
 
     var gadgetComponentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
 
-    //var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
+    var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
 
-    //var newView = Handlebars.compile($('#add-new-view-hds').html());
+    var newViewHbs = Handlebars.compile($('#add-new-view-hds').html());
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
@@ -260,6 +260,7 @@ $(function () {
         var propertiesContainer = $('#gadget-configuration');//$('.ues-component-properties-container');
         dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
         propertiesContainer.empty();
+        $('#view-configuration').empty();
         propertiesContainer
             .html(gadgetComponentPropertiesHbs(ctx))
             .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
@@ -733,7 +734,6 @@ $(function () {
         designer.on('click', '.option li', function () {
             var text = $(this).children().text();
             $('#view-layout-select .selected').text(text);
-
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
@@ -761,8 +761,11 @@ $(function () {
 
         });
 
-       // $('.ues-view-component-properties-handle').on('click', function () {
         $('#designer-view-mode').on('click', '.ues-view-component-properties-handle', function () {
+
+            // if ($('#right-sidebar').hasClass('toggled')) {
+            //     $('.close-sidebar[data-target="#right-sidebar"]').click();
+            // }
 
             //init
             var currentPageType = pageType;
@@ -777,8 +780,9 @@ $(function () {
                 viewId = tempName;
             }
             pageType = viewId;
+            $('#designer-view-mode li').removeClass('active');
+            $('#designer-view-mode li[data-view-mode='+pageType+']').addClass('active');
 
-            var mode = viewId;
             // if (mode === 'default') {
             //     pageType = DEFAULT_DASHBOARD_VIEW;
             //     ues.global.type = DEFAULT_DASHBOARD_VIEW;
@@ -795,7 +799,8 @@ $(function () {
 
             //buildViewPropertiesContext(component, page);
 
-            var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
+            //var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
+            $('#gadget-configuration').empty();
             $('#view-configuration').empty();
             $('#view-configuration').html(viewComponentPropertiesHbs(ctx)).on('keypress', function (event) {
                 if(event.keyCode===13 || event.which===13){
@@ -806,11 +811,13 @@ $(function () {
                     temp = temp.trim();
                     if(page.layout.content[viewId].name === undefined){
                         page.layout.content[viewId].name = temp;
-                        // if(page.layout.content[viewId].id === undefined){
-                        //     console.log('no view id');
-                        //     var tempId = temp.replace(/\s/g, '');
-                        //     page.layout.content[viewId].id = tempId;
-                        // }
+                        if(page.layout.content[viewId].roles===undefined){
+                            if(viewId==='anon'){
+                                page.layout.content[viewId].roles = ['Anonymous'];
+                            }else{
+                                page.layout.content[viewId].roles = ['Internal/everyone'];
+                            }
+                        }
                     } else {
                         page.layout.content[viewId].name = temp;
                     }
@@ -932,7 +939,6 @@ $(function () {
                 viewer($(this), role.name, viewId);
             });
 
-
             $('#right-sidebar').toggleClass("toggled");
         });
 
@@ -958,14 +964,18 @@ $(function () {
         $('#designer-view-mode').on('click', '.ues-trash-handle', function () {
             var tempName = this.parentElement.parentElement.parentElement.textContent;
             tempName = tempName.trim();
+            var viewId = getViewId(tempName);
+            if(viewId===null || viewId===undefined){
+                viewId = tempName;
+            }
+            pageType = viewId;
+            $('#designer-view-mode li').removeClass('active');
+            $('#designer-view-mode li[data-view-mode='+pageType+']').addClass('active');
+
             showConfirm('Deleting the view',
                 'This will remove the view and all its content. Do you want to continue?',
                 function () {
-                    var viewId = getViewId(tempName);
-                    if(viewId===null || viewId===undefined){
-                        viewId = tempName;
-                    }
-                    pageType = viewId;
+
                     delete page.layout.content[viewId];
                     if(viewId==='loggedIn'){
                         viewId = 'default';
@@ -1435,23 +1445,22 @@ $(function () {
         };
     };
 
+    /**
+     * Returns view id when the view name is given
+     * @param viewName View name
+     * @returns {String} View id
+     */
     var getViewId = function (viewName) {
-        var layoutContent = page.layout.content;
-        var js = JSON.parse(JSON.stringify(page.layout.content));
-        var array = Object.keys(js);
-        viewName = viewName.trim();
+        var viewArray = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+        var viewArrayLength = viewArray.length;
 
-        for(var i = 0; i <array.length; i++){
-
-            if(page.layout.content[array[i]].name !== undefined) {
-                if(page.layout.content[array[i]].name === viewName) {
-                    return array[i];
+        for (var i = 0; i < viewArrayLength; i++) {
+            if (page.layout.content[viewArray[i]].name !== undefined) {
+                if (page.layout.content[viewArray[i]].name === viewName) {
+                    return viewArray[i];
                 }
-            } else {
-                console.log('Name Not defined for the view');
             }
         }
-
         return null;
     };
     /**
@@ -2153,7 +2162,6 @@ $(function () {
             paging.loading = false;
 
             if (err) {
-                console.log('error...');
                 return;
             }
 
@@ -2166,7 +2174,6 @@ $(function () {
             paging.end = !data.length;
             data = filterValidGadgets(type, viewId);
             // if (!fresh) {
-            //     console.log('Not fresh');
             //     assets.append(componentsListHbs({
             //         type: type,
             //         assets: data,
@@ -2266,6 +2273,9 @@ $(function () {
     var initDesigner = function () {
 
         $('#designer-view-mode').on('click', 'li', function () {
+            if ($('#right-sidebar').hasClass('toggled')) {
+                $('.close-sidebar[data-target="#right-sidebar"]').click();
+            }
             var currentPageType = pageType;
             var mode = $(this).data('view-mode');
             if (mode === 'default') {
@@ -2283,6 +2293,8 @@ $(function () {
             loadGadgetsWithViewRoles(pageType);
             switchPage(getPageId(), currentPageType);
            // $('#designer-view-mode li[data-view-mode='+pageType+']').click();
+            $('#designer-view-mode li').removeClass('active');
+            $('#designer-view-mode li[data-view-mode='+pageType+']').addClass('active');
         });
     };
 
@@ -2865,6 +2877,7 @@ $(function () {
                 renderPage(id, done);
             }
         }, 'html');
+        loadGadgetsWithViewRoles('view1');
     };
 
     /**
@@ -2990,9 +3003,6 @@ $(function () {
         $('#designer-view-mode').empty();
         $('.gadgets-grid').empty();
         gadgetIds = undefined;
-        // if(page!==undefined){
-        // console.log("RENDER PAGE:" + JSON.parse(JSON.stringify(page.layout.content)));
-        // }
         // if no pages found, display a message
         if (!dashboard.pages.length) {
 
@@ -3046,9 +3056,6 @@ $(function () {
         // }
 
 
-        var newView = Handlebars.compile($('#add-new-view-hds').html());
-
-
         var js = JSON.parse(JSON.stringify(page.content));
         var viewLength = Object.keys(js).length;
         var viewKeysArray = Object.keys(js);
@@ -3060,7 +3067,7 @@ $(function () {
 
             try {
                 var viewtemp = viewKeysArray[i];
-                $('#designer-view-mode').append(newView);
+                $('#designer-view-mode').append(newViewHbs);
                 document.getElementById("new-view-id").setAttribute('data-view-mode', viewtemp);
                 var viewTempName;
 
@@ -3082,13 +3089,17 @@ $(function () {
                       }
 
                  } else if(viewKeysArray[i] === 'anon') {
-                     viewTempName = 'Anon';
+                     viewTempName = 'Anonymous View';
                  } else{
                      viewTempName = page.layout.content[viewtemp].name;
                  }
                  document.getElementById("view-name").innerHTML = viewTempName;
                  document.getElementById("new-view-id").setAttribute('id', 'nav-tab-' + viewtemp);
                  document.getElementById("view-name").setAttribute('id', viewtemp)
+                if(i===0){
+                    $('#designer-view-mode li').removeClass('active');
+                    $('#designer-view-mode li[data-view-mode='+viewtemp+']').addClass('active');
+                }
 
             }catch(Exception){
                 console.log("View not available "+viewtemp);
@@ -3166,6 +3177,7 @@ $(function () {
         updatePagesList();
         updateMenuList();
         initBanner();
+
     };
 
     /**

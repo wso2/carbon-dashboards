@@ -21,6 +21,11 @@ $(function () {
      */
     var DASHBOARD_DEFAULT_VIEW = 'default';
     /**
+     * Dashboard anonymous view mode
+     * @const
+     */
+    var DASHBOARD_ANON_VIEW = 'anon';
+    /**
      * Gadget full screen mode.
      * @const
      */
@@ -41,6 +46,8 @@ $(function () {
      * @const
      */
     var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
+    var DEFAULT_VIEW_NAME = 'Default View';
+    var ANON_VIEW_NAME = 'Anonymous View';
     
     var page;
     /**
@@ -49,6 +56,7 @@ $(function () {
     var componentToolbarHbs = Handlebars.compile($('#ues-component-actions-hbs').html());
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
     var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
+    var viewOptionHbs = Handlebars.compile($("#view-option-hbs").html());
 
     /**
      * Initializes the component toolbar.
@@ -211,56 +219,106 @@ $(function () {
         }
     };
 
+    /**
+     * Returns the list of allowed views for the current user
+     * @param page Current page
+     * @returns {Array} List of allowe roles
+     */
     var gerUserAllowedViews = function (page) {
-        var viewOptionHbs = Handlebars.compile($("#view-option-hbs").html());
         $('#ds-allowed-view-list').empty();
-        var allowedViews = [];//['view1'];
+        var allowedViews = [];
         var pageViews = JSON.parse(JSON.stringify(page.content));
-        var viewsLength = Object.keys(pageViews).length;
         var viewKeysArray = Object.keys(pageViews);
-        for(var i=0; i<viewsLength; i++){
+        var viewsArrayLength = viewKeysArray.length;
+
+        for (var i = 0; i < viewsArrayLength; i++) {
             var viewRoles = page.layout.content[viewKeysArray[i]].roles;
-            if(isValidView(viewRoles)){
+            if (viewRoles === undefined) {
+                if (viewKeysArray[i] === 'loggedIn') {
+                    viewRoles = ["Internal/everyone"];
+                } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
+                    viewRoles = ["Anonymous"];
+                }
+            }
+            if (isAllowedView(viewRoles)) {
                 allowedViews.push(viewKeysArray[i]);
+                var tempViewName = page.layout.content[viewKeysArray[i]].name;
+                if (tempViewName === undefined) {
+                    if (viewKeysArray[i] === 'loggedIn') {
+                        tempViewName = DEFAULT_VIEW_NAME;
+                    } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
+                        tempViewName = ANON_VIEW_NAME;
+                    }
+                }
                 var viewOption = {
-                    viewName: viewKeysArray[i]
+                    viewName: tempViewName
                 };
                 $('#ds-allowed-view-list').append(viewOptionHbs(viewOption)).on('click option', function () {
                     var selectedView = $('#ds-allowed-view-list option:selected').text();
-                    console.log('click on view'+this.selectedOptions + page.id);
                     selectedView = selectedView.trim();
-                    ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, selectedView, function () {
-                        console.log('in view rendering');
-                        $('.ues-component-box .ues-component').each(function () {
-                            var component = ues.dashboards.findComponent($(this).attr('id'),page);
-                            renderComponentToolbar(component);
+                    var selectedViewId = getViewId(selectedView);
+                    if (selectedViewId === null) {
+                        if (viewKeysArray[i] === DEFAULT_VIEW_NAME) {
+                            selectedViewId = DASHBOARD_DEFAULT_VIEW;
+                        } else if (viewKeysArray[i] === ANON_VIEW_NAME) {
+                            selectedViewId = DASHBOARD_ANON_VIEW;
+                        }
+                    }
+                    ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, selectedViewId,
+                        function () {
+                            $('.ues-component-box .ues-component').each(function () {
+                                var component = ues.dashboards.findComponent($(this).attr('id'), page);
+                                renderComponentToolbar(component);
+                            });
+                            $('.grid-stack').gridstack({
+                                width: 12,
+                                cellHeight: 50,
+                                verticalMargin: 30,
+                                disableResize: true,
+                                disableDrag: true,
+                            });
                         });
-                        $('.grid-stack').gridstack({
-                            width: 12,
-                            cellHeight: 50,
-                            verticalMargin: 30,
-                            disableResize: true,
-                            disableDrag: true,
-                        });
-                    });
                 });
             }
         }
         return allowedViews;
     };
 
+    /**
+     * Returns view id when the view name is given
+     * @param viewName View name
+     * @returns {String} View id
+     */
+    var getViewId = function (viewName) {
+        var viewArray = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+        var viewArrayLength = viewArray.length;
 
-    var isValidView = function (viewRoles) {
-        var usrRoles = X;
-        var userRolesLength = usrRoles.length;
-        if(viewRoles===undefined){
-            viewRoles = ["Internal/everyone"];
+        for (var i = 0; i < viewArrayLength; i++) {
+            if (page.layout.content[viewArray[i]].name !== undefined) {
+                if (page.layout.content[viewArray[i]].name === viewName) {
+                    return viewArray[i];
+                }
+            }
+        }
+        return null;
+    };
+
+    /**
+     * Check whether a view is allowed for the current user
+     * according to his/her list of roles
+     * @param viewRoles Allowed roles list for the view
+     * @returns {boolean} View is allowed or not
+     */
+    var isAllowedView = function (viewRoles) {
+        var userRolesLength = userRolesList.length;
+        if (viewRoles === undefined) {
+
         }
         var viewRolesLength = viewRoles.length;
-        for(var i=0; i<userRolesLength; i++){
-            var tempUserRole = usrRoles[i];
-            for(var j=0; j<viewRolesLength;j++){
-                if(viewRoles[j]===tempUserRole){
+        for (var i = 0; i < userRolesLength; i++) {
+            var tempUserRole = userRolesList[i];
+            for (var j = 0; j < viewRolesLength; j++) {
+                if (viewRoles[j] === tempUserRole) {
                     return true;
                 }
             }
@@ -304,15 +362,14 @@ $(function () {
             }
         }
         var allowedViews = gerUserAllowedViews(page);
-        console.log(allowedViews);
-        if(allowedViews.length>0){
+        if (allowedViews.length > 0) {
             ues.global.dbType = allowedViews[0];
         }
-        if(allowedViews.length >1){
+        //if there is more than one view, enable dropdown list
+        if (allowedViews.length > 1) {
             $('#list-user-views').removeClass("hide");
             $('#list-user-views').removeClass("show");
         }
-        //ues.global.dbType = 'view2';
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {

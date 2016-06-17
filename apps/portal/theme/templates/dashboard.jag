@@ -29,10 +29,8 @@
         queryString = request.getQueryString();
 
     var userRoles = usr.roles();
-
-    if(!user || userRoles===undefined) {
-        //get all views for anon
-        userRoles.push('anon');
+    if(!user || userRoles === undefined) {
+        userRoles.push('Anonymous');
     }
 
     // Get the anon view
@@ -448,15 +446,13 @@
             </form>
         </div>
     </script>
-    <script>
-    X = <%=userRoles%>
-    //["admin", "sub-admin"];
-    </script>
 
+    <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
         {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
     </script>
 
+    <!-- View options for a particular page -->
     <script id="view-option-hbs" type="text/x-handlebars-template">
         <option>{{viewName}}</option>
     </script>
@@ -499,6 +495,10 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-ajax-api')%>"></script>
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
+
+    <script>
+        var userRolesList = <%= userRoles %>;
+    </script>
 
     <script>
         

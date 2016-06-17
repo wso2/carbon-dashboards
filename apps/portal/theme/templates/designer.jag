@@ -60,14 +60,6 @@
                     <ul class="nav navbar-nav">
                         <% if(! dashboard.isUserCustom) { %>
                         <% if(configs.isCreateGadgetEnable){%>
-                        <!--<li>-->
-                            <!--<a href="<%=tenantedUrlPrefix%>create-gadget">-->
-                                <!--<span class="fw-stack">-->
-                                    <!--<i class="fw fw-add fw-stack-1x"></i>-->
-                                    <!--<i class="fw fw-circle-outline fw-stack-2x"></i>-->
-                                <!--</span> <%=i18n.localize("create.gadget.label")%>-->
-                            <!--</a>-->
-                        <!--</li>-->
                         <%}%>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
@@ -320,14 +312,8 @@
                 <div class="nano" id="tempId">
                     <div class="nano-content">
                         <div id="gadget-configuration">
-                            <!--<div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("gadget.configuration.label")%></div>-->
-                            <!--<div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">-->
-                            <!--</div>-->
                         </div>
                         <div id="view-configuration">
-                            <!--<div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("view.configuration.label")%></div>-->
-                            <!--<div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">-->
-                            <!--</div>-->
                         </div>
                     </div>
                 </div>
@@ -335,42 +321,18 @@
 
             <div class="page-content">
                 <div class="view-container1" style="">
-                <div style="display:inline-block;margin:5px;height:50px">
-                <ul class="nav nav-tabs" id="designer-view-mode">
-
-                    <!--<li role="dashboard-view" data-view-mode="default" class="active">-->
-                        <!--&lt;!&ndash;<div class="view-heading ues-component-heading">&ndash;&gt;-->
-                            <!--<a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab"-->
-                                <!--data-toggle="tab">View 1</a>-->
-                                <!--<div class="gadget-actions ues-component-actions">-->
-                                    <!--<div class="btn-group">-->
-                                        <!--<button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">-->
-                                            <!--<i class="icon fw fw-configarations"></i>-->
-                                        <!--</button>-->
-                                        <!--<button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"-->
-                                            <!--data-target="#modalDelete" title="<%=i18n.localize("remove")%>">-->
-                                            <!--<i class="icon fw fw-cancel"></i>-->
-                                        <!--</button>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                    <!--</li>-->
-
-                    <!--<li role="dashboard-view" data-view-mode="anon" class="hide">-->
-                        <!--<a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab"-->
-                            <!--data-toggle="tab"><%=i18n.localize("anon.view")%></a>-->
-                    <!--</li>-->
-
-                </ul>
-                </div>
-                <div class ="ds-add-view-btn" style="display:inline-block;margin:5px;position:relative;top:-25px;">
-                    <button id="add-view">
+                    <div style="display:inline-block;margin:5px;height:50px">
+                        <ul class="nav nav-tabs" id="designer-view-mode">
+                        </ul>
+                    </div>
+                    <div class ="ds-add-view-btn" style="display:inline-block;margin:5px;position:relative;top:-25px;">
+                        <button id="add-view">
                             <span class="fw-stack" >
                                 <i class="fw fw-add fw-stack-1x"></i>
                                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                             </span>
-                    </button>
-                </div>
+                        </button>
+                    </div>
                 </div>
                 <div class="nano">
                     <div class="gird-guide">
@@ -606,11 +568,6 @@
                                 <input type="checkbox" name="landing"{{#if landing}} checked disabled{{/if}} /> <%= i18n.localize("use.as.landing") %>
                             </label>
                         </div>
-                        <div class="checkbox {{#if isUserCustom}}hidden{{/if}}">
-                            <label>
-                                <input type="checkbox" name="anon"{{#if isanon}} checked{{/if}} /> <%= i18n.localize("make.anonymous") %>
-                            </label>
-                        </div>
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="fluidLayout"{{#if fluidLayout}} checked{{/if}} /> <%= i18n.localize('fluid.layout') %>
@@ -711,29 +668,32 @@
         </div>
     </script>
 
+    <!-- Providing options to create a new view -->
     <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
         <div class="radio-button">
-          <label><input type="radio" name="view" value="new-view">Create New view</label>
-          <label><input type="radio" name="view" value="copy-view">Copy From Existing View</label>
+            <label><input type="radio" name="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
+            <label><input type="radio" name="new-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
         </div>
     </script>
 
+    <!-- Template for copying from an existing view -->
     <script id="select-copying-view-hbs" type="text/x-handlebars-template">
         <div class="radio">
-          <label><input type="radio" name="new-view" id="new-view">Create New view</label>
+            <label><input type="radio" name="new-view" id="new-view"><%=i18n.localize("create.new.view")%></label>
         </div>
         <div class="radio">
-          <label><input type="radio" name="copy-view" id="copy-view">Copy From Existing View</label>
+            <label><input type="radio" name="new-view" id="copy-view"><%=i18n.localize("copy.existing.view")%></label>
         </div>
         <div class="dropdown input-group-btn select" id="view-layout-select">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            <span class="selected">Available Views</span>
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            <span class="selected"><%=i18n.localize("available.views")%></span>
             <span class="caret"></span></button>
             <ul class="dropdown-menu option" role="menu" aria-labelledby="menu" id="page-views-menu">
             </ul>
         </div>
     </script>
 
+    <!-- Copying view option -->
     <script id="copying-view-options-hbs" type="text/x-handlebars-template">
         <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{viewName}}</a></li>
     </script>
@@ -762,17 +722,18 @@
         </div>
     </script>
 
+    <!-- View label -->
     <script id="add-new-view-hds" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
             <div class="view-heading ues-component-heading">
-            <a role="tab" data-toggle="tab" id="view-name">TempView</a>
+            <a role="tab" data-toggle="tab" id="view-name"><%=i18n.localize("new.view")%></a>
             <div class="gadget-actions ues-component-actions">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
+                    <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
+                    data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
                         <i class="icon fw fw-configarations"></i>
                     </button>
-                    <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
-                        data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+                    <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
                         <i class="icon fw fw-delete"></i>
                     </button>
                 </div>
@@ -782,8 +743,8 @@
     </script>
 
     <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
-    <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("gadget.configuration.label")%></div>
-    <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("gadget.configuration.label")%></div>
+        <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel-group ues-component-properties" id="accordion" role="tablist" aria-multiselectable="true" data-component="{{id}}">
             {{#has options}}
             <div class="panel panel-default ues-options ues-properties">
@@ -949,42 +910,41 @@
         </div>
     </script>
 
+    <!-- Template for user view role -->
     <script id="permission-menu-hbs" type="text/x-handlebars-template">
-    <div class="permission-menu-content view-role">
-        <span>{{name}}</span>
-        <hr class="permission-item"/>
-    </div>
+        <div class="permission-menu-content view-role">
+            <span>{{name}}</span>
+            <hr class="permission-item"/>
+        </div>
     </script>
 
+    <!-- View properties configuration -->
     <script id="ues-component-view-properties-hbs" type="text/x-handlebars-template">
         <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("view.configuration.label")%></div>
         <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel-group ues-component-properties" id="accordion" role="tablist" aria-multiselectable="true" data-component="{{id}}">
-
                 <div class="panel panel-default ues-styles ues-properties">
-
-                <div id="optionsLayouts" class="panel-collapse collapse in" role="tabpanel">
-                    <div class="panel-body add-padding-3x">
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <label for="input-name" class="control-label"><%= i18n.localize("view.name") %></label>
-                                    <input type="text" class="form-control ds-view-title" name="title" placeholder="<%= i18n.localize("title") %>" value="{{name}}" maxlength="200" />
+                    <div id="optionsLayouts" class="panel-collapse collapse in" role="tabpanel">
+                        <div class="panel-body add-padding-3x">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label for="input-name" class="control-label"><%= i18n.localize("view.name") %></label>
+                                        <input type="text" class="form-control ds-view-title" name="title" placeholder="<%= i18n.localize("title") %>" value="{{name}}" maxlength="200" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <label class="control-label"><%= i18n.localize("select.roles") %></label>
-                                    <input id="ues-share-view" type="text" class="form-control typeahead" placeholder="<%= i18n.localize("roles")%>">
-                                    <div class="ues-view-roles select-view-role"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label"><%= i18n.localize("select.roles") %></label>
+                                        <input id="ues-share-view" type="text" class="form-control typeahead" placeholder="<%= i18n.localize("roles")%>">
+                                        <div class="ues-view-roles select-view-role"></div>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div>
         </div>
     </script>
                         
