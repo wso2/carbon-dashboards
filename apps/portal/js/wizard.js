@@ -67,6 +67,26 @@ $('#provider-list').change(function () {
     provider = $("#providers").val();
 });
 
+/**
+ * Handle event of clicking on the test configuration button
+ */
+$('#test-connection').click(function () {
+    var providerConfig = getProviderConfigData();
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=testConnection',
+        method: "POST",
+        data: JSON.stringify(providerConfig),
+        contentType: "application/json",
+        async: false,
+        success: function () {
+            $('#test-verification-label').show();
+        },
+        error: function (xhr, message, errorObj) {
+            $('#tab2-validation-errors').html('Error in database configuration');
+        }
+    })
+});
+
 $('#show-data').click(function () {
     var pConfig = getProviderConfigData();
     $.ajax({
@@ -120,6 +140,8 @@ $('#gadget-name').on('keyup', function () {
 });
 
 $('#tab2').on('keypress', function() {
+    $('#test-verification-label').hide();
+    $('#tab2-validation-errors').empty();
     $('input[required="true"]').each(function () {
         $(this).on('keyup', function (e) {
             if ($(this).val()) {
@@ -127,6 +149,10 @@ $('#tab2').on('keypress', function() {
             }
         });
     });
+});
+
+$('#tab3').on('keypress', function () {
+    $('#tab3-validation-errors').empty();
 });
 
 $("#preview").click(function () {
@@ -193,8 +219,8 @@ $(".pager .finish").click(function() {
             var source = $("#wizard-error-hbs").html();
             ;
             var template = Handlebars.compile(source);
-            $("#top-rootwizard").empty();
-            $("#top-rootwizard").append(template({
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
                 error: xhr.responseText
             }));
         }
