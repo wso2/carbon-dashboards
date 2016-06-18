@@ -260,7 +260,7 @@ $(function () {
         var propertiesContainer = $('#gadget-configuration');//$('.ues-component-properties-container');
         dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
         propertiesContainer.empty();
-        $('#view-configuration').empty();
+     //   $('#view-configuration').empty();
         propertiesContainer
             .html(gadgetComponentPropertiesHbs(ctx))
             .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
@@ -761,7 +761,16 @@ $(function () {
 
         });
 
-        $('#designer-view-mode').on('click', '.ues-view-component-properties-handle', function () {
+        $('#designer-view-mode').on('click', '.ues-view-component-properties-handle', function (event) {
+            // if($('#right-sidebar').hasClass("toggled")){
+            //     console.log('remove toggle');
+            //     //$('#right-sidebar').removeClass("toggled");
+            //     $('.close-sidebar[data-target="#right-sidebar"]').click();
+            // } else {
+            //     console.log('toggle');
+            //     $('#right-sidebar').toggleClass("toggled");
+            //
+            // }
 
             // if ($('#right-sidebar').hasClass('toggled')) {
             //     $('.close-sidebar[data-target="#right-sidebar"]').click();
@@ -776,12 +785,11 @@ $(function () {
                 name: tempName
             };
             var viewId = getViewId(tempName);
-            if(viewId===null || viewId===undefined){
+            if (viewId === null || viewId === undefined) {
                 viewId = tempName;
             }
             pageType = viewId;
-            $('#designer-view-mode li').removeClass('active');
-            $('#designer-view-mode li[data-view-mode='+pageType+']').addClass('active');
+
 
             // if (mode === 'default') {
             //     pageType = DEFAULT_DASHBOARD_VIEW;
@@ -795,12 +803,20 @@ $(function () {
             //     ues.global.type = mode;
             // }
             loadGadgetsWithViewRoles(pageType);
-            switchPage(getPageId(), currentPageType);
-
-            //buildViewPropertiesContext(component, page);
+            if (currentPageType !== undefined) {
+                switchPage(getPageId(), currentPageType);
+            }else{
+                var js = JSON.parse(JSON.stringify(page.content));
+                var viewKeysArray = Object.keys(js);
+                if(viewKeysArray[0]){
+                    switchPage(getPageId(), viewKeysArray[0]);
+                }
+            }
+            $('#designer-view-mode li').removeClass('active');
+            $('#designer-view-mode li[data-view-mode=' + pageType + ']').addClass('active');
 
             //var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
-            $('#gadget-configuration').empty();
+          //  $('#gadget-configuration').empty();
             $('#view-configuration').empty();
             $('#view-configuration').html(viewComponentPropertiesHbs(ctx)).on('keypress', function (event) {
                 if(event.keyCode===13 || event.which===13){
@@ -809,6 +825,9 @@ $(function () {
                     //temp = temp.trim();
                     var temp = $(this).find('.ds-view-title').val();
                     temp = temp.trim();
+                    var tempViewName = getSelectedView();
+                    var viewId = getViewId(tempViewName);
+                    pageType = viewId;
                     if(page.layout.content[viewId].name === undefined){
                         page.layout.content[viewId].name = temp;
                         if(page.layout.content[viewId].roles===undefined){
@@ -823,7 +842,8 @@ $(function () {
                     }
                     saveDashboard();
                     renderPage(page.id);
-
+                    $('#designer-view-mode li').removeClass('active');
+                    $('#designer-view-mode li[data-view-mode=' + viewId + ']').addClass('active');
                 }
             });
 
@@ -939,7 +959,15 @@ $(function () {
                 viewer($(this), role.name, viewId);
             });
 
-            $('#right-sidebar').toggleClass("toggled");
+            if($('#right-sidebar').hasClass("toggled")){
+                //$('.close-sidebar[data-target="#right-sidebar"]').click();
+                $('#right-sidebar').removeClass("toggled");
+                //$('.close-sidebar[data-target="#right-sidebar"]').click();
+            } else {
+                $('#right-sidebar').toggleClass("toggled");
+
+            }
+            event.stopPropagation();
         });
 
         var viewer = function (el, role, viewId) {
@@ -954,11 +982,61 @@ $(function () {
                 }
             }
            if (!isExistingPermission(viewers, role)) {
-               page.layout.content[viewId].roles.push(role);
-               saveDashboard();
-                $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
+               var removingComponents = notAllowedGadgetsWithNewRole(role, viewId);
+               var removingComponentsLenth = removingComponents.length;
+               if(removingComponentsLenth>0){
+                   showConfirm('Some gadgets will be removed form the view, as they have no permission with this new role',
+                       'Do you want to continue adding this new role?',
+                       function () {
+                           for(var i=0;i<removingComponentsLenth;i++){
+                               removeComponent(removingComponents[i], function (err) {
+                                   if (err) {
+                                       console.log('Error in removing gadgets from the view');
+                                   }
+                                   saveDashboard();
+                               });
+                           }
+                           //saveDashboard();
+                           page.layout.content[viewId].roles.push(role);
+
+                           $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
+                           loadGadgetsWithViewRoles(viewId);
+                       });
+               } else {
+                   page.layout.content[viewId].roles.push(role);
+                   saveDashboard();
+                   $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
+                   loadGadgetsWithViewRoles(viewId);
+               }
             }
             el.typeahead('val', '');
+        };
+
+        var notAllowedGadgetsWithNewRole = function (role, viewId) {
+            var removingComponents = [];
+            var content = page.content[pageType];
+            for (area in content) {
+                if (content.hasOwnProperty(area)) {
+                    var contentLength = content[area].length;
+                    for(var i=0; i<contentLength; i++){
+                        var gadgetRoles = content[area][i].content["allowedRoles"];
+                        if(gadgetRoles===undefined){
+                            gadgetRoles = ["Internal/everyone"];
+                        }
+                        var isNotAllowed = true;
+                        for(var j=0; j<gadgetRoles.length; j++){
+                            if(gadgetRoles[j]===role){
+                                isNotAllowed = false;
+                                break;
+                            }
+                        }
+                        if(isNotAllowed){
+                            removingComponents.push(content[area][0]);
+                        }
+                    }
+                }
+            }
+            return removingComponents;
         };
 
         $('#designer-view-mode').on('click', '.ues-trash-handle', function () {
@@ -2049,6 +2127,10 @@ $(function () {
         return componentsWithCategories;
     };
 
+    var getSelectedView = function () {
+        var viewName = $('#designer-view-mode .active a').text();
+        return viewName.trim();
+    };
     /**
      * Sort the Filtered component to show the non categorized components first
      * @param {String} nonCategoryString
@@ -2074,7 +2156,7 @@ $(function () {
      * @return {null}
      * @private
      */
-    var loadAssets = function (type, query) {
+    var searchGadgets = function (type, query) {
         var paging = pagingHistory[type] || (pagingHistory[type] = {
                 start: 0,
                 count: COMPONENTS_PAGE_SIZE
@@ -2108,6 +2190,11 @@ $(function () {
             storeCache[type] = assetz.concat(data);
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
+            var selectedViewName = getSelectedView();
+            var viewId = getViewId(selectedViewName);
+            console.log(viewId);
+            data = filterValidGadgets(data,type, viewId);
+            console.log('final data'+data.length);
             if (!fresh) {
 
                 assets.append(componentsListHbs({
@@ -2139,16 +2226,19 @@ $(function () {
                 start: 0,
                 count: COMPONENTS_PAGE_SIZE
             });
-        // var buildPaging = function (paging, query) {
-        //     if (paging.query === query) {
-        //         return;
-        //     }
-        //     paging.end = false;
-        //     paging.query = query;
-        //     paging.start = 0;
-        //     paging.count = COMPONENTS_PAGE_SIZE;
-        // };
-        // buildPaging(paging, query);
+        // if(query){
+        //     var buildPaging = function (paging, query) {
+        //         if (paging.query === query) {
+        //             return;
+        //         }
+        //         paging.end = false;
+        //         paging.query = query;
+        //         paging.start = 0;
+        //         paging.count = COMPONENTS_PAGE_SIZE;
+        //     };
+        //     buildPaging(paging, query);
+        // }
+
         if (paging.loading) {
             return;
         }
@@ -2172,7 +2262,7 @@ $(function () {
 
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
-            data = filterValidGadgets(type, viewId);
+            data = filterValidGadgets(storeCache[type],type, viewId);
             // if (!fresh) {
             //     assets.append(componentsListHbs({
             //         type: type,
@@ -2198,17 +2288,18 @@ $(function () {
         // $('#btn-sidebar-gadgets').click();
     };
 
-    var filterValidGadgets = function (type,viewId) {
+    var filterValidGadgets = function (gadgetStore,type,viewId) {
         var data = [];
-        var storeArrayLength = storeCache[type].length;
-        if(viewId === 'default'){
+        var storeArrayLength = gadgetStore.length;
+        if (viewId === 'default') {
             viewId = 'loggedIn';
         }
+        if(page.layout.content[viewId]){
         var viewRoles = page.layout.content[viewId].roles;
-        if(viewRoles===undefined){
-            if(pageType ==='default'){
-            viewRoles = ["Internal/everyone"];
-            }else if(pageType ==='anon'){
+        if (viewRoles === undefined) {
+            if (pageType === 'default') {
+                viewRoles = ["Internal/everyone"];
+            } else if (pageType === 'anon') {
                 viewRoles = ["Anonymous"];
             }
         }
@@ -2216,19 +2307,24 @@ $(function () {
         var gadgetRoles;
         var isValid;
 
-        for(var i=0; i<storeArrayLength; i++){
-            gadgetRoles = storeCache[type][i].allowedRoles;
+        for (var i = 0; i < storeArrayLength; i++) {
+            gadgetRoles = gadgetStore[i].allowedRoles;
+            if (gadgetRoles === undefined) {
+                gadgetRoles = ["Internal/everyone"];
+            }
             isValid = false;
-            for(var j=0;j<viewRolesLength;j++){
+            for (var j = 0; j < viewRolesLength; j++) {
                 isValid = isRoleExistInView(gadgetRoles, viewRoles[j]);
-                if(!isValid){
+                if (!isValid) {
                     break;
                 }
             }
-            if(isValid){
-                data.push(storeCache[type][i]);
+            if (isValid) {
+                data.push(gadgetStore[i]);
             }
         }
+
+    }
         return data;
     };
 
@@ -2275,6 +2371,8 @@ $(function () {
         $('#designer-view-mode').on('click', 'li', function () {
             if ($('#right-sidebar').hasClass('toggled')) {
                 $('.close-sidebar[data-target="#right-sidebar"]').click();
+                //$('#right-sidebar').removeClass('toggled');
+                //$('.close-sidebar[data-target="#right-sidebar"]').click();
             }
             var currentPageType = pageType;
             var mode = $(this).data('view-mode');
@@ -2414,13 +2512,20 @@ $(function () {
                 return;
             }
             event.preventDefault();
+            // var array = document.querySelectorAll('.active');
+            // for(var i=0; i<array.length;i++){
+            //     if(array[i].hasClass('li[role="dashboard-view-mode"')){
+            //         console.log(i);
+            //     }
+            // }
+            //console.log(array);
             var query = $(this).val();
-            loadAssets('gadget', query);
+            searchGadgets('gadget', query);
         });
 
         $('.ues-store-assets .ues-search-box button').on('click', function () {
             var query = $(this).closest('.ues-search-box').find('input[type=text]').val();
-            loadAssets('gadget', query);
+            searchGadgets('gadget', query);
         });
     };
 
@@ -3099,6 +3204,7 @@ $(function () {
                 if(i===0){
                     $('#designer-view-mode li').removeClass('active');
                     $('#designer-view-mode li[data-view-mode='+viewtemp+']').addClass('active');
+                    loadGadgetsWithViewRoles(viewtemp);
                 }
 
             }catch(Exception){
