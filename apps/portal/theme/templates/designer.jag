@@ -391,9 +391,8 @@
         </div>
     </script>
 
-    <!-- view role template -->
-    <script id="ds-view-role-hbs" type="text/x-handlebars-template">
-    <div class="btn btn-default btn-bordered ds-view-role-label" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
+    <script id="ues-view-role-hbs" type="text/x-handlebars-template">
+    <div class="btn btn-default btn-bordered ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
     </script>
 
     <!-- Template to generate gridstack list -->
@@ -912,7 +911,7 @@
     </script>
 
     <!-- Template for user view role -->
-    <script id="roles-menu-hbs" type="text/x-handlebars-template">
+    <script id="permission-menu-hbs" type="text/x-handlebars-template">
         <div class="permission-menu-content view-role">
             <span>{{name}}</span>
             <hr class="permission-item"/>
@@ -937,7 +936,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label class="control-label"><%= i18n.localize("select.roles") %></label>
-                                        <input id="ds-view-roles" type="text" class="form-control typeahead" placeholder="<%= i18n.localize("roles")%>">
+                                        <input id="ues-share-view" type="text" class="form-control typeahead" placeholder="<%= i18n.localize("roles")%>">
                                         <div class="ues-view-roles select-view-role"></div>
                                     </div>
                                 </div>
