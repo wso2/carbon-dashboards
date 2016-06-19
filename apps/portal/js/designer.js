@@ -34,6 +34,9 @@ $(function () {
     var lang = navigator.languages ?
         navigator.languages[0] : (navigator.language || navigator.userLanguage || navigator.browserLanguage);
     var gadgetIds;
+    var LOGGEDIN_ROLE = "loggedIn";
+    var INTERNAL_EVERYONE_ROLE = "Internal/everyoen";
+    var ANONYMOUS_ROLE = "Anonymous";
 
     /**
      * Number of assets to be loaded.
@@ -257,10 +260,9 @@ $(function () {
      */
     var renderComponentProperties = function (component) {
         var ctx = buildPropertiesContext(component, page);
-        var propertiesContainer = $('#gadget-configuration');//$('.ues-component-properties-container');
+        var propertiesContainer = $('#gadget-configuration');
         dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
         propertiesContainer.empty();
-     //   $('#view-configuration').empty();
         propertiesContainer
             .html(gadgetComponentPropertiesHbs(ctx))
             .on('change', 'input[type=checkbox], input[type=range], select, textarea', function () {
@@ -731,114 +733,81 @@ $(function () {
             renderComponentProperties(findComponent(id));
         });
 
+        // when user select an existing view to copy the content
         designer.on('click', '.option li', function () {
             var text = $(this).children().text();
             $('#view-layout-select .selected').text(text);
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
-
-
             var layout = page.layout.content[text];
 
-                var viewLayoutContent = {
-                    blocks : layout.blocks,
-                    name : newViewName,
-                    roles : layout.roles
-                };
-                page.layout.content[newViewId] = viewLayoutContent;
-                saveDashboard();
+            var viewLayoutContent = {
+                blocks: layout.blocks,
+                name: newViewName,
+                roles: layout.roles
+            };
+
+            page.layout.content[newViewId] = viewLayoutContent;
+            saveDashboard();
 
             var viewContent = page.content[text];
             page.content[newViewId] = viewContent;
             saveDashboard();
-            page = findPage(dashboard, page.id);
-            pageType = newViewId;
 
+            pageType = newViewId;
             $('button[data-target=#left-sidebar]').click();
-            renderPage(page.id);
-            $('#designer-view-mode li[data-view-mode='+newViewId+']').click();
+            renderPage(getPageId());
+            $('#designer-view-mode li[data-view-mode=' + newViewId + ']').click();
 
         });
 
+        // when click on the properties button of a view
         $('#designer-view-mode').on('click', '.ues-view-component-properties-handle', function (event) {
-            // if($('#right-sidebar').hasClass("toggled")){
-            //     console.log('remove toggle');
-            //     //$('#right-sidebar').removeClass("toggled");
-            //     $('.close-sidebar[data-target="#right-sidebar"]').click();
-            // } else {
-            //     console.log('toggle');
-            //     $('#right-sidebar').toggleClass("toggled");
-            //
-            // }
-
-            // if ($('#right-sidebar').hasClass('toggled')) {
-            //     $('.close-sidebar[data-target="#right-sidebar"]').click();
-            // }
-
-            //init
             var currentPageType = pageType;
-
             var tempName = this.parentElement.parentElement.parentElement.textContent;
             tempName = tempName.trim();
             var ctx = {
                 name: tempName
             };
             var viewId = getViewId(tempName);
-            if (viewId === null || viewId === undefined) {
+
+            if (!viewId) {
                 viewId = tempName;
             }
             pageType = viewId;
-
-
-            // if (mode === 'default') {
-            //     pageType = DEFAULT_DASHBOARD_VIEW;
-            //     ues.global.type = DEFAULT_DASHBOARD_VIEW;
-            // } else if (mode === 'anon'){
-            //     pageType = ANONYMOUS_DASHBOARD_VIEW;
-            //     ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
-            //     ues.global.anon = true;
-            // } else {
-            //     pageType = mode;
-            //     ues.global.type = mode;
-            // }
             loadGadgetsWithViewRoles(pageType);
+
             if (currentPageType !== undefined) {
                 switchPage(getPageId(), currentPageType);
-            }else{
-                var js = JSON.parse(JSON.stringify(page.content));
-                var viewKeysArray = Object.keys(js);
-                if(viewKeysArray[0]){
+            } else {
+                var viewKeysArray = Object.keys(JSON.parse(JSON.stringify(page.content)));
+                if (viewKeysArray[0]) {
                     switchPage(getPageId(), viewKeysArray[0]);
                 }
             }
             $('#designer-view-mode li').removeClass('active');
             $('#designer-view-mode li[data-view-mode=' + pageType + ']').addClass('active');
 
-            //var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
-          //  $('#gadget-configuration').empty();
             $('#view-configuration').empty();
             $('#view-configuration').html(viewComponentPropertiesHbs(ctx)).on('keypress', function (event) {
-                if(event.keyCode===13 || event.which===13){
-                    //var temp = this.parentElement.parentElement.parentElement.textContent;
-                    //var x = this.findComponent('.ds-view-title');
-                    //temp = temp.trim();
-                    var temp = $(this).find('.ds-view-title').val();
-                    temp = temp.trim();
-                    var tempViewName = getSelectedView();
-                    var viewId = getViewId(tempViewName);
+                if (event.keyCode === 13 || event.which === 13) {
+                    var newViewName = $(this).find('.ds-view-title').val();
+                    newViewName = newViewName.trim();
+                    var currentViewName = getSelectedView();
+                    var viewId = getViewId(currentViewName);
                     pageType = viewId;
-                    if(page.layout.content[viewId].name === undefined){
-                        page.layout.content[viewId].name = temp;
-                        if(page.layout.content[viewId].roles===undefined){
-                            if(viewId==='anon'){
-                                page.layout.content[viewId].roles = ['Anonymous'];
-                            }else{
-                                page.layout.content[viewId].roles = ['Internal/everyone'];
+                    if (page.layout.content[viewId].name === undefined) {
+                        page.layout.content[viewId].name = newViewName;
+                        if (page.layout.content[viewId].roles === undefined) {
+                            if (viewId === ANONYMOUS_DASHBOARD_VIEW) {
+                                page.layout.content[viewId].roles = [ANONYMOUS_ROLE];
+                            } else {
+                                page.layout.content[viewId].roles = [INTERNAL_EVERYONE_ROLE];
                             }
                         }
                     } else {
-                        page.layout.content[viewId].name = temp;
+                        page.layout.content[viewId].name = newViewName;
                     }
                     saveDashboard();
                     renderPage(page.id);
@@ -847,16 +816,15 @@ $(function () {
                 }
             });
 
-            //set roles of the view
-           var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
-            var i;
-            var role;
-            var viewers = page.layout.content[viewId].roles;//ues.global.dashboard.permissions.viewers; //page.layout.content[viewId].roles;
-            if(viewers === undefined){
-                if(pageType ==='default'){
-                    viewers = ["Internal/everyone"];
-                }else if(pageType ==='anon'){
-                    viewers = ["Anonymous"];
+            // show the allowed roles for the view
+            var viewRoleHbs = Handlebars.compile($("#ds-view-role-hbs").html());
+            var i, role;
+            var viewers = page.layout.content[viewId].roles;
+            if (viewers === undefined) {
+                if (pageType === DEFAULT_DASHBOARD_VIEW) {
+                    viewers = [INTERNAL_EVERYONE_ROLE];
+                } else if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
+                    viewers = [ANONYMOUS_ROLE];
                 }
             }
             var html = '';
@@ -865,9 +833,7 @@ $(function () {
                 role = viewers[i];
                 html += viewRoleHbs(role);
             }
-
             $('#view-configuration').find('.ues-view-roles').append(html);
-
 
             var viewerSearchQuery = '';
             var maxLimit = 10;
@@ -899,7 +865,7 @@ $(function () {
                 console.log('Error calling max roles limit');
             });
 
-            var viewerRoles = new Bloodhound({
+            var viewRoles = new Bloodhound({
                 name: 'roles',
                 limit: 10,
                 prefetch: {
@@ -933,10 +899,9 @@ $(function () {
                 queryTokenizer: Bloodhound.tokenizers.whitespace
             });
 
-            viewerRoles.initialize();
-            var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
-            
-            $('#ues-share-view').typeahead({
+            viewRoles.initialize();
+            var rolesMenuHbs = Handlebars.compile($("#roles-menu-hbs").html());
+            $('#ds-view-roles').typeahead({
                 hint: true,
                 highlight: true,
                 minLength: 0
@@ -944,93 +909,99 @@ $(function () {
                 name: 'roles',
                 displayKey: 'name',
                 limit: 10,
-                source: viewerRoles.ttAdapter(),
+                source: viewRoles.ttAdapter(),
                 templates: {
                     empty: [
                         '<div class="empty-message">',
                         'No Result Available',
                         '</div>'
                     ].join('\n'),
-                    suggestion: permissionMenuHbs
+                    suggestion: rolesMenuHbs
                 }
             }).on('typeahead:selected', function (e, role, roles) {
-                viewer($(this), role.name, viewId);
+                addNewRole($(this), role.name, viewId);
             }).on('typeahead:autocomplete', function (e, role) {
-                viewer($(this), role.name, viewId);
+                addNewRole($(this), role.name, viewId);
             });
 
-            if($('#right-sidebar').hasClass("toggled")){
-                //$('.close-sidebar[data-target="#right-sidebar"]').click();
+            if ($('#right-sidebar').hasClass("toggled")) {
                 $('#right-sidebar').removeClass("toggled");
-                //$('.close-sidebar[data-target="#right-sidebar"]').click();
             } else {
                 $('#right-sidebar').toggleClass("toggled");
-
             }
             event.stopPropagation();
         });
 
-        var viewer = function (el, role, viewId) {
+        /**
+         * Adding a new role for the view
+         * @param el
+         * @param role New role
+         * @param viewId View id
+         */
+        var addNewRole = function (el, role, viewId) {
             var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
-
-            var viewers = page.layout.content[viewId].roles;
-            if(viewers === undefined){
-                if(pageType === 'default'){
-                    page.layout.content[pageType].roles = ["Internal/everyone"];
-                } else if(pageType === 'anon'){
-                    page.layout.content[pageType].roles = ["Anonymous"];
+            var roles = page.layout.content[viewId].roles;
+            pageType = viewId;
+            if (roles === undefined) {
+                if (pageType === DEFAULT_DASHBOARD_VIEW) {
+                    page.layout.content[pageType].roles = [INTERNAL_EVERYONE_ROLE];
+                } else if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
+                    page.layout.content[pageType].roles = [ANONYMOUS_ROLE];
                 }
             }
-           if (!isExistingPermission(viewers, role)) {
-               var removingComponents = notAllowedGadgetsWithNewRole(role, viewId);
-               var removingComponentsLenth = removingComponents.length;
-               if(removingComponentsLenth>0){
-                   showConfirm('Some gadgets will be removed form the view, as they have no permission with this new role',
-                       'Do you want to continue adding this new role?',
-                       function () {
-                           for(var i=0;i<removingComponentsLenth;i++){
-                               removeComponent(removingComponents[i], function (err) {
-                                   if (err) {
-                                       console.log('Error in removing gadgets from the view');
-                                   }
-                                   saveDashboard();
-                               });
-                           }
-                           //saveDashboard();
-                           page.layout.content[viewId].roles.push(role);
-
-                           $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
-                           loadGadgetsWithViewRoles(viewId);
-                       });
-               } else {
-                   page.layout.content[viewId].roles.push(role);
-                   saveDashboard();
-                   $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
-                   loadGadgetsWithViewRoles(viewId);
-               }
+            if (!isExistingRole(roles, role)) {
+                var removingComponents = getRestrictedGadgetsWithNewRole(role, viewId);
+                var removingComponentsLength = removingComponents.length;
+                if (removingComponentsLength > 0) {
+                    showConfirm('Some gadgets will be removed form the view, as they have no permission with this new role',
+                        'Do you want to continue adding this new role?',
+                        function () {
+                            for (var i = 0; i < removingComponentsLength; i++) {
+                                removeComponent(removingComponents[i], function (err) {
+                                    if (err) {
+                                        console.log('Error in removing gadgets from the view');
+                                    }
+                                });
+                            }
+                            page.layout.content[viewId].roles.push(role);
+                            saveDashboard();
+                            $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
+                            loadGadgetsWithViewRoles(viewId);
+                        });
+                } else {
+                    page.layout.content[viewId].roles.push(role);
+                    saveDashboard();
+                    $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
+                    loadGadgetsWithViewRoles(viewId);
+                }
             }
             el.typeahead('val', '');
         };
 
-        var notAllowedGadgetsWithNewRole = function (role, viewId) {
+        /**
+         * Return the list of restricted gadgets with the addition of new role
+         * @param role New role
+         * @returns {Array} Array of restricted roles
+         */
+        var getRestrictedGadgetsWithNewRole = function (role) {
             var removingComponents = [];
             var content = page.content[pageType];
             for (area in content) {
                 if (content.hasOwnProperty(area)) {
                     var contentLength = content[area].length;
-                    for(var i=0; i<contentLength; i++){
+                    for (var i = 0; i < contentLength; i++) {
                         var gadgetRoles = content[area][i].content["allowedRoles"];
-                        if(gadgetRoles===undefined){
-                            gadgetRoles = ["Internal/everyone"];
+                        if (gadgetRoles === undefined) {
+                            gadgetRoles = [INTERNAL_EVERYONE_ROLE];
                         }
                         var isNotAllowed = true;
-                        for(var j=0; j<gadgetRoles.length; j++){
-                            if(gadgetRoles[j]===role){
+                        for (var j = 0; j < gadgetRoles.length; j++) {
+                            if (gadgetRoles[j] === role) {
                                 isNotAllowed = false;
                                 break;
                             }
                         }
-                        if(isNotAllowed){
+                        if (isNotAllowed) {
                             removingComponents.push(content[area][0]);
                         }
                     }
@@ -1039,24 +1010,25 @@ $(function () {
             return removingComponents;
         };
 
+        //click on the delete button of a view
         $('#designer-view-mode').on('click', '.ues-trash-handle', function () {
             var tempName = this.parentElement.parentElement.parentElement.textContent;
             tempName = tempName.trim();
             var viewId = getViewId(tempName);
-            if(viewId===null || viewId===undefined){
+            if (!viewId) {
                 viewId = tempName;
             }
             pageType = viewId;
             $('#designer-view-mode li').removeClass('active');
-            $('#designer-view-mode li[data-view-mode='+pageType+']').addClass('active');
+            $('#designer-view-mode li[data-view-mode=' + pageType + ']').addClass('active');
 
             showConfirm('Deleting the view',
                 'This will remove the view and all its content. Do you want to continue?',
                 function () {
 
                     delete page.layout.content[viewId];
-                    if(viewId==='loggedIn'){
-                        viewId = 'default';
+                    if (viewId === LOGGEDIN_ROLE) {
+                        viewId = DEFAULT_DASHBOARD_VIEW;
                     }
                     delete page.content[viewId];
                     saveDashboard();
@@ -1064,17 +1036,16 @@ $(function () {
                 });
         });
 
-        //$('#view-configuration').find('.ues-view-roles').on('click', '.remove-button', function () {
+        // remove role of a view
         $('#view-configuration').on('click', '.remove-button', function () {
-            //remove
-            var el = $(this).closest('.ues-shared-role');
+            var el = $(this).closest('.ds-view-role-label');
             var role = el.data('role');
             var viewers = page.layout.content[pageType].roles;
-            if(viewers ===undefined){
-                if(pageType === 'default'){
-                    page.layout.content[pageType].roles = ["Internal/everyone"];
-                } else if(pageType === 'anon'){
-                    page.layout.content[pageType].roles = ["Anonymous"];
+            if (viewers === undefined) {
+                if (pageType === DEFAULT_DASHBOARD_VIEW) {
+                    page.layout.content[pageType].roles = [INTERNAL_EVERYONE_ROLE];
+                } else if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
+                    page.layout.content[pageType].roles = [ANONYMOUS_ROLE];
                 }
             }
             var removePermission = function () {
@@ -1085,20 +1056,25 @@ $(function () {
                 removeElement();
                 saveDashboard();
             };
-
             if (viewers.length == 1) {
                 showConfirm("Removing Permission",
                     "After this permission removal, this view will e no longer visible to anyone." +
                     " Do you want to continue?", removePermission);
             } else {
                 removePermission();
-           }
+            }
         });
 
-        var isExistingPermission = function (permissions, role) {
+        /**
+         * Check whether a role already existing in the list of roles of a view
+         * @param rolesList List of roles
+         * @param role New role
+         * @returns {boolean} Role exists or not
+         */
+        var isExistingRole = function (rolesList, role) {
             var isExist = false;
-            for (var i = 0; i < permissions.length; i++) {
-                if (permissions[i] == role) {
+            for (var i = 0; i < rolesList.length; i++) {
+                if (rolesList[i] == role) {
                     isExist = true;
                     break;
                 }
@@ -1106,53 +1082,37 @@ $(function () {
             return isExist;
         };
 
-        var getNumberOfUserRolesInDashboard = function (permission) {
-            var userRoles = 0;
-            // for (var i = 0; i < user.roles.length; i++) {
-            //     for (var j = 0; j < permission.length; j++) {
-            //         if (user.roles[i] == permission[j]) {
-            //             userRoles += 1;
-            //         }
-            //     }
-            // }
-            //return userRoles;
-            return dashboard.permissions.viewers.length;
-        };
-
-        //event hanlder for adding a new view
+        //event handler for adding a new view
         $('#add-view').on('click', function () {
             var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
             $('.gadgets-grid').empty();
             $('.gadgets-grid').html(viewCreationOptions);
-            $(".gadgets-grid input[type=radio]").click(function(){
-                if(this.value==="new-view") {
+            $(".gadgets-grid input[type=radio]").click(function () {
+                if (this.value === "new-view") {
+                    //if adding a new view
                     if (!$('#left-sidebar').hasClass('toggled')) {
                         $('#btn-sidebar-dashboard-layout').click();
                     }
-                    // var newView = Handlebars.compile($('#add-new-view-hds').html());
-                    // $('#designer-view-mode').append(newView);
-                    // $('#designer-view-mode li[data-view-mode=default] a').click();
-                } else if (this.value==="copy-view") {
+                } else if (this.value === "copy-view") {
+                    //if copying from an existing view
                     if (!$('#left-sidebar').hasClass('toggled')) {
                         $('#left-sidebar').hide();
                     }
                     var viewcopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
                     $('.gadgets-grid').empty();
                     $('.gadgets-grid').html(viewcopyingSelection);
-                    $('#copy-view').prop( "checked", true );
+                    $('#copy-view').prop("checked", true);
                     $('#page-views-menu').empty();
 
-                    var js = JSON.parse(JSON.stringify(page.content));
-                    var viewKeysArray = Object.keys(js);
-
+                    var viewKeysArray = Object.keys(JSON.parse(JSON.stringify(page.content)));
                     var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
-                    var temp;
-                    for(var i=0; i<viewKeysArray.length; i++){
-                        var temp = {
+                    for (var i = 0; i < viewKeysArray.length; i++) {
+                        var tempViewName = {
                             viewName: viewKeysArray[i]
                         };
-                        $('#page-views-menu').append(viewCopyingOptions(temp));
-                    };
+                        $('#page-views-menu').append(viewCopyingOptions(tempViewName));
+                    }
+                    ;
 
                 }
             });
@@ -1541,6 +1501,7 @@ $(function () {
         }
         return null;
     };
+
     /**
      * Check whether current landing page is anonymous or not.
      * @param {String} landing  Current landing page
@@ -2127,10 +2088,15 @@ $(function () {
         return componentsWithCategories;
     };
 
+    /**
+     * Returns the selected view nmae
+     * @returns {String} View name
+     */
     var getSelectedView = function () {
         var viewName = $('#designer-view-mode .active a').text();
         return viewName.trim();
     };
+
     /**
      * Sort the Filtered component to show the non categorized components first
      * @param {String} nonCategoryString
@@ -2192,9 +2158,7 @@ $(function () {
             paging.end = !data.length;
             var selectedViewName = getSelectedView();
             var viewId = getViewId(selectedViewName);
-            console.log(viewId);
-            data = filterValidGadgets(data,type, viewId);
-            console.log('final data'+data.length);
+            data = filterValidGadgets(data, viewId);
             if (!fresh) {
 
                 assets.append(componentsListHbs({
@@ -2219,6 +2183,10 @@ $(function () {
         });
     };
 
+    /**
+     * Load gadgets according to the view roles
+     * @param viewId View id
+     */
     var loadGadgetsWithViewRoles = function (viewId) {
         var type = 'gadget';
         $('.ues-thumbnails').empty();
@@ -2226,54 +2194,23 @@ $(function () {
                 start: 0,
                 count: COMPONENTS_PAGE_SIZE
             });
-        // if(query){
-        //     var buildPaging = function (paging, query) {
-        //         if (paging.query === query) {
-        //             return;
-        //         }
-        //         paging.end = false;
-        //         paging.query = query;
-        //         paging.start = 0;
-        //         paging.count = COMPONENTS_PAGE_SIZE;
-        //     };
-        //     buildPaging(paging, query);
-        // }
-
         if (paging.loading) {
             return;
         }
-        // if (paging.end) {
-        //     return;
-        // }
         paging.loading = true;
-
-
         ues.store.assets(type, paging, function (err, data) {
             paging.loading = false;
-
             if (err) {
                 return;
             }
-
-            var assets = $('.ues-store-assets').find('.ues-thumbnails');
-            var fresh = !paging.start;
-            var assetz = storeCache[type];
-            storeCache[type] = assetz.concat(data);
-
+            var gadgetContainer = $('.ues-store-assets').find('.ues-thumbnails');
+            var gadgets = storeCache[type];
+            storeCache[type] = gadgets.concat(data);
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
-            data = filterValidGadgets(storeCache[type],type, viewId);
-            // if (!fresh) {
-            //     assets.append(componentsListHbs({
-            //         type: type,
-            //         assets: data,
-            //         lang: lang
-            //     }));
-            //     initNanoScroller();
-            //     return;
-            // }
+            data = filterValidGadgets(storeCache[type], type, viewId);
             if (data.length) {
-                assets.html(componentsListHbs({
+                gadgetContainer.html(componentsListHbs({
                     type: type,
                     assets: sortComponentsByCategory(nonCategoryKeyWord, filterComponentByCategories(data)),
                     lang: lang
@@ -2281,68 +2218,75 @@ $(function () {
                 initNanoScroller();
                 return;
             }
-            assets.html(noComponentsHbs());
+            gadgetContainer.html(noComponentsHbs());
         });
-        //location.reload();
-        // $('#designer-view-mode li[data-view-mode='+viewId+'] a').click();
-        // $('#btn-sidebar-gadgets').click();
     };
 
-    var filterValidGadgets = function (gadgetStore,type,viewId) {
+    /**
+     * Filter gadgets according to the view roles and return the valid set of gadgets
+     * @param gadgetStore List of gadgets
+     * @param viewId View id
+     * @returns {Array} Array of valid gadgets
+     */
+    var filterValidGadgets = function (gadgetStore, viewId) {
         var data = [];
         var storeArrayLength = gadgetStore.length;
-        if (viewId === 'default') {
-            viewId = 'loggedIn';
+        if (viewId === DEFAULT_DASHBOARD_VIEW) {
+            viewId = LOGGEDIN_ROLE;
         }
-        if(page.layout.content[viewId]){
-        var viewRoles = page.layout.content[viewId].roles;
-        if (viewRoles === undefined) {
-            if (pageType === 'default') {
-                viewRoles = ["Internal/everyone"];
-            } else if (pageType === 'anon') {
-                viewRoles = ["Anonymous"];
-            }
-        }
-        var viewRolesLength = viewRoles.length;
-        var gadgetRoles;
-        var isValid;
-
-        for (var i = 0; i < storeArrayLength; i++) {
-            gadgetRoles = gadgetStore[i].allowedRoles;
-            if (gadgetRoles === undefined) {
-                gadgetRoles = ["Internal/everyone"];
-            }
-            isValid = false;
-            for (var j = 0; j < viewRolesLength; j++) {
-                isValid = isRoleExistInView(gadgetRoles, viewRoles[j]);
-                if (!isValid) {
-                    break;
+        if (page.layout.content[viewId]) {
+            var viewRoles = page.layout.content[viewId].roles;
+            if (viewRoles === undefined) {
+                if (pageType === DEFAULT_DASHBOARD_VIEW) {
+                    viewRoles = [INTERNAL_EVERYONE_ROLE];
+                } else if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
+                    viewRoles = [ANONYMOUS_ROLE];
                 }
             }
-            if (isValid) {
-                data.push(gadgetStore[i]);
+            var viewRolesLength = viewRoles.length;
+            var gadgetRoles, isValid;
+
+            for (var i = 0; i < storeArrayLength; i++) {
+                gadgetRoles = gadgetStore[i].allowedRoles;
+                if (gadgetRoles === undefined) {
+                    gadgetRoles = [INTERNAL_EVERYONE_ROLE];
+                }
+                isValid = false;
+                for (var j = 0; j < viewRolesLength; j++) {
+                    isValid = isRoleExistInView(gadgetRoles, viewRoles[j]);
+                    if (!isValid) {
+                        break;
+                    }
+                }
+                if (isValid) {
+                    data.push(gadgetStore[i]);
+                }
             }
         }
-
-    }
         return data;
     };
 
+    /**
+     * Check whether a particular view role already exists in the gadget
+     * @param gadgetRoles List of gadget roles
+     * @param viewRole View role
+     * @returns {boolean} Is exists or not
+     */
     var isRoleExistInView = function (gadgetRoles, viewRole) {
-        var gadgetRolesLength ;
-        if(gadgetRoles === undefined){
-            gadgetRolesLength =0;
-        } else{
+        var gadgetRolesLength;
+        if (gadgetRoles === undefined) {
+            gadgetRolesLength = 0;
+        } else {
             gadgetRolesLength = gadgetRoles.length;
         }
-
-        for(var i=0; i<gadgetRolesLength;i++){
-            if(gadgetRoles[i]===viewRole){
+        for (var i = 0; i < gadgetRolesLength; i++) {
+            if (gadgetRoles[i] === viewRole) {
                 return true;
             }
         }
         return false;
     };
+
     /**
      * Initializes the components.
      * @return {null}
@@ -2367,19 +2311,16 @@ $(function () {
      * @private
      */
     var initDesigner = function () {
-
         $('#designer-view-mode').on('click', 'li', function () {
             if ($('#right-sidebar').hasClass('toggled')) {
                 $('.close-sidebar[data-target="#right-sidebar"]').click();
-                //$('#right-sidebar').removeClass('toggled');
-                //$('.close-sidebar[data-target="#right-sidebar"]').click();
             }
             var currentPageType = pageType;
             var mode = $(this).data('view-mode');
             if (mode === 'default') {
                 pageType = DEFAULT_DASHBOARD_VIEW;
                 ues.global.type = DEFAULT_DASHBOARD_VIEW;
-            } else if (mode === 'anon'){
+            } else if (mode === 'anon') {
                 pageType = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.type = ANONYMOUS_DASHBOARD_VIEW;
                 ues.global.anon = true;
@@ -2390,9 +2331,8 @@ $(function () {
             ues.global.dbType = pageType;
             loadGadgetsWithViewRoles(pageType);
             switchPage(getPageId(), currentPageType);
-           // $('#designer-view-mode li[data-view-mode='+pageType+']').click();
             $('#designer-view-mode li').removeClass('active');
-            $('#designer-view-mode li[data-view-mode='+pageType+']').addClass('active');
+            $('#designer-view-mode li[data-view-mode=' + pageType + ']').addClass('active');
         });
     };
 
@@ -2436,59 +2376,49 @@ $(function () {
 
             });
         }),
-        $('#ues-view-layouts').on('click', '.thumbnail', function (e) {
-            e.preventDefault();
-            //display message 'evrything will be replaced'
-            var viewOptions = getNewViewOptions(page.content);
-            var newViewId = viewOptions.id;
-            var newViewName = viewOptions.name;
-
-            
-            var layout = findStoreCache('layout', $(this).data('id'));
-
-            var viewContent = {};
-            page.content[newViewId] = viewContent;
-
-            $.get(resolveURI(layout.url), function (data, status) {
-                var x = JSON.parse(data);
-                var viewLayoutContent = {
-                        blocks : x.blocks,
-                        name : newViewName,
-                        roles : ["Internal/everyone"]
-                };
-                page.layout.content[newViewId] = viewLayoutContent;
-                saveDashboard();
+            $('#ues-view-layouts').on('click', '.thumbnail', function (e) {
+                e.preventDefault();
+                var viewOptions = getNewViewOptions(page.content);
+                var newViewId = viewOptions.id;
+                var newViewName = viewOptions.name;
+                var layout = findStoreCache('layout', $(this).data('id'));
+                var viewContent = {};
+                page.content[newViewId] = viewContent;
+                $.get(resolveURI(layout.url), function (data, status) {
+                    var x = JSON.parse(data);
+                    var viewLayoutContent = {
+                        blocks: x.blocks,
+                        name: newViewName,
+                        roles: [INTERNAL_EVERYONE_ROLE]
+                    };
+                    page.layout.content[newViewId] = viewLayoutContent;
+                    saveDashboard();
+                });
+                page = findPage(dashboard, getPageId());
+                pageType = newViewId;
+                $('button[data-target=#left-sidebar]').click();
+                renderPage(page.id);
+                $('#designer-view-mode li[data-view-mode=' + newViewId + ']').click();
             });
-
-            page = findPage(dashboard, page.id);
-            pageType = newViewId;
-
-            $('button[data-target=#left-sidebar]').click();
-            renderPage(page.id);
-            $('#designer-view-mode li[data-view-mode='+newViewId+']').click();
-        });
         loadLayouts();
-        //$('#left-sidebar').hide();
     };
 
-
-    var getNewViewOptions = function() {
-        var js = JSON.parse(JSON.stringify(page.content));
-        var arr = [];
-        for (var x in js) {
-            arr.push(js[x]);
-        }
+    /**
+     * Returns a new view id and a view name
+     * @returns {{id: string, name: string}}
+     */
+    var getNewViewOptions = function () {
+        var pageContent = JSON.parse(JSON.stringify(page.content));
         var tempViewId = 2;
-        //check in the page array and get id
         var prefix = 'view';
         var titlePrefix = 'View ';
-
         var gettingNewId = true;
-        while(gettingNewId) {
+
+        while (gettingNewId) {
             try {
-                Object.keys(js[prefix+tempViewId]);
+                Object.keys(pageContent[prefix + tempViewId]);
                 tempViewId++;
-            }catch(Exception){
+            } catch (Exception) {
                 gettingNewId = false;
             }
         }
@@ -2504,21 +2434,12 @@ $(function () {
      * @private
      */
     var initStore = function () {
-        //loadAssets('gadget');
-
         // initialize search options in gadgets sidebar
         $('.ues-store-assets .ues-search-box input[type=text]').on('keypress', function (event) {
             if (event.which !== 13) {
                 return;
             }
             event.preventDefault();
-            // var array = document.querySelectorAll('.active');
-            // for(var i=0; i<array.length;i++){
-            //     if(array[i].hasClass('li[role="dashboard-view-mode"')){
-            //         console.log(i);
-            //     }
-            // }
-            //console.log(array);
             var query = $(this).val();
             searchGadgets('gadget', query);
         });
@@ -2972,7 +2893,7 @@ $(function () {
             }
             dashboard.menu.push(menu);
             page.layout.content['view1'].name = 'View 1';
-            page.layout.content['view1'].roles = ["Internal/everyone"];
+            page.layout.content['view1'].roles = [INTERNAL_EVERYONE_ROLE];
             saveDashboard();
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
@@ -3142,75 +3063,46 @@ $(function () {
         }
 
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
-        if(page.content[pageType]===undefined){
+        if (page.content[pageType] === undefined) {
             pageType = 'view1';
         }
-        // var anonToggle = $('#designer-view-mode li[data-view-mode=anon]');
-        // if (page.isanon && !dashboard.isUserCustom) {
-        //     anonToggle.removeClass('hide');
-        // } else {
-        //     anonToggle.addClass('hide');
-        // }
 
-        // if the current page doesn't have a anon view defined, render the default view
-        // if (!page.isanon) {
-        //     pageType = DEFAULT_DASHBOARD_VIEW;
-        //     ues.global.type = DEFAULT_DASHBOARD_VIEW;
-        //     $('#designer-view-mode li').removeClass('active');
-        //     $('#designer-view-mode li[data-view-mode=default]').addClass('active');
-        // }
+        var viewKeysArray = Object.keys(JSON.parse(JSON.stringify(page.content)));
+        var viewKeysLength = viewKeysArray.length;
 
-
-        var js = JSON.parse(JSON.stringify(page.content));
-        var viewLength = Object.keys(js).length;
-        var viewKeysArray = Object.keys(js);
-        var tempViewId = 2;
-        var prefix = 'view';
-        var titlePrefix = 'View ';
-
-        for(var i = 0; i < viewKeysArray.length ; i++){
-
+        for (var i = 0; i < viewKeysLength; i++) {
             try {
-                var viewtemp = viewKeysArray[i];
+                var tempView = viewKeysArray[i];
                 $('#designer-view-mode').append(newViewHbs);
-                document.getElementById("new-view-id").setAttribute('data-view-mode', viewtemp);
-                var viewTempName;
+                document.getElementById("new-view-id").setAttribute('data-view-mode', tempView);
+                var tempViewName;
 
-                // if(page.layout.content[viewtemp].name===undefined){
-                //     if((viewKeysArray[i] === 'loggedIn')){
-                //             viewTempName = 'loggedIn';
-                //
-                //     } else if(viewKeysArray[i] === 'anon') {
-                //         viewTempName = 'Anon';
-                //     }
-                // } else{
-                //     viewTempName = page.layout.content[viewtemp].name;
-                // }
-                 if((viewKeysArray[i] === 'loggedIn') || (viewKeysArray[i] === 'default')){
-                     if(page.layout.content['loggedIn'].name===undefined){
-                         viewTempName = 'loggedIn';
-                      } else{
-                          viewTempName = page.layout.content['loggedIn'].name;
-                      }
+                if (viewKeysArray[i] === DEFAULT_DASHBOARD_VIEW) {
+                    if (page.layout.content[LOGGEDIN_ROLE].name === undefined) {
+                        tempViewName = LOGGEDIN_ROLE;
+                    } else {
+                        tempViewName = page.layout.content[LOGGEDIN_ROLE].name;
+                    }
 
-                 } else if(viewKeysArray[i] === 'anon') {
-                     viewTempName = 'Anonymous View';
-                 } else{
-                     viewTempName = page.layout.content[viewtemp].name;
-                 }
-                 document.getElementById("view-name").innerHTML = viewTempName;
-                 document.getElementById("new-view-id").setAttribute('id', 'nav-tab-' + viewtemp);
-                 document.getElementById("view-name").setAttribute('id', viewtemp)
-                if(i===0){
-                    $('#designer-view-mode li').removeClass('active');
-                    $('#designer-view-mode li[data-view-mode='+viewtemp+']').addClass('active');
-                    loadGadgetsWithViewRoles(viewtemp);
+                } else if (viewKeysArray[i] === ANONYMOUS_DASHBOARD_VIEW) {
+                    tempViewName = 'Anonymous View';
+                } else {
+                    tempViewName = page.layout.content[tempView].name;
                 }
 
-            }catch(Exception){
-                console.log("View not available "+viewtemp);
+                document.getElementById("view-name").innerHTML = tempViewName;
+                document.getElementById("new-view-id").setAttribute('id', 'nav-tab-' + tempView);
+                document.getElementById("view-name").setAttribute('id', tempView);
+
+                if (i === 0) {
+                    $('#designer-view-mode li').removeClass('active');
+                    $('#designer-view-mode li[data-view-mode=' + tempView + ']').addClass('active');
+                    loadGadgetsWithViewRoles(tempView);
+                }
+            } catch (Exception) {
+                console.log("View not available " + tempView);
             }
-        };
+        }
 
         // render page header
         var currentPageIndex = 0;
