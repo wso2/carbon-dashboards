@@ -62,13 +62,22 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     getSchema = function (providerConfig) {
         var db = null;
         try {
-            var databseUrl = providerConfig['db_url'];
-            var databaseName = databseUrl.substring(databseUrl.lastIndexOf("/") + 1);
+            var databaseUrl = providerConfig['db_url'];
+            var databaseName = databaseUrl.substring(databaseUrl.lastIndexOf("/") + 1);
             var tableName = providerConfig['table_name'];
             var db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
                 databaseName + "' and table_name='" + tableName + "';";
             db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
             var schema = db.query(db_query);
+            if (schema.length != 0) {
+                for (var i in schema) {
+                    schema[i].fieldName = schema[i].column_name;
+                    schema[i].fieldType = schema[i].column_type;
+                    delete schema[i].column_name;
+                    delete schema[i].column_type;
+                }
+                return schema;
+            }
         } catch (e) {
             return {
                 "error": true,
@@ -77,20 +86,6 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         } finally {
             if (db != null) {
                 db.close();
-            }
-        }
-        if (schema.length != 0) {
-            for (var i in schema) {
-                schema[i].fieldName = schema[i].column_name;
-                schema[i].fieldType = schema[i].column_type;
-                delete schema[i].column_name;
-                delete schema[i].column_type;
-            }
-            return schema;
-        } else {
-            return {
-                "error": true,
-                "message": "Schema retrieval failed"
             }
         }
     };
