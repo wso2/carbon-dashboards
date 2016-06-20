@@ -40,7 +40,6 @@ public class AuthorizationUtil {
      */
     public static boolean isUserAuthorized(int tenantId, String username, String permission)
             throws UserStoreException, RegistryException {
-
         try {
             UserRealm userRealm = ServiceHolder.getRegistryService().getUserRealm(tenantId);
             return userRealm.getAuthorizationManager()

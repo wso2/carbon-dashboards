@@ -22,6 +22,7 @@ var fresh;
     var vars;
     var dashboardId;
     var matcher = new URIMatcher(request.getRequestURI());
+    var constants = require('/modules/constants.js');
 
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
@@ -49,7 +50,7 @@ var fresh;
     var isCustomize;
     var toReset;
     var method = request.getMethod();
-
+    var constants;
 
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');
@@ -142,15 +143,15 @@ var fresh;
     if (method === 'POST') {
         dashboards = require('/modules/dashboards.js');
         utils = require('/modules/utils.js');
-
+        constants = require('/modules/constants.js');
         dashboard = {
             id: dashboardId,
             title: request.getParameter('title'),
             description: request.getParameter('description'),
             permissions: {
-                viewers: ["Internal/" + dashboardId + "-viewer"],
-                editors: ["Internal/" + dashboardId + "-editor"],
-                owners: ["Internal/" + dashboardId + "-owner"]
+                viewers: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_VIEWER)],
+                editors: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_EDITOR)],
+                owners: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_OWNER)]
             },
             pages: [],
             menu:[],

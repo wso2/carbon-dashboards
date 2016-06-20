@@ -86,9 +86,9 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
-                var ContentDashboardJSON = JSON.parse(registry.content(dashboard));
-                if (!(ContentDashboardJSON.permissions).hasOwnProperty("owners")) {
-                    ContentDashboardJSON.permissions.owners = ContentDashboardJSON.permissions.editors;
+                var contentDashboardJSON = JSON.parse(registry.content(dashboard));
+                if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
+                    contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
                 }
                 allDashboards.push(ContentDashboardJSON);
             });

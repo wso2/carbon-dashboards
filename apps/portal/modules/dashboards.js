@@ -127,13 +127,13 @@ var getAsset = function (id, originalDashboardOnly) {
         }
     }
     var content = registry.content(path);
-    var ContentDashboardJSON = JSON.parse(content);
-    var dashboard = ContentDashboardJSON;
+    var contentDashboardJSON = JSON.parse(content);
+    var dashboard = contentDashboardJSON;
     if (dashboard) {
-        if(!(ContentDashboardJSON.permissions).hasOwnProperty("owners")){
-            ContentDashboardJSON.permissions.owners = ContentDashboardJSON.permissions.editors;
+        if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
+            contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
         }
-        var dashboard = ContentDashboardJSON;
+        var dashboard = contentDashboardJSON;
         dashboard.isUserCustom = isCustom;
         dashboard.isEditorEnable = false;
         if (!originalDashboardOnly && originalDB) {

@@ -65,3 +65,11 @@ var LOGIN = '/permission/admin/manage/portal/login';
 var DASHBOARD = '/permission/admin/manage/portal/dashboard';
 var CREATE = '/permission/admin/manage/portal/dashboard/create';
 var SETTINGS = '/permission/admin/manage/portal/dashboard/settings';
+
+//Internal Role creation constants
+var INTERNAL_ROLE = "Internal";
+var INTERNAL_ROLE_VIEWER = "viewer";
+var INTERNAL_ROLE_EDITOR = "editor";
+var INTERNAL_ROLE_OWNER = "owner";
+var INTERNAL_ROLE_FORWARDSLASH = "/";
+var INTERNAL_ROLE_SEPERATOR = "-";
