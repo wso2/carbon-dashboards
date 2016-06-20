@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.wso2.carbon.dashboard.deployment.util;
+package org.wso2.carbon.dashboard.authorization.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +29,7 @@ import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
  * This class validates the user based on the permission of the respective user
  */
 public class AuthorizationUtil {
-    private static final Log logger = LogFactory.getLog(AuthorizationUtils.class);
+    private static final Log LOG = LogFactory.getLog(AuthorizationUtils.class);
 
     /**
      * @param tenantId   Tenant ID of the user
@@ -40,10 +40,6 @@ public class AuthorizationUtil {
      */
     public static boolean isUserAuthorized(int tenantId, String username, String permission)
             throws UserStoreException, RegistryException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("User[" + username + "] calling method (" + Thread.currentThread().getStackTrace()[2]
-                    .getMethodName() + ") with permission[" + permission + "]");
-        }
 
         try {
             UserRealm userRealm = ServiceHolder.getRegistryService().getUserRealm(tenantId);
@@ -51,12 +47,12 @@ public class AuthorizationUtil {
                     .isUserAuthorized(MultitenantUtils.getTenantAwareUsername(username), permission,
                             CarbonConstants.UI_PERMISSION_ACTION);
         } catch (UserStoreException e) {
-            logger.error(e);
+            LOG.error(e);
             throw new UserStoreException(
-                    "Unable to get user permission information for user[" + username + "] due to " +
+                    "Unable to get user permission information for user [ " + username + " ] due to " +
                             e.getMessage(), e);
         } catch (RegistryException e) {
-            logger.error(e);
+            LOG.error(e);
             throw new RegistryException(e.getMessage(), e);
         }
     }

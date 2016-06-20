@@ -81,7 +81,7 @@ var portalRoot;
     var i18n = require("i18n");
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
-    if (!pageExists || (!user && (anonView === undefined))) {
+    if (!pageExists || (!user && !anonView)) {
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
     }
@@ -89,7 +89,7 @@ var portalRoot;
     //check whether the user has no edit/view permission and the anonymous
     // view is undefined
     if (user) {
-        if (!(user.isEditor || user.isViewer|| user.isOwner) && (anonView === undefined)) {
+        if (!(user.isEditor || user.isViewer|| user.isOwner) && !anonView) {
             response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
                     i18n.localize("page.not.found"));
             return;

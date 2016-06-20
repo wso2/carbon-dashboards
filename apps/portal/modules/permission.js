@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var authorizationUtil = Packages.org.wso2.carbon.dashboard.deployment.util.AuthorizationUtil;
+var authorizationUtil = Packages.org.wso2.carbon.dashboard.authorization.util.AuthorizationUtil;
 
 /**
  * To check whether the given user has the required permission access a specific section

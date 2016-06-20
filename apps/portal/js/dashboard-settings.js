@@ -61,11 +61,11 @@ $(function () {
     var showConfirm = function (title, message, ok) {
         var content = modalConfirmHbs({title: title, message: message});
         showHtmlModal(content, function () {
-            var el = $('#designerModal');
-            el.find('#ues-modal-confirm-yes').on('click', function () {
+            var element = $('#designerModal');
+            element.find('#ues-modal-confirm-yes').on('click', function () {
                 if (ok && typeof ok === 'function') {
                     ok();
-                    el.modal('hide');
+                    element.modal('hide');
                 }
             });
         });
@@ -197,14 +197,14 @@ $(function () {
      * @param2 role {String}
      * @private
      * */
-    var viewer = function (el, role) {
+    var addViewers = function (element, role) {
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
         if (!isExistingPermission(viewers, role)) {
             viewers.push(role);
             $('#ues-dashboard-settings').find('.ues-shared-view').append(sharedRoleHbs(role));
         }
-        el.typeahead('val', '');
+        element.typeahead('val', '');
     };
 
     /**
@@ -213,14 +213,14 @@ $(function () {
      * @param2 role {String}
      * @private
      * */
-    var owner = function (el, role) {
+    var addOwners = function (element, role) {
         var permissions = dashboard.permissions;
         var owners = permissions.owners;
         if (!isExistingPermission(owners, role)) {
             owners.push(role);
             $('#ues-dashboard-settings').find('.ues-shared-owner').append(sharedRoleHbs(role));
         }
-        el.typeahead('val', '');
+        element.typeahead('val', '');
     };
 
     /**
@@ -229,14 +229,14 @@ $(function () {
      * @param2 role {String}
      * @private
      * */
-    var editor = function (el, role) {
+    var addEditors = function (element, role) {
         var permissions = dashboard.permissions;
         var editors = permissions.editors;
         if (!isExistingPermission(editors, role)) {
             editors.push(role);
             $('#ues-dashboard-settings').find('.ues-shared-edit').append(sharedRoleHbs(role));
         }
-        el.typeahead('val', '');
+        element.typeahead('val', '');
     };
 
     /**
@@ -298,8 +298,7 @@ $(function () {
         var role;
 
         var html = '';
-        var length = viewers.length;
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < viewers.length; i++) {
             role = viewers[i];
             html += sharedRoleHbs(role);
         }
@@ -308,16 +307,14 @@ $(function () {
         settings.find('.ues-shared-view').append(html);
 
         html = '';
-        length = editors.length;
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < editors.length; i++) {
             role = editors[i];
             html += sharedRoleHbs(role);
         }
         settings.find('.ues-shared-edit').append(html);
 
         html = '';
-        length = owners.length;
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < owners.length; i++) {
             role = owners[i];
             html += sharedRoleHbs(role);
         }
@@ -384,7 +381,7 @@ $(function () {
         }
         return userRoles;
     };
-    
+
     /**
      * Initialize the UI functionality.
      * @private
@@ -460,9 +457,9 @@ $(function () {
                 suggestion: permissionMenuHbs
             }
         }).on('typeahead:selected', function (e, role, roles) {
-            viewer($(this), role.name);
+            addViewers($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
-            viewer($(this), role.name);
+            addViewers($(this), role.name);
         });
 
         var editorRoles = new Bloodhound({
@@ -520,9 +517,9 @@ $(function () {
                 suggestion: permissionMenuHbs
             }
         }).on('typeahead:selected', function (e, role, roles) {
-            editor($(this), role.name);
+            addEditors($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
-            editor($(this), role.name);
+            addEditors($(this), role.name);
         });
 
         var ownerRoles = new Bloodhound({
@@ -580,26 +577,25 @@ $(function () {
                 suggestion: permissionMenuHbs
             }
         }).on('typeahead:selected', function (e, role, roles) {
-            owner($(this), role.name);
+            addOwners($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
-            owner($(this), role.name);
+            addOwners($(this), role.name);
         });
 
         $('#ues-dashboard-settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
-            var el = $(this).closest('.ues-shared-role');
-            var role = el.data('role');
+            var element = $(this).closest('.ues-shared-role');
+            var role = element.data('role');
             var removePermission = function () {
                 editors.splice(editors.indexOf(role), 1);
                 var removeElement = function () {
-                    el.remove();
+                    element.remove();
                 };
 
                 removeElement();
             };
 
-            if ((editors.length == 1 || (getNumberOfUserRolesInDashboard(editors) == 1
-                && isExistingPermission(user.roles, role)))
-                && !user.isAdmin) {
+            if ((editors.length === 1 || (getNumberOfUserRolesInDashboard(editors) === 1
+                && isExistingPermission(user.roles, role))) && !user.isAdmin) {
                 showConfirm("Removing Permission",
                     "After this permission removal only administrator will be able to edit this dashboard." +
                     " Do you want to continue?", removePermission);
@@ -607,17 +603,17 @@ $(function () {
                 removePermission();
             }
         }).end().find('.ues-shared-view').on('click', '.remove-button', function () {
-            var el = $(this).closest('.ues-shared-role');
-            var role = el.data('role');
+            var element = $(this).closest('.ues-shared-role');
+            var role = element.data('role');
             var removePermission = function () {
                 viewers.splice(viewers.indexOf(role), 1);
                 var removeElement = function () {
-                    el.remove();
+                    element.remove();
                 };
                 removeElement();
             };
 
-            if ((viewers.length == 1 || (getNumberOfUserRolesInDashboard(viewers) == 1
+            if ((viewers.length === 1 || (getNumberOfUserRolesInDashboard(viewers) === 1
                 && isExistingPermission(user.roles, role)))
                 && !user.isAdmin) {
                 showConfirm("Removing Permission",
@@ -627,19 +623,18 @@ $(function () {
                 removePermission();
             }
         }).end().find('.ues-shared-owner').on('click', '.remove-button', function () {
-            var el = $(this).closest('.ues-shared-role');
-            var role = el.data('role');
+            var element = $(this).closest('.ues-shared-role');
+            var role = element.data('role');
             var removePermission = function () {
                 owners.splice(owners.indexOf(role), 1);
                 var removeElement = function () {
-                    el.remove();
+                    element.remove();
                 };
                 removeElement();
             };
 
-            if ((owners.length == 1 || (getNumberOfUserRolesInDashboard(owners) == 1
-                && isExistingPermission(user.roles, role)))
-                && !user.isAdmin) {
+            if ((owners.length === 1 || (getNumberOfUserRolesInDashboard(owners) === 1
+                && isExistingPermission(user.roles, role))) && !user.isAdmin) {
                 showConfirm("Removing Permission",
                     "After this permission removal only administrator will be able to view this dashboard." +
                     " Do you want to continue?", removePermission);

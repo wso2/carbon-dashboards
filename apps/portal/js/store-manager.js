@@ -86,7 +86,11 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
-                allDashboards.push(JSON.parse(registry.content(dashboard)));
+                var ContentDashboardJSON = JSON.parse(registry.content(dashboard));
+                if (stringify(ContentDashboardJSON.permissions.owners) === "null") {
+                    ContentDashboardJSON.permissions.owners = ContentDashboardJSON.permissions.editors;
+                }
+                allDashboards.push(ContentDashboardJSON);
             });
         }
         if (superTenantDashboards) {
@@ -94,6 +98,9 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             superTenantDashboards.forEach(function (dashboard) {
                 var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
                 if (parsedDashboards.shareDashboard) {
+                    if (stringify(parsedDashboards.permissions.owners) === "null") {
+                        parsedDashboards.permissions.owners = parsedDashboards.permissions.editors;
+                    }
                     allDashboards.push(parsedDashboards);
                 }
             });
@@ -186,6 +193,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var allAssets = [];
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
+
             var specificStore = require(storeExtension(storeTypes[i]));
             var assets = specificStore.getAssets(type, query);
             if (assets) {

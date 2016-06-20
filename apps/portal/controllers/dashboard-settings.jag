@@ -19,7 +19,7 @@ var pageId = null;
 var dashboard;
 var dashboardId;
 (function() {
-    var permissionCheck = require('/modules/permission-check.js');
+    var permission = require('/modules/permission.js');
     var constants = require('/modules/constants.js');
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
@@ -61,14 +61,10 @@ var dashboardId;
 
     var permissions = dashboard.permissions;
     // Check whether the user has global permissions to access the dashboard settings.
-    if (permissionCheck.isAllowed(constants.SETTINGS)) {
+    if (permission.isAllowed(constants.SETTINGS) || utils.allowed(user.roles, permissions.owners)) {
         include(utils.resolvePath('templates/dashboard-settings.jag'));
     } else {
-        if (!utils.allowed(user.roles, permissions.owners)) {
-            response.sendError(401, 'dashboard editing not authorized');
-            return;
-        }else{
-            include(utils.resolvePath('templates/dashboard-settings.jag'));
-        }
+        response.sendError(401, 'settings access not authorized of this tenant');
+        return;
     }
 } ()); %>

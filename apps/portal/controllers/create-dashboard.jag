@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 (function () {
-    var permissionCheck = require('/modules/permission-check.js');
+    var permission = require('/modules/permission.js');
     var constants = require('/modules/constants.js');
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
@@ -31,7 +31,7 @@
 
     var configs = require('/configs/designer.json');
 
-    if (!permissionCheck.isAllowed(constants.CREATE)) {
+    if (!permission.isAllowed(constants.CREATE)) {
         // If the user is not permitted to access it, send unauthorized error message.
         response.sendError(401, ""+i18n.localize("access.not.authorized"));
         return;

@@ -127,8 +127,13 @@ var getAsset = function (id, originalDashboardOnly) {
         }
     }
     var content = registry.content(path);
-    var dashboard = JSON.parse(content);
+    var ContentDashboardJSON = JSON.parse(content);
+    var dashboard = ContentDashboardJSON;
     if (dashboard) {
+        if(stringify(ContentDashboardJSON.permissions.owners)==="null"){
+            ContentDashboardJSON.permissions.owners = ContentDashboardJSON.permissions.editors;
+        }
+        var dashboard = ContentDashboardJSON;
         dashboard.isUserCustom = isCustom;
         dashboard.isEditorEnable = false;
         if (!originalDashboardOnly && originalDB) {

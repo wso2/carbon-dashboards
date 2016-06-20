@@ -148,9 +148,9 @@ var fresh;
             title: request.getParameter('title'),
             description: request.getParameter('description'),
             permissions: {
-                viewers: ["Internal/"+dashboardId+"-viewer"],
-                editors: ["Internal/"+dashboardId+"-editor"],
-                owners: ["Internal/"+dashboardId+"-owner"]
+                viewers: ["Internal/" + dashboardId + "-viewer"],
+                editors: ["Internal/" + dashboardId + "-editor"],
+                owners: ["Internal/" + dashboardId + "-owner"]
             },
             pages: [],
             menu:[],

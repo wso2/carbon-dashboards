@@ -21,7 +21,7 @@ var user;
     var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
     var constants = require("/modules/constants.js");
     var dashboards = require('/modules/dashboards.js');
-    var permissionCheck = require("/modules/permission-check.js");
+    var permission = require("/modules/permission.js");
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
@@ -52,7 +52,7 @@ var user;
         user = carbon.server.tenantUser(username);
         if (user.tenantId !== -1) {
             if (usr.login(username, password)) {
-                if (!permissionCheck.isAllowed(constants.LOGIN)) {
+                if (!permission.isAllowed(constants.LOGIN)) {
                     // If user do not have necessary permissions, display an error message and logout the user
                     message = 'login.unauthorized.messages';
                     usr.logout();
