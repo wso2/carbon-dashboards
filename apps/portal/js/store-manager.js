@@ -90,7 +90,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                 if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
                     contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
                 }
-                allDashboards.push(ContentDashboardJSON);
+                allDashboards.push(contentDashboardJSON);
             });
         }
         if (superTenantDashboards) {
