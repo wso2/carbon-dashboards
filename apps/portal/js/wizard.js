@@ -174,10 +174,10 @@ $("#preview").click(function () {
             async: false,
             success: function (data) {
                 if (!data.error) {
-                    hideInlineError($("#gadget-name"), $("#gadget-name-error"));
+                    $('#tab3-validation-errors').html('');
                     $('#preview-pane').html($('#preview-hbs').html());
                 } else {
-                    showInlineError($("#gadget-name"), $("#gadget-name-error"), data.message);
+                    $('#tab3-validation-errors').html(data.message);
                     $('#preview-pane').html('');
                     $('#rootwizard').find('.pager .finish').hide();
                 }
