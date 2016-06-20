@@ -87,7 +87,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
                 var ContentDashboardJSON = JSON.parse(registry.content(dashboard));
-                if (stringify(ContentDashboardJSON.permissions.owners) === "null") {
+                if (!(ContentDashboardJSON.permissions).hasOwnProperty("owners")) {
                     ContentDashboardJSON.permissions.owners = ContentDashboardJSON.permissions.editors;
                 }
                 allDashboards.push(ContentDashboardJSON);
@@ -98,7 +98,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             superTenantDashboards.forEach(function (dashboard) {
                 var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
                 if (parsedDashboards.shareDashboard) {
-                    if (stringify(parsedDashboards.permissions.owners) === "null") {
+                    if (!(parsedDashboards.permissions).hasOwnProperty("owners")) {
                         parsedDashboards.permissions.owners = parsedDashboards.permissions.editors;
                     }
                     allDashboards.push(parsedDashboards);
