@@ -122,7 +122,7 @@ var getAsset, getAssets, addAsset, deleteAsset;
 
     };
 
-    deleteAsset = function (id) {
+    deleteAsset = function (type, id) {
 
     };
 }());

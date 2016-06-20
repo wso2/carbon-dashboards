@@ -301,6 +301,7 @@
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <% include('/controllers/includes/common-scripts.jag'); %>
 <% include('/controllers/includes/dashboard-scripts.jag'); %>
+<script src="<%=urlPrefix%>js/show-hide-error.js"></script>
 <script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
 <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>

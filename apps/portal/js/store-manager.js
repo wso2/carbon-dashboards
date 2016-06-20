@@ -233,7 +233,19 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
     };
 
-    deleteAsset = function (id) {
-
+    /**
+     * To delete a asset
+     * @param {String} type Type of the asset to be deleted
+     * @param {String} id ID of the asset
+     */
+    deleteAsset = function (type, id) {
+        var storeTypesLength = config.store.types.length;
+        for (var i = 0; i < storeTypesLength; i++) {
+            var specificStore = require(storeExtension(storeTypes[i]));
+            var asset = specificStore.deleteAsset(type, id);
+            if (asset) {
+                break;
+            }
+        }
     };
 }());

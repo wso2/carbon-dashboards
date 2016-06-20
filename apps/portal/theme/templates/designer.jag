@@ -62,39 +62,29 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <% if(! dashboard.isUserCustom) { %>
-                        <% if(configs.isCreateGadgetEnable){%>
-                        <li>
-                            <a href="<%=tenantedUrlPrefix%>create-gadget">
-                                <span class="fw-stack">
-                                    <i class="fw fw-add fw-stack-1x"></i>
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                </span> <%=i18n.localize("create.gadget.label")%>
-                            </a>
-                        </li>
-                        <% } %>
-                        <% if (permission.isAllowed(constants.SETTINGS) || utils.allowed(user.roles,dashboard.permissions.owners)) { %>
-                        <li>
-                            <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
-                                <span class="icon fw-stack">
-                                    <i class="fw fw-settings fw-stack-1x"></i>
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                </span>
-                                <%=i18n.localize("settings")%>
-                            </a>
-                        </li>
-                        <% } else { %>
-			<script id="ues-navigation-bar-hbs" type="text/x-handlebars-template">
-                        <li id ="settingsButton">
-                            <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
-                                <span class="icon fw-stack">
-                                    <i class="fw fw-settings fw-stack-1x"></i>
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                </span>
-                                <%=i18n.localize("settings")%>
-                            </a>
-                        </li>
-			</script>
-			<% } %>
+                            <% if (permission.isAllowed(constants.SETTINGS) || utils.allowed(user.roles,dashboard.permissions.owners)) { %>
+                            <li>
+                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                                    <span class="icon fw-stack">
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    </span>
+                                    <%=i18n.localize("settings")%>
+                                </a>
+                            </li>
+                            <% } else { %>
+			                <script id="ues-navigation-bar-hbs" type="text/x-handlebars-template">
+                            <li id ="settingsButton">
+                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                                    <span class="icon fw-stack">
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    </span>
+                                    <%=i18n.localize("settings")%>
+                                </a>
+                            </li>
+			                </script>
+			                <% } %>
                         <% } else { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard.id%>?reset=true" class="ues-copy">
@@ -908,6 +898,7 @@
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
     <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
     <script src="<%=urlPrefix%>js/designer.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>

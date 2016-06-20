@@ -20,34 +20,6 @@ var PROVIDER_NAME = 'provider-name'
 var CHART_CONF = 'chart-conf';
 var CHART_NAME = 'chart-name';
 
-/**
- * Show error style for given element
- * @param1 element
- * @param2 errorElement
- * @private
- * */
-var showInlineError = function (element, errorElement, message) {
-    element.val('');
-    element.parent().addClass("has-error");
-    element.addClass("has-error");
-    errorElement.removeClass("hide");
-    if (message != null)
-        errorElement.html(message);
-    errorElement.addClass("show");
-};
-
-/**
- * Hide error style for given element
- * @param1 element
- * @param2 errorElement
- * @private
- * */
-var hideInlineError = function (element, errorElement) {
-    element.parent().removeClass("has-error");
-    element.removeClass("has-error");
-    errorElement.removeClass("show");
-    errorElement.addClass("hide");
-};
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
@@ -93,6 +65,26 @@ $('#rootwizard').bootstrapWizard({
 $('#provider-list').change(function () {
     step1Done = false;
     provider = $("#providers").val();
+});
+
+/**
+ * Handle event of clicking on the test configuration button
+ */
+$('#test-connection').click(function () {
+    var providerConfig = getProviderConfigData();
+    $.ajax({
+        url: ues.utils.relativePrefix() + 'apis/createGadget?action=testConnection',
+        method: "POST",
+        data: JSON.stringify(providerConfig),
+        contentType: "application/json",
+        async: false,
+        success: function () {
+            $('#test-verification-label').show();
+        },
+        error: function (xhr, message, errorObj) {
+            $('#tab2-validation-errors').html('Error in database configuration');
+        }
+    })
 });
 
 $('#show-data').click(function () {
@@ -148,6 +140,8 @@ $('#gadget-name').on('keyup', function () {
 });
 
 $('#tab2').on('keypress', function() {
+    $('#test-verification-label').hide();
+    $('#tab2-validation-errors').empty();
     $('input[required="true"]').each(function () {
         $(this).on('keyup', function (e) {
             if ($(this).val()) {
@@ -155,6 +149,10 @@ $('#tab2').on('keypress', function() {
             }
         });
     });
+});
+
+$('#tab3').on('keypress', function () {
+    $('#tab3-validation-errors').empty();
 });
 
 $("#preview").click(function () {
@@ -221,8 +219,8 @@ $(".pager .finish").click(function() {
             var source = $("#wizard-error-hbs").html();
             ;
             var template = Handlebars.compile(source);
-            $("#top-rootwizard").empty();
-            $("#top-rootwizard").append(template({
+            $("#rootwizard").empty();
+            $("#rootwizard").append(template({
                 error: xhr.responseText
             }));
         }

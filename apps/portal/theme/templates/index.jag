@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <link href="<%=urlPrefix%>libs/font-wso2_1.0.0/css/font-wso2.min.css" rel="stylesheet" type="text/css" />
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <% var permission = require('/modules/permission.js'); %>
     <% var utils = require('/modules/utils.js'); %>
@@ -40,20 +41,24 @@
     <% if (showNavigation) { %>
     <!-- navbar -->
     <div class="navbar-wrapper">
-        <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                        aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div id="navbar" class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <% if (! isMobileDevice && permission.isAllowed(constants.CREATE)) { %>
+            <nav class="navbar navbar-default affix-top" data-spy="affix" data-offset-top="80" data-offset-bottom="40">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-menu-toggle" data-toggle="collapse" data-target="#navbar2" aria-expanded="true" aria-controls="navbar2">
+                            <span class="icon fw-stack">
+                                <i class="fw fw-tiles fw-stack-1x"></i>
+                            </span>
+                        </a>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0px;">
+                        <ul class="nav navbar-nav collapse-nav-sub">
+                            <% if (! isMobileDevice && permission.isAllowed(constants.CREATE)) { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-dashboard">
                                 <span class="fw-stack">
@@ -63,21 +68,26 @@
                             </a>
                         </li>
                         <% } %>
-                        <% if (config.isCreateGadgetEnable) { %>
-                        <li>
-                            <a href="<%=tenantedUrlPrefix%>create-gadget">
-                                <span class="fw-stack">
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                    <i class="fw fw-add fw-stack-1x"></i>
-                                </span> <%= i18n.localize("create.gadget.label")%>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+                <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true"><!-- nav-collapse -->
+                    <ul class="nav navbar-nav collapse-nav-sub">
+                        <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="#"><i class="fw fw-dashboard"></i><%= i18n.localize("dashboards.label")%></a>
+                        </li>
+                        <li data-absolute-position="145" style="left: 145px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="<%=tenantedUrlPrefix%>gadget/">
+                                <i class="fw fw-gadget"></i><%= i18n.localize("gadgets")%>
                             </a>
                         </li>
-                        <% } %>
+                        <li data-absolute-position="275" style="left: 275px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="<%=tenantedUrlPrefix%>layout/"><i class="fw fw-layout"></i><%= i18n.localize("layouts")%></a>
+                        </li>
                     </ul>
-                </div><!--/.nav-collapse -->
-            </div>
-        </nav>
-    </div>
+                </div><!--/ .nav-collapse -->
+            </nav>
+        </div>
     <% } %>
 
     <div id="ues-portal" class="container-fluid">
@@ -91,7 +101,7 @@
                         <li>Filtered By <span id = "filter"><%= i18n.localize("all.dashboards") %></span> :
                             <button class="btn btn-default" data-toggle="dropdown" aria-expanded="false" ><i class="fw fw-filter"></i></button>
                             <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x" id="filter-dashboards">
-                                 <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
+                                <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
                                 <li><a href="#" data-filter="Shared"><%= i18n.localize("shared.dashboards") %></a></li>
                                 <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %></a></li>
                             </ul>
@@ -119,14 +129,11 @@
 
     <script id="ues-dashboards-empty-hbs" type="text/x-handlebars-template">
         <div class="col-md-12">
-            <div class="caption">
-                <h4>
-                    <%= i18n.localize("no.dashboards.found.description") %>
-                     <% if (permission.isAllowed(constants.CREATE)) { %>
-                        <%= i18n.localize("create.dashboard.click") %>
-                        <a href="<%=tenantedUrlPrefix%>create-dashboard"><%= i18n.localize("here.label") %></a>
-                     <% } %>
-                </h4>
+            <div class="message message-info">
+                <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.dashboards.found.description") %></h4>
+                <% if (permission.isAllowed(constants.CREATE)) { %>
+                    <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><u><%= i18n.localize("here.label") %></u></p>
+                <% } %>
             </div>
         </div>
     </script>
