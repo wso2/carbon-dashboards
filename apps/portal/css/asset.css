@@ -13,15 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var registerCallBackforPush;
-(function () {
-    /**
-     *
-     * @param providerConfig
-     * @param schema
-     */
-    registerCallBackforPush = function (providerConfig, schema, callback){
-        //callback(providerData);
-    };
-  
-}());
+
+#ds-assets-portal .ds-asset .ds-asset-trash-handle {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    width: 20px;
+    font-size: 12px;
+    text-align: right;
+}
+
+#ds-assets-portal .ds-asset {
+    height: 200px;
+    background-color: #edeeef;
+}
+
+.ds-asset-trash-cancel {
+    border-color: #000;
+}
+
+.ds-trash-actions {
+    right: 8px;
+    bottom: 7px;
+    position: absolute;
+    padding-bottom: 20px;
+    padding-right: 20px;
+}
+
+#ds-assets-portal .ds-asset h2 {
+    font-size: 14px;
+}

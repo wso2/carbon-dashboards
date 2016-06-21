@@ -51,7 +51,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param chartConfig
      */
     validate = function(chartConfig) {
-
+        return true;
     };
 
     /**
@@ -107,7 +107,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      */
     update = function(data) {
         wso2gadgets.onDataReady(data,"append");
-    }
+    };
 
     buildChartConfig = function (_chartConfig) {
         var conf = {};

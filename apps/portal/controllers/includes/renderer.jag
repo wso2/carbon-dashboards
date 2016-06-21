@@ -17,7 +17,7 @@
 var dbRoot;
 var dest;
 var renderEngine = {};
-
+var portalRoot;
 (function () {
     var log = new Log();
 
@@ -95,7 +95,7 @@ var renderEngine = {};
 
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
-
+    portalRoot = tenantedUrlPrefix + 'dashboards/';
     // global reference to getBootstrapLayout() function
     renderEngine.getDashboardContent = db.getBootstrapLayout;
 

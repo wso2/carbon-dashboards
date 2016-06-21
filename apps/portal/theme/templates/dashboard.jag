@@ -100,11 +100,8 @@
     %>
 
 </head>
-<body class="dashboard lang_<%=request.getLocale()%>">
-
-
+<% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard lang_<%=request.getLocale()%> dark">
-      <% if(typeof  bgColor === 'undefined'){ %>
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
@@ -129,10 +126,8 @@
             </div>
         </div>
     </div>
-      <% } %>
     <!-- #page-content-wrapper -->
     <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
-          <% if(typeof  bgColor === 'undefined'){ %>
         <div class="page-header">
             <div class="container-fluid">
 
@@ -224,6 +219,10 @@
 
             </div>
         </div>
+         <% } else { %>
+            <body class="dashboard lang_<%=request.getLocale()%>" style="padding-bottom: 0">
+            <body class="dashboard lang_<%=request.getLocale()%> dark" style="padding-bottom: 0">
+                <div class="page-content-wrapper remove-padding-xs">
          <% } %>
         <!-- page content -->
         <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
@@ -249,11 +248,14 @@
         <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
-            <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
-
-                <div class="nano">
-                    <div class="nano-content">
-
+            <% if(typeof  bgColor === 'undefined'){ %>
+                <div class="container-fluid body-wrapper">
+                <div class="nano" >
+            <% } else { %>
+                <div class="container-fluid body-wrapper" style="height: 100%;">
+                <div class="nano" style="position: absolute;">
+            <% } %>
+                    <div class="nano-content" >
                         <div class="page-content">
                             <div class="progress hidden">
                                     <div class="indeterminate"></div>

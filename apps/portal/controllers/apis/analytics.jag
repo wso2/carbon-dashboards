@@ -66,6 +66,7 @@
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var TYPE_REINDEX = 30;
     var TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES = 31;
+    var TYPE_DRILLDOWN_RANGE_COUNT = 32;
     var log = new Log();
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
@@ -123,9 +124,15 @@
     }
 
     var tableName = request.getParameter(TABLE_NAME);
-    if (type != TYPE_LIST_TABLES && type != TYPE_PAGINATION_SUPPORTED && type != TYPE_ADD_STREAM_DEFINITION
-            && type != TYPE_GET_STREAM_DEFINITION && type != TYPE_PUBLISH_EVENTS && type != TYPE_WAIT_FOR_INDEXING
-            && type != TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES && type != TYPE_GET_RECORDSTORES) {
+    if (type != TYPE_LIST_TABLES &&
+        //        type != TYPE_PUT_RECORDS &&
+        type != TYPE_PAGINATION_SUPPORTED &&
+        type != TYPE_ADD_STREAM_DEFINITION &&
+        type != TYPE_GET_STREAM_DEFINITION &&
+        type != TYPE_PUBLISH_EVENTS &&
+        type != TYPE_WAIT_FOR_INDEXING &&
+        type != TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES &&
+        type != TYPE_GET_RECORDSTORES) {
         if (tableName == null) {
             log.error("tableName is not provided!");
             response.status = HTTP_INTERNAL_ERROR;
@@ -267,6 +274,11 @@
                 result = connector.drillDownSearch(loggedInUser, tableName, contentAsString);
                 break;
             }
+            case TYPE_DRILLDOWN_RANGE_COUNT:
+            {
+                result = connector.drillDownRangeCount(loggedInUser, tableName, contentAsString);
+                break;
+            }
             case TYPE_DRILLDOWN_SEARCH_COUNT:
             {
                 result = connector.drillDownSearchCount(loggedInUser, tableName, contentAsString);
@@ -317,7 +329,13 @@
                 break;
             }
             default:
-                result = '{ "status": "Failed", "statusCode": "500", "message": "Unidentified operation" }';
+                response.status = 500;
+                result = {
+                    status: "Failed",
+                    message: "Unidentified operation"
+                };
+                print(result);
+                return;
         }
         if (result != null) {
             if (log.isDebugEnabled()) {
@@ -335,7 +353,8 @@
             print(finalResult);
         }
     } else {
-        print('{ "status": "Failed", "statusCode": "500", "message": "AnalyticsCachedWebServiceConnector is unavailable" }');
+        response.status = 500;
+        print({status: "Failed", message: "AnalyticsCachedWebServiceConnector is unavailable"});
     }
 
 }());

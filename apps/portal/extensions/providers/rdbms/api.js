@@ -32,15 +32,18 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     validate = function (providerConfig) {
+        var db = null;
         try {
-            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
         } catch (e) {
             return {
                 "error" : true,
                 "message" : "Database connection failed"
             }
-        } finally{
-            db.close();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
         }
         return true;
     };
@@ -57,33 +60,32 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param providerConfig
      */
     getSchema = function (providerConfig) {
+        var db = null;
         try {
-            var databaseName = providerConfig['db_name'];
+            var databaseUrl = providerConfig['db_url'];
+            var databaseName = databaseUrl.substring(databaseUrl.lastIndexOf("/") + 1);
             var tableName = providerConfig['table_name'];
             var db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
                 databaseName + "' and table_name='" + tableName + "';";
-            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
             var schema = db.query(db_query);
+            if (schema.length != 0) {
+                for (var i in schema) {
+                    schema[i].fieldName = schema[i].column_name;
+                    schema[i].fieldType = schema[i].column_type;
+                    delete schema[i].column_name;
+                    delete schema[i].column_type;
+                }
+                return schema;
+            }
         } catch (e) {
             return {
                 "error": true,
                 "message": "Schema Retrieval Failed"
             }
         } finally {
-            db.close();
-        }
-        if(schema.length != 0) {
-            for (var i in schema) {
-                schema[i].fieldName = schema[i].column_name;
-                schema[i].fieldType = schema[i].column_type;
-                delete schema[i].column_name;
-                delete schema[i].column_type;
-            }
-            return schema;
-        } else {
-            return {
-                "error": true,
-                "message": "Schema retrieval failed"
+            if (db != null) {
+                db.close();
             }
         }
     };
@@ -94,13 +96,20 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      * @param limit
      */
     getData = function (providerConfig, limit) {
-
-        var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
-        var query = providerConfig['query'];
-        if(limit){
-            query =query.replace(/^\s\s*/, '').replace(/\s\s*$/, '') + ' limit ' + limit;
+        var data;
+        try {
+            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            var query = providerConfig['query'];
+            if (limit) {
+                query = query.replace(/^\s\s*/, '').replace(/\s\s*$/, '') + ' limit ' + limit;
+            }
+            data = db.query(query);
         }
-        return db.query(query);
+        finally {
+            db.close();
+        }
+        return data;
+
     };
 
 }());

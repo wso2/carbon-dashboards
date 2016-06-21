@@ -245,37 +245,6 @@ $(function () {
         }
     };
 
-    /**
-     * Show error style for given element
-     * @param1 element
-     * @param2 errorElement
-     * @private
-     * */
-    var showInlineError = function (element, errorElement) {
-        element.val('');
-        element.parent().addClass("has-error");
-        element.addClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("hide");
-        element.parent().find("span.glyphicon").addClass("show");
-        errorElement.removeClass("hide");
-        errorElement.addClass("show");
-    };
-
-    /**
-     * Hide error style for given element
-     * @param1 element
-     * @param2 errorElement
-     * @private
-     * */
-    var hideInlineError = function (element, errorElement) {
-        element.parent().removeClass("has-error");
-        element.removeClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("show");
-        element.parent().find("span.glyphicon").addClass("hide");
-        errorElement.removeClass("show");
-        errorElement.addClass("hide");
-    };
-
     var initExistingRoles = function () {
         var i;
         var role;
@@ -568,6 +537,19 @@ $(function () {
             var text = $(this).children().text();
             $('#ues-dashboard-theme .selected').text(text);
             dashboard.theme = text;
+        });
+
+        //Share dashboard among tenants
+        $('#share-dashboard').on('click', function () {
+            dashboard.shareDashboard = $(this).is(":checked");
+            if(dashboard.shareDashboard) {
+                $('#share-info').removeClass("hide");
+                $('#share-info').addClass("show");
+            } else {
+                $('#share-info').removeClass("show");
+                $('#share-info').addClass("hide");
+            }
+
         });
 
         // Enable Oauth settings

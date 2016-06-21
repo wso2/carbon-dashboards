@@ -1179,40 +1179,7 @@ $(function () {
 
         return isPageAvailable;
     };
-
-    /**
-     * Show error style for given element.
-     * @param {Object} element
-     * @param {Object} errorElement
-     * @return {null}
-     * @private
-     */
-    var showInlineError = function (element, errorElement) {
-        element.val('');
-        element.parent().addClass("has-error");
-        element.addClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("hide");
-        element.parent().find("span.glyphicon").addClass("show");
-        errorElement.removeClass("hide");
-        errorElement.addClass("show");
-    };
-
-    /**
-     * Hide error style for given element.
-     * @param {Object} element
-     * @param {Object} errorElement
-     * @return {null}
-     * @private
-     */
-    var hideInlineError = function (element, errorElement) {
-        element.parent().removeClass("has-error");
-        element.removeClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("show");
-        element.parent().find("span.glyphicon").addClass("hide");
-        errorElement.removeClass("show");
-        errorElement.addClass("hide");
-    };
-
+    
     /**
      * Update page options.
      * @param {Object} e Event object
