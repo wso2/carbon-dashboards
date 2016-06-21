@@ -457,6 +457,7 @@
         <option>{{viewName}}</option>
     </script>
 
+    <script src="<%=urlPrefix%>js/async.js"></script>
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
