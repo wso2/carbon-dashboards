@@ -108,13 +108,13 @@ var maxRolesLimit;
         var user = session.get('user');
         var userManager = new carbon.user.UserManager(server, user.tenantId);
         try {
-            if (!userManager.roleExists("Internal/" + id + "-" + editorRole)) {
+            if (userManager.roleExists("Internal/" + id + "-" + editorRole)) {
                 userManager.removeRole("Internal/" + id + "-" + editorRole);
             }
-            if (!userManager.roleExists("Internal/" + id + "-" + viewerRole)) {
+            if (userManager.roleExists("Internal/" + id + "-" + viewerRole)) {
                 userManager.removeRole("Internal/" + id + "-" + viewerRole);
             }
-            if (!userManager.roleExists("Internal/" + id + "-" + ownerRole)) {
+            if (userManager.roleExists("Internal/" + id + "-" + ownerRole)) {
                 userManager.removeRole("Internal/" + id + "-" + ownerRole);
             }
         } catch (e) {
