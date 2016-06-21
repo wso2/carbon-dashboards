@@ -18,6 +18,7 @@ package org.wso2.carbon.dashboard.authorization.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.CarbonConstants;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.dashboard.deployment.internal.ServiceHolder;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
@@ -41,18 +42,19 @@ public class AuthorizationUtil {
     public static boolean isUserAuthorized(int tenantId, String username, String permission)
             throws UserStoreException, RegistryException {
         try {
-            UserRealm userRealm = ServiceHolder.getRegistryService().getUserRealm(tenantId);
-            return userRealm.getAuthorizationManager()
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
+            org.wso2.carbon.user.core.service.RealmService realm = ServiceHolder.getRealmService();
+            boolean isAuthorized =  realm.getTenantUserRealm(tenantId).getAuthorizationManager()
                     .isUserAuthorized(MultitenantUtils.getTenantAwareUsername(username), permission,
                             CarbonConstants.UI_PERMISSION_ACTION);
+            PrivilegedCarbonContext.endTenantFlow();
+            return isAuthorized;
         } catch (UserStoreException e) {
             LOG.error(e);
             throw new UserStoreException(
                     "Unable to get user permission information for user [ " + username + " ] due to " +
                             e.getMessage(), e);
-        } catch (RegistryException e) {
-            LOG.error(e);
-            throw new RegistryException(e.getMessage(), e);
         }
     }
 }
