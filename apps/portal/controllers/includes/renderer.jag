@@ -66,19 +66,33 @@ var portalRoot;
     // that page is defined
     pageId = pageId || dashboard.landing;
 
-    var anonView;
+    var anonView = [];
     var pageExists = false;
     dashboard.pages.forEach(function (page) {
         if (page.id == pageId) {
             pageExists = true;
-            anonView = page.layout.content.anon;
+            var pageLayoutContent = JSON.parse(JSON.stringify(page.layout.content));
+            var viewKeysArray = Object.keys(pageLayoutContent);
+            var viewArrayLength = viewKeysArray.length;
+            for (var i = 0; i < viewArrayLength; i++) {
+                if (page.layout.content[viewKeysArray[i]].roles !== undefined) {
+                    var viewRoles = page.layout.content[viewKeysArray[i]].roles;
+                    var viewRolesLength = viewRoles.length;
+                    for(var j = 0; j < viewRolesLength; j++){
+                        if(viewRoles[j] === 'Anonymous') {
+                            anonView.push(page.layout.content[viewKeysArray[i]]);
+                        }
+                    }
+                }
+            }
+            //anonView = page.layout.content.anon;
         }
     });
 
     var i18n = require("i18n");
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
-    if (!pageExists || (!user && (anonView === undefined))) {
+    if (!pageExists || (!user && (anonView.length === 0))) {
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
     }
@@ -86,7 +100,7 @@ var portalRoot;
     //check whether the user has no edit/view permission and the anonymous
     // view is undefined
     if (user) {
-        if (!(user.isEditor || user.isViewer) && (anonView === undefined)) {
+        if (!(user.isEditor || user.isViewer) && (anonView.length === 0)) {
             response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
                     i18n.localize("page.not.found"));
             return;

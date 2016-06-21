@@ -41,6 +41,5 @@
     ues.global.dashboard = <%=dashboard%>;
     ues.global.page = <%=JSON.stringify(pageId)%>;
     ues.global.anonRole = <%=JSON.stringify(anonRole)%>;
-    ues.global.dbType = <%=JSON.stringify(viewType)%>;
 </script>
 <% }()); %>

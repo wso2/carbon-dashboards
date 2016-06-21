@@ -137,10 +137,10 @@
                 .removeClass('ues-component-title-left ues-component-title-center ues-component-title-right')
                 .addClass(titlePositon);
 
-            if (ues.global.dbType === 'default') {
+          //  if (ues.global.dbType === 'default') {
                 hasCustomUserPrefView(metadata, comp);
                 hasCustomFullView(metadata, comp);
-            }
+          //  }
             
             var container = $('<div />').attr('id', cid);
             sandbox.find('.ues-component-body').html(container);

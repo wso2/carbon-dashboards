@@ -15,6 +15,11 @@
  * limitations under the License.
  */
 %>
+<%
+var usr = require('/modules/user.js');
+var user = usr.current();
+var userRoles = usr.roles();
+%>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
@@ -371,6 +376,10 @@
         <button type="submit">Submit</button>
     </form>
 
+    <script>
+        var userRolesList = <%= userRoles %>;
+    </script>
+
     <!-- Handlebar templates -->
     <!-- Template to generate component content -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
@@ -391,8 +400,9 @@
         </div>
     </script>
 
+    <!-- Template for view role -->
     <script id="ues-view-role-hbs" type="text/x-handlebars-template">
-    <div class="btn btn-default btn-bordered ues-shared-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
+        <div class="btn btn-default btn-bordered ds-view-role" data-role="{{.}}">{{.}} <span class="fw fw-uncheck remove-button"></span></div>
     </script>
 
     <!-- Template to generate gridstack list -->
@@ -936,7 +946,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label class="control-label"><%= i18n.localize("select.roles") %></label>
-                                        <input id="ues-share-view" type="text" class="form-control typeahead" placeholder="<%= i18n.localize("roles")%>">
+                                        <input id="ds-view-roles" type="text" class="form-control typeahead" placeholder="<%= i18n.localize("roles")%>">
                                         <div class="ues-view-roles select-view-role"></div>
                                     </div>
                                 </div>
