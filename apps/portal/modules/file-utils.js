@@ -117,3 +117,17 @@ function writeToFile (content, destinationPath){
     file.write(content);
     file.close();
 }
+
+/**
+ * Replace the given text in a file
+ * @param sourceFilePath
+ * @param originalText
+ * @param replaceText
+ */
+function replaceText (sourceFilePath,originalText, replaceText){
+    var sourceFile = new File(sourceFilePath);
+    sourceFile.open('r+');
+    var content = sourceFile.readAll();
+    sourceFile.write(content.replace(originalText, replaceText));
+    sourceFile.close();
+}

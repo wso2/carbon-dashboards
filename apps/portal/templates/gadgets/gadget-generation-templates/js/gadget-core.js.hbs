@@ -63,6 +63,7 @@ var getProviderData = function (){
         providerData = data;
         }
     });
+ return getProviderData;
 }
 {{/if}}
 
@@ -70,7 +71,7 @@ var drawGadget = function (){
     {{#if isPullMode}}
     draw('#canvas', conf[CHART_CONF], schema, providerData);
     setInterval(function() {
-        update(getProviderData);
+        update(getProviderData());
     },pref.getInt(REFRESH_INTERVAL));
     {{else}}
         draw('#canvas', conf[CHART_CONF], schema, null);

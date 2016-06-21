@@ -13,7 +13,7 @@ var defaultTableColumns = [];
 
 var PROVIDER_LOCATION = 'extensions/providers/';
 var CHART_LOCATION = 'extensions/chart-templates/';
-var DYNAMIC_JS_LOCATION = '/js/';
+var WIZARD_LIB_LOCATION = '/wizard-libs/';
 
 var PROVIDER_CONF = 'provider-conf';
 var PROVIDER_NAME = 'provider-name'
@@ -174,10 +174,10 @@ $("#preview").click(function () {
             async: false,
             success: function (data) {
                 if (!data.error) {
-                    hideInlineError($("#gadget-name"), $("#gadget-name-error"));
+                    $('#tab3-validation-errors').html('');
                     $('#preview-pane').html($('#preview-hbs').html());
                 } else {
-                    showInlineError($("#gadget-name"), $("#gadget-name-error"), data.message);
+                    $('#tab3-validation-errors').html(data.message);
                     $('#preview-pane').html('');
                     $('#rootwizard').find('.pager .finish').hide();
                 }
@@ -303,11 +303,20 @@ function registerAdvancedProviderUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
-                var dynamicJsList = config[key]['dynamicJS'];
-                for (var i in dynamicJsList){
-                     var js = document.createElement('script');
-                     js.src = PROVIDER_LOCATION + provider + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
-                     document.body.appendChild(js);
+                if (config[key]['wizard-imports']) {
+                    var wizardCssList = config[key]['wizard-imports']["css"];
+                    for (var i in wizardCssList) {
+                        var link = document.createElement('link')
+                        link.rel = 'stylesheet';
+                        link.href = PROVIDER_LOCATION + provider + WIZARD_LIB_LOCATION + wizardCssList[i];
+                        document.body.appendChild(link);
+                    }
+                    var wizardJsList = config[key]['wizard-imports']["js"];
+                    for (var i in wizardJsList) {
+                        var js = document.createElement('script');
+                        js.src = PROVIDER_LOCATION + provider + WIZARD_LIB_LOCATION + wizardJsList[i];
+                        document.body.appendChild(js);
+                    }
                 }
                 var data = {
                     "provider": provider,
@@ -379,11 +388,20 @@ function registerAdvancedChartUI(data) {
     for (var i = 0; i < data.length; i++) {
         (function (config, key) {
             if (config[key]['fieldType'].toLowerCase() === 'advanced') {
-                var dynamicJsList = config[key]['dynamicJS'];
-                for (var i in dynamicJsList){
-                    var js = document.createElement('script');
-                    js.src = CHART_LOCATION + chartType + DYNAMIC_JS_LOCATION + dynamicJsList[i] + '.js';
-                    document.body.appendChild(js);
+                if (config[key]['wizard-imports']) {
+                    var wizardCssList = config[key]['wizard-imports']["css"];
+                    for (var i in wizardCssList) {
+                        var link = document.createElement('link')
+                        link.rel = 'stylesheet';
+                        link.href = CHART_LOCATION + chartType + WIZARD_LIB_LOCATION+ wizardCssList[i];
+                        document.body.appendChild(link);
+                    }
+                    var wizardJsList = config[key]['wizard-imports']["js"];
+                    for (var i in wizardJsList) {
+                        var js = document.createElement('script');
+                        js.src = CHART_LOCATION + chartType + WIZARD_LIB_LOCATION + wizardJsList[i];
+                        document.body.appendChild(js);
+                    }
                 }
                 var data = {
                     "chartType": chartType,

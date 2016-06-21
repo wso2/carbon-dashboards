@@ -176,7 +176,7 @@
     "login.unauthorized.message": "You do not have necessary permissions to login the portal",
     "owners": "Owners",
     "valid.label": "Valid",
-    "test.configuration": "Test Configuration",
+    "test.connection": "Test Connection",
     "share.dashboard": "Share Dashboard",
     "all.dashboards": "All Dashboards",
     "shared.dashboards": "Shared Dashboards",

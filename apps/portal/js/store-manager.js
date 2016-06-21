@@ -239,6 +239,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * @param {String} id ID of the asset
      */
     deleteAsset = function (type, id) {
+        var storeTypes = config.store.types;
         var storeTypesLength = config.store.types.length;
         for (var i = 0; i < storeTypesLength; i++) {
             var specificStore = require(storeExtension(storeTypes[i]));

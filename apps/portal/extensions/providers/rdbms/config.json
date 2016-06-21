@@ -41,6 +41,6 @@
             "fieldType" : "string",
             "isRequired" : true
         }
-    ],
-    "provider-libs" : ["test"]
+
+    ]
 }
