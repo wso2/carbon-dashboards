@@ -242,7 +242,7 @@
                         
 
                         <div class="ues-components-grid gadgets-grid">
-                            <%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%>
+
                         </div>
                     </div>
 

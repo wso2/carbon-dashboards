@@ -330,33 +330,33 @@ var findPage = function (dashboard, id) {
  * @returns {Object}
  * @private
  */
-var findComponent = function (id, page) {
-    var i;
-    var length;
-    var area;
-    var component;
-    var components;
-    var type;
-
-    if ((user.domain != superDomain && user.domain != urlDomain) ||
-        (urlDomain && user.domain == superDomain && urlDomain != superDomain)) {
-        type = 'anon';
-    }
-
-    var content = (type === 'anon' ? page.content.anon : page.content.default)
-    for (area in content) {
-        if (content.hasOwnProperty(area)) {
-            components = content[area];
-            length = components.length;
-            for (i = 0; i < length; i++) {
-                component = components[i];
-                if (component.id === id) {
-                    return component;
-                }
-            }
-        }
-    }
-};
+// var findComponent = function (id, page) {
+//     var i;
+//     var length;
+//     var area;
+//     var component;
+//     var components;
+//     var type;
+//
+//     if ((user.domain != superDomain && user.domain != urlDomain) ||
+//         (urlDomain && user.domain == superDomain && urlDomain != superDomain)) {
+//         type = 'anon';
+//     }
+//
+//     var content = (type === 'anon' ? page.content.anon : page.content.default)
+//     for (area in content) {
+//         if (content.hasOwnProperty(area)) {
+//             components = content[area];
+//             length = components.length;
+//             for (i = 0; i < length; i++) {
+//                 component = components[i];
+//                 if (component.id === id) {
+//                     return component;
+//                 }
+//             }
+//         }
+//     }
+// };
 
 /**
  * Save banner in the registry.

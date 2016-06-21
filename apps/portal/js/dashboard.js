@@ -118,7 +118,7 @@ $(function () {
         viewer.on('click', '.ues-component-settings-handle', function (event) {
             event.preventDefault();
             var id = $(this).closest('.ues-component').attr('id');
-            var component = ues.dashboards.findComponent(id,page);
+            var component = ues.dashboards.findComponent(id, page);
             var componentContainer = $('#' + CONTAINER_PREFIX + id);
             // toggle the component settings view if exists
             if (component.hasCustomUserPrefView) {
@@ -194,7 +194,7 @@ $(function () {
                 toolbarButtons.default.configurations = true;
             }
 
-            toolbarButtons.default.configurations = toolbarButtons.default.configurations  && userPrefsExists && (ues.global.dbType !== 'anon');
+            toolbarButtons.default.configurations = toolbarButtons.default.configurations  && userPrefsExists;// && (ues.global.dbType !== 'anon');
             for (var i = 0; i < toolbarButtons.custom.length; i++) {
                 toolbarButtons.custom[i].iconTypeCSS = (toolbarButtons.custom[i].iconType.toLowerCase() == 'css');
                 toolbarButtons.custom[i].iconTypeImage = (toolbarButtons.custom[i].iconType.toLowerCase() == 'image');
@@ -239,6 +239,8 @@ $(function () {
                 } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
                     viewRoles = ["Anonymous"];
                 }
+            } else if(viewRoles.length === 0){
+                viewRoles = ["Internal/everyone"];
             }
             if (isAllowedView(viewRoles)) {
                 allowedViews.push(viewKeysArray[i]);
@@ -264,6 +266,7 @@ $(function () {
                             selectedViewId = DASHBOARD_ANON_VIEW;
                         }
                     }
+                    ues.global.dbType = selectedViewId;
                     ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, selectedViewId,
                         function () {
                             $('.ues-component-box .ues-component').each(function () {
@@ -362,15 +365,17 @@ $(function () {
             }
         }
         var allowedViews = gerUserAllowedViews(page);
+        var renderingView;
         if (allowedViews.length > 0) {
-            ues.global.dbType = allowedViews[0];
+            renderingView = allowedViews[0];
         }
         //if there is more than one view, enable dropdown list
         if (allowedViews.length > 1) {
             $('#list-user-views').removeClass("hide");
             $('#list-user-views').removeClass("show");
         }
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
+        ues.global.dbType = renderingView;
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, renderingView, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'),page);

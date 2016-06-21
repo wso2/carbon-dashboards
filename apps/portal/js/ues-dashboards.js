@@ -323,7 +323,8 @@
         var area;
         var component;
         var components;
-        var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
+        console.log(ues.global.dbType);
+        var content = page.content[ues.global.dbType];//(ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
