@@ -38,7 +38,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         } catch (e) {
             return {
                 "error" : true,
-                "message" : "Database connection failed"
+                "message" : e.message
             }
         } finally {
             if (db != null) {
@@ -65,23 +65,34 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
             var databaseUrl = providerConfig['db_url'];
             var databaseName = databaseUrl.substring(databaseUrl.lastIndexOf("/") + 1);
             var tableName = providerConfig['table_name'];
-            var db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
-                databaseName + "' and table_name='" + tableName + "';";
+            var db_query = '';
+            var COLUMN_NAME = 'column_name';
+            var COLUMN_TYPE = 'column_type';
+            var isH2 = providerConfig['db_url'].toLowerCase().indexOf('h2') > 0 ;
+            if (isH2) {
+                db_query = "SELECT column_name, type_name from information_schema.columns where table_name='" + tableName + "';";
+                COLUMN_NAME = 'COLUMN_NAME';
+                COLUMN_TYPE = 'TYPE_NAME';
+            }
+            else {
+                db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
+                    databaseName + "' and table_name='" + tableName + "';";
+            }
             db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
             var schema = db.query(db_query);
             if (schema.length != 0) {
                 for (var i in schema) {
-                    schema[i].fieldName = schema[i].column_name;
-                    schema[i].fieldType = schema[i].column_type;
-                    delete schema[i].column_name;
-                    delete schema[i].column_type;
+                    schema[i].fieldName = schema[i][COLUMN_NAME];
+                    schema[i].fieldType = schema[i][COLUMN_TYPE];
+                    delete schema[i][COLUMN_NAME];
+                    delete schema[i][COLUMN_TYPE];
                 }
                 return schema;
             }
         } catch (e) {
             return {
                 "error": true,
-                "message": "Schema Retrieval Failed"
+                "message": e.message
             }
         } finally {
             if (db != null) {
