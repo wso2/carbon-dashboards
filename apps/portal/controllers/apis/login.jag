@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+var user;
 (function () {
     var log = new Log();
     var configs = require('/configs/portal.js').config();
     var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
     var constants = require("/modules/constants.js");
     var dashboards = require('/modules/dashboards.js');
+    var permission = require("/modules/permission.js");
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
@@ -47,9 +48,16 @@
         var password = request.getParameter("password");
         var usr = require('/modules/user.js');
         var carbon = require('carbon');
-        var user = carbon.server.tenantUser(username);
+        user = carbon.server.tenantUser(username);
         if (user.tenantId !== -1) {
             if (usr.login(username, password)) {
+                if (!permission.isAllowed(constants.LOGIN)) {
+                    // If user do not have necessary permissions, display an error message and logout the user
+                    message = 'login.unauthorized.messages';
+                    usr.logout();
+                    response.sendRedirect(dest + "login?loginAttempt=true");
+                    return;
+                }
                 session.put("Loged", "true");
                 var properties = {username: username, password: password};
                 var idPServer = tokenUtil.getIdPServerURL();

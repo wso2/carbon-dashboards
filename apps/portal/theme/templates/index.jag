@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
     <link href="<%=urlPrefix%>libs/font-wso2_1.0.0/css/font-wso2.min.css" rel="stylesheet" type="text/css" />
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <% var permission = require('/modules/permission.js'); %>
+    <% var utils = require('/modules/utils.js'); %>
+    <% var constants = require('/modules/constants.js'); %>
     <title><%= i18n.localize("dashboards.label")%></title>
     <% var config = require('/configs/designer.json'); %>
 </head>
@@ -34,7 +37,7 @@
         </ol>
     </div>
 
-	<% var showNavigation = !isMobileDevice || config.isCreateGadgetEnable; %>
+	<% var showNavigation = (!isMobileDevice && permission.isAllowed(constants.CREATE)) || config.isCreateGadgetEnable; %>
     <% if (showNavigation) { %>
     <!-- navbar -->
     <div class="navbar-wrapper">
@@ -55,7 +58,7 @@
                     </div>
                     <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0px;">
                         <ul class="nav navbar-nav collapse-nav-sub">
-                            <% if (! isMobileDevice) { %>
+                            <% if (! isMobileDevice && permission.isAllowed(constants.CREATE)) { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>create-dashboard">
                                 <span class="fw-stack">
@@ -128,7 +131,9 @@
         <div class="col-md-12">
             <div class="message message-info">
                 <h4><i class="icon fw fw-info"></i><%= i18n.localize("no.dashboards.found.description") %></h4>
-                <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><u><%= i18n.localize("here.label") %></u></p>
+                <% if (permission.isAllowed(constants.CREATE)) { %>
+                    <p><%= i18n.localize("to.create.dashboard") %> <a href="<%=tenantedUrlPrefix%>create-dashboard"><u><%= i18n.localize("here.label") %></u></p>
+                <% } %>
             </div>
         </div>
     </script>
@@ -164,6 +169,7 @@
                 </span>
                 <%= i18n.localize("design") %>
             </a>
+            <%  if (permission.isAllowed(constants.SETTINGS)) { %>
             <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
                 <span class="fw-stack">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
@@ -171,10 +177,21 @@
                 </span>
                 <%= i18n.localize("settings") %>
             </a>
+            <% } else { %>
+		{{#if owner}}
+            <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+                <span class="fw-stack">
+                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                    <i class="fw fw-settings fw-stack-1x"></i>
+                </span>
+                <%= i18n.localize("settings") %>
+	    </a>
+		{{/if}}
+	    <% } %>
             {{/if}}
             <% } %>
         </div>
-        {{#if editable}}
+        {{#if owner}}
         <a href="#" class="ues-dashboard-trash-handle">
             <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.dashboard")%>"></i>
         </a>
