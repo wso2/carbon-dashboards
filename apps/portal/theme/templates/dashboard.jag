@@ -254,8 +254,8 @@
 
             <!-- page content -->
             <div class="form-group hide" id="list-user-views">
-                <select name="select-theme" class="form-control selectpicker dropdown" id="ds-allowed-view-list"
-                data-style="btn-default" data-width="100px">
+                <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
+                data-style="btn-default" data-width="100px" style="width: 200px">
                 </select>
             </div>
             <% if(typeof  bgColor === 'undefined'){ %>

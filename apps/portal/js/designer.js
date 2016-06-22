@@ -37,6 +37,7 @@ $(function () {
     var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
     var ANONYMOUS_ROLE = 'anonymous';
     var LOGGEDIN = 'loggedIn';
+    var isNewView = false;
 
     /**
      * Number of assets to be loaded.
@@ -918,7 +919,6 @@ $(function () {
             });
 
             viewerRoles.initialize();
-            console.log('Viewer roles'+viewerRoles);
             var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
 
             $('#ds-view-roles').typeahead({
@@ -967,7 +967,7 @@ $(function () {
                 viewId = LOGGEDIN;
                 viewRolesList = page.layout.content.loggedIn.roles;
             } else{
-                viewRolesList = page.layout.content[viewId].roles;;
+                viewRolesList = page.layout.content[viewId].roles;
             }
             if (viewRolesList === undefined) {
                 if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
@@ -1181,30 +1181,34 @@ $(function () {
 
         //event handler for adding a new view
         $('#add-view').on('click', function () {
+            if ($('#left-sidebar').hasClass('toggled')) {
+                $('.close-sidebar[data-target="#left-sidebar"]').click();
+            }
             var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
             $('.gadgets-grid').empty();
             $('.gadgets-grid').html(viewCreationOptions);
-            $(".gadgets-grid input[type=radio]").click(function(){
-                if(this.value==="new-view") {
+            $(".gadgets-grid input[type=radio]").click(function () {
+                if (this.value === "new-view") {
                     //if create a new view
+                    isNewView = true;
                     if (!$('#left-sidebar').hasClass('toggled')) {
                         $('#btn-sidebar-dashboard-layout').click();
                     }
-                } else if (this.value==="copy-view") {
+                } else if (this.value === "copy-view") {
                     //if copy from an existing view
-                    if (!$('#left-sidebar').hasClass('toggled')) {
-                        $('#left-sidebar').hide();
+                    if ($('#left-sidebar').hasClass('toggled')) {
+                        $('.close-sidebar[data-target="#left-sidebar"]').click();
                     }
                     var viewcopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
                     $('.gadgets-grid').empty();
                     $('.gadgets-grid').html(viewcopyingSelection);
-                    $('#copy-view').prop( "checked", true );
+                    $('#copy-view').prop("checked", true);
                     $('#page-views-menu').empty();
                     var pageContent = JSON.parse(JSON.stringify(page.content));
                     var viewKeysArray = Object.keys(pageContent);
                     var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
 
-                    for(var i=0; i<viewKeysArray.length; i++){
+                    for (var i = 0; i < viewKeysArray.length; i++) {
                         var temp = {
                             viewName: viewKeysArray[i]
                         };
@@ -1214,6 +1218,40 @@ $(function () {
                 }
             });
         });
+
+        $(document).on('click','#new-view',function(){
+            console.log("Click ***** new -ciew");
+            isNewView = true;
+            var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
+            $('.gadgets-grid').empty();
+            $('.gadgets-grid').html(viewCreationOptions);
+            $('.gadgets-grid #new-view').prop("checked", true);
+            if (!$('#left-sidebar').hasClass('toggled')) {
+                $('#btn-sidebar-dashboard-layout').click();
+            }
+        });
+        $(document).on('click','#copy-view',function(){
+            console.log("Click ***** copy -ciew");
+            if ($('#left-sidebar').hasClass('toggled')) {
+                $('.close-sidebar[data-target="#left-sidebar"]').click();
+            }
+            var viewcopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
+            $('.gadgets-grid').empty();
+            $('.gadgets-grid').html(viewcopyingSelection);
+            $('#copy-view').prop("checked", true);
+            $('#page-views-menu').empty();
+            var pageContent = JSON.parse(JSON.stringify(page.content));
+            var viewKeysArray = Object.keys(pageContent);
+            var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
+
+            for (var i = 0; i < viewKeysArray.length; i++) {
+                var temp = {
+                    viewName: viewKeysArray[i]
+                };
+                $('#page-views-menu').append(viewCopyingOptions(temp));
+            }
+        });
+
 
         // event handler for trash button
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
@@ -1968,7 +2006,7 @@ $(function () {
                 }
             }
         }
-    }
+    };
 
     /**
      * Handles menu item drop event
@@ -2614,37 +2652,79 @@ $(function () {
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
 
             });
-        }),
+        });
             $('#ues-view-layouts').on('click', '.thumbnail', function (e) {
                 e.preventDefault();
-                var viewOptions = getNewViewOptions(page.content);
-                var newViewId = viewOptions.id;
-                var newViewName = viewOptions.name;
                 var layout = findStoreCache('layout', $(this).data('id'));
+                if (isNewView) {
+                    //if creating a new view
+                    var viewOptions = getNewViewOptions(page.content);
+                    var newViewId = viewOptions.id;
+                    var newViewName = viewOptions.name;
+                    var viewContent = {};
+                    page.content[newViewId] = viewContent;
 
-                var viewContent = {};
-                page.content[newViewId] = viewContent;
+                    $.get(resolveURI(layout.url), function (data, status) {
+                        var layoutData = JSON.parse(data);
+                        var viewLayoutContent = {
+                            blocks: layoutData.blocks,
+                            name: newViewName,
+                            roles: [INTERNAL_EVERYONE_ROLE]
+                        };
+                        page.layout.content[newViewId] = viewLayoutContent;
+                        saveDashboard();
+                    });
 
-                $.get(resolveURI(layout.url), function (data, status) {
-                    var x = JSON.parse(data);
-                    var viewLayoutContent = {
-                        blocks: x.blocks,
-                        name: newViewName,
-                        roles: [INTERNAL_EVERYONE_ROLE]
-                    };
-                    page.layout.content[newViewId] = viewLayoutContent;
-                    saveDashboard();
-                });
+                    page = findPage(dashboard, getPageId());
+                    pageType = newViewId;
 
-                page = findPage(dashboard, getPageId());
-                pageType = newViewId;
+                    $('button[data-target=#left-sidebar]').click();
+                    var selectedView = getSelectedView();
+                    var tempViewId = getViewId(selectedView);
+                    $(document).ajaxComplete(function (event, xhr, settings) {
+                        console.log("*********");
+                        switchPage(getPageId(), tempViewId);
+                    });
+                    $('#designer-view-mode li[data-view-mode=' + newViewId + ']').click();
+                    isNewView = false;
+                } else {
+                    //if trying to change the layout of an existing view
+                    showConfirm('Adding a new layout for the view',
+                        'This will remove all the existing content in the current view. Do you want to continue?',
+                        function () {
+                            var selectedView = getSelectedView();
+                            var viewId = getViewId(selectedView);
+                            var viewName = page.layout.content[viewId].name;
+                            var viewRoles = page.layout.content[viewId].name;
+                            if (!viewName) {
+                                viewName = viewId;
+                            }
+                            if (!viewRoles) {
+                                viewRoles = [INTERNAL_EVERYONE_ROLE];
+                            }
+                            var viewContent = {};
+                            page.content[viewId] = viewContent;
 
-                $('button[data-target=#left-sidebar]').click();
-                var selectedView = getSelectedView();
-                var tempViewId = getViewId(selectedView);
-                switchPage(getPageId(), tempViewId);
-                //renderPage(getPageId());
-                $('#designer-view-mode li[data-view-mode=' + newViewId + ']').click();
+                            $.get(resolveURI(layout.url), function (data, status) {
+                                var layoutData = JSON.parse(data);
+                                var viewLayoutContent = {
+                                    blocks: layoutData.blocks,
+                                    name: viewName,
+                                    roles: viewRoles
+                                };
+                                page.layout.content[viewId] = viewLayoutContent;
+                                saveDashboard();
+                            });
+
+                            pageType = viewId;
+
+                            $('button[data-target=#left-sidebar]').click();
+                            $(document).ajaxComplete(function (event, xhr, settings) {
+                                switchPage(getPageId(), viewId);
+                            });
+                            $('#designer-view-mode li[data-view-mode=' + viewId + ']').click();
+                        });
+                }
             });
         loadLayouts();
     };
@@ -2655,7 +2735,7 @@ $(function () {
      */
     var getNewViewOptions = function() {
         var pageContent = JSON.parse(JSON.stringify(page.content));
-        var tempViewId = 2;
+        var tempViewId = 1;
         var prefix = 'view';
         var titlePrefix = 'View ';
 
@@ -3329,8 +3409,11 @@ $(function () {
                 } else if (viewKeysArray[i] === ANONYMOUS_DASHBOARD_VIEW) {
                     if(page.layout.content.anon === undefined){
                         continue;
+                    } else if(page.layout.content.anon.name) {
+                        viewTempName = page.layout.content.anon.name;
+                    } else{
+                        viewTempName = ANONYMOUS_DASHBOARD_VIEW;
                     }
-                    viewTempName = 'anon';
                 } else {
                     viewTempName = page.layout.content[tempView].name;
                 }
