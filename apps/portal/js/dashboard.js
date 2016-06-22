@@ -50,6 +50,7 @@ $(function () {
     var ANON_VIEW_NAME = 'anon';
     
     var page;
+    var selectedViewId;
     /**
      * Pre-compiling Handlebar templates
      */
@@ -251,7 +252,7 @@ $(function () {
 
         for (var i = 0; i < viewsArrayLength; i++) {
             var viewRoles = page.layout.content[viewKeysArray[i]].roles;
-            if (viewRoles === undefined) {
+            if (!viewRoles) {
                 if (viewKeysArray[i] === 'loggedIn') {
                     viewRoles = ["Internal/everyone"];
                 } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
@@ -263,7 +264,7 @@ $(function () {
             if (isAllowedView(viewRoles)) {
                 allowedViews.push(viewKeysArray[i]);
                 var tempViewName = page.layout.content[viewKeysArray[i]].name;
-                if (tempViewName === undefined) {
+                if (!tempViewName) {
                     if (viewKeysArray[i] === 'loggedIn') {
                         tempViewName = DEFAULT_VIEW_NAME;
                     } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
@@ -273,18 +274,22 @@ $(function () {
                 var viewOption = {
                     viewName: tempViewName
                 };
-                $('#ds-allowed-view-list').append(viewOptionHbs(viewOption)).on('click option', function () {
+                $('#ds-allowed-view-list').append(viewOptionHbs(viewOption)).unbind('change').on('change', function () {
                     var selectedView = $('#ds-allowed-view-list option:selected').text();
                     selectedView = selectedView.trim();
-                    var selectedViewId = getViewId(selectedView);
-                    if (selectedViewId === null) {
+                    var previousSelectedView = selectedViewId || ues.global.dbType;
+                    selectedViewId = getViewId(selectedView);
+
+                    if (!selectedViewId) {
                         if (viewKeysArray[i] === DEFAULT_VIEW_NAME) {
                             selectedViewId = DASHBOARD_DEFAULT_VIEW;
                         } else if (viewKeysArray[i] === ANON_VIEW_NAME) {
                             selectedViewId = DASHBOARD_ANON_VIEW;
                         }
                     }
+
                     ues.global.dbType = selectedViewId;
+                    destroyPage(page, previousSelectedView);
                     ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, selectedViewId,
                         function () {
                             $('.ues-component-box .ues-component').each(function () {
@@ -298,11 +303,86 @@ $(function () {
                                 disableResize: true,
                                 disableDrag: true,
                             });
-                        });
+                    });
                 });
             }
         }
         return allowedViews;
+    };
+
+    /**
+     * Destroys all areas in a given page.
+     * @param {Object} page     The page object
+     * @param {String} pageType Type of the page
+     * @param {function} done   Callback function
+     * @return {null}
+     * @private
+     */
+    var destroyPage = function (page, pageType, done) {
+        var area;
+        pageType = pageType || DEFAULT_DASHBOARD_VIEW;
+        var content = page.content[pageType];
+        var tasks = [];
+        for (area in content) {
+            if (content.hasOwnProperty(area)) {
+                tasks.push((function (area) {
+                    return function (done) {
+                        destroyArea(area, function (err) {
+                            done(err);
+                        });
+                    };
+                }(content[area])));
+            }
+        }
+        async.parallel(tasks, function (err, results) {
+            $('.gadgets-grid').empty();
+            if (!done) {
+                return;
+            }
+
+            done(err);
+        });
+    };
+
+    /**
+     * Destroys a given list of components of an area.
+     * @param {Object[]} components Components to be removed
+     * @param {function} done       Callback function
+     * @return {null}
+     * @private
+     */
+    var destroyArea = function (components, done) {
+        var i;
+        var length = components.length;
+        var tasks = [];
+        for (i = 0; i < length; i++) {
+            tasks.push((function (component) {
+                return function (done) {
+                    destroyComponent(component, function (err) {
+                        done(err);
+                    });
+                };
+            }(components[i])));
+        }
+        async.parallel(tasks, function (err, results) {
+            done(err);
+        });
+    };
+
+    /**
+     * Destroys the given component.
+     * @param {Object} component    Component to be destroyed
+     * @param {function} done       Callback function
+     * @return {null}
+     * @private
+     */
+    var destroyComponent = function (component, done) {
+        ues.components.destroy(component, function (err) {
+            if (err) {
+                return err;
+            }
+            done(err);
+        });
     };
 
     /**
