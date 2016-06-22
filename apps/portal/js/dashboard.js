@@ -46,8 +46,8 @@ $(function () {
      * @const
      */
     var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
-    var DEFAULT_VIEW_NAME = 'Default View';
-    var ANON_VIEW_NAME = 'Anonymous View';
+    var DEFAULT_VIEW_NAME = 'loggedIn';
+    var ANON_VIEW_NAME = 'anon';
     
     var page;
     /**
@@ -194,7 +194,25 @@ $(function () {
                 toolbarButtons.default.configurations = true;
             }
 
-            toolbarButtons.default.configurations = toolbarButtons.default.configurations  && userPrefsExists;// && (ues.global.dbType !== 'anon');
+            //check whether the view is an anonymous view
+            var viewRoles;
+            if(ues.global.dbType === 'default') {
+                viewRoles = page.layout.content.loggedIn.roles;
+            } else {
+                viewRoles = page.layout.content[ues.global.dbType].roles;
+            }
+
+            var isAnonView = false;
+            if (ues.global.dbType === 'anon') {
+                if (viewRoles === undefined) {
+                    isAnonView = true;
+                }
+            }
+            if (viewRoles !== undefined && (viewRoles.length > 0 && viewRoles[0] === 'anonymous')) {
+                isAnonView = true;
+            }
+
+            toolbarButtons.default.configurations = toolbarButtons.default.configurations && userPrefsExists && !isAnonView;
             for (var i = 0; i < toolbarButtons.custom.length; i++) {
                 toolbarButtons.custom[i].iconTypeCSS = (toolbarButtons.custom[i].iconType.toLowerCase() == 'css');
                 toolbarButtons.custom[i].iconTypeImage = (toolbarButtons.custom[i].iconType.toLowerCase() == 'image');
@@ -227,7 +245,7 @@ $(function () {
     var gerUserAllowedViews = function (page) {
         $('#ds-allowed-view-list').empty();
         var allowedViews = [];
-        var pageViews = JSON.parse(JSON.stringify(page.content));
+        var pageViews = JSON.parse(JSON.stringify(page.layout.content));
         var viewKeysArray = Object.keys(pageViews);
         var viewsArrayLength = viewKeysArray.length;
 
@@ -237,7 +255,7 @@ $(function () {
                 if (viewKeysArray[i] === 'loggedIn') {
                     viewRoles = ["Internal/everyone"];
                 } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
-                    viewRoles = ["Anonymous"];
+                    viewRoles = ["anonymous"];
                 }
             } else if(viewRoles.length === 0){
                 viewRoles = ["Internal/everyone"];
@@ -373,6 +391,9 @@ $(function () {
         if (allowedViews.length > 1) {
             $('#list-user-views').removeClass("hide");
             $('#list-user-views').removeClass("show");
+        }
+        if(renderingView === 'loggedIn') {
+            renderingView = 'default';
         }
         ues.global.dbType = renderingView;
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, renderingView, function () {

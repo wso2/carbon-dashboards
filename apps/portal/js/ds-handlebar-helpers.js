@@ -101,6 +101,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
+            if(menu[i]){
                 if (designer) {
                     //todo use fw-hide class once latest wso2 icon project released
                     var iClass = menu[i].ishidden ? "<i class='fw fw-block'></i>" : "<i class='fw fw-view'></i>";
@@ -129,6 +130,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 } else{
                     divTree += "</li>";
                 }
+            }
         }
     }
     return divTree;
