@@ -795,16 +795,19 @@ $(function () {
                 if (event.keyCode === 13 || event.which === 13) {
                     var newViewName = $(this).find('.ds-view-title').val();
                     newViewName = newViewName.trim();
-                    console.log(newViewName);
                     var currentViewName = getSelectedView();
-                    console.log(currentViewName);
                     var viewId = getViewId(currentViewName);
-                    console.log(viewId);
+                    
                     if (!viewId && (currentViewName === LOGGEDIN || currentViewName === ANONYMOUS_DASHBOARD_VIEW)) {
                         viewId = currentViewName;
                     }
-                    pageType = viewId;
-                    console.log(viewId);
+                    
+                    if (viewId === LOGGEDIN) {
+                        pageType = DEFAULT_DASHBOARD_VIEW;
+                    } else {
+                        pageType = viewId;
+                    }
+                    
                     if (page.layout.content[viewId].name === undefined) {
                         page.layout.content[viewId].name = newViewName;
                         if (page.layout.content[viewId].roles === undefined) {
@@ -817,8 +820,9 @@ $(function () {
                     } else {
                         page.layout.content[viewId].name = newViewName;
                     }
+                    
                     saveDashboard();
-                    renderPage(getPageId());
+                    switchPage(getPageId(), viewId);
                     $('#designer-view-mode li').removeClass('active');
                     $('#designer-view-mode li[data-view-mode=' + viewId + ']').addClass('active');
                 }
@@ -987,7 +991,7 @@ $(function () {
                             $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
                             loadGadgetsWithViewRoles(viewId);
                         });
-                } else if(isAnonRoleExists(viewRolesList)) {
+                } else if(isAnonRoleExists(viewId)) {
                     showConfirm('If you add this new role, the anonymous role will be removed from this view',
                         'Do you want to continue adding the new role?',
                         function () {
@@ -1103,7 +1107,8 @@ $(function () {
                     delete page.content[viewId];
                     dashboard.isanon = isAnonDashboard();
                     saveDashboard();
-                    renderPage(getPageId());
+                    switchPage(getPageId(), viewId);
+                    //renderPage(getPageId());
                 });
         });
 
@@ -1254,7 +1259,8 @@ $(function () {
      * @param viewRoles View roles
      * @returns {boolean} Is anonymous role exists or not
      */
-    var isAnonRoleExists = function (viewRoles) {
+    var isAnonRoleExists = function (viewId) {
+        var viewRoles = page.layout.content[viewId].roles;
         if(viewRoles){
             var viewRolesLength = viewRoles.length;
             for (var i = 0; i < viewRolesLength; i++) {
@@ -1262,6 +1268,8 @@ $(function () {
                     return true;
                 }
             }
+        } else if(viewId === ANONYMOUS_DASHBOARD_VIEW){
+            return true;
         }
         return false;
     };
@@ -1667,6 +1675,7 @@ $(function () {
         }
         return false;
     };
+
     /**
      * Check whether there are any anonymous pages.
      * @param {String} pageId Page ID
@@ -2321,7 +2330,7 @@ $(function () {
                 console.log('Layout not defined '+viewId);
                 isAnonView = false;
             } else{
-                isAnonView = isAnonRoleExists(page.layout.content[viewId].roles);
+                isAnonView = isAnonRoleExists(viewId);
             }
 
             data = validateGadgetsForDesigner(data, isAnonView);
@@ -2368,9 +2377,13 @@ $(function () {
                 }
                 isValid = false;
                 for (var j = 0; j < userRolesLength; j++) {
-                    if (isRoleExistInGadget(gadgetRoles, userRolesList[j])) {
-                        filteredGadgets.push(data[i]);
+                    isValid = isRoleExistInGadget(gadgetRoles, userRolesList[j]);
+                    if (isValid) {
+                        break;
                     }
+                }
+                if(isValid) {
+                    filteredGadgets.push(data[i]);
                 }
             }
             return filteredGadgets;
@@ -2416,7 +2429,7 @@ $(function () {
                 console.log('Layout not defined '+viewId);
                 isAnonView = false;
             } else{
-                isAnonView = isAnonRoleExists(page.layout.content[viewId].roles);
+                isAnonView = isAnonRoleExists(viewId);
             }
             data = validateGadgetsForDesigner(data, isAnonView);
             if (data.length) {
@@ -2455,7 +2468,7 @@ $(function () {
                 }
             }
             var viewRolesLength = viewRoles.length;
-            var isAnonExist = false
+            var isAnonExist = false;
             var isLoggedInExist = false;
             for (var r = 0; r < viewRolesLength; r++) {
                 if (viewRoles[r] === ANONYMOUS_ROLE) {
@@ -2627,7 +2640,10 @@ $(function () {
                 pageType = newViewId;
 
                 $('button[data-target=#left-sidebar]').click();
-                renderPage(getPageId());
+                var selectedView = getSelectedView();
+                var tempViewId = getViewId(selectedView);
+                switchPage(getPageId(), tempViewId);
+                //renderPage(getPageId());
                 $('#designer-view-mode li[data-view-mode=' + newViewId + ']').click();
             });
         loadLayouts();
@@ -3295,9 +3311,6 @@ $(function () {
         }
 
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
-        if (page.content[pageType] === undefined) {
-            pageType = 'view1';
-        }
 
         var pageContent = JSON.parse(JSON.stringify(page.content));
         var viewKeysArray = Object.keys(pageContent);
@@ -3315,7 +3328,7 @@ $(function () {
                     }
                 } else if (viewKeysArray[i] === ANONYMOUS_DASHBOARD_VIEW) {
                     if(page.layout.content.anon === undefined){
-                        break;
+                        continue;
                     }
                     viewTempName = 'anon';
                 } else {
@@ -3327,6 +3340,9 @@ $(function () {
                 document.getElementById("new-view-id").setAttribute('id', 'nav-tab-' + tempView);
                 document.getElementById("view-name").setAttribute('id', tempView)
                 if (i === 0) {
+                    if (page.content[pageType] === undefined) {
+                        pageType = tempView;
+                    }
                     $('#designer-view-mode li').removeClass('active');
                     $('#designer-view-mode li[data-view-mode=' + tempView + ']').addClass('active');
                     loadGadgetsWithViewRoles(tempView);
