@@ -38,6 +38,7 @@ var renderEngine = {};
     var permissions;
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
+    var viewId;
     i18n.init(request, utils.getLocaleResourcePath());
     // To set the bgcolor according to client`s website template
     bgColor = request.getParameter("bgcolor");
@@ -56,22 +57,24 @@ var renderEngine = {};
     if (log.isDebugEnabled()) {
         log.debug("Session id provided from the client is " + session.getId() + "Client has successfully connected.")
     }
-    if (matcher.match('/gadgets/{id}/{pid}')) {
+    if (matcher.match('/gadgets/{id}/{pid}/{vid}')) {
         uriElements = matcher.elements();
         dashboardId = uriElements.id;
         pageId = uriElements.pid;
+        viewId = uriElements.vid;
         isStandAlone = false
-    } else if (matcher.match('/gadgets/{id}/{pid}/{gid}')) {
+    } else if (matcher.match('/gadgets/{id}/{pid}/{vid}/{gid}')) {
         // Get the dashboard id, page id and gadget id from url
         uriElements = matcher.elements();
         dashboardId = uriElements.id;
         pageId = uriElements.pid;
+        viewId = uriElements.vid;
         var gadgetId = uriElements.gid;
     } else {
         response.sendError(400, i18n.localize("bad.request"));
         return;
     }
-
+    ues.global.dbType = viewId;
     dashboards = require('/modules/dashboards.js');
 
     if (!request.getParameter("shared")) {
@@ -160,7 +163,7 @@ var renderEngine = {};
     } else {
         dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
         // global reference to getBootstrapLayout() function
-        renderEngine.getDashboardContent = dashboards.getBootstrapLayout;
+        //renderEngine.getDashboardContent = dashboards.getBootstrapLayout;
     }
     // Based on the request (Whether it is stand alone or embedded) for the gadget,
     // decide the template to render

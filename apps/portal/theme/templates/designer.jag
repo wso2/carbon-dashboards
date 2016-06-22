@@ -735,19 +735,20 @@ var userRoles = usr.roles();
     <!-- View label -->
     <script id="add-new-view-hds" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
+
             <div class="view-heading ues-component-heading">
-            <a role="tab" data-toggle="tab" id="view-name"><%=i18n.localize("new.view")%></a>
-            <div class="gadget-actions ues-component-actions">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
-                    data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
-                        <i class="icon fw fw-configarations"></i>
-                    </button>
-                    <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
-                        <i class="icon fw fw-delete"></i>
-                    </button>
+                <a role="tab" data-toggle="tab" id="view-name"><%=i18n.localize("new.view")%></a>
+                <div class="gadget-actions ues-component-actions" style="display:inline-block;margin:2px;height:40px">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
+                        data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
+                            <i class="icon fw fw-configarations"></i>
+                        </button>
+                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+                            <i class="icon fw fw-delete"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
             </div>
         </li>
     </script>

@@ -30,7 +30,7 @@
 
     var userRoles = usr.roles();
     if(!user || userRoles === undefined) {
-        userRoles.push('Anonymous');
+        userRoles.push('anonymous');
     }
 
     // Get the anon view
@@ -65,18 +65,18 @@
     }
    
     // Show navigation menu (There should be more than one page to show the navigation menu)
-    var showNavigation = false;
-    if (isAnonView || !user) {
-        var anonPageCount = 0;
-        pages.forEach(function(p) {
-            if (p.isanon) {
-                anonPageCount++;
-            }
-        });
-        showNavigation = (anonPageCount > 1);
-    } else {
-        showNavigation = (pages.length > 1);
-    }
+   // var showNavigation = false;
+   // if (isAnonView || !user) {
+   //     var anonPageCount = 0;
+   //     pages.forEach(function(p) {
+    //        if (p.isanon) {
+    //            anonPageCount++;
+    //        }
+    //    });
+    //    showNavigation = (anonPageCount > 1);
+    //} else {
+    //    showNavigation = (pages.length > 1);
+    //}
 %>
 <html lang="en">
 <head>

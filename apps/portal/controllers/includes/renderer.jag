@@ -75,24 +75,23 @@ var portalRoot;
             var viewKeysArray = Object.keys(pageLayoutContent);
             var viewArrayLength = viewKeysArray.length;
             for (var i = 0; i < viewArrayLength; i++) {
-                if (page.layout.content[viewKeysArray[i]].roles !== undefined) {
-                    var viewRoles = page.layout.content[viewKeysArray[i]].roles;
-                    var viewRolesLength = viewRoles.length;
-                    for(var j = 0; j < viewRolesLength; j++){
-                        if(viewRoles[j] === 'Anonymous') {
-                            anonView.push(page.layout.content[viewKeysArray[i]]);
-                        }
-                    }
+                var viewRoles = page.layout.content[viewKeysArray[i]].roles;
+                if (viewRoles === undefined && viewKeysArray[i] === 'anon' && page.layout.content.anon !== undefined) {
+                    anonView.push(page.layout.content.anon);
+                } else if (viewRoles!== undefined && viewRoles.length > 0 && (viewRoles[0] === 'anonymous')) {
+                    anonView.push(page.layout.content[viewKeysArray[i]]);
                 }
             }
-            //anonView = page.layout.content.anon;
         }
     });
 
     var i18n = require("i18n");
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
+    log.info("pageexist: "+pageExists);
+    log.info("anon length: "+anonView.length);
     if (!pageExists || (!user && (anonView.length === 0))) {
+        log.info("1*** ");
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
     }
@@ -101,6 +100,7 @@ var portalRoot;
     // view is undefined
     if (user) {
         if (!(user.isEditor || user.isViewer) && (anonView.length === 0)) {
+            log.info("2*** ");
             response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
                     i18n.localize("page.not.found"));
             return;
@@ -111,7 +111,7 @@ var portalRoot;
     var isCustomDB = dashboard.isUserCustom;
     portalRoot = tenantedUrlPrefix + 'dashboards/';
     // global reference to getBootstrapLayout() function
-    renderEngine.getDashboardContent = db.getBootstrapLayout;
+    //renderEngine.getDashboardContent = db.getBootstrapLayout;
 
     include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>
