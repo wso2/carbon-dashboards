@@ -86,7 +86,11 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
-                allDashboards.push(JSON.parse(registry.content(dashboard)));
+                var contentDashboardJSON = JSON.parse(registry.content(dashboard));
+                if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
+                    contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
+                }
+                allDashboards.push(contentDashboardJSON);
             });
         }
         if (superTenantDashboards) {
@@ -94,6 +98,9 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             superTenantDashboards.forEach(function (dashboard) {
                 var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
                 if (parsedDashboards.shareDashboard) {
+                    if (!(parsedDashboards.permissions).hasOwnProperty("owners")) {
+                        parsedDashboards.permissions.owners = parsedDashboards.permissions.editors;
+                    }
                     allDashboards.push(parsedDashboards);
                 }
             });
@@ -108,14 +115,21 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                         description: dashboard.description,
                         pagesAvailable: dashboard.pages.length > 0,
                         editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
-                        shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId)
+                        shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                        owner: true
                     };
+                if (utils.allowed(userRoles, permissions.owners)) {
+                    userDashboards.push(data);
+                    return;
+                }
                 if (utils.allowed(userRoles, permissions.editors)) {
+                    data.owner = false;
                     userDashboards.push(data);
                     return;
                 }
                 if (utils.allowed(userRoles, permissions.viewers)) {
                     data.editable = false;
+                    data.owner = false;
                     userDashboards.push(data);
                 }
             });
@@ -179,6 +193,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var allAssets = [];
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
+
             var specificStore = require(storeExtension(storeTypes[i]));
             var assets = specificStore.getAssets(type, query);
             if (assets) {
