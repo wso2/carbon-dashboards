@@ -46,13 +46,11 @@
         var username = request.getParameter("username");
         var password = request.getParameter("password");
         var usr = require('/modules/user.js');
-        var api = require('/modules/api.js');
         var carbon = require('carbon');
         var user = carbon.server.tenantUser(username);
         if (user.tenantId !== -1) {
             if (usr.login(username, password)) {
                 session.put("Loged", "true");
-                var authToken = api.authenticate(username, password);
                 var properties = {username: username, password: password};
                 var idPServer = tokenUtil.getIdPServerURL();
                 if (tokenUtil.checkOAuthEnabled() && idPServer) {
@@ -62,8 +60,6 @@
                         }
                     });
                 }
-                session.put('authToken', authToken);
-
                 if (log.isDebugEnabled()) {
                     log.debug(session.get('user') + " is authorized.");
                 }
