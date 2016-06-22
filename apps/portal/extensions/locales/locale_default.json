@@ -192,7 +192,7 @@
     "go.layout.store": "to go to layout store",
     "layout.exist": "A layout with same id already exists. Please use different id and try again",
     "layout.configuration.file.missing": "Configuration file is not found in the zip. Please make sure your zip file contains layout.json.",
-    "select.zip.file.to.upload": "Please selet a zip file to upload.",
+    "select.zip.file.to.upload": "Please select a zip file to upload.",
     "file.format.is.not.supported": "file format is not supported",
     "file.size.exceeded": "File size exceeded. Please select a file below maximum file limit",
     "designer.access.not.authorized.for.tenant": "designer access not authorized for this tenant",
