@@ -88,10 +88,7 @@ var portalRoot;
     var i18n = require("i18n");
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
-    log.info("pageexist: "+pageExists);
-    log.info("anon length: "+anonView.length);
     if (!pageExists || (!user && (anonView.length === 0))) {
-        log.info("1*** ");
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
     }

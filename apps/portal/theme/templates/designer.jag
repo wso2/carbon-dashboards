@@ -735,7 +735,6 @@ var userRoles = usr.roles();
     <!-- View label -->
     <script id="add-new-view-hds" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
-
             <div class="view-heading ues-component-heading">
                 <a role="tab" data-toggle="tab" id="view-name"><%=i18n.localize("new.view")%></a>
                 <div class="gadget-actions ues-component-actions" style="display:inline-block;margin:2px;height:40px">
