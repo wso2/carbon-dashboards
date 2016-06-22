@@ -33,6 +33,7 @@ var toVizGrammarSchema;
             "double": "linear",
             "STRING": "ordinal",
             "varchar": "ordinal",
+            "VARCHAR" : "ordinal",
             "string": "ordinal"
         };
 
