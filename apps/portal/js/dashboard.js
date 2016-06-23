@@ -197,15 +197,15 @@ $(function () {
 
             //check whether the view is an anonymous view
             var viewRoles;
-            if(ues.global.dbType === 'default') {
+            if (ues.global.dbType === DASHBOARD_DEFAULT_VIEW) {
                 viewRoles = page.layout.content.loggedIn.roles;
             } else {
                 viewRoles = page.layout.content[ues.global.dbType].roles;
             }
 
             var isAnonView = false;
-            if (ues.global.dbType === 'anon') {
-                if (viewRoles === undefined) {
+            if (ues.global.dbType === DASHBOARD_ANON_VIEW) {
+                if (!viewRoles) {
                     isAnonView = true;
                 }
             }
@@ -243,14 +243,13 @@ $(function () {
      * @param page Current page
      * @returns {Array} List of allowe roles
      */
-    var gerUserAllowedViews = function (page) {
+    var getUserAllowedViews = function (page) {
         $('#ds-allowed-view-list').empty();
         var allowedViews = [];
         var pageViews = JSON.parse(JSON.stringify(page.layout.content));
         var viewKeysArray = Object.keys(pageViews);
-        var viewsArrayLength = viewKeysArray.length;
 
-        for (var i = 0; i < viewsArrayLength; i++) {
+        for (var i = 0, viewsArrayLength = viewKeysArray.length; i < viewsArrayLength; i++) {
             var viewRoles = page.layout.content[viewKeysArray[i]].roles;
             if (!viewRoles) {
                 if (viewKeysArray[i] === 'loggedIn') {
@@ -258,9 +257,10 @@ $(function () {
                 } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
                     viewRoles = ["anonymous"];
                 }
-            } else if(viewRoles.length === 0){
+            } else if (viewRoles.length === 0) {
                 viewRoles = ["Internal/everyone"];
             }
+            
             if (isAllowedView(viewRoles)) {
                 allowedViews.push(viewKeysArray[i]);
                 var tempViewName = page.layout.content[viewKeysArray[i]].name;
@@ -271,9 +271,11 @@ $(function () {
                         tempViewName = ANON_VIEW_NAME;
                     }
                 }
+                
                 var viewOption = {
                     viewName: tempViewName
                 };
+                
                 $('#ds-allowed-view-list').append(viewOptionHbs(viewOption)).unbind('change').on('change', function () {
                     var selectedView = $('#ds-allowed-view-list option:selected').text();
                     selectedView = selectedView.trim();
@@ -303,7 +305,7 @@ $(function () {
                                 disableResize: true,
                                 disableDrag: true,
                             });
-                    });
+                        });
                 });
             }
         }
@@ -392,10 +394,9 @@ $(function () {
      */
     var getViewId = function (viewName) {
         var viewArray = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
-        var viewArrayLength = viewArray.length;
 
-        for (var i = 0; i < viewArrayLength; i++) {
-            if (page.layout.content[viewArray[i]].name !== undefined) {
+        for (var i = 0, viewArrayLength = viewArray.length; i < viewArrayLength; i++) {
+            if (page.layout.content[viewArray[i]].name) {
                 if (page.layout.content[viewArray[i]].name === viewName) {
                     return viewArray[i];
                 }
@@ -411,12 +412,8 @@ $(function () {
      * @returns {boolean} View is allowed or not
      */
     var isAllowedView = function (viewRoles) {
-        var userRolesLength = userRolesList.length;
-        if (viewRoles === undefined) {
-
-        }
         var viewRolesLength = viewRoles.length;
-        for (var i = 0; i < userRolesLength; i++) {
+        for (var i = 0, userRolesLength = userRolesList.length; i < userRolesLength; i++) {
             var tempUserRole = userRolesList[i];
             for (var j = 0; j < viewRolesLength; j++) {
                 if (viewRoles[j] === tempUserRole) {
@@ -462,7 +459,7 @@ $(function () {
                 page = allPages[i];
             }
         }
-        var allowedViews = gerUserAllowedViews(page);
+        var allowedViews = getUserAllowedViews(page);
         var renderingView;
         if (allowedViews.length > 0) {
             renderingView = allowedViews[0];

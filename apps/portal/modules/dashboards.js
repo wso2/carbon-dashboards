@@ -470,7 +470,6 @@ var getBanner = function (dashboardId, username) {
  * @returns {String}            Bootstrap layout markup
  */
 // var getBootstrapLayout = function (pageId, isAnon) {
-//     log.info('Go inside bt layout ****');
 //     var bitmap;
 //     var err = [];
 //     var content = '';
@@ -769,7 +768,6 @@ var getBanner = function (dashboardId, username) {
 //         return;
 //     }
 //     try {
-//         console.log('get default or anon content ***');
 //         var json = (isAnon ? page.layout.content.anon.blocks : page.layout.content.loggedIn.blocks);
 //         content = process(initGrid(json));
 //     } catch (e) {

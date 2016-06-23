@@ -314,10 +314,12 @@ var userRoles = usr.roles();
                     data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" 
                     aria-expanded="true" rel="show-options" onclick="updateSidebarOptions(this)"><i class="fw fw-right-arrow"></i></button>
 
-                <div class="nano" id="tempId">
+                <div class="nano" id="ds-properties-container">
                     <div class="nano-content">
+                        <!-- Gadget properties loading -->
                         <div id="gadget-configuration">
                         </div>
+                        <!-- View properties loading -->
                         <div id="view-configuration">
                         </div>
                     </div>
@@ -681,18 +683,18 @@ var userRoles = usr.roles();
     <!-- Providing options to create a new view -->
     <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
         <div class="radio-button">
-            <label><input type="radio" name="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
-            <label><input type="radio" name="new-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
+            <label><input type="radio" name="new-view" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
+            <label><input type="radio" name="new-view" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
         </div>
     </script>
 
     <!-- Template for copying from an existing view -->
     <script id="select-copying-view-hbs" type="text/x-handlebars-template">
         <div class="radio">
-            <label><input type="radio" name="new-view" id="new-view"><%=i18n.localize("create.new.view")%></label>
+            <label><input type="radio" name="new-view" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
         </div>
         <div class="radio">
-            <label><input type="radio" name="new-view" id="copy-view"><%=i18n.localize("copy.existing.view")%></label>
+            <label><input type="radio" name="new-view" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
         </div>
         <div class="dropdown input-group-btn select" id="view-layout-select">
             <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
@@ -931,8 +933,8 @@ var userRoles = usr.roles();
     <!-- View properties configuration -->
     <script id="ues-component-view-properties-hbs" type="text/x-handlebars-template">
         <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("view.configuration.label")%></div>
-        <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
-            <div class="panel-group ues-component-properties" id="accordion" role="tablist" aria-multiselectable="true" data-component="{{id}}">
+        <div class="panel-group ues-component-properties-container" role="tablist" aria-multiselectable="true">
+            <div class="panel-group ues-component-properties" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default ues-styles ues-properties">
                     <div id="optionsLayouts" class="panel-collapse collapse in" role="tabpanel">
                         <div class="panel-body add-padding-3x">
