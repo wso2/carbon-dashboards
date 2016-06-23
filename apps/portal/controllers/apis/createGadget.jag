@@ -94,19 +94,29 @@
         if (!validate.error) {
             var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
             var output = {};
+            if (dataSet.length > 0) {
+                output.tableHeaders = Object.keys(dataSet[0]);
+                output.tableRows = [];
 
-            output.tableHeaders = Object.keys(dataSet[0]);
-            output.tableRows = [];
-
-            for (var i in dataSet) {
-                _obj = [];
-                for (var k in dataSet[i]) {
-                    _obj.push(dataSet[i][k])
+                for (var i in dataSet) {
+                    _obj = [];
+                    for (var k in dataSet[i]) {
+                        _obj.push(dataSet[i][k])
+                    }
+                    output.tableRows.push(_obj);
                 }
-                output.tableRows.push(_obj);
+                print(output);
+                return;
+            } else {
+                log.error('No data found');
+                print(
+                      {
+                          "error": true,
+                          "message": "No data found"
+                      }
+                );
+                return;
             }
-            print(output);
-            return;
         }
         else {
             log.error("Data validation failed for Provider Configuration");
