@@ -50,7 +50,7 @@ var init = function () {
             {{/if}}
            }
        });
-}
+};
 {{#if isPullMode}}
 var getProviderData = function (){
     $.ajax({
@@ -63,8 +63,8 @@ var getProviderData = function (){
         providerData = data;
         }
     });
- return getProviderData;
-}
+ return providerData;
+};
 {{/if}}
 
 var drawGadget = function (){
@@ -79,7 +79,7 @@ var drawGadget = function (){
             update(providerData);
         });
     {{/if}}
-}
+};
 init();
     drawGadget();
 });
