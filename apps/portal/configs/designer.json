@@ -54,6 +54,7 @@
     "cacheSizeBytes": "1073741824",
     "defaultDashboardRedirect": false,
     "isCreateGadgetEnable": true,
+    "isSecureVaultEnabled" : false,
     "assets": {
         "gadget": {
             "fileSizeLimit": 5
