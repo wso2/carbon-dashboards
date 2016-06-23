@@ -236,6 +236,7 @@ function getProviders() {
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviders',
         method: "GET",
+        async: false,
         contentType: "application/json",
         success: function (data) {
             if (data.length == 0) {
@@ -486,6 +487,7 @@ function fetchData(callback) {
         url: "/portal/apis/analytics",
         method: "GET",
         data: request,
+        async: false,
         contentType: "application/json",
         success: function (data) {
             var records = JSON.parse(data.message);

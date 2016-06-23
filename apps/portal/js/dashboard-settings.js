@@ -138,7 +138,8 @@ $(function () {
             url: url,
             method: 'PUT',
             data: JSON.stringify(dashboard),
-            contentType: 'application/json'
+            contentType: 'application/json',
+            async: false
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000);
             if (callback) {
@@ -162,6 +163,7 @@ $(function () {
             url: tokenUrl,
             type: "GET",
             dataType: "json",
+            async: false,
             data: {
                 id: dashboard.id
             }
