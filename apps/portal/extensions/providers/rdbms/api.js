@@ -108,8 +108,9 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
      */
     getData = function (providerConfig, limit) {
         var data;
+        var db = null;
         try {
-            var db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
             var query = providerConfig['query'];
             if (limit) {
                 query = query.replace(/^\s\s*/, '').replace(/\s\s*$/, '') + ' limit ' + limit;
@@ -117,7 +118,9 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
             data = db.query(query);
         }
         finally {
-            db.close();
+            if (db != null) {
+                db.close();
+            }
         }
         return data;
 
