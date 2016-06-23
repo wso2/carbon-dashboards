@@ -158,6 +158,18 @@
         </div>
     </script>
 
+     <script id="ds-asset-delete-error-hbs" type="text/x-handlebars-template">
+      <div class="alert alert-danger" id = "delete-error" role="alert">
+        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
+        <h3><%= i18n.localize("cannot.delete." + assetType)%> {{title}}. <%= i18n.localize("something.wrong")%></h3>
+        <button type="button" class="close" aria-label="close" data-dismiss="alert">
+            <span aria-hidden="true">
+                <i class="fw fw-cancel"></i>
+            </span>
+        </button>
+      </div>
+     </script>
+
     <!-- Jquery JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
 

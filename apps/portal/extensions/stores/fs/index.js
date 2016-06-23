@@ -77,8 +77,14 @@ var getAsset, getAssets, addAsset, deleteAsset;
         return assets;
     };
 
-    addAsset = function (asset) {
-
+    addAsset = function (type, id, assertFile) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var assetDir = new File(parent + id + ".zip");
+        assetDir.open('w');
+        assetDir.write(assertFile.getStream());
+        assetDir.close();
+        return true;
     };
 
     /**

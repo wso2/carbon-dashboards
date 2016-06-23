@@ -229,8 +229,15 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         return allAssets;
     };
 
-    addAsset = function (asset) {
-
+    addAsset = function (type, id, assertFile, storeType) {
+        var storeTypes = config.store.types;
+        var storeTypesLength = config.store.types.length;
+        for (var i = 0; i < storeTypesLength; i++) {
+            if (storeType === storeTypes[i]) {
+                var specificStore = require(storeExtension(storeTypes[i]));
+                return specificStore.addAsset(type, id, assertFile);
+            }
+        }
     };
 
     /**
@@ -238,14 +245,13 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * @param {String} type Type of the asset to be deleted
      * @param {String} id ID of the asset
      */
-    deleteAsset = function (type, id) {
+    deleteAsset = function (type, id, storeType) {
         var storeTypes = config.store.types;
         var storeTypesLength = config.store.types.length;
         for (var i = 0; i < storeTypesLength; i++) {
-            var specificStore = require(storeExtension(storeTypes[i]));
-            var asset = specificStore.deleteAsset(type, id);
-            if (asset) {
-                break;
+            if(storeType === storeTypes[i]) {
+                var specificStore = require(storeExtension(storeTypes[i]));
+                return specificStore.deleteAsset(type, id);
             }
         }
     };

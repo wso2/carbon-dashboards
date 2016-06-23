@@ -19,6 +19,11 @@ $(function () {
     var isStillLoading = false;
     var nextStart = 0;
     var hasMore = true;
+    /**
+     * Store type
+     * @const
+     */
+    var STORE_TYPE = "fs";
 
     /**
      * gadget count.
@@ -32,6 +37,7 @@ $(function () {
     var assetThumbnailHbs = Handlebars.compile($("#ds-asset-thumbnail-hbs").html());
     var assetConfirmHbs = Handlebars.compile($("#ds-asset-confirm-hbs").html());
     var assetsEmptyHbs = Handlebars.compile($("#ds-assets-empty-hbs").html());
+    var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
     Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
 
 
@@ -90,12 +96,16 @@ $(function () {
      * @private
      */
     var deleteAsset = function (id) {
-        ues.store.deleteAsset(assetType, id, function (err, data) {
+        ues.store.deleteAsset(assetType, id, STORE_TYPE, function (err, data) {
             if (err) {
-                console.log(err);
+                var asset = findAsset(id);
+                $('#'+id).html(assetsDeleteErrorHbs(asset));
+            }
+            else {
+                location.reload();
             }
         });
-        location.reload();
+
     };
 
     /**
@@ -118,6 +128,14 @@ $(function () {
         });
 
         portal.on('click', '.ds-assets .ds-asset-trash-cancel', function (e) {
+            e.preventDefault();
+            var assetElement = $(this).closest('.ds-asset');
+            var id = assetElement.data('id');
+            var asset = findAsset(id);
+            assetElement.html(assetThumbnailHbs(asset));
+        });
+
+        portal.on('click', '.ds-assets .close', function (e) {
             e.preventDefault();
             var assetElement = $(this).closest('.ds-asset');
             var id = assetElement.data('id');

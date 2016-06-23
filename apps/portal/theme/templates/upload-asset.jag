@@ -148,6 +148,8 @@
                 showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("file.size.exceeded")%>");
             <% } else if (errorMessage === "idAlreadyExists") { %>
                  showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize(assetType+".exist")%>");
+            <% } else if (errorMessage === "errorInUpload") { %>
+                 showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("error.in.upload")%>");
             <% } else if (errorMessage === "success") { %>
                  $('.upload-success').addClass("show").removeClass("hide");
             <% } %>

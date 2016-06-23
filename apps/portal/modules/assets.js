@@ -23,17 +23,21 @@
  * @returns {String} message Detailed message on what happened during asset upload
  */
 var addAsset = function (type, fileRequest) {
-    var tempAssetPath = '/store/' + userDomain + '/fs/temp-' + type + '/';
+    var storeManager = require("/js/store-manager.js");
+    var constants = require("/modules/constants.js");
+    var tempAssetPath = '/store/' + userDomain + '/' + constants.FILE_STORE + '/temp-' + type + '/';
     var ZipFile = Packages.java.util.zip.ZipFile;
     var zipExtension = ".zip";
     var process = require('process');
     var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal' + tempAssetPath;
-    var assetPath = '/store/' + userDomain + '/fs/' + type + '/';
+    var assetPath = '/store/' + userDomain + '/' + constants.FILE_STORE + '/' + type + '/';
     var configurationFileName = type + ".json";
     var config = require('/configs/designer.json');
     var bytesToMB = 1048576;
     var fileSizeLimit = type === "gadget" ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
     var log = new Log();
+    var fileUtils = require("/modules/file-utils.js");
+
     
     // Before copying the file to temporary location, check whether the given file exist and
     // the file size and whether it is a zip file
@@ -47,6 +51,8 @@ var addAsset = function (type, fileRequest) {
 
     // If it passes all the initial validations remove the zip file extensions to avoid the zip file being deployed
     // before other validations
+    fileUtils.createDirs(tempAssetPath);
+    fileUtils.createDirs(assetPath);
     var fileName = fileRequest.getName().replace(zipExtension, "");
     var tempDirectory = new File(tempAssetPath);
 
@@ -77,13 +83,9 @@ var addAsset = function (type, fileRequest) {
                         return 'idAlreadyExists';
                     }
                 }
-                // If there is a configuration file and no other assets with same id, deploy the asset
-                var assetDir = new File(assetPath + fileRequest.getName());
-                assetDir.open('w');
-                assetDir.write(fileRequest.getStream());
-                assetDir.close();
                 tempDirectory.del();
-                return 'success';
+                // If there is a configuration file and no other assets with same id, deploy the asset
+                 return storeManager.addAsset(type, fileName, fileRequest, constants.FILE_STORE) ? "success" : "errorInUpload";
             }
         }
         // If configuration file is missing indicate the error
