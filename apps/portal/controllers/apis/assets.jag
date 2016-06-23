@@ -34,6 +34,7 @@
     var utils = require('/modules/utils.js');
     var store = utils.store();
     var assetType = request.getParameter('type');
+    var storeType = request.getParameter('storeType');
     var method = request.getMethod();
 
     response.contentType = 'application/json';
@@ -62,13 +63,15 @@
         // Check whether it is a delete request. If it is a delete request, delete the asset
         if (method === 'DELETE') {
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.deleteAsset(assetType, id);
+                assets = store.deleteAsset(assetType, id, storeType);
             });
             if (!assets) {
                 response.sendError(404, JSON.stringify({
                     error: true
                 }));
+                return;
             }
+            print(assets);
             return;
         }
         response.sendError(405, JSON.stringify({
