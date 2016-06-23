@@ -77,6 +77,13 @@ var getAsset, getAssets, addAsset, deleteAsset;
         return assets;
     };
 
+    /**
+     * To add an asset to File Store
+     * @param {String} type Type of the asset
+     * @param {String} id Id of the asset
+     * @param {File} assertFile File with asset
+     * @returns {boolean}
+     */
     addAsset = function (type, id, assertFile) {
         var ctx = utils.currentContext();
         var parent = assetsDir(ctx, type);
@@ -88,9 +95,9 @@ var getAsset, getAssets, addAsset, deleteAsset;
     };
 
     /**
-     * To delete an asset
-     * @param type Type of the asset
-     * @param id Id of the asset
+     * To delete an asset from File Store
+     * @param {String} type Type of the asset
+     * @param {String} id Id of the asset
      * @returns true if the asset is deleted otherwise null
      */
     deleteAsset = function (type, id) {

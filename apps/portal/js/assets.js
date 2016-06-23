@@ -98,14 +98,11 @@ $(function () {
     var deleteAsset = function (id) {
         ues.store.deleteAsset(assetType, id, STORE_TYPE, function (err, data) {
             if (err) {
-                var asset = findAsset(id);
-                $('#'+id).html(assetsDeleteErrorHbs(asset));
-            }
-            else {
+                $('#'+id).html(assetsDeleteErrorHbs(findAsset(id)));
+            } else {
                 location.reload();
             }
         });
-
     };
 
     /**
@@ -149,7 +146,6 @@ $(function () {
             if (win.scrollTop() + win.height() < doc.height() - 100) {
                 return;
             }
-
             if (!isStillLoading) {
                 listAssets();
             }
