@@ -128,6 +128,6 @@ function replaceText (sourceFilePath,originalText, replaceText){
     var sourceFile = new File(sourceFilePath);
     sourceFile.open('r+');
     var content = sourceFile.readAll();
-    sourceFile.write(content.replace(originalText, replaceText));
+    sourceFile.write(content.split(originalText).join(replaceText));
     sourceFile.close();
 }
