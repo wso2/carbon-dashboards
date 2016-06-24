@@ -290,7 +290,6 @@
             renderNextPriority = true;
             rederingInitiator();
         }
-
     };
 
     var renderGadget = function () {
