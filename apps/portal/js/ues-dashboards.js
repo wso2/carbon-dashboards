@@ -228,7 +228,7 @@
         doneCallback();
     };
 
-    var isGadgetExists = function (gadgetComponetBox) {
+    var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
         ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
             isGadgetExists = error
@@ -317,8 +317,7 @@
             if (isDesignerView || hasComponent) {
                 container.html(componentBoxContentHbs());
             }
-            var gadgetID = content[$(componentBoxList[componentBoxNum]).attr('id')][0].content.id;
-            if (hasComponent && !(isGadgetExists(componentBoxList[componentBoxNum]))) {
+            if (hasComponent && !(isGadgetUnavailable(componentBoxList[componentBoxNum]))) {
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
                         log(err);
@@ -326,7 +325,10 @@
                 });
             }
             else {
-                container.find('.ues-component').find('.ues-component-title').text("Unable to find the gadget \"" + gadgetID + "\"");
+                if(hasComponent){
+                    var gadgetID = content[$(componentBoxList[componentBoxNum]).attr('id')][0].content.id;
+                    container.find('.ues-component').find('.ues-component-title').text("Unable to find the gadget \"" + gadgetID + "\"");
+                }
                 finishedLoading();
             }
 
