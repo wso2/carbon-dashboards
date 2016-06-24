@@ -17,12 +17,12 @@
  */
 (function () {
     var domain = ues.global.urlDomain || ues.global.userDomain;
-    var assetsUrl = ues.utils.relativePrefix() + 'apis/assets/';
+    var assetsUrl = ues.utils.relativePrefix() + 'apis/assets';
     var store = (ues.store = {});
 
     store.asset = function (type, id, cb) {
         $.ajax({
-            url: assetsUrl + 'publicassets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            url: assetsUrl + '/publicassets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
             method: "GET",
             contentType: "application/json",
             async: false,
