@@ -57,11 +57,8 @@
     var action = request.getParameter("action");
     var data = request.getContent();
 
-    if(data) {
-        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
-        var providerApi = require(providerApiLocation);
-    }
-
+    var providerApiLocation;
+    var providerApi;
     var validate;
     var chartApi;
     var gadgetID;
@@ -83,6 +80,8 @@
         return;
 
     } else if (action === 'getProviderConfig') {
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
         print(providerApi.getConfig().config);
         return;
 
@@ -106,6 +105,8 @@
         print(customProviderPartial);
         return;
     } else if (action === 'getData') {
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
         validate = providerApi.validate(data[PROVIDER_CONF]);
         if (!validate.error) {
             var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
@@ -151,6 +152,8 @@
         print(chartList);
         return;
     } else if (action === 'getChartConfig') {
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
         var schema = null;
         validate = providerApi.validate(data[PROVIDER_CONF]);
         if (!validate.error) {
@@ -197,6 +200,8 @@
         print(customPartial);
         return;
     } else if (action === 'preview') {
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
         var chartConf = data[CHART_CONF];
         var chart = chartConf[CHART_NAME];
         var chartApiLocation = CHART_LOCATION + chart + CHART_API_FILE;
@@ -320,10 +325,9 @@
             print(validate);
             return;
         }
-
-
-
     } else if(action === 'addGadgetToStore'){
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
         gadgetID = data[CHART_CONF][GADGET_NAME].replace(/ /g,"_");
         var isPushMode = false;
         if(providerApi.getMode().toLowerCase() === 'push'){
@@ -347,10 +351,12 @@
         });
         return;
     } else if (action === 'testConnection') {
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
         validate = providerApi.validate(data[PROVIDER_CONF]);
         var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
         if (validate.error) {
-            print({
+              print({
                 error: true,
                 message: "Database configuration error"
             });
