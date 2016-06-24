@@ -43,8 +43,12 @@
             url: assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
             method: "DELETE",
             contentType: "application/json",
+            async: false,
             success: function (data) {
                 cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
             }
         });
     };
