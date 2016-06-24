@@ -690,7 +690,7 @@ $(function () {
                 componentBody.hide();
             } else {
                 // rendering full view
-                var pageEl = $('.page-content');
+                var pageEl = $('.page-content').has('.nav-tabs');
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
                 getGridstack().disable();
