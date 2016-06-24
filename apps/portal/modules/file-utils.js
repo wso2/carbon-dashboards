@@ -41,7 +41,7 @@ function createDirs(path) {
 /**
  * Copy files to the given destination creating the directories if not exist
  * @param file
- * @param destPath location where file needs to be copied
+ * @param destinationPath location where file needs to be copied
  */
 function copyFile(file, destinationPath) {
     createDirs(destinationPath);
@@ -63,8 +63,7 @@ function copyDir(sourceFile, destinationPath) {
         if (sourceFile.isDirectory()) {
             var files = sourceFile.listFiles();
             for (var i = 0; i < files.length; i++) {
-                var subFile = files[i];
-                copyDir(subFile, destinationPath + '/' +sourceFile.getName());
+                copyDir(files[i], destinationPath + '/' +sourceFile.getName());
             }
         } else {
             copyFile(sourceFile, destinationPath + '/' + sourceFile.getName());
