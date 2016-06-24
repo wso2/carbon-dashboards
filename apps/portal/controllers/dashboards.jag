@@ -50,7 +50,6 @@ var fresh;
     var isCustomize;
     var toReset;
     var method = request.getMethod();
-    var constants;
 
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');

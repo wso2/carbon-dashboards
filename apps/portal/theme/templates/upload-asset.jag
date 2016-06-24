@@ -129,10 +129,10 @@
                         ' "file.format.is.not.supported" : "<%= i18n.localize("file.format.is.not.supported")%>",' +
                         ' "file.size.exceeded" : "<%= i18n.localize("file.size.exceeded")%>"' +
                         ' }';
-        var i18n_data_json = JSON.parse(i18n_data);
+       var i18n_data_json = JSON.parse(i18n_data);
 
 
-        var config = <%= configs%>;
+       var config = <%= configs%>;
 
        $(document).ready(function() {
             <% if (errorMessage) { %>
@@ -148,10 +148,12 @@
                 showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("file.size.exceeded")%>");
             <% } else if (errorMessage === "idAlreadyExists") { %>
                  showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize(assetType+".exist")%>");
+            <% } else if (errorMessage === "errorInUpload") { %>
+                 showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("error.in.upload")%>");
             <% } else if (errorMessage === "success") { %>
                  $('.upload-success').addClass("show").removeClass("hide");
             <% } %>
-        });
+       });
     </script>
 
     <script src="<%=urlPrefix%>js/ues.js"></script>
