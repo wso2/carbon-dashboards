@@ -46,14 +46,25 @@
     var SCHEME_NOTIFIER = '$COLUMN_NAMES';
     var PROVIDER_CONF = 'provider-conf';
     var PROVIDER_NAME = 'provider-name';
+    var PARTIAL = 'partial';
     var CHART_CONF = 'chart-conf';
     var CHART_NAME = 'chart-name';
     var GADGET_NAME = 'gadget-name';
+    var FIELD_NAME = 'fieldName';
 
     response.contentType = 'application/json';
 
     var action = request.getParameter("action");
     var data = request.getContent();
+
+    if(data) {
+        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        var providerApi = require(providerApiLocation);
+    }
+
+    var validate;
+    var chartApi;
+    var gadgetID;
 
     if (action === 'getProviders') {
         var providers = [];
@@ -70,27 +81,32 @@
         }
         print(providers);
         return;
+
     } else if (action === 'getProviderConfig') {
-        var providerApi = require(PROVIDERS_LOCATION + data.provider + PROVIDER_API_FILE );
         print(providerApi.getConfig().config);
         return;
+
     } else if (action === 'getProviderAdvancedUI') {
+        var providerHbsFile = null;
         try {
-            file = new File(PROVIDERS_LOCATION + data.provider + PARTIAL_LOCATION + data.partial + '.hbs');
-            if (!file.isExists()) {
+            providerHbsFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PARTIAL_LOCATION +
+                    data[PROVIDER_CONF][PARTIAL] + '.hbs');
+            if (!providerHbsFile.isExists()) {
                 return null;
             }
-            file.open('r');
-            var customPartial = file.readAll();
+            providerHbsFile.open('r');
+            var customProviderPartial = providerHbsFile.readAll();
+        } catch (e) {
+            log.error(e.message);
         } finally {
-            file.close();
+            if (providerHbsFile) {
+                providerHbsFile.close();
+            }
         }
-        print(customPartial);
+        print(customProviderPartial);
         return;
     } else if (action === 'getData') {
-        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
-        var providerApi = require(PROVIDERS_LOCATION + provider + PROVIDER_API_FILE );
-        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        validate = providerApi.validate(data[PROVIDER_CONF]);
         if (!validate.error) {
             var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
             var output = {};
@@ -135,10 +151,8 @@
         print(chartList);
         return;
     } else if (action === 'getChartConfig') {
-        var schema;
-        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
-        var providerApi = require(PROVIDERS_LOCATION + provider + PROVIDER_API_FILE );
-        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        var schema = null;
+        validate = providerApi.validate(data[PROVIDER_CONF]);
         if (!validate.error) {
             schema = providerApi.getSchema(data[PROVIDER_CONF]);
         } else {
@@ -146,14 +160,14 @@
             print(validate);
             return;
         }
-        var chartApi = require(CHART_LOCATION + data.chartType + CHART_API_FILE );
+        chartApi = require(CHART_LOCATION + data.chartType + CHART_API_FILE );
         if (!schema.error) {
             var modifiedChartConfig = chartApi.getConfig(schema);
             for (var i in modifiedChartConfig) {
                 if (modifiedChartConfig[i][VALUE_SET] && SCHEME_NOTIFIER === modifiedChartConfig[i][VALUE_SET][0]) {
                     modifiedChartConfig[i][VALUE_SET].splice(0);
                     for (var j in schema) {
-                        modifiedChartConfig[i][VALUE_SET].push(schema[j]['fieldName']);
+                        modifiedChartConfig[i][VALUE_SET].push(schema[j][FIELD_NAME]);
                     }
                 }
             }
@@ -165,15 +179,20 @@
             return;
         }
     } else if (action === 'getChartAdvancedUI') {
+        var chartHbsFile = null;
         try {
-            file = new File(CHART_LOCATION + data.chartType + PARTIAL_LOCATION + data.partial + '.hbs');
-            if (!file.isExists()) {
+            chartHbsFile = new File(CHART_LOCATION + data.chartType + PARTIAL_LOCATION + data.partial + '.hbs');
+            if (!chartHbsFile.isExists()) {
                 return null;
             }
             file.open('r');
-            var customPartial = file.readAll();
+            var customPartial = chartHbsFile.readAll();
+        } catch (e) {
+            log.error(e.message);
         } finally {
-            file.close();
+            if (chartHbsFile) {
+                chartHbsFile.close();
+            }
         }
         print(customPartial);
         return;
@@ -181,10 +200,10 @@
         var chartConf = data[CHART_CONF];
         var chart = chartConf[CHART_NAME];
         var chartApiLocation = CHART_LOCATION + chart + CHART_API_FILE;
-        var chartApi = require(chartApiLocation);
-        var validate = chartApi.validate(chartConf);
+        chartApi = require(chartApiLocation);
+        validate = chartApi.validate(chartConf);
         if(!validate.error){
-            var gadgetID = chartConf['gadget-name'].replace(/ /g,"_");
+            gadgetID = chartConf[GADGET_NAME].replace(/ /g,"_");
 
             var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
             if(gadgetStoreFile.isExists()){
@@ -207,8 +226,6 @@
             }
 
             var provider = data[PROVIDER_CONF][PROVIDER_NAME];
-            var providerApiLocation = PROVIDERS_LOCATION + provider + PROVIDER_API_FILE ;
-            var providerApi = require(providerApiLocation);
             var isPushMode = false;
             if(providerApi.getMode().toLowerCase() === 'push'){
                 isPushMode = true;
@@ -236,26 +253,18 @@
             gadgetXmlData['gadget_title'] = chartConf[GADGET_NAME];
             gadgetXmlData['isPushMode'] = isPushMode;
             gadgetXmlData['chart-type'] = chart;
-            var chartConf = require(CHART_LOCATION + chart + CHART_CONFIG_FILE);
+            var chartConfigFile = require(CHART_LOCATION + chart + CHART_CONFIG_FILE);
 
-            if(chartConf['imports']) {
-                var chartSpecificJs = chartConf['imports']["js"];
-                gadgetXmlData['chart-js'] = chartSpecificJs;
-                var chartSpecificCss = chartConf['imports']["css"];
-                gadgetXmlData['chart-css'] = chartSpecificCss;
-
-                if(chartConf['imports']["libs"]) {
-                    var chartSpecificJsLibs = chartConf['imports']["libs"]["js"];
-                    gadgetXmlData['chart-vendor-js'] = chartSpecificJsLibs;
-                    var chartSpecificCssLibs = chartConf['imports']["libs"]["css"];
-                    gadgetXmlData['chart-vendor-css'] = chartSpecificCssLibs;
+            if(chartConfigFile['imports']) {
+                gadgetXmlData['chart-js'] = chartConfigFile['imports']["js"];
+                gadgetXmlData['chart-css'] = chartConfigFile['imports']["css"];
+                if(chartConfigFile['imports']["libs"]) {
+                    gadgetXmlData['chart-vendor-js'] = chartConfigFile['imports']["libs"]["js"];
+                    gadgetXmlData['chart-vendor-css'] = chartConfigFile['imports']["libs"]["css"];
                 }
-
-                if(chartConf['imports']["shared-libs"]) {
-                    var sharedJs = chartConf['imports']["shared-libs"]["js"];
-                    gadgetXmlData['shared-js'] = sharedJs;
-                    var sharedCss = chartConf['imports']["shared-libs"]["css"];
-                    gadgetXmlData['shared-css'] = sharedCss;
+                if(chartConfigFile['imports']["shared-libs"]) {
+                    gadgetXmlData['shared-js'] =chartConfigFile['imports']["shared-libs"]["js"];
+                    gadgetXmlData['shared-css'] = chartConfigFile['imports']["shared-libs"]["css"];
                 }
             }
 
@@ -315,9 +324,7 @@
 
 
     } else if(action === 'addGadgetToStore'){
-        var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
-        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE ;
-        var providerApi = require(providerApiLocation);
+        gadgetID = data[CHART_CONF][GADGET_NAME].replace(/ /g,"_");
         var isPushMode = false;
         if(providerApi.getMode().toLowerCase() === 'push'){
             isPushMode = true;
@@ -340,9 +347,7 @@
         });
         return;
     } else if (action === 'testConnection') {
-        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE ;
-        var providerApi = require(providerApiLocation);
-        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        validate = providerApi.validate(data[PROVIDER_CONF]);
         var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
         if (validate.error) {
             print({

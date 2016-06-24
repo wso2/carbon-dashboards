@@ -35,6 +35,7 @@ var PROVIDER_CONF = 'provider-conf';
 var PROVIDER_NAME = 'provider-name';
 var CHART_CONF = 'chart-conf';
 var CHART_NAME = 'chart-name';
+var PARTIAL = 'partial';
 
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
@@ -289,11 +290,14 @@ function getProviders() {
 function getProviderConfig() {
     step1Done = true;
     provider = $("#providers").val();
-    var data = {"provider": provider};
+    var providerConf = {};
+    var configInput = {};
+    configInput[PROVIDER_NAME] = provider ;
+    providerConf[PROVIDER_CONF] = configInput;
     $.ajax({
         url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
         method: "POST",
-        data: JSON.stringify(data),
+        data: JSON.stringify(providerConf),
         contentType: "application/json",
         async: false,
         success: function (data) {
@@ -336,14 +340,15 @@ function registerAdvancedProviderUI(data) {
                         document.body.appendChild(js);
                     }
                 }
-                var data = {
-                    "provider": provider,
-                    "partial": config[key]['childPartial']
-                };
+                var providerConf = {};
+                var configInput = {};
+                configInput[PROVIDER_NAME] = provider ;
+                configInput[PARTIAL] =  config[key]['childPartial'];
+                providerConf[PROVIDER_CONF] = configInput;
                 $.ajax({
                     url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderAdvancedUI',
                     method: "POST",
-                    data: JSON.stringify(data),
+                    data: JSON.stringify(providerConf),
                     contentType: "application/json",
                     dataType: 'text',
                     async: false,
