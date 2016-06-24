@@ -18,12 +18,10 @@
 var provider;
 var chartType;
 var wizardData = {};
-var previewData = [];
 var columns = [];
 var step0Done = false;
 var step1Done = false;
 var step2Done = false;
-var isPaginationSupported = true;
 var selectedTableCoulumns = [];
 var defaultTableColumns = [];
 
@@ -36,6 +34,8 @@ var PROVIDER_NAME = 'provider-name';
 var CHART_CONF = 'chart-conf';
 var CHART_NAME = 'chart-name';
 var PARTIAL = 'partial';
+
+var CREATE_GADGET_API  = 'apis/createGadget';
 
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
@@ -90,7 +90,7 @@ $('#provider-list').change(function () {
 $('#test-connection').click(function () {
     var providerConfig = getProviderConfigData();
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=testConnection',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=testConnection',
         method: "POST",
         data: JSON.stringify(providerConfig),
         contentType: "application/json",
@@ -107,7 +107,7 @@ $('#test-connection').click(function () {
 $('#show-data').click(function () {
     var pConfig = getProviderConfigData();
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getData',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getData',
         method: "POST",
         data: JSON.stringify(pConfig),
         contentType: "application/json",
@@ -132,7 +132,6 @@ $('#show-data').click(function () {
                 location.reload();
             }
             var source = $("#wizard-error-hbs").html();
-            ;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
@@ -185,7 +184,7 @@ $("#preview").click(function () {
     }
     else {
         $.ajax({
-            url: ues.utils.relativePrefix() + 'apis/createGadget?action=preview',
+            url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=preview',
             method: "POST",
             data: JSON.stringify(wizardData),
             contentType: "application/json",
@@ -207,7 +206,6 @@ $("#preview").click(function () {
                     location.reload();
                 }
                 var source = $("#wizard-error-hbs").html();
-                ;
                 var template = Handlebars.compile(source);
                 wizard.empty();
                 wizard.append(template({
@@ -221,7 +219,7 @@ $("#preview").click(function () {
 $(".pager .finish").click(function() {
     $("#preview").click();
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=addGadgetToStore',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=addGadgetToStore',
         method: "POST",
         data: JSON.stringify(wizardData),
         contentType: "application/json",
@@ -253,7 +251,7 @@ $(".pager .finish").click(function() {
 
 function getProviders() {
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviders',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getProviders',
         method: "GET",
         async: false,
         contentType: "application/json",
@@ -296,7 +294,7 @@ function getProviderConfig() {
     configInput[PROVIDER_NAME] = provider ;
     providerConf[PROVIDER_CONF] = configInput;
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderConfig',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getProviderConfig',
         method: "POST",
         data: JSON.stringify(providerConf),
         contentType: "application/json",
@@ -347,7 +345,7 @@ function registerAdvancedProviderUI(data) {
                 configInput[PARTIAL] =  config[key]['childPartial'];
                 providerConf[PROVIDER_CONF] = configInput;
                 $.ajax({
-                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getProviderAdvancedUI',
+                    url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getProviderAdvancedUI',
                     method: "POST",
                     data: JSON.stringify(providerConf),
                     contentType: "application/json",
@@ -376,7 +374,7 @@ function getProviderConfigData() {
 
 function getChartList() {
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartList',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getChartList',
         method: "GET",
         contentType: "application/json",
         async: false,
@@ -389,7 +387,7 @@ function getChartList() {
 
 function getChartConfig(providerConfig) {
     $.ajax({
-        url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartConfig',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getChartConfig',
         method: "POST",
         data: JSON.stringify(providerConfig),
         contentType: "application/json",
@@ -432,7 +430,7 @@ function registerAdvancedChartUI(data) {
                     "partial": config[key]['childPartial']
                 };
                 $.ajax({
-                    url: ues.utils.relativePrefix() + 'apis/createGadget?action=getChartAdvancedUI',
+                    url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getChartAdvancedUI',
                     method: "POST",
                     data: JSON.stringify(data),
                     contentType: "application/json",

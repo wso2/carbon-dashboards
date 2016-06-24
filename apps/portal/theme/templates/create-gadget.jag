@@ -277,12 +277,6 @@
     <i><ins><a href="/portal"><font color="blue">Go to Portal</font></a></ins></i>
 </script>
 
-<script id="wizard-zeroevents-hbs" type="text/x-handlebars-template">
-    <div class="alert alert-warning" role="alert">
-       No events published. Publish events to see a preview of the selected chart.
-    </div>
-</script>
-
 <!-- Jquery JS -->
 <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
 <!-- Bootstrap JS -->
