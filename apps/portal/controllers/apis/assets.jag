@@ -20,11 +20,6 @@
 (function () {
     var log = new Log();
 
-    if (!user) {
-        response.sendError(401, 'unauthorized to access assets');
-        return;
-    }
-
     var DEFAULT_START = 0;
     var DEFAULT_COUNT = -1;
     var id;
@@ -42,6 +37,27 @@
     var assets;
 
     var matcher = new URIMatcher(request.getRequestURI());
+    if (matcher.match('/assets/publicassets/{id}')) {
+    id = matcher.elements().id;
+    if (method === 'GET') {
+        assets = store.getAsset(assetType, id);
+        if (!assets) {
+            response.sendError(404, JSON.stringify({
+                error: true
+            }));
+            return;
+        }
+        print(assets);
+        return;
+    }
+    }
+
+    if (!user) {
+        response.sendError(401, 'unauthorized to access assets');
+        return;
+    }
+
+
     if (matcher.match('/assets/{id}')) {
         id = matcher.elements().id;
         if (method === 'GET') {
