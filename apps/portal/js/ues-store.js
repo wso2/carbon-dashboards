@@ -47,13 +47,18 @@
         }, 'json');
     };
 
-    store.deleteAsset = function (type, id, cb) {
+    store.deleteAsset = function (type, id, storeType, cb) {
         $.ajax({
-            url: assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            url: assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type + '&storeType='
+            + storeType,
             method: "DELETE",
             contentType: "application/json",
+            async: false,
             success: function (data) {
                 cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
             }
         });
     };

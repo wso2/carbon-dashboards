@@ -16,6 +16,7 @@
 var log = new Log();
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
+var usr = require('/modules/user.js');
 
 /**
  * Get registry reference.
@@ -126,8 +127,13 @@ var getAsset = function (id, originalDashboardOnly) {
         }
     }
     var content = registry.content(path);
-    var dashboard = JSON.parse(content);
+    var contentDashboardJSON = JSON.parse(content);
+    var dashboard = contentDashboardJSON;
     if (dashboard) {
+        if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
+            contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
+        }
+        var dashboard = contentDashboardJSON;
         dashboard.isUserCustom = isCustom;
         dashboard.isEditorEnable = false;
         if (!originalDashboardOnly && originalDB) {
@@ -206,6 +212,7 @@ var create = function (dashboard) {
         content: JSON.stringify(dashboard),
         mediaType: 'application/json'
     });
+    usr.createRoles(dashboard.id);
     userManager.denyRole('internal/everyone', path, 'read');
 };
 
@@ -285,6 +292,7 @@ var remove = function (id) {
     if (registry.exists(path)) {
         registry.remove(path);
     }
+    usr.removeRoles(id);
 };
 
 /**

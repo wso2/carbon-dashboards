@@ -168,6 +168,13 @@
     "only.sample.data": "Only a sample set of data is shown here.",
     "success.label": "Success",
     "pages.menu.label": "Menu",
+    "create.dashboard.click": "To create a dashboard click",
+    "access.not.authorized": "Access not authorized",
+    "dashboard.not.found": "Dashboard not found",
+    "ok": "Ok",
+    "delete.unauthorized.message": "You do not have necessary permissions to delete the dashboard",
+    "login.unauthorized.message": "You do not have necessary permissions to login the portal",
+    "owners": "Owners",
     "valid.label": "Valid",
     "test.connection": "Test Connection",
     "share.dashboard": "Share Dashboard",
@@ -196,5 +203,10 @@
     "file.format.is.not.supported": "file format is not supported",
     "file.size.exceeded": "File size exceeded. Please select a file below maximum file limit",
     "designer.access.not.authorized.for.tenant": "designer access not authorized for this tenant",
-    "designer.access.not.authorized": "designer access not authorized"
+    "designer.access.not.authorized": "designer access not authorized",
+    "error.in.upload" : "Cannot upload the asset. Error occurred.",
+    "error" : "Error",
+    "cannot.delete.gadget" : "Cannot delete the gadget",
+    "cannot.delete.layout" : "Cannot delete the layout",
+    "something.wrong" : "Something went wrong. Try again later."
 }

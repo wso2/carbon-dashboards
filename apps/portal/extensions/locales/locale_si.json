@@ -152,6 +152,7 @@
   "shared.dashboards" : "Shared Dashboards",
   "tenant.dashboards" : "Tenant Specific Dashboards",
   "shared.by.supertenant" : "Shared By Super-Tenant",
+  "owners": "අයිතිකරුවන්",
   "share.information.message" : "This dashboard is visible to all the tenants"
   "upload.gadget.label" : "Upload Gadget",
   "create.layout.label" : "Create Layout",
@@ -173,5 +174,11 @@
   "file.format.is.not.supported": "File format is not supported",
   "file.size.exceeded" : "File size exceeded. Please select a file below maximum file limit",
   "designer.access.not.authorized.for.tenant": "designer access not authorized for this tenant",
-  "designer.access.not.authorized": "designer access not authorized"
+  "designer.access.not.authorized": "designer access not authorized",
+  "error.in.upload" : "Cannot upload the asset. Error occurred.",
+  "error" : "Error",
+  "cannot.delete.gadget" : "Cannot delete the gadget",
+  "cannot.delete.layout" : "Cannot delete the layout",
+  "something.wrong" : "Something went wrong. Try again later."
 }
+

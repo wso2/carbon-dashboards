@@ -24,6 +24,7 @@ $(function () {
     var permissions = dashboard.permissions;
     var viewers = permissions.viewers;
     var editors = permissions.editors;
+    var owners = permissions.owners;
     var url = dashboardsApi + '/' + dashboard.id;
     var user = null;
 
@@ -60,11 +61,11 @@ $(function () {
     var showConfirm = function (title, message, ok) {
         var content = modalConfirmHbs({title: title, message: message});
         showHtmlModal(content, function () {
-            var el = $('#designerModal');
-            el.find('#ues-modal-confirm-yes').on('click', function () {
+            var element = $('#designerModal');
+            element.find('#ues-modal-confirm-yes').on('click', function () {
                 if (ok && typeof ok === 'function') {
                     ok();
-                    el.modal('hide');
+                    element.modal('hide');
                 }
             });
         });
@@ -137,7 +138,8 @@ $(function () {
             url: url,
             method: 'PUT',
             data: JSON.stringify(dashboard),
-            contentType: 'application/json'
+            contentType: 'application/json',
+            async: false
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000);
             if (callback) {
@@ -161,6 +163,7 @@ $(function () {
             url: tokenUrl,
             type: "GET",
             dataType: "json",
+            async: false,
             data: {
                 id: dashboard.id
             }
@@ -196,14 +199,30 @@ $(function () {
      * @param2 role {String}
      * @private
      * */
-    var viewer = function (el, role) {
+    var addViewers = function (element, role) {
         var permissions = dashboard.permissions;
         var viewers = permissions.viewers;
         if (!isExistingPermission(viewers, role)) {
             viewers.push(role);
             $('#ues-dashboard-settings').find('.ues-shared-view').append(sharedRoleHbs(role));
         }
-        el.typeahead('val', '');
+        element.typeahead('val', '');
+    };
+
+    /**
+     * Add the available owner permission for dashboard in to permission list.
+     * @param1 el {Object} element of the list.
+     * @param2 role {String}
+     * @private
+     * */
+    var addOwners = function (element, role) {
+        var permissions = dashboard.permissions;
+        var owners = permissions.owners;
+        if (!isExistingPermission(owners, role)) {
+            owners.push(role);
+            $('#ues-dashboard-settings').find('.ues-shared-owner').append(sharedRoleHbs(role));
+        }
+        element.typeahead('val', '');
     };
 
     /**
@@ -212,14 +231,14 @@ $(function () {
      * @param2 role {String}
      * @private
      * */
-    var editor = function (el, role) {
+    var addEditors = function (element, role) {
         var permissions = dashboard.permissions;
         var editors = permissions.editors;
         if (!isExistingPermission(editors, role)) {
             editors.push(role);
             $('#ues-dashboard-settings').find('.ues-shared-edit').append(sharedRoleHbs(role));
         }
-        el.typeahead('val', '');
+        element.typeahead('val', '');
     };
 
     /**
@@ -250,8 +269,7 @@ $(function () {
         var role;
 
         var html = '';
-        var length = viewers.length;
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < viewers.length; i++) {
             role = viewers[i];
             html += sharedRoleHbs(role);
         }
@@ -260,12 +278,18 @@ $(function () {
         settings.find('.ues-shared-view').append(html);
 
         html = '';
-        length = editors.length;
-        for (i = 0; i < length; i++) {
+        for (i = 0; i < editors.length; i++) {
             role = editors[i];
             html += sharedRoleHbs(role);
         }
         settings.find('.ues-shared-edit').append(html);
+
+        html = '';
+        for (i = 0; i < owners.length; i++) {
+            role = owners[i];
+            html += sharedRoleHbs(role);
+        }
+        settings.find('.ues-shared-owner').append(html);
     };
 
     /**
@@ -328,7 +352,6 @@ $(function () {
         }
         return userRoles;
     };
-
 
     /**
      * Initialize the UI functionality.
@@ -405,9 +428,9 @@ $(function () {
                 suggestion: permissionMenuHbs
             }
         }).on('typeahead:selected', function (e, role, roles) {
-            viewer($(this), role.name);
+            addViewers($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
-            viewer($(this), role.name);
+            addViewers($(this), role.name);
         });
 
         var editorRoles = new Bloodhound({
@@ -465,26 +488,85 @@ $(function () {
                 suggestion: permissionMenuHbs
             }
         }).on('typeahead:selected', function (e, role, roles) {
-            editor($(this), role.name);
+            addEditors($(this), role.name);
         }).on('typeahead:autocomplete', function (e, role) {
-            editor($(this), role.name);
+            addEditors($(this), role.name);
+        });
+
+        var ownerRoles = new Bloodhound({
+            name: 'roles',
+            limit: 10,
+            prefetch: {
+                url: rolesApi,
+                filter: function (roles) {
+                    return $.map(roles, function (role) {
+                        return {name: role};
+                    });
+                },
+                ttl: 60
+            },
+            sufficient: 10,
+            remote: {
+                url: searchRolesApi + '?maxLimit=' + maxLimit + '&query=' + viewerSearchQuery,
+                filter: function (searchRoles) {
+                    return $.map(searchRoles, function (searchRole) {
+                        return {name: searchRole};
+                    });
+                },
+                prepare: function (query, settings) {
+                    viewerSearchQuery = query;
+                    var currentURL = settings.url;
+                    settings.url = currentURL + query;
+                    return settings;
+                },
+                ttl: 60
+            },
+            datumTokenizer: function (d) {
+                return d.name.split(/[\s\/.]+/) || [];
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace
+        });
+
+        ownerRoles.initialize();
+
+        $('#ues-share-owner').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 0
+        }, {
+            name: 'roles',
+            displayKey: 'name',
+            limit: 10,
+            source: ownerRoles.ttAdapter(),
+            extraInfo: ues.global.dashboard,
+            templates: {
+                empty: [
+                    '<div class="empty-message">',
+                    'No Result Available',
+                    '</div>'
+                ].join('\n'),
+                suggestion: permissionMenuHbs
+            }
+        }).on('typeahead:selected', function (e, role, roles) {
+            addOwners($(this), role.name);
+        }).on('typeahead:autocomplete', function (e, role) {
+            addOwners($(this), role.name);
         });
 
         $('#ues-dashboard-settings').find('.ues-shared-edit').on('click', '.remove-button', function () {
-            var el = $(this).closest('.ues-shared-role');
-            var role = el.data('role');
+            var element = $(this).closest('.ues-shared-role');
+            var role = element.data('role');
             var removePermission = function () {
                 editors.splice(editors.indexOf(role), 1);
                 var removeElement = function () {
-                    el.remove();
+                    element.remove();
                 };
 
                 removeElement();
             };
 
-            if ((editors.length == 1 || (getNumberOfUserRolesInDashboard(editors) == 1
-                && isExistingPermission(user.roles, role)))
-                && !user.isAdmin) {
+            if ((editors.length === 1 || (getNumberOfUserRolesInDashboard(editors) === 1
+                && isExistingPermission(user.roles, role))) && !user.isAdmin) {
                 showConfirm("Removing Permission",
                     "After this permission removal only administrator will be able to edit this dashboard." +
                     " Do you want to continue?", removePermission);
@@ -492,19 +574,38 @@ $(function () {
                 removePermission();
             }
         }).end().find('.ues-shared-view').on('click', '.remove-button', function () {
-            var el = $(this).closest('.ues-shared-role');
-            var role = el.data('role');
+            var element = $(this).closest('.ues-shared-role');
+            var role = element.data('role');
             var removePermission = function () {
                 viewers.splice(viewers.indexOf(role), 1);
                 var removeElement = function () {
-                    el.remove();
+                    element.remove();
                 };
                 removeElement();
             };
 
-            if ((viewers.length == 1 || (getNumberOfUserRolesInDashboard(viewers) == 1
+            if ((viewers.length === 1 || (getNumberOfUserRolesInDashboard(viewers) === 1
                 && isExistingPermission(user.roles, role)))
                 && !user.isAdmin) {
+                showConfirm("Removing Permission",
+                    "After this permission removal only administrator will be able to view this dashboard." +
+                    " Do you want to continue?", removePermission);
+            } else {
+                removePermission();
+            }
+        }).end().find('.ues-shared-owner').on('click', '.remove-button', function () {
+            var element = $(this).closest('.ues-shared-role');
+            var role = element.data('role');
+            var removePermission = function () {
+                owners.splice(owners.indexOf(role), 1);
+                var removeElement = function () {
+                    element.remove();
+                };
+                removeElement();
+            };
+
+            if ((owners.length === 1 || (getNumberOfUserRolesInDashboard(owners) === 1
+                && isExistingPermission(user.roles, role))) && !user.isAdmin) {
                 showConfirm("Removing Permission",
                     "After this permission removal only administrator will be able to view this dashboard." +
                     " Do you want to continue?", removePermission);
@@ -542,7 +643,7 @@ $(function () {
         //Share dashboard among tenants
         $('#share-dashboard').on('click', function () {
             dashboard.shareDashboard = $(this).is(":checked");
-            if(dashboard.shareDashboard) {
+            if (dashboard.shareDashboard) {
                 $('#share-info').removeClass("hide");
                 $('#share-info').addClass("show");
             } else {
@@ -579,7 +680,7 @@ $(function () {
         });
 
         // Reset the changes
-        $('#ues-dashboard-cancelBtn').on('click', function(){
+        $('#ues-dashboard-cancelBtn').on('click', function () {
             location.reload();
         });
     };

@@ -101,6 +101,7 @@ var saveDashboard = function (component) {
     $.ajax({
         url: url,
         method: 'PUT',
+        async: false,
         data: JSON.stringify(dashboard),
         contentType: 'application/json'
     }).success(function (data) {
