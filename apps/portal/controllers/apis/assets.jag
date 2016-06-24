@@ -37,7 +37,7 @@
     var assets;
 
     var matcher = new URIMatcher(request.getRequestURI());
-    if (matcher.match('/publicassets/{id}')) {
+    if (matcher.match('/assets/publicassets/{id}')) {
     id = matcher.elements().id;
     if (method === 'GET') {
         assets = store.getAsset(assetType, id);

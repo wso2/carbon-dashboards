@@ -324,15 +324,7 @@
                 });
             }
             else {
-                if(hasComponent){
-                    var gadgetID = content[$(componentBoxList[componentBoxNum]).attr('id')][0].content.id;
-                    container.find('.ues-component').find('.ues-component-title').text("Unable to find the gadget \"" + gadgetID + "\"");
-                    finishedLoading();
-                }else{
-                    renderNextPriority=true;
-                    rederingInitiator();
-                }
-
+                finishedLoading();
             }
 
         }
