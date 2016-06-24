@@ -620,6 +620,7 @@ $(function () {
             url: url,
             method: method,
             data: JSON.stringify(dashboard),
+            async: false,
             contentType: 'application/json'
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
@@ -2736,7 +2737,8 @@ $(function () {
             $.ajax({
                 url: $form.attr('action'),
                 type: $form.attr('method'),
-                data: {'data': cropData},
+                async: false,
+                data: {'data': cropData}
             }).success(function (d) {
                 if (ues.global.dashboard.isUserCustom) {
                     ues.global.dashboard.banner.customBannerExists = true;
@@ -2763,7 +2765,8 @@ $(function () {
                 $.ajax({
                     url: $form.attr('action'),
                     type: $form.attr('method'),
-                    data: {data: ''},
+                    async: false,
+                    data: {data: ''}
                 }).success(function (d) {
 
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
@@ -2784,6 +2787,7 @@ $(function () {
                 $.ajax({
                     url: $form.attr('action'),
                     type: 'DELETE',
+                    async: false,
                     dataType: 'json'
                 }).success(function (d) {
 

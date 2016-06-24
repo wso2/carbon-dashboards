@@ -154,6 +154,7 @@ $(function () {
                 url: apiUrl,
                 method: "GET",
                 contentType: "application/json",
+                async: false,
                 success: function (data) {
                     showInformation("URL Already Exists",
                         "A dashboard with same URL already exists. Please enter a different dashboard URL.");

@@ -32,6 +32,7 @@
             url: '/publisher/assets/dsgadget/apis/gadgets',
             type: 'POST',
             data: formData,
+            async: false,
             processData: false,
             contentType: false,
             success: function (data) {
