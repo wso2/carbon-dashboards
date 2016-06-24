@@ -298,6 +298,14 @@
             var providerApiFile = new File(providerApiLocation);
             fileUtils.copyFile(providerApiFile, gadgetDirLocation + '/js/core/' + provider + '-provider-api.js');
 
+            var providerApis = providerConf['provider-apis'];
+            if (providerApis) {
+                for (var f in providerApis) {
+                    fileUtils.copyFile(new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/' + providerApis[f]),
+                                    gadgetDirLocation + '/js/core/' + providerApis[f]);
+                }
+            }
+
             var chartApiFile = new File(chartApiLocation);
             fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/core/' + chart + '-api.js');
 
