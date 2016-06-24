@@ -73,3 +73,5 @@ var INTERNAL_ROLE_EDITOR = "editor";
 var INTERNAL_ROLE_OWNER = "owner";
 var INTERNAL_ROLE_FORWARDSLASH = "/";
 var INTERNAL_ROLE_SEPERATOR = "-";
+
+var FILE_STORE = "fs";

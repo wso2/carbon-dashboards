@@ -23,7 +23,7 @@ var configs = require('/configs/designer.json');
 (function () {
     errorMessage = request.getParameter("message");
     var possibleErrorMessages = ["success", "confgurationFileMissing", "idAlreadyExists", "fileNotFound",
-        "MaxFileLimitExceeded", "notaZipFile"];
+        "MaxFileLimitExceeded", "notaZipFile", "errorInUpload"];
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
