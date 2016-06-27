@@ -20,9 +20,24 @@
     var assetsUrl = ues.utils.relativePrefix() + 'apis/assets';
     var store = (ues.store = {});
 
-    store.asset = function (type, id, cb) {
+    store.anonasset = function (type, id, cb) {
         $.ajax({
             url: assetsUrl + '/publicassets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
+            }
+        });
+    };
+
+    store.asset = function (type, id, cb) {
+        $.ajax({
+            url: assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
             method: "GET",
             contentType: "application/json",
             async: false,
