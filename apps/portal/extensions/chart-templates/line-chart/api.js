@@ -28,8 +28,22 @@ var getConfig, validate, isProviderRequired, draw, update;
         /*
          dynamic logic goes here
          */
-        return chartConf;
 
+        var columns = [];
+
+        columns.push("None");
+        for(var i=0; i < schema.length; i++) {
+            columns.push(schema[i]["fieldName"]);
+        }
+
+        for(var i=0; i < chartConf.length; i++) {
+            if (chartConf[i]["fieldName"] == "color") {
+                chartConf[i]["valueSet"] = columns;
+                break;
+            }
+        }
+
+        return chartConf;
     };
 
     /**
@@ -37,7 +51,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      * @param chartConfig
      */
     validate = function(chartConfig) {
-
+        return true;
     };
 
     /**
@@ -93,7 +107,7 @@ var getConfig, validate, isProviderRequired, draw, update;
      */
     update = function(data) {
         wso2gadgets.onDataReady(data,"append");
-    }
+    };
 
     buildChartConfig = function (_chartConfig) {
         var conf = {};
@@ -103,8 +117,13 @@ var getConfig, validate, isProviderRequired, draw, update;
             type : "line",
             y: _chartConfig.y
         };
+
+        if (_chartConfig.color != "None") {
+            conf.charts[0].color = _chartConfig.color;
+        }
+
         return conf;
     };
 
-    
+
 }());

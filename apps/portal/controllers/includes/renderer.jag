@@ -17,7 +17,7 @@
 var dbRoot;
 var dest;
 var renderEngine = {};
-
+var portalRoot;
 (function () {
     var log = new Log();
 
@@ -34,11 +34,14 @@ var renderEngine = {};
     var UNAUTHORIZED_ERROR = 'Dashboard access not authorized';
     if (user) {
         //identify edit/view permission for the logged user
-        if (utils.allowed(user.roles, permissions.editors)) {
+        if (utils.allowed(user.roles, permissions.owners)) {
+            user.isOwner = true;
+        } else if (utils.allowed(user.roles, permissions.editors)) {
             user.isEditor = true;
         } else if (utils.allowed(user.roles, permissions.viewers)) {
             user.isViewer = true;
         } else {
+            user.isOwner = false;
             user.isEditor = false;
             user.isViewer = false;
         }
@@ -56,7 +59,7 @@ var renderEngine = {};
             return;
         }
 
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
+        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers) && !utils.allowed(user.roles, permissions.owners)) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
@@ -78,7 +81,7 @@ var renderEngine = {};
     var i18n = require("i18n");
     //check whether the page doesn't exist, or the user hasn't logged in
     // and the anonymous view is undefined
-    if (!pageExists || (!user && (anonView === undefined))) {
+    if (!pageExists || (!user && !anonView)) {
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
     }
@@ -86,7 +89,7 @@ var renderEngine = {};
     //check whether the user has no edit/view permission and the anonymous
     // view is undefined
     if (user) {
-        if (!(user.isEditor || user.isViewer) && (anonView === undefined)) {
+        if (!(user.isEditor || user.isViewer|| user.isOwner) && !anonView) {
             response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
                     i18n.localize("page.not.found"));
             return;
@@ -95,7 +98,7 @@ var renderEngine = {};
 
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
-
+    portalRoot = tenantedUrlPrefix + 'dashboards/';
     // global reference to getBootstrapLayout() function
     renderEngine.getDashboardContent = db.getBootstrapLayout;
 

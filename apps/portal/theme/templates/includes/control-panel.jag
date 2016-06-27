@@ -17,10 +17,14 @@
 %>
 <% if (user) { %>
     <% if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) { %>
-        <% if (user.isEditor) { %>
-            <li><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
+        <% if (dashboard.shareDashboard && user.domain != superDomain) { %>
+            <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy" title="<%= i18n.localize("view.button")%>"></i>Dashboard Portal</a></li>
         <% } else { %>
-            <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
+            <% if (user.isEditor || user.isOwner) { %>
+                <li><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
+            <% } else { %>
+                <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
+            <% } %>
         <% } %>
     <% } %>
         <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><i class="icon fw fw-sign-out"></i><%= i18n.localize("logout.label")%></a></li>

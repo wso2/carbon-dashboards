@@ -64,6 +64,7 @@ $(function () {
         $.ajax({
             url: dashboardsApi + '/' + id,
             method: 'DELETE',
+            async : false,
             success: function () {
                 button.stop();
                 location.reload();
@@ -83,6 +84,11 @@ $(function () {
 
         if (!hasMore) {
             isStillLoading = false;
+            $('.ues-dashboard').each(function (i, obj) {
+                if ($(this).find('.ues-dashboard-share').length) {
+                    $(this).addClass("shared");
+                }
+            });
             return;
         }
         ues.store.assets('dashboard', {
@@ -147,7 +153,24 @@ $(function () {
         portal.on('click', '.ues-view:not(.disable)', function(e) {
             e.preventDefault();
             window.open($(this).attr('href'), '_blank');
-        })
+        });
+
+        $('#filter-dashboards a').on('click', function () {
+            $('#filter').html($(this).text());
+            var filter = $(this).data('filter');
+
+            $('.ues-dashboard-container').each(function (i, obj) {
+                if (filter === "All") {
+                    $(this).show();
+                } else {
+                    if ($(this).find('.ues-dashboard-share').length) {
+                        filter === "Shared" ? $(this).show() : $(this).hide();
+                    } else {
+                        filter === "Shared" ? $(this).hide() : $(this).show();
+                    }
+                }
+            });
+        });
 
         $(window).scroll(function () {
             var win = $(window);

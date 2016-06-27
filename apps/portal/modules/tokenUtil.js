@@ -163,6 +163,36 @@ var tokenUtil = function () {
     };
 
     /**
+     * Get an Access token pair based on client secret
+     * @param encodedClientKeys  {{clientId:"", clientSecret:""}}
+     * @param scope              eg: PRODUCTION
+     * @param idPServer          identity provider url
+     * @returns {{accessToken: *, refreshToken: *}}
+     */
+    module.getTokenWithClientSecretType = function (encodedClientKeys, scope, idPServer) {
+        var xhr = new XMLHttpRequest();
+        var tokenEndpoint = idPServer;
+        xhr.open(constants.HTTP_POST, tokenEndpoint, false);
+        xhr.setRequestHeader(constants.CONTENT_TYPE_IDENTIFIER, constants.APPLICATION_X_WWW_FOR_URLENCODED);
+        xhr.setRequestHeader(constants.AUTHORIZATION_HEADER, constants.BASIC_PREFIX + encodedClientKeys);
+        xhr.send("grant_type=client_credentials&scope=" + scope);
+        var tokenPair = {};
+        if (xhr.status == constants.HTTP_ACCEPTED) {
+            var data = parse(xhr.responseText);
+            tokenPair.refreshToken = data.refresh_token;
+            tokenPair.accessToken = data.access_token;
+        } else if (xhr.status == constants.HTTP_USER_NOT_AUTHENTICATED) {
+            log.error("Error in obtaining token with client secret grant type, You are not authenticated yet");
+            return null;
+        } else {
+            log.error("Error in obtaining token with client secret grant type, This might be a problem with client meta " +
+                "data which required for client secret grant type");
+            return null;
+        }
+        return tokenPair;
+    };
+
+    /**
      * Get an AccessToken pair once existing access token is expired using previous refresh token
      * @param tokenPair     already existing access token and refresh token
      * @param clientData    {{clientId:"", clientSecret:""}}

@@ -58,3 +58,20 @@ var HTTP_UNAUTHORIZED = 401;
 var HTTP_USER_NOT_AUTHENTICATED = 403;
 var HTTP_INTERNAL_ERROR = 500;
 var HTTP_ACCEPTED = 200;
+
+// All the permission related constants
+var PORTAL = '/permission/admin/manage/portal';
+var LOGIN = '/permission/admin/manage/portal/login';
+var DASHBOARD = '/permission/admin/manage/portal/dashboard';
+var CREATE = '/permission/admin/manage/portal/dashboard/create';
+var SETTINGS = '/permission/admin/manage/portal/dashboard/settings';
+
+//Internal Role creation constants
+var INTERNAL_ROLE = "Internal";
+var INTERNAL_ROLE_VIEWER = "viewer";
+var INTERNAL_ROLE_EDITOR = "editor";
+var INTERNAL_ROLE_OWNER = "owner";
+var INTERNAL_ROLE_FORWARDSLASH = "/";
+var INTERNAL_ROLE_SEPERATOR = "-";
+
+var FILE_STORE = "fs";

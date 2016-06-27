@@ -22,6 +22,7 @@ var fresh;
     var vars;
     var dashboardId;
     var matcher = new URIMatcher(request.getRequestURI());
+    var constants = require('/modules/constants.js');
 
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
@@ -40,7 +41,6 @@ var fresh;
             response.sendError(401, 'Designer access not authorized of this tenant');
             return;
         }
-
         include(utils.resolvePath("templates/index.jag"));
         return;
     }
@@ -53,73 +53,85 @@ var fresh;
 
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');
-        utils.sandbox(context, function () {
-            dashboard = dashboards.getAsset(dashboardId);
-        });
 
-        if (!dashboard) {
-            response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
-            return;
-        }
-        
-        // Verify the original dashboard when returning a custom dashboard
-        if (dashboard.isUserCustom) {
-            
-            // Get the original dashboard
-            var originalDashboard;
-            utils.sandbox(context, function() {
-                originalDashboard = dashboards.getAsset(dashboardId, true);
+        if (!request.getParameter("shared")) {
+            utils.sandbox(context, function () {
+                dashboard = dashboards.getAsset(dashboardId);
             });
-        
-            // If the original dashboard is deleted, returns 404
-            if (! originalDashboard) {
+
+            if (!dashboard) {
                 response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
                 return;
             }
-            
-            // If the user doesn't have any permission on the original dashboard, returns 401
-            var authorized = false;
-            
-            // To view personalized dashboard, the user should have logged in, in the same domain and should have either editor or viewer permissions
-            if (user && user.domain == (urlDomain || superDomain) && 
-                (utils.allowed(user.roles, originalDashboard.permissions.editors) || utils.allowed(user.roles, originalDashboard.permissions.viewers))) {
-                authorized = true;                
-            }
-            
-            if (! authorized) {
-                // If there is no anon view defined send the unauthorized error, else return the anon view
-                if (!originalDashboard.isanon) {
-                    response.sendError(401, "Access to dashboard '" + dashboardId + "' is denied");
-                    return;   
+
+            // Verify the original dashboard when returning a custom dashboard
+            if (dashboard.isUserCustom) {
+
+                // Get the original dashboard
+                var originalDashboard;
+                utils.sandbox(context, function () {
+                    originalDashboard = dashboards.getAsset(dashboardId, true);
+                });
+
+                // If the original dashboard is deleted, returns 404
+                if (!originalDashboard) {
+                    response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
+                    return;
                 }
-                
-                dashboard = originalDashboard;
+
+                // If the user doesn't have any permission on the original dashboard, returns 401
+                var authorized = false;
+
+                // To view personalized dashboard, the user should have logged in, in the same domain and should have either editor or viewer permissions
+                if (user && user.domain == (urlDomain || superDomain) &&
+                        (utils.allowed(user.roles, originalDashboard.permissions.editors) || utils.allowed(user.roles, originalDashboard.permissions.viewers))) {
+                    authorized = true;
+                }
+
+                if (!authorized) {
+                    // If there is no anon view defined send the unauthorized error, else return the anon view
+                    if (!originalDashboard.isanon) {
+                        response.sendError(401, "Access to dashboard '" + dashboardId + "' is denied");
+                        return;
+                    }
+
+                    dashboard = originalDashboard;
+                }
             }
-        }
 
-        isCustomize = request.getParameter('custom');
+            isCustomize = request.getParameter('custom');
 
-        if (isCustomize) {
-            for (var i = 0; i < dashboard.pages.length; i++) {
-                dashboard.pages[i].isanon = false;
+            if (isCustomize) {
+                for (var i = 0; i < dashboard.pages.length; i++) {
+                    dashboard.pages[i].isanon = false;
+                }
+
+                dashboards.copy(dashboard);
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
+                return;
             }
 
-            dashboards.copy(dashboard);
-            response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
-            return;
-        }
+            toReset = request.getParameter('reset');
 
-        toReset = request.getParameter('reset');
+            if (toReset) {
+                dashboards.reset(dashboard.id);
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId);
+                return;
+            }
 
-        if (toReset) {
-            dashboards.reset(dashboard.id);
-            response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId);
-            return;
-        }
+            if (user && !urlDomain && user.domain != superDomain) {
+                response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain) + "dashboards/" + dashboardId);
+                return;
+            }
+        } else {
+            utils.sandbox(context, function () {
+                dashboard = dashboards.getSharedDashboard(dashboardId);
+            });
 
-        if (user && !urlDomain && user.domain != superDomain) {
-            response.sendRedirect(utils.tenantedPrefix(urlPrefix, superDomain) + "dashboards/" + dashboardId);
-            return;
+            if (!dashboard) {
+                response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
+                return;
+            }
         }
 
         editor = request.getParameter('editor');
@@ -130,14 +142,15 @@ var fresh;
     if (method === 'POST') {
         dashboards = require('/modules/dashboards.js');
         utils = require('/modules/utils.js');
-
+        constants = require('/modules/constants.js');
         dashboard = {
             id: dashboardId,
             title: request.getParameter('title'),
             description: request.getParameter('description'),
             permissions: {
-                viewers: ['Internal/everyone'],
-                editors: ['Internal/everyone']
+                viewers: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_VIEWER)],
+                editors: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_EDITOR)],
+                owners: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_OWNER)]
             },
             pages: [],
             menu:[],
@@ -146,7 +159,8 @@ var fresh;
             accessTokenUrl: "",
             apiKey: "",
             apiSecret: "",
-            theme: request.getParameter('select-theme')
+            theme: request.getParameter('select-theme'),
+            shareDashboard : false
     };
 
         utils.sandbox(context, function() {

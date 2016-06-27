@@ -16,6 +16,9 @@
  */
 %>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
+    <% var permission = require('/modules/permission.js'); %>
+    <% var constants = require('/modules/constants.js'); %>
+    <% var utilsss = require('/modules/utils.js'); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
@@ -48,7 +51,7 @@
         <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
             <div class="container-fluid ues-context-menu">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" 
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                             aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
@@ -59,25 +62,29 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <% if(! dashboard.isUserCustom) { %>
-                        <% if(configs.isCreateGadgetEnable){%>
-                        <!--<li>-->
-                            <!--<a href="<%=tenantedUrlPrefix%>create-gadget">-->
-                                <!--<span class="fw-stack">-->
-                                    <!--<i class="fw fw-add fw-stack-1x"></i>-->
-                                    <!--<i class="fw fw-circle-outline fw-stack-2x"></i>-->
-                                <!--</span> <%=i18n.localize("create.gadget.label")%>-->
-                            <!--</a>-->
-                        <!--</li>-->
-                        <%}%>
-                        <li>
-                            <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
-                                <span class="icon fw-stack">
-                                    <i class="fw fw-settings fw-stack-1x"></i>
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                </span>
-                                <%=i18n.localize("settings")%>
-                            </a>
-                        </li>
+                            <% if (permission.isAllowed(constants.SETTINGS) || utils.allowed(user.roles,dashboard.permissions.owners)) { %>
+                            <li>
+                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                                    <span class="icon fw-stack">
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    </span>
+                                    <%=i18n.localize("settings")%>
+                                </a>
+                            </li>
+                            <% } else { %>
+			                <script id="ues-navigation-bar-hbs" type="text/x-handlebars-template">
+                            <li id ="settingsButton">
+                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                                    <span class="icon fw-stack">
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    </span>
+                                    <%=i18n.localize("settings")%>
+                                </a>
+                            </li>
+			                </script>
+			                <% } %>
                         <% } else { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard.id%>?reset=true" class="ues-copy">
@@ -95,7 +102,7 @@
                                     <i class="fw fw-view fw-stack-1x"></i>
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                 </span>
-                                <%= i18n.localize("view.dashboard")%>
+                                <%= i18n.localize("view")%>
                             </a>
                         </li>
                     </ul>
@@ -137,14 +144,6 @@
                     onclick="loadMenuCreator(this)" title="<%=i18n.localize("pages.menu.label")%>"
                     id="btn-sidebar-menu">
                     <i class="icon fw fw-menu"></i>
-                </a>
-            </li>
-            <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper"
-                    data-container-divide="true" aria-expanded="false" rel="sub-nav"
-                    onclick="updateSidebarNav('#sidebarNavDashboardLayouts', this)" title="<%=i18n.localize("layouts")%>"
-                    id="btn-sidebar-dashboard-layout">
-                    <i class="icon fw fw-grid"></i>
                 </a>
             </li>
         </ul>
@@ -247,14 +246,6 @@
                         </div>
                     </div>
 
-                    <!-- View Layout -->
-                    <div id="sidebarNavDashboardLayouts" class="ues-store-assets" data-type="gadget">
-                        <div class="sidebar-brand"><%=i18n.localize("select.layout")%></div>
-                        <div class="add-padding-3x">
-                            <div id="ues-view-layouts"></div>
-                        </div>
-                    </div>
-
                     <!-- Menu Creator -->
                     <!-- div id="sidebarNavMenu" class="ues-store-assets" data-type="gadget">
                         <div class="sidebar-brand">Manage Menu</div>
@@ -319,15 +310,9 @@
 
                 <div class="nano">
                     <div class="nano-content">
-                        <div id="gadget-configuration">
-                            <!--<div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("gadget.configuration.label")%></div>-->
-                            <!--<div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">-->
-                            <!--</div>-->
-                        </div>
-                        <div id="view-configuration">
-                            <!--<div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("view.configuration.label")%></div>-->
-                            <!--<div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">-->
-                            <!--</div>-->
+
+                        <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("gadget.configuration.label")%></div>
+                        <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
                         </div>
                     </div>
                 </div>
@@ -335,37 +320,14 @@
 
             <div class="page-content">
                 <ul class="nav nav-tabs" id="designer-view-mode">
-
                     <li role="dashboard-view" data-view-mode="default" class="active">
-                        <!--<div class="view-heading ues-component-heading">-->
-                            <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab"
-                                data-toggle="tab"><%=i18n.localize("default.view")%></a>
-                                <div class="gadget-actions ues-component-actions">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
-                                            <i class="icon fw fw-configarations"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
-                                            data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
-                                            <i class="icon fw fw-cancel"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                        <!--</div>-->
+                        <a href="#defaultDashboardView" aria-controls="defaultDashboardView" role="tab" 
+                            data-toggle="tab"><%=i18n.localize("default.view")%></a>
                     </li>
-
                     <li role="dashboard-view" data-view-mode="anon" class="hide">
-                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab"
+                        <a href="#anonymousDashboardView" aria-controls="anonymousDashboardView" role="tab" 
                             data-toggle="tab"><%=i18n.localize("anon.view")%></a>
                     </li>
-
-                    <button id="add-view">
-                        <span class="fw-stack">
-                            <i class="fw fw-add fw-stack-1x"></i>
-                            <i class="fw fw-circle-outline fw-stack-2x"></i>
-                        </span>
-                    </button>
-
                 </ul>
                 <div class="nano">
                     <div class="gird-guide">
@@ -702,33 +664,6 @@
         </div>
     </script>
 
-    <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
-        <div class="radio-button">
-          <label><input type="radio" name="view" value="new-view">Create New view</label>
-          <label><input type="radio" name="view" value="copy-view">Copy From Existing View</label>
-        </div>
-    </script>
-
-    <script id="select-copying-view-hbs" type="text/x-handlebars-template">
-        <div class="radio">
-          <label><input type="radio" name="new-view" id="new-view">Create New view</label>
-        </div>
-        <div class="radio">
-          <label><input type="radio" name="copy-view" id="copy-view">Copy From Existing View</label>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Tutorials
-            <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
-            </ul>
-        </div>
-    </script>
-
     <script id="ues-designer-heading-hbs" type="text/x-handlebars-template">
         <div class="page-title">
             <h1 class="truncate"><%=encodeHtml(dashboard.title)%></h1> 
@@ -753,28 +688,7 @@
         </div>
     </script>
 
-    <script id="add-new-view-hds" type="text/x-handlebars-template">
-        <li role="dashboard-view" data-view-mode="default">
-        <!--<div class="view-heading ues-component-heading">-->
-            <a role="tab" data-toggle="tab">TempHub</a>
-            <div class="gadget-actions ues-component-actions">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
-                        <i class="icon fw fw-configarations"></i>
-                    </button>
-                    <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
-                        data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
-                        <i class="icon fw fw-cancel"></i>
-                    </button>
-                </div>
-            </div>
-            <!--</div>-->
-        </li>
-    </script>
-
     <script id="ues-component-properties-hbs" type="text/x-handlebars-template">
-    <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("gadget.configuration.label")%></div>
-    <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel-group ues-component-properties" id="accordion" role="tablist" aria-multiselectable="true" data-component="{{id}}">
             {{#has options}}
             <div class="panel panel-default ues-options ues-properties">
@@ -854,10 +768,6 @@
                          </form>
                     </div>
                 </div>
-            </div>
-
-            <div class="panel panel-default ues-settings ues-properties">
-
             </div>
 
             {{#has styles}}
@@ -942,44 +852,6 @@
                 <%= i18n.localize("no.properties.to.configure") %>
             {{/has}}
         </div>
-        </div>
-    </script>
-
-    <script id="ues-component-view-properties-hbs" type="text/x-handlebars-template">
-        <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("view.configuration.label")%></div>
-        <div class="panel-group ues-component-properties-container" id="accordion" role="tablist" aria-multiselectable="true">
-            <div class="panel-group ues-component-properties" id="accordion" role="tablist" aria-multiselectable="true" data-component="{{id}}">
-
-                <div class="panel panel-default ues-styles ues-properties">
-                <!--<div class="panel-heading text-truncate dropup" role="tab" id="optionsButtonStyles" data-toggle="collapse" data-target="#optionsStyles" aria-expanded="true">-->
-                    <!--<h4 class="panel-title"><%= i18n.localize("styles") %></h4><span class="caret"></span>-->
-                <!--</div>-->
-                <div id="optionsLayouts" class="panel-collapse collapse in" role="tabpanel">
-                    <div class="panel-body add-padding-3x">
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <label for="input-name" class="control-label"><%= i18n.localize("view.name") %></label>
-                                    <input type="text" class="form-control ues-localized-title" name="title" placeholder="<%= i18n.localize("title") %>" value="{{#if styles.title}}{{styles.title}}{{/if}}" maxlength="200" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <label class="control-label"><%= i18n.localize("select.roles") %></label>
-                                    <select class="form-control ues-title-position">
-                                        <option value="left"{{#equals "left" styles.titlePosition}} selected="selected"{{/equals}}><%= i18n.localize("left")%></option>
-                                        <option value="center"{{#equals "center" styles.titlePosition}} selected="selected"{{/equals}}><%= i18n.localize("center")%></option>
-                                        <option value="right"{{#equals "right" styles.titlePosition}} selected="selected"{{/equals}}><%= i18n.localize("right")%></option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-        </div>
     </script>
                         
     <script id="ues-no-components-hbs" type="text/x-handlebars-template">
@@ -1026,6 +898,7 @@
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
     <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
     <script src="<%=urlPrefix%>js/designer.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>

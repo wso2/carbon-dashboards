@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2005 - 2013, WSO2 Inc. (http://www.wso2.com) All Rights Reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,12 +20,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.dashboard.deployment.DashboardDeployer;
 import org.wso2.carbon.application.deployer.AppDeployerConstants;
 import org.wso2.carbon.application.deployer.AppDeployerUtils;
 import org.wso2.carbon.application.deployer.Feature;
 import org.wso2.carbon.application.deployer.handler.AppDeploymentHandler;
+import org.wso2.carbon.dashboard.deployment.DashboardDeployer;
 import org.wso2.carbon.registry.core.service.RegistryService;
+import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 
 import java.io.InputStream;
@@ -39,6 +40,10 @@ import java.util.Map;
  * interface="org.wso2.carbon.registry.core.service.RegistryService"
  * cardinality="1..1" policy="dynamic" bind="setRegistryService"
  * unbind="unsetRegistryService"
+ * @scr.reference name="user.realmservice.default"
+ * interface="org.wso2.carbon.user.core.service.RealmService"
+ * cardinality="1..1" policy="dynamic" bind="setRealmService"
+ * unbind="unsetRealmService"
  */
 public class DashboardDeployerDS {
 
@@ -53,8 +58,8 @@ public class DashboardDeployerDS {
     protected void activate(ComponentContext ctxt) {
         try {
             //dashboard artifacts deployer
-            appHandlerRegistration = ctxt.getBundleContext().registerService(
-                    AppDeploymentHandler.class.getName(), new DashboardDeployer(), null);
+            appHandlerRegistration = ctxt.getBundleContext()
+                    .registerService(AppDeploymentHandler.class.getName(), new DashboardDeployer(), null);
 
             ctxt.getBundleContext().registerService(Axis2ConfigurationContextObserver.class.getName(),
                     new DSAxis2ConfigurationObserverImpl(), null);
@@ -78,6 +83,14 @@ public class DashboardDeployerDS {
 
     protected void unsetRegistryService(RegistryService registryService) {
         ServiceHolder.setRegistryService(null);
+    }
+
+    protected void setRealmService(RealmService realmService) {
+        ServiceHolder.setRealmService(realmService);
+    }
+
+    protected void unsetRealmService(RealmService registryService) {
+        ServiceHolder.setRealmService(null);
     }
 
     protected void deactivate(ComponentContext ctxt) {

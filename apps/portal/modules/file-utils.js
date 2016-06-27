@@ -41,7 +41,7 @@ function createDirs(path) {
 /**
  * Copy files to the given destination creating the directories if not exist
  * @param file
- * @param destPath location where file needs to be copied
+ * @param destinationPath location where file needs to be copied
  */
 function copyFile(file, destinationPath) {
     createDirs(destinationPath);
@@ -53,14 +53,17 @@ function copyFile(file, destinationPath) {
     outFile.close();
 }
 
-
+/**
+ * copy the given directory to the destination
+ * @param sourceFile
+ * @param destinationPath
+ */
 function copyDir(sourceFile, destinationPath) {
     if (sourceFile.isExists()) {
         if (sourceFile.isDirectory()) {
             var files = sourceFile.listFiles();
             for (var i = 0; i < files.length; i++) {
-                var subFile = files[i];
-                copyDir(subFile, destinationPath + '/' +sourceFile.getName());
+                copyDir(files[i], destinationPath + '/' +sourceFile.getName());
             }
         } else {
             copyFile(sourceFile, destinationPath + '/' + sourceFile.getName());
@@ -87,7 +90,11 @@ function transformCopyFile(sourceFilePath, destinationPath, data) {
     outFile.close();
 }
 
-
+/**
+ * return list of file names in the given directory
+ * @param dirPath
+ * @returns {Array}
+ */
 function getFileNameList(dirPath) {
     var Dir = new File(dirPath);
     var files = Dir.listFiles();
@@ -96,4 +103,30 @@ function getFileNameList(dirPath) {
         fileNameList.push(file.getName());
     });
     return fileNameList;
+}
+
+/**
+ * write the given content to destination file
+ * @param content
+ * @param destinationPath
+ */
+function writeToFile (content, destinationPath){
+    var file = new File(destinationPath);
+    file.open("w");
+    file.write(content);
+    file.close();
+}
+
+/**
+ * Replace the given text in a file
+ * @param sourceFilePath
+ * @param originalText
+ * @param replaceText
+ */
+function replaceText (sourceFilePath,originalText, replaceText){
+    var sourceFile = new File(sourceFilePath);
+    sourceFile.open('r+');
+    var content = sourceFile.readAll();
+    sourceFile.write(content.split(originalText).join(replaceText));
+    sourceFile.close();
 }

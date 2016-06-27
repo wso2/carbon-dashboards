@@ -50,7 +50,7 @@ var init = function () {
             {{/if}}
            }
        });
-}
+};
 {{#if isPullMode}}
 var getProviderData = function (){
     $.ajax({
@@ -63,14 +63,15 @@ var getProviderData = function (){
         providerData = data;
         }
     });
-}
+ return providerData;
+};
 {{/if}}
 
 var drawGadget = function (){
     {{#if isPullMode}}
     draw('#canvas', conf[CHART_CONF], schema, providerData);
     setInterval(function() {
-        update(getProviderData);
+        update(getProviderData());
     },pref.getInt(REFRESH_INTERVAL));
     {{else}}
         draw('#canvas', conf[CHART_CONF], schema, null);
@@ -78,7 +79,7 @@ var drawGadget = function (){
             update(providerData);
         });
     {{/if}}
-}
+};
 init();
     drawGadget();
 });

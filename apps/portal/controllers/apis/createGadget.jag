@@ -36,18 +36,32 @@
     var GADGET_TEMPLATE_LOCATION = '/templates/gadgets/gadget-generation-templates/';
     var TEMP_GADGET_LOCATION = '/temp/';
 
+    var PROVIDER_API_FILE = '/api.js';
+    var CHART_API_FILE = '/api.js';
+    var PROVIDER_CONFIG_FILE = '/config.json';
+    var CHART_CONFIG_FILE = '/config.json';
+    var GADGET_XML_FILE = '/gadget.xml';
+
     var VALUE_SET = 'valueSet';
     var SCHEME_NOTIFIER = '$COLUMN_NAMES';
     var PROVIDER_CONF = 'provider-conf';
     var PROVIDER_NAME = 'provider-name';
+    var PARTIAL = 'partial';
     var CHART_CONF = 'chart-conf';
     var CHART_NAME = 'chart-name';
     var GADGET_NAME = 'gadget-name';
+    var FIELD_NAME = 'fieldName';
 
     response.contentType = 'application/json';
 
     var action = request.getParameter("action");
     var data = request.getContent();
+
+    var providerApiLocation;
+    var providerApi;
+    var validate;
+    var chartApi;
+    var gadgetID;
 
     if (action === 'getProviders') {
         var providers = [];
@@ -59,48 +73,67 @@
         });
 
         for (var i = 0; i < requiredProviders.length; i++) {
-            var configJson = require(PROVIDERS_LOCATION + requiredProviders[i] + '/config.json');
+            var configJson = require(PROVIDERS_LOCATION + requiredProviders[i] + PROVIDER_CONFIG_FILE);
             providers.push(configJson.info);
         }
         print(providers);
         return;
+
     } else if (action === 'getProviderConfig') {
-        var providerApi = require(PROVIDERS_LOCATION + data.provider + '/index.js');
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
         print(providerApi.getConfig().config);
         return;
+
     } else if (action === 'getProviderAdvancedUI') {
+        var providerHbsFile = null;
         try {
-            file = new File(PROVIDERS_LOCATION + data.provider + PARTIAL_LOCATION + data.partial + '.hbs');
-            if (!file.isExists()) {
+            providerHbsFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PARTIAL_LOCATION +
+                    data[PROVIDER_CONF][PARTIAL] + '.hbs');
+            if (!providerHbsFile.isExists()) {
                 return null;
             }
-            file.open('r');
-            var customPartial = file.readAll();
+            providerHbsFile.open('r');
+            var customProviderPartial = providerHbsFile.readAll();
+        } catch (e) {
+            log.error(e.message);
         } finally {
-            file.close();
+            if (providerHbsFile) {
+                providerHbsFile.close();
+            }
         }
-        print(customPartial);
+        print(customProviderPartial);
         return;
     } else if (action === 'getData') {
-        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
-        var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
-        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
+        validate = providerApi.validate(data[PROVIDER_CONF]);
         if (!validate.error) {
             var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
             var output = {};
+            if (dataSet.length > 0) {
+                output.tableHeaders = Object.keys(dataSet[0]);
+                output.tableRows = [];
 
-            output.tableHeaders = Object.keys(dataSet[0]);
-            output.tableRows = [];
-
-            for (var i in dataSet) {
-                _obj = [];
-                for (var k in dataSet[i]) {
-                    _obj.push(dataSet[i][k])
+                for (var i in dataSet) {
+                    _obj = [];
+                    for (var k in dataSet[i]) {
+                        _obj.push(dataSet[i][k])
+                    }
+                    output.tableRows.push(_obj);
                 }
-                output.tableRows.push(_obj);
+                print(output);
+                return;
+            } else {
+                log.error('No data found');
+                print(
+                      {
+                          "error": true,
+                          "message": "No data found"
+                      }
+                );
+                return;
             }
-            print(output);
-            return;
         }
         else {
             log.error("Data validation failed for Provider Configuration");
@@ -113,163 +146,211 @@
         var chartDirList = fileUtils.getFileNameList(CHART_LOCATION);
 
         for (var i = 0; i < chartDirList.length; i++) {
-            var chartConfigJson = require(CHART_LOCATION + chartDirList[i] + '/config.json');
+            var chartConfigJson = require(CHART_LOCATION + chartDirList[i] + CHART_CONFIG_FILE);
             chartList.push(chartConfigJson.info);
         }
         print(chartList);
         return;
     } else if (action === 'getChartConfig') {
-        var schema;
-        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
-        var providerApi = require(PROVIDERS_LOCATION + provider + '/index.js');
-        var validate = providerApi.validate(data[PROVIDER_CONF]);
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
+        var schema = null;
+        validate = providerApi.validate(data[PROVIDER_CONF]);
         if (!validate.error) {
             schema = providerApi.getSchema(data[PROVIDER_CONF]);
         } else {
-            log.error("Data validation failed for Provider Configuration");
+            log.error(validate.message);
             print(validate);
             return;
         }
-        var chartApi = require(CHART_LOCATION + data.chartType + '/index.js');
+        chartApi = require(CHART_LOCATION + data.chartType + CHART_API_FILE );
         if (!schema.error) {
             var modifiedChartConfig = chartApi.getConfig(schema);
             for (var i in modifiedChartConfig) {
                 if (modifiedChartConfig[i][VALUE_SET] && SCHEME_NOTIFIER === modifiedChartConfig[i][VALUE_SET][0]) {
                     modifiedChartConfig[i][VALUE_SET].splice(0);
                     for (var j in schema) {
-                        modifiedChartConfig[i][VALUE_SET].push(schema[j]['fieldName']);
+                        modifiedChartConfig[i][VALUE_SET].push(schema[j][FIELD_NAME]);
                     }
                 }
             }
             print(modifiedChartConfig);
             return;
         } else {
-            log.error("Schema Retrieval Failed");
+            log.error(schema.message);
             print(schema);
             return;
         }
     } else if (action === 'getChartAdvancedUI') {
+        var chartHbsFile = null;
         try {
-            file = new File(CHART_LOCATION + data.chartType + PARTIAL_LOCATION + data.partial + '.hbs');
-            if (!file.isExists()) {
+            chartHbsFile = new File(CHART_LOCATION + data.chartType + PARTIAL_LOCATION + data.partial + '.hbs');
+            if (!chartHbsFile.isExists()) {
                 return null;
             }
             file.open('r');
-            var customPartial = file.readAll();
+            var customPartial = chartHbsFile.readAll();
+        } catch (e) {
+            log.error(e.message);
         } finally {
-            file.close();
+            if (chartHbsFile) {
+                chartHbsFile.close();
+            }
         }
         print(customPartial);
         return;
     } else if (action === 'preview') {
-        var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
-        var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
-        if(gadgetStoreFile.isExists()){
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
+        var chartConf = data[CHART_CONF];
+        var chart = chartConf[CHART_NAME];
+        var chartApiLocation = CHART_LOCATION + chart + CHART_API_FILE;
+        chartApi = require(chartApiLocation);
+        validate = chartApi.validate(chartConf);
+        if(!validate.error){
+            gadgetID = chartConf[GADGET_NAME].replace(/ /g,"_");
+
+            var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
+            if(gadgetStoreFile.isExists()){
+                print({
+                    error: true,
+                    message: "Gadget with the same name already exists"
+                });
+                return;
+            }
+
+            var tempDir = new File(TEMP_GADGET_LOCATION);
+            if(!tempDir.isExists()){
+                tempDir.mkdir();
+            }
+
+            var gadgetDirLocation = TEMP_GADGET_LOCATION + gadgetID;
+            var gadgetDir = new File(gadgetDirLocation);
+            if(gadgetDir.isExists()) {
+                gadgetDir.del();
+            }
+
+            var provider = data[PROVIDER_CONF][PROVIDER_NAME];
+            var isPushMode = false;
+            if(providerApi.getMode().toLowerCase() === 'push'){
+                isPushMode = true;
+            }
+
+            if(isPushMode){
+                var providerClient = new File(PROVIDERS_LOCATION + provider + '/client.js');
+                fileUtils.copyFile(providerClient, gadgetDirLocation + '/js/core/provider-client.js');
+            }
+
+            var gadgetJsonData = {};
+            gadgetJsonData['gadget_id'] = gadgetID;
+            gadgetJsonData['gadget_title'] = chartConf[GADGET_NAME];
+            gadgetJsonData['gadget_url'] = 'gadget/'+ gadgetID + GADGET_XML_FILE;
+            fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.json.hbs',
+                            gadgetDirLocation +'/gadget.json', gadgetJsonData );
+
+            var gadgetCoreJsData = {};
+            gadgetCoreJsData['gadget_location'] = CONTEXT + gadgetDirLocation;
+            gadgetCoreJsData['isPullMode'] = !isPushMode;
+            fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
+                            gadgetDirLocation +'/js/core/gadget-core.js', gadgetCoreJsData);
+
+            var gadgetXmlData = {};
+            gadgetXmlData['gadget_title'] = chartConf[GADGET_NAME];
+            gadgetXmlData['isPushMode'] = isPushMode;
+            gadgetXmlData['chart-type'] = chart;
+            var chartConfigFile = require(CHART_LOCATION + chart + CHART_CONFIG_FILE);
+
+            if(chartConfigFile['imports']) {
+                gadgetXmlData['chart-js'] = chartConfigFile['imports']["js"];
+                gadgetXmlData['chart-css'] = chartConfigFile['imports']["css"];
+                if(chartConfigFile['imports']["libs"]) {
+                    gadgetXmlData['chart-vendor-js'] = chartConfigFile['imports']["libs"]["js"];
+                    gadgetXmlData['chart-vendor-css'] = chartConfigFile['imports']["libs"]["css"];
+                }
+                if(chartConfigFile['imports']["shared-libs"]) {
+                    gadgetXmlData['shared-js'] =chartConfigFile['imports']["shared-libs"]["js"];
+                    gadgetXmlData['shared-css'] = chartConfigFile['imports']["shared-libs"]["css"];
+                }
+            }
+
+            var providerConf = require(PROVIDERS_LOCATION + provider + PROVIDER_CONFIG_FILE);
+            var providerLibs = providerConf['provider-libs'];
+            gadgetXmlData['provider-libs'] = providerLibs;
+            gadgetXmlData['gadget_location'] = CONTEXT + gadgetDirLocation;
+            fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.xml.hbs',
+                            gadgetDirLocation + GADGET_XML_FILE, gadgetXmlData);
+
+            var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
+            fileUtils.copyFile(gadgetControllerFile, gadgetDirLocation + '/gadget-controller.jag');
+
+            var chartLibsDir = new File(CHART_LOCATION + chart + '/libs/');
+            fileUtils.copyDir(chartLibsDir, gadgetDirLocation);
+
+            var chartJsDir = new File(CHART_LOCATION + chart + '/js/');
+            fileUtils.copyDir(chartJsDir, gadgetDirLocation);
+
+            var chartCssDir = new File(CHART_LOCATION + chart + '/css/');
+            fileUtils.copyDir(chartCssDir, gadgetDirLocation);
+
+            var providerLibsDir = new File(PROVIDERS_LOCATION + provider + '/provider-libs/');
+            fileUtils.copyDir(providerLibsDir, gadgetDirLocation + '/js/');
+
+            var providerApiFile = new File(providerApiLocation);
+            fileUtils.copyFile(providerApiFile, gadgetDirLocation + '/js/core/' + provider + '-provider-api.js');
+
+            var providerApis = providerConf['provider-apis'];
+            if (providerApis) {
+                for (var f in providerApis) {
+                    fileUtils.copyFile(new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/' + providerApis[f]),
+                                    gadgetDirLocation + '/js/core/' + providerApis[f]);
+                }
+            }
+
+            var chartApiFile = new File(chartApiLocation);
+            fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/core/' + chart + '-api.js');
+
+            var previewFile = new File('/theme/templates/preview.jag');
+            if(previewFile.isExists()){
+                previewFile.del();
+            }
+            var previewData = {};
+            previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + gadgetDirLocation +
+                    GADGET_XML_FILE + '?' + new Date().getTime();
+            fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
+                    '/theme/templates/preview.jag', previewData);
+
+            var thumbnail = new File(GADGET_TEMPLATE_LOCATION + 'thumbnail.png');
+            fileUtils.copyFile(thumbnail,gadgetDirLocation + '/thumbnail.png');
+
+            fileUtils.writeToFile(data, gadgetDirLocation + '/conf.json');
             print({
-                error: true,
-                message: "Gadget with the same name already exists"
+                error: false
             });
             return;
         }
-
-        var tempDir = new File(TEMP_GADGET_LOCATION);
-        if(!tempDir.isExists()){
-            tempDir.mkdir();
+        else {
+            log.error("Data validation failed for Chart Configuration");
+            print(validate);
+            return;
         }
-
-        var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
-        if(gadgetDir.isExists()) {
-            gadgetDir.del();
-        }
-        var provider = data[PROVIDER_CONF][PROVIDER_NAME];
-        var providerApiLocation = PROVIDERS_LOCATION + provider + '/index.js';
-        var providerApi = require(providerApiLocation);
-        var isPushMode = false;
-        if(providerApi.getMode().toLowerCase() === 'push'){
-            isPushMode = true;
-        }
-
-        if(isPushMode){
-            var providerClient = new File(PROVIDERS_LOCATION + provider + '/client.js');
-            fileUtils.copyFile(providerClient, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-client.js');
-        }
-
-        var gadgetJsonData = {};
-        gadgetJsonData['gadget_id'] = gadgetID;
-        gadgetJsonData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
-        gadgetJsonData['gadget_url'] = 'gadget/'+ gadgetID + '/index.xml';
-        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.json.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/gadget.json', gadgetJsonData );
-
-        var gadgetCoreData = {};
-        gadgetCoreData['gadget_location'] = CONTEXT + TEMP_GADGET_LOCATION + gadgetID;
-        gadgetCoreData['isPullMode'] = !isPushMode;
-        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
-
-        var gadgetXmlData = {};
-        gadgetXmlData['gadget_title'] = data[CHART_CONF][GADGET_NAME];
-        gadgetXmlData['isPushMode'] = isPushMode;
-        var chart = data[CHART_CONF][CHART_NAME];
-        var chartConf = require(CHART_LOCATION + chart + '/config.json');
-        var commonLibs = chartConf['common-libs'];
-        gadgetXmlData['common-libs'] = commonLibs;
-        gadgetXmlData['chart-libs'] = chartConf['chart-libs'];
-
-        var providerConf = require(PROVIDERS_LOCATION + provider + '/config.json');
-        var providerLibs = providerConf['provider-libs'];
-        gadgetXmlData['provider-libs'] = providerLibs;
-        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'index.xml.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/index.xml', gadgetXmlData);
-
-        var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
-        fileUtils.copyFile(gadgetControllerFile, TEMP_GADGET_LOCATION + gadgetID + '/gadget-controller.jag');
-
-        var chartLibsDir = new File(CHART_LOCATION + chart + '/chart-libs/');
-        fileUtils.copyDir(chartLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
-
-        var providerLibsDir = new File(PROVIDERS_LOCATION + provider + '/provider-libs/');
-        fileUtils.copyDir(providerLibsDir, TEMP_GADGET_LOCATION + gadgetID + '/js/');
-
-        var providerApiFile = new File(providerApiLocation);
-        fileUtils.copyFile(providerApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/provider-api.js');
-
-        var chartApiFile = new File(CHART_LOCATION + chart + '/index.js');
-        fileUtils.copyFile(chartApiFile, TEMP_GADGET_LOCATION + gadgetID + '/js/chart-api.js');
-
-        var previewData = {};
-        previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + TEMP_GADGET_LOCATION +
-                gadgetID + '/index.xml';
-        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
-                        '/theme/templates/preview.jag', previewData);
-
-        var file = new File(TEMP_GADGET_LOCATION + gadgetID + '/conf.json');
-        file.open("w");
-        file.write(data);
-        file.close();
-        print({
-            error: false
-        });
-        return;
     } else if(action === 'addGadgetToStore'){
-        var gadgetID = data[CHART_CONF]['gadget-name'].replace(/ /g,"_");
-        var providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/index.js';
-        var providerApi = require(providerApiLocation);
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
+        gadgetID = data[CHART_CONF][GADGET_NAME].replace(/ /g,"_");
         var isPushMode = false;
         if(providerApi.getMode().toLowerCase() === 'push'){
             isPushMode = true;
         }
 
-        var gadgetCoreData = {};
-        gadgetCoreData['gadget_location'] = CONTEXT + GADGETS_LOCATION + gadgetID;
-        gadgetCoreData['isPullMode'] = !isPushMode;
-        fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
-                        TEMP_GADGET_LOCATION + gadgetID +'/js/gadget-core.js', gadgetCoreData);
+        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID +'/js/core/gadget-core.js', CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
+                        CONTEXT + GADGETS_LOCATION + gadgetID);
 
-        var gadget = new File(TEMP_GADGET_LOCATION + gadgetID);
-        fileUtils.copyDir(gadget, GADGETS_LOCATION);
+        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID + GADGET_XML_FILE, CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
+                           CONTEXT + GADGETS_LOCATION + gadgetID);
 
         var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
+        fileUtils.copyDir(gadgetDir, GADGETS_LOCATION);
+
         if(gadgetDir.isExists()) {
             gadgetDir.del();
         }
@@ -277,6 +358,30 @@
             error: false
         });
         return;
+    } else if (action === 'testConnection') {
+        providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
+        providerApi = require(providerApiLocation);
+        validate = providerApi.validate(data[PROVIDER_CONF]);
+        var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
+        if (validate.error) {
+              print({
+                error: true,
+                message: "Database configuration error"
+            });
+            return;
+        } else if (dataSet.error) {
+            print({
+                error: true,
+                message: "Database schema validation error"
+            });
+            return;
+        }
+        else {
+            print({
+                error: false
+            });
+            return;
+        }
     }
 
     response.sendError(404, JSON.stringify({

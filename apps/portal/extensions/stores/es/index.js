@@ -118,11 +118,11 @@ var getAsset, getAssets, addAsset, deleteAsset;
         return assets;
     };
 
-    addAsset = function (asset) {
+    addAsset = function (type, id, assertFile) {
 
     };
 
-    deleteAsset = function (id) {
+    deleteAsset = function (type, id) {
 
     };
 }());
