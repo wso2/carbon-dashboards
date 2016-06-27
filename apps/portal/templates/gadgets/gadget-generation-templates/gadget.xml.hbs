@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="{{gadget_title}}" description="This is a template gadget">
+        <Require feature="dynamic-height"/>
+        <Require feature="setprefs"/>
+    </ModulePrefs>
+    {{#if isPushMode}}
+    <UserPref name="windowSize"
+              display_name="Window Size"
+              default_value="10"/>
+    {{else}}
+    <UserPref name="refreshInterval"
+              display_name="Refresh Interval"
+              default_value="1000000"/>
+     {{/if}}
+    <Content type="html">
+        <![CDATA[
+        <head>
+            <!-- shared css -->
+            {{#each shared-css}}
+             <link href="/portal/libs/{{this}}" rel="stylesheet">
+            {{/each}}
+            <!-- chart vendor css -->
+            {{#each chart-vendor-css}}
+            <link href="{{../gadget_location}}/libs/{{this}}" rel="stylesheet">
+            {{/each}}
+            <!-- chart specific css -->
+            {{#each chart-css}}
+            <link href="{{../gadget_location}}/css/{{this}}" rel="stylesheet" >
+            {{/each}}
+
+            <!-- jQuery -->
+            <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+            <!-- provider libs -->
+            {{#each provider-libs}}
+            <script src="js/provider-libs/{{this}}"></script>
+            {{/each}}
+            <!-- shared libs -->
+            {{#each shared-js}}
+            <script src="/portal/libs/{{this}}"></script>
+            {{/each}}
+            <!-- chart specific vendor libs -->
+            {{#each chart-vendor-js}}
+            <script src="libs/{{this}}"></script>
+            {{/each}}
+            <!-- chart specific js -->
+            {{#each chart-js}}
+            <script src="js/{{this}}"></script>
+            {{/each}}
+            <!--scripts copied by framework -->
+            {{#if isPushMode}}
+            <script src="js/core/provider-client.js"></script>
+            {{/if}}
+            <script src="js/core/{{chart-type}}-api.js"></script>
+            <script src="js/core/gadget-core.js"></script>
+
+        </head>
+        <body>
+            <div id="canvas"></div>
+        </body>
+        ]]>
+    </Content>
+</Module>

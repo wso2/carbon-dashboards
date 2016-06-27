@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var registerCallBackforPush;
-(function () {
-    /**
-     *
-     * @param providerConfig
-     * @param schema
-     */
-    registerCallBackforPush = function (providerConfig, schema, callback){
-        //callback(providerData);
-    };
-  
-}());
+var authorizationUtil = Packages.org.wso2.carbon.dashboard.authorization.util.AuthorizationUtil;
+
+/**
+ * To check whether the given user has the required permission access a specific section
+ * @param permission
+ * @returns {boolean} true if the user has the required permission otherwise false
+ */
+var isAllowed = function (permission) {
+    return authorizationUtil.isUserAuthorized(user.tenantId, user.username, permission);
+};

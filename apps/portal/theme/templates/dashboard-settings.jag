@@ -139,11 +139,11 @@
                                 var list = folder.listFiles();
                                 list.forEach(function(file){
                                     themeName =  file.getName();
-                               %>
+                                %>
                                 <li><a href="#"><%=themeName%></a></li>
                                <%
                                 });
-                               %>
+                                %>
                             </ul>
                         </div>
                     </div>
@@ -189,6 +189,14 @@
                         <div class="ues-shared-edit"></div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="ues-share-owner" class="col-sm-3 control-label"><%= i18n.localize("owners")%></label>
+                    <div class="col-sm-9">
+                        <input id="ues-share-owner" type="text" class="form-control typeahead"
+                        placeholder="<%= i18n.localize("roles")%>">
+                        <div class="ues-shared-owner"></div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -201,8 +209,8 @@
                     <div class="col-sm-9">
 
                         <label class="switch">
-                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse" 
-                                data-target="#ues-oauth-settings-inputs" 
+                            <input id="ues-enable-oauth" type="checkbox" value="enable" data-toggle="collapse"
+                                data-target="#ues-oauth-settings-inputs"
                                 aria-expanded="<% if (dashboard.enableOauth == true) { print("true"); } else { print("false"); } %>"
                                 aria-controls="ues-oauth-settings-inputs" <% if (dashboard.enableOauth == true) { print("checked"); } %>>
                             <span class="helper"></span>
@@ -230,7 +238,7 @@
                             <p id="ues-is-url" class="form-control-static"><%=isURL%></p>
                         </div>
                         <div class="col-sm-3" style="text-align: right;">
-                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered" 
+                            <button type="button" id="ues-oauth-refresh" class="btn btn-default btn-bordered"
                                 title="<%=i18n.localize("refresh")%>"><i class="fw fw-refresh"></i></button>
                         </div>
                     </div>
@@ -293,6 +301,7 @@
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <% include('/controllers/includes/common-scripts.jag'); %>
 <% include('/controllers/includes/dashboard-scripts.jag'); %>
+<script src="<%=urlPrefix%>js/show-hide-error.js"></script>
 <script src="<%=urlPrefix%>js/dashboard-settings.js"></script>
 <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>

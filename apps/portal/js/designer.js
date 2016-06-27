@@ -74,7 +74,7 @@ $(function () {
      * @const
      * */
     var HIDDEN = "HIDDEN";
-    
+
     /**
      * RPC service name for gadget callback.
      * @const
@@ -112,8 +112,9 @@ $(function () {
             var modalElement = $('#designerModal');
             modalElement.find('#ues-modal-confirm-yes').on('click', function () {
                 if (ok && typeof ok === 'function') {
-                    ok();
-                    modalElement.modal('hide');
+                    if (ok()) {
+                        modalElement.modal('hide');
+                    }
                 }
             });
         });
@@ -634,8 +635,8 @@ $(function () {
             url: url,
             method: method,
             data: JSON.stringify(dashboard),
-            contentType: 'application/json',
-            async: false
+            async: false,
+            contentType: 'application/json'
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
             if (isRedirect) {
@@ -650,34 +651,6 @@ $(function () {
             generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
         });
     };
-
-    /**
-     * Saves dashboard json content
-     */
-    // var saveDashboardLayoutContent = function () {
-    //     var method = 'PUT';
-    //     var url = dashboardsApi + '/' + dashboard.id;
-    //     var isRedirect = false;
-    //     $.ajax({
-    //         url: url,
-    //         method: method,
-    //         data: JSON.stringify(dashboard),
-    //         contentType: 'application/json'
-    //     }).success(function (data) {
-    //         location.reload();
-    //         generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
-    //         if (isRedirect) {
-    //             isRedirect = false;
-    //             window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
-    //         }
-    //     }).error(function (xhr, status, err) {
-    //         if (xhr.status === 403) {
-    //             window.location.reload();
-    //             return;
-    //         }
-    //         generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
-    //     });
-    // };
 
     /**
      * Initializes the component toolbar.
@@ -732,7 +705,7 @@ $(function () {
                 componentBody.hide();
             } else {
                 // rendering full view
-                var pageEl = $('.page-content');
+                var pageEl = $('.page-content').has('.nav-tabs');
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
                 getGridstack().disable();
@@ -1256,7 +1229,7 @@ $(function () {
                     $('#page-views-menu').append(viewCopyingOptions(temp));
                 }
 
-            }
+
         });
 
         // event handler for trash button
@@ -1355,7 +1328,7 @@ $(function () {
             var componentBox = $('#' + component.id);
             // Set the width of the gadget heading
             var buttonUnitWidth = 41;
-            var headingWidth = 'calc(100% - ' + ((buttonCount > 3 ? 1 : buttonCount) * buttonUnitWidth + 25)  + 'px)';
+            var headingWidth = 'calc(100% - ' + ((buttonCount > 3 ? 1 : buttonCount) * buttonUnitWidth + 25) + 'px)';
             componentBox.find('.gadget-title').css('width', headingWidth);
             // Render the gadget template
             componentBox.find('.ues-component-actions').html(componentToolbarHbs(toolbarButtons));
@@ -1975,17 +1948,18 @@ $(function () {
         var ret = false;
         getStateOfSubordinates(menu, idVal);
 
-        function getStateOfSubordinates(menu, idVal){
+        function getStateOfSubordinates(menu, idVal) {
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === idVal) {
                     ret = menu[i].ishidden;
                     return;
                 }
-                if(menu[i].subordinates.length > 0){
+                if (menu[i].subordinates.length > 0) {
                     getStateOfSubordinates(menu[i].subordinates, idVal);
                 }
             }
         }
+
         return ret;
     }
 
@@ -1997,17 +1971,17 @@ $(function () {
      * @return {null}
      * @private
      */
-    var updateMenu = function (id, newValue, key){
+    var updateMenu = function (id, newValue, key) {
         var menu = dashboard.menu;
         updateSubordinates(menu, id, newValue);
 
-        function updateSubordinates(menu, id, newValue){
+        function updateSubordinates(menu, id, newValue) {
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === id) {
                     menu[i][key] = newValue;
                     return;
                 }
-                if(menu[i].subordinates.length > 0){
+                if (menu[i].subordinates.length > 0) {
                     updateSubordinates(menu[i].subordinates, id, newValue);
                 }
             }
@@ -2021,12 +1995,12 @@ $(function () {
      * @return {null}
      * @private
      */
-    var handleDropEvent = function(event, ui) {
+    var handleDropEvent = function (event, ui) {
         event.stopPropagation();
         //event.preventDefault();
         var draggable = ui.draggable;
         // dropping an anon page in to a non-anon container
-        if(draggable.attr('data-anon') === 'true' && $(event.target).attr('data-anon') === 'false'){
+        if (draggable.attr('data-anon') === 'true' && $(event.target).attr('data-anon') === 'false') {
             showInformation("Cannot drop anonymous page in to a non anonymous page container.");
             return;
         }
@@ -2035,7 +2009,7 @@ $(function () {
         var parentId = $(event.target).attr('id');
         var childObj = getChild(menu, draggable.attr('id'));
 
-        if(childObj != null || childObj != undefined){
+        if (childObj != null || childObj != undefined) {
             if (parentId === 'ds-menu-root') {
                 menu.push(childObj);
                 spliceOrDiscardChild(dashboard.menu, childObj.id, 'perform');
@@ -2046,7 +2020,7 @@ $(function () {
             }
         }
 
-        function findAndUpdateParent(menu, parentId){
+        function findAndUpdateParent(menu, parentId) {
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === parentId) {
                     menu[i].subordinates.push(childObj);
@@ -2054,8 +2028,8 @@ $(function () {
                     saveDashboard();
                     updateMenuList();
                     return;
-                } else if (menu[i].subordinates.length > 0){
-                    findAndUpdateParent(menu[i].subordinates,parentId);
+                } else if (menu[i].subordinates.length > 0) {
+                    findAndUpdateParent(menu[i].subordinates, parentId);
                 }
             }
         }
@@ -2068,25 +2042,26 @@ $(function () {
      * @return {Object}
      * @private
      */
-    var getChild = function(menu, id){
+    var getChild = function (menu, id) {
         var arrayT = [];
         var childObj;
 
         findChild(menu, id);
 
-        function findChild(menu, id){
+        function findChild(menu, id) {
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === id) {
                     //clone the object before decorating
                     childObj = JSON.parse(JSON.stringify(menu[i]));
                     menu[i].deletable = true;
                     return;
-                } else if (menu[i].subordinates.length > 0){
+                } else if (menu[i].subordinates.length > 0) {
                     findChild(menu[i].subordinates, id);
                 }
             }
         }
-        return childObj; 
+
+        return childObj;
     }
 
 
@@ -2097,19 +2072,19 @@ $(function () {
      * @return {Object}
      * @private
      */
-    var spliceOrDiscardChild = function(menu, id, func){
+    var spliceOrDiscardChild = function (menu, id, func) {
         findChild(menu, id, func);
 
-        function findChild(menu, id, func){
+        function findChild(menu, id, func) {
             for (var i = 0; i < menu.length; i++) {
                 if (menu[i].id === id && menu[i].deletable) {
-                    if(func === 'perform'){
+                    if (func === 'perform') {
                         menu.splice(i, 1);
                         return;
                     }
                     delete menu[i].deletable;
                     return;
-                } else if (menu[i].subordinates.length > 0){
+                } else if (menu[i].subordinates.length > 0) {
                     findChild(menu[i].subordinates, id, func);
                 }
             }
@@ -2743,6 +2718,9 @@ $(function () {
             }
         });
 
+            var viewContent = {};
+            page.content[viewId] = viewContent;
+            saveDashboard();
 
         pageType = viewId;
         $('button[data-target=#left-sidebar]').click();
@@ -2805,29 +2783,29 @@ $(function () {
      * @return {null}
      * @private
      */
-    var updateMenuList = function() {
+    var updateMenuList = function () {
         $('#ues-pages').html(menuListHbs({
             menu: dashboard.menu,
-            ishiddenMenu : dashboard.hideAllMenuItems
+            ishiddenMenu: dashboard.hideAllMenuItems
         }));
 
-        $(".menu-hierarchy").draggable({ 
-            revert:  function(dropped) {
-               var dropped = dropped && dropped[0].id == "droppable";
-               if(!dropped) return !dropped;
-            } 
-        }).each(function() {
+        $(".menu-hierarchy").draggable({
+            revert: function (dropped) {
+                var dropped = dropped && dropped[0].id == "droppable";
+                if (!dropped) return !dropped;
+            }
+        }).each(function () {
             var top = $(this).position().top;
             var left = $(this).position().left;
             $(this).data('orgTop', top);
             $(this).data('orgLeft', left);
         });
 
-        $('.menu-hierarchy').droppable( {
+        $('.menu-hierarchy').droppable({
             drop: handleDropEvent
         });
 
-        $('.ds-menu-root').droppable( {
+        $('.ds-menu-root').droppable({
             drop: handleDropEvent
         });
 
@@ -2852,7 +2830,7 @@ $(function () {
             }
         });
 
-        $('.hide-menu-item').click(function (){
+        $('.hide-menu-item').click(function () {
             manipulateMenuItem($(this).attr('id'));
         });
     };
@@ -2899,7 +2877,7 @@ $(function () {
                     'This will remove the page and all its content. Do you want to continue?',
                     function () {
                         //check whether there are any subordinates
-                        if (isRemovablePage(pid)) {
+                        if (isRemovablePage(pid) && pages.length !== 1) {
                             var pageContent = JSON.parse(JSON.stringify(page.content));
                             var viewKeys = Object.keys(pageContent);
                             removePage(pid, viewKeys[0], function (err) {
@@ -2930,10 +2908,11 @@ $(function () {
                                 dashboard.isanon = isAnonDashboard();
                                 saveDashboard();
                                 renderPage(dashboard.landing);
-                            }); 
+                            });
+                            return true;
                         } else {
-                            showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates or all pages are hidden.");
-
+                            pages.length !== 1 ? showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates,all pages are hidden or ") : showInformation("Unable to remove the last page")
+                            return false;
                         }
 
                     });
@@ -3018,8 +2997,8 @@ $(function () {
      */
     var getNextLandingPage = function (pid, menu) {
         var nextLandingpage = null;
-        for(var i = 0; i < menu.length; i++){
-            if(menu[i].id !== pid && menu[i].ishidden === false && nextLandingpage == null){
+        for (var i = 0; i < menu.length; i++) {
+            if (menu[i].id !== pid && menu[i].ishidden === false && nextLandingpage == null) {
                 nextLandingpage = menu[i].id;
             }
         }
@@ -3037,7 +3016,7 @@ $(function () {
         spliceOrDiscardChild(dashboard.menu, menuItem.id, 'discard');
         if ((pid === dashboard.landing && dashboard.hideAllMenuItems) || menuItem.subordinates.length > 0) {
             return false;
-        } 
+        }
         return true;
     }
 
@@ -3075,6 +3054,7 @@ $(function () {
                     }
                 }
             }
+
             saveDashboard();
         });
     };
@@ -3216,7 +3196,7 @@ $(function () {
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
-            var ishidden = dashboard.hideAllMenuItems ? true: false;
+            var ishidden = dashboard.hideAllMenuItems ? true : false;
             var page = {
                 id: id,
                 title: options.title,
@@ -3237,11 +3217,11 @@ $(function () {
             var menu = {
                 id : id,
                 ishidden: ishidden,
-                title : options.title,
+                title: options.title,
                 subordinates: []
             };
 
-            if(!dashboard.menu){
+            if (!dashboard.menu) {
                 dashboard.menu = [];
             }
             dashboard.menu.push(menu);
@@ -3731,7 +3711,8 @@ $(function () {
             $.ajax({
                 url: $form.attr('action'),
                 type: $form.attr('method'),
-                data: {'data': cropData},
+                async: false,
+                data: {'data': cropData}
             }).success(function (d) {
                 if (ues.global.dashboard.isUserCustom) {
                     ues.global.dashboard.banner.customBannerExists = true;
@@ -3758,7 +3739,8 @@ $(function () {
                 $.ajax({
                     url: $form.attr('action'),
                     type: $form.attr('method'),
-                    data: {data: ''},
+                    async: false,
+                    data: {data: ''}
                 }).success(function (d) {
 
                     // we need to suppress the global banner when removing the global banner from a custom dashboard.
@@ -3779,6 +3761,7 @@ $(function () {
                 $.ajax({
                     url: $form.attr('action'),
                     type: 'DELETE',
+                    async: false,
                     dataType: 'json'
                 }).success(function (d) {
 
@@ -3805,16 +3788,16 @@ $(function () {
      * @param {Boolean} state
      * @return {null}
      */
-    var manipulateAllMenuItems = function(bool){
+    var manipulateAllMenuItems = function (bool) {
         var menu = dashboard.menu;
         var landing = dashboard.landing;
         manipulateSubordinates(menu, landing);
 
-        function manipulateSubordinates(menu, landing){
+        function manipulateSubordinates(menu, landing) {
             for (var i = 0; i < menu.length; i++) {
-                    if (menu[i].id !== landing) {
-                        menu[i].ishidden = bool;
-                    }
+                if (menu[i].id !== landing) {
+                    menu[i].ishidden = bool;
+                }
                 if (menu[i].subordinates.length > 0) {
                     manipulateSubordinates(menu[i].subordinates, landing);
                 }
@@ -3828,13 +3811,13 @@ $(function () {
      * @param {String} pageID
      * @return {null}
      */
-    var manipulateMenuItem = function(pageId){
+    var manipulateMenuItem = function (pageId) {
         var menu = dashboard.menu;
         var landing = dashboard.landing;
         manipulateSubordinates(menu, landing);
         updateHideAllMenuItemsState();
 
-        function manipulateSubordinates(menu, landing){
+        function manipulateSubordinates(menu, landing) {
             for (var i = 0; i < menu.length; i++) {
                 //page should not be current landing page
                 if (menu[i].id !== landing && menu[i].id === pageId) {
@@ -3851,7 +3834,7 @@ $(function () {
                     return;
                 }
 
-                if(menu[i].subordinates.length > 0){
+                if (menu[i].subordinates.length > 0) {
                     manipulateSubordinates(menu[i].subordinates, landing);
                 }
             }
@@ -3859,22 +3842,22 @@ $(function () {
     }
 
     /**
-     * update dashboard.hideAllMenuItems state 
+     * update dashboard.hideAllMenuItems state
      * @return {null}
      */
     var updateHideAllMenuItemsState = function () {
         var menu = dashboard.menu;
         var visibleMenuItems = [];
         traverseSubordinates(menu);
-        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1) ? true: false;
+        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1) ? true : false;
         saveDashboard();
         updateMenuList();
 
-        function traverseSubordinates(menu){
+        function traverseSubordinates(menu) {
             for (var i = 0; i < menu.length; i++) {
-                    if (!menu[i].ishidden) {
-                        visibleMenuItems.push(menu[i].id);
-                    }
+                if (!menu[i].ishidden) {
+                    visibleMenuItems.push(menu[i].id);
+                }
                 if (menu[i].subordinates.length > 0) {
                     traverseSubordinates(menu[i].subordinates);
                 }

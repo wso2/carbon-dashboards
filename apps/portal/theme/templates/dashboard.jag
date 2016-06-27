@@ -486,6 +486,7 @@
     <% include('/controllers/includes/common-scripts.jag'); %>
     <% include('/controllers/includes/dashboard-scripts.jag'); %>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-gadgets')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-store')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-dashboards')%>"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>

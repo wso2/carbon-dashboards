@@ -102,34 +102,7 @@ $(function () {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
         }
     };
-
-    /**
-     * Show error style for given element
-     * @param1 element
-     * @param2 errorElement
-     * @private
-     * */
-    var showInlineError = function (element, errorElement) {
-        element.val('');
-        element.parent().addClass("has-error");
-        element.addClass("has-error");
-        errorElement.removeClass("hide");
-        errorElement.addClass("show");
-    };
-
-    /**
-     * Hide error style for given element
-     * @param1 element
-     * @param2 errorElement
-     * @private
-     * */
-    var hideInlineError = function (element, errorElement) {
-        element.parent().removeClass("has-error");
-        element.removeClass("has-error");
-        errorElement.removeClass("show");
-        errorElement.addClass("hide");
-    };
-
+    
     // Bind event handlers for dashboard title field
     $('#ues-dashboard-title').on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
@@ -181,6 +154,7 @@ $(function () {
                 url: apiUrl,
                 method: "GET",
                 contentType: "application/json",
+                async: false,
                 success: function (data) {
                     showInformation("URL Already Exists",
                         "A dashboard with same URL already exists. Please enter a different dashboard URL.");

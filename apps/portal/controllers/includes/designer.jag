@@ -33,7 +33,7 @@
     }
 
     var permissions = dashboard.permissions;
-    if (!utils.allowed(user.roles, permissions.editors) && !dashboard.isUserCustom) {
+    if (!(utils.allowed(user.roles, permissions.editors) || utils.allowed(user.roles, permissions.owners)) && !dashboard.isUserCustom) {
         response.sendError(401, 'Dashboard editing not authorized');
         return;
     }

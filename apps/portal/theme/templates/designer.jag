@@ -21,6 +21,9 @@ var user = usr.current();
 var userRoles = usr.roles();
 %>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
+    <% var permission = require('/modules/permission.js'); %>
+    <% var constants = require('/modules/constants.js'); %>
+    <% var utilsss = require('/modules/utils.js'); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
@@ -53,7 +56,7 @@ var userRoles = usr.roles();
         <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
             <div class="container-fluid ues-context-menu">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" 
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                             aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
                         <span class="icon-bar"></span>
@@ -64,17 +67,29 @@ var userRoles = usr.roles();
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <% if(! dashboard.isUserCustom) { %>
-                        <% if(configs.isCreateGadgetEnable){%>
-                        <%}%>
-                        <li>
-                            <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
-                                <span class="icon fw-stack">
-                                    <i class="fw fw-settings fw-stack-1x"></i>
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                </span>
-                                <%=i18n.localize("settings")%>
-                            </a>
-                        </li>
+                            <% if (permission.isAllowed(constants.SETTINGS) || utils.allowed(user.roles,dashboard.permissions.owners)) { %>
+                            <li>
+                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                                    <span class="icon fw-stack">
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    </span>
+                                    <%=i18n.localize("settings")%>
+                                </a>
+                            </li>
+                            <% } else { %>
+			                <script id="ues-navigation-bar-hbs" type="text/x-handlebars-template">
+                            <li id ="settingsButton">
+                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                                    <span class="icon fw-stack">
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    </span>
+                                    <%=i18n.localize("settings")%>
+                                </a>
+                            </li>
+			                </script>
+			                <% } %>
                         <% } else { %>
                         <li>
                             <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard.id%>?reset=true" class="ues-copy">
@@ -580,6 +595,11 @@ var userRoles = usr.roles();
                                 <input type="checkbox" name="landing"{{#if landing}} checked disabled{{/if}} /> <%= i18n.localize("use.as.landing") %>
                             </label>
                         </div>
+                        <div class="checkbox {{#if isUserCustom}}hidden{{/if}}">
+                            <label>
+                                <input type="checkbox" name="anon"{{#if isanon}} checked{{/if}} /> <%= i18n.localize("make.anonymous") %>
+                            </label>
+                        </div>
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="fluidLayout"{{#if fluidLayout}} checked{{/if}} /> <%= i18n.localize('fluid.layout') %>
@@ -837,6 +857,11 @@ var userRoles = usr.roles();
                     </div>
                 </div>
             </div>
+
+            <div class="panel panel-default ues-settings ues-properties">
+
+            </div>
+
             {{#has styles}}
             <div class="panel panel-default ues-styles ues-properties">
                 <div class="panel-heading text-truncate dropup" role="tab" id="optionsButtonStyles" data-toggle="collapse" data-target="#optionsStyles" aria-expanded="true">
@@ -1005,6 +1030,7 @@ var userRoles = usr.roles();
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
     <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
     <script src="<%=urlPrefix%>js/designer.js"></script>
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>

@@ -77,11 +77,37 @@ var getAsset, getAssets, addAsset, deleteAsset;
         return assets;
     };
 
-    addAsset = function (asset) {
-
+    /**
+     * To add an asset to File Store
+     * @param {String} type Type of the asset
+     * @param {String} id Id of the asset
+     * @param {File} assertFile File with asset
+     * @returns {boolean}
+     */
+    addAsset = function (type, id, assertFile) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var assetDir = new File(parent + id + ".zip");
+        assetDir.open('w');
+        assetDir.write(assertFile.getStream());
+        assetDir.close();
+        return true;
     };
 
-    deleteAsset = function (id) {
-
+    /**
+     * To delete an asset from File Store
+     * @param {String} type Type of the asset
+     * @param {String} id Id of the asset
+     * @returns true if the asset is deleted otherwise null
+     */
+    deleteAsset = function (type, id) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var file = new File(parent + id);
+        if (!file.isExists()) {
+            return null;
+        }
+        file.del();
+        return true;
     };
 }());

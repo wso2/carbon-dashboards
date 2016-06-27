@@ -34,11 +34,14 @@ var portalRoot;
     var UNAUTHORIZED_ERROR = 'Dashboard access not authorized';
     if (user) {
         //identify edit/view permission for the logged user
-        if (utils.allowed(user.roles, permissions.editors)) {
+        if (utils.allowed(user.roles, permissions.owners)) {
+            user.isOwner = true;
+        } else if (utils.allowed(user.roles, permissions.editors)) {
             user.isEditor = true;
         } else if (utils.allowed(user.roles, permissions.viewers)) {
             user.isViewer = true;
         } else {
+            user.isOwner = false;
             user.isEditor = false;
             user.isViewer = false;
         }
@@ -56,7 +59,7 @@ var portalRoot;
             return;
         }
 
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
+        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers) && !utils.allowed(user.roles, permissions.owners)) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
