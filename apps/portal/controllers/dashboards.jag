@@ -144,6 +144,7 @@ var fresh;
         utils = require('/modules/utils.js');
 
         dashboard = {
+            version: "2.4.0",
             id: dashboardId,
             title: request.getParameter('title'),
             description: request.getParameter('description'),

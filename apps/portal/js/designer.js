@@ -38,6 +38,7 @@ $(function () {
     var ANONYMOUS_ROLE = 'anonymous';
     var LOGGEDIN = 'loggedIn';
     var isNewView = false;
+    var isInViewCreation = false;
 
     /**
      * Number of assets to be loaded.
@@ -633,7 +634,8 @@ $(function () {
             url: url,
             method: method,
             data: JSON.stringify(dashboard),
-            contentType: 'application/json'
+            contentType: 'application/json',
+            async: false
         }).success(function (data) {
             generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
             if (isRedirect) {
@@ -649,30 +651,33 @@ $(function () {
         });
     };
 
-    var saveDashboardLayoutContent = function () {
-        var method = 'PUT';
-        var url = dashboardsApi + '/' + dashboard.id;
-        var isRedirect = false;
-        $.ajax({
-            url: url,
-            method: method,
-            data: JSON.stringify(dashboard),
-            contentType: 'application/json'
-        }).success(function (data) {
-            location.reload();
-            generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
-            if (isRedirect) {
-                isRedirect = false;
-                window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
-            }
-        }).error(function (xhr, status, err) {
-            if (xhr.status === 403) {
-                window.location.reload();
-                return;
-            }
-            generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
-        });
-    };
+    /**
+     * Saves dashboard json content
+     */
+    // var saveDashboardLayoutContent = function () {
+    //     var method = 'PUT';
+    //     var url = dashboardsApi + '/' + dashboard.id;
+    //     var isRedirect = false;
+    //     $.ajax({
+    //         url: url,
+    //         method: method,
+    //         data: JSON.stringify(dashboard),
+    //         contentType: 'application/json'
+    //     }).success(function (data) {
+    //         location.reload();
+    //         generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
+    //         if (isRedirect) {
+    //             isRedirect = false;
+    //             window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
+    //         }
+    //     }).error(function (xhr, status, err) {
+    //         if (xhr.status === 403) {
+    //             window.location.reload();
+    //             return;
+    //         }
+    //         generateMessage("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
+    //     });
+    // };
 
     /**
      * Initializes the component toolbar.
@@ -780,8 +785,6 @@ $(function () {
             };
 
             page.layout.content[newViewId] = viewLayoutContent;
-            saveDashboard();
-
             var viewContent = page.content[text];
             page.content[newViewId] = viewContent;
             saveDashboard();
@@ -875,14 +878,14 @@ $(function () {
                     viewRolesList = [ANONYMOUS_ROLE];
                 }
             }
-            var html = '';
+            var selectedViewRoles = '';
             for (var i = 0, tempViewRolesLength = viewRolesList.length ; i < tempViewRolesLength; i++) {
                 role = viewRolesList[i];
-                html += viewRoleHbs(role);
+                selectedViewRoles += viewRoleHbs(role);
             }
 
             //list all the dashboard roles to the dropdown
-            $('#view-configuration').find('.ues-view-roles').append(html);
+            $('#view-configuration').find('.ues-view-roles').append(selectedViewRoles);
             var viewerSearchQuery = '';
             var maxLimit = 10;
             var maxLimitApi = ues.utils.relativePrefix() + 'apis/roles/maxLimit';
@@ -974,9 +977,7 @@ $(function () {
                 addNewViewRole($(this), role.name, viewId);
             });
 
-            if ($('#right-sidebar').hasClass("toggled")) {
-                $('#right-sidebar').removeClass("toggled");
-            } else {
+            if (!$('#right-sidebar').hasClass("toggled")) {
                 $('#right-sidebar').toggleClass("toggled");
             }
             event.stopPropagation();
@@ -1220,12 +1221,14 @@ $(function () {
             }
             $('.gadgets-grid').empty();
             $('.gadgets-grid').html(viewCreationOptions);
+            isInViewCreation = true;
         });
 
         $(document).on('click', '.gadgets-grid input[type=radio]', function () {
             if (this.value === "new-view") {
                 //if create a new view
                 isNewView = true;
+                isInViewCreation = true;
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCreationOptions);
                 $('#new-view').prop("checked", true);
@@ -1238,6 +1241,7 @@ $(function () {
                     $('.close-sidebar[data-target="#left-sidebar"]').click();
                 }
 
+                isInViewCreation = true;
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCopyingSelection);
                 $('#copy-view').prop("checked", true);
@@ -2295,8 +2299,7 @@ $(function () {
      * @returns {String} View name
      */
     var getSelectedView = function () {
-        var viewName = $('#designer-view-mode .active a').text();
-        return viewName.trim();
+        return $('#designer-view-mode .active a').text().trim();
     };
 
     /**
@@ -2354,8 +2357,8 @@ $(function () {
 
             var assets = $('.ues-store-assets').find('.ues-thumbnails');
             var fresh = !paging.start;
-            var assetz = storeCache[type];
-            storeCache[type] = assetz.concat(data);
+            // var assetz = storeCache[type];
+            // storeCache[type] = assetz.concat(data);
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
 
@@ -2453,8 +2456,10 @@ $(function () {
             }
 
             var assets = $('.ues-store-assets').find('.ues-thumbnails');
-            var assetz = storeCache[type];
-            storeCache[type] = assetz.concat(data);
+            console.log(data.length);
+            if (data.length > 0) {
+                storeCache[type] = storeCache[type].concat(data);
+            }
 
             paging.start += COMPONENTS_PAGE_SIZE;
             paging.end = !data.length;
@@ -2610,8 +2615,12 @@ $(function () {
                 ues.global.type = mode;
             }
             loadGadgetsWithViewRoles(pageType);
-            switchPage(getPageId(), currentPageType);
-
+            //if(!isInViewCreation) {
+                switchPage(getPageId(), currentPageType);
+            // } else {
+            //     location.reload();
+            // }
+            isInViewCreation = false;
             $('#designer-view-mode li').removeClass('active');
             $('#designer-view-mode li[data-view-mode=' + pageType + ']').addClass('active');
         });
@@ -2706,23 +2715,41 @@ $(function () {
         var viewContent = {};
         page.content[viewId] = viewContent;
 
-        $.get(resolveURI(layout.url), function (data, status) {
-            var layoutData = JSON.parse(data);
-            var viewLayoutContent = {
-                blocks: layoutData.blocks,
-                name: viewName,
-                roles: viewRoles
-            };
-            page.layout.content[viewId] = viewLayoutContent;
-            saveDashboardLayoutContent();
+        // $.get(resolveURI(layout.url), function (data, status) {
+        //     var layoutData = JSON.parse(data);
+        //     var viewLayoutContent = {
+        //         blocks: layoutData.blocks,
+        //         name: viewName,
+        //         roles: viewRoles
+        //     };
+        //     page.layout.content[viewId] = viewLayoutContent;
+        //     saveDashboard();
+        // });
+
+        $.ajax({
+            url: resolveURI(layout.url),
+            async: false,
+            dataType: 'json',
+            success: function(data) {
+                console.log(data.blocks);
+                //var layoutData = JSON.parse(data);
+                var viewLayoutContent = {
+                    blocks: data.blocks,
+                    name: viewName,
+                    roles: viewRoles
+                };
+                page.layout.content[viewId] = viewLayoutContent;
+                saveDashboard();
+            }
         });
+
 
         pageType = viewId;
         $('button[data-target=#left-sidebar]').click();
 
-        $(document).ajaxComplete(function () {
+        //$(document).ajaxComplete(function () {
             switchPage(getPageId(), currentViewId);
-        });
+       // });
         $('#designer-view-mode li[data-view-mode=' + viewId + ']').click();
     };
 

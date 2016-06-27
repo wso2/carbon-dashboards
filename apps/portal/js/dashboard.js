@@ -246,8 +246,7 @@ $(function () {
     var getUserAllowedViews = function (page) {
         $('#ds-allowed-view-list').empty();
         var allowedViews = [];
-        var pageViews = JSON.parse(JSON.stringify(page.layout.content));
-        var viewKeysArray = Object.keys(pageViews);
+        var viewKeysArray = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
 
         for (var i = 0, viewsArrayLength = viewKeysArray.length; i < viewsArrayLength; i++) {
             var viewRoles = page.layout.content[viewKeysArray[i]].roles;

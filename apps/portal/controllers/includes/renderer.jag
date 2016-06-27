@@ -97,7 +97,6 @@ var portalRoot;
     // view is undefined
     if (user) {
         if (!(user.isEditor || user.isViewer) && (anonView.length === 0)) {
-            log.info("2*** ");
             response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
                     i18n.localize("page.not.found"));
             return;
