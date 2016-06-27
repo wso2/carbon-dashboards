@@ -215,7 +215,7 @@
         element.html(getGridstackLayout(layout[0]));
         // render gadget contents
         isDesignerView = isDesigner;
-        anonView = pageType === 'anon' ? true : false;
+        anonView = (pageType === 'anon') ? true : false;
         doneCallback = done;
         componentBoxNum = -1;
         componentBoxList = $('.ues-component-box');
@@ -231,11 +231,11 @@
 
     var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
-        if(anonView){
+        if (anonView) {
             ues.store.anonasset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
                 isGadgetExists = error
             });
-        }else{
+        } else {
             ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
                 isGadgetExists = error
             });
