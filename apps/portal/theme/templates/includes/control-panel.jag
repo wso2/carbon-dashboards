@@ -24,7 +24,11 @@
             <% if (user.isEditor || user.isOwner) { %>
                 <li><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
             <% } else if(dashboard.personalizeDashboard) { %>
-                <li><a href="?personalize=true"><i class="icon fw fw-settings" title="<%= i18n.localize("personalize")%>"></i>Edit Dashboard</a></li>
+                    <% if(isPersonalizeEnabled === 'true'){ %>
+                            <li><a href="?personalize=false"><i class="icon fw fw-settings" title="<%= i18n.localize("personalize")%>"></i>Edit Dashboard</a></li>
+                       <% } else { %>
+                            <li><a href="?personalize=true"><i class="icon fw fw-settings" title="<%= i18n.localize("personalize")%>"></i>Edit Dashboard</a></li>
+                           <% }%>
                 <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
             <% } %>
         <% } %>
