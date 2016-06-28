@@ -119,7 +119,7 @@ var fresh;
                 }
 
                 dashboards.copy(dashboard);
-                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?dashboardeditor=true');
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '/' + pageId + '?dashboardeditor=true');
                 return;
             }
 

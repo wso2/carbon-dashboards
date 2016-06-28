@@ -132,6 +132,45 @@ $(function () {
             }
             componentContainer.html(gadgetSettingsViewHbs(component.content)).addClass('ues-userprep-visible');
         });
+
+        // event handler for trash button
+        viewer.on('click', '.ues-component-box .ues-trash-handle', function () {
+            var that = $(this);
+            var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
+            var hasComponent = false;
+            if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
+                hasComponent = true;
+            }
+
+            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
+                var designerModal = $('#dashboardViewModal');
+                designerModal.find('#btn-delete').on('click', function () {
+                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
+                    var componentBox = that.closest('.ues-component-box');
+                    var id = componentBox.find('.ues-component').attr('id');
+                   // var removeBlock = (action == 'block');
+
+                    if (id) {
+                        removeComponent(findComponent(id), function (err) {
+                            if (!err) {
+                                removeBlock = false;
+                            }
+                            saveDashboard();
+                            getGridstack().remove_widget(componentBox.parent());
+                            updateLayout();
+                        });
+                    }
+
+                    //if (removeBlock) {
+
+                    /*} else {
+                        componentBox.html(componentBoxContentHbs());
+                    }*/
+
+                    designerModal.modal('hide');
+                });
+            });
+        });
     };
 
     /**
@@ -172,7 +211,7 @@ $(function () {
      * @private
      */
     var renderComponentToolbar = function (component) {
-        if (component) {
+        if (component && !isPersonalizeEnabled) {
             // Check whether any user preferences are exists
             var userPrefsExists = false;
             for (var key in component.content.options) {
@@ -448,6 +487,78 @@ $(function () {
                 }
             }
         }
+    };
+
+    /**
+     * Show HTML modal.
+     * @param {String} content      HTML content
+     * @param {function} beforeShow Function to be invoked just before showing the modal
+     * @return {null}
+     * @private
+     */
+    var showHtmlModal = function (content, beforeShow) {
+        var modalElement = $('#dashboardViewModal');
+        modalElement.find('.modal-content').html(content);
+        if (beforeShow && typeof beforeShow === 'function') {
+            beforeShow();
+        }
+
+        modalElement.modal();
+    };
+
+    /**
+     * Removes and destroys the given component from the page.
+     * @param {Object} component    The component to be removed
+     * @param {function} done       Callback function
+     * @return {null}
+     * @private
+     */
+    var removeComponent = function (component, done) {
+        destroyComponent(component, function (err) {
+            if (err) {
+                return done(err);
+            }
+            var container = $('#' + component.id);
+            var area = container.closest('.ues-component-box').attr('id');
+            pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+            var content = page.content[pageType];
+            area = content[area];
+            var index = area.indexOf(component);
+            area.splice(index, 1);
+            container.remove();
+
+            var compId = $('.ues-component-properties').data('component');
+            if (compId !== component.id) {
+                return done();
+            }
+            $('.ues-component-properties .ues-component-properties-container').empty();
+            done();
+        });
+    };
+
+    /**
+     * Destroys the given component.
+     * @param {Object} component    Component to be destroyed
+     * @param {function} done       Callback function
+     * @return {null}
+     * @private
+     */
+    var destroyComponent = function (component, done) {
+        ues.components.destroy(component, function (err) {
+            if (err) {
+                return err;
+            }
+            done(err);
+        });
+    };
+
+    /**
+     * Get Gridstack object.
+     * @return {Object}
+     * @private
+     */
+    var getGridstack = function () {
+        return $('.grid-stack').data('gridstack');
     };
 
     isPersonalizeEnabled? initDashboardEditor() : initDashboard();

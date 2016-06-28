@@ -210,5 +210,6 @@
     "cannot.delete.layout" : "Cannot delete the layout",
     "something.wrong" : "Something went wrong. Try again later.",
     "personalize.dashboard" : "Personalize Dashboard",
-    "personalize.information.message" : "Dashboard viewers will be able to personalize this dashboard."
+    "personalize.information.message" : "Dashboard viewers will be able to personalize this dashboard.",
+    "dashboard.view.delete.message" : "Are you sure you want to delete this item?"
 }
