@@ -208,5 +208,7 @@
     "error" : "Error",
     "cannot.delete.gadget" : "Cannot delete the gadget",
     "cannot.delete.layout" : "Cannot delete the layout",
-    "something.wrong" : "Something went wrong. Try again later."
+    "something.wrong" : "Something went wrong. Try again later.",
+    "personalize.dashboard" : "Personalize Dashboard",
+    "personalize.information.message" : "Dashboard viewers will be able to personalize this dashboard."
 }

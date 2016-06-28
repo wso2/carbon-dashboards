@@ -160,7 +160,8 @@ var fresh;
             apiKey: "",
             apiSecret: "",
             theme: request.getParameter('select-theme'),
-            shareDashboard : false
+            shareDashboard : false,
+            personalizeDashboard : false
     };
 
         utils.sandbox(context, function() {
