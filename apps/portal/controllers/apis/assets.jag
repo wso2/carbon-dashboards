@@ -28,6 +28,9 @@
     var query;
     var utils = require('/modules/utils.js');
     var store = utils.store();
+    var assets = require('/modules/assets.js');
+    var constants = require('/modules/constants.js');
+    var method = request.getMethod();
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
     var method = request.getMethod();
@@ -59,7 +62,6 @@
         return;
     }
 
-
     if (matcher.match('/assets/{id}')) {
         id = matcher.elements().id;
         if (method === 'GET') {
@@ -74,9 +76,6 @@
             }
             print(assets);
             return;
-        }
-        if (method === 'PUT') {
-            //TODO
         }
         // Check whether it is a delete request. If it is a delete request, delete the asset
         if (method === 'DELETE') {
@@ -115,13 +114,28 @@
             }
             query = request.getParameter('query');
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.getAssets(assetType, query, start, count);
+                assets = store.getAssets(assetType, query, start, count, storeType);
             });
             print(assets);
             return;
         }
-        if (method === 'PUT') {
-            //TODO
+        if (method === 'POST') {
+            var results;
+            utils.sandbox(utils.context(user, urlDomain), function () {
+                results = assets.addAsset(assetType, request.getParameter('id') + '$' + request.getParameter('version'), request.getFile("selected-file"), storeType);
+            });
+            if (storeType === constants.FILE_STORE) {
+                var urlPrefix = utils.relativePrefix(originalURI);
+                response.sendRedirect((utils.tenantedPrefix(urlPrefix, user.domain)) + 'upload-' + assetType + '?message=' + results);
+                return;
+            } else if (storeType === constants.ES_STORE) {
+                if (results !== "success") {
+                    response.sendError(400, i18n.localize("something.wrong"));
+                    return;
+                } else {
+                    return true;
+                }
+            }
         }
         response.sendError(405, JSON.stringify({
             error: true

@@ -3,5 +3,7 @@
   "host": "localhost",
   "port": "9444",
   "context": "portal",
+  "username" : "admin",
+  "password" : "admin",
   "url": "https://localhost:9444/portal"
 }

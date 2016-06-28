@@ -22,15 +22,15 @@
  * @param {Object} fileRequest File object from request
  * @returns {String} message Detailed message on what happened during asset upload
  */
-var addAsset = function (type, fileRequest) {
+var addAsset = function (type, id, fileRequest, storeType) {
     var storeManager = require("/js/store-manager.js");
     var constants = require("/modules/constants.js");
-    var tempAssetPath = '/store/' + userDomain + '/' + constants.FILE_STORE + '/temp-' + type + '/';
+    var tempAssetPath = '/store/' + userDomain + '/' + storeType + '/temp-' + type + '/';
     var ZipFile = Packages.java.util.zip.ZipFile;
     var zipExtension = ".zip";
     var process = require('process');
     var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal' + tempAssetPath;
-    var assetPath = '/store/' + userDomain + '/' + constants.FILE_STORE + '/' + type + '/';
+    var assetPath = '/store/' + userDomain + '/' + storeType + '/' + type + '/';
     var configurationFileName = type + ".json";
     var config = require('/configs/designer.json');
     var bytesToMB = 1048576;
@@ -45,8 +45,6 @@ var addAsset = function (type, fileRequest) {
         return 'fileNotFound';
     } else if (fileRequest.getLength() / bytesToMB > fileSizeLimit) {
         return 'MaxFileLimitExceeded';
-    } else if (fileRequest.getName().indexOf(zipExtension) < 0) {
-        return 'notaZipFile';
     }
 
     // If it passes all the initial validations remove the zip file extensions to avoid the zip file being deployed
@@ -76,6 +74,7 @@ var addAsset = function (type, fileRequest) {
                 var assetDirectory = new File(assetPath);
                 var files = assetDirectory.listFiles();
 
+                fileName = (storeType === constants.FILE_STORE) ? fileName : id;
                 // Check whether is there is another asset with same id
                 for (var index = 0; index < files.length; index++) {
                     if (files[index].getName() === fileName) {
@@ -85,7 +84,7 @@ var addAsset = function (type, fileRequest) {
                 }
                 tempDirectory.del();
                 // If there is a configuration file and no other assets with same id, deploy the asset
-                 return storeManager.addAsset(type, fileName, fileRequest, constants.FILE_STORE) ? "success" : "errorInUpload";
+                 return storeManager.addAsset(type, fileName, fileRequest, storeType) ? "success" : "errorInUpload";
             }
         }
         // If configuration file is missing indicate the error

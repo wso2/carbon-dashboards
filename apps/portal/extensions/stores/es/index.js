@@ -25,12 +25,13 @@ var getAsset, getAssets, addAsset, deleteAsset;
 
     var utils = require('/modules/utils.js');
     var config = require('/extensions/stores/es/config.json');
+    var constants = require('/modules/constants.js');
 
     var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
         var config = require('/configs/designer.json');
         var domain = config.shareStore ? carbon.server.superTenant.domain : ctx.domain;
-        return dir + domain + '/es/' + type + '/';
+        return dir + domain + '/' + constants.ES_STORE + '/' + type + '/';
     };
 
     var obtainAuthorizedHeaderForAPICall = function () {
@@ -56,7 +57,7 @@ var getAsset, getAssets, addAsset, deleteAsset;
             publishedAssets.push(asset_id);
         }
         return publishedAssets;
-    }
+    };
 
     getAsset = function (type, id) {
         if (type === 'layout') {
@@ -118,11 +119,46 @@ var getAsset, getAssets, addAsset, deleteAsset;
         return assets;
     };
 
-    addAsset = function (type, id, assertFile) {
+    /**
+     * To add an asset to es store
+     * @param {String} type Type of the asset to be added
+     * @param {String} id Id of the asset
+     * @param {Object} assetFile File with the asset
+     * @returns {boolean} true if the asset upload succeeds
+     */
+    addAsset = function (type, id, assetFile) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var assetDir = new File(parent + id + "_gdt.gdt");
 
+        try {
+            assetDir.open('w');
+            assetDir.write(assetFile.getStream());
+            assetDir.unZip(parent + id);
+            return true;
+        } catch (e) {
+            log.error("Cannot add asset to " + constants.ES_STORE);
+            throw e;
+        } finally {
+            assetDir.close();
+            assetDir.del();
+        }
     };
 
+    /**
+     * To delete an asset from Enterprise Store
+     * @param {String} type Type of the asset
+     * @param {String} id Id of the asset
+     * @returns true if the asset is deleted otherwise null
+     */
     deleteAsset = function (type, id) {
-
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var file = new File(parent + id);
+        if (!file.isExists()) {
+            return null;
+        }
+        file.del();
+        return true;
     };
 }());

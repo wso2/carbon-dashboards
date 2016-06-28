@@ -32,9 +32,23 @@ asset.manager = function (ctx) {
      */
     var GADGET_EXT_PATH = "/extensions/assets/" + ASSET_NAME;
 
+    /**
+     * That connects id and version
+     * @const
+     * @private
+     * @type {string}
+     */
+    var DILEMETER = '$';
+
+    /**
+     * Status code for http success
+     * @const
+     * @private
+     */
+    var HTTP_SUCCESS_CODE = 200;
+
     var notifier = require('store').notificationManager;
     var storeConstants = require('store').storeConstants;
-    var COMMENT = 'User comment';
     var carbon = require('carbon');
     var social = carbon.server.osgiService('org.wso2.carbon.social.core.service.SocialActivityService');
 
@@ -63,21 +77,41 @@ asset.manager = function (ctx) {
             var HttpMultipartMode = Packages.org.apache.http.entity.mime.HttpMultipartMode;
             var ContentType = Packages.org.apache.http.entity.ContentType;
             var HttpClientBuilder = Packages.org.apache.http.impl.client.HttpClientBuilder;
-
             var zipFileName = getExtensionDir() + '/gadgets/' + assetId + '.gadget';
-
-            var post = new HttpPost(portalConfigs.url + '/apis/gadgets');
-            var inputStream = new FileInputStream(zipFileName);
+            var MultitenantUtils = Packages.org.wso2.carbon.utils.multitenancy.MultitenantUtils;
+            var domain = MultitenantUtils.getTenantDomain(session.get("LOGGED_IN_USER"));
             var builder = MultipartEntityBuilder.create();
+            var post = new HttpPost(portalConfigs.url + '/apis/login');
+            var ResponseHandler = Packages.org.apache.http.impl.client.BasicResponseHandler;
+            var client;
+            var response;
+            var inputStream;
+            var responseBody;
+
+            builder = MultipartEntityBuilder.create();
+            builder.addTextBody("username", portalConfigs.username);
+            builder.addTextBody("password", portalConfigs.password);
+            post.setEntity(builder.build());
+            client = HttpClientBuilder.create().build();
+            response = client.execute(post);
+            if (response.getStatusLine().getStatusCode() !== HTTP_SUCCESS_CODE) {
+                return false;
+            }
+            responseBody = new ResponseHandler().handleResponse(response);
+            post = new HttpPost(portalConfigs.url + '/apis/gadgets');
+            inputStream = new FileInputStream(zipFileName);
+            builder = MultipartEntityBuilder.create();
             builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-            builder.addBinaryBody("gadget", inputStream, ContentType.create("application/zip"), gadgetId);
+            builder.addBinaryBody("selected-file", inputStream, ContentType.create("application/zip"), gadgetId);
             builder.addTextBody("id", gadgetId);
             builder.addTextBody("version", version);
+            builder.addTextBody("storeType", "es");
+            builder.addTextBody("domain", domain);
             post.setEntity(builder.build());
-            var client = HttpClientBuilder.create().build();
-            var response = client.execute(post);
-
-            if (response.getStatusLine().getStatusCode() != 200) {
+            post.addHeader("cookie", "JSESSIONID=" + parse(String(responseBody)).sessionId);
+            client = HttpClientBuilder.create().build();
+            response = client.execute(post);
+            if (response.getStatusLine().getStatusCode() != HTTP_SUCCESS_CODE) {
                 return false;
             }
         }
@@ -226,7 +260,22 @@ asset.manager = function (ctx) {
                 };
             }
         }
+        res.id = res.id + DILEMETER + res.version;
+        var assetId = options.id;
+        var zipFile = new File(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gadget');
+        zipFile.unZip(GADGET_EXT_PATH + '/gadgets/temp/' + assetId);
 
+        var gadgetJSONFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId+"/gadget.json");
+        var gadgetJSONString = stringify(res);
+        gadgetJSONFile.open("w");
+        gadgetJSONFile.write(res);
+        gadgetJSONFile.close();
+
+        zipFile.del();
+
+        var unZippedGadgetFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId);
+        unZippedGadgetFile.zip(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gadget');
+        unZippedGadgetFile.del();
         // Todo update the gadget.json in gadget.zip file with new content
 
         return res;
@@ -315,7 +364,7 @@ asset.server = function (ctx) {
             }]
         }
     };
-}
+};
 
 asset.configure = function () {
     return {
@@ -323,8 +372,8 @@ asset.configure = function () {
             gadget: {
                 fields: {
                     gadgetarchive: {
-                        type: 'file',
-                    },
+                        type: 'file'
+                    }
                 }
             },
             overview: {

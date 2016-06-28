@@ -57,8 +57,7 @@
             <field type="options">
                 <name label="Type">Type</name>
                 <values>
-                    <value>Gadget</value>
-                    <value>Widget</value>
+                    <value>gadget</value>
                 </values>
             </field>
             <field type="text-area">
