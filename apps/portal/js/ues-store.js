@@ -20,7 +20,7 @@
     var assetsUrl = ues.utils.relativePrefix() + 'apis/assets';
     var store = (ues.store = {});
 
-    store.anonasset = function (type, id, cb) {
+    store.asset = function (type, id, cb) {
         $.ajax({
             url: assetsUrl + '/publicassets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
             method: "GET",
@@ -34,22 +34,7 @@
             }
         });
     };
-
-    store.asset = function (type, id, cb) {
-        $.ajax({
-            url: assetsUrl + '/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
-            method: "GET",
-            contentType: "application/json",
-            async: false,
-            success: function (data) {
-                cb(false, data);
-            },
-            error: function (data) {
-                cb(true, data);
-            }
-        });
-    };
-
+    
     store.assets = function (type, paging, cb) {
         var query = 'type=' + type;
         query += domain ? '&domain=' + domain : '';
