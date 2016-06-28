@@ -27,7 +27,7 @@
         user = usr.current(),
         isAnonView = request.getParameter('isAnonView'),
         queryString = request.getQueryString(),
-        isPersonalizeEnabled = request.getParameter('personalize');
+        isPersonalizeEnabled = request.getParameter('dashboardeditor');
 
     // Get the anon view
     if (!user) {

@@ -48,6 +48,7 @@ var fresh;
     var dashboards;
     var editor;
     var isCustomize;
+    var isPersonalize;
     var toReset;
     var method = request.getMethod();
 
@@ -100,6 +101,7 @@ var fresh;
             }
 
             isCustomize = request.getParameter('custom');
+            isPersonalize = request.getParameter('personalize');
 
             if (isCustomize) {
                 for (var i = 0; i < dashboard.pages.length; i++) {
@@ -108,6 +110,16 @@ var fresh;
 
                 dashboards.copy(dashboard);
                 response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
+                return;
+            }
+
+            if (isPersonalize === 'true') {
+                for (var i = 0; i < dashboard.pages.length; i++) {
+                    dashboard.pages[i].isanon = false;
+                }
+
+                dashboards.copy(dashboard);
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?dashboardeditor=true');
                 return;
             }
 
