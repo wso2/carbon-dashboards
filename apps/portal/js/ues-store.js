@@ -34,7 +34,7 @@
             }
         });
     };
-
+    
     store.assets = function (type, paging, cb) {
         var query = 'type=' + type;
         query += domain ? '&domain=' + domain : '';
