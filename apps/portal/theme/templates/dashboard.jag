@@ -26,7 +26,8 @@
     var usr = require('/modules/user.js'),
         user = usr.current(),
         isAnonView = request.getParameter('isAnonView'),
-        queryString = request.getQueryString();
+        queryString = request.getQueryString(),
+        isPersonalizeEnabled = request.getParameter('personalize');
 
     // Get the anon view
     if (!user) {
@@ -612,7 +613,8 @@
         //usage : in traverseMenu helper
         var user = <%= user %>,
             queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>;    
+            isAnonView = <%= isAnonView %>,
+            isPersonalizeEnabled = <%= isPersonalizeEnabled %>;  
     </script>
 </body>
 </html>

@@ -72,28 +72,6 @@ $(function () {
             gadgets.rpc.call(fid, RPC_GADGET_BUTTON_CALLBACK, null, action);
         });
 
-        //gadget titlebar click function handler
-/*        viewer.on('click', '.ues-component-heading', function (e) {
-            console.log('ues-component-heading clicked');
-            if( $(this).hasClass('edit') ){
-                //TODO disable edit options from the dashboard view
-                $(this).removeClass('edit');
-                $(this).find('.ues-component-full-handle').show();
-                $(this).find('.ues-component-delete-handle').hide();
-
-
-            } else {
-                //TODO enable edit options in the dashboard view
-                $(this).addClass('edit');
-                //change maxmize iclass to delete
-                $(this).find('.ues-component-full-handle').hide();
-                $(this).find('.ues-component-delete-handle').show();
-
-                //debugger;
-                //
-            }
-        });*/
-
         // gadget maximization handler
         viewer.on('click', '.ues-component-full-handle', function (e) {
             var id = $(this).closest('.ues-component').attr('id');
@@ -285,6 +263,38 @@ $(function () {
                 width: 12,
                 cellHeight: 50,
                 verticalMargin: 30,
+                disableResize: true,
+                disableDrag: true,
+            });
+        });
+        $('.nano').nanoScroller();
+    };
+
+    /**
+     * This is the initial call from the dashboard.js.
+     * @return {null}
+     * @private
+     */
+    var initDashboardEditor = function () {
+        var allPages = ues.global.dashboard.pages;
+        if (allPages.length > 0) {
+            page = (ues.global.page ? ues.global.page : allPages[0]);
+        }
+        for (var i = 0; i < allPages.length; i++) {
+            if (ues.global.page == allPages[i].id) {
+                page = allPages[i];
+            }
+        }
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
+            // render component toolbar for each components
+            $('.ues-component-box .ues-component').each(function () {
+                var component = ues.dashboards.findComponent($(this).attr('id'),page);
+                renderComponentToolbar(component);
+            });
+            $('.grid-stack').gridstack({
+                width: 12,
+                cellHeight: 50,
+                verticalMargin: 30,
                 disableResize: false,
                 disableDrag: false,
             }).on('dragstop', function (e, ui) {
@@ -309,9 +319,7 @@ $(function () {
                         updateComponent(container.attr('id'));
                     }
                 }
-
                 updateLayout();
-
             });
         });
         $('.nano').nanoScroller();
@@ -442,7 +450,7 @@ $(function () {
         }
     };
 
-    initDashboard();
+    isPersonalizeEnabled? initDashboardEditor() : initDashboard();
     updateMenuList();
     initComponentToolbar();
 });
