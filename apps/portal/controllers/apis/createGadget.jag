@@ -188,7 +188,7 @@
             if (!chartHbsFile.isExists()) {
                 return null;
             }
-            file.open('r');
+            chartHbsFile.open('r');
             var customPartial = chartHbsFile.readAll();
         } catch (e) {
             log.error(e.message);
