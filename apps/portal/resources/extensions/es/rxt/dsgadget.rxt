@@ -34,7 +34,7 @@
     </ui>
     <content>
         <table name="Gadget">
-            <field type="text">
+            <field type="text" required="true">
                 <name label="Gadget ZIP">Gadgetarchive</name>
             </field>
         </table>
@@ -58,6 +58,7 @@
                 <name label="Type">Type</name>
                 <values>
                     <value>gadget</value>
+                    <value>widget</value>
                 </values>
             </field>
             <field type="text-area">
@@ -66,7 +67,7 @@
             <field type="text">
                 <name label="Category">Gadgetcategory</name>
             </field>
-            <field type="text">
+            <field type="text" required="true">
                 <name label="Gadget Definition">Gadgetxmlurl</name>
             </field>
             <field type="text">

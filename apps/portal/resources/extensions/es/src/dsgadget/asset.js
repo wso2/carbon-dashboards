@@ -46,11 +46,24 @@ asset.manager = function (ctx) {
      * @private
      */
     var HTTP_SUCCESS_CODE = 200;
-
+    var BYTES_TO_MB = 1048576;
     var notifier = require('store').notificationManager;
     var storeConstants = require('store').storeConstants;
     var carbon = require('carbon');
+    var portalConfigs = require(GADGET_EXT_PATH + "/configs/portal.json");
     var social = carbon.server.osgiService('org.wso2.carbon.social.core.service.SocialActivityService');
+
+    var HttpPost = org.apache.http.client.methods.HttpPost;
+    var HttpDelete = org.apache.http.client.methods.HttpDelete;
+    var FileInputStream = Packages.java.io.FileInputStream;
+    var MultipartEntityBuilder = Packages.org.apache.http.entity.mime.MultipartEntityBuilder;
+    var HttpMultipartMode = Packages.org.apache.http.entity.mime.HttpMultipartMode;
+    var ContentType = Packages.org.apache.http.entity.ContentType;
+    var HttpClientBuilder = Packages.org.apache.http.impl.client.HttpClientBuilder;
+    var MultitenantUtils = Packages.org.wso2.carbon.utils.multitenancy.MultitenantUtils;
+    var ResponseHandler = Packages.org.apache.http.impl.client.BasicResponseHandler;
+    var builder = MultipartEntityBuilder.create();
+    var domain = MultitenantUtils.getTenantDomain(session.get("LOGGED_IN_USER"));
 
     /**
      * Get absolute path to the gadget extension directory.
@@ -69,54 +82,76 @@ asset.manager = function (ctx) {
      * @private
      */
     var uploadGadgetToDS = function (assetId, gadgetId, version) {
-        var portalConfigs = require(GADGET_EXT_PATH + "/configs/portal.json");
         if (portalConfigs.url.length > 0) {
-            var HttpPost = org.apache.http.client.methods.HttpPost;
-            var FileInputStream = Packages.java.io.FileInputStream;
-            var MultipartEntityBuilder = Packages.org.apache.http.entity.mime.MultipartEntityBuilder;
-            var HttpMultipartMode = Packages.org.apache.http.entity.mime.HttpMultipartMode;
-            var ContentType = Packages.org.apache.http.entity.ContentType;
-            var HttpClientBuilder = Packages.org.apache.http.impl.client.HttpClientBuilder;
             var zipFileName = getExtensionDir() + '/gadgets/' + assetId + '.gadget';
-            var MultitenantUtils = Packages.org.wso2.carbon.utils.multitenancy.MultitenantUtils;
-            var domain = MultitenantUtils.getTenantDomain(session.get("LOGGED_IN_USER"));
-            var builder = MultipartEntityBuilder.create();
             var post = new HttpPost(portalConfigs.url + '/apis/login');
-            var ResponseHandler = Packages.org.apache.http.impl.client.BasicResponseHandler;
+            ;
             var client;
             var response;
             var inputStream;
             var responseBody;
 
+            // If authenticate passes, send gadget to DS side with relevant parameters
+            responseBody = loginToDS();
+            if (responseBody !== false) {
+                post = new HttpPost(portalConfigs.url + '/t/' + domain + '/apis/assets');
+                inputStream = new FileInputStream(zipFileName);
+                builder = MultipartEntityBuilder.create();
+                builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                builder.addBinaryBody("selected-file", inputStream, ContentType.create("application/zip"), gadgetId);
+                builder.addTextBody("id", gadgetId);
+                builder.addTextBody("version", version);
+                builder.addTextBody("storeType", "es");
+                builder.addTextBody("type", "gadget");
+                post.setEntity(builder.build());
+                post.addHeader("cookie", "JSESSIONID=" + parse(String(responseBody)).sessionId);
+                client = HttpClientBuilder.create().build();
+                response = client.execute(post);
+                if (response.getStatusLine().getStatusCode() != HTTP_SUCCESS_CODE) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        return true;
+    };
+
+    var loginToDS = function () {
+        if (portalConfigs.url.length > 0) {
+            // Authenticate the user for DS side
+            var builder = MultipartEntityBuilder.create();
+            var client = HttpClientBuilder.create().build();
+            var response;
+            var post = new HttpPost(portalConfigs.url + '/apis/login');
+
+            builder.addTextBody("username", portalConfigs.username);
+            builder.addTextBody("password", portalConfigs.password);
+            post.setEntity(builder.build());
+
+            response = client.execute(post);
+
+            // If authentication fails, return
+            if (response.getStatusLine().getStatusCode() !== HTTP_SUCCESS_CODE) {
+                return false;
+            }
+            // Authenticate the user for DS side
             builder = MultipartEntityBuilder.create();
             builder.addTextBody("username", portalConfigs.username);
             builder.addTextBody("password", portalConfigs.password);
             post.setEntity(builder.build());
             client = HttpClientBuilder.create().build();
             response = client.execute(post);
+
+            // If authentication fails, return
             if (response.getStatusLine().getStatusCode() !== HTTP_SUCCESS_CODE) {
                 return false;
-            }
-            responseBody = new ResponseHandler().handleResponse(response);
-            post = new HttpPost(portalConfigs.url + '/apis/gadgets');
-            inputStream = new FileInputStream(zipFileName);
-            builder = MultipartEntityBuilder.create();
-            builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-            builder.addBinaryBody("selected-file", inputStream, ContentType.create("application/zip"), gadgetId);
-            builder.addTextBody("id", gadgetId);
-            builder.addTextBody("version", version);
-            builder.addTextBody("storeType", "es");
-            builder.addTextBody("domain", domain);
-            post.setEntity(builder.build());
-            post.addHeader("cookie", "JSESSIONID=" + parse(String(responseBody)).sessionId);
-            client = HttpClientBuilder.create().build();
-            response = client.execute(post);
-            if (response.getStatusLine().getStatusCode() != HTTP_SUCCESS_CODE) {
-                return false;
+            } else {
+                return new ResponseHandler().handleResponse(response);
             }
         }
-        return true;
+        return false;
     };
+
 
     /**
      * Remove the gadget archive from the associated dashboard server.
@@ -127,10 +162,22 @@ asset.manager = function (ctx) {
     var removeGadgetFromDS = function (gadgetId, version) {
         var portalConfigs = require(GADGET_EXT_PATH + "/configs/portal.json");
         if (portalConfigs.url.length > 0) {
-            var response = del(portalConfigs.url + '/apis/gadgets/' + gadgetId + '/' + version);
-            if (response.xhr.status != 200) {
-                return false;
+            var client;
+            var response;
+            var del;
+            var responseBody = loginToDS();
+            if (responseBody !== false) {
+                del = new HttpDelete(portalConfigs.url + '/t/' + domain + '/apis/assets/' + gadgetId + DILEMETER + version + '?storeType=es&type=gadget');
+                del.addHeader("cookie", "JSESSIONID=" + parse(String(responseBody)).sessionId);
+                client = HttpClientBuilder.create().build();
+                response = client.execute(del);
+
+                if (response.getStatusLine().getStatusCode() != HTTP_SUCCESS_CODE) {
+                    return false;
+                }
+                return true;
             }
+            return false;
         }
         return true;
     };
@@ -156,18 +203,31 @@ asset.manager = function (ctx) {
      */
     var saveGadget = function (assetId) {
         var gadgetFile = request.getFile('gadget_gadgetarchive');
+        var gadget = null;
         if (!gadgetFile) {
             return;
+        } else if (gadgetFile.getLength() / BYTES_TO_MB > portalConfigs.gadgetFileSizeLimit) {
+            log.error("No gadget file uploaded.");
+            return;
         }
-
-        // Build the gadget archive file name. Extension of the gadget archive is set to .gadget as .zip files
+        // Build the gadget archive file name. Extension of the gadget archive is set to .gdt as .zip files
         // will be automatically deployed.
         deleteGadget(assetId);
 
-        // Save the gadget
-        var gadget = new File(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gadget');
-        gadget.open('w');
-        gadget.write(gadgetFile.getStream());
+        try {
+            // Save the gadget
+            var gadget = new File(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gdt');
+            gadget.open('w');
+            gadget.write(gadgetFile.getStream());
+            return true;
+        } catch (e) {
+            log.error("Error saving DS gadgets")
+        } finally {
+            if (gadget !== null) {
+                gadget.close();
+            }
+
+        }
         gadget.close();
     };
 
@@ -186,7 +246,7 @@ asset.manager = function (ctx) {
             description: options.attributes.overview_description,
             version: options.attributes.overview_version,
             data: {
-                url: options.attributes.overview_gadgetxmlurl,
+                url: options.attributes.overview_gadgetxmlurl
             }
         };
 
@@ -261,12 +321,24 @@ asset.manager = function (ctx) {
             }
         }
         res.id = res.id + DILEMETER + res.version;
+
+        if (res.thumbnail.indexOf("gadget/" + options.attributes.overview_id) === 0) {
+            res.thumbnail = res.thumbnail.replace("gadget/" + options.attributes.overview_id, "gadget/" + res.id);
+        }
+        if (res.data.url.indexOf("gadget/" + options.attributes.overview_id) === 0) {
+            res.data.url = res.data.url.replace("gadget/" + options.attributes.overview_id, "gadget/" + res.id);
+        }
+
         var assetId = options.id;
         var zipFile = new File(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gadget');
-        zipFile.unZip(GADGET_EXT_PATH + '/gadgets/temp/' + assetId);
-
-        var gadgetJSONFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId+"/gadget.json");
-        var gadgetJSONString = stringify(res);
+        if (zipFile.isExists()) {
+            zipFile.unZip(GADGET_EXT_PATH + '/gadgets/temp/' + assetId);
+        }
+        else {
+            var zipExtractionDirectory = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId + '/');
+            zipExtractionDirectory.mkdir();
+        }
+        var gadgetJSONFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId + "/gadget.json");
         gadgetJSONFile.open("w");
         gadgetJSONFile.write(res);
         gadgetJSONFile.close();
@@ -320,21 +392,22 @@ asset.manager = function (ctx) {
             }
         },
         update: function (options) {
-            saveGadget(options.id)
-            if (buildGadgetJson(options)) {
-                if (!uploadGadgetToDS(options.id, options.attributes.overview_id, options.attributes.overview_version)) {
-                    log.error('Failed uploading the gadget to Dashboard Server.');
+            if (saveGadget(options.id)) {
+                if (buildGadgetJson(options)) {
+                    if (!uploadGadgetToDS(options.id, options.attributes.overview_id, options.attributes.overview_version)) {
+                        log.error('Failed uploading the gadget to Dashboard Server.');
+                    }
+                } else {
+                    log.error('Failed to build the gagdet.json from the metadata.');
                 }
-            } else {
-                log.error('Failed to build the gagdet.json from the metadata.');
+
+                // TODO: Save the gadget thumbnail (ES side)
+
+                this._super.update.call(this, options);
+                var asset = this.get(options.id);
+                // trigger notification on asset update
+                notifier.notifyEvent(storeConstants.ASSET_UPDATE_EVENT, asset.type, asset.name, null, asset.path, ctx.tenantId);
             }
-
-            // TODO: Save the gadget thumbnail (ES side)
-
-            this._super.update.call(this, options);
-            var asset = this.get(options.id);
-            // trigger notification on asset update
-            notifier.notifyEvent(storeConstants.ASSET_UPDATE_EVENT, asset.type, asset.name, null, asset.path, ctx.tenantId);
         },
         remove: function (id) {
             var asset = this.get(id);
@@ -351,7 +424,7 @@ asset.manager = function (ctx) {
             }
         }
     }
-}
+};
 
 asset.server = function (ctx) {
     return {
@@ -385,7 +458,7 @@ asset.configure = function () {
                         type: 'file'
                     }
                 }
-            },
+            }
         },
         meta: {
             lifecycle: {
@@ -400,9 +473,6 @@ asset.configure = function () {
             ui: {
                 icon: 'fw fw-web-app'
             },
-            // categories: {
-            //     categoryField: 'general_category'
-            // },
             notifications: {
                 enabled: true
             },

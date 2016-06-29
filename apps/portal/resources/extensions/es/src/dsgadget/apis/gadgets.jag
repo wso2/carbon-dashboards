@@ -37,7 +37,7 @@
      * @private
      */
     var GADGET_EXT_PATH = '/extensions/assets/' + ASSET_NAME;
-
+    var method = request.getMethod();
     /**
      * Get absolute path to the publisher directory.
      * @returns {string} Directory path
@@ -54,33 +54,44 @@
      * @returns {*}
      * @private
      */
-    var readGadgetConfigs = function(id) {
+    var readGadgetConfigs = function (id) {
         var gadgetFile = request.getFile('gadget_gadgetarchive');
-        if (!gadgetFile) {
-            log.error("No gadget file uploaded.");
-            return false;
-        }
-
         var gadgetDestPath = GADGET_EXT_PATH + '/gadgets/temp/' + id + '.gadget';
-
-        // Save the uploaded gadget file in the file system
-        var gadget = new File(gadgetDestPath);
-        gadget.open('w');
-        gadget.write(gadgetFile.getStream());
-        gadget.close();
-
-        // Extract the gadget zip file
         var InputStreamReader = Packages.java.io.InputStreamReader;
         var BufferedReader = Packages.java.io.BufferedReader;
         var ZipFile = Packages.java.util.zip.ZipFile;
         var StringBuilder = Packages.java.lang.StringBuilder;
-
         var zipFilePath = getPublisherDir() + gadgetDestPath;
         var conf;
+        var zip;
+        var gadget = null;
+        var bytesToMB = 1048576;
+        var portalConfigs = require(GADGET_EXT_PATH + "/configs/portal.json");
 
+
+        if (!gadgetFile) {
+            log.error("No gadget file uploaded.");
+            return;
+        } else if (gadgetFile.getLength() / bytesToMB > portalConfigs.gadgetFileSizeLimit) {
+            log.error("Gadget file exceeded");
+            return;
+        }
+
+        // Save the uploaded gadget file in the file system
+            try {
+                gadget = new File(gadgetDestPath);
+                gadget.open('w');
+                gadget.write(gadgetFile.getStream());
+            } catch (e) {
+                log.error('Cannot save the zip file in the relevant location. ' + e);
+                return;
+            } finally {
+                gadget.close();
+            }
+        // Extract the gadget zip file
         try {
             // Extract the zip file and read the content of the gadget.json file.
-            var zip = new ZipFile(zipFilePath);
+            zip = new ZipFile(zipFilePath);
             for (var e = zip.entries(); e.hasMoreElements();) {
                 var entry = e.nextElement();
                 if (entry.getName().toLowerCase() == "gadget.json") {
@@ -97,13 +108,13 @@
                 }
             }
         } catch (e) {
-            log.error('Error occurred while extracting the zip file.', e);
+            log.error('Error occurred while extracting the zip file.' + e);
+        } finally {
+            // Delete the uploaded gadget file
+            gadget.del();
         }
-
-        // Delete the uploaded gadget file
-        gadget.del();
         return conf;
-    }
+    };
 
     /**
      * Generate GUID.
@@ -115,11 +126,10 @@
             return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
         };
         return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
-    }
+    };
 
-    var method = request.getMethod();
     if (method == 'POST') {
-        print (readGadgetConfigs(guid()) || '');
+        print(readGadgetConfigs(guid()) || '');
     }
 })();
 %>

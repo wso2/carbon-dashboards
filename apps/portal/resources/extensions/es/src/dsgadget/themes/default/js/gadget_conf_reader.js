@@ -18,6 +18,7 @@
  */
 
 (function () {
+    var fileSizeLimit = 5;
     // Change the encoding type of the form
     var form = ($('#form-asset-update').length > 0) ? $('#form-asset-update') : $('#form-asset-create');
     form.attr('enctype', 'multipart/form-data');
@@ -26,7 +27,12 @@
     $('#gadget_gadgetarchive').on('change', function () {
         // Create formData element to be sent as multipart data
         var formData = new FormData();
-        formData.append('gadget_gadgetarchive', $(this)[0].files[0]);
+        if ( (($(this)[0].files[0].size/1024)/1024).toFixed(4) <= 5 ) {
+            formData.append('gadget_gadgetarchive', $(this)[0].files[0]);
+        }
+        else {
+            $(this)[0].files[0] = null;
+        }
 
         $.ajax({
             url: '/publisher/assets/dsgadget/apis/gadgets',
@@ -55,7 +61,7 @@
                         $('#overview_type option')
                             .removeAttr('selected')
                             .filter(function () {
-                                return $(this).text().toLowerCase() == gadgetConf.type.toLowerCase();
+                                return $(this).text().toLowerCase() === gadgetConf.type.toLowerCase();
                             }).attr('selected', '');
                     }
 
@@ -192,6 +198,9 @@
                         });
                     }
                 }
+            },
+            error : function (data) {
+                alert("Error");
             }
         });
     });
