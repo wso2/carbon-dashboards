@@ -749,22 +749,32 @@
                          <form class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-sm-12">
-				{{#if settings.personalize}}
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" name="personalize"{{#if settings.personalize}} checked="checked"{{/if}} /> <%= i18n.localize("personalizable") %>
-                                        </label>
-                                    </div>
-				{{/if}}
+				                    {{#if settings.personalize}}
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="personalize"{{#if settings.personalize}} checked="checked"{{/if}} />
+                                                <%= i18n.localize("personalizable") %>
+                                            </label>
+                                        </div>
+				                    {{/if}}
                                 </div>
                             </div>
- 			     <div class="form-group">
+ 			                <div class="form-group">
                                  <div class="col-sm-12">
-			 	     <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
-				     <input id="priorityPicker" name = "priority" type="range" min="0" max="<%= configs.maxGadgetPriority?configs.maxGadgetPriority:10 %>" value={{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5 %>{{/if}} />
-				     <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5 %>{{/if}}</span>
-				 </div>
-		             </div>
+			 	                    <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
+				                    <input id="priorityPicker" name = "priority" type="range" min="0" max="<%= configs.maxGadgetPriority?configs.maxGadgetPriority:10 %>"
+				                    value={{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5 %>{{/if}} />
+				                    <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}
+				                    <%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5 %>{{/if}}</span>
+				                </div>
+		                    </div>
+		                    <div class="form-group">
+                                 <div class="col-sm-12">
+			 	                    <label for="input-name" class="control-label"><%= i18n.localize("timeout") %></label>
+				                    <input id="timeoutInterval" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+				                    name = "timeoutInterval" type="text"  value={{#if settings.timeoutInterval}}{{settings.timeoutInterval}}{{else}}60000{{/if}} />
+				                </div>
+		                    </div>
                          </form>
                     </div>
                 </div>
