@@ -331,26 +331,29 @@ asset.manager = function (ctx) {
 
         var assetId = options.id;
         var zipFile = new File(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gadget');
+        var gadgetJSONFile = null;
+
+        // If zip file exists
         if (zipFile.isExists()) {
             zipFile.unZip(GADGET_EXT_PATH + '/gadgets/temp/' + assetId);
+            try {
+                gadgetJSONFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId + "/gadget.json");
+                gadgetJSONFile.open("w");
+                gadgetJSONFile.write(res);
+            } catch (e) {
+                log.error("Unable to update gadget json file." + e.getMessage());
+                throw e;
+            } finally {
+                if (gadgetJSONFile !== null) {
+                    gadgetJSONFile.close();
+                }
+            }
+            zipFile.del();
+            var unZippedGadgetFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId);
+            unZippedGadgetFile.zip(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gadget');
+            unZippedGadgetFile.del();
+            return res;
         }
-        else {
-            var zipExtractionDirectory = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId + '/');
-            zipExtractionDirectory.mkdir();
-        }
-        var gadgetJSONFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId + "/gadget.json");
-        gadgetJSONFile.open("w");
-        gadgetJSONFile.write(res);
-        gadgetJSONFile.close();
-
-        zipFile.del();
-
-        var unZippedGadgetFile = new File(GADGET_EXT_PATH + '/gadgets/temp/' + assetId);
-        unZippedGadgetFile.zip(GADGET_EXT_PATH + '/gadgets/' + assetId + '.gadget');
-        unZippedGadgetFile.del();
-        // Todo update the gadget.json in gadget.zip file with new content
-
-        return res;
     };
 
     return {
