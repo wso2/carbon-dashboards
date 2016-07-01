@@ -29,7 +29,7 @@
         queryString = request.getQueryString();
 
     var userRoles = usr.roles();
-    if(!user || userRoles === undefined) {
+    if(!user || !userRoles) {
         userRoles.push('anonymous');
     }
 
@@ -499,10 +499,6 @@
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>
-        var userRolesList = <%= userRoles %>;
-    </script>
-
-    <script>
         
         function getCookie(cname) {
             var name = cname + "=";
@@ -633,7 +629,8 @@
         //usage : in traverseMenu helper
         var user = <%= user %>,
             queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>;    
+            isAnonView = <%= isAnonView %>;
+        var userRolesList = <%= userRoles %>;
     </script>
 </body>
 </html>

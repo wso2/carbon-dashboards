@@ -46,7 +46,12 @@ $(function () {
      * @const
      */
     var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
-    var DEFAULT_VIEW_NAME = 'loggedIn';
+
+    /**
+     * Anonymous view role
+     * @const
+     */
+    var ANONYMOUS_ROLE = 'anonymous';
     var ANON_VIEW_NAME = 'anon';
     
     var page;
@@ -196,12 +201,7 @@ $(function () {
             }
 
             //check whether the view is an anonymous view
-            var viewRoles;
-            if (ues.global.dbType === DASHBOARD_DEFAULT_VIEW) {
-                viewRoles = page.layout.content.loggedIn.roles;
-            } else {
-                viewRoles = page.layout.content[ues.global.dbType].roles;
-            }
+            var viewRoles = page.layout.content[ues.global.dbType].roles;
 
             var isAnonView = false;
             if (ues.global.dbType === DASHBOARD_ANON_VIEW) {
@@ -209,7 +209,7 @@ $(function () {
                     isAnonView = true;
                 }
             }
-            if (viewRoles !== undefined && (viewRoles.length > 0 && viewRoles[0] === 'anonymous')) {
+            if (viewRoles !== undefined && (viewRoles.length > 0 && viewRoles[0].toLowerCase() === ANONYMOUS_ROLE)) {
                 isAnonView = true;
             }
 
@@ -246,70 +246,33 @@ $(function () {
     var getUserAllowedViews = function (page) {
         $('#ds-allowed-view-list').empty();
         var allowedViews = [];
-        var viewKeysArray = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
-
-        for (var i = 0, viewsArrayLength = viewKeysArray.length; i < viewsArrayLength; i++) {
-            var viewRoles = page.layout.content[viewKeysArray[i]].roles;
-            if (!viewRoles) {
-                if (viewKeysArray[i] === 'loggedIn') {
-                    viewRoles = ["Internal/everyone"];
-                } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
-                    viewRoles = ["anonymous"];
-                }
-            } else if (viewRoles.length === 0) {
-                viewRoles = ["Internal/everyone"];
-            }
-            
+        var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+        for (var i = 0; i < views.length; i++) {
+            var viewRoles = page.layout.content[views[i]].roles;
             if (isAllowedView(viewRoles)) {
-                allowedViews.push(viewKeysArray[i]);
-                var tempViewName = page.layout.content[viewKeysArray[i]].name;
-                if (!tempViewName) {
-                    if (viewKeysArray[i] === 'loggedIn') {
-                        tempViewName = DEFAULT_VIEW_NAME;
-                    } else if (viewKeysArray[i] === DASHBOARD_ANON_VIEW) {
-                        tempViewName = ANON_VIEW_NAME;
-                    }
-                }
-                
+                allowedViews.push(views[i]);
+                var tempViewName = page.layout.content[views[i]].name;
                 var viewOption = {
                     viewName: tempViewName
                 };
-                
-                $('#ds-allowed-view-list').append(viewOptionHbs(viewOption)).unbind('change').on('change', function () {
-                    var selectedView = $('#ds-allowed-view-list option:selected').text();
-                    selectedView = selectedView.trim();
-                    var previousSelectedView = selectedViewId || ues.global.dbType;
-                    selectedViewId = getViewId(selectedView);
-
-                    if (!selectedViewId) {
-                        if (viewKeysArray[i] === DEFAULT_VIEW_NAME) {
-                            selectedViewId = DASHBOARD_DEFAULT_VIEW;
-                        } else if (viewKeysArray[i] === ANON_VIEW_NAME) {
-                            selectedViewId = DASHBOARD_ANON_VIEW;
-                        }
-                    }
-
-                    ues.global.dbType = selectedViewId;
-                    destroyPage(page, previousSelectedView);
-                    ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, selectedViewId,
-                        function () {
-                            $('.ues-component-box .ues-component').each(function () {
-                                var component = ues.dashboards.findComponent($(this).attr('id'), page);
-                                renderComponentToolbar(component);
-                            });
-                            $('.grid-stack').gridstack({
-                                width: 12,
-                                cellHeight: 50,
-                                verticalMargin: 30,
-                                disableResize: true,
-                                disableDrag: true,
-                            });
-                        });
-                });
+                $('#ds-allowed-view-list').append(viewOptionHbs(viewOption));
             }
         }
         return allowedViews;
     };
+
+    //event handler for selecting views from the dropdown list in the page
+    $(document).on('change', '#ds-allowed-view-list', function (event) {
+        event.preventDefault();
+        var selectedView = $('#ds-allowed-view-list option:selected').text();
+        selectedView = selectedView.trim();
+        var previousSelectedView = selectedViewId || ues.global.dbType;
+        selectedViewId = getViewId(selectedView);
+
+        ues.global.dbType = selectedViewId;
+        destroyPage(page, previousSelectedView);
+        renderViewContent(selectedViewId);
+    });
 
     /**
      * Destroys all areas in a given page.
@@ -392,12 +355,11 @@ $(function () {
      * @returns {String} View id
      */
     var getViewId = function (viewName) {
-        var viewArray = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
-
-        for (var i = 0, viewArrayLength = viewArray.length; i < viewArrayLength; i++) {
-            if (page.layout.content[viewArray[i]].name) {
-                if (page.layout.content[viewArray[i]].name === viewName) {
-                    return viewArray[i];
+        var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+        for (var i = 0, viewArrayLength = views.length; i < viewArrayLength; i++) {
+            if (page.layout.content[views[i]].name) {
+                if (page.layout.content[views[i]].name === viewName) {
+                    return views[i];
                 }
             }
         }
@@ -444,6 +406,28 @@ $(function () {
     };
 
     /**
+     * Render the view content
+     * @param viewId View id
+     */
+    var renderViewContent = function (viewId) {
+        
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function () {
+            // render component toolbar for each components
+            $('.ues-component-box .ues-component').each(function () {
+                var component = ues.dashboards.findComponent($(this).attr('id'),page);
+                renderComponentToolbar(component);
+            });
+            $('.grid-stack').gridstack({
+                width: 12,
+                cellHeight: 50,
+                verticalMargin: 30,
+                disableResize: true,
+                disableDrag: true
+            });
+        });
+    };
+
+    /**
      * This is the initial call from the dashboard.js.
      * @return {null}
      * @private
@@ -468,24 +452,8 @@ $(function () {
             $('#list-user-views').removeClass("hide");
             $('#list-user-views').removeClass("show");
         }
-        if(renderingView === 'loggedIn') {
-            renderingView = 'default';
-        }
         ues.global.dbType = renderingView;
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, renderingView, function () {
-            // render component toolbar for each components
-            $('.ues-component-box .ues-component').each(function () {
-                var component = ues.dashboards.findComponent($(this).attr('id'),page);
-                renderComponentToolbar(component);
-            });
-            $('.grid-stack').gridstack({
-                width: 12,
-                cellHeight: 50,
-                verticalMargin: 30,
-                disableResize: true,
-                disableDrag: true,
-            });
-        });
+        renderViewContent(renderingView);
         $('.nano').nanoScroller();
     };
 
