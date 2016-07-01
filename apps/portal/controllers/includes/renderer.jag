@@ -26,6 +26,9 @@ var portalRoot;
     var permissions = dashboard.permissions;
     var anonymous = permissions.viewers.indexOf(anonRole) !== -1;
     var db = require('/modules/dashboards.js');
+    var i18n = require("i18n");
+    var ANON_VIEW = 'anon';
+    var ANONYMOUS_ROLE = 'anonymous';
 
     /**
      * Unauthorized error message.
@@ -34,11 +37,14 @@ var portalRoot;
     var UNAUTHORIZED_ERROR = 'Dashboard access not authorized';
     if (user) {
         //identify edit/view permission for the logged user
-        if (utils.allowed(user.roles, permissions.editors)) {
+        if (utils.allowed(user.roles, permissions.owners)) {
+            user.isOwner = true;
+        } else if (utils.allowed(user.roles, permissions.editors)) {
             user.isEditor = true;
         } else if (utils.allowed(user.roles, permissions.viewers)) {
             user.isViewer = true;
         } else {
+            user.isOwner = false;
             user.isEditor = false;
             user.isViewer = false;
         }
@@ -50,54 +56,56 @@ var portalRoot;
             return;
         }
 
-
         if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
 
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers)) {
+        if (!dashboard.isanon && !user.isEditor && !user.isViewer && !user.isOwner) {
             response.sendError(401, UNAUTHORIZED_ERROR);
             return;
         }
     }
 
-    // check whether the requested page exists and the anonymous view for
-    // that page is defined
     pageId = pageId || dashboard.landing;
+    var currentPage;
 
-    var anonView = [];
-    var pageExists = false;
     dashboard.pages.forEach(function (page) {
         if (page.id == pageId) {
-            pageExists = true;
-            var pageLayoutContent = JSON.parse(JSON.stringify(page.layout.content));
-            var viewKeysArray = Object.keys(pageLayoutContent);
-            var viewArrayLength = viewKeysArray.length;
-            for (var i = 0; i < viewArrayLength; i++) {
-                var viewRoles = page.layout.content[viewKeysArray[i]].roles;
-                if (viewRoles === undefined && viewKeysArray[i] === 'anon' && page.layout.content.anon !== undefined) {
-                    anonView.push(page.layout.content.anon);
-                } else if (viewRoles!== undefined && viewRoles.length > 0 && (viewRoles[0] === 'anonymous')) {
-                    anonView.push(page.layout.content[viewKeysArray[i]]);
-                }
-            }
+            currentPage = page;
         }
     });
 
-    var i18n = require("i18n");
-    //check whether the page doesn't exist, or the user hasn't logged in
-    // and the anonymous view is undefined
-    if (!pageExists || (!user && (anonView.length === 0))) {
+    //check whether the page exists or not
+    if (!currentPage) {
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
     }
 
-    //check whether the user has no edit/view permission and the anonymous
-    // view is undefined
-    if (user) {
-        if (!(user.isEditor || user.isViewer) && (anonView.length === 0)) {
-            log.info("2*** ");
+    if (!user) {
+        // if it is an anonymous user, check whether an anon view exists for the page
+        var pageLayoutContent = JSON.parse(JSON.stringify(currentPage.layout.content));
+        var pageViews = Object.keys(pageLayoutContent);
+        var existsAnonView = false;
+        for (var i = 0; i < pageViews.length; i++) {
+            var viewRoles = currentPage.layout.content[pageViews[i]].roles;
+            if (viewRoles === undefined && pageViews[i] === ANON_VIEW && currentPage.layout.content.anon !== undefined) {
+                //check anon view of a previous dashboard json file
+                existsAnonView = true;
+                break;
+            } else if (viewRoles !== undefined && viewRoles.length > 0 && (viewRoles[0].toLowerCase() === ANONYMOUS_ROLE)) {
+                existsAnonView = true;
+                break;
+            }
+        }
+        if (!existsAnonView) {
+            response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
+                    i18n.localize("page.not.found"));
+            return;
+        }
+    } else {
+        //if it is a logged in user, check whether the user has edit/view/owner permission
+        if (!(user.isEditor || user.isViewer || user.isOwner)) {
             response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
                     i18n.localize("page.not.found"));
             return;
@@ -107,8 +115,6 @@ var portalRoot;
     dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
     var isCustomDB = dashboard.isUserCustom;
     portalRoot = tenantedUrlPrefix + 'dashboards/';
-    // global reference to getBootstrapLayout() function
-    //renderEngine.getDashboardContent = db.getBootstrapLayout;
 
     include(utils.resolvePath('templates/dashboard.jag'));
 }()); %>

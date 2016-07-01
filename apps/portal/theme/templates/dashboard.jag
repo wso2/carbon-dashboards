@@ -29,7 +29,7 @@
         queryString = request.getQueryString();
 
     var userRoles = usr.roles();
-    if(!user || userRoles === undefined) {
+    if(!user || !userRoles) {
         userRoles.push('anonymous');
     }
 
@@ -486,6 +486,7 @@
     <% include('/controllers/includes/common-scripts.jag'); %>
     <% include('/controllers/includes/dashboard-scripts.jag'); %>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-gadgets')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-store')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-dashboards')%>"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
@@ -496,10 +497,6 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-ajax-api')%>"></script>
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
-
-    <script>
-        var userRolesList = <%= userRoles %>;
-    </script>
 
     <script>
         
@@ -632,7 +629,8 @@
         //usage : in traverseMenu helper
         var user = <%= user %>,
             queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>;    
+            isAnonView = <%= isAnonView %>;
+        var userRolesList = <%= userRoles %>;
     </script>
 </body>
 </html>

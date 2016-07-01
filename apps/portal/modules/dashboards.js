@@ -16,6 +16,11 @@
 var log = new Log();
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
+var usr = require('/modules/user.js');
+var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
+var ANONYMOUS_ROLE = 'anonymous';
+var ANONYMOUS_VIEW_NAME = 'Anonymous View';
+var DEFAULT_VIEW_NAME = 'Default View';
 
 /**
  * Get registry reference.
@@ -115,7 +120,7 @@ var getAsset = function (id, originalDashboardOnly) {
     if (user) {
         var originalDBPath = registryPath(id);
         if (registry.exists(originalDBPath)) {
-            originalDB = JSON.parse(registry.content(originalDBPath));
+            originalDB = getDashboardContentFromRegistry(registry, originalDBPath);//JSON.parse(registry.content(originalDBPath));//
         }
         if (!originalDashboardOnly) {
             var userDBPath = registryUserPath(id, user.username);
@@ -125,9 +130,14 @@ var getAsset = function (id, originalDashboardOnly) {
             }
         }
     }
-    var content = registry.content(path);
-    var dashboard = JSON.parse(content);
+    //var content = registry.content(path);//
+    var contentDashboardJSON = getDashboardContentFromRegistry(registry, path); //JSON.parse(content);
+    var dashboard = contentDashboardJSON;
     if (dashboard) {
+        if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
+            contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
+        }
+        var dashboard = contentDashboardJSON;
         dashboard.isUserCustom = isCustom;
         dashboard.isEditorEnable = false;
         if (!originalDashboardOnly && originalDB) {
@@ -184,7 +194,7 @@ var getAssets = function (paging) {
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
     dashboards.forEach(function (dashboard) {
-        dashboardz.push(JSON.parse(registry.content(dashboard)));
+        dashboardz.push(getDashboardContentFromRegistry(registry, dashboard));//JSON.parse(registry.content(dashboard))); //
     });
     return dashboardz;
 };
@@ -206,6 +216,7 @@ var create = function (dashboard) {
         content: JSON.stringify(dashboard),
         mediaType: 'application/json'
     });
+    usr.createRoles(dashboard.id);
     userManager.denyRole('internal/everyone', path, 'read');
 };
 
@@ -285,6 +296,7 @@ var remove = function (id) {
     if (registry.exists(path)) {
         registry.remove(path);
     }
+    usr.removeRoles(id);
 };
 
 /**
@@ -463,6 +475,38 @@ var getBanner = function (dashboardId, username) {
     return result;
 };
 
+var getDashboardContentFromRegistry = function (registry, dashboard) {
+    var dashboardJsonVersion = "2.4.0";
+    // /_system/config/ues/dashboards';
+    // return id ? path + '/' + id : path;
+    log.info(dashboard);
+    var dashboardContent = JSON.parse(registry.content(dashboard));
+    if (dashboardContent) {
+        if (!dashboardContent.version || dashboardContent.version !== dashboardJsonVersion) {
+            log.info("no version");
+            dashboardContent.version = dashboardJsonVersion;
+            dashboardContent.pages.forEach(function (page) {
+                if (page.layout.content.loggedIn) {
+                    page.layout.content.default = page.layout.content.loggedIn;
+                    page.layout.content.default.name = DEFAULT_VIEW_NAME;
+                    page.layout.content.default.roles = [INTERNAL_EVERYONE_ROLE];
+                    delete page.layout.content.loggedIn;
+                }
+                if (page.layout.content.anon) {
+                    log.info("having anon content");
+                    page.layout.content.anon.name = ANONYMOUS_VIEW_NAME;
+                    page.layout.content.anon.roles = [ANONYMOUS_ROLE];
+                }
+            });
+            var path = '/_system/config/ues/dashboards/' + dashboardContent.id;
+            registry.put(path, {
+                content: JSON.stringify(dashboardContent),
+                mediaType: 'application/json'
+            });
+        }
+    }
+    return dashboardContent; //finally return the content
+};
 /**
  * Generate Bootstrap layout from JSON layout
  * @param   {String} pageId     ID of the dashboard page

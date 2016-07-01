@@ -8,6 +8,11 @@ var maxRolesLimit;
 
 (function () {
     var log = new Log();
+    var editorRole = "editor";
+    var viewerRole = "viewer";
+    var ownerRole = "owner";
+    var carbon = require('carbon');
+    var server = new carbon.server.Server();
 
     current = function () {
         var user = session.get('user');
@@ -19,8 +24,6 @@ var maxRolesLimit;
     };
 
     login = function (username, password) {
-        var carbon = require('carbon');
-        var server = new carbon.server.Server();
         try {
             if (!server.authenticate(username, password)) {
                 return false;
@@ -64,27 +67,58 @@ var maxRolesLimit;
     };
 
     roles = function () {
-        var carbon = require('carbon');
-        var server = new carbon.server.Server();
         var user = session.get('user');
         var um = new carbon.user.UserManager(server, user.tenantId);
         return um.allRoles();
     };
 
     searchRoles = function (filter, maxItems) {
-        var carbon = require('carbon');
-        var server = new carbon.server.Server();
         var user = session.get('user');
         var um = new carbon.user.UserManager(server, user.tenantId);
         return um.searchRoles(filter, maxItems, true, true, true);
     };
 
     maxRolesLimit = function () {
-        var carbon = require('carbon');
-        var server = new carbon.server.Server();
         var user = session.get('user');
         var um = new carbon.user.UserManager(server, user.tenantId);
         var map = um.getMaxLimit('MaxRoleNameListLength');
         return map.get("PRIMARY");
+    };
+
+    createRoles = function (id) {
+        var user = session.get('user');
+        var userManager = new carbon.user.UserManager(server, user.tenantId);
+        try {
+            var users = [user.username];
+            if (!userManager.roleExists("Internal/" + id + "-" + editorRole)) {
+                userManager.addRole("Internal/" + id + "-" + editorRole, users, null);
+            }
+            if (!userManager.roleExists("Internal/" + id + "-" + viewerRole)) {
+                userManager.addRole("Internal/" + id + "-" + viewerRole, users, null);
+            }
+            if (!userManager.roleExists("Internal/" + id + "-" + ownerRole)) {
+                userManager.addRole("Internal/" + id + "-" + ownerRole, users, null);
+            }
+        } catch (e) {
+            log.error(e);
+        }
+    };
+
+    removeRoles = function (id) {
+        var user = session.get('user');
+        var userManager = new carbon.user.UserManager(server, user.tenantId);
+        try {
+            if (userManager.roleExists("Internal/" + id + "-" + editorRole)) {
+                userManager.removeRole("Internal/" + id + "-" + editorRole);
+            }
+            if (userManager.roleExists("Internal/" + id + "-" + viewerRole)) {
+                userManager.removeRole("Internal/" + id + "-" + viewerRole);
+            }
+            if (userManager.roleExists("Internal/" + id + "-" + ownerRole)) {
+                userManager.removeRole("Internal/" + id + "-" + ownerRole);
+            }
+        } catch (e) {
+            log.error(e);
+        }
     };
 }());

@@ -20,11 +20,6 @@
 (function () {
     var log = new Log();
 
-    if (!user) {
-        response.sendError(401, 'unauthorized to access assets');
-        return;
-    }
-
     var DEFAULT_START = 0;
     var DEFAULT_COUNT = -1;
     var id;
@@ -34,6 +29,7 @@
     var utils = require('/modules/utils.js');
     var store = utils.store();
     var assetType = request.getParameter('type');
+    var storeType = request.getParameter('storeType');
     var method = request.getMethod();
 
     response.contentType = 'application/json';
@@ -41,6 +37,27 @@
     var assets;
 
     var matcher = new URIMatcher(request.getRequestURI());
+    if (matcher.match('/assets/publicassets/{id}')) {
+    id = matcher.elements().id;
+    if (method === 'GET') {
+        assets = store.getAsset(assetType, id);
+        if (!assets) {
+            response.sendError(404, JSON.stringify({
+                error: true
+            }));
+            return;
+        }
+        print(assets);
+        return;
+    }
+    }
+
+    if (!user) {
+        response.sendError(401, 'unauthorized to access assets');
+        return;
+    }
+
+
     if (matcher.match('/assets/{id}')) {
         id = matcher.elements().id;
         if (method === 'GET') {
@@ -58,6 +75,20 @@
         }
         if (method === 'PUT') {
             //TODO
+        }
+        // Check whether it is a delete request. If it is a delete request, delete the asset
+        if (method === 'DELETE') {
+            utils.sandbox(utils.context(user, urlDomain), function () {
+                assets = store.deleteAsset(assetType, id, storeType);
+            });
+            if (!assets) {
+                response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            print(assets);
+            return;
         }
         response.sendError(405, JSON.stringify({
             error: true

@@ -64,6 +64,7 @@ $(function () {
         $.ajax({
             url: dashboardsApi + '/' + id,
             method: 'DELETE',
+            async : false,
             success: function () {
                 button.stop();
                 location.reload();

@@ -101,35 +101,33 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
-            if(menu[i]){
-                if (designer) {
-                    //todo use fw-hide class once latest wso2 icon project released
-                    var iClass = menu[i].ishidden ? "<i class='fw fw-block'></i>" : "<i class='fw fw-view'></i>";
-                    divTree +="<li id='" + menu[i].id +"' data-parent='" + parent +
-                        "' data-id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
-                                "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" +menu[i].id + 
-                                "'>" + iClass + "</span></span>";
-                } else {
-                    var divLi = "<li><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>";
-                    if(!menu[i].ishidden){
-                        if (isAnonView || !user) {
-                            if (menu[i].isanon) {
-                                // Anonymous viewing. So render only anonymous pages links.
-                                divTree += divLi;
-                            }
-                        } else {
+            if (designer) {
+                //todo use fw-hide class once latest wso2 icon project released
+                var iClass = menu[i].ishidden ? "<i class='fw fw-block'></i>" : "<i class='fw fw-view'></i>";
+                divTree += "<li id='" + menu[i].id + "' data-parent='" + parent +
+                    "' data-id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
+                    "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" + menu[i].id +
+                    "'>" + iClass + "</span></span>";
+            } else {
+                var divLi = "<li><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>";
+                if (!menu[i].ishidden) {
+                    if (isAnonView || !user) {
+                        if (menu[i].isanon) {
+                            // Anonymous viewing. So render only anonymous pages links.
                             divTree += divLi;
                         }
+                    } else {
+                        divTree += divLi;
                     }
                 }
+            }
 
-                if(menu[i].subordinates.length > 0){
-                    divTree += "<ul class='' id='"+ menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
-                    updateSubordinates(menu[i].subordinates, menu[i].id);
-                    divTree += "</ul>";
-                } else{
-                    divTree += "</li>";
-                }
+            if (menu[i].subordinates.length > 0) {
+                divTree += "<ul class='' id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+                updateSubordinates(menu[i].subordinates, menu[i].id);
+                divTree += "</ul>";
+            } else {
+                divTree += "</li>";
             }
         }
     }

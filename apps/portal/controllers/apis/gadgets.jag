@@ -21,6 +21,8 @@
 (function () {
     var log = new Log();
     var GADGET_STORE_PATH = '/store/carbon.super/es/gadget';
+    var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
 
     // Create the respective directory structure if not available
     (function (parent, childs) {
@@ -65,25 +67,28 @@
 
     var method = request.getMethod();
     var matcher = new URIMatcher(request.getRequestURI());
-    if (matcher.match('/gadgets')) {
-        if (method === 'POST') {
-            // Create the gadget
-            saveGadget(request.getParameter('id') + '$' + request.getParameter('version'));
-        }
-    }
 
-    if (matcher.match('/gadgets/{id}/{version}')) {
-        var id = matcher.elements().id;
-        var version = matcher.elements().version;
-        if (method === 'PUT') {
-            // Update the gadget
-            saveGadget(id + '$' + version);
+    if (user) {
+        if (matcher.match('/gadgets')) {
+            if (method === 'POST') {
+                // Create the gadget
+                saveGadget(request.getParameter('id') + '$' + request.getParameter('version'));
+            }
         }
-
-        if (method === 'DELETE') {
-            // Delete the gadget
-            deleteGadget(id + '$' + version);
+        if (matcher.match('/gadgets/{id}/{version}')) {
+            var id = matcher.elements().id;
+            var version = matcher.elements().version;
+            if (method === 'PUT') {
+                // Update the gadget
+                saveGadget(id + '$' + version);
+            }
+            if (method === 'DELETE') {
+                // Delete the gadget
+                deleteGadget(id + '$' + version);
+            }
         }
+    } else {
+        response.sendError(401, i18n.localize("request.not.authorized"));
     }
 })();
 %>

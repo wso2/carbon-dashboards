@@ -208,7 +208,7 @@
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
-        var layout = (pageType === 'default' ? $(page.layout.content.loggedIn) : $(page.layout.content[pageType]));
+        var layout = $(page.layout.content[pageType]);//(pageType === 'default' ? $(page.layout.content.loggedIn) : $(page.layout.content[pageType]));
         content = page.content[pageType];
         componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
         // this is to be rendered only in the designer. in the view mode, the template is rendered in the server
@@ -216,42 +216,80 @@
         // render gadget contents
         isDesignerView = isDesigner;
         doneCallback = done;
-        componentBoxNum = 0;
+        componentBoxNum = -1;
         componentBoxList = $('.ues-component-box');
         sortGadgets();
-        renderGadget();
+        loadingFinishedCount = 0;
+        prePriority = getPriorty(componentBoxList[0]);
+        rederingInitiator();
         if (!doneCallback) {
             return;
         }
         doneCallback();
     };
+
+    var isGadgetUnavailable = function (gadgetComponetBox) {
+        var isGadgetExists = false;
+        ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+            isGadgetExists = error
+        });
+        return isGadgetExists;
+    }
+
+    var rederingInitiator = function () {
+        while (true) {
+            if ((prePriority === getPriorty(componentBoxList[componentBoxNum + 1]) || renderNextPriority) && componentBoxNum < componentBoxList.length) {
+                loadingFinishedCount++;
+                renderNextPriority = false;
+                componentBoxNum++;
+                renderGadget();
+                prePriority = getPriorty(componentBoxList[componentBoxNum]);
+                if (!doneCallback) {
+                    return;
+                }
+                doneCallback();
+            } else {
+                break;
+            }
+
+        }
+    };
+
+    var getPriorty = function (componentBoxA) {
+        var defaultPriorityVal = ues.global.dashboard.defaultPriority;
+        var contentA = content[$(componentBoxA).attr('id')];
+        if (contentA) {
+            if (contentA[0]) {
+                var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                return priorityA;
+            }
+        }
+    };
+
+    var priorityComparison = function (componentBoxA, componentBoxB) {
+        var priorityA = getPriorty(componentBoxA);
+        var priorityB = getPriorty(componentBoxB);
+        if (priorityA && priorityB) {
+            return (priorityB - priorityA);
+        }
+        else {
+            return priorityA ? -1 : 1;
+        }
+    }
 
     var sortGadgets = function () {
         var defaultPriorityVal = ues.global.dashboard.defaultPriority;
         componentBoxList.sort(function (componentBoxA, componentBoxB) {
-            var contentA = content[$(componentBoxA).attr('id')];
-            var contentB = content[$(componentBoxB).attr('id')];
-            if (contentA && contentB) {
-                if(contentA[0] && contentB[0]){
-                    var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                    var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                    return (priorityB - priorityA);
-                }
-                else{
-                    return 1;
-                }
-            }
+            return priorityComparison(componentBoxA, componentBoxB);
         });
     };
 
     var finishedLoading = function () {
-        componentBoxNum++;
-        renderGadget();
-        if (!doneCallback) {
-            return;
+        loadingFinishedCount--;
+        if (loadingFinishedCount === 0) {
+            renderNextPriority = true;
+            rederingInitiator();
         }
-        doneCallback();
-
     };
 
     var renderGadget = function () {
@@ -278,7 +316,7 @@
             if (isDesignerView || hasComponent) {
                 container.html(componentBoxContentHbs());
             }
-            if (hasComponent) {
+            if (hasComponent && !(isGadgetUnavailable(componentBoxList[componentBoxNum]))) {
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
                         log(err);
@@ -370,8 +408,8 @@
     var resolveURI = function (uri) {
         var index = uri.indexOf('://');
         var scheme = uri.substring(0, index);
-        if(scheme === LEGACY_STORE){
-            uri.replace(LEGACY_STORE,DEFAULT_STORE);
+        if (scheme === LEGACY_STORE) {
+            uri.replace(LEGACY_STORE, DEFAULT_STORE);
             scheme = DEFAULT_STORE;
         }
         var uriPlugin = ues.plugins.uris[scheme];
@@ -384,7 +422,7 @@
         if ((typeof(dashboard) !== 'undefined') && dashboard.shareDashboard) {
             path = path.replace(user.domain, SUPER_DOMAIN);
         }
-        
+
         return path;
     };
 
@@ -400,7 +438,7 @@
         findPage: findPage,
         resolveURI: resolveURI,
         finishedLoadingGadget: finishedLoading,
-        findComponent : findComponent
+        findComponent: findComponent
     };
 
     ues.assets = {};
