@@ -249,9 +249,15 @@
 
     var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
-        ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
-            isGadgetExists = error
-        });
+        if(ues.global.dashboard.shareDashboard){
+            ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+                isGadgetExists = error
+            });
+        } else {
+            ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+                isGadgetExists = error
+            });
+        }
         return isGadgetExists;
     }
 

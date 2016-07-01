@@ -34,6 +34,21 @@
             }
         });
     };
+
+    store.sharedAsset = function (type, id, cb) {
+        $.ajax({
+            url: assetsUrl + '/publicassets/' + id + '?' + (domain ? 'domain=carbon.super&' : '') + 'type=' + type,
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
+            }
+        });
+    };
     
     store.assets = function (type, paging, cb) {
         var query = 'type=' + type;
