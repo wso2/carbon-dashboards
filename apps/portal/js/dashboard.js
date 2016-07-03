@@ -52,7 +52,6 @@ $(function () {
      * @const
      */
     var ANONYMOUS_ROLE = 'anonymous';
-    var ANON_VIEW_NAME = 'anon';
     
     var page;
     var selectedViewId;
@@ -264,11 +263,9 @@ $(function () {
     //event handler for selecting views from the dropdown list in the page
     $(document).on('change', '#ds-allowed-view-list', function (event) {
         event.preventDefault();
-        var selectedView = $('#ds-allowed-view-list option:selected').text();
-        selectedView = selectedView.trim();
+        var selectedView = $('#ds-allowed-view-list option:selected').text().trim();
         var previousSelectedView = selectedViewId || ues.global.dbType;
         selectedViewId = getViewId(selectedView);
-
         ues.global.dbType = selectedViewId;
         destroyPage(page, previousSelectedView);
         renderViewContent(selectedViewId);
@@ -356,7 +353,7 @@ $(function () {
      */
     var getViewId = function (viewName) {
         var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
-        for (var i = 0, viewArrayLength = views.length; i < viewArrayLength; i++) {
+        for (var i = 0; i < views.length; i++) {
             if (page.layout.content[views[i]].name) {
                 if (page.layout.content[views[i]].name === viewName) {
                     return views[i];
@@ -373,10 +370,9 @@ $(function () {
      * @returns {boolean} View is allowed or not
      */
     var isAllowedView = function (viewRoles) {
-        var viewRolesLength = viewRoles.length;
-        for (var i = 0, userRolesLength = userRolesList.length; i < userRolesLength; i++) {
+        for (var i = 0; i < userRolesList.length; i++) {
             var tempUserRole = userRolesList[i];
-            for (var j = 0; j < viewRolesLength; j++) {
+            for (var j = 0; j < viewRoles.length; j++) {
                 if (viewRoles[j] === tempUserRole) {
                     return true;
                 }
@@ -410,7 +406,6 @@ $(function () {
      * @param viewId View id
      */
     var renderViewContent = function (viewId) {
-        
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
