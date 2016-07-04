@@ -41,9 +41,8 @@
     i18n.init(request, utils.getLocaleResourcePath());
     response.contentType = 'application/json';
 
-    if (matcher.match('/assets/publicassets/{id}')) {
+    if (matcher.match('/assets/publicAssets/{id}')) {
         id = matcher.elements().id;
-        new Log().info(id);
         if (method === 'GET') {
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.getAsset(assetType, id);

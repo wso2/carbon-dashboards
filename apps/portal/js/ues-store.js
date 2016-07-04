@@ -19,10 +19,26 @@
     var domain = ues.global.urlDomain || ues.global.userDomain;
     var assetsUrl = ues.utils.relativePrefix() + 'apis/assets';
     var store = (ues.store = {});
+    var SUPERTENANT_DOMAIN = "carbon.super";
 
     store.asset = function (type, id, cb) {
         $.ajax({
-            url: assetsUrl + '/publicassets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
+            }
+        });
+    };
+
+    store.sharedAsset = function (type, id, cb) {
+        $.ajax({
+            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + SUPERTENANT_DOMAIN + '&' : '') + 'type=' + type,
             method: "GET",
             contentType: "application/json",
             async: false,
