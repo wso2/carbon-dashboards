@@ -77,6 +77,9 @@
             print(assets);
             return;
         }
+        if (method === 'PUT') {
+            //TODO
+        }
         // Check whether it is a delete request. If it is a delete request, delete the asset
         if (method === 'DELETE') {
             utils.sandbox(utils.context(user, urlDomain), function () {
@@ -137,6 +140,9 @@
             });
             print(assets);
             return;
+        }
+        if (method === 'PUT') {
+            //TODO
         }
         if (method === 'POST') {
             var results = asset.addAsset(assetType, request.getParameter('id') + esConfig.dirNameDelimiter + request.getParameter('version'), request.getFile("selected-file"), storeType);
