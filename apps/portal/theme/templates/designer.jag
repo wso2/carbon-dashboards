@@ -360,21 +360,6 @@ var userRoles = usr.roles();
                             </span>
                         </button>
                         <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu">
-                            <li>
-                                <a href="#">
-                                    <span class="name">API</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span class="name">WSDL</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span class="name">SOAP Service</span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -417,6 +402,31 @@ var userRoles = usr.roles();
 
     <script>
         var userRolesList = <%= userRoles %>;
+        var i18n_object = '{ ' +
+                            ' "add.new.layout" : "<%= i18n.localize("add.new.layout")%>",' +
+                            ' "add.new.layout.message" : "<%= i18n.localize("add.new.layout.message")%>",' +
+                            ' "reset.page" : "<%= i18n.localize("reset.page")%>",' +
+                            ' "reset.page.message" : "<%= i18n.localize("reset.page.message")%>",' +
+                            ' "delete.page" : "<%= i18n.localize("delete.page")%>",' +
+                            ' "delete.page.message" : "<%= i18n.localize("delete.page.message")%>",' +
+                            ' "add.anonymous.role" : "<%= i18n.localize("add.anonymous.role")%>",' +
+                            ' "add.anonymous.role.message" : "<%= i18n.localize("add.anonymous.role.message")%>",' +
+                            ' "add.new.role.removing.anonymous" : "<%= i18n.localize("add.new.role.removing.anonymous")%>",' +
+                            ' "add.new.role.removing.anonymous.message" : "<%= i18n.localize("add.new.role.removing.anonymous.message")%>",' +
+                            ' "add.new.role" : "<%= i18n.localize("add.new.role")%>",' +
+                            ' "add.new.role.message" : "<%= i18n.localize("add.new.role.message")%>",' +
+                            ' "delete.view" : "<%= i18n.localize("delete.view")%>",' +
+                            ' "delete.view.message" : "<%= i18n.localize("delete.view.message")%>",' +
+                            ' "not.delete.view" : "<%= i18n.localize("not.delete.view")%>",' +
+                            ' "not.delete.view.message" : "<%= i18n.localize("not.delete.view.message")%>",' +
+                            ' "not.delete.role" : "<%= i18n.localize("not.delete.role")%>",' +
+                            ' "not.delete.role.message" : "<%= i18n.localize("not.delete.role.message")%>",' +
+                            ' "remove.gadgets.with.role.addition" : "<%= i18n.localize("remove.gadgets.with.role.addition")%>",' +
+                            ' "remove.gadgets.with.role.addition.message" : "<%= i18n.localize("remove.gadgets.with.role.addition.message")%>",' +
+                            ' "not.close.view" : "<%= i18n.localize("not.close.view")%>",' +
+                            ' "not.close.view.message" : "<%= i18n.localize("not.close.view.message")%>"' +
+                            ' }';
+        var i18n_data = JSON.parse(i18n_object);
     </script>
 
     <!-- Handlebar templates -->
@@ -617,11 +627,6 @@ var userRoles = usr.roles();
                                 <input type="checkbox" name="landing"{{#if landing}} checked disabled{{/if}} /> <%= i18n.localize("use.as.landing") %>
                             </label>
                         </div>
-                        <!--<div class="checkbox {{#if isUserCustom}}hidden{{/if}}">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" name="anon"{{#if isanon}} checked{{/if}} /> <%= i18n.localize("make.anonymous") %>-->
-                            <!--</label>-->
-                        <!--</div>-->
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="fluidLayout"{{#if fluidLayout}} checked{{/if}} /> <%= i18n.localize('fluid.layout') %>
@@ -780,7 +785,7 @@ var userRoles = usr.roles();
     <script id="add-new-view-hds" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
             <div class="view-heading ues-component-heading">
-                <a role="tab" data-toggle="tab" id="view-name"><%=i18n.localize("new.view")%></a>
+                <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
                 <div class="gadget-actions ues-component-actions" style="display:inline-block;margin:2px;height:40px">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
@@ -790,7 +795,7 @@ var userRoles = usr.roles();
                         <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
                             <i class="icon fw fw-delete"></i>
                         </button>
-                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
+                        <button type="button" class="btn btn-default ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
                             <i class="icon fw fw-cancel"></i>
                         </button>
                     </div>
@@ -881,10 +886,6 @@ var userRoles = usr.roles();
                          </form>
                     </div>
                 </div>
-            </div>
-
-            <div class="panel panel-default ues-settings ues-properties">
-
             </div>
 
             {{#has styles}}
@@ -980,6 +981,7 @@ var userRoles = usr.roles();
         </div>
     </script>
 
+    <!-- Template for listing non visible views of the page -->
     <script id="view-listing-hbs" type="text/x-handlebars-template">
         <li>
             <a href="#">
@@ -987,6 +989,7 @@ var userRoles = usr.roles();
             </a>
         </li>
     </script>
+
     <!-- View properties configuration -->
     <script id="ues-component-view-properties-hbs" type="text/x-handlebars-template">
         <div class="sidebar-brand"><i class="icon"></i> <%=i18n.localize("view.configuration.label")%></div>

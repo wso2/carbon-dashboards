@@ -57,7 +57,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var userRoles = um.getRoleListOfUser(ctx.username);
 
         var dashboards = getDashboardsFromRegistry(start, count, registry);
-        log.info(dashboards);
         var superTenantDashboards = null;
         var superTenantRegistry = null;
 
@@ -131,37 +130,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         return userDashboards;
     };
 
-    // var getDashboardContentFromRegistry = function (registry, dashboard) {
-    //     var dashboardJsonVersion = "2.4.0";
-    //     // /_system/config/ues/dashboards';
-    //     // return id ? path + '/' + id : path;
-    //     var dashboardContent = JSON.parse(registry.content(dashboard));
-    //     log.info('****** '+dashboardContent.title);
-    //     if(!dashboardContent.version || dashboardContent.version !== dashboardJsonVersion) {
-    //         log.info("no version");
-    //         dashboardContent.version = dashboardJsonVersion;
-    //         dashboardContent.pages.forEach(function (page) {
-    //             if(page.layout.content.loggedIn) {
-    //                 page.layout.content.default = page.layout.content.loggedIn;
-    //                 page.layout.content.default.name = "Default View";
-    //                 page.layout.content.default.roles = ["Internal/everyone"];
-    //                 delete page.layout.content.loggedIn;
-    //             }
-    //             if(page.layout.content.anon) {
-    //                 log.info("having anon content");
-    //                 page.layout.content.anon.name = "Anonymous View";
-    //                 page.layout.content.anon.roles = ["anonymous"];
-    //             }
-    //         });
-    //         var path = '/_system/config/ues/dashboards/'+dashboardContent.id;
-    //         registry.put(path, {
-    //             content: JSON.stringify(dashboardContent),
-    //             mediaType: 'application/json'
-    //         });
-    //     }
-    //     return JSON.parse(registry.content(dashboard)); //finally return the content
-    // };
-
     /**
      * To provide backward compatibility for gadgets
      * @param url
@@ -208,10 +176,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * @returns {Array}
      */
     getAssets = function (type, query, start, count) {
-        log.info('get asset store manager');
         var ctx = utils.currentContext();
         if (type === 'dashboard') {
-            log.info(type);
             return findDashboards(ctx, type, query, start, count);
         }
         var server = new carbon.server.Server();

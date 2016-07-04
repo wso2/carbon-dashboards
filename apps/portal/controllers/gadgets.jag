@@ -162,8 +162,6 @@ var renderEngine = {};
         }
     } else {
         dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
-        // global reference to getBootstrapLayout() function
-        //renderEngine.getDashboardContent = dashboards.getBootstrapLayout;
     }
     // Based on the request (Whether it is stand alone or embedded) for the gadget,
     // decide the template to render

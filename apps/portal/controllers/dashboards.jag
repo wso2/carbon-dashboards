@@ -17,6 +17,7 @@
 var pageId;
 var dashboard;
 var fresh;
+var DASHBOARD_VERSION = "2.4.0";
 
 (function () {
     var vars;
@@ -102,10 +103,6 @@ var fresh;
             isCustomize = request.getParameter('custom');
 
             if (isCustomize) {
-                //for (var i = 0; i < dashboard.pages.length; i++) {
-                //    dashboard.pages[i].isanon = false;
-                //}
-
                 dashboards.copy(dashboard);
                 response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
                 return;
@@ -144,7 +141,7 @@ var fresh;
         utils = require('/modules/utils.js');
         constants = require('/modules/constants.js');
         dashboard = {
-            version: "2.4.0",
+            version: DASHBOARD_VERSION,
             id: dashboardId,
             title: request.getParameter('title'),
             description: request.getParameter('description'),
