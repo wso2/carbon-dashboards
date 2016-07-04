@@ -31,7 +31,6 @@
     var asset = require('/modules/assets.js');
     var constants = require('/modules/constants.js');
     var esConfig = require('/extensions/stores/es/config.json');
-    var method = request.getMethod();
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
     var method = request.getMethod();
