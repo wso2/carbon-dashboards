@@ -34,12 +34,11 @@
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
     var method = request.getMethod();
+    response.contentType = 'application/json';
     var assets;
     var i18n = require('i18n');
-    var matcher = new URIMatcher(request.getRequestURI());
     i18n.init(request, utils.getLocaleResourcePath());
-    response.contentType = 'application/json';
-
+    var matcher = new URIMatcher(request.getRequestURI());
     if (matcher.match('/assets/publicAssets/{id}')) {
         id = matcher.elements().id;
         if (method === 'GET') {
