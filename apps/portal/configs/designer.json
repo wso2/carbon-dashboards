@@ -1,6 +1,6 @@
 {
     "store": {
-        "types": ["fs"]
+        "types": ["fs", "es"]
     },
     "gadgetGeneration" :{
         "isCreateGadgetEnable": false,

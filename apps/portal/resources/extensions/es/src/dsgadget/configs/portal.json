@@ -6,5 +6,8 @@
   "username" : "admin",
   "password" : "admin",
   "url": "https://localhost:9444/portal",
-  "gadgetFileSizeLimit" : 5
+  "gadgetFileSizeLimit" : 5,
+  "delimiter" : "_",
+  "storeType" : "es",
+  "type" : "gadget"
 }

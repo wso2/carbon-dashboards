@@ -30,6 +30,7 @@
     var store = utils.store();
     var asset = require('/modules/assets.js');
     var constants = require('/modules/constants.js');
+    var esConfig = require('/extensions/stores/es/config.json');
     var method = request.getMethod();
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
@@ -37,12 +38,12 @@
     var assets;
     var i18n = require('i18n');
     var matcher = new URIMatcher(request.getRequestURI());
-
     i18n.init(request, utils.getLocaleResourcePath());
     response.contentType = 'application/json';
 
     if (matcher.match('/assets/publicassets/{id}')) {
         id = matcher.elements().id;
+        new Log().info(id);
         if (method === 'GET') {
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.getAsset(assetType, id);
@@ -98,8 +99,8 @@
         return;
     }
 
-    if (matcher.match('/assets/{id}' + constants.ES_STORE_DELIMITER +'{version}')) {
-        id = matcher.elements().id + constants.ES_STORE_DELIMITER + matcher.elements().version;
+    if (matcher.match('/assets/{id}' + esConfig.dirNameDelimiter + '{version}')) {
+        id = matcher.elements().id + esConfig.dirNameDelimiter + matcher.elements().version;
         if (method === 'DELETE') {
             assets = store.deleteAsset(assetType, id, storeType);
             if (!assets) {
@@ -140,7 +141,7 @@
             return;
         }
         if (method === 'POST') {
-            var results = asset.addAsset(assetType, request.getParameter('id') + '$' + request.getParameter('version'), request.getFile("selected-file"), storeType);
+            var results = asset.addAsset(assetType, request.getParameter('id') + esConfig.dirNameDelimiter + request.getParameter('version'), request.getFile("selected-file"), storeType);
             if (storeType === constants.FILE_STORE) {
                 var urlPrefix = utils.relativePrefix(originalURI);
                 response.sendRedirect((utils.tenantedPrefix(urlPrefix, user.domain)) + 'upload-' + assetType + '?message=' + results);

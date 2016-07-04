@@ -45,7 +45,7 @@
      */
     var getPublisherDir = function () {
         var process = require('process');
-        return process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/publisher';
+        return process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps' + context;
     };
 
     /**
@@ -56,7 +56,9 @@
      */
     var readGadgetConfigs = function (id) {
         var gadgetFile = request.getFile('gadget_gadgetarchive');
-        var gadgetDestPath = GADGET_EXT_PATH + '/gadgets/temp/' + id + '.gadget';
+        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/gadgets/');
+        var gadgetsTempDirectory = new File(GADGET_EXT_PATH + '/gadgets/temp/');
+        var gadgetDestPath = GADGET_EXT_PATH + '/gadgets/temp/' + id + '.gdt';
         var InputStreamReader = Packages.java.io.InputStreamReader;
         var BufferedReader = Packages.java.io.BufferedReader;
         var ZipFile = Packages.java.util.zip.ZipFile;
@@ -78,13 +80,19 @@
             return;
         }
 
+        if (!gadgetsMainDirectory.isExists()) {
+            gadgetsMainDirectory.mkdir();
+        }
+        if (!gadgetsTempDirectory.isExists()) {
+            gadgetsTempDirectory.mkdir();
+        }
         // Save the uploaded gadget file in the file system
         try {
             gadget = new File(gadgetDestPath);
             gadget.open('w');
             gadget.write(gadgetFile.getStream());
         } catch (e) {
-            log.error('Cannot save the zip file in the relevant location. ' + e);
+            log.error('Cannot save the zip file in the relevant location.');
             return;
         } finally {
             if (gadget !== null) {
@@ -98,7 +106,7 @@
             for (var e = zip.entries(); e.hasMoreElements();) {
                 var entry = e.nextElement();
                 if (entry.getName().toLowerCase() == "gadget.json") {
-                    var inputStream = zip.getInputStream(entry);
+                    inputStream = zip.getInputStream(entry);
                     bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                     var sb = new StringBuilder();
                     var line;
@@ -106,16 +114,21 @@
                         sb.append(line);
                     }
                     conf = sb.toString();
-                    bufferedReader.close();
-                    inputStream.close();
                     break;
                 }
             }
         } catch (e) {
-            log.error('Error occurred while extracting the zip file.' + e.getMessage());
+            log.error('Error occurred while extracting the zip file.');
+            throw e;
         } finally {
             // Delete the uploaded gadget file
             gadget.del();
+            if (inputStream !== null) {
+                inputStream.close();
+            }
+            if (bufferedReader !== null) {
+                bufferedReader.close();
+            }
         }
         return conf;
     };

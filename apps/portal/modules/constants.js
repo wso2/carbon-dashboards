@@ -79,4 +79,4 @@ var ES_STORE = 'es';
 var GADGET_TYPE = 'gadget';
 var LAYOUT_TYPE = 'layout';
 
-var ES_STORE_DELIMITER = '$';
+var ES_STORE_DELIMITER = '_';

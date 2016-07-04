@@ -34,8 +34,11 @@
     </ui>
     <content>
         <table name="Gadget">
-            <field type="text" required="true">
+            <field type="text" required="true" readonly="true">
                 <name label="Gadget ZIP">Gadgetarchive</name>
+            </field>
+            <field type="text">
+                <name>thumbnail</name>
             </field>
         </table>
         <table name="Overview">

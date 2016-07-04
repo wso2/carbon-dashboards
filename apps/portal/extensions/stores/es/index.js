@@ -35,28 +35,41 @@ var getAsset, getAssets, addAsset, deleteAsset;
     };
 
     var obtainAuthorizedHeaderForAPICall = function () {
-        var password = config.authConfiguration.password;
-        if(config.authConfiguration.isSecureVaultEnabled){
-            password = resolvePassword(password);
+        try {
+            var password = config.authConfiguration.password;
+            if (config.authConfiguration.isSecureVaultEnabled) {
+                password = resolvePassword(password);
+            }
+            var authenticate = post(config.authenticationApi, {
+                "password": password,
+                "username": config.authConfiguration.username
+            }, {}, 'json');
+            return {
+                'Cookie': "JSESSIONID=" + authenticate.data.data.sessionId + ";",
+                'Accept': 'application/json'
+            };
         }
-        var authenticate = post(config.authenticationApi, {"password": password,
-            "username": config.authConfiguration.username }, {}, 'json');
-        return {
-            'Cookie': "JSESSIONID=" + authenticate.data.data.sessionId + ";",
-            'Accept': 'application/json'
-        };
+        catch (e) {
+            throw e;
+        }
     };
 
     var getPublishedAssets = function () {
-        var headers = obtainAuthorizedHeaderForAPICall();
-        var assets = parse((get(config.publishedAssetApi, headers, 'application/json')).data).data;
-        var publishedAssets = [];
-        for (var i = 0; i < assets.length; i++) {
-            var asset_id = (assets[i][GADGET_ATTRIBUTES][GADGET_ID] + config.dirNameDelimiter
+        try {
+            var headers = obtainAuthorizedHeaderForAPICall();
+            var assets = parse((get(config.publishedAssetApi, headers, 'application/json')).data).data;
+            var publishedAssets = [];
+            for (var i = 0; i < assets.length; i++) {
+                var asset_id = (assets[i][GADGET_ATTRIBUTES][GADGET_ID] + config.dirNameDelimiter
                 + assets[i][GADGET_ATTRIBUTES][GADGET_VERSION]).replace(/ /g, config.dirNameDelimiter);
-            publishedAssets.push(asset_id);
+                publishedAssets.push(asset_id);
+            }
+            return publishedAssets;
         }
-        return publishedAssets;
+        catch (e) {
+            log.error("Cannot connect to Enterprise Store");
+        }
+
     };
 
     getAsset = function (type, id) {
@@ -85,38 +98,40 @@ var getAsset, getAssets, addAsset, deleteAsset;
         }
         var publishedAssets = getPublishedAssets();
 
-        var ctx = utils.currentContext();
-        var parent = new File(assetsDir(ctx, type));
-        var allAssets = parent.listFiles();
-        var assets = [];
-        for (var j = 0; j < publishedAssets.length; j++) {
-            query = query ? new RegExp(query, 'i') : null;
-            allAssets.forEach(function (file) {
-                if (publishedAssets[j] === file.getName()) {
-                    if (!file.isDirectory()) {
-                        return;
-                    }
-                    file = new File(file.getPath() + '/' + type + '.json');
-                    if (file.isExists()) {
-                        file.open('r');
-                        var asset = JSON.parse(file.readAll());
-                        if (!query) {
+        if (publishedAssets) {
+            var ctx = utils.currentContext();
+            var parent = new File(assetsDir(ctx, type));
+            var allAssets = parent.listFiles();
+            var assets = [];
+            for (var j = 0; j < publishedAssets.length; j++) {
+                query = query ? new RegExp(query, 'i') : null;
+                allAssets.forEach(function (file) {
+                    if (publishedAssets[j] === file.getName()) {
+                        if (!file.isDirectory()) {
+                            return;
+                        }
+                        file = new File(file.getPath() + '/' + type + '.json');
+                        if (file.isExists()) {
+                            file.open('r');
+                            var asset = JSON.parse(file.readAll());
+                            if (!query) {
+                                assets.push(asset);
+                                file.close();
+                                return;
+                            }
+                            var title = asset.title || '';
+                            if (!query.test(title)) {
+                                file.close();
+                                return;
+                            }
                             assets.push(asset);
                             file.close();
-                            return;
                         }
-                        var title = asset.title || '';
-                        if (!query.test(title)) {
-                            file.close();
-                            return;
-                        }
-                        assets.push(asset);
-                        file.close();
                     }
-                }
-            });
+                });
+            }
+            return assets;
         }
-        return assets;
     };
 
     /**
