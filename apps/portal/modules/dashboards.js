@@ -21,7 +21,7 @@ var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
 var ANONYMOUS_ROLE = 'anonymous';
 var ANONYMOUS_VIEW_NAME = 'Anonymous View';
 var DEFAULT_VIEW_NAME = 'Default View';
-var DASHBOARD_VERSION = "2.4.0";
+var DASHBOARD_VERSION = "1.0.20";
 
 /**
  * Get registry reference.
@@ -121,7 +121,7 @@ var getAsset = function (id, originalDashboardOnly) {
     if (user) {
         var originalDBPath = registryPath(id);
         if (registry.exists(originalDBPath)) {
-            originalDB = getDashboardContentFromRegistry(registry, originalDBPath);
+            originalDB = getConvertedDashboardContent(registry, originalDBPath);
         }
         if (!originalDashboardOnly) {
             var userDBPath = registryUserPath(id, user.username);
@@ -131,7 +131,7 @@ var getAsset = function (id, originalDashboardOnly) {
             }
         }
     }
-    var contentDashboardJSON = getDashboardContentFromRegistry(registry, path);
+    var contentDashboardJSON = getConvertedDashboardContent(registry, path);
     var dashboard = contentDashboardJSON;
     if (dashboard) {
         if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
@@ -194,7 +194,7 @@ var getAssets = function (paging) {
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
     dashboards.forEach(function (dashboard) {
-        dashboardz.push(getDashboardContentFromRegistry(registry, dashboard));
+        dashboardz.push(getConvertedDashboardContent(registry, dashboard));
     });
     return dashboardz;
 };
@@ -446,7 +446,7 @@ var getBanner = function (dashboardId, username) {
  * @param registry Registry object
  * @param dashboard Dashboard name
  */
-var getDashboardContentFromRegistry = function (registry, dashboard) {
+var getConvertedDashboardContent = function (registry, dashboard) {
     var dashboardJsonVersion = DASHBOARD_VERSION;
     var dashboardContent = JSON.parse(registry.content(dashboard));
     if (dashboardContent) {
@@ -460,12 +460,11 @@ var getDashboardContentFromRegistry = function (registry, dashboard) {
                     delete page.layout.content.loggedIn;
                 }
                 if (page.layout.content.anon) {
-                    log.info("having anon content");
                     page.layout.content.anon.name = ANONYMOUS_VIEW_NAME;
                     page.layout.content.anon.roles = [ANONYMOUS_ROLE];
                 }
             });
-            var path = '/_system/config/ues/dashboards/' + dashboardContent.id;
+            var path = registryPath(dashboardContent.id);
             registry.put(path, {
                 content: JSON.stringify(dashboardContent),
                 mediaType: 'application/json'
