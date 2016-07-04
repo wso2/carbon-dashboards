@@ -26,7 +26,7 @@
     form.attr('enctype', 'multipart/form-data');
 
     // Handler for gadget file change event
-    $('#gadget_gadgetarchive').on('change', function () {
+    gadgetArchive.on('change', function () {
         // Create formData element to be sent as multipart data
         var formData = new FormData();
         if ((($(this)[0].files[0].size / 1024) / 1024).toFixed(4) > fileSizeLimit) {
@@ -46,19 +46,15 @@
                     messages.alertInfo("gadget.json found. Populating the data from values in gadget.json");
                     if (data) {
                         var gadgetConf = JSON.parse(data);
-
                         if (gadgetConf.hasOwnProperty('id') && !$('#overview_id').prop('disabled')) {
                             $('#overview_id').val(gadgetConf.id);
                         }
-
                         if (gadgetConf.hasOwnProperty('title') && !$('#overview_name').prop('disabled')) {
                             $('#overview_name').val(gadgetConf.title);
                         }
-
                         if (gadgetConf.hasOwnProperty('version') && !$('#overview_version').prop('disabled')) {
                             $('#overview_version').val(gadgetConf.version);
                         }
-
                         if (gadgetConf.hasOwnProperty('type')) {
                             $('#overview_type option')
                                 .removeAttr('selected')
@@ -66,23 +62,18 @@
                                     return $(this).text().toLowerCase() === gadgetConf.type.toLowerCase();
                                 }).attr('selected', '');
                         }
-
                         if (gadgetConf.hasOwnProperty('description')) {
                             $('#overview_description').val(gadgetConf.description);
                         }
-
                         if (gadgetConf.hasOwnProperty('category')) {
                             $('#overview_gadgetcategory').val(gadgetConf.category);
                         }
-
                         if (gadgetConf.hasOwnProperty('data') && gadgetConf.data.hasOwnProperty('url')) {
                             $('#overview_gadgetxmlurl').val(gadgetConf.data.url);
                         }
-
                         if (gadgetConf.hasOwnProperty('thumbnail')) {
                             $('#overview_thumbnailurl').val(gadgetConf.thumbnail);
                         }
-
                         if (gadgetConf.hasOwnProperty('settings')) {
                             var settings = [];
                             for (var setting in gadgetConf.settings) {
@@ -104,7 +95,6 @@
                                 i++;
                             });
                         }
-
                         if (gadgetConf.hasOwnProperty('options')) {
                             var options = [];
                             for (var option in gadgetConf.options) {
@@ -129,7 +119,6 @@
                                 i++;
                             });
                         }
-
                         if (gadgetConf.hasOwnProperty('styles')) {
                             var styles = [];
                             for (var style in gadgetConf.styles) {
@@ -151,7 +140,6 @@
                                 i++;
                             });
                         }
-
                         if (gadgetConf.hasOwnProperty('notify')) {
                             var notifiers = [];
                             for (var notifier in gadgetConf.notify) {

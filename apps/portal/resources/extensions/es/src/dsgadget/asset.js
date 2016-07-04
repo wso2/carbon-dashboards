@@ -31,37 +31,17 @@ asset.manager = function (ctx) {
      * @private
      */
     var GADGET_EXT_PATH = "/extensions/assets/" + ASSET_NAME;
+    var COMMENT = 'User comment';
 
-    /**
-     * That connects id and version
-     * @const
-     * @private
-     * @type {string}
-     */
-    var DELIMITER = '_';
-
-    /**
-     * Status code for http success
-     * @const
-     * @private
-     */
-    var HTTP_SUCCESS_CODE = 200;
-    var BYTES_TO_MB = 1048576;
-    var RESOURCES_REGISTRY = '/_system/governance/store/asset_resources/';
+    var utils = require(GADGET_EXT_PATH + '/utils.js');
+    var portalConfigs = require(GADGET_EXT_PATH + "/configs/portal.json");
     var es = require("store").server;
-    var registry = es.systemRegistry(ctx.tenantId);
-    var thumbnailFileName = 'thumbnail';
-
     var notifier = require('store').notificationManager;
     var storeConstants = require('store').storeConstants;
     var carbon = require('carbon');
-    var portalConfigs = require(GADGET_EXT_PATH + "/configs/portal.json");
+
+    var registry = es.systemRegistry(ctx.tenantId);
     var social = carbon.server.osgiService('org.wso2.carbon.social.core.service.SocialActivityService');
-    var gadgetExtension = '.gdt';
-    var gadgetsDirectoryLabel = "gadgets";
-    var gadgetTempDirectoryLabel = 'temp';
-    var gadgetDSDirectory = 'gadget/';
-    var assetsAPI = '/apis/assets';
     var HttpPost = org.apache.http.client.methods.HttpPost;
     var HttpDelete = org.apache.http.client.methods.HttpDelete;
     var FileInputStream = Packages.java.io.FileInputStream;
@@ -75,16 +55,6 @@ asset.manager = function (ctx) {
     var domain = MultitenantUtils.getTenantDomain(session.get("LOGGED_IN_USER"));
 
     /**
-     * Get absolute path to the gadget extension directory.
-     * @returns {string} Directory path
-     * @private
-     */
-    var getExtensionDir = function () {
-        var process = require('process');
-        return process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps' + context + '/extensions/assets/' + ASSET_NAME;
-    };
-
-    /**
      * Post the gadget archive to the associated dashboard server.
      * @param {String} gadgetId Gadget ID
      * @returns {boolean} Status
@@ -92,7 +62,7 @@ asset.manager = function (ctx) {
      */
     var uploadGadgetToDS = function (assetId, gadgetId, version) {
         if (portalConfigs.url.length > 0) {
-            var zipFileName = getExtensionDir() + '/' + gadgetsDirectoryLabel + '/' + assetId + gadgetExtension;
+            var zipFileName = utils.getPublisherDir() + GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + assetId + utils.gadgetExtension;
             var post = null;
             var client;
             var response;
@@ -102,7 +72,7 @@ asset.manager = function (ctx) {
             // If authenticate passes, send gadget to DS side with relevant parameters
             responseBody = loginToDS();
             if (responseBody !== false) {
-                post = new HttpPost(portalConfigs.url + '/t/' + domain + assetsAPI);
+                post = new HttpPost(portalConfigs.url + '/t/' + domain + utils.assetsAPI);
                 inputStream = new FileInputStream(zipFileName);
                 builder = MultipartEntityBuilder.create();
                 builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -115,7 +85,7 @@ asset.manager = function (ctx) {
                 post.addHeader("cookie", "JSESSIONID=" + parse(String(responseBody)).sessionId);
                 client = HttpClientBuilder.create().build();
                 response = client.execute(post);
-                if (response.getStatusLine().getStatusCode() != HTTP_SUCCESS_CODE) {
+                if (response.getStatusLine().getStatusCode() !== utils.HTTP_SUCCESS_CODE) {
                     return false;
                 }
                 return true;
@@ -135,23 +105,10 @@ asset.manager = function (ctx) {
             builder.addTextBody("username", portalConfigs.username);
             builder.addTextBody("password", portalConfigs.password);
             post.setEntity(builder.build());
-
             response = client.execute(post);
 
             // If authentication fails, return
-            if (response.getStatusLine().getStatusCode() !== HTTP_SUCCESS_CODE) {
-                return false;
-            }
-            // Authenticate the user for DS side
-            builder = MultipartEntityBuilder.create();
-            builder.addTextBody("username", portalConfigs.username);
-            builder.addTextBody("password", portalConfigs.password);
-            post.setEntity(builder.build());
-            client = HttpClientBuilder.create().build();
-            response = client.execute(post);
-
-            // If authentication fails, return
-            if (response.getStatusLine().getStatusCode() !== HTTP_SUCCESS_CODE) {
+            if (response.getStatusLine().getStatusCode() !== utils.HTTP_SUCCESS_CODE) {
                 return false;
             } else {
                 return new ResponseHandler().handleResponse(response);
@@ -174,12 +131,12 @@ asset.manager = function (ctx) {
             var del;
             var responseBody = loginToDS();
             if (responseBody !== false) {
-                del = new HttpDelete(portalConfigs.url + '/t/' + domain + assetsAPI + '/' + gadgetId + portalConfigs.delimiter + version + '?storeType=' + portalConfigs.storeType + '&type=' + portalConfigs.type);
+                del = new HttpDelete(portalConfigs.url + '/t/' + domain + utils.assetsAPI + '/' + gadgetId +
+                    portalConfigs.delimiter + version + '?storeType=' + portalConfigs.storeType + '&type=' + portalConfigs.type);
                 del.addHeader("cookie", "JSESSIONID=" + parse(String(responseBody)).sessionId);
                 client = HttpClientBuilder.create().build();
                 response = client.execute(del);
-
-                if (response.getStatusLine().getStatusCode() != HTTP_SUCCESS_CODE) {
+                if (response.getStatusLine().getStatusCode() !== utils.HTTP_SUCCESS_CODE) {
                     return false;
                 }
                 return true;
@@ -196,7 +153,7 @@ asset.manager = function (ctx) {
      * @private
      */
     var deleteGadget = function (assetId) {
-        var gadget = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + assetId + gadgetExtension);
+        var gadget = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + assetId + utils.gadgetExtension);
         if (gadget.isExists()) {
             gadget.del();
         }
@@ -209,13 +166,13 @@ asset.manager = function (ctx) {
      * @private
      */
     var saveGadget = function (assetId) {
-        var gadgetFile = request.getFile('gadget_gadgetarchive');
-        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel);
+        var gadgetFile = request.getFile(utils.gadgetZipFileNameInRegistry);
+        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel);
         var gadget = null;
 
         if (!gadgetFile) {
             return;
-        } else if (gadgetFile.getLength() / BYTES_TO_MB > portalConfigs.gadgetFileSizeLimit) {
+        } else if (gadgetFile.getLength() / utils.BYTES_TO_MB > portalConfigs.gadgetFileSizeLimit) {
             log.error("Max gadget size limit exceeded.");
             return;
         }
@@ -228,7 +185,7 @@ asset.manager = function (ctx) {
 
         try {
             // Save the gadget
-            var gadget = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + assetId + gadgetExtension);
+            var gadget = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + assetId + utils.gadgetExtension);
             gadget.open('w');
             gadget.write(gadgetFile.getStream());
             return true;
@@ -249,7 +206,7 @@ asset.manager = function (ctx) {
      */
     var buildGadgetJson = function (options) {
         var assetId = options.id;
-        var zipFile = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + assetId + gadgetExtension);
+        var zipFile = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + assetId + utils.gadgetExtension);
         var gadgetJSONFile = null;
         var res = {
             id: options.attributes.overview_id,
@@ -335,17 +292,19 @@ asset.manager = function (ctx) {
             }
         }
         res.id = res.id + portalConfigs.delimiter + res.version;
-        if (res.thumbnail && res.thumbnail.indexOf(gadgetDSDirectory + options.attributes.overview_id) === 0) {
-            res.thumbnail = res.thumbnail.replace(gadgetDSDirectory + options.attributes.overview_id, gadgetDSDirectory + res.id);
+        if (res.thumbnail && res.thumbnail.indexOf(utils.gadgetDSDirectory + options.attributes.overview_id) === 0) {
+            res.thumbnail = res.thumbnail.replace(utils.gadgetDSDirectory + options.attributes.overview_id,
+                utils.gadgetDSDirectory + res.id);
         }
-        if (res.data.url && res.data.url.indexOf(gadgetDSDirectory + options.attributes.overview_id) === 0) {
-            res.data.url = res.data.url.replace(gadgetDSDirectory + options.attributes.overview_id, gadgetDSDirectory + res.id);
+        if (res.data.url && res.data.url.indexOf(utils.gadgetDSDirectory + options.attributes.overview_id) === 0) {
+            res.data.url = res.data.url.replace(utils.gadgetDSDirectory + options.attributes.overview_id,
+                utils.gadgetDSDirectory + res.id);
         }
         // If zip file exists
         if (zipFile.isExists()) {
-            zipFile.unZip(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + gadgetTempDirectoryLabel + '/' + assetId);
+            zipFile.unZip(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + utils.gadgetTempDirectoryLabel + '/' + assetId);
             try {
-                gadgetJSONFile = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + gadgetTempDirectoryLabel
+                gadgetJSONFile = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + utils.gadgetTempDirectoryLabel
                     + '/' + assetId + "/gadget.json");
                 gadgetJSONFile.open("w");
                 gadgetJSONFile.write(res);
@@ -358,16 +317,20 @@ asset.manager = function (ctx) {
                 }
             }
             zipFile.del();
-            var unZippedGadgetFile = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + gadgetTempDirectoryLabel + '/' + assetId);
-            unZippedGadgetFile.zip(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + assetId + gadgetExtension);
+            var unZippedGadgetFile = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' +
+                utils.gadgetTempDirectoryLabel + '/' + assetId);
+            unZippedGadgetFile.zip(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + assetId + utils.gadgetExtension);
 
+            // If thumbnail exists, save it separately
             if (res.thumbnail) {
-                var thumbnailURL = res.thumbnail.replace("gadget/" + res.id, "");
-                new Log().info(thumbnailURL);
-                var thumbnail = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + gadgetTempDirectoryLabel + '/' + assetId + thumbnailURL);
-                thumbnail.saveAs(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + res.id + '_thumbnail');
+                var thumbnailURL = res.thumbnail.replace(utils.gadgetDSDirectory + res.id, "");
+                var thumbnail = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' +
+                    utils.gadgetTempDirectoryLabel + '/' + assetId + thumbnailURL);
+                if (thumbnail.isExists()) {
+                    thumbnail.saveAs(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + res.id + '_' +
+                        utils.thumbnailFileName);
+                }
             }
-
             unZippedGadgetFile.del();
             return res;
         }
@@ -380,7 +343,6 @@ asset.manager = function (ctx) {
             if ((options.attributes) && ctx.rxtManager.getRxtField(ctx.assetType, 'overview_createdtime')) {
                 options.attributes.overview_createdtime = ref.getCurrentTime();
             }
-
             this._super.create.call(this, options);
             var asset = this.get(options.id); //TODO avoid get: expensive operation
             var assetPath = asset.path;
@@ -389,7 +351,8 @@ asset.manager = function (ctx) {
             try {
                 social.warmUpRatingCache(ctx.assetType + ':' + options.id);
             } catch (e) {
-                log.warn("Unable to publish the asset: " + ctx.assetType + ":" + options.id + " to social cache. This may affect on sort by popularity function.");
+                log.warn("Unable to publish the asset: " + ctx.assetType + ":" + options.id + " to social cache. " +
+                    "This may affect on sort by popularity function.");
             }
             //Check whether the user has admin role
             var endpoint = storeConstants.PRIVATE_ROLE_ENDPOINT + user;
@@ -413,21 +376,26 @@ asset.manager = function (ctx) {
             saveGadget(options.id);
             if (buildGadgetJson(options)) {
                 // To save thumbnail in ES side
-                if (options.attributes.overview_thumbnailurl) {
-                    options.attributes.gadget_thumbnail = thumbnailFileName;
-                    var thumbnail = new File(GADGET_EXT_PATH + '/' + gadgetsDirectoryLabel + '/' + options.attributes.overview_id + portalConfigs.delimiter + options.attributes.overview_version + '_' + thumbnailFileName);
-                    var resource = {};
-                    resource.content = thumbnail.getStream();
-                    resource.name = thumbnailFileName;
-                    var pathSuffix = ASSET_NAME + "/" + options.id + "/" + thumbnailFileName;
-                    var path = RESOURCES_REGISTRY + pathSuffix;
-                    registry.put(path, resource);
-                    thumbnail.del();
+                var thumbnail = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' +
+                    options.attributes.overview_id + portalConfigs.delimiter + options.attributes.overview_version + '_'
+                    + utils.thumbnailFileName);
+                if (options.attributes.overview_thumbnailurl && thumbnail.isExists) {
+                    try {
+                        options.attributes.gadget_thumbnail = utils.thumbnailFileName;
+                        var resource = {};
+                        resource.content = thumbnail.getStream();
+                        resource.name = utils.thumbnailFileName;
+                        var pathSuffix = ASSET_NAME + "/" + options.id + "/" + utils.thumbnailFileName;
+                        var path = utils.RESOURCES_REGISTRY + pathSuffix;
+                        registry.put(path, resource);
+                    } finally {
+                        thumbnail.close();
+                        thumbnail.del();
+                    }
                 }
                 if (!uploadGadgetToDS(options.id, options.attributes.overview_id, options.attributes.overview_version)) {
                     log.error('Failed to upload the gadget to Dashboard Server.');
                 }
-
             } else {
                 log.error('Failed to build the gadget.json from the metadata.');
             }
@@ -435,7 +403,6 @@ asset.manager = function (ctx) {
             var asset = this.get(options.id);
             // trigger notification on asset update
             notifier.notifyEvent(storeConstants.ASSET_UPDATE_EVENT, asset.type, asset.name, null, asset.path, ctx.tenantId);
-            new Log().info(registry.get(RESOURCES_REGISTRY + ASSET_NAME + "/" +options.id+"/gadget_gadgetarchive").content);
         },
         remove: function (id) {
             var asset = this.get(id);
@@ -446,6 +413,39 @@ asset.manager = function (ctx) {
             this._super.remove.call(this, id);
             // trigger notification on asset update
             notifier.notifyEvent(storeConstants.ASSET_UPDATE_EVENT, asset.type, asset.name, null, asset.path, ctx.tenantId);
+        },
+        invokeLcAction: function (asset, action, lcName, userArgs) {
+            var zipFile = registry.get(utils.RESOURCES_REGISTRY + ASSET_NAME + "/" + asset.id + "/" + utils.gadgetZipFileNameInRegistry);
+            var success;
+
+            if (zipFile) {
+                var gadgetZipFile = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + asset.id + utils.gadgetExtension);
+                if (!gadgetZipFile.isExists()) {
+                    try {
+                        gadgetZipFile.open("w");
+                        gadgetZipFile.write(zipFile.content);
+                    } finally {
+                        if (!gadgetZipFile) {
+                            gadgetZipFile.close();
+                        }
+                    }
+                    if (buildGadgetJson(asset)) {
+                        if (!uploadGadgetToDS(asset.id, asset.attributes.overview_id, asset.attributes.overview_version)) {
+                            log.error('Failed to upload the gadget to Dashboard Server.');
+                        }
+                    } else {
+                        log.error('Failed to build the gadget.json from the metadata.');
+                    }
+                }
+            }
+            if (lcName) {
+                success = this._super.invokeLcAction.call(this, asset, action, lcName, userArgs);
+            } else {
+                success = this._super.invokeLcAction.call(this, asset, action);
+            }
+            //trigger notification on LC state change
+            notifier.notifyEvent(storeConstants.LC_STATE_CHANGE_EVENT, asset.type, asset.name, COMMENT, asset.path, ctx.tenantId);
+            return success;
         }
     }
 };
@@ -502,7 +502,6 @@ asset.configure = function () {
                 enabled: true
             },
             thumbnail: 'gadget_thumbnail',
-            // banner: 'images_banner',
             nameAttribute: 'overview_name',
             versionAttribute: 'overview_version',
             providerAttribute: 'overview_provider',

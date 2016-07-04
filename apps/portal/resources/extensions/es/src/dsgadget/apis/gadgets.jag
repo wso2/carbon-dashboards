@@ -37,16 +37,8 @@
      * @private
      */
     var GADGET_EXT_PATH = '/extensions/assets/' + ASSET_NAME;
+    var utils = require(GADGET_EXT_PATH + '/utils.js');
     var method = request.getMethod();
-    /**
-     * Get absolute path to the publisher directory.
-     * @returns {string} Directory path
-     * @private
-     */
-    var getPublisherDir = function () {
-        var process = require('process');
-        return process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps' + context;
-    };
 
     /**
      * Read gadget configurations from the gadget.json file.
@@ -55,31 +47,31 @@
      * @private
      */
     var readGadgetConfigs = function (id) {
-        var gadgetFile = request.getFile('gadget_gadgetarchive');
-        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/gadgets/');
-        var gadgetsTempDirectory = new File(GADGET_EXT_PATH + '/gadgets/temp/');
-        var gadgetDestPath = GADGET_EXT_PATH + '/gadgets/temp/' + id + '.gdt';
+        var portalConfigs = require(GADGET_EXT_PATH + '/configs/portal.json');
+        var gadgetFile = request.getFile(utils.gadgetZipFileNameInRegistry);
+        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/');
+        var gadgetsTempDirectory = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' +
+                utils.gadgetTempDirectoryLabel + '/');
+        var gadgetDestPath = GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + utils.gadgetTempDirectoryLabel
+                + '/' + id + utils.gadgetExtension;
         var InputStreamReader = Packages.java.io.InputStreamReader;
         var BufferedReader = Packages.java.io.BufferedReader;
         var ZipFile = Packages.java.util.zip.ZipFile;
         var StringBuilder = Packages.java.lang.StringBuilder;
-        var zipFilePath = getPublisherDir() + gadgetDestPath;
-        var portalConfigs = require(GADGET_EXT_PATH + "/configs/portal.json");
+        var zipFilePath = utils.getPublisherDir() + gadgetDestPath;
         var inputStream = null;
         var bufferedReader = null;
         var conf;
         var zip;
         var gadget = null;
-        var bytesToMB = 1048576;
 
         if (!gadgetFile) {
-            log.error("No gadget file uploaded.");
+            log.error('No gadget file uploaded.');
             return;
-        } else if (gadgetFile.getLength() / bytesToMB > portalConfigs.gadgetFileSizeLimit) {
-            log.error("Gadget file exceeded");
+        } else if (gadgetFile.getLength() / utils.BYTES_TO_MB > portalConfigs.gadgetFileSizeLimit) {
+            log.error('Gadget file size limit exceeded');
             return;
         }
-
         if (!gadgetsMainDirectory.isExists()) {
             gadgetsMainDirectory.mkdir();
         }
@@ -110,7 +102,7 @@
                     bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                     var sb = new StringBuilder();
                     var line;
-                    while ((line = bufferedReader.readLine()) != null) {
+                    while ((line = bufferedReader.readLine()) !== null) {
                         sb.append(line);
                     }
                     conf = sb.toString();
