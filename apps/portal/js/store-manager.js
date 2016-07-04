@@ -57,7 +57,6 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var userRoles = um.getRoleListOfUser(ctx.username);
 
         var dashboards = getDashboardsFromRegistry(start, count, registry);
-        log.info(dashboards);
         var superTenantDashboards = null;
         var superTenantRegistry = null;
 
@@ -177,10 +176,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * @returns {Array}
      */
     getAssets = function (type, query, start, count) {
-        log.info('get asset store manager');
         var ctx = utils.currentContext();
         if (type === 'dashboard') {
-            log.info(type);
             return findDashboards(ctx, type, query, start, count);
         }
         var server = new carbon.server.Server();

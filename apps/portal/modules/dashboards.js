@@ -21,6 +21,7 @@ var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
 var ANONYMOUS_ROLE = 'anonymous';
 var ANONYMOUS_VIEW_NAME = 'Anonymous View';
 var DEFAULT_VIEW_NAME = 'Default View';
+var DASHBOARD_VERSION = "2.4.0";
 
 /**
  * Get registry reference.
@@ -446,7 +447,7 @@ var getBanner = function (dashboardId, username) {
  * @param dashboard Dashboard name
  */
 var getDashboardContentFromRegistry = function (registry, dashboard) {
-    var dashboardJsonVersion = "2.4.0";
+    var dashboardJsonVersion = DASHBOARD_VERSION;
     var dashboardContent = JSON.parse(registry.content(dashboard));
     if (dashboardContent) {
         if (!dashboardContent.version || dashboardContent.version !== dashboardJsonVersion) {

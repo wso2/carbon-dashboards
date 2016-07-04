@@ -991,7 +991,8 @@ $(function () {
                 for (var i = 0; i < removingComponentsLength; i++) {
                     removeComponent(removingComponents[i], function (err) {
                         if (err) {
-                            generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter", 2000, null);
+                            generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
+                                2000, null);
                         }
                     });
                 }
@@ -1022,22 +1023,23 @@ $(function () {
                         return true;
                     });
                 } else if (isAnonRoleExists(viewId)) {
-                    showConfirm(i18n_data["add.new.role.removing.anonymous"], i18n_data["add.new.role.removing.anonymous.message"], function () {
-                        if (removingComponentsLength > 0) {
-                            removeRestrictedGadgets();
-                        }
-                        viewRolesList.splice(viewRolesList.indexOf(ANONYMOUS_ROLE), 1);
-                        $('#view-configuration').find('.ues-view-roles').empty();
-                        viewRolesList.push(role);
-                        for (var i = 0; i < viewRolesList.length; i++) {
-                            var tempRole = viewRolesList[i];
-                            $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(tempRole));
-                        }
-                        loadGadgetsWithViewRoles(viewId);
-                        dashboard.isanon = isAnonDashboard();
-                        saveDashboard();
-                        return true;
-                    });
+                    showConfirm(i18n_data["add.new.role.removing.anonymous"],
+                        i18n_data["add.new.role.removing.anonymous.message"], function () {
+                            if (removingComponentsLength > 0) {
+                                removeRestrictedGadgets();
+                            }
+                            viewRolesList.splice(viewRolesList.indexOf(ANONYMOUS_ROLE), 1);
+                            $('#view-configuration').find('.ues-view-roles').empty();
+                            viewRolesList.push(role);
+                            for (var i = 0; i < viewRolesList.length; i++) {
+                                var tempRole = viewRolesList[i];
+                                $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(tempRole));
+                            }
+                            loadGadgetsWithViewRoles(viewId);
+                            dashboard.isanon = isAnonDashboard();
+                            saveDashboard();
+                            return true;
+                        });
                 } else if (removingComponentsLength > 0) {
                     showConfirm(i18n_data["add.new.role"], i18n_data["add.new.role.message"], function () {
                         removeRestrictedGadgets();
@@ -1100,7 +1102,8 @@ $(function () {
                 // all the view roles or internal/everyone role
                 if (isViewRoleExistsInRolesList(gadgetRoles, INTERNAL_EVERYONE_ROLE)) {
                     return true;
-                } else if (role !== INTERNAL_EVERYONE_ROLE && !isViewRoleExistsInRolesList(viewRoles, INTERNAL_EVERYONE_ROLE)) {
+                } else if (role !== INTERNAL_EVERYONE_ROLE && !isViewRoleExistsInRolesList(viewRoles,
+                        INTERNAL_EVERYONE_ROLE)) {
                     for (var i = 0; i < viewRoles.length; i++) {
                         if (!isViewRoleExistsInRolesList(gadgetRoles, viewRoles[i]) && (viewRoles[i] !== role)) {
                             return false;
@@ -1130,7 +1133,8 @@ $(function () {
                 return false;
             } else if (isAnonRoleExists(viewId)) {
                 //if there is anonymous role in the view, it will be removed while adding the new role
-                if (isViewRoleExistsInRolesList(gadgetRoles, INTERNAL_EVERYONE_ROLE) || isViewRoleExistsInRolesList(gadgetRoles, role)) {
+                if (isViewRoleExistsInRolesList(gadgetRoles, INTERNAL_EVERYONE_ROLE) ||
+                    isViewRoleExistsInRolesList(gadgetRoles, role)) {
                     return true;
                 }
             } else {
