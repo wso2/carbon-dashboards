@@ -350,7 +350,7 @@ var userRoles = usr.roles();
                     <div class ="ds-add-view-btn" style="display:inline-block;margin:5px;position:relative;top:-25px;">
                         <button id="more-views" data-toggle="dropdown" aria-expanded="false" hidden>
                             <span class="icon fw-stack">
-                                <i class="fw fw-tiles fw-stack-1x"></i>
+                                <i class="fw fw-down fw-stack-1x toggle-icon-up"></i>
                             </span>
                         </button>
                         <button id="add-view" hidden>

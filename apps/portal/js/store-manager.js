@@ -79,7 +79,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
-                var contentDashboardJSON = moduleDashboards.getDashboardContentFromRegistry(registry, dashboard);
+                var contentDashboardJSON = moduleDashboards.getConvertedDashboardContent(registry, dashboard);
                 if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
                     contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
                 }
@@ -89,7 +89,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (superTenantDashboards) {
             utils.startTenantFlow(carbon.server.superTenant.tenantId);
             superTenantDashboards.forEach(function (dashboard) {
-                var parsedDashboards = moduleDashboards.getDashboardContentFromRegistry(superTenantRegistry, dashboard);
+                var parsedDashboards = moduleDashboards.getConvertedDashboardContent(superTenantRegistry, dashboard);
                 if (parsedDashboards.shareDashboard) {
                     if (!(parsedDashboards.permissions).hasOwnProperty("owners")) {
                         parsedDashboards.permissions.owners = parsedDashboards.permissions.editors;
