@@ -71,7 +71,7 @@ asset.manager = function (ctx) {
 
             // If authenticate passes, send gadget to DS side with relevant parameters
             responseBody = loginToDS();
-            if (responseBody !== false) {
+            if (responseBody) {
                 post = new HttpPost(portalConfigs.url + '/t/' + domain + utils.assetsAPI);
                 inputStream = new FileInputStream(zipFileName);
                 builder = MultipartEntityBuilder.create();
@@ -130,7 +130,7 @@ asset.manager = function (ctx) {
             var response;
             var del;
             var responseBody = loginToDS();
-            if (responseBody !== false) {
+            if (responseBody) {
                 del = new HttpDelete(portalConfigs.url + '/t/' + domain + utils.assetsAPI + '/' + gadgetId +
                     portalConfigs.delimiter + version + '?storeType=' + portalConfigs.storeType + '&type=' + portalConfigs.type);
                 del.addHeader("cookie", "JSESSIONID=" + parse(String(responseBody)).sessionId);
