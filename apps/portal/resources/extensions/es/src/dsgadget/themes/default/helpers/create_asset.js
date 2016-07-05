@@ -29,9 +29,9 @@ for (name in hps) {
     }
 }
 var fn = that.resources;
-var resources = function(page, meta) {
+var resources = function (page, meta) {
 
-    var o = (fn)? fn(page, meta):{css:[],js:[],code:[]};
+    var o = (fn) ? fn(page, meta) : {css: [], js: [], code: []};
     if (!o.css) {
         o.css = [];
     }

@@ -21,8 +21,7 @@
     var fileSizeLimit = 5;
     var gadgetArchive = $('#gadget_gadgetarchive');
     // Change the encoding type of the form
-    var form = ($('#form-asset-update').length > 0) ? $('#form-asset-update') : $('#form-asset-create');
-    var isCreate = ($('#form-asset-update').length > 0) ? false : true;
+    var form = $('#form-asset-create');
     form.attr('enctype', 'multipart/form-data');
 
     // Handler for gadget file change event
@@ -33,7 +32,7 @@
             messages.alertError('Selected file exceeds file sizeLimit');
             gadgetArchive.replaceWith(gadgetArchive = gadgetArchive.clone(true));
         }
-        else if ($(this)[0].files[0] || !isCreate) {
+        else if ($(this)[0].files[0]) {
             formData.append('gadget_gadgetarchive', $(this)[0].files[0]);
             $.ajax({
                 url: 'apis/gadgets',

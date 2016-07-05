@@ -37,7 +37,8 @@
      * @private
      */
     var GADGET_EXT_PATH = '/extensions/assets/' + ASSET_NAME;
-    var utils = require(GADGET_EXT_PATH + '/utils.js');
+    var utils = require(GADGET_EXT_PATH + '/modules/utils.js').api;
+    var constants = require(GADGET_EXT_PATH + '/modules/constants.js').constants;
     var method = request.getMethod();
 
     /**
@@ -48,12 +49,12 @@
      */
     var readGadgetConfigs = function (id) {
         var portalConfigs = require(GADGET_EXT_PATH + '/configs/portal.json');
-        var gadgetFile = request.getFile(utils.gadgetZipFileNameInRegistry);
-        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/');
-        var gadgetsTempDirectory = new File(GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' +
-                utils.gadgetTempDirectoryLabel + '/');
-        var gadgetDestPath = GADGET_EXT_PATH + '/' + utils.gadgetsDirectoryLabel + '/' + utils.gadgetTempDirectoryLabel
-                + '/' + id + utils.gadgetExtension;
+        var gadgetFile = request.getFile(constants.GADGET_ZIP_FILE_IN_REGISTRY);
+        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/');
+        var gadgetsTempDirectory = new File(GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/' +
+                constants.GADGET_TEMP_DIRECTORY_LABEL + '/');
+        var gadgetDestPath = GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/' + constants.GADGET_TEMP_DIRECTORY_LABEL
+                + '/' + id + constants.GADGET_EXTENSION
         var InputStreamReader = Packages.java.io.InputStreamReader;
         var BufferedReader = Packages.java.io.BufferedReader;
         var ZipFile = Packages.java.util.zip.ZipFile;
@@ -68,7 +69,7 @@
         if (!gadgetFile) {
             log.error('No gadget file uploaded.');
             return;
-        } else if (gadgetFile.getLength() / utils.BYTES_TO_MB > portalConfigs.gadgetFileSizeLimit) {
+        } else if (gadgetFile.getLength() / constants.BYTES_TO_MB > portalConfigs.gadgetFileSizeLimit) {
             log.error('Gadget file size limit exceeded');
             return;
         }
@@ -87,7 +88,7 @@
             log.error('Cannot save the zip file in the relevant location.');
             return;
         } finally {
-            if (gadget !== null) {
+            if (gadget) {
                 gadget.close();
             }
         }
@@ -97,7 +98,7 @@
             zip = new ZipFile(zipFilePath);
             for (var e = zip.entries(); e.hasMoreElements();) {
                 var entry = e.nextElement();
-                if (entry.getName().toLowerCase() == "gadget.json") {
+                if (entry.getName().toLowerCase().indexOf(constants.GADGET_CONFIGURATION_FILE) > -1) {
                     inputStream = zip.getInputStream(entry);
                     bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                     var sb = new StringBuilder();
@@ -115,10 +116,10 @@
         } finally {
             // Delete the uploaded gadget file
             gadget.del();
-            if (inputStream !== null) {
+            if (inputStream) {
                 inputStream.close();
             }
-            if (bufferedReader !== null) {
+            if (bufferedReader) {
                 bufferedReader.close();
             }
         }
