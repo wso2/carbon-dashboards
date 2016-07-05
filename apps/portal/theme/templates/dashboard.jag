@@ -570,13 +570,6 @@
                 $('.grid-stack-item[data-banner=true]')
                     .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
             }
-
-            // Toggle component box heading
-            $('.ues-component').hover(function() {
-                toggleHeading($(this), true);
-            }, function() {
-                toggleHeading($(this), false);
-            });
         });
         
         function toggleProductLogo(sidebarEventType){
@@ -587,17 +580,6 @@
             }
             else if (sidebarEventType == 'shown'){
                 logo.hide();
-            }
-        }
-
-        function toggleHeading(source, show) {
-            if (source.hasClass('ues-no-heading')) {
-                var heading = source.find('.ues-component-heading');
-                if (show) {
-                    heading.slideDown();
-                } else {
-                    heading.slideUp();
-                }
             }
         }
 
