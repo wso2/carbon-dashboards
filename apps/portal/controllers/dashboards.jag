@@ -60,16 +60,16 @@ var fresh;
                 dashboard = dashboards.getAsset(dashboardId);
                 if(!dashboard.menu && dashboard.pages.length > 0){
                     if(log.isDebugEnabled()){
-                        log.info("Unable to locate menu object, updating dashboard.json for: " + dashboardId);
+                        log.debug("Unable to locate menu object, updating dashboard.json for: " + dashboardId);
                     }
 
                     dashboard = decorateDashboard(dashboard);
                     utils.sandbox(context, function() {
                         dashboards.update(dashboard);
                     });
-                    
+
                     if(log.isDebugEnabled()){
-                        log.info("Updated dashboard.json for: " + dashboardId);
+                        log.debug("Updated dashboard.json for: " + dashboardId);
                     }
                 }
             });
