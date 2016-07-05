@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("upload."+assetType+".label")%></title>
-    <% var constants = require("/modules/constants");%>
+    <% var constants = require("/modules/constants.js");%>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -89,7 +89,7 @@
                             <div class="input-group input-wrap file-upload-control">
                                 <input type="text" class="form-control" readonly="">
                                 <input type="hidden"  name = "type" class="form-control" value="<%= assetType%>">
-                                <input type="hidden"  name = "storeType" class="form-control" value="<%= constants.%>">
+                                <input type="hidden"  name = "storeType" class="form-control" value="<%= constants.FILE_STORE%>">
                                 <input type="file" class="form-control" accept=".zip" id = "selected-file" name="selected-file">
                                 <div class="input-group-btn">
                                     <button class="btn browse" type="button" title="Browse File">
