@@ -108,15 +108,13 @@
      * @param {Object} component Component object
      */
     var setupTitleBar = function (sandbox, component) {
-        if (!isDesignerView && component.content.styles.no_heading) {
+        if (component.content.styles.no_heading) {
             sandbox.find('.ues-component-heading').hide();
-        } else {
-            if (component.content.styles.no_heading) {
-                sandbox.addClass('ues-no-heading');
-            } else {
-                sandbox.removeClass('ues-no-heading');
-                sandbox.find('.ues-component-heading').show();
-            }
+            sandbox.addClass('ues-no-heading');
+        }
+        else {
+            sandbox.find('.ues-component-heading').show();
+            sandbox.removeClass('ues-no-heading');
         }
     }
 
