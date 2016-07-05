@@ -23,8 +23,10 @@
  * @returns {String} message Detailed message on what happened during asset upload
  */
 var addAsset = function (type, id, fileRequest, storeType) {
+    var log = new Log();
     var storeManager = require("/js/store-manager.js");
     var constants = require("/modules/constants.js");
+    var urlDomain = urlDomain ? urlDomain : superDomain;
     var tempAssetPath = '/store/' + urlDomain + '/' + storeType + '/temp-' + type + '/';
     var ZipFile = Packages.java.util.zip.ZipFile;
     var zipExtension = ".zip";
@@ -35,7 +37,6 @@ var addAsset = function (type, id, fileRequest, storeType) {
     var config = require('/configs/designer.json');
     var bytesToMB = 1048576;
     var fileSizeLimit = type === "gadget" ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
-    var log = new Log();
     var fileUtils = require("/modules/file-utils.js");
 
     // Before copying the file to temporary location, check whether the given file exist and

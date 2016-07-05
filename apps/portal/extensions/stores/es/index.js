@@ -48,8 +48,7 @@ var getAsset, getAssets, addAsset, deleteAsset;
                 'Cookie': "JSESSIONID=" + authenticate.data.data.sessionId + ";",
                 'Accept': 'application/json'
             };
-        }
-        catch (e) {
+        } catch (e) {
             throw e;
         }
     };
@@ -65,8 +64,7 @@ var getAsset, getAssets, addAsset, deleteAsset;
                 publishedAssets.push(asset_id);
             }
             return publishedAssets;
-        }
-        catch (e) {
+        } catch (e) {
             log.error("Cannot connect to Enterprise Store");
         }
 
@@ -97,14 +95,13 @@ var getAsset, getAssets, addAsset, deleteAsset;
             return;
         }
         var publishedAssets = getPublishedAssets();
-
         if (publishedAssets) {
             var ctx = utils.currentContext();
             var parent = new File(assetsDir(ctx, type));
             var allAssets = parent.listFiles();
             var assets = [];
+            query = query ? new RegExp(query, 'i') : null;
             for (var j = 0; j < publishedAssets.length; j++) {
-                query = query ? new RegExp(query, 'i') : null;
                 allAssets.forEach(function (file) {
                     if (publishedAssets[j] === file.getName()) {
                         if (!file.isDirectory()) {
