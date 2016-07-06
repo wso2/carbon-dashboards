@@ -40,6 +40,10 @@ asset.manager = function (ctx) {
             options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;
             this._super.update.call(this, options);
         },
+        remove: function (id) {
+            utils.deleteGadget(id);
+            this._super.remove.call(this, id);
+        },
         invokeLcAction: function (asset, action, lcName, userArgs) {
             var lc = lifecycleApi.getLifecycle(asset.lifecycle, ctx.tenantId);
             var states = lc.nextStates(asset.lifecycleState);

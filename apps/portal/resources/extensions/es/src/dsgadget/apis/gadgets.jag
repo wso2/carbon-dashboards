@@ -40,21 +40,21 @@
     var utils = require(GADGET_EXT_PATH + '/modules/utils.js').api;
     var constants = require(GADGET_EXT_PATH + '/modules/constants.js').constants;
     var method = request.getMethod();
+    var responseProcessor = require('utils').response;
 
     /**
      * Read gadget configurations from the gadget.json file.
-     * @param {String} id GUID
      * @returns {*}
      * @private
      */
-    var readGadgetConfigs = function (id) {
+    var readGadgetConfigs = function () {
         var portalConfigs = require(GADGET_EXT_PATH + '/configs/portal.json');
         var gadgetFile = request.getFile(constants.GADGET_ZIP_FILE_IN_REGISTRY);
         var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/');
         var gadgetsTempDirectory = new File(GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/' +
                 constants.GADGET_TEMP_DIRECTORY_LABEL + '/');
         var gadgetDestPath = GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/' + constants.GADGET_TEMP_DIRECTORY_LABEL
-                + '/' + id + constants.GADGET_EXTENSION
+                + '/' + constants.GADGET_TEMP_DIRECTORY_LABEL + constants.GADGET_EXTENSION;
         var InputStreamReader = Packages.java.io.InputStreamReader;
         var BufferedReader = Packages.java.io.BufferedReader;
         var ZipFile = Packages.java.util.zip.ZipFile;
@@ -112,7 +112,7 @@
             }
         } catch (e) {
             log.error('Error occurred while extracting the zip file.');
-            throw e;
+            response = responseProcessor.buildSuccessResponse(response, constants.HTTP_INTERNAL_ERROR, e);
         } finally {
             // Delete the uploaded gadget file
             gadget.del();
@@ -126,18 +126,13 @@
         return conf;
     };
 
-    /**
-     * Generate GUID.
-     * @returns {String} GUID
-     * @private
-     */
-    var guid = function () {
-        var uuid = Packages.java.util.UUID;
-        return uuid.randomUUID();
-    };
 
     if (method == 'POST') {
-        print(readGadgetConfigs(guid()) || '');
+        var data = readGadgetConfigs();
+        data = (data) ? data : constants.GADGET_CONFIGURATION_FILE + ' not found';
+        response = responseProcessor.buildSuccessResponse(response, constants.HTTP_SUCCESS_CODE, data);
+    } else {
+        response = responseProcessor.buildErrorResponse(response, constants.HTTP_METHOD_NOT_ALLOWED, "HTTP request method not allowed");
     }
 })();
 %>

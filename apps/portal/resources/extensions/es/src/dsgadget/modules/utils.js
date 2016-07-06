@@ -134,8 +134,7 @@ var api = {};
         if (zipFile.isExists()) {
             zipFile.unZip(TEMP_GADGET_DIRECTORY_PATH + '/' + assetId);
             try {
-                gadgetJSONFile = new File(TEMP_GADGET_DIRECTORY_PATH
-                    + '/' + assetId + "/gadget.json");
+                gadgetJSONFile = new File(TEMP_GADGET_DIRECTORY_PATH + '/' + assetId + '/' + constants.GADGET_CONFIGURATION_FILE);
                 gadgetJSONFile.open("w");
                 gadgetJSONFile.write(res);
                 zipFile.del();
@@ -379,4 +378,16 @@ var api = {};
             }
         }
     };
+
+    /**
+     * Delete the gadget zip from ES file system, if the relevant gadget zip exists
+     * @param {String} id of the asset to be deleted
+     */
+    api.deleteGadget = function (id) {
+        var gadgetZip = new File(MAIN_GADGET_DIRECTORY_PATH + '/' + id + constants.GADGET_EXTENSION);
+
+        if (gadgetZip.isExists()) {
+            gadgetZip.del();
+        }
+    }
 }(api));

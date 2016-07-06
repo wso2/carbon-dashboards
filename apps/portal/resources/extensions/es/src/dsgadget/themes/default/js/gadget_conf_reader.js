@@ -44,6 +44,7 @@
                 success: function (data) {
                     messages.alertInfo("gadget.json found. Populating the data from values in gadget.json");
                     if (data) {
+                        data = data.data;
                         var gadgetConf = JSON.parse(data);
                         if (gadgetConf.hasOwnProperty('id') && !$('#overview_id').prop('disabled')) {
                             $('#overview_id').val(gadgetConf.id);
@@ -74,6 +75,7 @@
                             $('#overview_thumbnailurl').val(gadgetConf.thumbnail);
                         }
                         if (gadgetConf.hasOwnProperty('settings')) {
+                            // User can have unbounded number of settings, Populate them, if those are already defined
                             var settings = [];
                             for (var setting in gadgetConf.settings) {
                                 if (gadgetConf.settings.hasOwnProperty(setting)) {
@@ -188,7 +190,7 @@
                     }
                 },
                 error: function (data) {
-                    messages.alertError('Error occurred while updating gadget.json');
+                    messages.alertError('Gadget zip file is corrupted');
                     gadgetArchive.replaceWith(gadgetArchive = gadgetArchive.clone(true));
                 }
             });
