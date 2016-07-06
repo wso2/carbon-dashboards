@@ -130,15 +130,18 @@
                 .removeClass('ues-component-title-left ues-component-title-center ues-component-title-right')
                 .addClass(titlePositon);
 
-            hasCustomUserPrefView(metadata, comp);
-            hasCustomFullView(metadata, comp);
+            if (ues.global.dbType === 'default') {
+                hasCustomUserPrefView(metadata, comp);
+                hasCustomFullView(metadata, comp);
+            }
+            
             var container = $('<div />').attr('id', cid);
             sandbox.find('.ues-component-body').html(container);
             var hasHeading = sandbox.closest('.ues-component').hasClass('ues-no-heading');
             var renderParams = {};
-            var gadgetHeight = parseInt(sandbox.closest('.ues-component-box').height()) -
+            renderParams[osapi.container.RenderParam.HEIGHT] = 
+                parseInt(sandbox.closest('.ues-component-box').height()) -
                 (!hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
-            renderParams[osapi.container.RenderParam.HEIGHT] = (gadgetHeight > 0 ? gadgetHeight : 0);
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
