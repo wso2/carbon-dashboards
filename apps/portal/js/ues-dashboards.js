@@ -45,7 +45,7 @@
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
-
+        setupTitleBar(sandbox,component);
         if (component.content.styles.hide_gadget) {
             hideGadget(sandbox);
         } else {
@@ -63,6 +63,7 @@
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
+        setupTitleBar(container,component);
         if (component.content.styles.hide_gadget) {
             hideGadget(container);
         } else {
@@ -100,6 +101,22 @@
         sandbox.removeClass('ues-hide-gadget');
         sandbox.find('.ues-component-body').show();
     };
+
+    /**
+     * manage the titleBar of each gadget
+     * @param {Object} sandbox Gadget container
+     * @param {Object} component Component object
+     */
+    var setupTitleBar = function (sandbox, component) {
+        if (component.content.styles.no_heading) {
+            sandbox.find('.ues-component-heading').hide();
+            sandbox.addClass('ues-no-heading');
+        }
+        else {
+            sandbox.find('.ues-component-heading').show();
+            sandbox.removeClass('ues-no-heading');
+        }
+    }
 
     /**
      * Get a component ID.
@@ -230,9 +247,15 @@
 
     var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
-        ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
-            isGadgetExists = error
-        });
+        if(ues.global.dashboard.shareDashboard){
+            ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+                isGadgetExists = error
+            });
+        } else {
+            ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+                isGadgetExists = error
+            });
+        }
         return isGadgetExists;
     }
 

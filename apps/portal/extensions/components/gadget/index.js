@@ -124,13 +124,6 @@
             var cid = containerId(comp.id);
             var gid = gadgetId(comp.id);
             sandbox.find('.ues-component-title').text(styles.title);
-            if (styles.no_heading) {
-                sandbox.addClass('ues-no-heading');
-                sandbox.find('.ues-component-heading').hide();
-            } else {
-                sandbox.removeClass('ues-no-heading');
-                sandbox.find('.ues-component-heading').show();
-            }
             
             var titlePositon = 'ues-component-title-' + (styles.titlePosition || 'left');
             sandbox.find('.ues-component-heading')
@@ -144,11 +137,11 @@
             
             var container = $('<div />').attr('id', cid);
             sandbox.find('.ues-component-body').html(container);
-            var hasHeading = !sandbox.closest('.ues-component').hasClass('ues-no-heading');
+            var hasHeading = sandbox.closest('.ues-component').hasClass('ues-no-heading');
             var renderParams = {};
             renderParams[osapi.container.RenderParam.HEIGHT] = 
                 parseInt(sandbox.closest('.ues-component-box').height()) -
-                (hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
+                (!hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
