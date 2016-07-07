@@ -20,13 +20,13 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.dashboard.deployment.util.DeploymentUtil;
 import org.wso2.carbon.application.deployer.CarbonApplication;
 import org.wso2.carbon.application.deployer.config.ApplicationConfiguration;
 import org.wso2.carbon.application.deployer.config.Artifact;
 import org.wso2.carbon.application.deployer.config.CappFile;
 import org.wso2.carbon.application.deployer.handler.AppDeploymentHandler;
 import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.dashboard.deployment.util.DeploymentUtil;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.utils.CarbonUtils;
 
@@ -45,8 +45,7 @@ import java.util.List;
 public class DashboardDeployer implements AppDeploymentHandler {
     private static final Log log = LogFactory.getLog(DashboardDeployer.class);
 
-    @Override
-    public void deployArtifacts(CarbonApplication carbonApp, AxisConfiguration axisConfig)
+    @Override public void deployArtifacts(CarbonApplication carbonApp, AxisConfiguration axisConfig)
             throws DeploymentException {
         checkForTenantDirectory();
         ApplicationConfiguration appConfig = carbonApp.getAppConfig();
@@ -61,8 +60,8 @@ public class DashboardDeployer implements AppDeploymentHandler {
     }
 
     /**
-     *  If tenant domain is foo.com, this method checks for a directory named foo.com inside /portal/store directory.
-     *  If not found, this will create foo.com, foo.com/gadget, foo.com/layout and foo.com/widget directories too.
+     * If tenant domain is foo.com, this method checks for a directory named foo.com inside /portal/store directory.
+     * If not found, this will create foo.com, foo.com/gadget, foo.com/layout and foo.com/widget directories too.
      */
     private void checkForTenantDirectory() throws DeploymentException {
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
@@ -72,37 +71,40 @@ public class DashboardDeployer implements AppDeploymentHandler {
                 .append(tenantDomain).toString();
         File tenantDir = new File(path.toString());
         if (!tenantDir.exists()) {
+            tenantDir.mkdir();
             log.info("Creating directory " + tenantDomain + " for tenant related dashboard artifacts");
-            try {
-                tenantDir.mkdir();
-                File storeTypeDir = new File(path + File.separator + DashboardConstants.DEFAULT_STORE_TYPE);
-                if (!storeTypeDir.exists()) {
-                    storeTypeDir.mkdir();
-                }
-                String pathToArtifacts = path + File.separator + DashboardConstants.DEFAULT_STORE_TYPE;
-                //create gadget, layout and widget directories for this tenant
-                File gadgetDir = new File(pathToArtifacts + File.separator + "gadget");
-                if (!gadgetDir.exists()) {
-                    gadgetDir.mkdir();
-                }
-                File layoutDir = new File(pathToArtifacts + File.separator + "layout");
-                if (!layoutDir.exists()) {
-                    String carbonLayoutDir = new StringBuilder(carbonRepository).append("jaggeryapps")
-                            .append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
-                            .append("store").append(File.separator).append("carbon.super").append(File.separator)
-                            .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator).append("layout")
-                            .toString();
-                    FileUtils.copyDirectory(new File(carbonLayoutDir), new File(path));
-                }
-                File widgetDir = new File(pathToArtifacts + File.separator + "widget");
-                if (!widgetDir.exists()) {
-                    widgetDir.mkdir();
-                }
-                log.info("Created gadget,layout and widget directories for tenant [" + tenantDomain + "]");
-            } catch (Exception e) {
-                throw new DeploymentException(e);
-            }
         }
+        try {
+            File storeTypeDir = new File(path + File.separator + DashboardConstants.DEFAULT_STORE_TYPE);
+            if (!storeTypeDir.exists()) {
+                storeTypeDir.mkdir();
+            }
+            String pathToArtifacts = path + File.separator + DashboardConstants.DEFAULT_STORE_TYPE;
+            //create gadget, layout and widget directories for this tenant
+            File gadgetDir = new File(pathToArtifacts + File.separator + "gadget");
+            if (!gadgetDir.exists()) {
+                gadgetDir.mkdir();
+            }
+            File layoutDir = new File(pathToArtifacts + File.separator + "layout");
+            if (!layoutDir.exists()) {
+                String carbonLayoutDir = new StringBuilder(carbonRepository).append("jaggeryapps")
+                        .append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
+                        .append("store").append(File.separator).append("carbon.super").append(File.separator)
+                        .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator).append("layout")
+                        .toString();
+                FileUtils.copyDirectory(new File(carbonLayoutDir), new File(
+                        path.concat(File.separator).concat(DashboardConstants.DEFAULT_STORE_TYPE).concat(File.separator)
+                                .concat("layout")));
+            }
+            File widgetDir = new File(pathToArtifacts + File.separator + "widget");
+            if (!widgetDir.exists()) {
+                widgetDir.mkdir();
+            }
+            log.info("Created gadget,layout and widget directories for tenant [" + tenantDomain + "]");
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        }
+
     }
 
     private void deploy(List<Artifact> artifacts) throws DashboardDeploymentException {
@@ -192,8 +194,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
         }
     }
 
-    @Override
-    public void undeployArtifacts(CarbonApplication carbonApplication, AxisConfiguration axisConfiguration)
+    @Override public void undeployArtifacts(CarbonApplication carbonApplication, AxisConfiguration axisConfiguration)
             throws DeploymentException {
         List<Artifact.Dependency> deps = carbonApplication.getAppConfig().getApplicationArtifact().getDependencies();
         List<Artifact> artifacts = new ArrayList<Artifact>();
