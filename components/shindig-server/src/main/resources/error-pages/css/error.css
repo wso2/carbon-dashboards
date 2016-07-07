@@ -1,0 +1,14 @@
+h1, h3, h4 {
+    text-align: center;
+    font-weight: 200;
+}
+
+a {
+    color: #2578ff
+}
+
+body {
+    border-top: solid 20px #444;
+    padding: 0;
+    margin: 0;
+}

@@ -89,6 +89,10 @@
                                         <include name="features.txt" />
                                     </fileset>
                                 </copy>
+                                <copy todir="${tempdir}/shindig/">
+                                    <fileset dir="src/main/resources" includes="error-pages/**">
+                                    </fileset>
+                                </copy>
                                 <zip destfile="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}.jar" basedir="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}" />
                                 <delete dir="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}" />
                                 <zip destfile="target/shindig-server-${carbon.dashboards.version}.war" basedir="${tempdir}/shindig" />
