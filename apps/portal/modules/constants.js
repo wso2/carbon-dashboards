@@ -66,6 +66,16 @@ var DASHBOARD = '/permission/admin/manage/portal/dashboard';
 var CREATE = '/permission/admin/manage/portal/dashboard/create';
 var SETTINGS = '/permission/admin/manage/portal/dashboard/settings';
 
+var GADGET = '/permission/admin/manage/portal/gadget';
+var GADGET_UPLOAD = '/permission/admin/manage/portal/gadget/upload';
+var GADGET_DELETE = '/permission/admin/manage/portal/gadget/delete';
+var GADGET_GENERATE = '/permission/admin/manage/portal/gadget/generate';
+
+var LAYOUT = '/permission/admin/manage/portal/layout';
+var LAYOUT_UPLOAD = '/permission/admin/manage/portal/layout/upload';
+var LAYOUT_DELETE = '/permission/admin/manage/portal/layout/delete';
+
+
 //Internal Role creation constants
 var INTERNAL_ROLE = "Internal";
 var INTERNAL_ROLE_VIEWER = "viewer";

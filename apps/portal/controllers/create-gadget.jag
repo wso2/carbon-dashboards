@@ -15,6 +15,11 @@
  * limitations under the License.
  */
 (function() {
+    var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
+    var permission = require('/modules/permission.js');
+    var constants = require('/modules/constants.js');
+
     if (!user) {
         sendLogin();
         return;
@@ -38,5 +43,9 @@
         return;
     }
 
-    include(utils.resolvePath('templates/create-gadget.jag'));
+    if (permission.isAllowed(constants.GADGET_GENERATE)) {
+        include(utils.resolvePath('templates/create-gadget.jag'));
+    } else {
+        response.sendError(401, i18n.localize("designer.access.not.authorized"));
+    }
 } ()); %>
