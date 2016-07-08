@@ -212,7 +212,7 @@
           <label><input type="checkbox" name="{{fieldName}}"/>{{fieldLabel}}</label>
        {{/equalsIgnoreCase}}
        {{#equalsIgnoreCase fieldType "password"}}
-          <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label><input type="password" class="form-control" name="{{fieldName}}"
+          <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label><input type="password" autocomplete="off" class="form-control" name="{{fieldName}}"
           {{#if isRequired}}required="true"{{/if}}/>
           {{#if isRequired}} <label id="{{fieldName}}-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>{{/if}}
        {{/equalsIgnoreCase}}

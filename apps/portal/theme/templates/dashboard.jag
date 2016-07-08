@@ -112,10 +112,7 @@
                     <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
                 </div>
                 
-                <ul class="nav nav-pills nav-stacked pages">
-                    <div id="ues-pages">
-                    </div>
-                </ul>
+                <div id="ues-pages"><!-- dynamic content --></div>
                 
                 <hr>
                 

@@ -22,6 +22,8 @@ var assetType = "gadget";
 var configs = require('/configs/designer.json');
 (function () {
     errorMessage = request.getParameter("message");
+    var permission = require('/modules/permission.js');
+    var constants = require('/modules/constants.js');
     var possibleErrorMessages = ["success", "confgurationFileMissing", "idAlreadyExists", "fileNotFound",
         "MaxFileLimitExceeded", "notaZipFile", "errorInUpload"];
     var i18n = require("i18n");
@@ -50,5 +52,9 @@ var configs = require('/configs/designer.json');
         }
     }
 
-    include(utils.resolvePath('templates/upload-asset.jag'));
+    if (permission.isAllowed(constants.GADGET_UPLOAD)) {
+        include(utils.resolvePath('templates/upload-asset.jag'));
+    } else {
+        response.sendError(401, i18n.localize("designer.access.not.authorized"));
+    }
 }()); %>

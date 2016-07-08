@@ -130,6 +130,8 @@
                 .removeClass('ues-component-title-left ues-component-title-center ues-component-title-right')
                 .addClass(titlePositon);
 
+            sandbox.closest('.ues-component').attr('type', comp.content.type);
+
             if (ues.global.dbType === 'default') {
                 hasCustomUserPrefView(metadata, comp);
                 hasCustomFullView(metadata, comp);

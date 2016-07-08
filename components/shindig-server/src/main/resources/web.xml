@@ -349,4 +349,29 @@
         <servlet-name>rpcSwf</servlet-name>
         <url-pattern>/xpc*</url-pattern>
     </servlet-mapping>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error-pages/error404.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>401</error-code>
+        <location>/error-pages/error401.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error-pages/error403.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>405</error-code>
+        <location>/error-pages/error405.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error-pages/error500.html</location>
+    </error-page>
 </web-app>
