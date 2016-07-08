@@ -87,14 +87,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
             }
             File layoutDir = new File(pathToArtifacts + File.separator + "layout");
             if (!layoutDir.exists()) {
-                String carbonLayoutDir = new StringBuilder(carbonRepository).append("jaggeryapps")
-                        .append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
-                        .append("store").append(File.separator).append("carbon.super").append(File.separator)
-                        .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator).append("layout")
-                        .toString();
-                FileUtils.copyDirectory(new File(carbonLayoutDir), new File(
-                        path.concat(File.separator).concat(DashboardConstants.DEFAULT_STORE_TYPE).concat(File.separator)
-                                .concat("layout")));
+                layoutDir.mkdir();
             }
             File widgetDir = new File(pathToArtifacts + File.separator + "widget");
             if (!widgetDir.exists()) {
