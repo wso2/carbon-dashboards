@@ -258,7 +258,7 @@ $(function () {
         if (!gadgetIds[gadgetName]) {
             gadgetIds[gadgetName] = 0;
         }
-        return gadgetName + '-' + (gadgetIds[gadgetName]++);
+        return gadgetName + "-" +(gadgetIds[gadgetName]++);
     };
 
     /**
@@ -592,6 +592,8 @@ $(function () {
     var previewDashboard = function (page) {
         var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ?
             '?isAnonView=true' : '';
+        addingParam = addingParam + ((addingParam === '') ? '?preview=true' : '&preview=true');
+        addingParam = addingParam +'&currentView=' + getViewId(getSelectedView());
         var pageURL = dashboard.landing !== page.id ? page.id : '';
         var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
@@ -807,7 +809,7 @@ $(function () {
         $('#designer-view-mode').on('click', '.ues-view-component-properties-handle', function (event) {
             event.preventDefault();
             var currentPageType = pageType;
-            var tempName = this.closest('.view-heading').textContent.trim();
+            var tempName = $(this).closest('.view-heading').text().trim();
             var ctx = {
                 name: tempName
             };
@@ -1184,7 +1186,7 @@ $(function () {
             if ($('#right-sidebar').hasClass('toggled')) {
                 $('#right-sidebar').removeClass('toggled');
             }
-            var tempName = this.closest('.view-heading').textContent.trim();
+            var tempName = $(this).closest('.view-heading').text().trim();
             var viewId = getViewId(tempName);
             var currentView = getSelectedView();
             var currentViewId = getViewId(currentView);
@@ -1213,7 +1215,7 @@ $(function () {
         $('#designer-view-mode').on('click', '.ues-close-view', function (event) {
             event.preventDefault();
             if (visibleViews.length > 1) {
-                var viewId = getViewId(this.closest('.view-heading').textContent.trim());
+                var viewId = getViewId($(this).closest('.view-heading').text().trim());
                 var currentViewId = getViewId(getSelectedView());
                 for (var i = 0; i < visibleViews.length; i++) {
                     if (visibleViews[i] === viewId) {
@@ -1241,7 +1243,7 @@ $(function () {
                 $('#right-sidebar').removeClass('toggled');
             }
             var currentPageType = pageType;
-            var mode = getViewId(this.textContent.trim());
+            var mode = getViewId($(this).text().trim());
             if (mode === DEFAULT_DASHBOARD_VIEW) {
                 pageType = DEFAULT_DASHBOARD_VIEW;
                 ues.global.type = DEFAULT_DASHBOARD_VIEW;
@@ -1387,7 +1389,6 @@ $(function () {
                 $('#copy-view').prop("checked", true);
                 $('#page-views-menu').empty();
                 var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
-
                 for (var i = 0; i < views.length; i++) {
                     var temp = {
                         viewName: page.layout.content[views[i]].name
@@ -1518,7 +1519,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id = generateGadgetId(asset.id);
+        var id = generateGadgetId(asset.id +"-"+getViewId(getSelectedView()));
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -3372,8 +3373,7 @@ $(function () {
             return;
         }
         //enable add view button only if there is a page
-        $('#add-view').removeClass('hidden');
-        $('#add-view').show();
+        $('#add-view').removeClass('hidden').show();
         $('#ues-dashboard-preview-link').show();
         $('.gadgets-grid').html('');
         $('.page-header .page-actions').show();

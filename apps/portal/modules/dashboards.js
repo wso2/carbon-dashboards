@@ -239,10 +239,12 @@ var update = function (dashboard) {
             throw 'a dashboard cannot be found with the id ' + dashboard.id;
         }
     }
+    new Log().info(JSON.stringify(registry.get(dashboard)));
     registry.put(path, {
         content: JSON.stringify(dashboard),
         mediaType: 'application/json'
     });
+    new Log().info(stringify(registry.get(path).content));
 };
 
 /**
