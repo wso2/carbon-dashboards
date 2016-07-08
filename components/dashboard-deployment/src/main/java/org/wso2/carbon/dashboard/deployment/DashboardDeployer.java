@@ -104,7 +104,6 @@ public class DashboardDeployer implements AppDeploymentHandler {
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
-
     }
 
     private void deploy(List<Artifact> artifacts) throws DashboardDeploymentException {
