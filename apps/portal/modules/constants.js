@@ -75,7 +75,6 @@ var LAYOUT = '/permission/admin/manage/portal/layout';
 var LAYOUT_UPLOAD = '/permission/admin/manage/portal/layout/upload';
 var LAYOUT_DELETE = '/permission/admin/manage/portal/layout/delete';
 
-
 //Internal Role creation constants
 var INTERNAL_ROLE = "Internal";
 var INTERNAL_ROLE_VIEWER = "viewer";
