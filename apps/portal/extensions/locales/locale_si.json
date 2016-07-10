@@ -179,6 +179,7 @@
   "error" : "Error",
   "cannot.delete.gadget" : "Cannot delete the gadget",
   "cannot.delete.layout" : "Cannot delete the layout",
-  "something.wrong" : "Something went wrong. Try again later."
+  "something.wrong" : "Something went wrong. Try again later.",
+  "timeout" : "Timeout Interval"
 }
 

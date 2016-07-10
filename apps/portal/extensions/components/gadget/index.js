@@ -145,6 +145,7 @@
                 parseInt(sandbox.closest('.ues-component-box').height()) -
                 (!hasHeading ? sandbox.closest('.ues-component-box').find('.ues-component-heading').height() : 0) - 2;
             renderParams[osapi.container.RenderParam.VIEW] = comp.viewOption || 'home';
+            renderParams["settings"] = (content.settings || {});
             var site = ues.gadgets.render(container, url, params, renderParams);
             gadgets[gid] = {
                 component: comp,
