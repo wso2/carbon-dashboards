@@ -258,7 +258,7 @@ $(function () {
         if (!gadgetIds[gadgetName]) {
             gadgetIds[gadgetName] = 0;
         }
-        return gadgetName + "-" +(gadgetIds[gadgetName]++);
+        return gadgetName + '-' +(gadgetIds[gadgetName]++);
     };
 
     /**
@@ -1519,7 +1519,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id = generateGadgetId(asset.id +"-"+getViewId(getSelectedView()));
+        var id = generateGadgetId(asset.id);
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -2826,7 +2826,7 @@ $(function () {
                 // reset the dashboard
                 event.preventDefault();
                 var that = $(this);
-                showConfirm(i18n_data["reset.page"], i18_data["reset.page.message"], function () {
+                showConfirm(i18n_data["reset.page"], i18n_data["reset.page.message"], function () {
                     window.open(that.attr('href'), "_self");
                 });
             });

@@ -445,15 +445,20 @@ $(function () {
         }
         var allowedViews = getUserAllowedViews(page);
         var renderingView;
-        if (allowedViews.length > 0) {
-            if (currentView) {
-                for (var view in allowedViews) {
-                    if (allowedViews[view] === currentView) {
-                        renderingView = allowedViews[view];
+
+        if (embeddableView) {
+            renderingView = embeddableView;
+        } else {
+            if (allowedViews.length > 0) {
+                if (currentView) {
+                    for (var view in allowedViews) {
+                        if (allowedViews[view] === currentView) {
+                            renderingView = allowedViews[view];
+                        }
                     }
+                } else {
+                    renderingView = allowedViews[0];
                 }
-            } else {
-                renderingView = allowedViews[0];
             }
         }
         //if there is more than one view, enable dropdown list

@@ -39,6 +39,12 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     };
 
     getDashboardsFromRegistry = function (start, count, registry) {
+        if (!registry) {
+            var server = new carbon.server.Server();
+            registry = new carbon.registry.Registry(server, {
+                system: true
+            });
+        }
         return registry.content(registryPath(), {
             start: start,
             count: count

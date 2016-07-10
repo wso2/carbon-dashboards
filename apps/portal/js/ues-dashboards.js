@@ -19,6 +19,8 @@
     var DEFAULT_STORE = 'fs';
     var LEGACY_STORE = 'store';
     var SUPER_DOMAIN = 'carbon.super';
+    var loadingFinishedCount;
+
     /**
      * Find a component.
      * @param {String} type Type of the plugin
