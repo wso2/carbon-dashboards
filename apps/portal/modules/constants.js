@@ -83,4 +83,9 @@ var INTERNAL_ROLE_OWNER = "owner";
 var INTERNAL_ROLE_FORWARDSLASH = "/";
 var INTERNAL_ROLE_SEPERATOR = "-";
 
-var FILE_STORE = "fs";
+var FILE_STORE = 'fs';
+var ES_STORE = 'es';
+var GADGET_TYPE = 'gadget';
+var LAYOUT_TYPE = 'layout';
+
+var ES_STORE_DELIMITER = '_';
