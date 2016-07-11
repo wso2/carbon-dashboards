@@ -19,6 +19,7 @@ $(function () {
      * To render the specific gadget in a certain page
      */
     var renderGadget = function () {
+        ues.global.dbType = view;
         window.onresize = function () {
             location.reload();
         };

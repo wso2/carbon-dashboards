@@ -252,7 +252,8 @@ $(function () {
                 allowedViews.push(views[i]);
                 var tempViewName = page.layout.content[views[i]].name;
                 var viewOption = {
-                    viewName: tempViewName
+                    viewName: tempViewName,
+                    viewId : getViewId(tempViewName.trim())
                 };
                 $('#ds-allowed-view-list').append(viewOptionHbs(viewOption));
             }
@@ -406,6 +407,11 @@ $(function () {
      * @param viewId View id
      */
     var renderViewContent = function (viewId) {
+        $("#ds-allowed-view-list > option").each(function() {
+            if ($(this).val() === viewId) {
+                $('#ds-allowed-view-list').val(viewId);
+            }
+        });
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
@@ -439,8 +445,21 @@ $(function () {
         }
         var allowedViews = getUserAllowedViews(page);
         var renderingView;
-        if (allowedViews.length > 0) {
-            renderingView = allowedViews[0];
+
+        if (embeddableView) {
+            renderingView = embeddableView;
+        } else {
+            if (allowedViews.length > 0) {
+                if (currentView) {
+                    for (var view in allowedViews) {
+                        if (allowedViews[view] === currentView) {
+                            renderingView = allowedViews[view];
+                        }
+                    }
+                } else {
+                    renderingView = allowedViews[0];
+                }
+            }
         }
         //if there is more than one view, enable dropdown list
         if (allowedViews.length > 1) {

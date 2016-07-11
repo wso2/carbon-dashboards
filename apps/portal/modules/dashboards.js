@@ -337,6 +337,46 @@ var findPage = function (dashboard, id) {
 };
 
 /**
+ * Find a particular view within a particular page
+ * @param {Object} page Page
+ * @param {String} viewId View id
+ * @returns {*}
+ */
+var findView = function (page, viewId) {
+    if (page) {
+        var view = page.content;
+        if (view && view[viewId]) {
+            return view[viewId];
+        }
+    }
+};
+
+/**
+ * Find a given component in the current page
+ * @param {Number} id
+ * @returns {Object}
+ * @private
+ */
+var findComponent = function (id, view) {
+    var i;
+    var length;
+    var area;
+    var component;
+    var components;
+    for (area in view) {
+        if (view.hasOwnProperty(area)) {
+            components = view[area];
+            length = components.length;
+            for (i = 0; i < length; i++) {
+                component = components[i];
+                if (component.id === id) {
+                    return component;
+                }
+            }
+        }
+    }
+};
+/**
  * Save banner in the registry.
  * @param {String} dashboardId   ID of the dashboard
  * @param {String} username      Username

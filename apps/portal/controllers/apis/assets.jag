@@ -37,19 +37,21 @@
     var assets;
 
     var matcher = new URIMatcher(request.getRequestURI());
-    if (matcher.match('/assets/publicassets/{id}')) {
-    id = matcher.elements().id;
-    if (method === 'GET') {
-        assets = store.getAsset(assetType, id);
-        if (!assets) {
-            response.sendError(404, JSON.stringify({
-                error: true
-            }));
+    if (matcher.match('/assets/publicAssets/{id}')) {
+        id = matcher.elements().id;
+        if (method === 'GET') {
+            utils.sandbox(utils.context(user, urlDomain), function () {
+                assets = store.getAsset(assetType, id);
+            });
+            if (!assets) {
+                response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            print(assets);
             return;
         }
-        print(assets);
-        return;
-    }
     }
 
     if (!user) {

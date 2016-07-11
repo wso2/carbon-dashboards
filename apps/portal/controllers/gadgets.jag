@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * All the requests that starts with /gadgets/ will be handled with this controller
+ * All the reqts that starts with /gadgets/ will be handled with this controller
  */
 
 var fresh = false;
 var bgColor;
 var pageId;
+var vId;
 var dbRoot;
 var dest;
 var renderEngine = {};
@@ -30,6 +31,7 @@ var renderEngine = {};
     var uriElements;
     var dashboardId;
     var page;
+    var view;
     var isStandAlone = true; //To check whether the request is for stand alone gadget/ pub-sub gadget
     var i18n = require("i18n");
     var gadgets;
@@ -38,7 +40,6 @@ var renderEngine = {};
     var permissions;
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
-    var viewId;
     i18n.init(request, utils.getLocaleResourcePath());
     // To set the bgcolor according to client`s website template
     bgColor = request.getParameter("bgcolor");
@@ -61,20 +62,19 @@ var renderEngine = {};
         uriElements = matcher.elements();
         dashboardId = uriElements.id;
         pageId = uriElements.pid;
-        viewId = uriElements.vid;
+        vId = uriElements.vid;
         isStandAlone = false
     } else if (matcher.match('/gadgets/{id}/{pid}/{vid}/{gid}')) {
         // Get the dashboard id, page id and gadget id from url
         uriElements = matcher.elements();
         dashboardId = uriElements.id;
         pageId = uriElements.pid;
-        viewId = uriElements.vid;
+        vId = uriElements.vid;
         var gadgetId = uriElements.gid;
     } else {
         response.sendError(400, i18n.localize("bad.request"));
         return;
     }
-    ues.global.dbType = viewId;
     dashboards = require('/modules/dashboards.js');
 
     if (!request.getParameter("shared")) {
@@ -151,10 +151,16 @@ var renderEngine = {};
         return;
     }
 
+    view = dashboards.findView(page, vId);
+    if (!view) {
+        response.sendError(404, i18n.localize("page.not.found"));
+        return;
+    }
+
     // If it is a standalone gadget, check whether the required gadget exist
     if (isStandAlone) {
         // Check whether a gadget exist within the page
-        var isComponentExists = dashboards.findComponent(gadgetId, page);
+        var isComponentExists = dashboards.findComponent(gadgetId, view);
         // If there is no such gadget, send error.
         if (!isComponentExists) {
             response.sendError(404, i18n.localize("page.not.found"));
