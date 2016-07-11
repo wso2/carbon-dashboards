@@ -26,7 +26,8 @@
     var usr = require('/modules/user.js'),
         user = usr.current(),
         isAnonView = request.getParameter('isAnonView'),
-        queryString = request.getQueryString();
+        queryString = request.getQueryString(),
+        isPersonalizeEnabled = request.getParameter('dashboardeditor');
 
     // Get the anon view
     if (!user) {
@@ -102,6 +103,13 @@
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard lang_<%=request.getLocale()%> dark">
+    <!-- Modal -->
+    <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
@@ -438,6 +446,34 @@
         {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
     </script>
 
+    <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+            <h3 class="modal-title" id="deleteModalLabel">
+                {{#if hasComponent}}
+                <%=i18n.localize("dashboard.view.delete.message")%>
+                {{/if}}
+            </h3>
+        </div>
+        {{#if hasComponent}}
+        <div class="pull-right">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-delete"><%=i18n.localize("delete")%></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("cancel")%></button>
+            </div>
+        </div>
+        {{else}}
+        <div class="modal-body">
+            <%=i18n.localize("delete.block.only.message")%>
+            <input type="radio" name="delete-option" value="block" class="hidden" checked>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-delete" data-dismiss="modal"><%=i18n.localize("yes.label")%></button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("no.label")%></button>
+        </div>
+        {{/if}}
+    </script>
+
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
@@ -591,7 +627,8 @@
         //usage : in traverseMenu helper
         var user = <%= user %>,
             queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>;    
+            isAnonView = <%= isAnonView %>,
+            isPersonalizeEnabled = <%= isPersonalizeEnabled %>;  
     </script>
 </body>
 </html>

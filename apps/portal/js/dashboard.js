@@ -41,6 +41,14 @@ $(function () {
      * @const
      */
     var RPC_GADGET_BUTTON_CALLBACK = "RPC_GADGET_BUTTON_CALLBACK";
+
+    /**
+     * Anonymous dashboard view mode.
+     * @const
+     */
+    var ANONYMOUS_DASHBOARD_VIEW = 'anon';
+
+    var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
     
     var page;
     /**
@@ -124,6 +132,45 @@ $(function () {
             }
             componentContainer.html(gadgetSettingsViewHbs(component.content)).addClass('ues-userprep-visible');
         });
+
+        // event handler for trash button
+        viewer.on('click', '.ues-component-box .ues-trash-handle', function () {
+            var that = $(this);
+            var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
+            var hasComponent = false;
+            if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
+                hasComponent = true;
+            }
+
+            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
+                var designerModal = $('#dashboardViewModal');
+                designerModal.find('#btn-delete').on('click', function () {
+                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
+                    var componentBox = that.closest('.ues-component-box');
+                    var id = componentBox.find('.ues-component').attr('id');
+                   // var removeBlock = (action == 'block');
+
+                    if (id) {
+                        removeComponent(findComponent(id), function (err) {
+                            if (!err) {
+                                removeBlock = false;
+                            }
+                            saveDashboard();
+                            getGridstack().remove_widget(componentBox.parent());
+                            updateLayout();
+                        });
+                    }
+
+                    //if (removeBlock) {
+
+                    /*} else {
+                        componentBox.html(componentBoxContentHbs());
+                    }*/
+
+                    designerModal.modal('hide');
+                });
+            });
+        });
     };
 
     /**
@@ -164,7 +211,7 @@ $(function () {
      * @private
      */
     var renderComponentToolbar = function (component) {
-        if (component) {
+        if (component && !isPersonalizeEnabled) {
             // Check whether any user preferences are exists
             var userPrefsExists = false;
             for (var key in component.content.options) {
@@ -262,7 +309,259 @@ $(function () {
         $('.nano').nanoScroller();
     };
 
-    initDashboard();
+    /**
+     * This is the initial call from the dashboard.js.
+     * @return {null}
+     * @private
+     */
+    var initDashboardEditor = function () {
+        var allPages = ues.global.dashboard.pages;
+        if (allPages.length > 0) {
+            page = (ues.global.page ? ues.global.page : allPages[0]);
+        }
+        for (var i = 0; i < allPages.length; i++) {
+            if (ues.global.page == allPages[i].id) {
+                page = allPages[i];
+            }
+        }
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
+            // render component toolbar for each components
+            $('.ues-component-box .ues-component').each(function () {
+                var component = ues.dashboards.findComponent($(this).attr('id'),page);
+                renderComponentToolbar(component);
+            });
+            $('.grid-stack').gridstack({
+                width: 12,
+                cellHeight: 50,
+                verticalMargin: 30,
+                disableResize: false,
+                disableDrag: false,
+            }).on('dragstop', function (e, ui) {
+                updateLayout();
+            }).on('resizestart', function (e, ui) {
+                // hide the component content on start resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    container.find('.ues-component-body').hide();
+                }
+            }).on('resizestop', function (e, ui) {
+                // re-render component on stop resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    var gsItem = container.closest('.grid-stack-item');
+                    var node = gsItem.data('_gridstack_node');
+                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                    container.closest('.ues-component-box').attr('data-height', height);
+                    container.find('.ues-component-body').show();
+                    if (container.attr('id')) {
+                        updateComponent(container.attr('id'));
+                    }
+                }
+                updateLayout();
+            });
+        });
+        $('.nano').nanoScroller();
+    };
+
+    /**
+     * Update the layout after modification.
+     * @return {null}
+     */
+    var updateLayout = function () {
+
+        // extract the layout from the designer and save it
+        var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
+            el = $(el);
+            var node = el.data('_gridstack_node');
+
+            if (node) {
+                return {
+                    id: el.attr('data-id'),
+                    x: node.x,
+                    y: node.y,
+                    width: node.width,
+                    height: node.height,
+                    banner: el.attr('data-banner') == 'true'
+                };
+            }
+        });
+
+        var serializedGrid = [];
+        for (i = 0; i < res.length; i++) {
+            if (res[i]) {
+                serializedGrid.push(res[i]);
+            }
+        }
+
+        var json = {blocks: serializedGrid};
+        var id;
+        var i;
+        var length;
+        // find the current page index
+        for (i = 0,length = ues.global.dashboard.pages.length; i < length; i++) {
+            if (ues.global.dashboard.pages[i].id === page.id) {
+                id = i;
+            }
+        }
+        if (typeof id === 'undefined') {
+            throw 'Specified page : ' + page.id + ' cannot be found';
+        }
+        if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
+            ues.global.dashboard.pages[id].layout.content.anon = json;
+        } else {
+            ues.global.dashboard.pages[id].layout.content.loggedIn = json;
+        }
+        saveDashboard();
+    };
+
+    /**
+     * Saves the dashboard content.
+     * @return {null}
+     * @private
+     */
+    var saveDashboard = function () {
+        var method = 'PUT';
+        var url = dashboardsApi + '/' + dashboard.id;
+        var isRedirect = false;
+        $.ajax({
+            url: url,
+            method: method,
+            data: JSON.stringify(dashboard),
+            async: false,
+            contentType: 'application/json'
+        }).success(function (data) {
+            //generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
+            console.log("Dashboard saved successfully.");
+            if (isRedirect) {
+                isRedirect = false;
+                window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
+            }
+        }).error(function (xhr, status, err) {
+            if (xhr.status === 403) {
+                window.location.reload();
+                return;
+            }
+            //("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
+            console.log("Error saving the dashboard.");
+        });
+    };
+
+    /**
+     * Triggers update hook of a given component.
+     * @param {String} id   Component ID
+     * @return {null}
+     * @private
+     */
+    var updateComponent = function (id) {
+        ues.components.update(findComponent(id), function (err) {
+            if (err) {
+                throw err;
+            }
+        });
+    };
+
+    /**
+     * Find a given component in the current page.
+     * @param {String} id   The component ID
+     * @return {Object}
+     * @private
+     */
+    var findComponent = function (id) {
+        var i;
+        var length;
+        var area;
+        var component;
+        var components;
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+        var content = page.content[pageType];
+        for (area in content) {
+            if (content.hasOwnProperty(area)) {
+                components = content[area];
+                length = components.length;
+                for (i = 0; i < length; i++) {
+                    component = components[i];
+                    if (component.id === id) {
+                        return component;
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     * Show HTML modal.
+     * @param {String} content      HTML content
+     * @param {function} beforeShow Function to be invoked just before showing the modal
+     * @return {null}
+     * @private
+     */
+    var showHtmlModal = function (content, beforeShow) {
+        var modalElement = $('#dashboardViewModal');
+        modalElement.find('.modal-content').html(content);
+        if (beforeShow && typeof beforeShow === 'function') {
+            beforeShow();
+        }
+
+        modalElement.modal();
+    };
+
+    /**
+     * Removes and destroys the given component from the page.
+     * @param {Object} component    The component to be removed
+     * @param {function} done       Callback function
+     * @return {null}
+     * @private
+     */
+    var removeComponent = function (component, done) {
+        destroyComponent(component, function (err) {
+            if (err) {
+                return done(err);
+            }
+            var container = $('#' + component.id);
+            var area = container.closest('.ues-component-box').attr('id');
+            pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+            var content = page.content[pageType];
+            area = content[area];
+            var index = area.indexOf(component);
+            area.splice(index, 1);
+            container.remove();
+
+            var compId = $('.ues-component-properties').data('component');
+            if (compId !== component.id) {
+                return done();
+            }
+            $('.ues-component-properties .ues-component-properties-container').empty();
+            done();
+        });
+    };
+
+    /**
+     * Destroys the given component.
+     * @param {Object} component    Component to be destroyed
+     * @param {function} done       Callback function
+     * @return {null}
+     * @private
+     */
+    var destroyComponent = function (component, done) {
+        ues.components.destroy(component, function (err) {
+            if (err) {
+                return err;
+            }
+            done(err);
+        });
+    };
+
+    /**
+     * Get Gridstack object.
+     * @return {Object}
+     * @private
+     */
+    var getGridstack = function () {
+        return $('.grid-stack').data('gridstack');
+    };
+
+    isPersonalizeEnabled? initDashboardEditor() : initDashboard();
     updateMenuList();
     initComponentToolbar();
 });
