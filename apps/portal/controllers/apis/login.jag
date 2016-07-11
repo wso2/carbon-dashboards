@@ -77,6 +77,10 @@ var user;
                 if (dest) {
                     response.sendRedirect(dest);
                 }
+                var content = {'sessionId': session.getId()};
+                response.status = 200;
+                response.contentType = 'application/json';
+                response.content = content;
             }
             else {
                 if (dest) {

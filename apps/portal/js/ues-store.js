@@ -51,12 +51,15 @@
         });
     };
     
-    store.assets = function (type, paging, cb) {
+    store.assets = function (type, paging, cb, storeType) {
         var query = 'type=' + type;
         query += domain ? '&domain=' + domain : '';
         if (paging) {
             query += paging.query ? '&query=' + paging.query : '';
             query += '&start=' + paging.start + '&count=' + paging.count;
+        }
+        if (storeType) {
+            query += '&storeType=' + storeType;
         }
         $.get(assetsUrl + '?' + query, function (data) {
             cb(false, data);

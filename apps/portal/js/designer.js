@@ -797,7 +797,28 @@ $(function () {
             };
             page.layout.content[newViewId] = viewLayoutContent;
             var viewContent = page.content[selectedViewId];
-            page.content[newViewId] = viewContent;
+            var i;
+            var length;
+            var area;
+            var component;
+            var components;
+            var content = viewContent;
+            for (area in content) {
+                console.log(area);
+                if (content.hasOwnProperty(area)) {
+                    components = content[area];
+                    length = components.length;
+                    for (i = 0; i < length; i++) {
+                        component = components[i];
+                        var id = component.id.split("-").pop();
+                        console.log(component.id);
+                        component.id = component.id.replace(id, guid());
+                        console.log(component.id);
+                    }
+                    content[area] = components;
+                }
+            }
+            page.content[newViewId] = content;
             saveDashboard();
             pageType = newViewId;
             $('button[data-target=#left-sidebar]').click();
@@ -1519,7 +1540,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id = generateGadgetId(asset.id);
+        var id = asset.id+ "-" + guid();
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -2731,6 +2752,13 @@ $(function () {
         };
     };
 
+    var guid = function () {
+                var s4 = function () {
+                        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+                   };
+                return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
+    }
+
     /**
      * Initializes the store.
      * @return {null}
@@ -3115,6 +3143,7 @@ $(function () {
                 var id = ui.helper.data('id');
                 var type = ui.helper.data('type');
                 if (!hasComponents($(this))) {
+                    console.log($(this));
                     createComponent($(this), findStoreCache(type, id));
                 }
             }
