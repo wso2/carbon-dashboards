@@ -21,12 +21,13 @@ var getAsset, getAssets, addAsset, deleteAsset;
     var dir = '/store/';
 
     var utils = require('/modules/utils.js');
+    var constants = require('/modules/constants.js');
 
     var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
         var config = require('/configs/designer.json');
         var domain = config.shareStore ? carbon.server.superTenant.domain : ctx.domain;
-        return dir + domain + '/fs/' + type + '/';
+        return dir + domain + '/' + constants.FILE_STORE + '/' + type + '/';
     };
 
     getAsset = function (type, id) {
@@ -77,11 +78,45 @@ var getAsset, getAssets, addAsset, deleteAsset;
         return assets;
     };
 
-    addAsset = function (asset) {
-
+    /**
+     * To add an asset to File Store
+     * @param {String} type Type of the asset
+     * @param {String} id Id of the asset
+     * @param {File} assertFile File with asset
+     * @returns {boolean}
+     */
+    addAsset = function (type, id, assertFile) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var assetDir = new File(parent + id + "_gdt.gdt");
+        try {
+            assetDir.open('w');
+            assetDir.write(assertFile.getStream());
+            assetDir.close();
+            assetDir.unZip(parent + id);
+            return true;
+        } catch (e) {
+            log.error("Cannot add asset to " + constants.FILE_STORE);
+            throw e;
+        } finally {
+            assetDir.del();
+        }
     };
 
-    deleteAsset = function (id) {
-
+    /**
+     * To delete an asset from File Store
+     * @param {String} type Type of the asset
+     * @param {String} id Id of the asset
+     * @returns true if the asset is deleted otherwise null
+     */
+    deleteAsset = function (type, id) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var file = new File(parent + id);
+        if (!file.isExists()) {
+            return null;
+        }
+        file.del();
+        return true;
     };
 }());

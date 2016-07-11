@@ -84,9 +84,10 @@ Handlebars.registerHelper('resolveURI', function (path) {
 });
 
 //handlebar helper which returns menu hierachy
-Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden) {
-    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'>";
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString) {
+    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize pages'>";
     var checked = isHidden ? "checked=''": "" ;
+    var requestParam = (queryString !== null) ? "?" + queryString: "";
 
     if(designer){
         divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'>" +
@@ -96,7 +97,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
     }
 
     updateSubordinates(menu, null);
-    divTree += "</ul>"
+    divTree += "</ul>";
 
     function updateSubordinates(menu, parent){
         for (var i = 0; i < menu.length; i++) {
@@ -108,7 +109,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                                 "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" +menu[i].id + 
                                 "'>" + iClass + "</span></span>";
                 } else {
-                    var divLi = "<li><a href='" + menu[i].id + "'>" + menu[i].title + "</a>";
+                    var divLi = "<li><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>";
                     if(!menu[i].ishidden){
                         if (isAnonView || !user) {
                             if (menu[i].isanon) {

@@ -21,18 +21,19 @@
 
     response.contentType = 'application/json';
     var PROVIDER_CONF = 'provider-conf';
-
+    var PROVIDER_NAME = 'provider-name';
 
     var action = request.getParameter("action");
     var data = request.getContent();
+    var providerConf = data[PROVIDER_CONF];
+    var providerAPI = require('js/core/' + providerConf[PROVIDER_NAME] + '-provider-api.js');
 
     if (action === 'getSchema') {
-        var providerAPI = require('js/provider-api.js');
-        print(providerAPI.getSchema(data[PROVIDER_CONF]));
+        print(providerAPI.getSchema(providerConf));
         return;
     } else if(action === 'getData'){
-        var providerAPI = require('js/provider-api.js');
-        print(providerAPI.getData(data[PROVIDER_CONF]));
+        print(providerAPI.getData(providerConf));
+        return;
     }
 
 }());

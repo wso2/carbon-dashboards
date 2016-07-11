@@ -17,21 +17,54 @@
 -->
 
 <component xmlns="http://products.wso2.org/carbon">
-	<!-- <deployers>
-        <deployer>
-            <directory>eventstreams</directory>
-            <extension>json</extension>
-            <class>org.wso2.carbon.event.stream.core.EventStreamDeployer</class>
-        </deployer>
-    </deployers> -->
     <ManagementPermissions>
         <ManagementPermission>
-            <DisplayName>Analytics</DisplayName>
-            <ResourceId>/permission/admin/manage/analytics</ResourceId>
+            <DisplayName>Portal</DisplayName>
+            <ResourceId>/permission/admin/manage/portal</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Analytics Dashboard</DisplayName>
-            <ResourceId>/permission/admin/manage/analytics/dashboard</ResourceId>
+            <DisplayName>Login</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/login</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Dashboard</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/dashboard</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Create</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/dashboard/create</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Settings</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/dashboard/settings</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Gadget</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Generate</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget/generate</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Upload</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget/upload</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Delete</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget/delete</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Layout</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/layout</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Upload</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/layout/upload</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Delete</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/layout/delete</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>
 </component>

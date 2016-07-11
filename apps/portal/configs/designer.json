@@ -55,6 +55,15 @@
     "cacheSizeBytes": "1073741824",
     "defaultDashboardRedirect": false,
     "isCreateGadgetEnable": true,
+    "isSecureVaultEnabled" : false,
+    "assets": {
+        "gadget": {
+            "fileSizeLimit": 5
+        },
+        "layout": {
+            "fileSizeLimit": 1
+        }
+    },
     "oauth": {
         "username": "admin",
         "password": "admin"

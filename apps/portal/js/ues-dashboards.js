@@ -18,6 +18,7 @@
 
     var DEFAULT_STORE = 'fs';
     var LEGACY_STORE = 'store';
+    var SUPER_DOMAIN = 'carbon.super';
     /**
      * Find a component.
      * @param {String} type Type of the plugin
@@ -44,7 +45,7 @@
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
-
+        setupTitleBar(sandbox,component);
         if (component.content.styles.hide_gadget) {
             hideGadget(sandbox);
         } else {
@@ -62,6 +63,7 @@
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
+        setupTitleBar(container,component);
         if (component.content.styles.hide_gadget) {
             hideGadget(container);
         } else {
@@ -99,6 +101,22 @@
         sandbox.removeClass('ues-hide-gadget');
         sandbox.find('.ues-component-body').show();
     };
+
+    /**
+     * manage the titleBar of each gadget
+     * @param {Object} sandbox Gadget container
+     * @param {Object} component Component object
+     */
+    var setupTitleBar = function (sandbox, component) {
+        if (component.content.styles.no_heading) {
+            sandbox.find('.ues-component-heading').hide();
+            sandbox.addClass('ues-no-heading');
+        }
+        else {
+            sandbox.find('.ues-component-heading').show();
+            sandbox.removeClass('ues-no-heading');
+        }
+    }
 
     /**
      * Get a component ID.
@@ -215,42 +233,86 @@
         // render gadget contents
         isDesignerView = isDesigner;
         doneCallback = done;
-        componentBoxNum = 0;
+        componentBoxNum = -1;
         componentBoxList = $('.ues-component-box');
         sortGadgets();
-        renderGadget();
+        loadingFinishedCount = 0;
+        prePriority = getPriorty(componentBoxList[0]);
+        rederingInitiator();
         if (!doneCallback) {
             return;
         }
         doneCallback();
     };
+
+    var isGadgetUnavailable = function (gadgetComponetBox) {
+        var isGadgetExists = false;
+        if(ues.global.dashboard.shareDashboard){
+            ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+                isGadgetExists = error
+            });
+        } else {
+            ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+                isGadgetExists = error
+            });
+        }
+        return isGadgetExists;
+    }
+
+    var rederingInitiator = function () {
+        while (true) {
+            if ((prePriority === getPriorty(componentBoxList[componentBoxNum + 1]) || renderNextPriority) && componentBoxNum < componentBoxList.length) {
+                loadingFinishedCount++;
+                renderNextPriority = false;
+                componentBoxNum++;
+                renderGadget();
+                prePriority = getPriorty(componentBoxList[componentBoxNum]);
+                if (!doneCallback) {
+                    return;
+                }
+                doneCallback();
+            } else {
+                break;
+            }
+
+        }
+    };
+
+    var getPriorty = function (componentBoxA) {
+        var defaultPriorityVal = ues.global.dashboard.defaultPriority;
+        var contentA = content[$(componentBoxA).attr('id')];
+        if (contentA) {
+            if (contentA[0]) {
+                var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
+                return priorityA;
+            }
+        }
+    };
+
+    var priorityComparison = function (componentBoxA, componentBoxB) {
+        var priorityA = getPriorty(componentBoxA);
+        var priorityB = getPriorty(componentBoxB);
+        if (priorityA && priorityB) {
+            return (priorityB - priorityA);
+        }
+        else {
+            return priorityA ? -1 : 1;
+        }
+    }
 
     var sortGadgets = function () {
         var defaultPriorityVal = ues.global.dashboard.defaultPriority;
         componentBoxList.sort(function (componentBoxA, componentBoxB) {
-            var contentA = content[$(componentBoxA).attr('id')];
-            var contentB = content[$(componentBoxB).attr('id')];
-            if (contentA && contentB) {
-                if(contentA[0] && contentB[0]){
-                    var priorityA = contentA[0].content.settings ? contentA[0].content.settings['priority'] ? contentA[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                    var priorityB = contentB[0].content.settings ? contentB[0].content.settings['priority'] ? contentB[0].content.settings['priority'] : defaultPriorityVal : defaultPriorityVal;
-                    return (priorityB - priorityA);
-                }
-                else{
-                    return 1;
-                }
-            }
+            return priorityComparison(componentBoxA, componentBoxB);
         });
     };
 
     var finishedLoading = function () {
-        componentBoxNum++;
-        renderGadget();
-        if (!doneCallback) {
-            return;
+        loadingFinishedCount--;
+        if (loadingFinishedCount === 0) {
+            renderNextPriority = true;
+            rederingInitiator();
         }
-        doneCallback();
-
     };
 
     var renderGadget = function () {
@@ -277,7 +339,7 @@
             if (isDesignerView || hasComponent) {
                 container.html(componentBoxContentHbs());
             }
-            if (hasComponent) {
+            if (hasComponent && !(isGadgetUnavailable(componentBoxList[componentBoxNum]))) {
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
                         log(err);
@@ -369,8 +431,8 @@
     var resolveURI = function (uri) {
         var index = uri.indexOf('://');
         var scheme = uri.substring(0, index);
-        if(scheme === LEGACY_STORE){
-            uri.replace(LEGACY_STORE,DEFAULT_STORE);
+        if (scheme === LEGACY_STORE) {
+            uri.replace(LEGACY_STORE, DEFAULT_STORE);
             scheme = DEFAULT_STORE;
         }
         var uriPlugin = ues.plugins.uris[scheme];
@@ -378,7 +440,13 @@
             return uri;
         }
         var path = uri.substring(index + 3);
-        return uriPlugin(path);
+
+        path = uriPlugin(path);
+        if ((typeof(dashboard) !== 'undefined') && dashboard.shareDashboard) {
+            path = path.replace(user.domain, SUPER_DOMAIN);
+        }
+
+        return path;
     };
 
     ues.components = {
@@ -393,7 +461,7 @@
         findPage: findPage,
         resolveURI: resolveURI,
         finishedLoadingGadget: finishedLoading,
-        findComponent : findComponent
+        findComponent: findComponent
     };
 
     ues.assets = {};

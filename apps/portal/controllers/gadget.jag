@@ -1,5 +1,6 @@
-/*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+<%
+/**
+ * Copyright 2016 WSO2, Inc. (http://wso2.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,16 +13,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This is the controller for gadgets main page.
  */
-var registerCallBackforPush;
+
+var assetType = "gadget";
 (function () {
-    /**
-     *
-     * @param providerConfig
-     * @param schema
-     */
-    registerCallBackforPush = function (providerConfig, schema, callback){
-        //callback(providerData);
-    };
-  
-}());
+    var utils = require('/modules/utils.js');
+    var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
+
+    if (!user) {
+        sendLogin();
+        return;
+    }
+    if (userDomain !== (urlDomain || superDomain)) {
+        response.sendError(401, i18n.localize("designer.access.not.authorized.for.tenant"));
+        return;
+    }
+    include(utils.resolvePath("templates/assets.jag"));
+}()); %>

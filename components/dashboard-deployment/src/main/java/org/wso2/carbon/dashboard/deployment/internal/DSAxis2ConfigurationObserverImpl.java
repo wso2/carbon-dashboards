@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2005 - 2013, WSO2 Inc. (http://www.wso2.com) All Rights Reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,46 +37,42 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
         String gadgetDir = tenantDir + DashboardConstants.GADGET_DEPLOYMENT_DIR;
         createTenantDirectory(tenantDir);
         if (!isDSTenantIArtifactInitialized(layoutDir)) {
-           copyResources(DashboardConstants.LAYOUT_TYPE, layoutDir);
+            copyResources(DashboardConstants.LAYOUT_TYPE, layoutDir);
         }
         if (!isDSTenantIArtifactInitialized(gadgetDir)) {
             copyResources(DashboardConstants.GADGET_TYPE, gadgetDir);
         }
     }
 
-    private void createTenantDirectory (String tenantDirectory){
+    private void createTenantDirectory(String tenantDirectory) {
         File file = new File(tenantDirectory);
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
     }
 
-    private boolean isDSTenantIArtifactInitialized(String tenantArtifactDirectory){
+    private boolean isDSTenantIArtifactInitialized(String tenantArtifactDirectory) {
         File file = new File(tenantArtifactDirectory);
         return file.exists();
     }
 
-    private void copyResources(String artifactType, String destinationLocation){
-        File sourceResourceFile =
-                new File(CarbonUtils.getCarbonHome() + File.separator +
-                        DashboardConstants.SHARED_RESOURCE_LOCATION + File.separator + artifactType);
+    private void copyResources(String artifactType, String destinationLocation) {
+        File sourceResourceFile = new File(CarbonUtils.getCarbonHome() + File.separator +
+                DashboardConstants.SHARED_RESOURCE_LOCATION + File.separator + artifactType);
         File destinationFile = new File(destinationLocation);
         try {
             FileManipulator.copyDir(sourceResourceFile, destinationFile);
         } catch (IOException e) {
-            log.error("Error while initializing the tenant dashboard resources :"+
-                    PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true)
-                    +e.getMessage());
+            log.warn("Error while retrieving the resources from sharedstore " +
+                    PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain(true) + e.getMessage());
         }
     }
 
-    private String getTenantDirPath(String tenantDomain){
+    private String getTenantDirPath(String tenantDomain) {
         String carbonRepository = CarbonUtils.getCarbonRepository();
         StringBuilder sb = new StringBuilder(carbonRepository);
-        sb.append("jaggeryapps").append(File.separator)
-                .append(DashboardConstants.APP_NAME).append(File.separator)
-                .append("store").append(File.separator)
-                .append(tenantDomain).append(File.separator)
+        sb.append("jaggeryapps").append(File.separator).append(DashboardConstants.APP_NAME).append(File.separator)
+                .append("store").append(File.separator).append(tenantDomain).append(File.separator)
                 .append(DashboardConstants.DEFAULT_STORE_TYPE).append(File.separator);
 
         return sb.toString();

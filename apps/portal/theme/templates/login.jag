@@ -49,7 +49,7 @@
                     </div>
                     <div class="form-group">
                         <label for="ues-password" class="sr-only"><%= i18n.localize("password")%></label>
-                        <input type="password" name="password" class="form-control ues-password" placeholder="<%= i18n.localize("password")%>" required>
+                        <input type="password" name="password" autocomplete="off" class="form-control ues-password" placeholder="<%= i18n.localize("password")%>" required>
                     </div>
                     <input type="hidden" name="destination" value="/portal/">
 

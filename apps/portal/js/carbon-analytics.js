@@ -55,6 +55,7 @@ function AnalyticsClient() {
     var TYPE_SEARCH_WITH_AGGREGATES = 29;
     var TYPE_REINDEX = 30;
     var TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES = 31;
+    var TYPE_DRILLDOWN_RANGE_COUNT = 32;
     var HTTP_GET = "GET";
     var HTTP_POST = "POST";
     var RESPONSE_ELEMENT = "responseJSON";
@@ -822,6 +823,46 @@ function AnalyticsClient() {
                         url: this.serverUrl + "?type=" + TYPE_DRILLDOWN_SEARCH + "&tableName=" +
                                                                                drillDownReq["tableName"],
                         data: JSON.stringify(drillDownReq["drillDownInfo"]),
+                        type: HTTP_POST,
+                        success: function (data) {
+                            callback(data);
+                        },
+                        error: function (msg) {
+                            error(msg[RESPONSE_ELEMENT]);
+                        }
+                    });
+    };
+
+    /**
+     * Returns the labeled numeric buckets along with the record count in that given bucket .
+     * @param drillDownReq The object which contains Bucket information.
+     *  e.g. drillDownReq = {
+     *          tableName : "TEST",
+     *          drillDownRangeInfo : {
+                    "rangeField" : "date", //the field to be bucketed
+                    "query" : "product:DAS, //additional query
+                    "ranges" : [{
+                        "label" : "2016-12-23", //label to represent the given bucket
+                        "from" : startTime of 2016-12-23,// lower bound of the bucket inclusive
+                        "to" :  endTime of 2016-12-23 //upper bound of the bucket exclusive
+                    },{
+                        "label" : "2016-12-25",
+                        "from" : startTime of 2016-12-25,
+                        "to" :  endTime of 2016-12-25
+                    },{
+                        "label" : "2016-12-26",
+                        "from" : startTime of 2016-12-26,
+                        "to" :  endTime of 2016-12-26
+                    },]
+     *          }
+     * @param callback The callback function which has one argument which contains the matching records
+     * @param error The callback function which has one argument which contains the error if any
+     */
+    this.drillDownRangeCount = function (drillDownReq, callback, error) {
+        jQuery.ajax({
+                        url: this.serverUrl + "?type=" + TYPE_DRILLDOWN_RANGE_COUNT + "&tableName=" +
+                             drillDownReq["tableName"],
+                        data: JSON.stringify(drillDownReq["drillDownRangeInfo"]),
                         type: HTTP_POST,
                         success: function (data) {
                             callback(data);

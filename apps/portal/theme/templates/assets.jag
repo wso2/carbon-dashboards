@@ -1,0 +1,203 @@
+<%
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * This is the template file for assets (gadget/layout) home page
+ */
+%>
+    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
+    <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
+    <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <% var permission = require('/modules/permission.js'); %>
+    <% var constants = require('/modules/constants.js'); %>
+    <title><%= i18n.localize(assetType+"s")%></title>
+    <% var config = require('/configs/designer.json'); %>
+</head>
+<body>
+    <% include(utils.resolvePath('templates/global-navigation.jag')); %>
+
+    <!-- breadcrumb -->
+    <div class="breadcrumb-wrapper">
+        <ol class="breadcrumb">
+            <li class="active"><i class="icon fw fw-home"></i> <%=i18n.localize(assetType+"s")%></li>
+        </ol>
+    </div>
+
+
+	<% var showNavigation = !isMobileDevice || (config.isCreateGadgetEnable || assetType !== "gadget"); %>
+    <% if (showNavigation) { %>
+        <!-- navbar -->
+        <div class="navbar-wrapper">
+            <nav class="navbar navbar-default affix-top" data-spy="affix" data-offset-top="80" data-offset-bottom="40">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                        aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only"><%=i18n.localize("toggle.navigation")%></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-menu-toggle" data-toggle="collapse" data-target="#navbar2" aria-expanded="true"
+                        aria-controls="navbar2">
+                            <span class="icon fw-stack">
+                                <i class="fw fw-tiles fw-stack-1x"></i>
+                            </span>
+                        </a>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0px;">
+                        <ul class="nav navbar-nav collapse-nav-sub">
+                            <% if (! isMobileDevice) { %>
+                                <% if (config.isCreateGadgetEnable && assetType === "gadget" && permission.isAllowed(constants.GADGET_GENERATE)) { %>
+                                    <li>
+                                        <a href="<%=tenantedUrlPrefix%>create-gadget">
+                                            <span class="fw-stack">
+                                                <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                                <i class="fw fw-add fw-stack-1x"></i>
+                                            </span> <%= i18n.localize("generate.gadget.label")%>
+                                        </a>
+                                    </li>
+                                <% }  %>
+                                 <li>
+                                 <% var isUploadAllowed = (assetType === 'gadget') ? permission.isAllowed(constants.GADGET_UPLOAD) : permission.isAllowed(constants.LAYOUT_UPLOAD); %>
+                                   <% if (isUploadAllowed) { %>
+                                     <a href="<%=tenantedUrlPrefix%>upload-<%= assetType%>">
+                                        <span class="fw-stack">
+                                            <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                            <i class="fw fw-upload fw-stack-1x"></i>
+                                        </span> <%= i18n.localize("upload."+assetType+".label")%>
+                                    </a>
+                                   <% } %>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+                <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true">
+                     <ul class="nav navbar-nav collapse-nav-sub">
+                        <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="<%=tenantedUrlPrefix%>dashboards/"><i class="fw fw-dashboard"></i>
+                            <%= i18n.localize("dashboards.label")%></a>
+                        </li>
+                        <li data-absolute-position="145" style="left: 145px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="<%=tenantedUrlPrefix%>gadget/">
+                                <i class="fw fw-gadget"></i><%= i18n.localize("gadgets")%></a>
+                        </li>
+                        <li data-absolute-position="275" style="left: 275px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="<%=tenantedUrlPrefix%>layout/"><i class="fw fw-layout"></i>
+                            <%= i18n.localize("layouts")%></a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    <% } %>
+
+    <div id="ds-assets-portal" class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="page-sub-title"><%= i18n.localize(assetType+"s") %></h1>
+            </div>
+        </div>
+        <div class="row thumbnails ds-assets"></div>
+    </div>
+
+    <!-- Footer -->
+    <% include(utils.resolvePath('templates/includes/portal-footer.jag')); %>
+
+    <!-- Handlebar templates -->
+    <script id="ds-assets-list-hbs" type="text/x-handlebars-template">
+        {{#each .}}
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="thumbnail ds-asset" id="{{id}}" data-id="{{id}}">
+                    {{>ds-asset-thumbnail-hbs}}
+                </div>
+            </div>
+        {{/each}}
+    </script>
+
+    <script id="ds-assets-empty-hbs" type="text/x-handlebars-template">
+        <div class="col-md-12">
+            <div class="message message-info">
+                <h4><i class="icon fw fw-info"></i><%= i18n.localize("no."+assetType+"s.found.description") %></h4>
+                <p><%= i18n.localize("to.upload."+assetType) %> <a href="<%=tenantedUrlPrefix%>upload-<%= assetType%>">
+                <u><%= i18n.localize("here.label") %></u></p>
+            </div>
+        </div>
+    </script>
+
+    <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
+        <h5 class="title">{{title}}</h5>
+        <% var isDeleteAllowed = (assetType === 'gadget') ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
+        <% if (isDeleteAllowed) { %>
+             <a href="#" class="ds-asset-trash-handle">
+                <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
+                <%= i18n.localize("delete."+assetType)%>"></i>
+            </a>
+        <% } %>
+        <img src="{{resolveURI thumbnail}}" style="height : 150px;"/>
+    </script>
+
+    <script id="ds-asset-confirm-hbs" type="text/x-handlebars-template">
+        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <div class="alert alert-warning" role="alert">
+            <i class="icon fw fw-error"></i><strong>Warning!</strong> <%= i18n.localize(assetType+".delete.warning")%>
+        </div>
+        <div class="ds-trash-actions" >
+            <a href="#" class="btn btn-danger ladda-button ds-asset-trash-confirm" role="button"
+            data-style="expand-left" data-size="l">
+                <span class="ladda-label"><%= i18n.localize("delete")%></span>
+            </a>
+            <a href="#" class="btn btn-default ds-asset-trash-cancel" role="button" ><%= i18n.localize("cancel")%></a>
+        </div>
+    </script>
+
+     <script id="ds-asset-delete-error-hbs" type="text/x-handlebars-template">
+          <div class="alert alert-danger" id = "delete-error" role="alert">
+            <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
+            <h3><%= i18n.localize("cannot.delete." + assetType)%> {{title}}. <%= i18n.localize("something.wrong")%></h3>
+            <button type="button" class="close" aria-label="close" data-dismiss="alert">
+                <span aria-hidden="true">
+                    <i class="fw fw-cancel"></i>
+                </span>
+            </button>
+          </div>
+     </script>
+
+    <!-- Jquery JS -->
+    <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Handlebars -->
+   <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
+    <script src="<%=urlPrefix%>js/spin.min.js"></script>
+    <script src="<%=urlPrefix%>js/ladda.min.js"></script>
+    <script src="<%=urlPrefix%>js/ues.js"></script>
+    <% include('/controllers/includes/common-scripts.jag'); %>
+    <script src="<%=urlPrefix%>js/ues-store.js"></script>
+    <script src="<%=urlPrefix%>js/assets.js"></script>
+    <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
+    <% include('/controllers/includes/theme-portal-scripts.jag'); %>
+    <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
+    <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
+    <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+    <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
+</body>
+</html>

@@ -15,6 +15,7 @@
  */
 
 #ues-dashboard-settings .ues-shared-view,
+#ues-dashboard-settings .ues-shared-owner,
 #ues-dashboard-settings .ues-shared-edit {
     margin-top: 10px;
 }
@@ -25,6 +26,11 @@
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     background-color: #ffffff;
+}
+
+#share-info {
+    padding-top: 8px;
+    font-weight: bold;
 }
 
 /**

@@ -25,7 +25,8 @@
 
     var usr = require('/modules/user.js'),
         user = usr.current(),
-        isAnonView = request.getParameter('isAnonView');
+        isAnonView = request.getParameter('isAnonView'),
+        queryString = request.getQueryString();
 
     // Get the anon view
     if (!user) {
@@ -99,11 +100,8 @@
     %>
 
 </head>
-<body class="dashboard lang_<%=request.getLocale()%>">
-
-
+<% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard lang_<%=request.getLocale()%> dark">
-      <% if(typeof  bgColor === 'undefined'){ %>
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
@@ -116,10 +114,7 @@
                     <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
                 </div>
                 
-                <ul class="nav nav-pills nav-stacked pages">
-                    <div id="ues-pages">
-                    </div>
-                </ul>
+                <div id="ues-pages"><!-- dynamic content --></div>
                 
                 <hr>
                 
@@ -128,10 +123,8 @@
             </div>
         </div>
     </div>
-      <% } %>
     <!-- #page-content-wrapper -->
     <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
-          <% if(typeof  bgColor === 'undefined'){ %>
         <div class="page-header">
             <div class="container-fluid">
 
@@ -223,6 +216,10 @@
 
             </div>
         </div>
+         <% } else { %>
+            <body class="dashboard lang_<%=request.getLocale()%>" style="padding-bottom: 0">
+            <body class="dashboard lang_<%=request.getLocale()%> dark" style="padding-bottom: 0">
+                <div class="page-content-wrapper remove-padding-xs">
          <% } %>
         <!-- page content -->
         <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
@@ -248,11 +245,14 @@
         <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
-            <div class="<%= page.layout.fluidLayout ? 'container-fluid' : 'container'%> body-wrapper">
-
-                <div class="nano">
-                    <div class="nano-content">
-
+            <% if(typeof  bgColor === 'undefined'){ %>
+                <div class="container-fluid body-wrapper">
+                <div class="nano" >
+            <% } else { %>
+                <div class="container-fluid body-wrapper" style="height: 100%;">
+                <div class="nano" style="position: absolute;">
+            <% } %>
+                    <div class="nano-content" >
                         <div class="page-content">
                             <div class="progress hidden">
                                     <div class="indeterminate"></div>
@@ -435,7 +435,7 @@
     </script>
 
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
     </script>
 
     <!-- Jquery/Jquery UI JS -->
@@ -466,6 +466,7 @@
     <% include('/controllers/includes/common-scripts.jag'); %>
     <% include('/controllers/includes/dashboard-scripts.jag'); %>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-gadgets')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-store')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-dashboards')%>"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
@@ -566,13 +567,6 @@
                 $('.grid-stack-item[data-banner=true]')
                     .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
             }
-
-            // Toggle component box heading
-            $('.ues-component').hover(function() {
-                toggleHeading($(this), true);
-            }, function() {
-                toggleHeading($(this), false);
-            });
         });
         
         function toggleProductLogo(sidebarEventType){
@@ -586,17 +580,6 @@
             }
         }
 
-        function toggleHeading(source, show) {
-            if (source.hasClass('ues-no-heading')) {
-                var heading = source.find('.ues-component-heading');
-                if (show) {
-                    heading.slideDown();
-                } else {
-                    heading.slideUp();
-                }
-            }
-        }
-
         $('#left-sidebar').on('hidden.sidebar', function(e){
             toggleProductLogo(e.type)
         });
@@ -607,6 +590,7 @@
 
         //usage : in traverseMenu helper
         var user = <%= user %>,
+            queryString = <%= stringify(queryString) %>,
             isAnonView = <%= isAnonView %>;    
     </script>
 </body>
