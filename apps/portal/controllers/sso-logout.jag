@@ -31,10 +31,12 @@
         var sso_sessions = application.get('sso_sessions');
         var sessionId = session.getId();
         var attr = config.authentication.methods.sso.attributes;
+        var carbon = require('carbon');
+        var superTenant = carbon.server.superTenant;
         var encodedSAMLLogoutRequest;
 
         if(attr.responseSigningEnabled){
-            encodedSAMLLogoutRequest = sso.client.getEncodedSignedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer, -1234, 'carbon.super', attr.identityProviderURL, attr.defaultNameIDPolicy);
+            encodedSAMLLogoutRequest = sso.client.getEncodedSignedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer, superTenant.tenantId, superTenant.domain, attr.identityProviderURL, attr.defaultNameIDPolicy);
         } else {
             encodedSAMLLogoutRequest = sso.client.getEncodedSAMLLogoutRequest(user, sso_sessions[session.getId()], attr.issuer);
         }
