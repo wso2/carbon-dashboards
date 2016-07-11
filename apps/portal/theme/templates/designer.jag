@@ -760,7 +760,7 @@ var userRoles = usr.roles();
     </script>
 
     <!-- View label -->
-    <script id="add-new-view-hds" type="text/x-handlebars-template">
+    <script id="add-new-view-hbs" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
             <div class="view-heading ues-component-heading">
                 <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>

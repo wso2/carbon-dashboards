@@ -199,7 +199,7 @@ $(function () {
 
     var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
 
-    var newViewHbs = Handlebars.compile($('#add-new-view-hds').html());
+    var newViewHbs = Handlebars.compile($('#add-new-view-hbs').html());
 
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
 
@@ -473,6 +473,7 @@ $(function () {
             var container = $('#' + component.id);
             var area = container.closest('.ues-component-box').attr('id');
             pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+
             var content = page.content[pageType];
             area = content[area];
             var index = area.indexOf(component);
@@ -797,23 +798,14 @@ $(function () {
             };
             page.layout.content[newViewId] = viewLayoutContent;
             var viewContent = page.content[selectedViewId];
-            var i;
-            var length;
-            var area;
-            var component;
-            var components;
             var content = viewContent;
-            for (area in content) {
-                console.log(area);
+            for (var area in content) {
                 if (content.hasOwnProperty(area)) {
-                    components = content[area];
-                    length = components.length;
-                    for (i = 0; i < length; i++) {
-                        component = components[i];
-                        var id = component.id.split("-").pop();
-                        console.log(component.id);
-                        component.id = component.id.replace(id, guid());
-                        console.log(component.id);
+                    var components = content[area];
+                    for (var i = 0; i < components.length; i++) {
+                        var component = components[i];
+                        if (component.id.indexOf('-'+selectedViewId+'-') > -1)
+                        component.id = component.id.replace('-' + selectedViewId + '-', '-' + newViewId + '-');
                     }
                     content[area] = components;
                 }
@@ -1226,6 +1218,7 @@ $(function () {
                     dashboard.isanon = isAnonDashboard();
                     saveDashboard();
                     views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+                    window.location.reload();
                     renderView(viewId, views[0]);
                     return true;
                 });
@@ -1540,7 +1533,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id = asset.id+ "-" + guid();
+        var id = generateGadgetId(asset.id + "-"+ getViewId(getSelectedView()));
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -2724,7 +2717,6 @@ $(function () {
         var viewContent = {};
         page.content[viewId] = viewContent;
         saveDashboard();
-        $('button[data-target=#left-sidebar]').click();
         renderView(currentViewId, viewId);
     };
 
@@ -2751,13 +2743,6 @@ $(function () {
             name: titlePrefix + tempViewId
         };
     };
-
-    var guid = function () {
-                var s4 = function () {
-                        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-                   };
-                return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
-    }
 
     /**
      * Initializes the store.
@@ -3071,7 +3056,7 @@ $(function () {
                 width: unitSize * parseInt($('#block-width').val()),
                 height: unitSize * parseInt($('#block-height').val())
             });
-        }
+        };
 
         // redraw the grid when changing the width/height values
         $('#block-height, #block-width')
@@ -3091,7 +3076,7 @@ $(function () {
             }
 
             getGridstack().add_widget($(newBlockHbs({id: id})), 0, 0, width, height);
-            $('.ues-component-box#' + id).html(componentBoxContentHbs())
+            $('.ues-component-box#' + id).html(componentBoxContentHbs());
 
             updateLayout();
             listenLayout();
@@ -3143,7 +3128,6 @@ $(function () {
                 var id = ui.helper.data('id');
                 var type = ui.helper.data('type');
                 if (!hasComponents($(this))) {
-                    console.log($(this));
                     createComponent($(this), findStoreCache(type, id));
                 }
             }
@@ -3190,7 +3174,6 @@ $(function () {
      * @private
      */
     var createPage = function (options, lid, done) {
-
         var layout = findStoreCache('layout', lid);
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
@@ -3504,9 +3487,7 @@ $(function () {
                         updateComponent(container.attr('id'));
                     }
                 }
-
                 updateLayout();
-
             });
 
             $('.gadgets-grid [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
