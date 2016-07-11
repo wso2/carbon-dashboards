@@ -211,6 +211,8 @@
     "cannot.delete.layout" : "Cannot delete the layout",
     "something.wrong" : "Something went wrong. Try again later.",
     "timeout" : "Timeout Interval",
+    "something.wrong" : "Something went wrong. Try again later.",
+    "timeout" : "Timeout Interval",
     "view.name": "View Name",
     "select.roles": "Select Role(s)",
     "create.new.view": "Create New view",
