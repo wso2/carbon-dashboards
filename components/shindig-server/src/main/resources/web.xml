@@ -76,40 +76,14 @@
             <param-name>hstsEnabled</param-name>
             <param-value>false</param-value>
         </init-param>
-    </filter>
-
-    <filter>
-        <filter-name>HttpHeaderSecurityFilter_AntiClickJacking_Shindig</filter-name>
-        <filter-class>org.apache.catalina.filters.HttpHeaderSecurityFilter</filter-class>
-        <!-- Disable other headers except X-Frame-Options (not required, but enhances performance)-->
-        <init-param>
-            <param-name>hstsEnabled</param-name>
-            <param-value>false</param-value>
-        </init-param>
-        <init-param>
-            <param-name>blockContentTypeSniffingEnabled</param-name>
-            <param-value>false</param-value>
-        </init-param>
-        <init-param>
-            <param-name>xssProtectionEnabled</param-name>
-            <param-value>false</param-value>
-        </init-param>
         <init-param>
             <param-name>antiClickJackingOption</param-name>
             <param-value>SAMEORIGIN</param-value>
         </init-param>
     </filter>
-
-    <!-- Global filter mapping -->
     <filter-mapping>
         <filter-name>HttpHeaderSecurityFilter</filter-name>
         <url-pattern>*</url-pattern>
-    </filter-mapping>
-
-    <!-- Overriding filter mapping for the specific URL, should come after global filter mapping-->
-    <filter-mapping>
-        <filter-name>HttpHeaderSecurityFilter_AntiClickJacking_Shindig</filter-name>
-        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <filter>
