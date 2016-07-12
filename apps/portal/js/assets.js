@@ -72,7 +72,7 @@ $(function () {
                 return;
             }
             listAssets();
-        });
+        }, STORE_TYPE);
     };
 
     /**

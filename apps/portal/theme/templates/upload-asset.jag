@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <title><%= i18n.localize("upload."+assetType+".label")%></title>
+    <% var constants = require("/modules/constants.js");%>
 </head>
 <body>
 <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -71,7 +72,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <form action="<%=tenantedUrlPrefix%><%= assetType%>" method="post" id="asset-upload-form" enctype="multipart/form-data" >
+                <form action="<%=tenantedUrlPrefix%>apis/assets" method="post" id="asset-upload-form" enctype="multipart/form-data" >
                     <h1 class="page-sub-title"><%= i18n.localize("upload."+assetType+".label")%></h1><br>
                     <div class="alert alert-success upload-success hide" role="alert">
                         <i class="icon fw fw-success"></i><strong><%= i18n.localize("success.label")%>!</strong> <%= i18n.localize("upload.success."+assetType)%>
@@ -87,6 +88,8 @@
                             <label class="control-label"><%= i18n.localize("file.upload")%></label>
                             <div class="input-group input-wrap file-upload-control">
                                 <input type="text" class="form-control" readonly="">
+                                <input type="hidden"  name = "type" class="form-control" value="<%= assetType%>">
+                                <input type="hidden"  name = "storeType" class="form-control" value="<%= constants.FILE_STORE%>">
                                 <input type="file" class="form-control" accept=".zip" id = "selected-file" name="selected-file">
                                 <div class="input-group-btn">
                                     <button class="btn browse" type="button" title="Browse File">

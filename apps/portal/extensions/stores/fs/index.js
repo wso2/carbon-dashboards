@@ -21,12 +21,13 @@ var getAsset, getAssets, addAsset, deleteAsset;
     var dir = '/store/';
 
     var utils = require('/modules/utils.js');
+    var constants = require('/modules/constants.js');
 
     var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
         var config = require('/configs/designer.json');
         var domain = config.shareStore ? carbon.server.superTenant.domain : ctx.domain;
-        return dir + domain + '/fs/' + type + '/';
+        return dir + domain + '/' + constants.FILE_STORE + '/' + type + '/';
     };
 
     getAsset = function (type, id) {
@@ -87,11 +88,19 @@ var getAsset, getAssets, addAsset, deleteAsset;
     addAsset = function (type, id, assertFile) {
         var ctx = utils.currentContext();
         var parent = assetsDir(ctx, type);
-        var assetDir = new File(parent + id + ".zip");
-        assetDir.open('w');
-        assetDir.write(assertFile.getStream());
-        assetDir.close();
-        return true;
+        var assetDir = new File(parent + id + "_gdt.gdt");
+        try {
+            assetDir.open('w');
+            assetDir.write(assertFile.getStream());
+            assetDir.close();
+            assetDir.unZip(parent + id);
+            return true;
+        } catch (e) {
+            log.error("Cannot add asset to " + constants.FILE_STORE);
+            throw e;
+        } finally {
+            assetDir.del();
+        }
     };
 
     /**

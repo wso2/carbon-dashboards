@@ -19,9 +19,7 @@
 
 var assetType = "gadget";
 (function () {
-    var method = request.getMethod();
     var utils = require('/modules/utils.js');
-    var assets = require('/modules/assets.js');
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
@@ -33,11 +31,5 @@ var assetType = "gadget";
         response.sendError(401, i18n.localize("designer.access.not.authorized.for.tenant"));
         return;
     }
-
-    if (method === "GET") {
-        include(utils.resolvePath("templates/assets.jag"));
-    } else if (method === "POST") {
-        var message = assets.addAsset(assetType, request.getFile("selected-file"));
-        response.sendRedirect(tenantedUrlPrefix + 'upload-gadget?message=' + message);
-    }
+    include(utils.resolvePath("templates/assets.jag"));
 }()); %>

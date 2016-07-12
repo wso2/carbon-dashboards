@@ -26,6 +26,8 @@
     var destination = request.getParameter("destination");
     var referer = request.getHeader("referer");
     var ignoreReferer = request.getParameter("ignoreReferer");
+    var carbon = require('carbon');
+    var superTenant = carbon.server.superTenant;
 
     if (destination) {
         referer = destination;
@@ -39,7 +41,12 @@
     var relayState = (referer ? referer : '/portal');
     //TODO: need to parameterize default value in order to support app renaming
 
-    var encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
+    var encodedSAMLAuthRequest;
+    if(attr.responseSigningEnabled){
+        encodedSAMLAuthRequest = sso.client.getEncodedSignedSAMLAuthRequest(attr.issuer, attr.identityProviderURL, attr.acs, attr.isPassive, superTenant.tenantId, superTenant.domain, attr.defaultNameIDPolicy);
+    } else {
+        encodedSAMLAuthRequest = sso.client.getEncodedSAMLAuthRequest(attr.issuer);
+    }
     var log = new Log();
     var postUrl = attr.identityProviderURL;
     if (log.isDebugEnabled()) {

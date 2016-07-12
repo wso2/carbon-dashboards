@@ -85,7 +85,7 @@ Handlebars.registerHelper('resolveURI', function (path) {
 
 //handlebar helper which returns menu hierachy
 Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString) {
-    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize'>";
+    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize pages'>";
     var checked = isHidden ? "checked=''": "" ;
     var requestParam = (queryString !== null) ? "?" + queryString: "";
 
