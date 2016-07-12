@@ -40,25 +40,49 @@ var CREATE_GADGET_API  = 'apis/createGadget';
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
+    nextSelector: '.btn-next',
+    previousSelector: '.btn-previous',
     onNext: function(tab, navigation, index) {
         var isRequiredFieldsFilled = true;
+
+        $(tab.children('a').attr('href')).find('input[required="true"]').each(function () {
+            if (!$.trim($(this).val())) {
+                isRequiredFieldsFilled = false;
+                showInlineError($(this), $("#" + $(this).attr("name") + "-error"));
+            }else{
+                hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
+            }
+        });
+
         if(index == 2) {
-            $('input[required="true"]').each(function () {
-                if (!$.trim($(this).val())) {
-                    isRequiredFieldsFilled = false;
-                    showInlineError($(this), $("#" + $(this).attr("name") + "-error"));
-                }
-                else{
-                    hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
-                }
-            });
             if(isRequiredFieldsFilled){
+                $('.btn-next a').text('Add to store').removeClass('disabled');
                 $('#lastTab').removeClass("tab-link-disabled");
             }
+        }
+
+        if(index == 3 && isRequiredFieldsFilled){
+            $('.btn-next').addClass('complete');
+        }
+
+        if(isRequiredFieldsFilled){
+            $($('.wiz-nav-inner li')[index]).removeClass('current').addClass('completed');
+            $($('.wiz-nav-inner li')[index+1]).addClass('current');
         }
         
         
         return isRequiredFieldsFilled;
+    },
+    onPrevious: function(tab, navigation, index){
+        if(index != -1){
+            $('.btn-next a').text('Next');
+            tab.removeClass('current');
+            tab.prev().removeClass('completed').addClass('current');
+        }
+        
+    },
+    onTabClick: function(tab, navigation, index){
+        return false;
     },
     onTabShow: function (tab, navigation, index) {
         if (index == 0 && !step0Done) {
@@ -216,7 +240,7 @@ $("#preview").click(function () {
     }
 });
 
-$(".pager .finish").click(function() {
+$(document).on('click','.complete',function(){
     $("#preview").click();
     $.ajax({
         url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=addGadgetToStore',
@@ -242,8 +266,7 @@ $(".pager .finish").click(function() {
             }));
         }
     });
-
-});
+})
 
 
 

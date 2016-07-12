@@ -843,6 +843,11 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
   float: none !important;
 }
 
+.navbar-menu-toggle .icon {
+    line-height: 50px;
+    vertical-align: text-bottom;
+}
+
 .navbar-menu-toggle {
   float: left;
   height: 50px;
