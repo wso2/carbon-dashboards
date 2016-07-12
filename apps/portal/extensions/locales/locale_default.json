@@ -238,5 +238,6 @@
     "remove.gadgets.with.role.addition": "Some gadgets will be removed form this view, as they no longer have permission with the removal of the role",
     "remove.gadgets.with.role.addition.message": "Do you want to continue removing this role?",
     "not.close.view": "Cannot close this view",
-    "not.close.view.message": "You cannot close this view, since it is the only visible view for this page"
+    "not.close.view.message": "You cannot close this view, since it is the only visible view for this page",
+    "select.view" : "Select View"
 }

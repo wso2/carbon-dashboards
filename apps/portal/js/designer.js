@@ -782,10 +782,12 @@ $(function () {
         });
 
         // event handler for clicking on a view name to copy the content
-        designer.on('click', '.option li', function (event) {
+        designer.on('change', '#page-views-menu', function (event) {
+            console.log("here");
             event.preventDefault();
             visibleViews = [];
-            var selectedViewId = getViewId($(this).children().text());
+            console.log($('#page-views-menu :selected').text());
+            var selectedViewId = getViewId($('#page-views-menu :selected').text());
             $('#view-layout-select .selected').text(selectedViewId);
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
@@ -1218,8 +1220,9 @@ $(function () {
                     dashboard.isanon = isAnonDashboard();
                     saveDashboard();
                     views = Object.keys(JSON.parse(JSON.stringify(page.content)));
-                    window.location.reload();
                     renderView(viewId, views[0]);
+                    window.location.reload();
+                    pageType = views[0];
                     return true;
                 });
             }
@@ -1401,7 +1404,7 @@ $(function () {
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCopyingSelection);
                 $('#copy-view').prop("checked", true);
-                $('#page-views-menu').empty();
+                //$('#page-views-menu').empty();
                 var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
                 for (var i = 0; i < views.length; i++) {
                     var temp = {
@@ -3397,8 +3400,6 @@ $(function () {
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-
-        pageType = pageType || DEFAULT_DASHBOARD_VIEW;
         var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
         $('#more-views').addClass('hidden');
         if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
@@ -3410,6 +3411,7 @@ $(function () {
             $('#more-views').removeClass('hidden');
             $('#more-views').show();
         }
+
         //render all view tabs in the page
         for (var i = 0; i < visibleViews.length; i++) {
             try {
@@ -3422,12 +3424,17 @@ $(function () {
                 document.getElementById("view-name").setAttribute('id', tempView);
                 if (i === 0) {
                     pageType = pageType || tempView;
+
+                    if (pageType === DEFAULT_DASHBOARD_VIEW && tempView !== DEFAULT_DASHBOARD_VIEW){
+                        pageType = tempView;
+                    }
                 }
             } catch (Exception) {
                 generateMessage(viewTempName + " view is no longer available", null, null, "error", "topCenter", 2000, null);
             }
         }
 
+        pageType = pageType || DEFAULT_DASHBOARD_VIEW;
         $('#designer-view-mode li').removeClass('active');
         $('#designer-view-mode li[data-view-mode=' + pageType + ']').addClass('active');
         loadGadgetsWithViewRoles(pageType);
@@ -3566,7 +3573,6 @@ $(function () {
      * @private
      */
     var initDashboard = function (db, page) {
-
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
 
