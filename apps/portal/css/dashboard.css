@@ -472,7 +472,7 @@ body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
     background: transparent;
 }
 
-.nav.pages > li.active a {
+.nav.pages li.active > a {
     background: #121822;
     border-left: 5px solid #438cad;
 }

@@ -109,7 +109,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                                 "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" +menu[i].id + 
                                 "'>" + iClass + "</span></span>";
                 } else {
-                    var cls = menu[i].id === currentPageId? 'active': 'none';
+                    var cls = menu[i].id === currentPageId? 'active': '';
                     var divLi = "<li class='" + cls + "'><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>";
                     if(!menu[i].ishidden){
                         if (isAnonView || !user) {
