@@ -64,6 +64,9 @@
 .wiz-nav-inner li span {
     display: block;
 }
+.wiz-control{
+    cursor: pointer;
+}
 .wiz-nav-inner .wiz-control {
     padding: 1.5% 0.5%;
     background-color: #EDE8EF;
@@ -132,4 +135,19 @@
     border-right: 1px solid #E5E5E5;
     border-bottom: 2px solid #3598db;
     margin-top: -1px;
+}
+.wiz-content .tab-pane{
+    padding:20px;
+}
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover{
+    background-color: inherit !important;
+}
+.nav>li>a:focus, .nav>li>a:hover{
+    background-color: inherit;
+}
+.nav-pills>li{
+    float: none !important;
+}
+.nav>li>a{
+    padding: 0px;
 }

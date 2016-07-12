@@ -78,16 +78,16 @@
                 <div class="wizard-inner nav-bar">
                     <div class="navbar-inner">
                         <ul class="wiz-nav-inner with-controls">
-                            <li class="wiz-control previous"><i class="fw fw-left fw-2x"></i><a class="hidden-xs ">Back</a></li>
-                            <li class="wiz-step current"><a href="#tab1" data-toggle="tab"><span>1</span><span class="hidden-xs"><%= i18n.localize("select.provider")%></span></a></li>
+                            <li class="wiz-control btn-previous"><i class="fw fw-left fw-2x"></i><a class="hidden-xs ">Previous</a></li>
+                            <li class="wiz-step current active"><a href="#tab1" data-toggle="tab"><span>1</span><span class="hidden-xs"><%= i18n.localize("select.provider")%></span></a></li>
                             <li class="wiz-step"><a href="#tab2" data-toggle="tab"><span>2</span><span class="hidden-xs"><%= i18n.localize("configure.provider")%></span></a></li>
-                            <li class="wiz-step "><a href="#tab3" data-toggle="tab"><span>3</span><span class="hidden-xs"><%= i18n.localize("configure.chart")%></span></a></li>
-                            <li class="wiz-control next"><i class="fw fw-right fw-2x"></i><a class="hidden-xs">Next</a></li>
+                            <li class="wiz-step"><a href="#tab3" data-toggle="tab"><span>3</span><span class="hidden-xs"><%= i18n.localize("configure.chart")%></span></a></li>
+                            <li class="wiz-control btn-next"><i class="fw fw-right fw-2x"></i><a class="hidden-xs">Next</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="wiz-content tab-content">
-                    <div class="tab-pane" id="tab1">
+                    <div class="tab-pane active" id="tab1">
                         <div id="tab1-validation-errors" class="text-danger bg-danger"></div>
                         <form id="provider-list-form">
                               <label for="datasource"><%= i18n.localize("select.provider")%> <span class="required">*</span></label>
@@ -136,7 +136,7 @@
                         <div id="tab3-validation-errors" class="text-danger bg-danger"></div>
                         <div class="form-group">
                         <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
-                        <input type="text" id="gadget-name" class="form-control" name="gadget-name" />
+                        <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" />
                            <label id="gadget-name-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
                         </div>
                         <div class="form-group">
@@ -163,12 +163,6 @@
                         value="<%= i18n.localize("add.to.gadget.store")%>"/>
                         <div id="preview-pane"></div>
                     </div>
-                    <ul class="pager wizard">
-                        <li class="previous first" style="display:none;"><a href="#">First</a></li>
-                        <li class="previous"><a href="#">Previous</a></li>
-                        <li class="next last" style="display:none;"><a href="#">Last</a></li>
-                        <li class="next"><a href="#">Next</a></li>
-                    </ul>
                 </div>
             </div>
 
