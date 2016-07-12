@@ -165,37 +165,6 @@
                     </div>
                 </div>
             </div>
-
-
-            <!--<div class="wizard">
-                <div class="navbar">
-                  <div class="navbar-inner">
-                    <div class="container">
-                    <ul class = "nav navbar-nav">
-                        <li><a href="#tab1" data-toggle="tab"><h4><%= i18n.localize("select.provider")%></h4></a></li>
-                        <li><a href="#tab2" data-toggle="tab"><h4><%= i18n.localize("configure.provider")%></h4></a></li>
-                        <li id = "lastTab" class = "tab-link-disabled"><a href="#tab3" data-toggle="tab"><h4><%= i18n.localize("configure.chart")%></h4></a></li>
-                    </ul>
-                    </div>
-                  </div>
-                </div>
-                </br>
-                <div class="tab-content">
-                    
-
-                    
-                    
-                    <div class="form-group">
-                        <!--<ul class="pager wizard">
-                            <li class="previous first" style="display:none;"><a href="#">First</a></li>
-                            <li class="previous"><a href="#">Previous</a></li>
-                            <li class="next last" style="display:none;"><a href="#">Last</a></li>
-                            <li class="next"><a href="#">Next</a></li>
-                            <li class="next finish" style="display:none;"><a href="#">Add to Gadget Store</a></li>
-                        </ul>-->
-                    <!--</div>
-                </div>
-            </div>-->
         </div>
     </div>
 </div>

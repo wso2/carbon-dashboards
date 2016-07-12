@@ -49,15 +49,14 @@ $('#rootwizard').bootstrapWizard({
             if (!$.trim($(this).val())) {
                 isRequiredFieldsFilled = false;
                 showInlineError($(this), $("#" + $(this).attr("name") + "-error"));
-            }
-            else{
+            }else{
                 hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
             }
         });
 
         if(index == 2) {
             if(isRequiredFieldsFilled){
-                $('.btn-next a').text('Finish');
+                $('.btn-next a').text('Add to store').removeClass('disabled');
                 $('#lastTab').removeClass("tab-link-disabled");
             }
         }
@@ -76,6 +75,7 @@ $('#rootwizard').bootstrapWizard({
     },
     onPrevious: function(tab, navigation, index){
         if(index != -1){
+            $('.btn-next a').text('Next');
             tab.removeClass('current');
             tab.prev().removeClass('completed').addClass('current');
         }
