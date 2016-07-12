@@ -84,7 +84,7 @@ Handlebars.registerHelper('resolveURI', function (path) {
 });
 
 //handlebar helper which returns menu hierachy
-Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString) {
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentPageId) {
     var divTree = "<ul class='nav nav-pills nav-stacked menu-customize pages'>";
     var checked = isHidden ? "checked=''": "" ;
     var requestParam = (queryString !== null) ? "?" + queryString: "";
@@ -109,7 +109,8 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                                 "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" +menu[i].id + 
                                 "'>" + iClass + "</span></span>";
                 } else {
-                    var divLi = "<li><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>";
+                    var cls = menu[i].id === currentPageId? 'active': 'none';
+                    var divLi = "<li class='" + cls + "'><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>";
                     if(!menu[i].ishidden){
                         if (isAnonView || !user) {
                             if (menu[i].isanon) {

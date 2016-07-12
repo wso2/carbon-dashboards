@@ -435,7 +435,7 @@
     </script>
 
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString pageId}}{{/traverseMenu}}
     </script>
 
     <!-- Jquery/Jquery UI JS -->
@@ -591,7 +591,8 @@
         //usage : in traverseMenu helper
         var user = <%= user %>,
             queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>;    
+            isAnonView = <%= isAnonView %>,  
+            pageId = <%= stringify(pageId) %>;
     </script>
 </body>
 </html>
