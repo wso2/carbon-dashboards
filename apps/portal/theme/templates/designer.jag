@@ -721,18 +721,17 @@ var userRoles = usr.roles();
         <div class="radio">
             <label><input type="radio" name="new-view" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
         </div>
-        <div class="dropdown input-group-btn select" id="view-layout-select">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-            <span class="selected"><%=i18n.localize("available.views")%></span>
-            <span class="caret"></span></button>
-            <ul class="dropdown-menu option" role="menu" aria-labelledby="menu" id="page-views-menu">
-            </ul>
+        <div class ='form-group' id="view-layout-select">
+            <label for="ues-theme-list"><%=i18n.localize("available.views") %></label>
+            <select class="form-control selectpicker dropdown"  role="menu" aria-labelledby="menu" id="page-views-menu" data-style = 'btn-default'>
+            <option><a role="menuitem" tabindex="-1" href="#"><%=i18n.localize("select.view")%></a></option>
+            </select>
         </div>
     </script>
 
     <!-- Copying view option -->
     <script id="copying-view-options-hbs" type="text/x-handlebars-template">
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{viewName}}</a></li>
+         <option><a role="menuitem" tabindex="-1" href="#">{{viewName}}</a></option>
     </script>
 
     <script id="ues-designer-heading-hbs" type="text/x-handlebars-template">
@@ -760,7 +759,7 @@ var userRoles = usr.roles();
     </script>
 
     <!-- View label -->
-    <script id="add-new-view-hds" type="text/x-handlebars-template">
+    <script id="add-new-view-hbs" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
             <div class="view-heading ues-component-heading">
                 <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
@@ -861,6 +860,13 @@ var userRoles = usr.roles();
 				     <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5 %>{{/if}}</span>
 				 </div>
 		             </div>
+                            <div class="form-group">
+                                 <div class="col-sm-12">
+                                    <label for="input-name" class="control-label"><%= i18n.localize("timeout") %></label>
+                                    <input id="timeoutInterval" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                                    name = "timeoutInterval" type="text"  value={{#if settings.timeoutInterval}}{{settings.timeoutInterval}}{{else}}60000{{/if}} />
+                                </div>
+                            </div>
                          </form>
                     </div>
                 </div>

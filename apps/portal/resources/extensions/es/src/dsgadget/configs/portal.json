@@ -1,7 +1,9 @@
 {
-  "protocol": "https",
-  "host": "localhost",
-  "port": "9444",
-  "context": "portal",
-  "url": "https://localhost:9444/portal"
+  "url": "https://localhost:9444/portal",
+  "username": "admin",
+  "password": "admin",
+  "gadgetFileSizeLimit": 5,
+  "delimiter": "_",
+  "storeType": "es",
+  "type": "gadget"
 }

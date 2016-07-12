@@ -22,31 +22,29 @@
  * @param {Object} fileRequest File object from request
  * @returns {String} message Detailed message on what happened during asset upload
  */
-var addAsset = function (type, fileRequest) {
+var addAsset = function (type, id, fileRequest, storeType) {
+    var log = new Log();
     var storeManager = require("/js/store-manager.js");
     var constants = require("/modules/constants.js");
-    var tempAssetPath = '/store/' + userDomain + '/' + constants.FILE_STORE + '/temp-' + type + '/';
+    var urlDomain = urlDomain ? urlDomain : superDomain;
+    var tempAssetPath = '/store/' + urlDomain + '/' + storeType + '/temp-' + type + '/';
     var ZipFile = Packages.java.util.zip.ZipFile;
     var zipExtension = ".zip";
     var process = require('process');
     var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal' + tempAssetPath;
-    var assetPath = '/store/' + userDomain + '/' + constants.FILE_STORE + '/' + type + '/';
+    var assetPath = '/store/' + urlDomain + '/' + storeType + '/' + type + '/';
     var configurationFileName = type + ".json";
     var config = require('/configs/designer.json');
     var bytesToMB = 1048576;
     var fileSizeLimit = type === "gadget" ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
-    var log = new Log();
     var fileUtils = require("/modules/file-utils.js");
 
-    
     // Before copying the file to temporary location, check whether the given file exist and
     // the file size and whether it is a zip file
     if (fileRequest === null) {
         return 'fileNotFound';
     } else if (fileRequest.getLength() / bytesToMB > fileSizeLimit) {
         return 'MaxFileLimitExceeded';
-    } else if (fileRequest.getName().indexOf(zipExtension) < 0) {
-        return 'notaZipFile';
     }
 
     // If it passes all the initial validations remove the zip file extensions to avoid the zip file being deployed
@@ -55,15 +53,23 @@ var addAsset = function (type, fileRequest) {
     fileUtils.createDirs(assetPath);
     var fileName = fileRequest.getName().replace(zipExtension, "");
     var tempDirectory = new File(tempAssetPath);
+    var gadget = null;
 
     if (!tempDirectory.isExists()) {
         tempDirectory.mkdir();
     }
-
-    var gadget = new File(tempAssetPath + fileName);
-    gadget.open('w');
-    gadget.write(fileRequest.getStream());
-    gadget.close();
+    try {
+        gadget = new File(tempAssetPath + fileName);
+        gadget.open('w');
+        gadget.write(fileRequest.getStream());
+    } catch (e) {
+        log.error("Cannot upload the zip file to temporary location");
+        return 'fileNotFound';
+    } finally {
+        if (gadget !== null) {
+            gadget.close();
+        }
+    }
 
     try {
         // Extract the zip file and check whether there is a configuration file
@@ -72,20 +78,22 @@ var addAsset = function (type, fileRequest) {
 
         for (var entries = fileInZip; entries.hasMoreElements();) {
             var entry = entries.nextElement();
-            if ((entry.getName().toLowerCase() + "") === configurationFileName) {
+            if ((entry.getName().toLowerCase() + "").indexOf(configurationFileName) > -1) {
                 var assetDirectory = new File(assetPath);
                 var files = assetDirectory.listFiles();
-
-                // Check whether is there is another asset with same id
-                for (var index = 0; index < files.length; index++) {
-                    if (files[index].getName() === fileName) {
-                        tempDirectory.del();
-                        return 'idAlreadyExists';
+                fileName = (storeType === constants.FILE_STORE) ? fileName : id;
+                if (storeType === constants.FILE_STORE) {
+                    // Check whether is there is another asset with same id
+                    for (var index = 0; index < files.length; index++) {
+                        if (files[index].getName() === fileName) {
+                            tempDirectory.del();
+                            return 'idAlreadyExists';
+                        }
                     }
                 }
                 tempDirectory.del();
                 // If there is a configuration file and no other assets with same id, deploy the asset
-                 return storeManager.addAsset(type, fileName, fileRequest, constants.FILE_STORE) ? "success" : "errorInUpload";
+                return storeManager.addAsset(type, fileName, fileRequest, storeType) ? "success" : "errorInUpload";
             }
         }
         // If configuration file is missing indicate the error
