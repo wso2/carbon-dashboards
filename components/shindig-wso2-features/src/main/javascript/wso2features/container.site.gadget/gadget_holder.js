@@ -148,7 +148,10 @@ osapi.container.GadgetHolder.prototype.render = function (gadgetInfo, viewParams
     this.renderParams_ = renderParams;
 
     this.isOaaIframe_ = this.hasFeature_(gadgetInfo, 'pubsub-2');
-    var timeout = renderParams.settings.timeoutInterval ? renderParams.settings.timeoutInterval : 60000;
+    var timeout = 60000;
+    if (renderParams && renderParams.settings) {
+        timeout = renderParams.settings.timeoutInterval || 60000;
+    }
     this.isOaaIframe_ ? this.doOaaIframeHtml_(timeout) : this.doNormalIframeHtml_();
 };
 
