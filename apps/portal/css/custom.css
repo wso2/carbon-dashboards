@@ -552,7 +552,7 @@ html:not('.ie') .page-content-wrapper.fixed .sidebar-wrapper.sidebar-options {
 }
 
 .menu-customize.nav.nav-stacked li ul {
-    margin-left: 20px;
+    padding-left: 15px;
 }
 
 .menu-customize.nav.nav-stacked li > span {

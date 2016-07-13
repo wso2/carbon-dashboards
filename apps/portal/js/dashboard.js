@@ -265,7 +265,8 @@ $(function () {
             isAnonView: isAnonView,
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
-            queryString: queryString
+            queryString: queryString,
+            pageId: pageId
         }));
         //menulist for small res
         $('#ues-pages-col').html(menuListHbs({
@@ -273,7 +274,8 @@ $(function () {
             isAnonView: isAnonView,
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
-            queryString: queryString
+            queryString: queryString,
+            pageId: pageId
         }));
     };
 

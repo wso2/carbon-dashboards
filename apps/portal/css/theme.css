@@ -39,3 +39,130 @@
 .thumbnail {
     background: #3498db;
 }
+
+/* ========================================================================
+ * Wizard Component
+ * ======================================================================== */
+.wiz-nav-inner{
+    
+}
+.wiz-nav-inner{
+    list-style: none;
+    display: table;
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    table-layout: fixed;
+    border: 1px solid #E5E5E5;
+    text-align: center;
+}
+.wiz-nav-inner li {
+    display: table-cell;
+    border-right: 1px solid #E5E5E5;
+    text-align: center;
+    padding: 1.5% 2%;
+    width: 100%;
+    border-bottom: 2px solid #3598db;
+}
+.wiz-nav-inner li span {
+    display: block;
+}
+.wiz-control{
+    cursor: pointer;
+}
+.wiz-nav-inner .wiz-control {
+    padding: 1.5% 0.5%;
+    background-color: #EDE8EF;
+}
+.wiz-control i{
+    display: block;
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+.wiz-step {
+    position: relative;
+}
+.wiz-step.current{
+    background-color: #3598db;
+    color: #fff;
+}
+.wiz-step.current:before{
+    border-left-color: #E5E5E5;
+}
+.wiz-step.current:after{
+    border-left-color: #3598db;
+}
+.wiz-step.completed{
+    background-color: #344860;
+    color: #fff;
+}
+.wiz-step.completed:before{
+    border-left-color: #E5E5E5;
+}
+.wiz-step.completed:after{
+    border-left-color: #344860;
+}
+.wiz-step:after, .wiz-step:before {
+    left: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+.wiz-step:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-left-color: #FFFFFF;
+    border-width: 11px;
+    margin-top: -11px;
+    z-index: 2;
+}
+.wiz-step:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-left-color: #E5E5E5;
+    border-width: 13px;
+    margin-top: -13px;
+    z-index: 1;
+}
+.with-controls li:nth-last-child(2):before, .with-controls li:nth-last-child(2):after{
+    border: 0px;
+}
+.no-controls li:nth-last-child(1):before, .no-controls li:nth-last-child(1):after{
+    border: 0px;
+}
+.wiz-content{
+    min-height: 300px;
+    border-left: 1px solid #E5E5E5;
+    border-right: 1px solid #E5E5E5;
+    border-bottom: 2px solid #3598db;
+    margin-top: -1px;
+}
+.wiz-content .tab-pane{
+    padding:20px;
+}
+.wiz-nav-inner.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover{
+    background-color: inherit !important;
+}
+.wiz-nav-inner.nav>li>a:focus, .nav>li>a:hover{
+    background-color: inherit;
+}
+.wiz-nav-inner.nav-pills>li{
+    float: none !important;
+}
+.wiz-nav-inner.nav>li>a{
+    padding: 0px;
+}
+.wiz-nav-inner.btn .fw-stack {
+    margin: 0px 5px;
+}
+.wiz-nav-inner.nav>li.disabled>a {
+    color: inherit;
+}
+.wiz-nav-inner.nav>li.disabled>a:focus, .nav>li.disabled>a:hover {
+    color: #777;
+    text-decoration: none;
+    cursor: pointer;
+    background-color: transparent;
+}

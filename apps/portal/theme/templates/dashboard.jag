@@ -443,7 +443,7 @@
     </script>
 
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString pageId}}{{/traverseMenu}}
     </script>
 
     <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
@@ -628,7 +628,7 @@
         var user = <%= user %>,
             queryString = <%= stringify(queryString) %>,
             isAnonView = <%= isAnonView %>,
-            isPersonalizeEnabled = <%= isPersonalizeEnabled %>;  
+            pageId = <%= stringify(pageId) %>;
     </script>
 </body>
 </html>
