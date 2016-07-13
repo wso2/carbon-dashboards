@@ -24,6 +24,7 @@ var DASHBOARD_VERSION = "1.0.20";
     var dashboardId;
     var matcher = new URIMatcher(request.getRequestURI());
     var constants = require('/modules/constants.js');
+    var log = new Log("/controllers/dashboards.jag");
 
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
@@ -58,6 +59,20 @@ var DASHBOARD_VERSION = "1.0.20";
         if (!request.getParameter("shared")) {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getAsset(dashboardId);
+                if(!dashboard.menu && dashboard.pages.length > 0){
+                    if(log.isDebugEnabled()){
+                        log.debug("Unable to locate menu object, updating dashboard.json for: " + dashboardId);
+                    }
+
+                    dashboard = decorateDashboard(dashboard);
+                    utils.sandbox(context, function() {
+                        dashboards.update(dashboard);
+                    });
+
+                    if(log.isDebugEnabled()){
+                        log.debug("Updated dashboard.json for: " + dashboardId);
+                    }
+                }
             });
 
             if (!dashboard) {
@@ -167,6 +182,22 @@ var DASHBOARD_VERSION = "1.0.20";
 
         response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
         return;
+    }
+
+    function decorateDashboard(dashboard){
+        dashboard.menu = [];
+        for(var i=0,length=dashboard.pages.length; i < length; i++){
+            var menu = {
+                "id" : dashboard.pages[i].id,
+                "isanon" : false,
+                "ishidden" : false,
+                "title": dashboard.pages[i].title,
+                "subordinates" : []
+            };
+            dashboard.menu.push(menu);
+        }
+        dashboard.hideAllMenuItems = false;
+        return dashboard;
     }
 
     response.sendError(400, 'Bad dashboard request');

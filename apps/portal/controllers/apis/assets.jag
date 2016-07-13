@@ -28,35 +28,38 @@
     var query;
     var utils = require('/modules/utils.js');
     var store = utils.store();
+    var asset = require('/modules/assets.js');
+    var constants = require('/modules/constants.js');
+    var esConfig = require('/extensions/stores/es/config.json');
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
     var method = request.getMethod();
-
     response.contentType = 'application/json';
-
     var assets;
-
+    var i18n = require('i18n');
+    i18n.init(request, utils.getLocaleResourcePath());
     var matcher = new URIMatcher(request.getRequestURI());
-    if (matcher.match('/assets/publicassets/{id}')) {
-    id = matcher.elements().id;
-    if (method === 'GET') {
-        assets = store.getAsset(assetType, id);
-        if (!assets) {
-            response.sendError(404, JSON.stringify({
-                error: true
-            }));
+    if (matcher.match('/assets/publicAssets/{id}')) {
+        id = matcher.elements().id;
+        if (method === 'GET') {
+            utils.sandbox(utils.context(user, urlDomain), function () {
+                assets = store.getAsset(assetType, id);
+            });
+            if (!assets) {
+                response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            print(assets);
             return;
         }
-        print(assets);
-        return;
-    }
     }
 
     if (!user) {
         response.sendError(401, 'unauthorized to access assets');
         return;
     }
-
 
     if (matcher.match('/assets/{id}')) {
         id = matcher.elements().id;
@@ -96,6 +99,25 @@
         return;
     }
 
+    if (matcher.match('/assets/{id}' + esConfig.dirNameDelimiter + '{version}')) {
+        id = matcher.elements().id + esConfig.dirNameDelimiter + matcher.elements().version;
+        if (method === 'DELETE') {
+            assets = store.deleteAsset(assetType, id, storeType);
+            if (!assets) {
+                response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            print(assets);
+            return;
+        }
+        response.sendError(405, JSON.stringify({
+            error: true
+        }));
+        return;
+    }
+
     if (matcher.match('/assets')) {
         id = matcher.elements().id;
         if (method === 'GET') {
@@ -113,13 +135,28 @@
             }
             query = request.getParameter('query');
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.getAssets(assetType, query, start, count);
+                assets = store.getAssets(assetType, query, start, count, storeType);
             });
             print(assets);
             return;
         }
         if (method === 'PUT') {
             //TODO
+        }
+        if (method === 'POST') {
+            var results = asset.addAsset(assetType, request.getParameter('id') + esConfig.dirNameDelimiter + request.getParameter('version'), request.getFile("selected-file"), storeType);
+            if (storeType === constants.FILE_STORE) {
+                var urlPrefix = utils.relativePrefix(originalURI);
+                response.sendRedirect((utils.tenantedPrefix(urlPrefix, user.domain)) + 'upload-' + assetType + '?message=' + results);
+                return;
+            } else if (storeType === constants.ES_STORE) {
+                if (results !== "success") {
+                    response.sendError(400, i18n.localize("something.wrong"));
+                    return;
+                } else {
+                    return true;
+                }
+            }
         }
         response.sendError(405, JSON.stringify({
             error: true

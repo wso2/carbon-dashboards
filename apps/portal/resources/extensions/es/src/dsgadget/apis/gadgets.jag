@@ -37,89 +37,102 @@
      * @private
      */
     var GADGET_EXT_PATH = '/extensions/assets/' + ASSET_NAME;
-
-    /**
-     * Get absolute path to the publisher directory.
-     * @returns {string} Directory path
-     * @private
-     */
-    var getPublisherDir = function () {
-        var process = require('process');
-        return process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/publisher';
-    };
+    var utils = require(GADGET_EXT_PATH + '/modules/utils.js').api;
+    var constants = require(GADGET_EXT_PATH + '/modules/constants.js').constants;
+    var method = request.getMethod();
+    var responseProcessor = require('utils').response;
 
     /**
      * Read gadget configurations from the gadget.json file.
-     * @param {String} id GUID
      * @returns {*}
      * @private
      */
-    var readGadgetConfigs = function(id) {
-        var gadgetFile = request.getFile('gadget_gadgetarchive');
-        if (!gadgetFile) {
-            log.error("No gadget file uploaded.");
-            return false;
-        }
-
-        var gadgetDestPath = GADGET_EXT_PATH + '/gadgets/temp/' + id + '.gadget';
-
-        // Save the uploaded gadget file in the file system
-        var gadget = new File(gadgetDestPath);
-        gadget.open('w');
-        gadget.write(gadgetFile.getStream());
-        gadget.close();
-
-        // Extract the gadget zip file
+    var readGadgetConfigs = function () {
+        var portalConfigs = require(GADGET_EXT_PATH + '/configs/portal.json');
+        var gadgetFile = request.getFile(constants.GADGET_ZIP_FILE_IN_REGISTRY);
+        var gadgetsMainDirectory = new File(GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/');
+        var gadgetsTempDirectory = new File(GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/' +
+                constants.GADGET_TEMP_DIRECTORY_LABEL + '/');
+        var gadgetDestPath = GADGET_EXT_PATH + '/' + constants.GADGETS_DIRECTORY_LABEL + '/' + constants.GADGET_TEMP_DIRECTORY_LABEL
+                + '/' + constants.GADGET_TEMP_DIRECTORY_LABEL + constants.GADGET_EXTENSION;
         var InputStreamReader = Packages.java.io.InputStreamReader;
         var BufferedReader = Packages.java.io.BufferedReader;
         var ZipFile = Packages.java.util.zip.ZipFile;
         var StringBuilder = Packages.java.lang.StringBuilder;
-
-        var zipFilePath = getPublisherDir() + gadgetDestPath;
+        var zipFilePath = utils.getPublisherDir() + gadgetDestPath;
+        var inputStream = null;
+        var bufferedReader = null;
         var conf;
+        var zip;
+        var gadget = null;
 
+        if (!gadgetFile) {
+            log.error('No gadget file uploaded.');
+            return;
+        } else if (gadgetFile.getLength() / constants.BYTES_TO_MB > portalConfigs.gadgetFileSizeLimit) {
+            log.error('Gadget file size limit exceeded');
+            return;
+        }
+        if (!gadgetsMainDirectory.isExists()) {
+            gadgetsMainDirectory.mkdir();
+        }
+        if (!gadgetsTempDirectory.isExists()) {
+            gadgetsTempDirectory.mkdir();
+        }
+        // Save the uploaded gadget file in the file system
+        try {
+            gadget = new File(gadgetDestPath);
+            gadget.open('w');
+            gadget.write(gadgetFile.getStream());
+        } catch (e) {
+            log.error('Cannot save the zip file in the relevant location.');
+            return;
+        } finally {
+            if (gadget) {
+                gadget.close();
+            }
+        }
+        // Extract the gadget zip file
         try {
             // Extract the zip file and read the content of the gadget.json file.
-            var zip = new ZipFile(zipFilePath);
+            zip = new ZipFile(zipFilePath);
             for (var e = zip.entries(); e.hasMoreElements();) {
                 var entry = e.nextElement();
-                if (entry.getName().toLowerCase() == "gadget.json") {
-                    var inputStream = zip.getInputStream(entry);
-                    var bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                if (entry.getName().toLowerCase().indexOf(constants.GADGET_CONFIGURATION_FILE) > -1) {
+                    inputStream = zip.getInputStream(entry);
+                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                     var sb = new StringBuilder();
                     var line;
-                    while ((line = bufferedReader.readLine()) != null) {
+                    while ((line = bufferedReader.readLine()) !== null) {
                         sb.append(line);
                     }
                     conf = sb.toString();
-                    bufferedReader.close();
-                    inputStream.close();
+                    break;
                 }
             }
         } catch (e) {
-            log.error('Error occurred while extracting the zip file.', e);
+            log.error('Error occurred while extracting the zip file.');
+            response = responseProcessor.buildSuccessResponse(response, constants.HTTP_INTERNAL_ERROR, e);
+        } finally {
+            // Delete the uploaded gadget file
+            gadget.del();
+            if (inputStream) {
+                inputStream.close();
+            }
+            if (bufferedReader) {
+                bufferedReader.close();
+            }
         }
-
-        // Delete the uploaded gadget file
-        gadget.del();
         return conf;
-    }
+    };
 
-    /**
-     * Generate GUID.
-     * @returns {String} GUID
-     * @private
-     */
-    var guid = function () {
-        var s4 = function () {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-        };
-        return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
-    }
 
-    var method = request.getMethod();
     if (method == 'POST') {
-        print (readGadgetConfigs(guid()) || '');
+        var data = readGadgetConfigs();
+        data = (data) ? data : constants.GADGET_CONFIGURATION_FILE + ' not found';
+        response = responseProcessor.buildSuccessResponse(response, constants.HTTP_SUCCESS_CODE, data);
+    } else {
+        response = responseProcessor.buildErrorResponse(response, constants.HTTP_METHOD_NOT_ALLOWED, "HTTP request method not allowed");
     }
 })();
 %>

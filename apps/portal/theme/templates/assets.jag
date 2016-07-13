@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
+    <% var permission = require('/modules/permission.js'); %>
+    <% var constants = require('/modules/constants.js'); %>
     <title><%= i18n.localize(assetType+"s")%></title>
     <% var config = require('/configs/designer.json'); %>
 </head>
@@ -60,7 +62,7 @@
                     <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0px;">
                         <ul class="nav navbar-nav collapse-nav-sub">
                             <% if (! isMobileDevice) { %>
-                                <% if (config.isCreateGadgetEnable && assetType === "gadget") { %>
+                                <% if (config.isCreateGadgetEnable && assetType === "gadget" && permission.isAllowed(constants.GADGET_GENERATE)) { %>
                                     <li>
                                         <a href="<%=tenantedUrlPrefix%>create-gadget">
                                             <span class="fw-stack">
@@ -71,12 +73,15 @@
                                     </li>
                                 <% }  %>
                                  <li>
+                                 <% var isUploadAllowed = (assetType === 'gadget') ? permission.isAllowed(constants.GADGET_UPLOAD) : permission.isAllowed(constants.LAYOUT_UPLOAD); %>
+                                   <% if (isUploadAllowed) { %>
                                      <a href="<%=tenantedUrlPrefix%>upload-<%= assetType%>">
                                         <span class="fw-stack">
                                             <i class="fw fw-circle-outline fw-stack-2x"></i>
                                             <i class="fw fw-upload fw-stack-1x"></i>
                                         </span> <%= i18n.localize("upload."+assetType+".label")%>
                                     </a>
+                                   <% } %>
                                 </li>
                             <% } %>
                         </ul>
@@ -137,10 +142,13 @@
 
     <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
         <h5 class="title">{{title}}</h5>
-         <a href="#" class="ds-asset-trash-handle">
-            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
-            <%= i18n.localize("delete."+assetType)%>"></i>
-        </a>
+        <% var isDeleteAllowed = (assetType === 'gadget') ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
+        <% if (isDeleteAllowed) { %>
+             <a href="#" class="ds-asset-trash-handle">
+                <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
+                <%= i18n.localize("delete."+assetType)%>"></i>
+            </a>
+        <% } %>
         <img src="{{resolveURI thumbnail}}" style="height : 150px;"/>
     </script>
 

@@ -38,5 +38,33 @@
             <DisplayName>Settings</DisplayName>
             <ResourceId>/permission/admin/manage/portal/dashboard/settings</ResourceId>
         </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Gadget</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Generate</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget/generate</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Upload</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget/upload</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Delete</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget/delete</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Layout</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/layout</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Upload</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/layout/upload</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Delete</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/layout/delete</ResourceId>
+        </ManagementPermission>
     </ManagementPermissions>
 </component>

@@ -194,9 +194,9 @@
     "upload": "Upload",
     "gadget.exist": "A gadget with same id already exists. Please use different id and try again",
     "gadget.configuration.file.missing": "Configuration file is not found in the zip. Please make sure your zip file contains gadget.json.",
-    "upload.success.gadget": "You have successfully uploaded the gadget. It will take some time to access the gadget. Click",
+    "upload.success.gadget": "You have successfully uploaded the gadget. Click",
     "go.gadget.store": "to go to gadget store",
-    "upload.success.layout": "You have successfully uploaded the layout. It will take some time to access the layout. Click",
+    "upload.success.layout": "You have successfully uploaded the layout. Click",
     "go.layout.store": "to go to layout store",
     "layout.exist": "A layout with same id already exists. Please use different id and try again",
     "layout.configuration.file.missing": "Configuration file is not found in the zip. Please make sure your zip file contains layout.json.",
@@ -210,6 +210,7 @@
     "cannot.delete.gadget" : "Cannot delete the gadget",
     "cannot.delete.layout" : "Cannot delete the layout",
     "something.wrong" : "Something went wrong. Try again later.",
+    "timeout" : "Timeout Interval",
     "view.name": "View Name",
     "select.roles": "Select Role(s)",
     "create.new.view": "Create New view",
@@ -237,5 +238,6 @@
     "remove.gadgets.with.role.addition": "Some gadgets will be removed form this view, as they no longer have permission with the removal of the role",
     "remove.gadgets.with.role.addition.message": "Do you want to continue removing this role?",
     "not.close.view": "Cannot close this view",
-    "not.close.view.message": "You cannot close this view, since it is the only visible view for this page"
+    "not.close.view.message": "You cannot close this view, since it is the only visible view for this page",
+    "select.view" : "Select View"
 }

@@ -23,14 +23,21 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'),
-        user = usr.current(),
-        isAnonView = request.getParameter('isAnonView'),
-        queryString = request.getQueryString();
+    var usr = require('/modules/user.js'),  user = usr.current(),   isAnonView = request.getParameter('isAnonView'),
+        isPreview = request.getParameter('preview'),    queryString = request.getQueryString();
 
-    var userRoles = usr.roles();
-    if(!user || !userRoles) {
+    var userRoles = [];
+    var viewId = request.getParameter('currentView');
+    if(!user) {
         userRoles.push('anonymous');
+    } else {
+        var tempRoles = usr.roles();
+        if(isPreview) {
+            userRoles.push('anonymous');
+        }
+        for (var i = 0; i < tempRoles.length; i++){
+            userRoles.push(tempRoles[i]);
+        }
     }
 
     // Get the anon view
@@ -105,10 +112,7 @@
                     <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
                 </div>
                 
-                <ul class="nav nav-pills nav-stacked pages">
-                    <div id="ues-pages">
-                    </div>
-                </ul>
+                <div id="ues-pages"><!-- dynamic content --></div>
                 
                 <hr>
                 
@@ -238,12 +242,12 @@
         <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
-            <div class="form-group hide" id="list-user-views">
-                <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
-                data-style="btn-default" data-width="100px" style="width: 200px">
-                </select>
-            </div>
             <% if(typeof  bgColor === 'undefined'){ %>
+                <div class="form-group hide" id="list-user-views">
+                    <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
+                    data-style="btn-default" data-width="100px" style="width: 200px">
+                    </select>
+                </div>
                 <div class="container-fluid body-wrapper">
                 <div class="nano" >
             <% } else { %>
@@ -297,23 +301,6 @@
             </div>
         </div>
         {{/each}}
-    </script>
-
-    <!-- Component container -->
-    <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-        <div class="gadget-wrapper">
-            <div class="ues-component gadget">
-                <div class="ues-component-heading gadget-heading">
-                    <h4 class="ues-component-title gadget-title truncate"></h4>
-
-                    <div class="ues-component-actions gadget-actions">
-
-                    </div>
-                </div>
-
-                <div class="ues-component-body gadget-body"></div>
-            </div>
-        </div>
     </script>
 
     <!-- Component toolbar actions -->
@@ -439,7 +426,7 @@
 
     <!-- View options for a particular page -->
     <script id="view-option-hbs" type="text/x-handlebars-template">
-        <option>{{viewName}}</option>
+        <option value = {{viewId}}>{{viewName}}</option>
     </script>
 
     <script src="<%=urlPrefix%>js/async.js"></script>
@@ -572,13 +559,6 @@
                 $('.grid-stack-item[data-banner=true]')
                     .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
             }
-
-            // Toggle component box heading
-            $('.ues-component').hover(function() {
-                toggleHeading($(this), true);
-            }, function() {
-                toggleHeading($(this), false);
-            });
         });
         
         function toggleProductLogo(sidebarEventType){
@@ -589,17 +569,6 @@
             }
             else if (sidebarEventType == 'shown'){
                 logo.hide();
-            }
-        }
-
-        function toggleHeading(source, show) {
-            if (source.hasClass('ues-no-heading')) {
-                var heading = source.find('.ues-component-heading');
-                if (show) {
-                    heading.slideDown();
-                } else {
-                    heading.slideUp();
-                }
             }
         }
 
@@ -616,6 +585,11 @@
             queryString = <%= stringify(queryString) %>,
             isAnonView = <%= isAnonView %>;
         var userRolesList = <%= userRoles %>;
+        var currentView = <%= stringify(viewId) %>;
+        var embeddableView = null;
+        <% if (typeof bgColor !== 'undefined') { %>
+                embeddableView = <%= stringify(vId) %>;
+         <%   } %>
     </script>
 </body>
 </html>

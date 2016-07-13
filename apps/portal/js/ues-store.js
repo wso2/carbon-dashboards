@@ -19,10 +19,11 @@
     var domain = ues.global.urlDomain || ues.global.userDomain;
     var assetsUrl = ues.utils.relativePrefix() + 'apis/assets';
     var store = (ues.store = {});
+    var SUPERTENANT_DOMAIN = "carbon.super";
 
     store.asset = function (type, id, cb) {
         $.ajax({
-            url: assetsUrl + '/publicassets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
             method: "GET",
             contentType: "application/json",
             async: false,
@@ -35,12 +36,30 @@
         });
     };
 
-    store.assets = function (type, paging, cb) {
+    store.sharedAsset = function (type, id, cb) {
+        $.ajax({
+            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + SUPERTENANT_DOMAIN + '&' : '') + 'type=' + type,
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
+            }
+        });
+    };
+    
+    store.assets = function (type, paging, cb, storeType) {
         var query = 'type=' + type;
         query += domain ? '&domain=' + domain : '';
         if (paging) {
             query += paging.query ? '&query=' + paging.query : '';
             query += '&start=' + paging.start + '&count=' + paging.count;
+        }
+        if (storeType) {
+            query += '&storeType=' + storeType;
         }
         $.get(assetsUrl + '?' + query, function (data) {
             cb(false, data);
