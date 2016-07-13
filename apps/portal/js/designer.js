@@ -473,6 +473,7 @@ $(function () {
             var container = $('#' + component.id);
             var area = container.closest('.ues-component-box').attr('id');
             pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+
             var content = page.content[pageType];
             area = content[area];
             var index = area.indexOf(component);
@@ -791,27 +792,15 @@ $(function () {
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
-            var viewContent = page.views.content[selectedViewId];
+            var layout = page.views.content[selectedViewId];
             var viewLayoutContent = {
-                layout: viewContent.layout,
+                blocks: layout.blocks,
                 name: newViewName,
-                roles: viewContent.roles
+                roles: layout.roles
             };
             page.views.content[newViewId] = viewLayoutContent;
             var viewContent = page.content[selectedViewId];
-            var content = viewContent;
-            for (var area in content) {
-                if (content.hasOwnProperty(area)) {
-                    var components = content[area];
-                    for (var i = 0; i < components.length; i++) {
-                        var component = components[i];
-                        if (component.id.indexOf('-'+selectedViewId+'-') > -1)
-                        component.id = component.id.replace('-' + selectedViewId + '-', '-' + newViewId + '-');
-                    }
-                    content[area] = components;
-                }
-            }
-            page.content[newViewId] = content;
+            page.content[newViewId] = viewContent;
             saveDashboard();
             pageType = newViewId;
             $('button[data-target=#left-sidebar]').click();
@@ -1213,15 +1202,19 @@ $(function () {
                 showInformation(i18n_data["not.delete.view"], i18n_data["not.delete.view.message"]);
             } else {
                 showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
-                    delete page.views.content[viewId];
-                    delete page.content[viewId];
-                    visibleViews = [];
-                    dashboard.isanon = isAnonDashboard();
-                    saveDashboard();
-                    views = Object.keys(JSON.parse(JSON.stringify(page.content)));
-                    renderView(viewId, views[0]);
-                    window.location.reload();
-                    pageType = views[0];
+                    destroyPage(page, pageType, function (err) {
+                        if (err) {
+                            throw err;
+                        }
+                        delete page.views.content[viewId];
+                        delete page.content[viewId];
+                        visibleViews = [];
+                        dashboard.isanon = isAnonDashboard();
+                        saveDashboard();
+                        views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+                        renderView(viewId, views[0]);
+                        pageType = views[0];
+                    });
                     return true;
                 });
             }
@@ -1341,9 +1334,13 @@ $(function () {
             if ($('#left-sidebar').hasClass('toggled')) {
                 $('.close-sidebar[data-target="#left-sidebar"]').click();
             }
-            $('.gadgets-grid').empty();
-            $('.gadgets-grid').html(viewCreationOptions);
-            isInViewCreationView = true;
+            destroyPage(page, pageType, function (err) {
+                if (err) {
+                    throw err;
+                }
+                $('.gadgets-grid').html(viewCreationOptions);
+                isInViewCreationView = true;
+            });
         });
 
         //event handler for clicking on the toggle button to get more views
@@ -1403,9 +1400,6 @@ $(function () {
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCopyingSelection);
                 $('#copy-view').prop("checked", true);
-                //$('#page-views-menu').empty();
-                var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
-                $('#page-views-menu').empty();
                 var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
 
                 for (var i = 0; i < views.length; i++) {
@@ -1538,7 +1532,7 @@ $(function () {
      * @private
      */
     var createComponent = function (container, asset) {
-        var id = generateGadgetId(asset.id + "-"+ getViewId(getSelectedView()));
+        var id = generateGadgetId(asset.id);
         var area = container.attr('id');
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -2709,9 +2703,8 @@ $(function () {
             async: false,
             dataType: 'json'
         }).success(function (data) {
-            var layoutData = JSON.parse(data);
             var viewLayoutContent = {
-                layout: layoutData.blocks,
+                blocks: data.blocks,
                 name: viewName,
                 roles: viewRoles
             };
@@ -3184,13 +3177,12 @@ $(function () {
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
             var ishidden = dashboard.hideAllMenuItems ? true : false;
-            var layoutData = JSON.parse(data);
             var page = {
                 id: id,
                 title: options.title,
                 views: {
                     content: {
-                        default: layoutData.blocks
+                        default: JSON.parse(data),
                     },
                     fluidLayout: false
                 },
@@ -3299,7 +3291,7 @@ $(function () {
         if (typeof id === 'undefined') {
             throw 'Specified page : ' + page.id + ' cannot be found';
         }
-        ues.global.dashboard.pages[id].views.content[pageType].layout = serializedGrid;
+        ues.global.dashboard.pages[id].views.content[pageType].blocks = serializedGrid;
         saveDashboard();
     };
 

@@ -494,13 +494,12 @@ var getConvertedDashboardContent = function (registry, dashboard) {
             dashboardContent.version = dashboardJsonVersion;
             dashboardContent.pages.forEach(function (page) {
                 if (page.layout.content.loggedIn) {
-                    page.views.content.default.layout = page.layout.content.loggedIn.blocks;
+                    page.views.content.default = page.layout.content.loggedIn;
                     page.views.content.default.name = DEFAULT_VIEW_NAME;
                     page.views.content.default.roles = [INTERNAL_EVERYONE_ROLE];
                     delete page.layout.content.loggedIn;
                 }
                 if (page.layout.content.anon) {
-                    page.views.content.anon.layout = page.layout.content.anon.blocks;
                     page.views.content.anon.name = ANONYMOUS_VIEW_NAME;
                     page.views.content.anon.roles = [ANONYMOUS_ROLE];
                     delete page.layout.content.anon;
