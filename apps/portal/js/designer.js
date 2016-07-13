@@ -2671,17 +2671,22 @@ $(function () {
             } else {
                 //if tries to change the layout of an existing view
                 showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
-                    var selectedView = getSelectedView();
-                    var viewId = getViewId(selectedView);
-                    var viewName = page.views.content[viewId].name;
-                    var viewRoles = page.views.content[viewId].roles;
-                    if (!viewName) {
-                        viewName = viewId;
-                    }
-                    if (!viewRoles) {
-                        viewRoles = [INTERNAL_EVERYONE_ROLE];
-                    }
-                    saveViewContent(viewId, viewId, viewName, viewRoles, layout);
+                    destroyPage(page, pageType, function (err) {
+                        if (err) {
+                            throw err;
+                        }
+                        var selectedView = getSelectedView();
+                        var viewId = getViewId(selectedView);
+                        var viewName = page.views.content[viewId].name;
+                        var viewRoles = page.views.content[viewId].roles;
+                        if (!viewName) {
+                            viewName = viewId;
+                        }
+                        if (!viewRoles) {
+                            viewRoles = [INTERNAL_EVERYONE_ROLE];
+                        }
+                        saveViewContent(viewId, viewId, viewName, viewRoles, layout);
+                    });
                     return true;
                 });
             }
