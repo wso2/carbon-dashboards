@@ -258,7 +258,7 @@ $(function () {
         if (!gadgetIds[gadgetName]) {
             gadgetIds[gadgetName] = 0;
         }
-        return gadgetName + '-' +(gadgetIds[gadgetName]++);
+        return gadgetName + '-' + (gadgetIds[gadgetName]++);
     };
 
     /**
@@ -473,7 +473,6 @@ $(function () {
             var container = $('#' + component.id);
             var area = container.closest('.ues-component-box').attr('id');
             pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-
             var content = page.content[pageType];
             area = content[area];
             var index = area.indexOf(component);
@@ -792,13 +791,13 @@ $(function () {
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
-            var layout = page.layout.content[selectedViewId];
+            var viewContent = page.views.content[selectedViewId];
             var viewLayoutContent = {
-                blocks: layout.blocks,
+                layout: viewContent.layout,
                 name: newViewName,
-                roles: layout.roles
+                roles: viewContent.roles
             };
-            page.layout.content[newViewId] = viewLayoutContent;
+            page.views.content[newViewId] = viewLayoutContent;
             var viewContent = page.content[selectedViewId];
             var content = viewContent;
             for (var area in content) {
@@ -849,7 +848,7 @@ $(function () {
                     var newViewName = $(this).find('.ds-view-title').val().trim();
                     var currentViewName = getSelectedView();
                     var viewId = getViewId(currentViewName);
-                    page.layout.content[viewId].name = newViewName;
+                    page.views.content[viewId].name = newViewName;
                     saveDashboard();
                     renderView(viewId, viewId);
                 }
@@ -858,7 +857,7 @@ $(function () {
             //Add view roles to the properties tab
             //var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
             var role;
-            var viewRolesList = page.layout.content[viewId].roles;
+            var viewRolesList = page.views.content[viewId].roles;
             var selectedViewRoles = '';
             for (var i = 0; i < viewRolesList.length; i++) {
                 role = viewRolesList[i];
@@ -997,7 +996,7 @@ $(function () {
          * @param viewId View id
          */
         var addNewViewRole = function (element, role, viewId) {
-            var viewRolesList = page.layout.content[viewId].roles;
+            var viewRolesList = page.views.content[viewId].roles;
             var removingComponents = getRestrictedGadgets(role, pageType, roleAddAction);
             var removingComponentsLength = removingComponents.length;
 
@@ -1021,7 +1020,7 @@ $(function () {
              * @param role New role
              */
             var addRoleToView = function (viewId, role) {
-                page.layout.content[viewId].roles.push(role);
+                page.views.content[viewId].roles.push(role);
                 saveDashboard();
                 $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(role));
                 loadGadgetsWithViewRoles(viewId);
@@ -1034,7 +1033,7 @@ $(function () {
                             removeRestrictedGadgets();
                         }
                         dashboard.isanon = true;
-                        page.layout.content[viewId].roles = [];
+                        page.views.content[viewId].roles = [];
                         $('#view-configuration').find('.ues-view-roles').empty();
                         addRoleToView(viewId, role);
                         return true;
@@ -1079,7 +1078,7 @@ $(function () {
         var getRestrictedGadgets = function (role, viewId, action) {
             var removingComponents = [];
             var content = page.content[pageType];
-            var viewRoles = page.layout.content[viewId].roles;
+            var viewRoles = page.views.content[viewId].roles;
 
             for (area in content) {
                 if (content.hasOwnProperty(area)) {
@@ -1214,7 +1213,7 @@ $(function () {
                 showInformation(i18n_data["not.delete.view"], i18n_data["not.delete.view.message"]);
             } else {
                 showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
-                    delete page.layout.content[viewId];
+                    delete page.views.content[viewId];
                     delete page.content[viewId];
                     visibleViews = [];
                     dashboard.isanon = isAnonDashboard();
@@ -1280,7 +1279,7 @@ $(function () {
             event.preventDefault();
             var element = $(this).closest('.ds-view-role');
             var role = element.data('role');
-            var viewRoles = page.layout.content[pageType].roles;
+            var viewRoles = page.views.content[pageType].roles;
 
             /**
              * Remove role from the view
@@ -1363,7 +1362,7 @@ $(function () {
                 }
                 if (!isExist) {
                     var ctx = {
-                        viewName: page.layout.content[views[i]].name
+                        viewName: page.views.content[views[i]].name
                     };
                     $('#view-list').append(viewListingHbs(ctx));
                 }
@@ -1406,9 +1405,12 @@ $(function () {
                 $('#copy-view').prop("checked", true);
                 //$('#page-views-menu').empty();
                 var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+                $('#page-views-menu').empty();
+                var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+
                 for (var i = 0; i < views.length; i++) {
                     var temp = {
-                        viewName: page.layout.content[views[i]].name
+                        viewName: page.views.content[views[i]].name
                     };
                     $('#page-views-menu').append(viewCopyingOptions(temp));
                 }
@@ -1460,7 +1462,7 @@ $(function () {
      * @returns {boolean} Is anonymous role exists or not
      */
     var isAnonRoleExists = function (viewId) {
-        var viewRoles = page.layout.content[viewId].roles;
+        var viewRoles = page.views.content[viewId].roles;
         if (viewRoles.length > 0 && viewRoles[0].toLowerCase() === ANONYMOUS_ROLE) {
             return true;
         }
@@ -1799,10 +1801,10 @@ $(function () {
      * @returns {String} View id
      */
     var getViewId = function (viewName) {
-        var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
         for (var i = 0; i < views.length; i++) {
-            if (page.layout.content[views[i]].name) {
-                if (page.layout.content[views[i]].name === viewName) {
+            if (page.views.content[views[i]].name) {
+                if (page.views.content[views[i]].name === viewName) {
                     return views[i];
                 }
             }
@@ -1817,9 +1819,9 @@ $(function () {
     var isAnonDashboard = function () {
         if (dashboard.pages) {
             for (var i = 0; i < dashboard.pages.length; i++) {
-                var views = Object.keys(JSON.parse(JSON.stringify(dashboard.pages[i].layout.content)));
+                var views = Object.keys(JSON.parse(JSON.stringify(dashboard.pages[i].views.content)));
                 for (var j = 0; j < views.length; j++) {
-                    var viewRoles = dashboard.pages[i].layout.content[views[j]].roles;
+                    var viewRoles = dashboard.pages[i].views.content[views[j]].roles;
                     if (!viewRoles && (views[j] === ANONYMOUS_ROLE)) {
                         return true;
                     } else if (viewRoles.length === 1 && viewRoles[0] === ANONYMOUS_ROLE) {
@@ -1840,7 +1842,7 @@ $(function () {
         if (page) {
             var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
             for (var j = 0; j < views.length; j++) {
-                var viewRoles = page.layout.content[views[j]].roles;
+                var viewRoles = page.views.content[views[j]].roles;
                 if (!viewRoles) {
                     if (views[j] === ANONYMOUS_ROLE) {
                         return true;
@@ -2021,7 +2023,7 @@ $(function () {
                 }
             },
             fluidLayout: function () {
-                page.layout.fluidLayout = fluidLayout.is(':checked');
+                page.views.fluidLayout = fluidLayout.is(':checked');
             }
         };
 
@@ -2536,7 +2538,7 @@ $(function () {
      */
     var filterGadgetsForViewRoles = function (gadgetStore, type, viewId) {
         var data = [];
-        var viewRoles = page.layout.content[viewId].roles;
+        var viewRoles = page.views.content[viewId].roles;
         var viewRolesLength = viewRoles.length;
         var isAnonExist = false;
         var isLoggedInExist = false;
@@ -2677,8 +2679,8 @@ $(function () {
                 showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
                     var selectedView = getSelectedView();
                     var viewId = getViewId(selectedView);
-                    var viewName = page.layout.content[viewId].name;
-                    var viewRoles = page.layout.content[viewId].roles;
+                    var viewName = page.views.content[viewId].name;
+                    var viewRoles = page.views.content[viewId].roles;
                     if (!viewName) {
                         viewName = viewId;
                     }
@@ -2707,12 +2709,13 @@ $(function () {
             async: false,
             dataType: 'json'
         }).success(function (data) {
+            var layoutData = JSON.parse(data);
             var viewLayoutContent = {
-                blocks: data.blocks,
+                layout: layoutData.blocks,
                 name: viewName,
                 roles: viewRoles
             };
-            page.layout.content[viewId] = viewLayoutContent;
+            page.views.content[viewId] = viewLayoutContent;
         }).error(function (xhr, status, err) {
             generateMessage("Error creating the page view", null, null, "error", "topCenter", 2000, null);
         });
@@ -2923,7 +2926,7 @@ $(function () {
                 title: page.title,
                 landing: (dashboard.landing == page.id),
                 isUserCustom: dashboard.isUserCustom,
-                fluidLayout: page.layout.fluidLayout || false
+                fluidLayout: page.views.fluidLayout || false
             })).on('change', 'input', function () {
                 if (updatePageProperties($(this).closest('.ues-page-properties'))) {
                     switchPage(page.id, pageType);
@@ -3181,12 +3184,13 @@ $(function () {
         $.get(resolveURI(layout.url), function (data) {
             var id = options.id;
             var ishidden = dashboard.hideAllMenuItems ? true : false;
+            var layoutData = JSON.parse(data);
             var page = {
                 id: id,
                 title: options.title,
-                layout: {
+                views: {
                     content: {
-                        default: JSON.parse(data),
+                        default: layoutData.blocks
                     },
                     fluidLayout: false
                 },
@@ -3209,8 +3213,8 @@ $(function () {
                 dashboard.menu = [];
             }
             dashboard.menu.push(menu);
-            page.layout.content[DEFAULT_DASHBOARD_VIEW].name = DEFAULT_VIEW_NAME;
-            page.layout.content[DEFAULT_DASHBOARD_VIEW].roles = [INTERNAL_EVERYONE_ROLE];
+            page.views.content[DEFAULT_DASHBOARD_VIEW].name = DEFAULT_VIEW_NAME;
+            page.views.content[DEFAULT_DASHBOARD_VIEW].roles = [INTERNAL_EVERYONE_ROLE];
             saveDashboard();
             pageType = DEFAULT_DASHBOARD_VIEW;
             visibleViews = [];
@@ -3295,7 +3299,7 @@ $(function () {
         if (typeof id === 'undefined') {
             throw 'Specified page : ' + page.id + ' cannot be found';
         }
-        ues.global.dashboard.pages[id].layout.content[pageType].blocks = serializedGrid;
+        ues.global.dashboard.pages[id].views.content[pageType].layout = serializedGrid;
         saveDashboard();
     };
 
@@ -3416,7 +3420,7 @@ $(function () {
         for (var i = 0; i < visibleViews.length; i++) {
             try {
                 var tempView = visibleViews[i];
-                var viewTempName = page.layout.content[tempView].name;
+                var viewTempName = page.views.content[tempView].name;
                 $('#designer-view-mode').append(newViewHbs);
                 document.getElementById("new-view-id").setAttribute('data-view-mode', tempView);
                 document.getElementById("view-name").innerHTML = viewTempName;
