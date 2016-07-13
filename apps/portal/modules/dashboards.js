@@ -454,14 +454,16 @@ var getConvertedDashboardContent = function (registry, dashboard) {
             dashboardContent.version = dashboardJsonVersion;
             dashboardContent.pages.forEach(function (page) {
                 if (page.layout.content.loggedIn) {
-                    page.layout.content.default = page.layout.content.loggedIn;
-                    page.layout.content.default.name = DEFAULT_VIEW_NAME;
-                    page.layout.content.default.roles = [INTERNAL_EVERYONE_ROLE];
+                    page.views.content.default.layout = page.layout.content.loggedIn.blocks;
+                    page.views.content.default.name = DEFAULT_VIEW_NAME;
+                    page.views.content.default.roles = [INTERNAL_EVERYONE_ROLE];
                     delete page.layout.content.loggedIn;
                 }
                 if (page.layout.content.anon) {
-                    page.layout.content.anon.name = ANONYMOUS_VIEW_NAME;
-                    page.layout.content.anon.roles = [ANONYMOUS_ROLE];
+                    page.views.content.anon.layout = page.layout.content.anon.blocks;
+                    page.views.content.anon.name = ANONYMOUS_VIEW_NAME;
+                    page.views.content.anon.roles = [ANONYMOUS_ROLE];
+                    delete page.layout.content.anon;
                 }
             });
             var path = registryPath(dashboardContent.id);

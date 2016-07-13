@@ -208,7 +208,7 @@
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
-        var layout = $(page.layout.content[pageType]);
+        var layout = $(page.views.content[pageType]);
         content = page.content[pageType];
         componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
         // this is to be rendered only in the designer. in the view mode, the template is rendered in the server

@@ -200,7 +200,7 @@ $(function () {
             }
 
             //check whether the view is an anonymous view
-            var viewRoles = page.layout.content[ues.global.dbType].roles;
+            var viewRoles = page.views.content[ues.global.dbType].roles;
 
             var isAnonView = false;
             if (ues.global.dbType === DASHBOARD_ANON_VIEW) {
@@ -245,12 +245,12 @@ $(function () {
     var getUserAllowedViews = function (page) {
         $('#ds-allowed-view-list').empty();
         var allowedViews = [];
-        var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
         for (var i = 0; i < views.length; i++) {
-            var viewRoles = page.layout.content[views[i]].roles;
+            var viewRoles = page.views.content[views[i]].roles;
             if (isAllowedView(viewRoles)) {
                 allowedViews.push(views[i]);
-                var tempViewName = page.layout.content[views[i]].name;
+                var tempViewName = page.views.content[views[i]].name;
                 var viewOption = {
                     viewName: tempViewName
                 };
@@ -352,10 +352,10 @@ $(function () {
      * @returns {String} View id
      */
     var getViewId = function (viewName) {
-        var views = Object.keys(JSON.parse(JSON.stringify(page.layout.content)));
+        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
         for (var i = 0; i < views.length; i++) {
-            if (page.layout.content[views[i]].name) {
-                if (page.layout.content[views[i]].name === viewName) {
+            if (page.views.content[views[i]].name) {
+                if (page.views.content[views[i]].name === viewName) {
                     return views[i];
                 }
             }

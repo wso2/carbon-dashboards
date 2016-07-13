@@ -84,12 +84,12 @@ var portalRoot;
 
     if (!user) {
         // if it is an anonymous user, check whether an anon view exists for the page
-        var pageLayoutContent = JSON.parse(JSON.stringify(currentPage.layout.content));
+        var pageLayoutContent = JSON.parse(JSON.stringify(currentPage.views.content));
         var pageViews = Object.keys(pageLayoutContent);
         var existsAnonView = false;
         for (var i = 0; i < pageViews.length; i++) {
             var viewRoles = currentPage.layout.content[pageViews[i]].roles;
-            if (viewRoles === undefined && pageViews[i] === ANON_VIEW && currentPage.layout.content.anon !== undefined) {
+            if (viewRoles === undefined && pageViews[i] === ANON_VIEW && currentPage.views.content.anon !== undefined) {
                 //check anon view of a previous dashboard json file
                 existsAnonView = true;
                 break;
