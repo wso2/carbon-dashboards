@@ -20,6 +20,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
     var carbon = require('carbon');
     var utils = require('/modules/utils.js');
+    var moduleDashboards = require('/modules/dashboards.js');
     var config = require('/configs/designer.json');
     var DEFAULT_STORE_TYPE = 'fs';
     var LEGACY_STORE_TYPE = 'store';
@@ -37,12 +38,13 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         return STORE_EXTENSIONS_LOCATION + storeType + '/index.js';
     };
 
-    getDashboardsFromRegistry = function (start, count) {
-
-        var server = new carbon.server.Server();
-        var registry = new carbon.registry.Registry(server, {
-            system: true
-        });
+    getDashboardsFromRegistry = function (start, count, registry) {
+        if (!registry) {
+            var server = new carbon.server.Server();
+            registry = new carbon.registry.Registry(server, {
+                system: true
+            });
+        }
         return registry.content(registryPath(), {
             start: start,
             count: count
@@ -60,7 +62,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var um = new carbon.user.UserManager(server, ctx.tenantId);
         var userRoles = um.getRoleListOfUser(ctx.username);
 
-        var dashboards = getDashboardsFromRegistry(start, count);
+        var dashboards = getDashboardsFromRegistry(start, count, registry);
         var superTenantDashboards = null;
         var superTenantRegistry = null;
 
@@ -70,10 +72,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                 system: true,
                 tenantId: carbon.server.superTenant.tenantId
             });
-            superTenantDashboards = superTenantRegistry.content(registryPath(), {
-                start: start,
-                count: count
-            });
+            superTenantDashboards = getDashboardsFromRegistry(start, count, superTenantRegistry);
             utils.endTenantFlow();
         }
 
@@ -86,7 +85,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
-                var contentDashboardJSON = JSON.parse(registry.content(dashboard));
+                var contentDashboardJSON = moduleDashboards.getConvertedDashboardContent(registry, dashboard);
                 if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
                     contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
                 }
@@ -96,7 +95,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (superTenantDashboards) {
             utils.startTenantFlow(carbon.server.superTenant.tenantId);
             superTenantDashboards.forEach(function (dashboard) {
-                var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
+                var parsedDashboards = moduleDashboards.getConvertedDashboardContent(superTenantRegistry, dashboard);
                 if (parsedDashboards.shareDashboard) {
                     if (!(parsedDashboards.permissions).hasOwnProperty("owners")) {
                         parsedDashboards.permissions.owners = parsedDashboards.permissions.editors;

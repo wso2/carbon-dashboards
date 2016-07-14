@@ -23,11 +23,23 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'),
-        user = usr.current(),
-        isAnonView = request.getParameter('isAnonView'),
-        queryString = request.getQueryString(),
-        isPersonalizeEnabled = request.getParameter('dashboardeditor');
+    var usr = require('/modules/user.js'),  user = usr.current(),   isAnonView = request.getParameter('isAnonView'),
+        isPreview = request.getParameter('preview'),    queryString = request.getQueryString(),
+            isPersonalizeEnabled = request.getParameter('dashboardeditor');
+
+    var userRoles = [];
+    var viewId = request.getParameter('currentView');
+    if(!user) {
+        userRoles.push('anonymous');
+    } else {
+        var tempRoles = usr.roles();
+        if(isPreview) {
+            userRoles.push('anonymous');
+        }
+        for (var i = 0; i < tempRoles.length; i++){
+            userRoles.push(tempRoles[i]);
+        }
+    }
 
     // Get the anon view
     if (!user) {
@@ -58,20 +70,6 @@
     var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
     if (request.getParameter('isAnonView') == 'true') {
         dashboardUrl += '?isAnonView=true';
-    }
-   
-    // Show navigation menu (There should be more than one page to show the navigation menu)
-    var showNavigation = false;
-    if (isAnonView || !user) {
-        var anonPageCount = 0;
-        pages.forEach(function(p) {
-            if (p.isanon) {
-                anonPageCount++;
-            }
-        });
-        showNavigation = (anonPageCount > 1);
-    } else {
-        showNavigation = (pages.length > 1);
     }
 %>
 <html lang="en">
@@ -229,31 +227,14 @@
             <body class="dashboard lang_<%=request.getLocale()%> dark" style="padding-bottom: 0">
                 <div class="page-content-wrapper remove-padding-xs">
          <% } %>
-        <!-- page content -->
-        <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
-            <div class="nano">
-                <div class="nano-content">
-
-                    <div class="page-content">
-                        
-                        <div class="progress hidden">
-                            <div class="indeterminate"></div>
-                        </div>
-                        
-
-                        <div class="ues-components-grid gadgets-grid">
-                            <%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div-->
-        <!-- #page-content-wrapper -->
-        <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
+                <div class="form-group hide" id="list-user-views">
+                    <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
+                    data-style="btn-default" data-width="100px" style="width: 200px">
+                    </select>
+                </div>
                 <div class="container-fluid body-wrapper">
                 <div class="nano" >
             <% } else { %>
@@ -271,7 +252,6 @@
                     </div>
                 </div>
             </div>
-        <!--/div-->
     </div><!-- /#page-content-wrapper -->
 
 
@@ -307,23 +287,6 @@
             </div>
         </div>
         {{/each}}
-    </script>
-
-    <!-- Component container -->
-    <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-        <div class="gadget-wrapper">
-            <div class="ues-component gadget">
-                <div class="ues-component-heading gadget-heading">
-                    <h4 class="ues-component-title gadget-title truncate"></h4>
-
-                    <div class="ues-component-actions gadget-actions">
-
-                    </div>
-                </div>
-
-                <div class="ues-component-body gadget-body"></div>
-            </div>
-        </div>
     </script>
 
     <!-- Component toolbar actions -->
@@ -442,8 +405,9 @@
         </div>
     </script>
 
+    <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString pageId}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
     </script>
 
     <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
@@ -473,7 +437,12 @@
         </div>
         {{/if}}
     </script>
+   <!-- View options for a particular page -->
+    <script id="view-option-hbs" type="text/x-handlebars-template">
+        <option value = {{viewId}}>{{viewName}}</option>
+    </script>
 
+    <script src="<%=urlPrefix%>js/async.js"></script>
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
@@ -628,7 +597,13 @@
         var user = <%= user %>,
             queryString = <%= stringify(queryString) %>,
             isAnonView = <%= isAnonView %>,
-            pageId = <%= stringify(pageId) %>;
+             isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
+        var userRolesList = <%= userRoles %>;
+        var currentView = <%= stringify(viewId) %>;
+        var embeddableView = null;
+        <% if (typeof bgColor !== 'undefined') { %>
+                embeddableView = <%= stringify(vId) %>;
+         <%   } %>
     </script>
 </body>
 </html>

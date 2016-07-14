@@ -155,10 +155,9 @@ var saveOptions = function (sandbox, options) {
     });
 };
 
-var initDashboard = function (db, pageId, type) {
+var initDashboard = function (db, pageId) {
     dashboard = (ues.global.dashboard = db);
     page = findPage(dashboard, pageId);
-    pageType = type ? type : DEFAULT_DASHBOARD_VIEW;
 };
 
-initDashboard(ues.global.dashboard, ues.global.page, ues.global.dbType);
+initDashboard(ues.global.dashboard, ues.global.page);

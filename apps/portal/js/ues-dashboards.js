@@ -19,6 +19,8 @@
     var DEFAULT_STORE = 'fs';
     var LEGACY_STORE = 'store';
     var SUPER_DOMAIN = 'carbon.super';
+    var loadingFinishedCount;
+
     /**
      * Find a component.
      * @param {String} type Type of the plugin
@@ -225,7 +227,7 @@
     var renderPage = function (element, dashboard, page, pageType, done, isDesigner) {
         setDocumentTitle(dashboard, page);
         wirings = wires(page, pageType);
-        var layout = (pageType === 'anon' ? $(page.layout.content.anon) : $(page.layout.content.loggedIn));
+        var layout = $(page.views.content[pageType]);
         content = page.content[pageType];
         componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html() || '');
         // this is to be rendered only in the designer. in the view mode, the template is rendered in the server
@@ -384,7 +386,7 @@
         var area;
         var component;
         var components;
-        var content = (ues.global.dbType === 'anon' ? page.content.anon : page.content.default);
+        var content = page.content[ues.global.dbType];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
                 components = content[area];
