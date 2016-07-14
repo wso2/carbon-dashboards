@@ -783,10 +783,8 @@ $(function () {
 
         // event handler for clicking on a view name to copy the content
         designer.on('change', '#page-views-menu', function (event) {
-            console.log("here");
             event.preventDefault();
             visibleViews = [];
-            console.log($('#page-views-menu :selected').text());
             var selectedViewId = getViewId($('#page-views-menu :selected').text());
             $('#view-layout-select .selected').text(selectedViewId);
             var viewOptions = getNewViewOptions(page.content);
