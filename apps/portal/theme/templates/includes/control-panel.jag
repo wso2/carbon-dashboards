@@ -30,6 +30,8 @@
                             <li><a href="<%=dbRoot%><%=pageId%>?personalize=true"><i class="icon fw fw-settings" title="<%= i18n.localize("personalize")%>"></i>Edit Dashboard</a></li>
                            <% }%>
                 <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
+            <% } else {%>
+                    <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy" title="<%= i18n.localize("view.button")%>"></i>Dashboard Portal</a></li>
             <% } %>
         <% } %>
     <% } %>

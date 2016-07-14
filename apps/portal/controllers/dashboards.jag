@@ -114,6 +114,7 @@ var DASHBOARD_VERSION = "1.0.20";
 
                     dashboard = originalDashboard;
                 }
+                dashboard.personalizeDashboard = originalDashboard.personalizeDashboard;
             }
 
             isCustomize = request.getParameter('custom');
@@ -167,7 +168,6 @@ var DASHBOARD_VERSION = "1.0.20";
                 return;
             }
         }
-
         editor = request.getParameter('editor');
         editor ? include('includes/designer.jag') : include('includes/renderer.jag');
         return;
