@@ -87,10 +87,12 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
                 var contentDashboardJSON = JSON.parse(registry.content(dashboard));
-                if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
-                    contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
+                if (dashboard == registryPath(contentDashboardJSON.id)) {
+                    if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
+                        contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
+                    }
+                    allDashboards.push(contentDashboardJSON);
                 }
-                allDashboards.push(contentDashboardJSON);
             });
         }
         if (superTenantDashboards) {
