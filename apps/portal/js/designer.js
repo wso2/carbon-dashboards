@@ -798,7 +798,7 @@ $(function () {
             };
             page.views.content[newViewId] = viewLayoutContent;
             var viewContent = page.content[selectedViewId];
-            page.content[newViewId] = viewContent;
+            page.content[newViewId] = JSON.parse(JSON.stringify(viewContent));
             saveDashboard();
             pageType = newViewId;
             $('button[data-target=#left-sidebar]').click();
