@@ -33,6 +33,11 @@
     font-weight: bold;
 }
 
+#personalize-info {
+    padding-top: 8px;
+    font-weight: bold;
+}
+
 /**
  * Theme overrides
  */

@@ -23,8 +23,12 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'),  user = usr.current(),   isAnonView = request.getParameter('isAnonView'),
-        isPreview = request.getParameter('preview'),    queryString = request.getQueryString();
+    var usr = require('/modules/user.js'),
+        user = usr.current(),
+        isAnonView = request.getParameter('isAnonView'),
+        queryString = request.getQueryString(),
+        isPersonalizeEnabled = request.getParameter('dashboardeditor'),
+        isPreview = request.getParameter('preview');
 
     var userRoles = [];
     var viewId = request.getParameter('currentView');
@@ -100,6 +104,13 @@
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard lang_<%=request.getLocale()%> dark">
+    <!-- Modal -->
+    <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
@@ -219,27 +230,6 @@
             <body class="dashboard lang_<%=request.getLocale()%> dark" style="padding-bottom: 0">
                 <div class="page-content-wrapper remove-padding-xs">
          <% } %>
-        <!-- page content -->
-        <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
-            <div class="nano">
-                <div class="nano-content">
-
-                    <div class="page-content">
-                        
-                        <div class="progress hidden">
-                            <div class="indeterminate"></div>
-                        </div>
-                        
-
-                        <div class="ues-components-grid gadgets-grid">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div-->
-        <!-- #page-content-wrapper -->
-        <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
@@ -301,6 +291,23 @@
             </div>
         </div>
         {{/each}}
+    </script>
+
+    <!-- Component container -->
+    <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
+        <div class="gadget-wrapper">
+            <div class="ues-component gadget">
+                <div class="ues-component-heading gadget-heading">
+                    <h4 class="ues-component-title gadget-title truncate"></h4>
+
+                    <div class="ues-component-actions gadget-actions">
+
+                    </div>
+                </div>
+
+                <div class="ues-component-body gadget-body"></div>
+            </div>
+        </div>
     </script>
 
     <!-- Component toolbar actions -->
@@ -422,6 +429,34 @@
     <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
         {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
+    </script>
+
+    <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+            <h3 class="modal-title" id="deleteModalLabel">
+                {{#if hasComponent}}
+                <%=i18n.localize("dashboard.view.delete.message")%>
+                {{/if}}
+            </h3>
+        </div>
+        {{#if hasComponent}}
+        <div class="pull-right">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-delete"><%=i18n.localize("delete")%></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("cancel")%></button>
+            </div>
+        </div>
+        {{else}}
+        <div class="modal-body">
+            <%=i18n.localize("delete.block.only.message")%>
+            <input type="radio" name="delete-option" value="block" class="hidden" checked>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-delete" data-dismiss="modal"><%=i18n.localize("yes.label")%></button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("no.label")%></button>
+        </div>
+        {{/if}}
     </script>
 
     <!-- View options for a particular page -->
@@ -587,9 +622,10 @@
         var userRolesList = <%= userRoles %>;
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;
+        var isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
-         <%   } %>
+         <% } %>
     </script>
 </body>
 </html>
