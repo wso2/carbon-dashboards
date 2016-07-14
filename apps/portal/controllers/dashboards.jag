@@ -135,6 +135,16 @@ var DASHBOARD_VERSION = "1.0.20";
                 return;
             }
 
+            if (isPersonalize === 'true') {
+                for (var i = 0; i < dashboard.pages.length; i++) {
+                    dashboard.pages[i].isanon = false;
+                }
+
+                dashboards.copy(dashboard);
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '/' + pageId + '?dashboardeditor=true');
+                return;
+            }
+
             toReset = request.getParameter('reset');
 
             if (toReset) {
