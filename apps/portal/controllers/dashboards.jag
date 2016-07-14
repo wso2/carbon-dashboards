@@ -50,7 +50,6 @@ var DASHBOARD_VERSION = "1.0.20";
     var dashboards;
     var editor;
     var isCustomize;
-    var isPersonalize;
     var toReset;
     var method = request.getMethod();
 
@@ -117,21 +116,10 @@ var DASHBOARD_VERSION = "1.0.20";
             }
 
             isCustomize = request.getParameter('custom');
-            isPersonalize = request.getParameter('personalize');
 
             if (isCustomize) {
                 dashboards.copy(dashboard);
                 response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
-                return;
-            }
-
-            if (isPersonalize === 'true') {
-                for (var i = 0; i < dashboard.pages.length; i++) {
-                    dashboard.pages[i].isanon = false;
-                }
-
-                dashboards.copy(dashboard);
-                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '/' + pageId + '?dashboardeditor=true');
                 return;
             }
 
@@ -185,8 +173,7 @@ var DASHBOARD_VERSION = "1.0.20";
             apiKey: "",
             apiSecret: "",
             theme: request.getParameter('select-theme'),
-            shareDashboard : false,
-            personalizeDashboard : false
+            shareDashboard : false
     };
 
         utils.sandbox(context, function() {
