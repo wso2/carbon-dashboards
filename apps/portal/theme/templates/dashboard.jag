@@ -246,10 +246,10 @@
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
-                <div class="container-fluid body-wrapper">
+                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" >
             <% } else { %>
-                <div class="container-fluid body-wrapper" style="height: 100%;">
+                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay" style="height: 100%;">
                 <div class="nano" style="position: absolute;">
             <% } %>
                     <div class="nano-content" >

@@ -152,6 +152,10 @@
                 site: site
             };
             done(false, comp);
+            
+            sandbox.find('iframe').on('load', function(){
+                $(this).closest('.gadget-body').removeClass('loading');
+            });
         });
     };
 
