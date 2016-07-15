@@ -154,12 +154,9 @@
             done(false, comp);
             
             sandbox.find('iframe').on('load', function(){
-                var readyInterval = setInterval(function() {
-                    if (this.contentWindow.document.readyState == "complete") {
-                        $(this).closest('.gadget-body').removeClass('loading');
-                        clearInterval(readyInterval);
-                    }
-                }, 100);
+                if (this.contentWindow.document.readyState == "complete") {
+                    $(this).closest('.gadget-body').removeClass('loading');
+                }
             });
         });
     };
