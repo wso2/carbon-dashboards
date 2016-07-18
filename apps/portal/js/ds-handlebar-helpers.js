@@ -84,7 +84,7 @@ Handlebars.registerHelper('resolveURI', function (path) {
 });
 
 //handlebar helper which returns menu hierachy
-Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentPageId) {
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentPageId, allowedViews) {
     var divTree = "<ul class='nav nav-pills nav-stacked menu-customize pages'>";
     var checked = isHidden ? "checked=''": "" ;
     var requestParam = (queryString !== null) ? "?" + queryString: "";
@@ -96,10 +96,10 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'> <i class='fw fw-view'></i> Hide All</li>";
     }
 
-    updateSubordinates(menu, null);
+    updateSubordinates(menu, null, allowedViews);
     divTree += "</ul>";
 
-    function updateSubordinates(menu, parent){
+    function updateSubordinates(menu, parent, allowedViews) {
         for (var i = 0; i < menu.length; i++) {
                 if (designer) {
                     //todo use fw-hide class once latest wso2 icon project released
@@ -112,7 +112,12 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                     var cls = menu[i].id === currentPageId? 'active': '';
                     var divLi = "<li class='" + cls + "'><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>";
                     if(!menu[i].ishidden){
-                        if (isAnonView || !user) {
+                        if (allowedViews) {
+                            if (allowedViews.indexOf(menu[i].id) > -1) {
+                                divTree += divLi;
+                            }
+                        }
+                        else if (isAnonView || !user) {
                             if (menu[i].isanon) {
                                 // Anonymous viewing. So render only anonymous pages links.
                                 divTree += divLi;

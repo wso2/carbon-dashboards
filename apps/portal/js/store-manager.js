@@ -194,7 +194,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         }
         return storeType.concat('://' + url);
     };
-
+    
     /**
      * Find an asset based on the type and asset id
      * @param type

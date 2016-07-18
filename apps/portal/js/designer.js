@@ -1015,16 +1015,36 @@ $(function () {
 
             if (!isExistingPermission(viewRolesList, role)) {
                 if (role === ANONYMOUS_ROLE) {
-                    showConfirm(i18n_data["add.anonymous.role"], i18n_data["add.anonymous.role.message"], function () {
-                        if (removingComponentsLength > 0) {
-                            removeRestrictedGadgets();
+                    var isAllowed = false;
+                    if (page.id !== dashboard.landing){
+                        var landingPage = getPage(dashboard.landing);
+                        isAllowed = isRoleExist(landingPage, ANONYMOUS_ROLE);
+                        if (!isAllowed) {
+                            showInformation("Cannot add " + ANONYMOUS_ROLE + " role", "Please make sure atleast one view in landing page contains " + ANONYMOUS_ROLE);
                         }
-                        dashboard.isanon = true;
-                        page.views.content[viewId].roles = [];
-                        $('#view-configuration').find('.ues-view-roles').empty();
-                        addRoleToView(viewId, role);
-                        return true;
-                    });
+                    } else {
+                        if (dashboard.pages.length > 1) {
+                            isAllowed = isRoleExist(page, INTERNAL_EVERYONE_ROLE, viewId);
+                            if (!isAllowed) {
+                                showInformation("Cannot add " + ANONYMOUS_ROLE + " role", "Landing page should contain atleast one " + INTERNAL_EVERYONE_ROLE);
+                            }
+
+                        } else {
+                            isAllowed = true;
+                        }
+                    }
+                    if (isAllowed) {
+                        showConfirm(i18n_data["add.anonymous.role"], i18n_data["add.anonymous.role.message"], function () {
+                            if (removingComponentsLength > 0) {
+                                removeRestrictedGadgets();
+                            }
+                            dashboard.isanon = true;
+                            page.views.content[viewId].roles = [];
+                            $('#view-configuration').find('.ues-view-roles').empty();
+                            addRoleToView(viewId, role);
+                            return true;
+                        });
+                    }
                 } else if (isAnonRoleExists(viewId)) {
                     showConfirm(i18n_data["add.new.role.removing.anonymous"],
                         i18n_data["add.new.role.removing.anonymous.message"], function () {
@@ -1191,6 +1211,9 @@ $(function () {
             var viewId = getViewId(tempName);
             var currentView = getSelectedView();
             var currentViewId = getViewId(currentView);
+            var isAllowed = false;
+            var isAnonNeeded = false;
+
             if (pageType !== viewId) {
                 pageType = viewId;
                 renderView(currentViewId, viewId);
@@ -1198,7 +1221,49 @@ $(function () {
             var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
             if (views.length === 1) {
                 showInformation(i18n_data["not.delete.view"], i18n_data["not.delete.view.message"]);
+                return;
+            }
+            if (dashboard.landing === page.id && dashboard.pages.length > 1) {
+
+                if (page.views.content[viewId].roles.indexOf(ANONYMOUS_ROLE) > -1) {
+                    var pages = dashboard.pages;
+                    for (var i = 0; i < pages.length; i++) {
+                        if (page.id !== pages[i].id) {
+                            isAnonNeeded = isRoleExist(pages[i], ANONYMOUS_ROLE);
+                            if (isAnonNeeded) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (var i = 0; i < views.length; i++) {
+                    if (views[i] !== viewId) {
+                        var tempViewRoles = page.views.content[views[i]].roles;
+                        if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1 && !isAnonNeeded) {
+                            isAllowed = true;
+                            break;
+                        } else if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1 && isAnonNeeded) {
+                            isAllowed = true;
+                            break;
+                        }
+                    }
+                    if (i === views.length - 1 && !isAllowed) {
+                        if (!isAnonNeeded) {
+                            showInformation("Cannot delete the view", "Landing page should contain atleast one view with "
+                                + INTERNAL_EVERYONE_ROLE);
+                            return;
+                        } else {
+                            showInformation("Cannot delete the view", "Landing page should contain atleast one view with "
+                                + ANONYMOUS_ROLE + " since other pages contains view with anonymous role");
+                            return;
+                        }
+                    }
+                }
+
             } else {
+                isAllowed = true;
+            }
+            if (isAllowed) {
                 showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
                     destroyPage(page, pageType, function (err) {
                         if (err) {
@@ -1271,6 +1336,7 @@ $(function () {
             var element = $(this).closest('.ds-view-role');
             var role = element.data('role');
             var viewRoles = page.views.content[pageType].roles;
+            var isAllowed = false;
 
             /**
              * Remove role from the view
@@ -1290,22 +1356,34 @@ $(function () {
             //check whether there are gadgets in the view, which will be restricted after removing the new role
             if (viewRoles.length === 1) {
                 showInformation(i18n_data["not.delete.role"], i18n_data["not.delete.role.message"]);
-            } else if (removingComponentsLength > 0) {
-                showConfirm(i18n_data["remove.gadgets.with.role.addition"],
-                    i18n_data["remove.gadgets.with.role.addition.message"], function () {
-                        for (var i = 0; i < removingComponentsLength; i++) {
-                            removeComponent(removingComponents[i], function (err) {
-                                if (err) {
-                                    generateMessage("Error in removing gadgets from the view", null, null, "error",
-                                        "topCenter", 2000, null);
-                                }
-                            });
-                        }
-                        removePermission();
-                        return true;
-                    });
+                return;
+            } else if (page.id === dashboard.landing && role === INTERNAL_EVERYONE_ROLE && dashboard.pages.length > 1) {
+                isAllowed = isRoleExist(page, INTERNAL_EVERYONE_ROLE, pageType);
+                if (!isAllowed) {
+                    showInformation("Cannot remove the role " + INTERNAL_EVERYONE_ROLE,
+                        "Landing page should contain " + INTERNAL_EVERYONE_ROLE);
+                }
             } else {
-                removePermission();
+                isAllowed = true;
+            }
+            if (isAllowed) {
+                if (removingComponentsLength > 0) {
+                    showConfirm(i18n_data["remove.gadgets.with.role.addition"],
+                        i18n_data["remove.gadgets.with.role.addition.message"], function () {
+                            for (var i = 0; i < removingComponentsLength; i++) {
+                                removeComponent(removingComponents[i], function (err) {
+                                    if (err) {
+                                        generateMessage("Error in removing gadgets from the view", null, null, "error",
+                                            "topCenter", 2000, null);
+                                    }
+                                });
+                            }
+                            removePermission();
+                            return true;
+                        });
+                } else {
+                    removePermission();
+                }
             }
             loadGadgetsWithViewRoles(pageType);
         });
@@ -1435,7 +1513,6 @@ $(function () {
                             saveDashboard();
                         });
                     }
-
                     if (removeBlock) {
                         getGridstack().remove_widget(componentBox.parent());
                         updateLayout();
@@ -1848,6 +1925,42 @@ $(function () {
         return false;
     };
 
+    var isEligibleToLanding = function(page) {
+        var pages = dashboard.pages;
+        var viewsWithAnon = 0;
+        var isAnonExist = false;
+        var isInternalExist = false;
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i].id !== page.id) {
+                var tempPage = pages[i];
+                var views = Object.keys(JSON.parse(JSON.stringify(tempPage.views.content)));
+                for (var k = 0; k < views.length; k++) {
+                    var tempViewRoles = tempPage.views.content[views[k]].roles;
+                    if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                        viewsWithAnon++;
+                        break;
+                    }
+                }
+            }
+        }
+        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        for (var k = 0; k < views.length; k++) {
+            var tempViewRoles = page.views.content[views[k]].roles;
+            if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                isInternalExist = true;
+            }
+            if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                isAnonExist = true;
+            }
+        }
+        if (isInternalExist && isAnonExist) {
+            return true;
+        }
+        if (isInternalExist && viewsWithAnon < 1) {
+            return true;
+        }
+    };
+
     /**
      * Check whether there are any anonymous pages.
      * @param {String} pageId Page ID
@@ -2007,6 +2120,10 @@ $(function () {
                         landing.prop("checked", false);
                         showInformation("Cannot Select This Page As Landing",
                             "This page is hidden in the menu, please select a different page");
+                    } else if (!isEligibleToLanding(page)) {
+                        landing.prop("checked", false);
+                        showInformation("Cannot Select This Page As Landing",
+                            "This page either does not have a view with internal/everyone role or anonymous role");
                     } else {
                         dashboard.landing = idVal;
                         var menuItem = getChild(dashboard.menu, idVal);
@@ -2054,7 +2171,7 @@ $(function () {
         }
 
         return ret;
-    }
+    };
 
     /**
      * Update menu item based on the given key
@@ -2639,6 +2756,19 @@ $(function () {
             e.preventDefault();
             var options = pageOptions();
 
+            var landingPageId = dashboard.landing;
+
+            if (landingPageId) {
+                var pages = dashboard.pages;
+                var landingPage = getPage(landingPageId);
+                var isAllowed = isRoleExist(landingPage, INTERNAL_EVERYONE_ROLE);
+
+                if (!isAllowed) {
+                    showInformation("Cannot create a new page",
+                        "Landing page does not contain a view wih " + INTERNAL_EVERYONE_ROLE);
+                    return;
+                }
+            }
             createPage(options, $(this).data('id'), function (err) {
 
                 // reload pages list
@@ -2869,7 +2999,6 @@ $(function () {
                         removePage(pid, views[0], function (err) {
                             var pages = dashboard.pages;
                             var childObj = getChild(dashboard.menu, pid);
-                            //updatePagesList(pages);
 
                             // if the landing page was deleted, make the first page(in menu) to be the landing page
                             if (dashboard.menu.length) {
@@ -2877,6 +3006,7 @@ $(function () {
                                     //get next possible landing page from the menu
                                     var nextLandingpage = getNextLandingPage(pid, dashboard.menu);
                                     dashboard.landing = nextLandingpage;//dashboard.menu[0].id;
+                                    generateMessage("Landing page changed to " + dashboard.landing, null, null, "success", "topCenter", 2000, null);
                                     var menuItem = getChild(dashboard.menu, nextLandingpage);
                                     dashboard.menu.unshift(menuItem);
                                     spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
@@ -2898,7 +3028,8 @@ $(function () {
                         });
                         return true;
                     } else {
-                        dashboard.pages.length !== 1 ? showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates,all pages are hidden or ") : showInformation("Unable to remove the last page")
+                        dashboard.pages.length !== 1 ? showInformation("Unable to remove this page. Make sure this page " +
+                            "doesn't have any subordinates,all pages are hidden or any of the other pages have a view for the role " + INTERNAL_EVERYONE_ROLE) : showInformation("Unable to remove the last page");
                         return false;
                     }
                 });
@@ -2983,13 +3114,44 @@ $(function () {
      */
     var getNextLandingPage = function (pid, menu) {
         var nextLandingpage = null;
+        var pagesWithInternal = null;
+        var viewsWithAnon = 0;
         for (var i = 0; i < menu.length; i++) {
             if (menu[i].id !== pid && menu[i].ishidden === false && nextLandingpage == null) {
-                nextLandingpage = menu[i].id;
+                var pages = dashboard.pages;
+                var tempPage = null;
+                var isAnonExist = false;
+                var isInternalExist = false;
+                for (var x = 0; x < pages.length; x++){
+                    if (pages[x].id === menu[i].id){
+                        tempPage = pages[x];
+                    }
+                }
+                var views = Object.keys(JSON.parse(JSON.stringify(tempPage.views.content)));
+                for (var k = 0; k < views.length; k++) {
+                    var tempViewRoles = tempPage.views.content[views[k]].roles;
+                    if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                        isInternalExist = true;
+                        if (!pagesWithInternal) {
+                            pagesWithInternal = menu[i].id;
+                        }
+                    }
+                    if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                        isAnonExist = true;
+                        viewsWithAnon++;
+                    }
+                    if (isInternalExist && isAnonExist) {
+                        nextLandingpage = menu[i].id;
+                        return nextLandingpage;
+                    }
+                }
             }
         }
+        if (viewsWithAnon === 0) {
+            return pagesWithInternal;
+        }
         return nextLandingpage;
-    }
+    };
 
     /**
      * Check whether page is deletable based on subordinates
@@ -3002,9 +3164,40 @@ $(function () {
         spliceOrDiscardChild(dashboard.menu, menuItem.id, 'discard');
         if ((pid === dashboard.landing && dashboard.hideAllMenuItems) || menuItem.subordinates.length > 0) {
             return false;
+        } else if (dashboard.landing === pid){
+            var pages = dashboard.pages;
+            var viewsWithAnon = 0;
+            var viewsWithInternal = 0;
+
+            for (var j = 0; j < pages.length; j++) {
+                if (pages[j].id !== pid) {
+                    var isAnonExist = false;
+                    var isInternalExist = false;
+                    var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
+                    for (var i = 0; i < views.length; i++) {
+                        var tempViewRoles = pages[j].views.content[views[i]].roles;
+                        if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                            isInternalExist = true;
+                            viewsWithInternal++;
+                        }
+                        if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                            isAnonExist = true;
+                            viewsWithAnon++;
+                        }
+                        if (isInternalExist && isAnonExist) {
+                            return true;
+                        }
+                    }
+                }
+                if (j === pages.length-1) {
+                    return ((viewsWithAnon === 0) && viewsWithInternal > 0);
+                }
+            }
+        } else {
+            return true;
         }
-        return true;
-    }
+        return false;
+    };
 
     /**
      * Register the "set_pref" rpc function. When user set the user preferences using
@@ -3359,45 +3552,6 @@ $(function () {
     };
 
     /**
-     * Returns the list of allowed views for the current user
-     * @param page Current page
-     * @returns {Array} List of allowe roles
-     */
-    var getUserAllowedViews = function (views) {
-        var allowedViews = [];
-        for (var i = 0; i < views.length; i++) {
-            var viewRoles = page.views.content[views[i]].roles;
-            if (isAllowedView(viewRoles)) {
-                allowedViews.push(views[i]);
-                var tempViewName = page.views.content[views[i]].name;
-                var viewOption = {
-                    viewName: tempViewName,
-                    viewId : getViewId(tempViewName.trim())
-                };
-            }
-        }
-        return allowedViews;
-    };
-
-    /**
-     * Check whether a view is allowed for the current user
-     * according to his/her list of roles
-     * @param viewRoles Allowed roles list for the view
-     * @returns {boolean} View is allowed or not
-     */
-    var isAllowedView = function (viewRoles) {
-        for (var i = 0; i < userRolesList.length; i++) {
-            var tempUserRole = userRolesList[i];
-            for (var j = 0; j < viewRoles.length; j++) {
-                if (viewRoles[j] === tempUserRole) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-    
-    /**
      * Renders the given page in the designer view.
      * @param {String} pid      Page ID
      * @param {function} done   Callback function
@@ -3439,7 +3593,7 @@ $(function () {
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-        var views = getUserAllowedViews(Object.keys(JSON.parse(JSON.stringify(page.content))));
+        var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
         $('#more-views').addClass('hidden');
         if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
             visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
@@ -3542,6 +3696,8 @@ $(function () {
             }
             done(err);
         }, true);
+
+        
         updatePagesList();
         updateMenuList();
         initBanner();
@@ -3875,7 +4031,42 @@ $(function () {
                 }
             }
         }
-    }
+    };
+
+    /**
+     * To check whether a view with a particular role exist in the page
+     * @param pageToBeChecked Page to checked for the role
+     * @param role Role to be checked
+     * @param viewId View Id to be skipped if any
+     * @returns {boolean} true if a view with particular role exists, otherwise false
+     */
+    var isRoleExist = function(pageToBeChecked, role, viewId) {
+        var views = Object.keys(JSON.parse(JSON.stringify(pageToBeChecked.content)));
+        for (var i = 0; i < views.length; i++) {
+            if (!viewId || viewId !== views[i].id) {
+                var tempViewRoles = pageToBeChecked.views.content[views[i]].roles;
+                if (tempViewRoles.indexOf(role) > -1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    /**
+     * To get a page of specific id
+     * @param id Specific ID
+     * @returns page with the given id
+     */
+    var getPage = function(id) {
+        var pages = dashboard.pages;
+        for (var k = 0; k < pages.length; k++) {
+            if (pages[k].id === id) {
+                return pages[k];
+            }
+        }
+    };
+
 
     /**
      * update dashboard.hideAllMenuItems state

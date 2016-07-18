@@ -289,8 +289,10 @@ $(function () {
      * @param page Current page
      * @returns {Array} List of allowe roles
      */
-    var getUserAllowedViews = function (page) {
-        $('#ds-allowed-view-list').empty();
+    var getUserAllowedViews = function (page, isMenuRendering) {
+        if (!isMenuRendering) {
+            $('#ds-allowed-view-list').empty();
+        }
         var allowedViews = [];
         var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
         for (var i = 0; i < views.length; i++) {
@@ -302,7 +304,9 @@ $(function () {
                     viewName: tempViewName,
                     viewId : getViewId(tempViewName.trim())
                 };
-                $('#ds-allowed-view-list').append(viewOptionHbs(viewOption));
+                if (!isMenuRendering) {
+                    $('#ds-allowed-view-list').append(viewOptionHbs(viewOption));
+                }
             }
         }
         return allowedViews;
@@ -437,7 +441,8 @@ $(function () {
             isAnonView: isAnonView,
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
-            queryString: queryString
+            queryString: queryString,
+            allowedViews : user ? getUserAllowedPages() : getAnonViewPages()
         }));
         //menulist for small res
         $('#ues-pages-col').html(menuListHbs({
@@ -445,10 +450,40 @@ $(function () {
             isAnonView: isAnonView,
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
-            queryString: queryString
+            queryString: queryString,
+            allowedViews : user ? getUserAllowedPages() : getAnonViewPages()
         }));
     };
 
+    var getUserAllowedPages = function() {
+        var pageIds = [];
+        var pages = ues.global.dashboard.pages;
+
+        for (var i = 0; i < pages.length; i++){
+            var allowedViews = getUserAllowedViews(pages[i], true);
+            if (allowedViews.length > 0){
+                pageIds.push(pages[i].id);
+            }
+        }
+        return pageIds;
+    };
+
+    var getAnonViewPages = function(page) {
+        var pages = ues.global.dashboard.pages;
+        var pids = [];
+
+        for (var j = 0; j < pages.length; j++) {
+            var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
+            for (var i = 0; i < views.length; i++) {
+                var viewRoles = pages[j].views.content[views[i]].roles;
+                if (viewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                    pids.push(pages[j].id);
+                    i = views.length;
+                }
+            }
+        }
+        return pids;
+    };
     /**
      * Render the view content
      * @param viewId View id
