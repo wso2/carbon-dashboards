@@ -1357,7 +1357,8 @@ $(function () {
                 }
                 if (!isExist) {
                     var ctx = {
-                        viewName: page.views.content[views[i]].name
+                        viewName: page.views.content[views[i]].name,
+                        viewId: views[i]
                     };
                     $('#view-list').append(viewListingHbs(ctx));
                 }
@@ -3358,6 +3359,45 @@ $(function () {
     };
 
     /**
+     * Returns the list of allowed views for the current user
+     * @param page Current page
+     * @returns {Array} List of allowe roles
+     */
+    var getUserAllowedViews = function (views) {
+        var allowedViews = [];
+        for (var i = 0; i < views.length; i++) {
+            var viewRoles = page.views.content[views[i]].roles;
+            if (isAllowedView(viewRoles)) {
+                allowedViews.push(views[i]);
+                var tempViewName = page.views.content[views[i]].name;
+                var viewOption = {
+                    viewName: tempViewName,
+                    viewId : getViewId(tempViewName.trim())
+                };
+            }
+        }
+        return allowedViews;
+    };
+
+    /**
+     * Check whether a view is allowed for the current user
+     * according to his/her list of roles
+     * @param viewRoles Allowed roles list for the view
+     * @returns {boolean} View is allowed or not
+     */
+    var isAllowedView = function (viewRoles) {
+        for (var i = 0; i < userRolesList.length; i++) {
+            var tempUserRole = userRolesList[i];
+            for (var j = 0; j < viewRoles.length; j++) {
+                if (viewRoles[j] === tempUserRole) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    
+    /**
      * Renders the given page in the designer view.
      * @param {String} pid      Page ID
      * @param {function} done   Callback function
@@ -3399,7 +3439,7 @@ $(function () {
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-        var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+        var views = getUserAllowedViews(Object.keys(JSON.parse(JSON.stringify(page.content))));
         $('#more-views').addClass('hidden');
         if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
             visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
@@ -3424,7 +3464,7 @@ $(function () {
                 if (i === 0) {
                     pageType = pageType || tempView;
 
-                    if (pageType === DEFAULT_DASHBOARD_VIEW && tempView !== DEFAULT_DASHBOARD_VIEW){
+                    if (visibleViews.indexOf(pageType) <= -1) {
                         pageType = tempView;
                     }
                 }

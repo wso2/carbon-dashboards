@@ -18,7 +18,13 @@
 <%
 var usr = require('/modules/user.js');
 var user = usr.current();
-var userRoles = usr.roles();
+var userRoles = [];
+var tempRoles =  usr.getUserRoles();
+userRoles.push('anonymous');
+
+for (var i = 0; i < tempRoles.length; i++){
+    userRoles.push(tempRoles[i]);
+}
 %>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <% var permission = require('/modules/permission.js'); %>
@@ -969,7 +975,7 @@ var userRoles = usr.roles();
     <script id="view-listing-hbs" type="text/x-handlebars-template">
         <li>
             <a href="#">
-                <span class="name">{{viewName}}</span>
+                <span class="name" id="{{viewId}}">{{viewName}}</span>
             </a>
         </li>
     </script>

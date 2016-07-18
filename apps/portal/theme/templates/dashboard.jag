@@ -32,7 +32,7 @@
     if(!user) {
         userRoles.push('anonymous');
     } else {
-        var tempRoles = usr.roles();
+        var tempRoles = usr.getUserRoles();
         if(isPreview) {
             userRoles.push('anonymous');
         }
