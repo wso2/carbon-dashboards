@@ -17,11 +17,7 @@ var log = new Log();
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
 var usr = require('/modules/user.js');
-var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
-var ANONYMOUS_ROLE = 'anonymous';
-var ANONYMOUS_VIEW_NAME = 'Anonymous View';
-var DEFAULT_VIEW_NAME = 'Default View';
-var DASHBOARD_VERSION = "1.0.20";
+var constants = require('/modules/constants.js');
 
 /**
  * Get registry reference.
@@ -376,6 +372,7 @@ var findComponent = function (id, view) {
         }
     }
 };
+
 /**
  * Save banner in the registry.
  * @param {String} dashboardId   ID of the dashboard
@@ -487,7 +484,7 @@ var getBanner = function (dashboardId, username) {
  * @param dashboard Dashboard name
  */
 var getConvertedDashboardContent = function (registry, dashboard) {
-    var dashboardJsonVersion = DASHBOARD_VERSION;
+    var dashboardJsonVersion = constants.DASHBOARD_VERSION;
     var dashboardContent = JSON.parse(registry.content(dashboard));
     if (dashboardContent) {
         if (!dashboardContent.version || dashboardContent.version !== dashboardJsonVersion) {
@@ -495,13 +492,13 @@ var getConvertedDashboardContent = function (registry, dashboard) {
             dashboardContent.pages.forEach(function (page) {
                 if (page.layout.content.loggedIn) {
                     page.views.content.default = page.layout.content.loggedIn;
-                    page.views.content.default.name = DEFAULT_VIEW_NAME;
-                    page.views.content.default.roles = [INTERNAL_EVERYONE_ROLE];
+                    page.views.content.default.name = constants.DEFAULT_VIEW_NAME;
+                    page.views.content.default.roles = [constants.INTERNAL_EVERYONE_ROLE];
                     delete page.layout.content.loggedIn;
                 }
                 if (page.layout.content.anon) {
-                    page.views.content.anon.name = ANONYMOUS_VIEW_NAME;
-                    page.views.content.anon.roles = [ANONYMOUS_ROLE];
+                    page.views.content.anon.name = constants.ANONYMOUS_VIEW_NAME;
+                    page.views.content.anon.roles = [constants.ANONYMOUS_ROLE];
                     delete page.layout.content.anon;
                 }
             });

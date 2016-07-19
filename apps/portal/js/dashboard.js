@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,6 +144,11 @@ $(function () {
                 updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
                 return;
             }
+            ues.components.destroy(component, function (err) {
+                if (err) {
+                    throw err;
+                }
+            });
             componentContainer.html(gadgetSettingsViewHbs(component.content)).addClass('ues-userprep-visible');
         });
 
@@ -162,7 +167,6 @@ $(function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
                     var componentBox = that.closest('.ues-component-box');
                     var id = componentBox.find('.ues-component').attr('id');
-                   // var removeBlock = (action == 'block');
 
                     if (id) {
                         removeComponent(findComponent(id), function (err) {
@@ -174,13 +178,6 @@ $(function () {
                             updateLayout();
                         });
                     }
-
-                    //if (removeBlock) {
-
-                    /*} else {
-                        componentBox.html(componentBoxContentHbs());
-                    }*/
-
                     designerModal.modal('hide');
                 });
             });
@@ -287,6 +284,7 @@ $(function () {
     /**
      * Returns the list of allowed views for the current user
      * @param page Current page
+     * @param isMenuRendering to check whether the user allowed views is required for the menu rendering
      * @returns {Array} List of allowe roles
      */
     var getUserAllowedViews = function (page, isMenuRendering) {
@@ -455,20 +453,28 @@ $(function () {
         }));
     };
 
-    var getUserAllowedPages = function() {
+    /**
+     * To get the user allowed pages based on views
+     * @returns {Array} array of pages that is permitted by user to view
+     */
+    var getUserAllowedPages = function () {
         var pageIds = [];
         var pages = ues.global.dashboard.pages;
 
-        for (var i = 0; i < pages.length; i++){
+        for (var i = 0; i < pages.length; i++) {
             var allowedViews = getUserAllowedViews(pages[i], true);
-            if (allowedViews.length > 0){
+            if (allowedViews.length > 0) {
                 pageIds.push(pages[i].id);
             }
         }
         return pageIds;
     };
 
-    var getAnonViewPages = function(page) {
+    /**
+     * To get the pages that has atleast one anonview
+     * @returns {Array} array of pages that is permitted for an anon user to view
+     */
+    var getAnonViewPages = function () {
         var pages = ues.global.dashboard.pages;
         var pids = [];
 
@@ -484,6 +490,7 @@ $(function () {
         }
         return pids;
     };
+    
     /**
      * Render the view content
      * @param viewId View id
@@ -533,10 +540,10 @@ $(function () {
         } else {
             if (allowedViews.length > 0) {
                 if (currentView) {
-                    for (var view in allowedViews) {
-                        if (allowedViews[view] === currentView) {
-                            renderingView = allowedViews[view];
-                        }
+                    if (allowedViews.indexOf(currentView) > -1) {
+                        renderingView = currentView;
+                    } else {
+                        renderingView = allowedViews[0];
                     }
                 } else {
                     renderingView = allowedViews[0];
@@ -613,7 +620,6 @@ $(function () {
      * @return {null}
      */
     var updateLayout = function () {
-
         // extract the layout from the designer and save it
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
@@ -686,8 +692,6 @@ $(function () {
                 window.location.reload();
                 return;
             }
-            //("Error saving the dashboard", null, null, "error", "topCenter", 2000, null);
-            console.log("Error saving the dashboard.");
         });
     };
 

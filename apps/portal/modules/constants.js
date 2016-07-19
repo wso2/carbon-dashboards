@@ -87,5 +87,10 @@ var FILE_STORE = 'fs';
 var ES_STORE = 'es';
 var GADGET_TYPE = 'gadget';
 var LAYOUT_TYPE = 'layout';
-
 var ES_STORE_DELIMITER = '_';
+
+var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
+var ANONYMOUS_ROLE = 'anonymous';
+var ANONYMOUS_VIEW_NAME = 'Anonymous View';
+var DEFAULT_VIEW_NAME = 'Default View';
+var DASHBOARD_VERSION = "1.0.20";
