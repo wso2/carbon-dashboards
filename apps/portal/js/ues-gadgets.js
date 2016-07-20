@@ -74,8 +74,10 @@
     };
 
     var remove = function (id) {
-        container.closeGadget(registry[id]);
-        delete registry[id];
+        if (registry[id]) {
+            container.closeGadget(registry[id]);
+            delete registry[id];
+        }
     };
 
     //Initializing OpenAjax ManagedHub
