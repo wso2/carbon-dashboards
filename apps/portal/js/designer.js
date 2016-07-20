@@ -1044,13 +1044,12 @@ $(function () {
                         }
                     }
                     if (dashboard.landing === page.id && dashboard.pages.length > 1 && isAnonViewExists) {
-                        if (isRoleExist(page, ANONYMOUS_ROLE, viewId)) {
-                            showInformation("Cannot remove " + ANONYMOUS_ROLE + " role", "Other pages " +
-                                "contain " + ANONYMOUS_ROLE);
+                        if (!isRoleExist(page, ANONYMOUS_ROLE, viewId)) {
+                            showInformation(i18n_data['cannot.remove'] + " " + ANONYMOUS_ROLE + " " + i18n_data['role'],
+                                i18n_data['other.pages.contains.views'] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
                             return;
                         }
                     }
-
                     showConfirm(i18n_data["add.new.role.removing.anonymous"],
                         i18n_data["add.new.role.removing.anonymous.message"], function () {
                             if (removingComponentsLength > 0) {
@@ -1218,6 +1217,8 @@ $(function () {
             var currentViewId = getViewId(currentView);
             var isAllowed = false;
             var isAnonViewNeeded = false;
+            var isInternalExists = false;
+            var isAnonExists = false;
 
             if (pageType !== viewId) {
                 pageType = viewId;
@@ -1249,13 +1250,18 @@ $(function () {
                 for (var i = 0; i < views.length; i++) {
                     if (views[i] !== viewId) {
                         var tempViewRoles = page.views.content[views[i]].roles;
-                        if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1 && !isAnonViewNeeded) {
+                        if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                            isInternalExists = true;
+                            if (!isAnonViewNeeded) {
+                                isAllowed = true;
+                                break;
+                            }
+                        } else if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                            isAnonExists = true;
+                        }
+
+                        if (isAnonExists && isInternalExists && isAnonViewNeeded){
                             isAllowed = true;
-                            break;
-                        } else if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1 && isAnonViewNeeded &&
-                            tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
-                            isAllowed = true;
-                            break;
                         }
                     }
                 }
@@ -1947,9 +1953,9 @@ $(function () {
             if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
                 isAnonExist = true;
             }
-        }
-        if (isInternalExist && isAnonExist) {
-            return true;
+            if (isInternalExist && isAnonExist) {
+                return true;
+            }
         }
         if (isInternalExist && !viewsWithAnon) {
             return true;
