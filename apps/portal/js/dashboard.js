@@ -101,6 +101,11 @@ $(function () {
                     .removeClass('fw-expand')
                     .addClass('fw-contract');
                 component.fullViewPoped = true;
+                ues.components.destroy(component, function (err) {
+                    if (err) {
+                        throw err;
+                    }
+                });
             }
             $('.nano').nanoScroller();
         });
