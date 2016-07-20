@@ -23,10 +23,15 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'), user = usr.current(), isAnonView = request.getParameter('isAnonView'),
-            isPreview = request.getParameter('preview'), queryString = request.getQueryString(),
-            isPersonalizeEnabled = request.getParameter('dashboardeditor'), userRoles = [],
-            viewId = request.getParameter('currentView'), constants = require('/modules/constants.js');
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var isAnonView = request.getParameter('isAnonView');
+    var isPreview = request.getParameter('preview');
+    var queryString = request.getQueryString();
+    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
+    var userRoles = [];
+    var viewId = request.getParameter('currentView');
+    var constants = require('/modules/constants.js');
 
     if (!user) {
         userRoles.push(constants.ANONYMOUS_ROLE);
@@ -591,10 +596,10 @@
         });
 
         //usage : in traverseMenu helper
-        var user = <%= user %>,
-            queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>,
-             isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
+        var user = <%= user %>;
+        var queryString = <%= stringify(queryString) %>;
+        var isAnonView = <%= isAnonView %>;
+        var isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
         var userRolesList = <%= userRoles %>;
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;

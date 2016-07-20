@@ -350,18 +350,19 @@ var findView = function (page, viewId) {
 /**
  * Find a given component in the current page
  * @param {Number} id
+ * @param {Object} view
  * @returns {Object}
  * @private
  */
 var findComponent = function (id, view) {
     var i;
     var length;
-    var area;
+    var conatiner;
     var component;
     var components;
-    for (area in view) {
-        if (view.hasOwnProperty(area)) {
-            components = view[area];
+    for (conatiner in view) {
+        if (view.hasOwnProperty(conatiner)) {
+            components = view[conatiner];
             length = components.length;
             for (i = 0; i < length; i++) {
                 component = components[i];

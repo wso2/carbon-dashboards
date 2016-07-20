@@ -1224,7 +1224,7 @@ $(function () {
                 pageType = viewId;
                 renderView(currentViewId, viewId);
             }
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             if (views.length === 1) {
                 showInformation(i18n_data["not.delete.view"], i18n_data["not.delete.view.message"]);
                 return;
@@ -1287,7 +1287,7 @@ $(function () {
                     visibleViews = [];
                     dashboard.isanon = isAnonDashboard();
                     saveDashboard();
-                    views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+                    views = Object.keys(page.content);
                     renderView(viewId, views[0]);
                     pageType = views[0];
                 });
@@ -1425,7 +1425,7 @@ $(function () {
         $('#more-views').on('click', function (event) {
             event.preventDefault();
             $('#view-list').empty();
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             var isExist;
             for (var i = 0; i < views.length; i++) {
                 isExist = false;
@@ -1479,7 +1479,7 @@ $(function () {
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCopyingSelection);
                 $('#copy-view').prop("checked", true);
-                var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+                var views = Object.keys(page.views.content);
 
                 for (var i = 0; i < views.length; i++) {
                     var temp = {
@@ -1869,7 +1869,7 @@ $(function () {
      * @returns {String} View id
      */
     var getViewId = function (viewName) {
-        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             if (page.views.content[views[i]].name) {
                 if (page.views.content[views[i]].name === viewName) {
@@ -1887,7 +1887,7 @@ $(function () {
     var isAnonDashboard = function () {
         if (dashboard.pages) {
             for (var i = 0; i < dashboard.pages.length; i++) {
-                var views = Object.keys(JSON.parse(JSON.stringify(dashboard.pages[i].views.content)));
+                var views = Object.keys(dashboard.pages[i].views.content);
                 for (var j = 0; j < views.length; j++) {
                     var viewRoles = dashboard.pages[i].views.content[views[j]].roles;
                     if (!viewRoles && (views[j] === ANONYMOUS_ROLE)) {
@@ -1908,7 +1908,7 @@ $(function () {
      */
     var isAnonPage = function (page) {
         if (page) {
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             for (var j = 0; j < views.length; j++) {
                 var viewRoles = page.views.content[views[j]].roles;
                 if (!viewRoles) {
@@ -1944,7 +1944,7 @@ $(function () {
                 }
             }
         }
-        views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        views = Object.keys(page.views.content);
         for (k = 0; k < views.length; k++) {
             tempViewRoles = page.views.content[views[k]].roles;
             if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
@@ -2080,11 +2080,7 @@ $(function () {
             },
             landing: function () {
                 if (landing.is(':checked')) {
-                    if (hasAnonPages && isAnonPage(page)) {
-                        landing.prop("checked", false);
-                        showInformation("Cannot Select This Page As Landing",
-                            "Please add an anonymous view to this page before select it as the landing page");
-                    } else if (ishiddenPage(idVal)) {
+                    if (ishiddenPage(idVal)) {
                         landing.prop("checked", false);
                         showInformation("Cannot Select This Page As Landing",
                             "This page is hidden in the menu, please select a different page");
@@ -2961,8 +2957,7 @@ $(function () {
                 showConfirm(i18n_data["delete.page"], i18n_data["delete.page.message"], function () {
                     //check whether there are any subordinates
                     if (isRemovablePage(pid) && dashboard.pages.length !== 1) {
-                        var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
-                        removePage(pid, views[0], function (err) {
+                        removePage(pid, pageType, function (err) {
                             var pages = dashboard.pages;
                             var childObj = getChild(dashboard.menu, pid);
 
@@ -3103,7 +3098,7 @@ $(function () {
                 var tempPage = getPage(menu[i].id);
                 var isAnonExist = false;
                 var isInternalExist = false;
-                var views = Object.keys(JSON.parse(JSON.stringify(tempPage.views.content)));
+                var views = Object.keys(tempPage.views.content);
                 for (var k = 0; k < views.length; k++) {
                     var tempViewRoles = tempPage.views.content[views[k]].roles;
                     if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
@@ -3148,7 +3143,7 @@ $(function () {
                 if (pages[j].id !== pid) {
                     var isAnonExist = false;
                     var isInternalExist = false;
-                    var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
+                    var views = Object.keys(pages[j].views.content);
                     for (var i = 0; i < views.length; i++) {
                         var tempViewRoles = pages[j].views.content[views[i]].roles;
                         if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
@@ -3233,7 +3228,7 @@ $(function () {
      * @returns {boolean} true if a view with particular role exists, otherwise false
      */
     var isRoleExist = function (pageToBeChecked, role, viewId) {
-        var views = Object.keys(JSON.parse(JSON.stringify(pageToBeChecked.content)));
+        var views = Object.keys(pageToBeChecked.content);
         for (var i = 0; i < views.length; i++) {
             if (!viewId || viewId !== views[i]) {
                 var tempViewRoles = pageToBeChecked.views.content[views[i]].roles;
@@ -3274,7 +3269,7 @@ $(function () {
             var pages = dashboard.pages;
             var numberOfPages = pages.length;
             for (var i = 0; i < numberOfPages; i++) {
-                var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+                var views = Object.keys(page.content);
                 for (var v = 0; v < views.length; v++) {
                     var pageContent = pages[i].content[views[v]];
                     var zones = Object.keys(pageContent);
@@ -3503,7 +3498,10 @@ $(function () {
             if (err) {
                 throw err;
             }
-            renderPage(pid);
+            renderPage(pid, function(err) {
+                var removingComponents = getRestrictedGadgetsToBeViewed();
+                removeGadgets(removingComponents, removingComponents.length);
+            });
         });
     };
 
@@ -3590,7 +3588,7 @@ $(function () {
      */
     var renderView = function (currentView, newView) {
         if (isInViewCreationView) {
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             pageType = newView;
             if (views.length > 0 && views.length > NO_OF_VISIBLE_VIEWS) {
                 pageType = views[0];
@@ -3651,7 +3649,7 @@ $(function () {
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-        var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+        var views = Object.keys(page.content);
         $('#more-views').addClass('hidden');
         if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
             visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
@@ -3755,8 +3753,8 @@ $(function () {
         updatePagesList();
         updateMenuList();
         initBanner();
-        var removingComponents = getRestrictedGadgetsToBeViewed();
-        removeGadgets(removingComponents, removingComponents.length);
+        //var removingComponents = getRestrictedGadgetsToBeViewed();
+        //removeGadgets(removingComponents, removingComponents.length);
     };
 
     /**
@@ -3823,7 +3821,13 @@ $(function () {
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
         if (pages.length > 0) {
-            renderPage(page || db.landing || pages[0].id);
+            renderPage(page || db.landing || pages[0].id,function (err) {
+                if (err) {
+                    throw err;
+                }
+                var removingComponents = getRestrictedGadgetsToBeViewed();
+                removeGadgets(removingComponents, removingComponents.length);
+            });
         } else {
             renderPage(null)
         }
