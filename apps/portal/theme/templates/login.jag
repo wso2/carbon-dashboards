@@ -51,7 +51,7 @@
                         <label for="ues-password" class="sr-only"><%= i18n.localize("password")%></label>
                         <input type="password" name="password" autocomplete="off" class="form-control ues-password" placeholder="<%= i18n.localize("password")%>" required>
                     </div>
-                    <input type="hidden" name="destination" value="/portal/">
+                    <input type="hidden" name="destination" value="<%=dest%>">
 
                     <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">
                         <%= i18n.localize("login.label")%></button>
