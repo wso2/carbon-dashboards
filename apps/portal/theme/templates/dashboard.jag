@@ -15,64 +15,64 @@
  * limitations under the License.
  */
 
-// i18n
-var i18n = require("i18n");
-var utils = require('/modules/utils.js');
-i18n.init(request, utils.getLocaleResourcePath());
+    // i18n
+    var i18n = require("i18n");
+    var utils = require('/modules/utils.js');
+    i18n.init(request, utils.getLocaleResourcePath());
 
-// If the pageId is null, render the landing page
-pageId = pageId || dashboard.landing;
+    // If the pageId is null, render the landing page
+    pageId = pageId || dashboard.landing;
 
-var usr = require('/modules/user.js');
-var user = usr.current();
-var isAnonView = request.getParameter('isAnonView');
-var isPreview = request.getParameter('preview');
-var queryString = request.getQueryString();
-var isPersonalizeEnabled = request.getParameter('dashboardeditor');
-var userRoles = [];
-var viewId = request.getParameter('currentView');
-var constants = require('/modules/constants.js');
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var isAnonView = request.getParameter('isAnonView');
+    var isPreview = request.getParameter('preview');
+    var queryString = request.getQueryString();
+    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
+    var userRoles = [];
+    var viewId = request.getParameter('currentView');
+    var constants = require('/modules/constants.js');
 
-if (!user) {
-    userRoles.push(constants.ANONYMOUS_ROLE);
-} else {
-    var tempRoles = usr.getUserRoles();
-    if (isPreview) {
+    if (!user) {
         userRoles.push(constants.ANONYMOUS_ROLE);
+    } else {
+        var tempRoles = usr.getUserRoles();
+        if (isPreview) {
+            userRoles.push(constants.ANONYMOUS_ROLE);
+        }
+        for (var i = 0; i < tempRoles.length; i++) {
+            userRoles.push(tempRoles[i]);
+        }
     }
-    for (var i = 0; i < tempRoles.length; i++) {
-        userRoles.push(tempRoles[i]);
-    }
-}
-// Get the anon view
-if (!user) {
-    if (isAnonView) {
-        response.sendRedirect(request.getRequestURL());
-    }
-    isAnonView = true;
-} else {
-    isAnonView = JSON.parse(isAnonView);
-
-    if ((user.domain != urlDomain && urlDomain) ||
-            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+    // Get the anon view
+    if (!user) {
+        if (isAnonView) {
+            response.sendRedirect(request.getRequestURL());
+        }
         isAnonView = true;
-    }
-}
+    } else {
+        isAnonView = JSON.parse(isAnonView);
 
-// Get the current page
-var pages = dashboard.pages,
-        page;
-pages.forEach(function(p) {
-    if (p.id == pageId) {
-        page = p;
+        if ((user.domain != urlDomain && urlDomain) ||
+                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+            isAnonView = true;
+        }
     }
-});
 
-// Build the URL for the home page
-var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
-if (request.getParameter('isAnonView') == 'true') {
-    dashboardUrl += '?isAnonView=true';
-}
+    // Get the current page
+    var pages = dashboard.pages,
+            page;
+    pages.forEach(function(p) {
+        if (p.id == pageId) {
+            page = p;
+        }
+    });
+
+    // Build the URL for the home page
+    var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
+    if (request.getParameter('isAnonView') == 'true') {
+        dashboardUrl += '?isAnonView=true';
+    }
 %>
 <html lang="en">
 <head>
@@ -83,21 +83,21 @@ if (request.getParameter('isAnonView') == 'true') {
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <!-- Gridstack -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
-        
+
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
 
     <!-- Custom theme overrides -->
     <%
-var path = utils.getThemeStylesPath();
-var folder = new File('/' + path);
-var filePath = "";
-var fileList = folder.listFiles();
-fileList.forEach(function(file){
-    filePath = '/' + path +'/' + file.getName();
+    var path = utils.getThemeStylesPath();
+    var folder = new File('/' + path);
+    var filePath = "";
+    var fileList = folder.listFiles();
+    fileList.forEach(function(file){
+        filePath = '/' + path +'/' + file.getName();
     %>
         <link rel="stylesheet" href="<%=urlPrefix%><%=filePath%>">
     <%
-});
+    });
 %>
 
 </head>
@@ -114,17 +114,18 @@ fileList.forEach(function(file){
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
             <div class="nano-content">
-                    
+
                 <div class="product-logo">
                     <i class="icon fw fw-wso2-logo"></i>
                 </div>
                 <div class="product-name">
                     <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
                 </div>
-                
+
                 <div id="ues-pages"><!-- dynamic content --></div>
-                
+
                 <hr>
+
                 <div class="panel panel-default active">
                     <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
                         data-toggle="collapse" aria-expanded="true">
@@ -179,7 +180,7 @@ fileList.forEach(function(file){
                     </div>
                 </div>
                 <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
-                
+
             </div>
         </div>
     </div>
@@ -252,7 +253,7 @@ fileList.forEach(function(file){
                 </div>
 
                 <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
-                    
+
                     <div class="text-center add-margin-bottom-2x">
                         <span class="icon fw-stack fw-lg text-center">
                            <i class="fw fw-circle fw-stack-2x"></i>
@@ -260,7 +261,7 @@ fileList.forEach(function(file){
                         </span>
                     </div>
                     <div class="text-center add-margin-bottom-3x"><%= user ? user.username : "anon" %></div>
-                                    
+
                     <ul class="nav navbar-nav pages">
                         <div id="ues-pages-col"></div>
                     </ul>
@@ -321,7 +322,7 @@ fileList.forEach(function(file){
                 <h1 class="gadget-title ues-component-title truncate">:::</h1>
                 <div class="gadget-actions ues-component-actions">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" 
+                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
                                 data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
                             <i class="icon fw fw-delete"></i>
                         </button>
@@ -335,7 +336,7 @@ fileList.forEach(function(file){
 
     <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
         {{#each blocks}}
-        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" 
+        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}"
              data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
             <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
             </div>
@@ -438,7 +439,7 @@ fileList.forEach(function(file){
                             {{/equals}}
                             {{#equals type "LIST"}}
                             <label>{{title}}
-                                <textarea name="{{@key}}" class="form-control" rows="4" 
+                                <textarea name="{{@key}}" class="form-control" rows="4"
                                     placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
                                 <label><%= i18n.localize("enter.your.list.entries.label")%></label>
                             </label>
@@ -517,7 +518,6 @@ fileList.forEach(function(file){
 
     <!-- Handlebars JS -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
-
 
     <!--Libraies used in pdf generation feature-->
     <script src="<%=urlPrefix%>libs/jspdf_1.2.61/jspdf.min.js"></script>
