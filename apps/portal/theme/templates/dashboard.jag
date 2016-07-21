@@ -75,6 +75,14 @@
     } else {
         showNavigation = (pages.length > 1);
     }
+    
+    // Getting dashboard color theme
+    var gadgetTheme;
+    if(request.getCookie('dashboardTheme') != null) {
+        gadgetTheme = request.getCookie('dashboardTheme').value;
+    } else {
+        gadgetTheme = 'dark';
+    }
 %>
 <html lang="en">
 <head>
@@ -104,7 +112,7 @@
 
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
-<body class="dashboard lang_<%=request.getLocale()%> dark">
+<body class="dashboard lang_<%=request.getLocale()%> <%= gadgetTheme %>" data-gadget-theme="<%= gadgetTheme %>">
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
@@ -249,10 +257,10 @@
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
-                <div class="container-fluid body-wrapper">
+                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" >
             <% } else { %>
-                <div class="container-fluid body-wrapper" style="height: 100%;">
+                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay" style="height: 100%;">
                 <div class="nano" style="position: absolute;">
             <% } %>
                     <div class="nano-content" >
@@ -482,32 +490,19 @@
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>
-        
-        function getCookie(cname) {
-            var name = cname + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0; i<ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1);
-                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-            }
-            return "";
-        }
-        
+    
         $(document).ready(function() {
-            if((getCookie('dashboardTheme') == 'dark') || (getCookie('dashboardTheme') == '')){
-                $('[data-toggle="theme"]').attr('checked', 'checked');
-                $('body').addClass('dark');  
-            }
-            else{
-                $('[data-toggle="theme"]').removeAttr('checked');
-                $('body').removeClass('dark');
-            }
-
             <% if(typeof  bgColor != 'undefined'){ %>
                 $('.dashboard').css({'background-color': '<%=bgColor%>'});
-           <% } %>
-
+            <% } %>
+                
+            $('[data-toggle="loading"]').loading('show');
+            $('.gadget-body').addClass('loading');
+            
+            if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
+                $('.grid-stack-item[data-banner=true]')
+                    .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
+            }
         });
                 
         $('[data-toggle="theme"]').change(function(){
@@ -516,7 +511,7 @@
                     $('[data-toggle="theme"]').attr('checked', 'checked');
                 });
                 $('body').addClass('dark');
-                $('iframe').contents().find('body').addClass('dark');
+                $('iframe').contents().find('body').addClass('dark'); 
                 document.cookie = "dashboardTheme=dark";
             }
             else{
@@ -561,16 +556,6 @@
                 $('[data-toggle="loading"]').loading('hide');
             }    
         }, 200);
-
-        $(document).ready(function() {
-            $('[data-toggle="loading"]').loading('show');
-            $('.gadget-body').addClass('loading');
-            
-            if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
-                $('.grid-stack-item[data-banner=true]')
-                    .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
-            }
-        });
         
         function toggleProductLogo(sidebarEventType){
             var logo = $('#product-logo');
@@ -596,6 +581,7 @@
             queryString = <%= stringify(queryString) %>,
             isAnonView = <%= isAnonView %>,  
             pageId = <%= stringify(pageId) %>;
+            
     </script>
 </body>
 </html>
