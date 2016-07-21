@@ -15,64 +15,64 @@
  * limitations under the License.
  */
 
-    // i18n
-    var i18n = require("i18n");
-    var utils = require('/modules/utils.js');
-    i18n.init(request, utils.getLocaleResourcePath());
+// i18n
+var i18n = require("i18n");
+var utils = require('/modules/utils.js');
+i18n.init(request, utils.getLocaleResourcePath());
 
-    // If the pageId is null, render the landing page
-    pageId = pageId || dashboard.landing;
+// If the pageId is null, render the landing page
+pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js');
-    var user = usr.current();
-    var isAnonView = request.getParameter('isAnonView');
-    var isPreview = request.getParameter('preview');
-    var queryString = request.getQueryString();
-    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
-    var userRoles = [];
-    var viewId = request.getParameter('currentView');
-    var constants = require('/modules/constants.js');
+var usr = require('/modules/user.js');
+var user = usr.current();
+var isAnonView = request.getParameter('isAnonView');
+var isPreview = request.getParameter('preview');
+var queryString = request.getQueryString();
+var isPersonalizeEnabled = request.getParameter('dashboardeditor');
+var userRoles = [];
+var viewId = request.getParameter('currentView');
+var constants = require('/modules/constants.js');
 
-    if (!user) {
+if (!user) {
+    userRoles.push(constants.ANONYMOUS_ROLE);
+} else {
+    var tempRoles = usr.getUserRoles();
+    if (isPreview) {
         userRoles.push(constants.ANONYMOUS_ROLE);
-    } else {
-        var tempRoles = usr.getUserRoles();
-        if (isPreview) {
-            userRoles.push(constants.ANONYMOUS_ROLE);
-        }
-        for (var i = 0; i < tempRoles.length; i++) {
-            userRoles.push(tempRoles[i]);
-        }
     }
-    // Get the anon view
-    if (!user) {
-        if (isAnonView) {
-            response.sendRedirect(request.getRequestURL());
-        }
+    for (var i = 0; i < tempRoles.length; i++) {
+        userRoles.push(tempRoles[i]);
+    }
+}
+// Get the anon view
+if (!user) {
+    if (isAnonView) {
+        response.sendRedirect(request.getRequestURL());
+    }
+    isAnonView = true;
+} else {
+    isAnonView = JSON.parse(isAnonView);
+
+    if ((user.domain != urlDomain && urlDomain) ||
+            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
         isAnonView = true;
-    } else {
-        isAnonView = JSON.parse(isAnonView);
-
-        if ((user.domain != urlDomain && urlDomain) ||
-                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
-            isAnonView = true;
-        }
     }
+}
 
-    // Get the current page
-    var pages = dashboard.pages,
+// Get the current page
+var pages = dashboard.pages,
         page;
-    pages.forEach(function(p) {
-        if (p.id == pageId) {
-            page = p;
-        }
-    });
-   
-    // Build the URL for the home page
-    var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
-    if (request.getParameter('isAnonView') == 'true') {
-        dashboardUrl += '?isAnonView=true';
+pages.forEach(function(p) {
+    if (p.id == pageId) {
+        page = p;
     }
+});
+
+// Build the URL for the home page
+var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
+if (request.getParameter('isAnonView') == 'true') {
+    dashboardUrl += '?isAnonView=true';
+}
 %>
 <html lang="en">
 <head>
@@ -88,17 +88,17 @@
 
     <!-- Custom theme overrides -->
     <%
-        var path = utils.getThemeStylesPath();
-        var folder = new File('/' + path);
-        var filePath = "";
-        var fileList = folder.listFiles();
-        fileList.forEach(function(file){
-            filePath = '/' + path +'/' + file.getName();
+var path = utils.getThemeStylesPath();
+var folder = new File('/' + path);
+var filePath = "";
+var fileList = folder.listFiles();
+fileList.forEach(function(file){
+    filePath = '/' + path +'/' + file.getName();
     %>
         <link rel="stylesheet" href="<%=urlPrefix%><%=filePath%>">
     <%
-        });
-    %>
+});
+%>
 
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
@@ -125,7 +125,59 @@
                 <div id="ues-pages"><!-- dynamic content --></div>
                 
                 <hr>
-                
+                <div class="panel panel-default active">
+                    <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
+                        data-toggle="collapse" aria-expanded="true">
+                        <h4 class="panel-title">
+                        <span class="icon fw-stack">
+                        <i class="fw fw-pdf fw-stack-2x"></i>
+                        </span>
+                            <%=i18n.localize("dashboard.pdf.generatePDF")%></h4><span class="caret"></span>
+                    </div>
+                    <div class="collapse" id="pdf-size-panel">
+                        <div class="panel-body add-padding-3x generate-pdf-panel">
+        					<form class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+									<div class="panel-heading text-truncate dropdown dropdown-select-label">
+						            	<label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
+									</div>
+									 <div class="dropdown pagetype-selection-dropdown">
+										<div class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+  											<div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
+										</div>
+  											<ul class="dropdown-menu">
+    											<li><a href="#">A4</a></li>
+    											<li><a href="#">A3</a></li>
+    											<li><a href="#">A2</a></li>
+    											<li><a href="#">A1</a></li>
+  											</ul>
+									</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Width</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-width" placeholder="PDF Width" >
+										<label>px</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Height</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-height" placeholder="PDF Height">
+										<label>px</label>
+                                    </div>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked pages">
+                                    <div id="generate-pdf">
+                                        <li><%=i18n.localize("dashboard.pdf.downloadPDF")%></li>
+                                    </div>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
                 
             </div>
@@ -465,6 +517,16 @@
 
     <!-- Handlebars JS -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
+
+    <!--Libraies used in pdf generation feature-->
+    <script src="<%=urlPrefix%>libs/jspdf_1.2.61/jspdf.min.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/rgbcolor.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/StackBlur.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/canvg.js"></script>
+    <script src="<%=urlPrefix%>libs/html2canvas_0.5.0/html2canvas.js"></script>
+
+    <script src="<%=urlPrefix%>modules/constants.js"></script>
 
     <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 

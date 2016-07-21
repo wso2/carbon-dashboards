@@ -255,5 +255,8 @@
     "cannot.delete.last.page": "Unable to remove the last page",
     "cannot.remove.hidden.page": " Unable to remove this page. Make sure this page does not have any subordinates,all pages are hidden",
     "cannot.create.new.page" : "Cannot create a new page",
-    "landing.page.changed" : "Landing page changed to"
+    "landing.page.changed" : "Landing page changed to",
+    "dashboard.pdf.generatePDF" : "Generate PDF",
+    "dashboard.pdf.downloadPDF" : "Download the view",
+    "dashboard.pdf.selectSize" : "Select Size"
 }
