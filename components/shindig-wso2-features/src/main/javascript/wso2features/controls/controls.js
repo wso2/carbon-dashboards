@@ -183,7 +183,7 @@ wso2.gadgets.controls = (function () {
         restoreGadget: restoreGadget,
         addLostFocusListener: addLostFocusListener,
         addButtonListener: addButtonListener,
-		finishedLoadingGadget:finishedLoadingGadget,
+        finishedLoadingGadget:finishedLoadingGadget,
         getDashboardID: getDashboardID,
         getDashboardName: getDashboardName
     };
