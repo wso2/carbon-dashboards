@@ -61,13 +61,13 @@
 
     // Get the current page
     var pages = dashboard.pages,
-        page;
+            page;
     pages.forEach(function(p) {
         if (p.id == pageId) {
             page = p;
         }
     });
-   
+
     // Build the URL for the home page
     var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
     if (request.getParameter('isAnonView') == 'true') {
@@ -83,22 +83,22 @@
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <!-- Gridstack -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
-        
+
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
 
     <!-- Custom theme overrides -->
     <%
-        var path = utils.getThemeStylesPath();
-        var folder = new File('/' + path);
-        var filePath = "";
-        var fileList = folder.listFiles();
-        fileList.forEach(function(file){
-            filePath = '/' + path +'/' + file.getName();
+    var path = utils.getThemeStylesPath();
+    var folder = new File('/' + path);
+    var filePath = "";
+    var fileList = folder.listFiles();
+    fileList.forEach(function(file){
+        filePath = '/' + path +'/' + file.getName();
     %>
         <link rel="stylesheet" href="<%=urlPrefix%><%=filePath%>">
     <%
-        });
-    %>
+    });
+%>
 
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
@@ -114,20 +114,73 @@
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
             <div class="nano-content">
-                    
+
                 <div class="product-logo">
                     <i class="icon fw fw-wso2-logo"></i>
                 </div>
                 <div class="product-name">
                     <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
                 </div>
-                
+
                 <div id="ues-pages"><!-- dynamic content --></div>
-                
+
                 <hr>
-                
+
+                <div class="panel panel-default active">
+                    <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
+                        data-toggle="collapse" aria-expanded="true">
+                        <h4 class="panel-title">
+                        <span class="icon fw-stack">
+                        <i class="fw fw-pdf fw-stack-2x"></i>
+                        </span>
+                            <%=i18n.localize("dashboard.pdf.generatePDF")%></h4><span class="caret"></span>
+                    </div>
+                    <div class="collapse" id="pdf-size-panel">
+                        <div class="panel-body add-padding-3x generate-pdf-panel">
+        					<form class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+									<div class="panel-heading text-truncate dropdown dropdown-select-label">
+						            	<label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
+									</div>
+									 <div class="dropdown pagetype-selection-dropdown">
+										<div class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+  											<div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
+										</div>
+  											<ul class="dropdown-menu">
+    											<li><a href="#">A4</a></li>
+    											<li><a href="#">A3</a></li>
+    											<li><a href="#">A2</a></li>
+    											<li><a href="#">A1</a></li>
+  											</ul>
+									</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Width</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-width" placeholder="PDF Width" >
+										<label>px</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Height</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-height" placeholder="PDF Height">
+										<label>px</label>
+                                    </div>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked pages">
+                                    <div id="generate-pdf">
+                                        <li><%=i18n.localize("dashboard.pdf.downloadPDF")%></li>
+                                    </div>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
-                
+
             </div>
         </div>
     </div>
@@ -200,7 +253,7 @@
                 </div>
 
                 <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
-                    
+
                     <div class="text-center add-margin-bottom-2x">
                         <span class="icon fw-stack fw-lg text-center">
                            <i class="fw fw-circle fw-stack-2x"></i>
@@ -208,7 +261,7 @@
                         </span>
                     </div>
                     <div class="text-center add-margin-bottom-3x"><%= user ? user.username : "anon" %></div>
-                                    
+
                     <ul class="nav navbar-nav pages">
                         <div id="ues-pages-col"></div>
                     </ul>
@@ -269,7 +322,7 @@
                 <h1 class="gadget-title ues-component-title truncate">:::</h1>
                 <div class="gadget-actions ues-component-actions">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" 
+                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
                                 data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
                             <i class="icon fw fw-delete"></i>
                         </button>
@@ -283,7 +336,7 @@
 
     <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
         {{#each blocks}}
-        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" 
+        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}"
              data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
             <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
             </div>
@@ -386,7 +439,7 @@
                             {{/equals}}
                             {{#equals type "LIST"}}
                             <label>{{title}}
-                                <textarea name="{{@key}}" class="form-control" rows="4" 
+                                <textarea name="{{@key}}" class="form-control" rows="4"
                                     placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
                                 <label><%= i18n.localize("enter.your.list.entries.label")%></label>
                             </label>
@@ -465,6 +518,15 @@
 
     <!-- Handlebars JS -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+
+    <!--Libraies used in pdf generation feature-->
+    <script src="<%=urlPrefix%>libs/jspdf_1.2.61/jspdf.min.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/rgbcolor.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/StackBlur.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/canvg.js"></script>
+    <script src="<%=urlPrefix%>libs/html2canvas_0.5.0/html2canvas.js"></script>
+
+    <script src="<%=urlPrefix%>modules/constants.js"></script>
 
     <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 
