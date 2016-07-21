@@ -16,13 +16,19 @@
  */
 %>
 <%
-var usr = require('/modules/user.js');
-var user = usr.current();
-var userRoles = usr.roles();
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var userRoles = [];
+    var tempRoles = usr.getUserRoles();
+    var constants = require('/modules/constants.js');
+    userRoles.push(constants.ANONYMOUS_ROLE);
+
+    for (var i = 0; i < tempRoles.length; i++) {
+        userRoles.push(tempRoles[i]);
+    }
 %>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <% var permission = require('/modules/permission.js'); %>
-    <% var constants = require('/modules/constants.js'); %>
     <% var utilsss = require('/modules/utils.js'); %>
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
@@ -402,9 +408,24 @@ var userRoles = usr.roles();
                             ' "remove.gadgets.with.role.addition" : "<%= i18n.localize("remove.gadgets.with.role.addition")%>",' +
                             ' "remove.gadgets.with.role.addition.message" : "<%= i18n.localize("remove.gadgets.with.role.addition.message")%>",' +
                             ' "not.close.view" : "<%= i18n.localize("not.close.view")%>",' +
-                            ' "not.close.view.message" : "<%= i18n.localize("not.close.view.message")%>"' +
+                            ' "not.close.view.message" : "<%= i18n.localize("not.close.view.message")%>",' +
+                            ' "select.view" : "<%= i18n.localize("select.view")%>",' +
+                            ' "cannot.add" : "<%= i18n.localize("cannot.add")%>",' +
+                            ' "role" : "<%= i18n.localize("role")%>",' +
+                            ' "landing.page.minimal" : "<%= i18n.localize("landing.page.minimal")%>",' +
+                            ' "cannot.remove" : "<%= i18n.localize("cannot.remove")%>",' +
+                            ' "other.pages.contains.views" : "<%= i18n.localize("other.pages.contains.views")%>",' +
+                            ' "cannot.delete.view" : "<%= i18n.localize("cannot.delete.view")%>",' +
+                            ' "this.page.not.have.view" : "<%= i18n.localize("this.page.not.have.view")%>",' +
+                            ' "cannot.select.as.landing" : "<%= i18n.localize("cannot.select.as.landing")%>",' +
+                            ' "or" : "<%= i18n.localize("or")%>",' +
+                            ' "cannot.delete.last.page" : "<%= i18n.localize("cannot.delete.last.page")%>",' +
+                            ' "cannot.create.new.page" : "<%= i18n.localize("cannot.create.new.page")%>",' +
+                            ' "landing.page.changed" : "<%= i18n.localize("landing.page.changed")%>",' +
+                            ' "cannot.remove.hidden.page" : "<%= i18n.localize("cannot.remove.hidden.page")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
+
     </script>
 
     <!-- Handlebar templates -->
@@ -723,8 +744,9 @@ var userRoles = usr.roles();
         </div>
         <div class ='form-group' id="view-layout-select">
             <label for="ues-theme-list"><%=i18n.localize("available.views") %></label>
-            <select class="form-control selectpicker dropdown"  role="menu" aria-labelledby="menu" id="page-views-menu" data-style = 'btn-default'>
-            <option><a role="menuitem" tabindex="-1" href="#"><%=i18n.localize("select.view")%></a></option>
+            <select class="form-control selectpicker dropdown"  role="menu" aria-labelledby="menu" id="page-views-menu"
+            data-style = 'btn-default'>
+                <option><a role="menuitem" tabindex="-1" href="#"><%=i18n.localize("select.view")%></a></option>
             </select>
         </div>
     </script>
@@ -969,7 +991,7 @@ var userRoles = usr.roles();
     <script id="view-listing-hbs" type="text/x-handlebars-template">
         <li>
             <a href="#">
-                <span class="name">{{viewName}}</span>
+                <span class="name" id="{{viewId}}">{{viewName}}</span>
             </a>
         </li>
     </script>

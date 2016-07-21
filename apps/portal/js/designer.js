@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -254,7 +254,6 @@ $(function () {
                 }
             });
         }
-
         if (!gadgetIds[gadgetName]) {
             gadgetIds[gadgetName] = 0;
         }
@@ -473,7 +472,6 @@ $(function () {
             var container = $('#' + component.id);
             var area = container.closest('.ues-component-box').attr('id');
             pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-
             var content = page.content[pageType];
             area = content[area];
             var index = area.indexOf(component);
@@ -541,7 +539,6 @@ $(function () {
     var destroyPage = function (page, pageType, done) {
         var area;
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
-
         var content = page.content[pageType];
         var tasks = [];
         for (area in content) {
@@ -594,7 +591,7 @@ $(function () {
         var addingParam = ues.global.type.toString().localeCompare(ANONYMOUS_DASHBOARD_VIEW) == 0 ?
             '?isAnonView=true' : '';
         addingParam = addingParam + ((addingParam === '') ? '?preview=true' : '&preview=true');
-        addingParam = addingParam +'&currentView=' + getViewId(getSelectedView());
+        addingParam = addingParam + '&currentView=' + getViewId(getSelectedView());
         var pageURL = dashboard.landing !== page.id ? page.id : '';
         var url = dashboardsUrl + '/' + dashboard.id + '/' + pageURL + addingParam;
         window.open(url, '_blank');
@@ -612,7 +609,6 @@ $(function () {
      * @private
      * */
     var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
-
         var properties = {};
         properties.text = text;
         if (ok || cancel) {
@@ -791,14 +787,12 @@ $(function () {
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
             var layout = page.views.content[selectedViewId];
-            var viewLayoutContent = {
+            page.views.content[newViewId] = {
                 blocks: layout.blocks,
                 name: newViewName,
                 roles: layout.roles
             };
-            page.views.content[newViewId] = viewLayoutContent;
-            var viewContent = page.content[selectedViewId];
-            page.content[newViewId] = JSON.parse(JSON.stringify(viewContent));
+            page.content[newViewId] = JSON.parse(JSON.stringify(page.content[selectedViewId]));
             saveDashboard();
             pageType = newViewId;
             $('button[data-target=#left-sidebar]').click();
@@ -988,20 +982,6 @@ $(function () {
             var removingComponentsLength = removingComponents.length;
 
             /**
-             * Remove not permitted gadgets from the view
-             */
-            var removeRestrictedGadgets = function () {
-                for (var i = 0; i < removingComponentsLength; i++) {
-                    removeComponent(removingComponents[i], function (err) {
-                        if (err) {
-                            generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
-                                2000, null);
-                        }
-                    });
-                }
-            };
-
-            /**
              * Add role to the view and save the dashboard content
              * @param viewId View id
              * @param role New role
@@ -1015,9 +995,32 @@ $(function () {
 
             if (!isExistingPermission(viewRolesList, role)) {
                 if (role === ANONYMOUS_ROLE) {
+                    /*
+                      Before allowing addition of anon view check
+                        1. If it is not a landing page, check whether landing page has atelast one anon view
+                        2. If it is a landing page, and if there are more than 1 page, check whether there is atleast one
+                            view for internal/everyone role
+                     */
+                    if (page.id !== dashboard.landing) {
+                        var landingPage = getPage(dashboard.landing);
+                        if (!isRoleExist(landingPage, ANONYMOUS_ROLE)) {
+                            showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
+                                i18n_data["landing.page.minimal"] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
+                            return;
+                        }
+                    } else {
+                        if (dashboard.pages.length > 1) {
+                            if (!isRoleExist(page, INTERNAL_EVERYONE_ROLE, viewId)) {
+                                showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
+                                    i18n_data["landing.page.minimal"] + " " + INTERNAL_EVERYONE_ROLE + " " +
+                                    i18n_data['role']);
+                                return;
+                            }
+                        }
+                    }
                     showConfirm(i18n_data["add.anonymous.role"], i18n_data["add.anonymous.role.message"], function () {
                         if (removingComponentsLength > 0) {
-                            removeRestrictedGadgets();
+                            removeGadgets(removingComponents, removingComponentsLength);
                         }
                         dashboard.isanon = true;
                         page.views.content[viewId].roles = [];
@@ -1025,11 +1028,32 @@ $(function () {
                         addRoleToView(viewId, role);
                         return true;
                     });
+
                 } else if (isAnonRoleExists(viewId)) {
+                    var pages = dashboard.pages;
+                    var isAnonViewExists = false;
+
+                    /*
+                     Before removing the anon view from landing page, check whether any other views contains the anon view,
+                     if any of the other pages contains anon view
+                     */
+                    for (var pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                        if (pages[pageIndex].id !== dashboard.landing && isRoleExist(pages[pageIndex], ANONYMOUS_ROLE)) {
+                            isAnonViewExists = true;
+                            break;
+                        }
+                    }
+                    if (dashboard.landing === page.id && dashboard.pages.length > 1 && isAnonViewExists) {
+                        if (!isRoleExist(page, ANONYMOUS_ROLE, viewId)) {
+                            showInformation(i18n_data['cannot.remove'] + " " + ANONYMOUS_ROLE + " " + i18n_data['role'],
+                                i18n_data['other.pages.contains.views'] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
+                            return;
+                        }
+                    }
                     showConfirm(i18n_data["add.new.role.removing.anonymous"],
                         i18n_data["add.new.role.removing.anonymous.message"], function () {
                             if (removingComponentsLength > 0) {
-                                removeRestrictedGadgets();
+                                removeGadgets(removingComponents, removingComponentsLength);
                             }
                             viewRolesList.splice(viewRolesList.indexOf(ANONYMOUS_ROLE), 1);
                             $('#view-configuration').find('.ues-view-roles').empty();
@@ -1043,9 +1067,10 @@ $(function () {
                             saveDashboard();
                             return true;
                         });
+
                 } else if (removingComponentsLength > 0) {
                     showConfirm(i18n_data["add.new.role"], i18n_data["add.new.role.message"], function () {
-                        removeRestrictedGadgets();
+                        removeGadgets(removingComponents, removingComponentsLength);
                         addRoleToView(viewId, role);
                         return true;
                     })
@@ -1060,27 +1085,30 @@ $(function () {
          * Returns a list of restricted gadgets with deletion of a role
          * @param role New role
          * @param viewId View id
+         * @param action User action (Role addition or removal)
          * @returns {Array} Array of restricted gadgets
          */
         var getRestrictedGadgets = function (role, viewId, action) {
             var removingComponents = [];
             var content = page.content[pageType];
             var viewRoles = page.views.content[viewId].roles;
-
-            for (area in content) {
+            for (var area in content) {
                 if (content.hasOwnProperty(area)) {
-                    for (var i = 0; i < content[area].length; i++) {
-                        var gadgetRoles = content[area][i].content["allowedRoles"];
+                    var components = content[area];
+                    var length = components.length;
+                    for (var i = 0; i < length; i++) {
+                        var component = components[i];
+                        var gadgetRoles = component.content["allowedRoles"];
                         if (!gadgetRoles) {
                             gadgetRoles = [INTERNAL_EVERYONE_ROLE];
                         }
                         if (action === roleRemoveAction) {
                             if (!isGadgetValidAfterRoleRemoval(gadgetRoles, viewRoles, role)) {
-                                removingComponents.push(content[area][0]);
+                                removingComponents.push(component);
                             }
                         } else if (action === roleAddAction) {
                             if (!isGadgetValidAfterRoleAddition(gadgetRoles, viewRoles, role, viewId)) {
-                                removingComponents.push(content[area][0]);
+                                removingComponents.push(component);
                             }
                         }
                     }
@@ -1145,11 +1173,7 @@ $(function () {
                 // all the view roles or internal/everyone role
                 if (role === INTERNAL_EVERYONE_ROLE || isViewRoleExistsInRolesList(viewRoles, INTERNAL_EVERYONE_ROLE)) {
                     //if internal/everyone role is there, we only allow gadgets with internal/everyone role
-                    if (isViewRoleExistsInRolesList(gadgetRoles, INTERNAL_EVERYONE_ROLE)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return isViewRoleExistsInRolesList(gadgetRoles, INTERNAL_EVERYONE_ROLE);
                 } else {
                     //if internal/everyone role is not in the view roles, we allows gadgets with all
                     //the view roles including the new role or internal/everyone role
@@ -1191,31 +1215,84 @@ $(function () {
             var viewId = getViewId(tempName);
             var currentView = getSelectedView();
             var currentViewId = getViewId(currentView);
+            var isAllowed = false;
+            var isAnonViewNeeded = false;
+            var isInternalExists = false;
+            var isAnonExists = false;
+
             if (pageType !== viewId) {
                 pageType = viewId;
                 renderView(currentViewId, viewId);
             }
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             if (views.length === 1) {
                 showInformation(i18n_data["not.delete.view"], i18n_data["not.delete.view.message"]);
-            } else {
-                showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
-                    destroyPage(page, pageType, function (err) {
-                        if (err) {
-                            throw err;
-                        }
-                        delete page.views.content[viewId];
-                        delete page.content[viewId];
-                        visibleViews = [];
-                        dashboard.isanon = isAnonDashboard();
-                        saveDashboard();
-                        views = Object.keys(JSON.parse(JSON.stringify(page.content)));
-                        renderView(viewId, views[0]);
-                        pageType = views[0];
-                    });
-                    return true;
-                });
+                return;
             }
+            /**
+             * When removing a view if it is a landing page, check for anon, internal everyone roles based on other
+             * pages.
+             *  -> Internal/everyone role is important
+             *  -> If any of the other pages has view for anon role, then view with anon role is mandatory in landing page
+             */
+            if (dashboard.landing === page.id && dashboard.pages.length > 1) {
+                if (page.views.content[viewId].roles.indexOf(ANONYMOUS_ROLE) > -1) {
+                    var pages = dashboard.pages;
+                    for (var i = 0; i < pages.length; i++) {
+                        if (page.id !== pages[i].id) {
+                            isAnonViewNeeded = isRoleExist(pages[i], ANONYMOUS_ROLE);
+                            if (isAnonViewNeeded) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (var i = 0; i < views.length; i++) {
+                    if (views[i] !== viewId) {
+                        var tempViewRoles = page.views.content[views[i]].roles;
+                        if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                            isInternalExists = true;
+                            if (!isAnonViewNeeded) {
+                                isAllowed = true;
+                                break;
+                            }
+                        } else if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                            isAnonExists = true;
+                        }
+
+                        if (isAnonExists && isInternalExists && isAnonViewNeeded){
+                            isAllowed = true;
+                        }
+                    }
+                }
+                if (!isAllowed) {
+                    if (!isAnonViewNeeded) {
+                        showInformation(i18n_data['cannot.delete.view'], i18n_data['landing.page.minimal'] + " "
+                            + INTERNAL_EVERYONE_ROLE);
+                        return;
+                    } else {
+                        showInformation(i18n_data['cannot.delete.view'], i18n_data['landing.page.minimal'] + " "
+                            + ANONYMOUS_ROLE + " ."+ i18n_data['other.pages.contains.views'] + " " + ANONYMOUS_ROLE);
+                        return;
+                    }
+                }
+            }
+            showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
+                destroyPage(page, pageType, function (err) {
+                    if (err) {
+                        throw err;
+                    }
+                    delete page.views.content[viewId];
+                    delete page.content[viewId];
+                    visibleViews = [];
+                    dashboard.isanon = isAnonDashboard();
+                    saveDashboard();
+                    views = Object.keys(page.content);
+                    renderView(viewId, views[0]);
+                    pageType = views[0];
+                });
+                return true;
+            });
         });
 
         //event handler for closing the view
@@ -1271,6 +1348,8 @@ $(function () {
             var element = $(this).closest('.ds-view-role');
             var role = element.data('role');
             var viewRoles = page.views.content[pageType].roles;
+            var removingComponents = getRestrictedGadgets(role, pageType, roleRemoveAction);
+            var removingComponentsLength = removingComponents.length;
 
             /**
              * Remove role from the view
@@ -1284,23 +1363,24 @@ $(function () {
                 dashboard.isanon = isAnonDashboard();
                 saveDashboard();
             };
-            var removingComponents = getRestrictedGadgets(role, pageType, roleRemoveAction);
-            var removingComponentsLength = removingComponents.length;
 
             //check whether there are gadgets in the view, which will be restricted after removing the new role
             if (viewRoles.length === 1) {
                 showInformation(i18n_data["not.delete.role"], i18n_data["not.delete.role.message"]);
-            } else if (removingComponentsLength > 0) {
+                return;
+            } else if (page.id === dashboard.landing && role === INTERNAL_EVERYONE_ROLE && dashboard.pages.length > 1) {
+                // If this view belongs to landing page and if there are more than 1 page and if only this view contains
+                // Internal/everyone, cannot allow the user to remove it
+                if (!isRoleExist(page, INTERNAL_EVERYONE_ROLE, pageType)) {
+                    showInformation(i18n_data['cannot.remove'] + " " + i18n_data['role'] + " " + INTERNAL_EVERYONE_ROLE,
+                        i18n_data['landing.page.minimal'] + " " + INTERNAL_EVERYONE_ROLE);
+                    return;
+                }
+            }
+            if (removingComponentsLength > 0) {
                 showConfirm(i18n_data["remove.gadgets.with.role.addition"],
                     i18n_data["remove.gadgets.with.role.addition.message"], function () {
-                        for (var i = 0; i < removingComponentsLength; i++) {
-                            removeComponent(removingComponents[i], function (err) {
-                                if (err) {
-                                    generateMessage("Error in removing gadgets from the view", null, null, "error",
-                                        "topCenter", 2000, null);
-                                }
-                            });
-                        }
+                        removeGadgets(removingComponents, removingComponentsLength);
                         removePermission();
                         return true;
                     });
@@ -1345,7 +1425,7 @@ $(function () {
         $('#more-views').on('click', function (event) {
             event.preventDefault();
             $('#view-list').empty();
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             var isExist;
             for (var i = 0; i < views.length; i++) {
                 isExist = false;
@@ -1357,7 +1437,8 @@ $(function () {
                 }
                 if (!isExist) {
                     var ctx = {
-                        viewName: page.views.content[views[i]].name
+                        viewName: page.views.content[views[i]].name,
+                        viewId: views[i]
                     };
                     $('#view-list').append(viewListingHbs(ctx));
                 }
@@ -1398,7 +1479,7 @@ $(function () {
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCopyingSelection);
                 $('#copy-view').prop("checked", true);
-                var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+                var views = Object.keys(page.views.content);
 
                 for (var i = 0; i < views.length; i++) {
                     var temp = {
@@ -1434,7 +1515,6 @@ $(function () {
                             saveDashboard();
                         });
                     }
-
                     if (removeBlock) {
                         getGridstack().remove_widget(componentBox.parent());
                         updateLayout();
@@ -1455,10 +1535,7 @@ $(function () {
      */
     var isAnonRoleExists = function (viewId) {
         var viewRoles = page.views.content[viewId].roles;
-        if (viewRoles.length > 0 && viewRoles[0].toLowerCase() === ANONYMOUS_ROLE) {
-            return true;
-        }
-        return false;
+        return (viewRoles.length > 0 && viewRoles[0].toLowerCase() === ANONYMOUS_ROLE);
     };
 
     /**
@@ -1776,7 +1853,6 @@ $(function () {
             content = component.content,
             optionsAvailable = isOptionAvailable(Object.keys(content.options), content.options),
             options = optionsAvailable ? content.options : {};
-
         return {
             id: component.id,
             title: content.title,
@@ -1793,7 +1869,7 @@ $(function () {
      * @returns {String} View id
      */
     var getViewId = function (viewName) {
-        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             if (page.views.content[views[i]].name) {
                 if (page.views.content[views[i]].name === viewName) {
@@ -1811,7 +1887,7 @@ $(function () {
     var isAnonDashboard = function () {
         if (dashboard.pages) {
             for (var i = 0; i < dashboard.pages.length; i++) {
-                var views = Object.keys(JSON.parse(JSON.stringify(dashboard.pages[i].views.content)));
+                var views = Object.keys(dashboard.pages[i].views.content);
                 for (var j = 0; j < views.length; j++) {
                     var viewRoles = dashboard.pages[i].views.content[views[j]].roles;
                     if (!viewRoles && (views[j] === ANONYMOUS_ROLE)) {
@@ -1832,7 +1908,7 @@ $(function () {
      */
     var isAnonPage = function (page) {
         if (page) {
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             for (var j = 0; j < views.length; j++) {
                 var viewRoles = page.views.content[views[j]].roles;
                 if (!viewRoles) {
@@ -1845,6 +1921,45 @@ $(function () {
             }
         }
         return false;
+    };
+
+    /**
+     * To check whether the given page is suitable to make as landing
+     * @param page Page to made as landing
+     * @returns {boolean} true if it is eligible for landing page
+     */
+    var isEligibleForLanding = function(page) {
+        var pages = dashboard.pages;
+        var viewsWithAnon = false;
+        var isAnonExist = false;
+        var isInternalExist = false;
+        var views;
+        var tempViewRoles;
+        var k;
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i].id !== page.id) {
+                if (isRoleExist(pages[i], ANONYMOUS_ROLE)) {
+                    viewsWithAnon = true;
+                    break;
+                }
+            }
+        }
+        views = Object.keys(page.views.content);
+        for (k = 0; k < views.length; k++) {
+            tempViewRoles = page.views.content[views[k]].roles;
+            if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                isInternalExist = true;
+            }
+            if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                isAnonExist = true;
+            }
+            if (isInternalExist && isAnonExist) {
+                return true;
+            }
+        }
+        if (isInternalExist && !viewsWithAnon) {
+            return true;
+        }
     };
 
     /**
@@ -1900,39 +2015,6 @@ $(function () {
         }
 
         return isPageAvailable;
-    };
-
-    /**
-     * Show error style for given element.
-     * @param {Object} element
-     * @param {Object} errorElement
-     * @return {null}
-     * @private
-     */
-    var showInlineError = function (element, errorElement) {
-        element.val('');
-        element.parent().addClass("has-error");
-        element.addClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("hide");
-        element.parent().find("span.glyphicon").addClass("show");
-        errorElement.removeClass("hide");
-        errorElement.addClass("show");
-    };
-
-    /**
-     * Hide error style for given element.
-     * @param {Object} element
-     * @param {Object} errorElement
-     * @return {null}
-     * @private
-     */
-    var hideInlineError = function (element, errorElement) {
-        element.parent().removeClass("has-error");
-        element.removeClass("has-error");
-        element.parent().find("span.glyphicon").removeClass("show");
-        element.parent().find("span.glyphicon").addClass("hide");
-        errorElement.removeClass("show");
-        errorElement.addClass("hide");
     };
 
     /**
@@ -1998,14 +2080,15 @@ $(function () {
             },
             landing: function () {
                 if (landing.is(':checked')) {
-                    if (hasAnonPages && isAnonPage(page)) {
-                        landing.prop("checked", false);
-                        showInformation("Cannot Select This Page As Landing",
-                            "Please add an anonymous view to this page before select it as the landing page");
-                    } else if (ishiddenPage(idVal)) {
+                    if (ishiddenPage(idVal)) {
                         landing.prop("checked", false);
                         showInformation("Cannot Select This Page As Landing",
                             "This page is hidden in the menu, please select a different page");
+                    } else if (!isEligibleForLanding(page)) {
+                        landing.prop("checked", false);
+                        showInformation(i18n_data['cannot.select.as.landing'],
+                            i18n_data['this.page.not.have.view'] + " " + INTERNAL_EVERYONE_ROLE + " " + i18n_data['role']
+                            + " " + i18n_data['or'] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
                     } else {
                         dashboard.landing = idVal;
                         var menuItem = getChild(dashboard.menu, idVal);
@@ -2051,9 +2134,8 @@ $(function () {
                 }
             }
         }
-
         return ret;
-    }
+    };
 
     /**
      * Update menu item based on the given key
@@ -2154,7 +2236,7 @@ $(function () {
         }
 
         return childObj;
-    }
+    };
 
 
     /**
@@ -2431,7 +2513,6 @@ $(function () {
             var viewId = getViewId(selectedViewName);
             data = filterGadgetsForViewRoles(data, type, viewId);
             if (!fresh) {
-
                 assets.append(componentsListHbs({
                     type: type,
                     assets: data,
@@ -2540,7 +2621,7 @@ $(function () {
             if (viewRoles[r] === ANONYMOUS_ROLE) {
                 isAnonExist = true;
             } else if (viewRoles[r] === INTERNAL_EVERYONE_ROLE) {
-                isLoggedInExist === true;
+                isLoggedInExist = true;
             }
         }
 
@@ -2633,16 +2714,29 @@ $(function () {
      * @private
      * */
     var initLayoutWorkspace = function () {
-
         $('#ues-page-layouts').on('click', '.thumbnail', function (e) {
             e.preventDefault();
             var options = pageOptions();
+            var landingPageId = dashboard.landing;
 
+            /**
+             * When creating a new page check whether the landing page contains the view
+             * with internal/everyone, if not don`t allow the user to create a new page
+             */
+            if (landingPageId) {
+                var pages = dashboard.pages;
+                var landingPage = getPage(landingPageId);
+                var isAllowed = isRoleExist(landingPage, INTERNAL_EVERYONE_ROLE);
+
+                if (!isAllowed) {
+                    showInformation(i18n_data['cannot.create.new.page'], i18n_data['landing.page.minimal'] +
+                        " " + INTERNAL_EVERYONE_ROLE + " " + i18n_data['role']);
+                    return;
+                }
+            }
             createPage(options, $(this).data('id'), function (err) {
-
                 // reload pages list
                 updatePagesList();
-
                 // hide the sidebar
                 $('#sidebarNavPages button[rel="createPage"]').click();
                 // open page options
@@ -2667,7 +2761,7 @@ $(function () {
                 saveViewContent(currentViewId, newViewId, newViewName, viewRoles, layout);
                 isNewView = false;
             } else {
-                //if tries to change the layout of an existing view
+                //if tries to change the layout of an existing view, after confiramtion destroy the page
                 showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
                     destroyPage(page, pageType, function (err) {
                         if (err) {
@@ -2706,12 +2800,11 @@ $(function () {
             async: false,
             dataType: 'json'
         }).success(function (data) {
-            var viewLayoutContent = {
+            page.views.content[viewId] = {
                 blocks: data.blocks,
                 name: viewName,
                 roles: viewRoles
             };
-            page.views.content[viewId] = viewLayoutContent;
         }).error(function (xhr, status, err) {
             generateMessage("Error creating the page view", null, null, "error", "topCenter", 2000, null);
         });
@@ -2864,11 +2957,9 @@ $(function () {
                 showConfirm(i18n_data["delete.page"], i18n_data["delete.page.message"], function () {
                     //check whether there are any subordinates
                     if (isRemovablePage(pid) && dashboard.pages.length !== 1) {
-                        var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
-                        removePage(pid, views[0], function (err) {
+                        removePage(pid, pageType, function (err) {
                             var pages = dashboard.pages;
                             var childObj = getChild(dashboard.menu, pid);
-                            //updatePagesList(pages);
 
                             // if the landing page was deleted, make the first page(in menu) to be the landing page
                             if (dashboard.menu.length) {
@@ -2876,6 +2967,8 @@ $(function () {
                                     //get next possible landing page from the menu
                                     var nextLandingpage = getNextLandingPage(pid, dashboard.menu);
                                     dashboard.landing = nextLandingpage;//dashboard.menu[0].id;
+                                    generateMessage(i18n_data['landing.page.changed'] + " " + dashboard.landing, null,
+                                        null, "success", "topCenter", 2000, null);
                                     var menuItem = getChild(dashboard.menu, nextLandingpage);
                                     dashboard.menu.unshift(menuItem);
                                     spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
@@ -2897,7 +2990,10 @@ $(function () {
                         });
                         return true;
                     } else {
-                        dashboard.pages.length !== 1 ? showInformation("Unable to remove this page. Make sure this page doesn't have any subordinates,all pages are hidden or ") : showInformation("Unable to remove the last page")
+                        dashboard.pages.length !== 1 ? showInformation(i18n_data['cannot.remove.hidden.page'] + " " +
+                            i18n_data['or'] + " " + i18n_data['other.pages.contains.views'] + " " +
+                            INTERNAL_EVERYONE_ROLE + " " + i18n_data['role']) :
+                            showInformation(i18n_data['cannot.delete.last.page']);
                         return false;
                     }
                 });
@@ -2975,20 +3071,58 @@ $(function () {
 
     /**
      * Find and return the next possible landing page
-     * @param {String} pid- current landing page
+     * @param {String} pid current landing page
      * @param {Object} menu
      * @return {String} pid- next landing page
      * @private
      */
     var getNextLandingPage = function (pid, menu) {
         var nextLandingpage = null;
-        for (var i = 0; i < menu.length; i++) {
-            if (menu[i].id !== pid && menu[i].ishidden === false && nextLandingpage == null) {
-                nextLandingpage = menu[i].id;
+        var pagesWithInternal = null;
+        var viewsWithAnon = 0;
+
+        if (menu.length === 2) {
+            for (var i = 0; i < menu.length; i++) {
+                if (menu[i].id !== pid && menu[i].ishidden === false) {
+                    return menu[i].id;
+                }
             }
         }
+
+        // When getting next landing page, if there is a page that has views for anon and internal everyone, select
+        // that as landing page, or if there are no anon views in other pages select the page with a view for
+        // internal/everyone
+        for (var i = 0; i < menu.length; i++) {
+            if (menu[i].id !== pid && menu[i].ishidden === false && nextLandingpage == null) {
+                var pages = dashboard.pages;
+                var tempPage = getPage(menu[i].id);
+                var isAnonExist = false;
+                var isInternalExist = false;
+                var views = Object.keys(tempPage.views.content);
+                for (var k = 0; k < views.length; k++) {
+                    var tempViewRoles = tempPage.views.content[views[k]].roles;
+                    if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                        isInternalExist = true;
+                        if (!pagesWithInternal) {
+                            pagesWithInternal = menu[i].id;
+                        }
+                    }
+                    if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                        isAnonExist = true;
+                        viewsWithAnon++;
+                    }
+                    if (isInternalExist && isAnonExist) {
+                        nextLandingpage = menu[i].id;
+                        return nextLandingpage;
+                    }
+                }
+            }
+        }
+        if (viewsWithAnon === 0) {
+            return pagesWithInternal;
+        }
         return nextLandingpage;
-    }
+    };
 
     /**
      * Check whether page is deletable based on subordinates
@@ -3001,9 +3135,124 @@ $(function () {
         spliceOrDiscardChild(dashboard.menu, menuItem.id, 'discard');
         if ((pid === dashboard.landing && dashboard.hideAllMenuItems) || menuItem.subordinates.length > 0) {
             return false;
+        } else if (dashboard.landing === pid && dashboard.pages.length > 2){
+            var pages = dashboard.pages;
+            var viewsWithAnon = 0;
+            var viewsWithInternal = 0;
+            for (var j = 0; j < pages.length; j++) {
+                if (pages[j].id !== pid) {
+                    var isAnonExist = false;
+                    var isInternalExist = false;
+                    var views = Object.keys(pages[j].views.content);
+                    for (var i = 0; i < views.length; i++) {
+                        var tempViewRoles = pages[j].views.content[views[i]].roles;
+                        if (tempViewRoles.indexOf(INTERNAL_EVERYONE_ROLE) > -1) {
+                            isInternalExist = true;
+                            viewsWithInternal++;
+                        }
+                        if (tempViewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
+                            isAnonExist = true;
+                            viewsWithAnon++;
+                        }
+                        if (isInternalExist && isAnonExist) {
+                            return true;
+                        }
+                    }
+                }
+                if (j === pages.length-1) {
+                    return ((viewsWithAnon === 0) && viewsWithInternal > 0);
+                }
+            }
+        } else {
+            return true;
         }
-        return true;
-    }
+        return false;
+    };
+
+    /**
+     * To remove the set of gadgets in designer mode.
+     * @param removingComponents Gadgets to be removed
+     * @param length Number of gadgets to be removed
+     */
+    var removeGadgets = function(removingComponents, length) {
+        for (var i = 0; i < length; i++) {
+            var componentBox = $("#" + removingComponents[i].id).closest(".ues-component-box");
+            removeComponent(removingComponents[i], function (err) {
+                if (err) {
+                    generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
+                        2000, null);
+                }
+            });
+            componentBox.html(componentBoxContentHbs());
+        }
+    };
+
+    /**
+     * To get the list of gadgets that need to be hidden for particular user view
+     * @returns {Array} List of gadgets to be removed
+     */
+    var getRestrictedGadgetsToBeViewed = function () {
+        var removingComponents = [];
+        var content = page.content[pageType];
+        for (var area in content) {
+            if (content.hasOwnProperty(area)) {
+                var components = content[area];
+                var length = components.length;
+                for (var i = 0; i < length; i++) {
+                    var component = components[i];
+                    var gadgetRoles = component.content["allowedRoles"];
+                    var isGadgetRenderable = false;
+
+                    if (!gadgetRoles) {
+                        gadgetRoles = [INTERNAL_EVERYONE_ROLE];
+                    }
+                    for (var j = 0; j < userRolesList.length && !isGadgetRenderable; j++) {
+                        if (isRoleExistInGadget(gadgetRoles, userRolesList[j])) {
+                            isGadgetRenderable = true;
+                        }
+                        if (j === userRolesList.length - 1 && !isGadgetRenderable) {
+                            removingComponents.push(component);
+                        }
+                    }
+                }
+            }
+        }
+        return removingComponents;
+    };
+
+    /**
+     * To check whether a view with a particular role exist in the page
+     * @param pageToBeChecked Page to checked for the role
+     * @param role Role to be checked
+     * @param viewId View Id to be skipped if any
+     * @returns {boolean} true if a view with particular role exists, otherwise false
+     */
+    var isRoleExist = function (pageToBeChecked, role, viewId) {
+        var views = Object.keys(pageToBeChecked.content);
+        for (var i = 0; i < views.length; i++) {
+            if (!viewId || viewId !== views[i]) {
+                var tempViewRoles = pageToBeChecked.views.content[views[i]].roles;
+                if (tempViewRoles.indexOf(role) > -1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    /**
+     * To get a page of specific id
+     * @param id Specific ID
+     * @returns page with the given id
+     */
+    var getPage = function (id) {
+        var pages = dashboard.pages;
+        for (var k = 0; k < pages.length; k++) {
+            if (pages[k].id === id) {
+                return pages[k];
+            }
+        }
+    };
 
     /**
      * Register the "set_pref" rpc function. When user set the user preferences using
@@ -3020,7 +3269,7 @@ $(function () {
             var pages = dashboard.pages;
             var numberOfPages = pages.length;
             for (var i = 0; i < numberOfPages; i++) {
-                var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+                var views = Object.keys(page.content);
                 for (var v = 0; v < views.length; v++) {
                     var pageContent = pages[i].content[views[v]];
                     var zones = Object.keys(pageContent);
@@ -3185,7 +3434,7 @@ $(function () {
                 title: options.title,
                 views: {
                     content: {
-                        default: JSON.parse(data),
+                        default: JSON.parse(data)
                     },
                     fluidLayout: false
                 },
@@ -3237,7 +3486,7 @@ $(function () {
     /**
      * Switches the given page
      * @param {String} pid      Page ID
-     * @param {String} pageType Type of the page
+     * @param {String} currentPageType Type of the page
      * @return {null}
      * @private
      */
@@ -3249,7 +3498,10 @@ $(function () {
             if (err) {
                 throw err;
             }
-            renderPage(pid);
+            renderPage(pid, function(err) {
+                var removingComponents = getRestrictedGadgetsToBeViewed();
+                removeGadgets(removingComponents, removingComponents.length);
+            });
         });
     };
 
@@ -3258,7 +3510,6 @@ $(function () {
      * @return {null}
      */
     var updateLayout = function () {
-
         // extract the layout from the designer and save it
         var res = _.map($('.grid-stack .grid-stack-item:visible'), function (el) {
             el = $(el);
@@ -3319,7 +3570,6 @@ $(function () {
      * @private
      */
     var showCreatePage = function () {
-
         // if the left panel is closed, click on the pages button
         if (!$('#left-sidebar').hasClass('toggled')) {
             $('#btn-pages-sidebar').click()
@@ -3338,7 +3588,7 @@ $(function () {
      */
     var renderView = function (currentView, newView) {
         if (isInViewCreationView) {
-            var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+            var views = Object.keys(page.content);
             pageType = newView;
             if (views.length > 0 && views.length > NO_OF_VISIBLE_VIEWS) {
                 pageType = views[0];
@@ -3399,7 +3649,7 @@ $(function () {
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-        var views = Object.keys(JSON.parse(JSON.stringify(page.content)));
+        var views = Object.keys(page.content);
         $('#more-views').addClass('hidden');
         if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
             visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
@@ -3423,8 +3673,7 @@ $(function () {
                 document.getElementById("view-name").setAttribute('id', tempView);
                 if (i === 0) {
                     pageType = pageType || tempView;
-
-                    if (pageType === DEFAULT_DASHBOARD_VIEW && tempView !== DEFAULT_DASHBOARD_VIEW){
+                    if (visibleViews.indexOf(pageType) <= -1) {
                         pageType = tempView;
                     }
                 }
@@ -3459,7 +3708,6 @@ $(function () {
             }
         }));
         ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
-
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
@@ -3470,7 +3718,7 @@ $(function () {
                 animate: true,
                 cellHeight: 50,
                 verticalMargin: 30,
-                handle: '.ues-component-heading, .ues-component-heading .ues-component-title',
+                handle: '.ues-component-heading, .ues-component-heading .ues-component-title'
             }).on('dragstop', function (e, ui) {
                 updateLayout();
             }).on('resizestart', function (e, ui) {
@@ -3505,6 +3753,8 @@ $(function () {
         updatePagesList();
         updateMenuList();
         initBanner();
+        //var removingComponents = getRestrictedGadgetsToBeViewed();
+        //removeGadgets(removingComponents, removingComponents.length);
     };
 
     /**
@@ -3519,7 +3769,6 @@ $(function () {
         var pages = dashboard.pages;
         var length = pages.length;
         var page = prefix + pid;
-
         for (i = 0; i < length; i++) {
             if (pages[i].id === page) {
                 pid++;
@@ -3527,7 +3776,6 @@ $(function () {
                 return checkForExistingPageNames(prefix, pid);
             }
         }
-
         return pid;
     };
 
@@ -3555,9 +3803,7 @@ $(function () {
         var pid = 0;
         var prefix = 'page';
         var titlePrefix = 'Page ';
-
         pid = checkForExistingPageNames(prefix, pid);
-
         return {
             id: prefix + pid,
             title: titlePrefix + pid
@@ -3574,9 +3820,14 @@ $(function () {
     var initDashboard = function (db, page) {
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
-
         if (pages.length > 0) {
-            renderPage(page || db.landing || pages[0].id);
+            renderPage(page || db.landing || pages[0].id,function (err) {
+                if (err) {
+                    throw err;
+                }
+                var removingComponents = getRestrictedGadgetsToBeViewed();
+                removeGadgets(removingComponents, removingComponents.length);
+            });
         } else {
             renderPage(null)
         }
@@ -3587,7 +3838,6 @@ $(function () {
      * @return {null}
      */
     var loadBanner = function () {
-
         ues.global.dashboard.banner = ues.global.dashboard.banner || {
                 globalBannerExists: false,
                 customBannerExists: false
@@ -3835,7 +4085,7 @@ $(function () {
                 }
             }
         }
-    }
+    };
 
     /**
      * update dashboard.hideAllMenuItems state

@@ -5,6 +5,7 @@ var authorized;
 var roles;
 var searchRoles;
 var maxRolesLimit;
+var getUserRoles;
 
 (function () {
     var log = new Log();
@@ -70,6 +71,11 @@ var maxRolesLimit;
         var user = session.get('user');
         var um = new carbon.user.UserManager(server, user.tenantId);
         return um.allRoles();
+    };
+
+    getUserRoles = function () {
+        var user = session.get('user'), um = new carbon.user.UserManager(server, user.tenantId);
+        return um.getRoleListOfUser(user.username);
     };
 
     searchRoles = function (filter, maxItems) {

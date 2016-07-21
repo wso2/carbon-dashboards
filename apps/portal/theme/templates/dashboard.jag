@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,24 +23,27 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'),  user = usr.current(),   isAnonView = request.getParameter('isAnonView'),
-        isPreview = request.getParameter('preview'),    queryString = request.getQueryString(),
-            isPersonalizeEnabled = request.getParameter('dashboardeditor');
-
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var isAnonView = request.getParameter('isAnonView');
+    var isPreview = request.getParameter('preview');
+    var queryString = request.getQueryString();
+    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
     var userRoles = [];
     var viewId = request.getParameter('currentView');
-    if(!user) {
-        userRoles.push('anonymous');
+    var constants = require('/modules/constants.js');
+
+    if (!user) {
+        userRoles.push(constants.ANONYMOUS_ROLE);
     } else {
-        var tempRoles = usr.roles();
-        if(isPreview) {
-            userRoles.push('anonymous');
+        var tempRoles = usr.getUserRoles();
+        if (isPreview) {
+            userRoles.push(constants.ANONYMOUS_ROLE);
         }
-        for (var i = 0; i < tempRoles.length; i++){
+        for (var i = 0; i < tempRoles.length; i++) {
             userRoles.push(tempRoles[i]);
         }
     }
-
     // Get the anon view
     if (!user) {
         if (isAnonView) {
@@ -50,9 +53,8 @@
     } else {
         isAnonView = JSON.parse(isAnonView);
 
-        if((user.domain != urlDomain && urlDomain) ||
-            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) &&
-                !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+        if ((user.domain != urlDomain && urlDomain) ||
+                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
             isAnonView = true;
         }
     }
@@ -407,7 +409,7 @@
 
     <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString null allowedViews}}{{/traverseMenu}}
     </script>
 
     <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
@@ -594,16 +596,16 @@
         });
 
         //usage : in traverseMenu helper
-        var user = <%= user %>,
-            queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>,
-             isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
+        var user = <%= user %>;
+        var queryString = <%= stringify(queryString) %>;
+        var isAnonView = <%= isAnonView %>;
+        var isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
         var userRolesList = <%= userRoles %>;
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
-         <%   } %>
+        <% } %>
     </script>
 </body>
 </html>
