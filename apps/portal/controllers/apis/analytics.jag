@@ -329,7 +329,7 @@
                 break;
             }
             default:
-                response.status = 500;
+                response.status = 400;
                 result = {
                     status: "Failed",
                     message: "Unidentified operation"
