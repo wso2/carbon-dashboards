@@ -7,9 +7,10 @@
 var elem = document.getElementById("my-placeholder");
 var gadget = "{{absolute_gadget_url}}";
 var container = new osapi.container.Container();
+var userPrefsObject = {
+    refreshInterval : '1000000'
+};
 var site = container.newGadgetSite(elem);
- var options = {};
-        options[osapi.container.RenderParam.WIDTH] = '100%';
-        options[osapi.container.RenderParam.HEIGHT] = '100%';
-container.navigateGadget(site, gadget, {}, options);
+var renderParams = { width: '100%', height: '100%',userPrefs: userPrefsObject };
+container.navigateGadget(site, gadget, {}, renderParams);
 </script>

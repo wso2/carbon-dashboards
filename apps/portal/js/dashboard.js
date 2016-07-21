@@ -144,6 +144,11 @@ $(function () {
                 updateComponentProperties(componentContainer.find('.ues-sandbox'), component);
                 return;
             }
+            ues.components.destroy(component, function (err) {
+                if (err) {
+                    throw err;
+                }
+            });
             componentContainer.html(gadgetSettingsViewHbs(component.content)).addClass('ues-userprep-visible');
         });
 

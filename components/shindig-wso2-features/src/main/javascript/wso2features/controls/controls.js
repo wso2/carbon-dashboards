@@ -61,6 +61,20 @@ wso2.gadgets.controls = (function () {
      */
     var RPC_SERVICE_FINISHEDLOADING_CALL = 'RPC_SERVICE_FINISHEDLOADING_CALL';
 
+    /**
+     * RPC service name of getting dashboard ID
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETDASHBOARDID_CALL = 'RPC_SERVICE_GETDASHBOARDID_CALL';
+
+    /**
+     * RPC service name of getting dashboard ID
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETDASHBOARDNAME_CALL = 'RPC_SERVICE_GETDASHBOARDNAME_CALL';
+
     // Keeps handlers for lost focus event.
     var lostFocusCallbacks = [];
 
@@ -122,6 +136,30 @@ wso2.gadgets.controls = (function () {
         wso2.gadgets.core.callContainerService(RPC_SERVICE_FINISHEDLOADING_CALL, null, null);
     }
 
+    /**
+     * return  id of the dashboard
+     * @return {dashboardID}
+     */
+    var getDashboardID = function (callback) {
+        return wso2.gadgets.core.callContainerService(RPC_SERVICE_GETDASHBOARDID_CALL, null, function (dashboardID) {
+            if (callback) {
+                callback(dashboardID);
+            }
+        });
+    };
+
+    /**
+     * return  name of the dashboard
+     * @return {dashboardName}
+     */
+    var getDashboardName = function (callback) {
+        return wso2.gadgets.core.callContainerService(RPC_SERVICE_GETDASHBOARDNAME_CALL, null, function (dashboardName) {
+            if (callback) {
+                callback(dashboardName);
+            }
+        });
+    };
+
     // Register callback function to get responses from the container.
     gadgets.rpc.register(RPC_SERVICE_LOST_FOCUS_CALLBACK, function () {
         for (var i = 0; i < lostFocusCallbacks.length; i++) {
@@ -145,6 +183,8 @@ wso2.gadgets.controls = (function () {
         restoreGadget: restoreGadget,
         addLostFocusListener: addLostFocusListener,
         addButtonListener: addButtonListener,
-		finishedLoadingGadget:finishedLoadingGadget
+        finishedLoadingGadget:finishedLoadingGadget,
+        getDashboardID: getDashboardID,
+        getDashboardName: getDashboardName
     };
 })();

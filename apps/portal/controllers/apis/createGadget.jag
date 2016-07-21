@@ -248,8 +248,12 @@
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.json.hbs',
                             gadgetDirLocation +'/gadget.json', gadgetJsonData );
 
+            var gadgetUtilData = {};
+            gadgetUtilData['gadget_location'] = CONTEXT + gadgetDirLocation;
+            fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-util.js.hbs',
+                    gadgetDirLocation +'/js/core/gadget-util.js', gadgetUtilData);
+
             var gadgetCoreJsData = {};
-            gadgetCoreJsData['gadget_location'] = CONTEXT + gadgetDirLocation;
             gadgetCoreJsData['isPullMode'] = !isPushMode;
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
                             gadgetDirLocation +'/js/core/gadget-core.js', gadgetCoreJsData);
@@ -342,8 +346,8 @@
             isPushMode = true;
         }
 
-        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID +'/js/core/gadget-core.js', CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
-                        CONTEXT + GADGETS_LOCATION + gadgetID);
+        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID +'/js/core/gadget-util.js', CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
+                CONTEXT + GADGETS_LOCATION + gadgetID);
 
         fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID + GADGET_XML_FILE, CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
                            CONTEXT + GADGETS_LOCATION + gadgetID);
