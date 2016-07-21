@@ -16,8 +16,11 @@
  */
 %>
 <%
-    var usr = require('/modules/user.js'), user = usr.current(), userRoles = [], tempRoles = usr.getUserRoles(),
-            constants = require('/modules/constants.js');
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var userRoles = [];
+    var tempRoles = usr.getUserRoles();
+    var constants = require('/modules/constants.js');
     userRoles.push(constants.ANONYMOUS_ROLE);
 
     for (var i = 0; i < tempRoles.length; i++) {
