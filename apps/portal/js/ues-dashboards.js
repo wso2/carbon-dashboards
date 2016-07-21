@@ -449,6 +449,14 @@
         return path;
     };
 
+    var getDashboardID = function () {
+        return ues.global.dashboard.id;
+    };
+
+    var getDashboardName = function () {
+        return ues.global.dashboard.title;
+    };
+
     ues.components = {
         create: createComponent,
         update: updateComponent,
@@ -461,7 +469,9 @@
         findPage: findPage,
         resolveURI: resolveURI,
         finishedLoadingGadget: finishedLoading,
-        findComponent: findComponent
+        findComponent: findComponent,
+        getDashboardID: getDashboardID,
+        getDashboardName: getDashboardName
     };
 
     ues.assets = {};
