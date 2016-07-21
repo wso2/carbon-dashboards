@@ -137,37 +137,37 @@
                     </div>
                     <div class="collapse" id="pdf-size-panel">
                         <div class="panel-body add-padding-3x generate-pdf-panel">
-        					<form class="form-horizontal">
+                            <form class="form-horizontal">
                                 <div class="form-group">
                                     <div class="col-sm-12">
-									<div class="panel-heading text-truncate dropdown dropdown-select-label">
-						            	<label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
-									</div>
-									 <div class="dropdown pagetype-selection-dropdown">
-										<div class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-  											<div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
-										</div>
-  											<ul class="dropdown-menu">
-    											<li><a href="#">A4</a></li>
-    											<li><a href="#">A3</a></li>
-    											<li><a href="#">A2</a></li>
-    											<li><a href="#">A1</a></li>
-  											</ul>
-									</div>
+                                        <div class="panel-heading text-truncate dropdown dropdown-select-label">
+                                            <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
+                                        </div>
+                                        <div class="dropdown pagetype-selection-dropdown">
+                                            <div class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                                <div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
+                                            </div>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">A4</a></li>
+                                                <li><a href="#">A3</a></li>
+                                                <li><a href="#">A2</a></li>
+                                                <li><a href="#">A1</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label class="control-label">Width</label>
                                         <input type="text" class="form-control input-pdf-width-height" id="pdf-width" placeholder="PDF Width" >
-										<label>px</label>
+                                        <label>px</label>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label class="control-label">Height</label>
                                         <input type="text" class="form-control input-pdf-width-height" id="pdf-height" placeholder="PDF Height">
-										<label>px</label>
+                                        <label>px</label>
                                     </div>
                                 </div>
                                 <ul class="nav nav-pills nav-stacked pages">
