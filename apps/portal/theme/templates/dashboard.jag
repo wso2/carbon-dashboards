@@ -23,10 +23,13 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'),
-        user = usr.current(),
-        isAnonView = request.getParameter('isAnonView'),
-        queryString = request.getQueryString();
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var isAnonView = request.getParameter('isAnonView');
+    var queryString;
+    if(request.getParameter('shared')){
+        queryString = 'shared=' + request.getParameter('shared');
+    }
 
     // Get the anon view
     if (!user) {
