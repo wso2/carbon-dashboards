@@ -1,6 +1,6 @@
 <%
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,27 @@
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
 
-    var usr = require('/modules/user.js'),
-        user = usr.current(),
-        isAnonView = request.getParameter('isAnonView'),
-        queryString = request.getQueryString();
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    var isAnonView = request.getParameter('isAnonView');
+    var isPreview = request.getParameter('preview');
+    var queryString = request.getQueryString();
+    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
+    var userRoles = [];
+    var viewId = request.getParameter('currentView');
+    var constants = require('/modules/constants.js');
 
+    if (!user) {
+        userRoles.push(constants.ANONYMOUS_ROLE);
+    } else {
+        var tempRoles = usr.getUserRoles();
+        if (isPreview) {
+            userRoles.push(constants.ANONYMOUS_ROLE);
+        }
+        for (var i = 0; i < tempRoles.length; i++) {
+            userRoles.push(tempRoles[i]);
+        }
+    }
     // Get the anon view
     if (!user) {
         if (isAnonView) {
@@ -37,40 +53,25 @@
     } else {
         isAnonView = JSON.parse(isAnonView);
 
-        if((user.domain != urlDomain && urlDomain) ||
-            (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) &&
-                !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+        if ((user.domain != urlDomain && urlDomain) ||
+                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
             isAnonView = true;
         }
     }
 
     // Get the current page
     var pages = dashboard.pages,
-        page;
+            page;
     pages.forEach(function(p) {
         if (p.id == pageId) {
             page = p;
         }
     });
-   
+
     // Build the URL for the home page
     var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
     if (request.getParameter('isAnonView') == 'true') {
         dashboardUrl += '?isAnonView=true';
-    }
-   
-    // Show navigation menu (There should be more than one page to show the navigation menu)
-    var showNavigation = false;
-    if (isAnonView || !user) {
-        var anonPageCount = 0;
-        pages.forEach(function(p) {
-            if (p.isanon) {
-                anonPageCount++;
-            }
-        });
-        showNavigation = (anonPageCount > 1);
-    } else {
-        showNavigation = (pages.length > 1);
     }
 %>
 <html lang="en">
@@ -82,44 +83,104 @@
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <!-- Gridstack -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
-        
+
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
 
     <!-- Custom theme overrides -->
     <%
-        var path = utils.getThemeStylesPath();
-        var folder = new File('/' + path);
-        var filePath = "";
-        var fileList = folder.listFiles();
-        fileList.forEach(function(file){
-            filePath = '/' + path +'/' + file.getName();
+    var path = utils.getThemeStylesPath();
+    var folder = new File('/' + path);
+    var filePath = "";
+    var fileList = folder.listFiles();
+    fileList.forEach(function(file){
+        filePath = '/' + path +'/' + file.getName();
     %>
         <link rel="stylesheet" href="<%=urlPrefix%><%=filePath%>">
     <%
-        });
-    %>
+    });
+%>
 
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard lang_<%=request.getLocale()%> dark">
+    <!-- Modal -->
+    <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
     <!-- .left-sidebar -->
     <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
         <div class="nano">
             <div class="nano-content">
-                    
+
                 <div class="product-logo">
                     <i class="icon fw fw-wso2-logo"></i>
                 </div>
                 <div class="product-name">
                     <% include(utils.getThemeTemplatePath('templates/includes/project-title.jag')); %>
                 </div>
-                
+
                 <div id="ues-pages"><!-- dynamic content --></div>
-                
+
                 <hr>
-                
+
+                <div class="panel panel-default active">
+                    <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
+                        data-toggle="collapse" aria-expanded="true">
+                        <h4 class="panel-title">
+                        <span class="icon fw-stack">
+                        <i class="fw fw-pdf fw-stack-2x"></i>
+                        </span>
+                            <%=i18n.localize("dashboard.pdf.generatePDF")%></h4><span class="caret"></span>
+                    </div>
+                    <div class="collapse" id="pdf-size-panel">
+                        <div class="panel-body add-padding-3x generate-pdf-panel">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="panel-heading text-truncate dropdown dropdown-select-label">
+                                            <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
+                                        </div>
+                                        <div class="dropdown pagetype-selection-dropdown">
+                                            <div class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                                <div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
+                                            </div>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">A4</a></li>
+                                                <li><a href="#">A3</a></li>
+                                                <li><a href="#">A2</a></li>
+                                                <li><a href="#">A1</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Width</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-width" placeholder="PDF Width" >
+                                        <label>px</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Height</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-height" placeholder="PDF Height">
+                                        <label>px</label>
+                                    </div>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked pages">
+                                    <div id="generate-pdf">
+                                        <li><%=i18n.localize("dashboard.pdf.downloadPDF")%></li>
+                                    </div>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
-                
+
             </div>
         </div>
     </div>
@@ -192,7 +253,7 @@
                 </div>
 
                 <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
-                    
+
                     <div class="text-center add-margin-bottom-2x">
                         <span class="icon fw-stack fw-lg text-center">
                            <i class="fw fw-circle fw-stack-2x"></i>
@@ -200,7 +261,7 @@
                         </span>
                     </div>
                     <div class="text-center add-margin-bottom-3x"><%= user ? user.username : "anon" %></div>
-                                    
+
                     <ul class="nav navbar-nav pages">
                         <div id="ues-pages-col"></div>
                     </ul>
@@ -221,31 +282,14 @@
             <body class="dashboard lang_<%=request.getLocale()%> dark" style="padding-bottom: 0">
                 <div class="page-content-wrapper remove-padding-xs">
          <% } %>
-        <!-- page content -->
-        <!--div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
-            <div class="nano">
-                <div class="nano-content">
-
-                    <div class="page-content">
-                        
-                        <div class="progress hidden">
-                            <div class="indeterminate"></div>
-                        </div>
-                        
-
-                        <div class="ues-components-grid gadgets-grid">
-                            <%=renderEngine.getDashboardContent(pageId || dashboard.landing, isAnonView)%>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div-->
-        <!-- #page-content-wrapper -->
-        <!--div class="page-content-wrapper"-->
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
+                <div class="form-group hide" id="list-user-views">
+                    <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
+                    data-style="btn-default" data-width="100px" style="width: 200px">
+                    </select>
+                </div>
                 <div class="container-fluid body-wrapper">
                 <div class="nano" >
             <% } else { %>
@@ -258,12 +302,11 @@
                                     <div class="indeterminate"></div>
                             </div>
                             <!-- Components grid -->
-                                <div class="ues-components-grid gadgets-grid"></div>
+                                <div class="ues-components-grid gadgets-grid" id = "gadgets-grid"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        <!--/div-->
     </div><!-- /#page-content-wrapper -->
 
 
@@ -279,7 +322,7 @@
                 <h1 class="gadget-title ues-component-title truncate">:::</h1>
                 <div class="gadget-actions ues-component-actions">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" 
+                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
                                 data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
                             <i class="icon fw fw-delete"></i>
                         </button>
@@ -293,29 +336,12 @@
 
     <script id="ues-component-box-list-hbs" type="text/x-handlebars-template">
         {{#each blocks}}
-        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" 
+        <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}"
              data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
             <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
             </div>
         </div>
         {{/each}}
-    </script>
-
-    <!-- Component container -->
-    <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
-        <div class="gadget-wrapper">
-            <div class="ues-component gadget">
-                <div class="ues-component-heading gadget-heading">
-                    <h4 class="ues-component-title gadget-title truncate"></h4>
-
-                    <div class="ues-component-actions gadget-actions">
-
-                    </div>
-                </div>
-
-                <div class="ues-component-body gadget-body"></div>
-            </div>
-        </div>
     </script>
 
     <!-- Component toolbar actions -->
@@ -413,7 +439,7 @@
                             {{/equals}}
                             {{#equals type "LIST"}}
                             <label>{{title}}
-                                <textarea name="{{@key}}" class="form-control" rows="4" 
+                                <textarea name="{{@key}}" class="form-control" rows="4"
                                     placeholder='<%= i18n.localize("placeholder.item.list")%>'>{{value}}</textarea>
                                 <label><%= i18n.localize("enter.your.list.entries.label")%></label>
                             </label>
@@ -434,10 +460,44 @@
         </div>
     </script>
 
+    <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString pageId}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString null allowedViews}}{{/traverseMenu}}
     </script>
 
+    <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+            <h3 class="modal-title" id="deleteModalLabel">
+                {{#if hasComponent}}
+                <%=i18n.localize("dashboard.view.delete.message")%>
+                {{/if}}
+            </h3>
+        </div>
+        {{#if hasComponent}}
+        <div class="pull-right">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-delete"><%=i18n.localize("delete")%></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("cancel")%></button>
+            </div>
+        </div>
+        {{else}}
+        <div class="modal-body">
+            <%=i18n.localize("delete.block.only.message")%>
+            <input type="radio" name="delete-option" value="block" class="hidden" checked>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-delete" data-dismiss="modal"><%=i18n.localize("yes.label")%></button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("no.label")%></button>
+        </div>
+        {{/if}}
+    </script>
+   <!-- View options for a particular page -->
+    <script id="view-option-hbs" type="text/x-handlebars-template">
+        <option value = {{viewId}}>{{viewName}}</option>
+    </script>
+
+    <script src="<%=urlPrefix%>js/async.js"></script>
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
@@ -459,6 +519,15 @@
     <!-- Handlebars JS -->
     <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
 
+    <!--Libraies used in pdf generation feature-->
+    <script src="<%=urlPrefix%>libs/jspdf_1.2.61/jspdf.min.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/rgbcolor.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/StackBlur.js"></script>
+    <script src="<%=urlPrefix%>libs/canvg_v1.4/canvg.js"></script>
+    <script src="<%=urlPrefix%>libs/html2canvas_0.5.0/html2canvas.js"></script>
+
+    <script src="<%=urlPrefix%>modules/constants.js"></script>
+
     <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
 
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues')%>"></script>
@@ -468,6 +537,7 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-gadgets')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-store')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-dashboards')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard-pdf-generation')%>"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>
@@ -589,10 +659,16 @@
         });
 
         //usage : in traverseMenu helper
-        var user = <%= user %>,
-            queryString = <%= stringify(queryString) %>,
-            isAnonView = <%= isAnonView %>,  
-            pageId = <%= stringify(pageId) %>;
+        var user = <%= user %>;
+        var queryString = <%= stringify(queryString) %>;
+        var isAnonView = <%= isAnonView %>;
+        var isPersonalizeEnabled = <%= isPersonalizeEnabled %>;
+        var userRolesList = <%= userRoles %>;
+        var currentView = <%= stringify(viewId) %>;
+        var embeddableView = null;
+        <% if (typeof bgColor !== 'undefined') { %>
+                embeddableView = <%= stringify(vId) %>;
+        <% } %>
     </script>
 </body>
 </html>

@@ -180,6 +180,10 @@
   "cannot.delete.gadget" : "Cannot delete the gadget",
   "cannot.delete.layout" : "Cannot delete the layout",
   "something.wrong" : "Something went wrong. Try again later.",
-  "timeout" : "Timeout Interval"
+  "timeout" : "Timeout Interval",
+  "select.view" : "Select View",
+  "dashboard.pdf.generatePDF" : "Generate PDF",
+  "dashboard.pdf.downloadPDF" : "Download the view",
+  "dashboard.pdf.selectSize" : "Select Size"
 }
 

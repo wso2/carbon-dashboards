@@ -20,6 +20,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
     var carbon = require('carbon');
     var utils = require('/modules/utils.js');
+    var moduleDashboards = require('/modules/dashboards.js');
     var config = require('/configs/designer.json');
     var DEFAULT_STORE_TYPE = 'fs';
     var LEGACY_STORE_TYPE = 'store';
@@ -37,16 +38,57 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         return STORE_EXTENSIONS_LOCATION + storeType + '/index.js';
     };
 
-    getDashboardsFromRegistry = function (start, count) {
-
-        var server = new carbon.server.Server();
-        var registry = new carbon.registry.Registry(server, {
-            system: true
-        });
+    getDashboardsFromRegistry = function (start, count, registry) {
+        if (!registry) {
+            var server = new carbon.server.Server();
+            registry = new carbon.registry.Registry(server, {
+                system: true
+            });
+        }
         return registry.content(registryPath(), {
             start: start,
             count: count
         });
+    };
+
+    /**
+     * Check whether a view is allowed for the current user
+     * according to his/her list of roles
+     * @param viewRoles Allowed roles list for the view
+     * @param userRolesList Particular user`s roles
+     * @returns {boolean} View is allowed or not
+     */
+    var isAllowedView = function (viewRoles, userRolesList) {
+        for (var i = 0; i < userRolesList.length; i++) {
+            var tempUserRole = userRolesList[i];
+            for (var j = 0; j < viewRoles.length; j++) {
+                if (viewRoles[j] === String(tempUserRole)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    /**
+     * Returns the list of allowed views for the current user
+     * @param dashboard Current Dashboard
+     * @param userRoles roles of the current user
+     * @returns {Boolean} true if there is a allowed view
+     */
+    var getUserAllowedViews = function (dashboard, userRoles) {
+        var pages = dashboard.pages;
+        for (var j = 0; j < pages.length; j++) {
+            var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
+            var allowedViews = [];
+            for (var i = 0; i < views.length; i++) {
+                var viewRoles = pages[j].views.content[views[i]].roles;
+                if (isAllowedView(viewRoles, userRoles)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     };
 
     var findDashboards = function (ctx, type, query, start, count) {
@@ -60,7 +102,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var um = new carbon.user.UserManager(server, ctx.tenantId);
         var userRoles = um.getRoleListOfUser(ctx.username);
 
-        var dashboards = getDashboardsFromRegistry(start, count);
+        var dashboards = getDashboardsFromRegistry(start, count, registry);
         var superTenantDashboards = null;
         var superTenantRegistry = null;
 
@@ -70,10 +112,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                 system: true,
                 tenantId: carbon.server.superTenant.tenantId
             });
-            superTenantDashboards = superTenantRegistry.content(registryPath(), {
-                start: start,
-                count: count
-            });
+            superTenantDashboards = getDashboardsFromRegistry(start, count, superTenantRegistry);
             utils.endTenantFlow();
         }
 
@@ -86,8 +125,9 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
 
         if (dashboards) {
             dashboards.forEach(function (dashboard) {
-                var contentDashboardJSON = JSON.parse(registry.content(dashboard));
+                var contentDashboardJSON = moduleDashboards.getConvertedDashboardContent(registry, dashboard);
                 if (dashboard == registryPath(contentDashboardJSON.id)) {
+
                     if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
                         contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
                     }
@@ -98,7 +138,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         if (superTenantDashboards) {
             utils.startTenantFlow(carbon.server.superTenant.tenantId);
             superTenantDashboards.forEach(function (dashboard) {
-                var parsedDashboards = JSON.parse(superTenantRegistry.content(dashboard));
+                var parsedDashboards = moduleDashboards.getConvertedDashboardContent(superTenantRegistry, dashboard);
                 if (parsedDashboards.shareDashboard) {
                     if (!(parsedDashboards.permissions).hasOwnProperty("owners")) {
                         parsedDashboards.permissions.owners = parsedDashboards.permissions.editors;
@@ -115,7 +155,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                         id: dashboard.id,
                         title: dashboard.title,
                         description: dashboard.description,
-                        pagesAvailable: dashboard.pages.length > 0,
+                        pagesAvailable: getUserAllowedViews(dashboard, userRoles),
                         editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         owner: true
@@ -157,7 +197,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         }
         return storeType.concat('://' + url);
     };
-
+    
     /**
      * Find an asset based on the type and asset id
      * @param type

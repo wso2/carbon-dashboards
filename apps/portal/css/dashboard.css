@@ -48,6 +48,7 @@
     padding-bottom: 6px;
     border-bottom: 1px solid #ddd;
 }
+
 .gadget-setting label {
     display: block;
 }
@@ -125,8 +126,8 @@
 }
 
 .ues-hide-gadget.ues-component {
-     display: none;
- }
+    display: none;
+}
 
 .ues-component {
     height: 100%;
@@ -314,9 +315,11 @@ body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
     .dashboard .page-header .navbar-collapse.collapse {
         display: none !important;
     }
+
     .page-header .container-fluid {
         padding: 0 15px;
     }
+
     .navbar-nav > li > a {
         padding: 10px 0;
     }
@@ -602,6 +605,7 @@ ul.sidebar-messages > li:last-child {
     margin: 0;
     overflow: hidden
 }
+
 .progress .determinate {
     position: absolute;
     background-color: inherit;
@@ -611,9 +615,11 @@ ul.sidebar-messages > li:last-child {
     background-color: #26a69a;
     transition: width .3s linear
 }
+
 .progress .indeterminate {
     background-color: #438CAD;
 }
+
 .progress .indeterminate:before {
     content: '';
     position: absolute;
@@ -625,6 +631,7 @@ ul.sidebar-messages > li:last-child {
     -webkit-animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
     animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite
 }
+
 .progress .indeterminate:after {
     content: '';
     position: absolute;
@@ -638,6 +645,31 @@ ul.sidebar-messages > li:last-child {
     -webkit-animation-delay: 1.15s;
     animation-delay: 1.15s
 }
+
+.generate-pdf-panel {
+    background-color: #1e2531 !important;
+}
+
+.input-pdf-width-height {
+    width: 90%;
+    display: inline;
+}
+
+.pagetype-selection-dropdown {
+    display: inline;
+    margin-left: 85px;
+}
+
+.pagetype-div {
+    width: 35%;
+    display: inline;
+}
+
+.dropdown-select-label {
+    width: 35%;
+    display: inline;
+}
+
 @-webkit-keyframes indeterminate {
     0% {
         left: -35%;
@@ -652,6 +684,7 @@ ul.sidebar-messages > li:last-child {
         right: -90%
     }
 }
+
 @keyframes indeterminate {
     0% {
         left: -35%;
@@ -666,6 +699,7 @@ ul.sidebar-messages > li:last-child {
         right: -90%
     }
 }
+
 @-webkit-keyframes indeterminate-short {
     0% {
         left: -200%;
@@ -680,6 +714,7 @@ ul.sidebar-messages > li:last-child {
         right: -8%
     }
 }
+
 @keyframes indeterminate-short {
     0% {
         left: -200%;
@@ -694,6 +729,7 @@ ul.sidebar-messages > li:last-child {
         right: -8%
     }
 }
+
 /* Hiding menu*/
 .nav.pages a[href*='esb-analytics/message'],
 .nav.pages a[href*='esb-analytics/mediator'] {
