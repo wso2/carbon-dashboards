@@ -59,7 +59,7 @@
         }
 
         if (dashboardCountPerUser == 1) {
-            response.sendRedirect(DASHBOARDS + "/" + assetsForUser[0].id);
+            response.sendRedirect(DASHBOARDS + "/" + assetsForUser[0].id + "/");
             return;
         }
 
