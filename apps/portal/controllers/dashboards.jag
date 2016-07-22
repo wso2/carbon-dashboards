@@ -17,6 +17,7 @@
 var pageId;
 var dashboard;
 var fresh;
+var DASHBOARD_VERSION = "1.0.20";
 
 (function () {
     var vars;
@@ -49,6 +50,7 @@ var fresh;
     var dashboards;
     var editor;
     var isCustomize;
+    var isPersonalize;
     var toReset;
     var method = request.getMethod();
 
@@ -112,17 +114,35 @@ var fresh;
 
                     dashboard = originalDashboard;
                 }
+                dashboard.personalizeDashboard = originalDashboard.personalizeDashboard;
             }
 
             isCustomize = request.getParameter('custom');
+            isPersonalize = request.getParameter('personalize');
 
             if (isCustomize) {
+                dashboards.copy(dashboard);
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
+                return;
+            }
+
+            if (isPersonalize === 'true') {
                 for (var i = 0; i < dashboard.pages.length; i++) {
                     dashboard.pages[i].isanon = false;
                 }
 
                 dashboards.copy(dashboard);
-                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '/' + pageId + '?dashboardeditor=true');
+                return;
+            }
+
+            if (isPersonalize === 'true') {
+                for (var i = 0; i < dashboard.pages.length; i++) {
+                    dashboard.pages[i].isanon = false;
+                }
+
+                dashboards.copy(dashboard);
+                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '/' + pageId + '?dashboardeditor=true');
                 return;
             }
 
@@ -148,7 +168,6 @@ var fresh;
                 return;
             }
         }
-
         editor = request.getParameter('editor');
         editor ? include('includes/designer.jag') : include('includes/renderer.jag');
         return;
@@ -159,6 +178,7 @@ var fresh;
         utils = require('/modules/utils.js');
         constants = require('/modules/constants.js');
         dashboard = {
+            version: DASHBOARD_VERSION,
             id: dashboardId,
             title: request.getParameter('title'),
             description: request.getParameter('description'),
@@ -175,7 +195,8 @@ var fresh;
             apiKey: "",
             apiSecret: "",
             theme: request.getParameter('select-theme'),
-            shareDashboard : false
+            shareDashboard : false,
+            personalizeDashboard : false
     };
 
         utils.sandbox(context, function() {

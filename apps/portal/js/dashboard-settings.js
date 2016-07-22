@@ -653,6 +653,18 @@ $(function () {
 
         });
 
+        $('#personalize-dashboard').on('click', function () {
+            dashboard.personalizeDashboard = $(this).is(":checked");
+            if (dashboard.personalizeDashboard) {
+                $('#personalize-info').removeClass("hide");
+                $('#personalize-info').addClass("show");
+            } else {
+                $('#personalize-info').removeClass("show");
+                $('#personalize-info').addClass("hide");
+            }
+
+        });
+
         // Enable Oauth settings
         $('#ues-enable-oauth').on('click', function () {
             dashboard.enableOauth = $(this).is(":checked");

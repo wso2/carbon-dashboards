@@ -121,7 +121,7 @@ wso2.gadgets.controls = (function () {
     var finishedLoadingGadget = function () {
         wso2.gadgets.core.callContainerService(RPC_SERVICE_FINISHEDLOADING_CALL, null, null);
     }
-
+    
     // Register callback function to get responses from the container.
     gadgets.rpc.register(RPC_SERVICE_LOST_FOCUS_CALLBACK, function () {
         for (var i = 0; i < lostFocusCallbacks.length; i++) {
@@ -145,6 +145,6 @@ wso2.gadgets.controls = (function () {
         restoreGadget: restoreGadget,
         addLostFocusListener: addLostFocusListener,
         addButtonListener: addButtonListener,
-		finishedLoadingGadget:finishedLoadingGadget
+        finishedLoadingGadget:finishedLoadingGadget
     };
 })();

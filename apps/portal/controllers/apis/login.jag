@@ -41,7 +41,7 @@ var user;
             }
             // Check whether the dest. URL starts with '/portal'. if not set the url to '/portal'.
             if (!/^\/portal/i.test(dest)) {
-                dest = '/portal';
+                dest = '/portal/';
             }
         }
         var username = request.getParameter("username");

@@ -73,6 +73,10 @@ i18n.init(request, utils.getLocaleResourcePath());
         </div>
     </script>
 
+    <script>
+        var view = "<%= vId %>";
+    </script>
+
     <!-- Jquery/Jquery UI JS -->
     <script src="<%=urlPrefix%>libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
     <script src="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>

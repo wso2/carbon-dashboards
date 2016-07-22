@@ -17,6 +17,7 @@ var log = new Log();
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
 var usr = require('/modules/user.js');
+var constants = require('/modules/constants.js');
 
 /**
  * Get registry reference.
@@ -116,7 +117,7 @@ var getAsset = function (id, originalDashboardOnly) {
     if (user) {
         var originalDBPath = registryPath(id);
         if (registry.exists(originalDBPath)) {
-            originalDB = JSON.parse(registry.content(originalDBPath));
+            originalDB = getConvertedDashboardContent(registry, originalDBPath);
         }
         if (!originalDashboardOnly) {
             var userDBPath = registryUserPath(id, user.username);
@@ -126,8 +127,7 @@ var getAsset = function (id, originalDashboardOnly) {
             }
         }
     }
-    var content = registry.content(path);
-    var contentDashboardJSON = JSON.parse(content);
+    var contentDashboardJSON = getConvertedDashboardContent(registry, path);
     var dashboard = contentDashboardJSON;
     if (dashboard) {
         if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
@@ -190,7 +190,7 @@ var getAssets = function (paging) {
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
     dashboards.forEach(function (dashboard) {
-        dashboardz.push(JSON.parse(registry.content(dashboard)));
+        dashboardz.push(getConvertedDashboardContent(registry, dashboard));
     });
     return dashboardz;
 };
@@ -333,28 +333,36 @@ var findPage = function (dashboard, id) {
 };
 
 /**
+ * Find a particular view within a particular page
+ * @param {Object} page Page
+ * @param {String} viewId View id
+ * @returns {*}
+ */
+var findView = function (page, viewId) {
+    if (page) {
+        var view = page.content;
+        if (view && view[viewId]) {
+            return view[viewId];
+        }
+    }
+};
+
+/**
  * Find a given component in the current page
  * @param {Number} id
+ * @param {Object} view
  * @returns {Object}
  * @private
  */
-var findComponent = function (id, page) {
+var findComponent = function (id, view) {
     var i;
     var length;
-    var area;
+    var conatiner;
     var component;
     var components;
-    var type;
-
-    if ((user.domain != superDomain && user.domain != urlDomain) ||
-        (urlDomain && user.domain == superDomain && urlDomain != superDomain)) {
-        type = 'anon';
-    }
-
-    var content = (type === 'anon' ? page.content.anon : page.content.default)
-    for (area in content) {
-        if (content.hasOwnProperty(area)) {
-            components = content[area];
+    for (conatiner in view) {
+        if (view.hasOwnProperty(conatiner)) {
+            components = view[conatiner];
             length = components.length;
             for (i = 0; i < length; i++) {
                 component = components[i];
@@ -472,321 +480,35 @@ var getBanner = function (dashboardId, username) {
 };
 
 /**
- * Generate Bootstrap layout from JSON layout
- * @param   {String} pageId     ID of the dashboard page
- * @param   {String} isAnon     Is anon mode
- * @returns {String}            Bootstrap layout markup
+ * Get the registry content and convert a previous dashboard json into a new version
+ * @param registry Registry object
+ * @param dashboard Dashboard name
  */
-var getBootstrapLayout = function (pageId, isAnon) {
-    var bitmap;
-    var err = [];
-    var content = '';
-    var unitHeight = 150;
-
-    /**
-     * Process the data object and build the grid.
-     * @param {Array} data Array of data objects
-     * @return {Array} Array of grid elements
-     * @private
-     */
-    function initGrid(data) {
-        var grid = [];
-        data.forEach(function (d) {
-            // if there is no second dimension array, create it
-            if (typeof grid[d.y] === 'undefined') {
-                grid[d.y] = [];
-            }
-            grid[d.y][d.x] = {"id": d.id, "width": d.width, "height": d.height, "banner": d.banner || false};
-        });
-        return grid;
-    };
-
-    /**
-     * Generate bitmap to mark starts and ends of the blocks.
-     * @param {Array} grid Grid array
-     * @param {Number} sx Start x index
-     * @param {Number} sy Start y index
-     * @param {Number} ex End x index
-     * @param {Number} ey End y index
-     * @return {Array} Bitmap to mark the starts and ends of the blocks
-     * @private
-     */
-    function generateBitmap(grid, sx, sy, ex, ey) {
-        var x;
-        var y;
-        var i;
-        var extra = 0;
-        var localMax;
-        bitmap = [];
-        // calculate the total height of the bitmap
-        for (y = sy; y <= ey; y++) {
-            if (typeof grid[y] === 'undefined') {
-                continue;
-            }
-            localMax = 0;
-            for (x = sx; x <= ex; x++) {
-                if (typeof grid[y][x] === 'undefined') {
-                    continue;
+var getConvertedDashboardContent = function (registry, dashboard) {
+    var dashboardJsonVersion = constants.DASHBOARD_VERSION;
+    var dashboardContent = JSON.parse(registry.content(dashboard));
+    if (dashboardContent) {
+        if (!dashboardContent.version || dashboardContent.version !== dashboardJsonVersion) {
+            dashboardContent.version = dashboardJsonVersion;
+            dashboardContent.pages.forEach(function (page) {
+                if (page.layout.content.loggedIn) {
+                    page.views.content.default = page.layout.content.loggedIn;
+                    page.views.content.default.name = constants.DEFAULT_VIEW_NAME;
+                    page.views.content.default.roles = [constants.INTERNAL_EVERYONE_ROLE];
+                    delete page.layout.content.loggedIn;
                 }
-                localMax = Math.max(localMax, grid[y][x].height);
-            }
-            extra = Math.max(--extra, 0) + localMax - 1;
-        }
-        // create a x * y bitmap and initialize into false state
-        for (y = sy; y <= extra + ey; y++) {
-            bitmap[y] = [];
-            for (x = sx; x <= ex; x++) {
-                bitmap[y][x] = false;
-            }
-        }
-        // traverse through the entire grid and mark cells appropriately
-        for (y = sy; y <= ey; y++) {
-            if (typeof grid[y] === 'undefined') {
-                continue;
-            }
-            for (x = sx; x <= ex; x++) {
-                if (typeof grid[y][x] === 'undefined') {
-                    continue;
+                if (page.layout.content.anon) {
+                    page.views.content.anon.name = constants.ANONYMOUS_VIEW_NAME;
+                    page.views.content.anon.roles = [constants.ANONYMOUS_ROLE];
+                    delete page.layout.content.anon;
                 }
-                // this is for multi-row blocks. iterate through all the rows and mark the starts and offsets
-                for (i = y; i < y + grid[y][x].height; i++) {
-                    bitmap[i][x] = true;                    // start of the block
-                    bitmap[i][x + grid[y][x].width] = true; // end of the block
-                }
-            }
+            });
+            var path = registryPath(dashboardContent.id);
+            registry.put(path, {
+                content: JSON.stringify(dashboardContent),
+                mediaType: 'application/json'
+            });
         }
-        return bitmap;
     }
-
-    /**
-     * Prints a single Bootstrap row.
-     * @param {Array} grid Grid array
-     * @param {Number} y Row number
-     * @param {Number} sx Start x index
-     * @param {Number} ex End x index
-     * @param {Number} parentWidth Width of the parent column
-     * @return {String} HTML markup to print a row
-     * @private
-     */
-    function printRow(grid, y, sx, ex, parentWidth) {
-        parentWidth = parentWidth || 12;
-        var x;
-        var width;
-        var el;
-        var classes;
-        var row;
-        var left;
-        var offset = 0;
-        var previousEndPoint = 0;
-        var processedRow = [];
-        var content = '';
-        var height = 0;
-        // calculate new indices and widths depending on the parent's width
-        for (x = sx; x <= ex; x++) {
-            var el = grid[y][x];
-            if (typeof el === 'undefined') {
-                continue;
-            }
-            left = Math.ceil((x - sx) * 12) / (12 - sx);
-            width = Math.ceil((el.width * 12) / parentWidth);
-            processedRow[left] = {id: el.id, height: el.height, width: width, left: left, banner: el.banner};
-        }
-        // draw the bootstrap columns
-        for (x = 0; x <= 11; x++) {
-            if (typeof processedRow[x] === 'undefined') {
-                continue;
-            }
-            height = unitHeight * processedRow[x].height;
-            classes = 'col-md-' + processedRow[x].width + ' ues-component-box';
-            if (processedRow[x].banner) {
-                classes += ' ues-banner-placeholder';
-            }
-            var styles = 'height: ' + height + 'px;';
-            offset = x - previousEndPoint;
-            if (offset > 0) {
-                classes += ' col-md-offset-' + offset;
-            }
-            previousEndPoint += processedRow[x].width + offset;
-            content += '<div id="' + processedRow[x].id + '" class="' + classes + '" ';
-            if (styles) {
-                content += 'style="' + styles + '" ';
-            }
-            content += 'data-height="' + processedRow[x].height + '"></div>';
-        }
-        return '<div class="row">' + content + '</div>';
-    }
-
-    /**
-     * Process the grid and generate the Bootstrap template.
-     * @param {Array} grid Grid array
-     * @param {Number} sx Start x index
-     * @param {Number} sy Start y index
-     * @param {Number} ex End x index
-     * @param {Number} ey End y index
-     * @reuturn {String} HTML markup to generate the grid using Bootstrap
-     * @private
-     */
-    function process(grid, sx, sy, ex, ey, parentWidth) {
-        // initialize optional parameters
-        sx = sx || 0;
-        ex = ex || 11;
-        ey = ey || grid.length - 1;
-        parentWidth = parentWidth || 12;
-        // if the start row not defined, get the first defined row
-        if (!sy) {
-            for (y = 0; y <= ey; y++) {
-                if (typeof grid[y] === 'undefined') {
-                    continue;
-                }
-                sy = y;
-                break;
-            }
-        }
-        var x;
-        var previousHeight;
-        var varyingHeight = false;
-        var y = sy;
-        var rowSpan = 1;
-        var startRow = sy;
-        var endRow = -1;
-        var content = '';
-        bitmap = bitmap || generateBitmap(grid, sx, sy, ex, ey);
-        // traverse through all the rows in the grid and process row-by-row
-        while (y <= ey) {
-            previousHeight = undefined;
-            // calculate the row span (height of the row)
-            for (x = sx; x <= ex; x++) {
-                if (typeof grid[y] === 'undefined' || typeof grid[y][x] === 'undefined') {
-                    continue;
-                }
-                if (typeof previousHeight === 'undefined') {
-                    previousHeight = grid[y][x].height;
-                }
-                if (previousHeight != grid[y][x].height) {
-                    varyingHeight = true;
-                }
-                rowSpan = Math.max(rowSpan, grid[y][x].height);
-                previousHeight = grid[y][x].height;
-            }
-            // decrease the row span by 1 since the current row is being processed.
-            rowSpan--;
-            // if the rowSpan = 0, then we can safety split the above rows from the rest
-            if (rowSpan == 0 || y == ey) {
-                endRow = y;
-                // if the heights of each block is not varying, then the section can be
-                // printed as a single row. otherwise the row block needc to be processed.
-                if (!varyingHeight) {
-                    content += printRow(grid, startRow, sx, ex, parentWidth);
-                } else {
-                    // now we have a block of rows. so try to split it vertically if possible. if not, this kind of 
-                    // layout cannot be rendered using bootstrap.
-                    // split vertically (by columns)
-                    // identify the columns which have aligned margins
-                    var columnStatus = [];
-                    for (x = sx; x <= ex; x++) {
-                        columnStatus[x] = true;
-                        for (var i = startRow; i <= endRow; i++) {
-                            columnStatus[x] = columnStatus[x] && bitmap[i][x];
-                        }
-                    }
-                    var startCol;
-                    var endCol;
-                    var child;
-                    var width;
-                    var row;
-                    var child = '';
-                    // iterate through all the column, identify the start and end columns
-                    // and process the sub-grid recursively
-                    for (x = sx; x <= ex; x++) {
-                        if (columnStatus[x] || x == ex) {
-                            if (typeof startCol === 'undefined') {
-                                startCol = (x == sx) ? x : x - 1;
-                                continue;
-                            }
-                            endCol = (x == ex) ? x : x - 1;
-                            width = endCol - startCol + 1;
-                            var subContent = '';
-                            if (startCol == sx && endCol == ex) {
-                                err.push({
-                                    name: 'UnsupportedLayoutError',
-                                    message: 'Unable to properly render the layout using Bootstrap'
-                                });
-                                // fallback to the failsafe mode
-                                var refinedGrid = [];
-                                var i = 0;
-                                var x2;
-                                var y2;
-                                // read the non-renderable section from the grid and create a renderable grid with refined indices
-                                for (y2 = startRow; y2 <= endRow; y2++) {
-                                    if (typeof grid[y2] === 'undefined') {
-                                        continue;
-                                    }
-                                    for (x2 = sx; x2 <= ex; x2++) {
-                                        var el = grid[y2][x2];
-                                        if (typeof el === 'undefined') {
-                                            continue;
-                                        }
-                                        refinedGrid[i] = [el];
-                                        i += el.height;
-                                    }
-                                }
-                                // print each row from the non-renderable grid
-                                for (y2 = 0; y2 < refinedGrid.length; y2++) {
-                                    if (typeof refinedGrid[y2] === 'undefined') {
-                                        continue;
-                                    }
-                                    for (x2 = 0; x2 <= 11; x2++) {
-                                        if (typeof refinedGrid[y2][x2] === 'undefined') {
-                                            continue;
-                                        }
-                                        subContent += printRow(refinedGrid, y2, 0, 11, 12);
-                                    }
-                                }
-                            } else {
-                                subContent += process(grid, startCol, startRow, endCol, endRow, width);
-                            }
-                            child += '<div class="col-md-' + width + '">' + subContent + '</div>';
-                            startCol = endCol + 1;
-                        }
-                    }
-                    content += '<div class="row">' + child + '</div>';
-                }
-                // skip the rows until a defined row is found
-                for (y = endRow + 1; y <= ey && typeof grid[y] === 'undefined'; y++);
-                rowSpan = 1;
-                startRow = y;
-                varyingHeight = false;
-            } else {
-                // if this is not a row cut, skip to the next row
-                y++;
-            }
-        }
-        return content;
-    };
-    var page;
-    var result = '';
-    dashboard.pages.forEach(function (p) {
-        if (p.id == pageId) {
-            page = p;
-            return;
-        }
-    });
-    if (!page) {
-        response.sendError(404, 'Not found');
-        return;
-    }
-    try {
-        var json = (isAnon ? page.layout.content.anon.blocks : page.layout.content.loggedIn.blocks);
-        content = process(initGrid(json));
-    } catch (e) {
-        err.push(e);
-    }
-    if (err.length > 0) {
-        var errMessage = '';
-        err.forEach(function (e) {
-            errMessage += e.message + '\n';
-        });
-        log.error('Errors found when generating Bootstrap layout: ' + errMessage);
-    }
-    return content;
+    return dashboardContent;
 };

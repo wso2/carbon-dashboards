@@ -92,6 +92,20 @@
      */
     var RPC_SERVICE_FINISHEDLOADING_CALL = 'RPC_SERVICE_FINISHEDLOADING_CALL';
 
+    /**
+     * RPC service name of getting dashboard ID
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETDASHBOARDID_CALL = 'RPC_SERVICE_GETDASHBOARDID_CALL';
+
+    /**
+     * RPC service name of getting dashboard Name
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETDASHBOARDNAME_CALL = 'RPC_SERVICE_GETDASHBOARDNAME_CALL';
+
     var username;
     var encodeHash = false;
 
@@ -280,6 +294,16 @@
     //notifies the completion of gadget loading
     gadgets.rpc.register(RPC_SERVICE_FINISHEDLOADING_CALL, function () {
         ues.dashboards.finishedLoadingGadget();
+    });
+
+    //get id of the dashboard
+    gadgets.rpc.register(RPC_SERVICE_GETDASHBOARDID_CALL, function () {
+        sendGadgetResponse(this.f, RPC_SERVICE_GETDASHBOARDID_CALL, ues.dashboards.getDashboardID());
+    });
+
+    //get name of the dashboard
+    gadgets.rpc.register(RPC_SERVICE_GETDASHBOARDNAME_CALL, function () {
+        sendGadgetResponse(this.f, RPC_SERVICE_GETDASHBOARDNAME_CALL, ues.dashboards.getDashboardName());
     });
 
     // Notify each gadgets when the user clicks on the dashboard.
