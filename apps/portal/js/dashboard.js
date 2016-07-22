@@ -40,7 +40,7 @@ $(function () {
      * @const
      */
     var CONTAINER_PREFIX = 'gadget-';
-    
+
     /**
      * RPC service name for gadget button callback.
      * @const
@@ -60,7 +60,13 @@ $(function () {
     var ANONYMOUS_DASHBOARD_VIEW = 'anon';
 
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
-    
+
+    /**
+     * url for restore dashboard page
+     * @const
+     */
+    var dashboardsApiRestore = ues.utils.tenantPrefix() + 'apis/dashboards/restore';
+
     var page;
     var selectedViewId;
     /**
@@ -174,6 +180,7 @@ $(function () {
                                 removeBlock = false;
                             }
                             saveDashboard();
+                            $("#" + ues.global.page).show();
                             getGridstack().remove_widget(componentBox.parent());
                             updateLayout();
                         });
@@ -274,7 +281,7 @@ $(function () {
             var componentBox = $('#' + component.id);
             // Set the width of the gadget heading
             var buttonUnitWidth = 41;
-            var headingWidth = 'calc(100% - ' + ((buttonCount > 3 ? 1 : buttonCount) * buttonUnitWidth + 25)  + 'px)';
+            var headingWidth = 'calc(100% - ' + ((buttonCount > 3 ? 1 : buttonCount) * buttonUnitWidth + 25) + 'px)';
             componentBox.find('.gadget-title').css('width', headingWidth);
             // Render the gadget template
             componentBox.find('.ues-component-actions').html(componentToolbarHbs(toolbarButtons));
@@ -300,7 +307,7 @@ $(function () {
                 var tempViewName = page.views.content[views[i]].name;
                 var viewOption = {
                     viewName: tempViewName,
-                    viewId : getViewId(tempViewName.trim())
+                    viewId: getViewId(tempViewName.trim())
                 };
                 if (!isMenuRendering) {
                     $('#ds-allowed-view-list').append(viewOptionHbs(viewOption));
@@ -318,7 +325,7 @@ $(function () {
         selectedViewId = getViewId(selectedView);
         ues.global.dbType = selectedViewId;
         destroyPage(page, previousSelectedView);
-        renderViewContent(selectedViewId);
+        isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
     });
 
     /**
@@ -432,7 +439,7 @@ $(function () {
     };
 
     //compile handlebar for the menu list
-    var updateMenuList = function() {
+    var updateMenuList = function () {
         //menulist for big res
         $('#ues-pages').html(menuListHbs({
             menu: ues.global.dashboard.menu,
@@ -440,7 +447,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
-            allowedViews : user ? getUserAllowedPages() : getAnonViewPages()
+            allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
         }));
         //menulist for small res
         $('#ues-pages-col').html(menuListHbs({
@@ -449,7 +456,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
-            allowedViews : user ? getUserAllowedPages() : getAnonViewPages()
+            allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
         }));
     };
 
@@ -490,13 +497,13 @@ $(function () {
         }
         return pids;
     };
-    
+
     /**
      * Render the view content
      * @param viewId View id
      */
-    var renderViewContent = function (viewId) {
-        $("#ds-allowed-view-list > option").each(function() {
+    var renderViewContentInViewMode = function (viewId) {
+        $("#ds-allowed-view-list > option").each(function () {
             if ($(this).val() === viewId) {
                 $('#ds-allowed-view-list').val(viewId);
             }
@@ -504,7 +511,7 @@ $(function () {
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function () {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
-                var component = ues.dashboards.findComponent($(this).attr('id'),page);
+                var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
             });
             $('.grid-stack').gridstack({
@@ -513,6 +520,57 @@ $(function () {
                 verticalMargin: 30,
                 disableResize: true,
                 disableDrag: true
+            });
+        });
+    };
+
+    /**
+     * Render the view content in Edit mode
+     * @param viewId View id
+     */
+    var renderViewContentInEditMode = function (viewId) {
+        $("#ds-allowed-view-list > option").each(function () {
+            if ($(this).val() === viewId) {
+                $('#ds-allowed-view-list').val(viewId);
+            }
+        });
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
+            // render component toolbar for each components
+            $('.ues-component-box .ues-component').each(function () {
+                var component = ues.dashboards.findComponent($(this).attr('id'), page);
+                renderComponentToolbar(component);
+            });
+            $('.grid-stack').gridstack({
+                width: 12,
+                cellHeight: 50,
+                verticalMargin: 30,
+                disableResize: false,
+                disableDrag: false
+            }).on('dragstop', function (e, ui) {
+                updateLayout();
+                $("#" + ues.global.page).show();
+            }).on('resizestart', function (e, ui) {
+                // hide the component content on start resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    container.find('.ues-component-body').hide();
+                }
+            }).on('resizestop', function (e, ui) {
+                // re-render component on stop resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    var gsItem = container.closest('.grid-stack-item');
+                    var node = gsItem.data('_gridstack_node');
+                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                    container.closest('.ues-component-box').attr('data-height', height);
+                    container.find('.ues-component-body').show();
+                    if (container.attr('id')) {
+                        updateComponent(container.attr('id'));
+                    }
+                }
+                updateLayout();
+                $("#" + ues.global.page).show();
             });
         });
     };
@@ -556,62 +614,7 @@ $(function () {
             $('#list-user-views').removeClass("show");
         }
         ues.global.dbType = renderingView;
-        renderViewContent(renderingView);
-        $('.nano').nanoScroller();
-    };
-
-    /**
-     * This is the initial call from the dashboard.js.
-     * @return {null}
-     * @private
-     */
-    var initDashboardEditor = function () {
-        var allPages = ues.global.dashboard.pages;
-        if (allPages.length > 0) {
-            page = (ues.global.page ? ues.global.page : allPages[0]);
-        }
-        for (var i = 0; i < allPages.length; i++) {
-            if (ues.global.page == allPages[i].id) {
-                page = allPages[i];
-            }
-        }
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
-            // render component toolbar for each components
-            $('.ues-component-box .ues-component').each(function () {
-                var component = ues.dashboards.findComponent($(this).attr('id'),page);
-                renderComponentToolbar(component);
-            });
-            $('.grid-stack').gridstack({
-                width: 12,
-                cellHeight: 50,
-                verticalMargin: 30,
-                disableResize: false,
-                disableDrag: false,
-            }).on('dragstop', function (e, ui) {
-                updateLayout();
-            }).on('resizestart', function (e, ui) {
-                // hide the component content on start resizing the component
-                var container = $(ui.element).find('.ues-component');
-                if (container) {
-                    container.find('.ues-component-body').hide();
-                }
-            }).on('resizestop', function (e, ui) {
-                // re-render component on stop resizing the component
-                var container = $(ui.element).find('.ues-component');
-                if (container) {
-                    var gsItem = container.closest('.grid-stack-item');
-                    var node = gsItem.data('_gridstack_node');
-                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
-                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-                    container.closest('.ues-component-box').attr('data-height', height);
-                    container.find('.ues-component-body').show();
-                    if (container.attr('id')) {
-                        updateComponent(container.attr('id'));
-                    }
-                }
-                updateLayout();
-            });
-        });
+        isPersonalizeEnabled ? renderViewContentInEditMode(renderingView) : renderViewContentInViewMode(renderingView);
         $('.nano').nanoScroller();
     };
 
@@ -643,13 +646,11 @@ $(function () {
                 serializedGrid.push(res[i]);
             }
         }
-
-        var json = {blocks: serializedGrid};
+        pageType = getViewId(getSelectedView());
         var id;
         var i;
-        var length;
         // find the current page index
-        for (i = 0,length = ues.global.dashboard.pages.length; i < length; i++) {
+        for (i = 0; i < ues.global.dashboard.pages.length; i++) {
             if (ues.global.dashboard.pages[i].id === page.id) {
                 id = i;
             }
@@ -657,11 +658,8 @@ $(function () {
         if (typeof id === 'undefined') {
             throw 'Specified page : ' + page.id + ' cannot be found';
         }
-        if (pageType === ANONYMOUS_DASHBOARD_VIEW) {
-            ues.global.dashboard.pages[id].layout.content.anon = json;
-        } else {
-            ues.global.dashboard.pages[id].layout.content.loggedIn = json;
-        }
+        ues.global.dashboard.pages[id].views.content[pageType].blocks = serializedGrid;
+        ues.global.dashboard.pages[id].edited = true;
         saveDashboard();
     };
 
@@ -809,8 +807,72 @@ $(function () {
         return $('.grid-stack').data('gridstack');
     };
 
-    isPersonalizeEnabled? initDashboardEditor() : initDashboard();
+    /**
+     * restore the selected edited page using original page
+     * @param pageID selected page
+     */
+    var restoreDashboard = function (pageID) {
+        var method = 'PUT';
+        var url = dashboardsApiRestore + '/' + dashboard.id + '/' + pageID;
+        var isRedirect = false;
+        $.ajax({
+            url: url,
+            method: method,
+            data: JSON.stringify(dashboard),
+            async: false,
+            contentType: 'application/json'
+        }).success(function (data) {
+            dashboard = data;
+            ues.global.dashboard = data;
+            saveDashboard();
+            $("#" + pageID).hide();
+            refreshCurrentView();
+        });
+    };
+
+    /**
+     * re-render the current view of the page
+     */
+    var refreshCurrentView = function () {
+        var selectedView = $('#ds-allowed-view-list option:selected').text().trim();
+        selectedViewId = getViewId(selectedView);
+        ues.global.dbType = selectedViewId;
+        destroyPage(page, selectedViewId);
+        isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
+    };
+
+    /**
+     * Return the current selected view name
+     * @returns {String} View name
+     */
+    var getSelectedView = function () {
+        return $('#ds-allowed-view-list :selected').text().trim();
+    };
+
+    /**
+     * register click event for refresh buttons
+     */
+    var registerRefreshBtnHandler = function () {
+        $("li > button[class='refreshBtn']").click(function () {
+            restoreDashboard(this.id);
+        });
+    };
+
+    /**
+     * update refresh button visibility according to edit attribute
+     */
+    var updateRefreshBtnVisibility = function () {
+        for (var page = 0; page < ues.global.dashboard.pages.length; page++) {
+            if (ues.global.dashboard.pages[page].edited === true && isPersonalizeEnabled) {
+                $("#" + ues.global.dashboard.pages[page].id).show();
+            }
+        }
+    };
+
+    initDashboard();
     updateMenuList();
+    updateRefreshBtnVisibility();
+    registerRefreshBtnHandler();
     initComponentToolbar();
 });
 

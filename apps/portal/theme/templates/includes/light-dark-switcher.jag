@@ -16,10 +16,10 @@
  */
 %>
 <div class="light-dark-switcher">
-    <label>Light</label>
+    <label class="light-dark-switcher-label">Light</label>
     <label class="switch">
         <input type="checkbox" data-toggle="theme" checked="checked">
         <span class="helper"></span>
     </label>
-    <label>Dark</label>
+    <label class="light-dark-switcher-label">Dark</label>
 </div>

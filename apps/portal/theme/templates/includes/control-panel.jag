@@ -17,6 +17,7 @@
 %>
 
 <% if (user) { %>
+    <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
     <% if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) { %>
         <% if (dashboard.shareDashboard && user.domain != superDomain) { %>
             <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy" title="<%= i18n.localize("view.button")%>"></i>Dashboard Portal</a></li>
