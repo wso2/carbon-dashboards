@@ -88,80 +88,122 @@
                 </div>
                 <div class="wiz-content tab-content">
                     <div class="tab-pane active" id="tab1">
-                        <div id="tab1-validation-errors" class="text-danger bg-danger"></div>
-                        <form id="provider-list-form">
-                              <label for="datasource"><%= i18n.localize("select.provider")%> <span class="required">*</span></label>
-                              <div id = "provider-list">
+                        
+                        <div class="alert alert-danger" role="alert" id="tab1-validation-errors" style="display: none;">
+                            <i class="icon fw fw-error"></i>
+                            <span class="text"></span>
+                            <button type="button" class="close hidden" aria-label="close" data-dismiss="alert">
+                                <span aria-hidden="true">
+                                    <i class="fw fw-cancel"></i>
+                                </span>
+                            </button>
+                        </div>
+                        
+                        <form id="provider-list-form" class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">  
+                                    <label for="datasource"><%= i18n.localize("select.provider")%> <span class="required">*</span></label>
+                                    <div id="provider-list"></div>
+                                </div>
                             </div>
                         </form>
+                            
                     </div>
                     <div class="tab-pane" id="tab2">
-                        <div id="tab2-validation-errors" class="text-danger bg-danger"></div>
-                        <form id="provider-config-form">
-                            <fieldset>
-                                <div class="form-group">
-                                  <div id = "provider-config"></div>
-                                </div>
-                            </fieldset>
-                        </form>
-                        <button type="button" id="test-connection" class="btn btn-primary btn-bordered pull-left btn-lg check_url_valid">
-                            <%= i18n.localize("test.connection")%>
-                        </button>
-                        <div class="col-md-3">
-                            <h4>
-                                <span class="label label-success url_validate_label" id="test-verification-label" style="display: none;">
-                                    <i class="fw fw-check"></i><%= i18n.localize("valid.label")%>
+                        
+                        <div class="alert alert-danger" role="alert" id="tab2-validation-errors" style="display: none;">
+                            <i class="icon fw fw-error"></i>
+                            <span class="text"></span>
+                            <button type="button" class="close hidden" aria-label="close" data-dismiss="alert">
+                                <span aria-hidden="true">
+                                    <i class="fw fw-cancel"></i>
                                 </span>
-                            </h4>
+                            </button>
                         </div>
-                        <br><br><br>
-                        <div class="form-group">
-                            <button type="button" id="show-data" class="btn btn-primary btn-bordered pull-left">
-                                <span class="fw-stack fw-lg">
+                        
+                        <form id="provider-config-form" class="form-horizontal">
+                            <div id="provider-config"></div>
+                        </form>
+                        
+                        <div>
+                            <button type="button" id="show-data" class="btn btn-default btn-bordered">
+                                <span class="icon fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-database fw-stack-1x"></i>
-                                </span><%= i18n.localize("show.data")%>
+                                </span> <%= i18n.localize("show.data")%>
                             </button>
-                            <div class="col-md-9"><br>
-                                <label id="sample-data-message" class="label-important" hidden>
-                                    <%= i18n.localize("only.sample.data")%></label>
-                            </div>
-                            <br><br>
+
+                            <button type="button" id="test-connection" class="btn btn-default btn-bordered check_url_valid">
+                                <%= i18n.localize("test.connection")%>
+                            </button>
+                                
+                            <span class="label label-success label-test-connection url_validate_label" id="test-verification-label">
+                                <span class="icon fw-stack">
+                                    <i class="fw fw-check fw-stack-1x"></i>
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i> 
+                                </span> <%= i18n.localize("valid.label")%>
+                            </span>
                         </div>
-                        <div class="form-group">
-                            <div id="data-preview"></div>
+                        
+                        <div class="alert alert-info alert-sample-message" role="alert" id="sample-data-message">
+                            <i class="icon fw fw-warning"></i><strong>Info!</strong>
+                            <%= i18n.localize("only.sample.data")%>
+                            <button type="button" class="close hidden" aria-label="close" data-dismiss="alert">
+                                <span aria-hidden="true">
+                                    <i class="fw fw-cancel"></i>
+                                </span>
+                            </button>
                         </div>
+                            
+                        <div id="data-preview"></div>
+                            
                     </div>
+                                
                     <div class="tab-pane" id="tab3">
-                        <div id="tab3-validation-errors" class="text-danger bg-danger"></div>
-                        <div class="form-group">
-                        <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
-                        <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" />
-                           <label id="gadget-name-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
+                        
+                        <div class="alert alert-danger" role="alert" id="tab3-validation-errors" style="display: none;">
+                            <i class="icon fw fw-error"></i>
+                            <span class="text"></span>
+                            <button type="button" class="close hidden" aria-label="close" data-dismiss="alert">
+                                <span aria-hidden="true">
+                                    <i class="fw fw-cancel"></i>
+                                </span>
+                            </button>
                         </div>
-                        <div class="form-group">
-                        <div id="chart-list"></div></div>
-                        <form id="chart-config-form">
+                        
+                        <form id="chart-config-form" class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
+                                    <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" />
+                                    <label id="gadget-name-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
+                                </div>
+                            </div>
 
                             <div class="form-group">
-                              <div id = "chart-config"></div>
+                                <div id="chart-list"></div>
                             </div>
-
                         </form>
+                                
+                        <form id="chart-config-form" class="form-horizontal">
+                            <div id="chart-config"></div>
+                        </form>
+                                
                         <div class="form-group">
-                            <button type="button" id="preview" class="btn btn-primary btn-bordered pull-left">
-                                <span class="fw-stack fw-lg">
+                            <button type="button" id="preview" class="btn btn-default btn-bordered">
+                                <span class="icon fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-view fw-stack-1x"></i>
-                                </span><%= i18n.localize("preview")%>
+                                </span> <%= i18n.localize("preview")%>
                             </button>
                             <br>
                         </div>
-                        <br><br>
-                        <p></p>
+
                         <input type="button" id="add.to.gadget.store" style="display:none;"
-                        value="<%= i18n.localize("add.to.gadget.store")%>"/>
-                        <div id="preview-pane"></div>
+                            value="<%= i18n.localize("add.to.gadget.store")%>"/>
+                            
+                        <div id="preview-pane" style="max-width: 500px;"></div>
+                            
                     </div>
                 </div>
             </div>
@@ -193,32 +235,50 @@
 </script>
 <script id="ui-config-hbs" type="text/x-handlebars-template">
     {{#each .}}
-    <div class="form-group">
-       {{#equalsIgnoreCase fieldType "string"}}
-          <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label><input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
-          placeholder="{{placeholderText}}" {{#if isRequired}}required="true"{{/if}}/>
-          {{#if isRequired}} <label id="{{fieldName}}-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>{{/if}}
-       {{/equalsIgnoreCase}}
-       {{#equalsIgnoreCase fieldType "checkbox"}}
-          <label><input type="checkbox" name="{{fieldName}}"/>{{fieldLabel}}</label>
-       {{/equalsIgnoreCase}}
-       {{#equalsIgnoreCase fieldType "password"}}
-          <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label><input type="password" autocomplete="off" class="form-control" name="{{fieldName}}"
-          {{#if isRequired}}required="true"{{/if}}/>
-          {{#if isRequired}} <label id="{{fieldName}}-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>{{/if}}
-       {{/equalsIgnoreCase}}
-       {{#equalsIgnoreCase fieldType "dropdown"}}
-          <label>{{fieldLabel}}</label>
-          <select name="{{fieldName}}" class="form-control">
-           {{#each valueSet}}
-             <option value="{{this}}">{{this}}</option>
-           {{/each}}
-        </select>
-       {{/equalsIgnoreCase}}
-       {{#equalsIgnoreCase fieldType "advanced"}}
-            {{> (lookup . 'childPartial')}}
-       {{/equalsIgnoreCase}}
-       </div>
+        <div class="form-group">
+           {{#equalsIgnoreCase fieldType "string"}}
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label>
+                  <input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
+                        placeholder="{{placeholderText}}" {{#if isRequired}}required="true"{{/if}}/>
+              </div>
+              {{#if isRequired}}
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <label id="{{fieldName}}-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
+                  </div>
+              {{/if}}
+           {{/equalsIgnoreCase}}
+           {{#equalsIgnoreCase fieldType "checkbox"}}
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <label><input type="checkbox" name="{{fieldName}}"/>{{fieldLabel}}</label>
+              </div>
+           {{/equalsIgnoreCase}}
+           {{#equalsIgnoreCase fieldType "password"}}
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label>
+                  <input type="password" autocomplete="off" class="form-control" name="{{fieldName}}"
+                        {{#if isRequired}}required="true"{{/if}}/>
+              </div>
+              {{#if isRequired}}
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <label id="{{fieldName}}-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
+              </div>
+              {{/if}}
+           {{/equalsIgnoreCase}}
+           {{#equalsIgnoreCase fieldType "dropdown"}}
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <label>{{fieldLabel}}</label>
+                    <select name="{{fieldName}}" class="form-control">
+                        {{#each valueSet}}
+                            <option value="{{this}}">{{this}}</option>
+                        {{/each}}
+                    </select>
+               </div>
+           {{/equalsIgnoreCase}}
+           {{#equalsIgnoreCase fieldType "advanced"}}
+                {{> (lookup . 'childPartial')}}
+           {{/equalsIgnoreCase}}
+        </div>
     {{/each}}
 </script>
 
@@ -246,26 +306,32 @@
 </script>
 
 <script id="chart-list-hbs" type="text/x-handlebars-template">
-     <label><%= i18n.localize("select.chart")%></label>
-      <select id="chart-type" class="form-control">
-      {{#each .}}
-          <option value="{{this.id}}">{{this.name}}</option>
-        {{/each}}
-      </select>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">  
+        <label><%= i18n.localize("select.chart")%></label>
+        <select id="chart-type" class="form-control">
+            {{#each .}}
+                <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+        </select>
+    </div>
 </script>
 
 <script id="preview-hbs" type="text/x-handlebars-template">
-     <iframe src= "theme/templates/preview.jag" width="100%" height="80%"  scrolling="no" ></iframe>
+     <iframe src= "theme/templates/preview.jag" width="100%" height="500" scrolling="no" ></iframe>
 </script>
 
 <script id="success-hbs" type="text/x-handlebars-template">
-    <br><br><br>
-    <div class="alert alert-success" role="alert">
+    <div class="alert alert-success add-margin-top-5x" role="alert">
         <i class="icon fw fw-success"></i>
         <strong><%= i18n.localize("success.label")%>!!</strong>
         <%= i18n.localize("gadget.add.success")%>
     </div>
-    <i><ins><a href="/portal"><font color="blue">Go to Portal</font></a></ins></i>
+    <a href="/portal" class="btn btn-deafult btn-bordered">
+        <span class="fw-stack">
+            <i class="fw fw-left-arrow fw-stack-1x"></i>
+            <i class="fw fw-circle-outline fw-stack-2x"></i>
+        </span> Go to Portal
+    </a>
 </script>
 
 <!-- Jquery JS -->
