@@ -120,11 +120,14 @@ $('#test-connection').click(function () {
         contentType: "application/json",
         async: false,
         success: function () {
+            $('#tab2-validation-errors > .text').empty();
+            $('#tab2-validation-errors').hide();
             $('#test-verification-label').show();
         },
         error: function (xhr, message, errorObj) {
             $('#tab2-validation-errors > .text').html('<strong>Error!</strong> in database configuration');
             $('#tab2-validation-errors').show();
+            $('#test-verification-label').hide();
         }
     })
 });
