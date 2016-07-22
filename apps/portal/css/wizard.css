@@ -1,3 +1,7 @@
 .wizard {
 	margin-top: 25px;
 }
+
+.btn > .icon {
+    font-size: 10px;
+}
