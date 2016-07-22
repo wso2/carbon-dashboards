@@ -17,6 +17,7 @@
 %>
 
 <% if (user) { %>
+    <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
     <% if (!isAnonView && (urlDomain == user.domain || (user.domain == superDomain && (!urlDomain || urlDomain == superDomain)))) { %>
         <% if (dashboard.shareDashboard && user.domain != superDomain) { %>
             <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy" title="<%= i18n.localize("view.button")%>"></i>Dashboard Portal</a></li>
@@ -24,12 +25,8 @@
             <% if (user.isEditor || user.isOwner) { %>
                 <li><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("edit.button")%>"></i>Dashboard Settings</a></li>
             <% } else if(dashboard.personalizeDashboard) { %>
-                    <% if(isPersonalizeEnabled === 'true'){ %>
-                            <li><a href="<%=dbRoot%><%=pageId%>?personalize=false"><i class="icon fw fw-settings" title="<%= i18n.localize("personalize")%>"></i>Edit Dashboard</a></li>
-                       <% } else { %>
-                            <li><a href="<%=dbRoot%><%=pageId%>?personalize=true"><i class="icon fw fw-settings" title="<%= i18n.localize("personalize")%>"></i>Edit Dashboard</a></li>
-                           <% }%>
-                <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
+                    <% include(utils.getThemeTemplatePath('templates/includes/edit-view-switcher.jag')); %>
+                    <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy" title="<%= i18n.localize("personalize")%>"></i>Customize Dashboard</a></li>
             <% } else {%>
                     <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy" title="<%= i18n.localize("view.button")%>"></i>Dashboard Portal</a></li>
             <% } %>

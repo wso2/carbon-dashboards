@@ -16,10 +16,14 @@
  */
 %>
 <div class="light-dark-switcher">
-    <label class="light-dark-switcher-label">Light</label>
+    <label class="light-dark-switcher-label">View</label>
     <label class="switch">
-        <input type="checkbox" data-toggle="theme" checked="checked">
+		<% if(isPersonalizeEnabled === 'true'){ %>
+        <input type="checkbox" id="edit-view-toggler" checked="checked">
+		 <% } else { %>
+		<input type="checkbox" id="edit-view-toggler" >
+		<% } %>
         <span class="helper"></span>
     </label>
-    <label class="light-dark-switcher-label">Dark</label>
-</div>
+    <label class="light-dark-switcher-label">Edit</label>
+</div>	
