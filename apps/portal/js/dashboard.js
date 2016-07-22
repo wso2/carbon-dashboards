@@ -84,7 +84,9 @@ $(function () {
      */
     var initComponentToolbar = function () {
         var viewer = $('.ues-components-grid');
-
+        if (isPersonalizeEnabled) {
+            $(".gadget-heading").css("cursor","move");
+        }
         // gadget title bar custom button function handler
         viewer.on('click', '.ues-custom-action', function (e) {
             var fid = $(this).closest('.ues-component-box').find('iframe').attr('id');
@@ -324,8 +326,13 @@ $(function () {
         var previousSelectedView = selectedViewId || ues.global.dbType;
         selectedViewId = getViewId(selectedView);
         ues.global.dbType = selectedViewId;
-        destroyPage(page, previousSelectedView);
-        isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
+        destroyPage(page, previousSelectedView, function (err) {
+            if (err) {
+                throw err;
+            }
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            initComponentToolbar();
+        });
     });
 
     /**
@@ -548,7 +555,7 @@ $(function () {
                 disableDrag: false
             }).on('dragstop', function (e, ui) {
                 updateLayout();
-                $("#" + ues.global.page).show();
+                updateRefreshBtn(ues.global.page);
             }).on('resizestart', function (e, ui) {
                 // hide the component content on start resizing the component
                 var container = $(ui.element).find('.ues-component');
@@ -570,7 +577,7 @@ $(function () {
                     }
                 }
                 updateLayout();
-                $("#" + ues.global.page).show();
+                updateRefreshBtn(ues.global.page);
             });
         });
     };
@@ -646,7 +653,7 @@ $(function () {
                 serializedGrid.push(res[i]);
             }
         }
-        pageType = getViewId(getSelectedView());
+        pageType = getViewId(getSelectedViewName());
         var id;
         var i;
         // find the current page index
@@ -719,7 +726,7 @@ $(function () {
         var area;
         var component;
         var components;
-        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+        pageType = ues.global.dbType ? ues.global.dbType : DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
         for (area in content) {
             if (content.hasOwnProperty(area)) {
@@ -837,15 +844,20 @@ $(function () {
         var selectedView = $('#ds-allowed-view-list option:selected').text().trim();
         selectedViewId = getViewId(selectedView);
         ues.global.dbType = selectedViewId;
-        destroyPage(page, selectedViewId);
-        isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
+        destroyPage(page, selectedViewId, function (err) {
+            if (err) {
+                throw err;
+            }
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            initComponentToolbar();
+        });
     };
 
     /**
      * Return the current selected view name
      * @returns {String} View name
      */
-    var getSelectedView = function () {
+    var getSelectedViewName = function () {
         return $('#ds-allowed-view-list :selected').text().trim();
     };
 
@@ -853,21 +865,29 @@ $(function () {
      * register click event for refresh buttons
      */
     var registerRefreshBtnHandler = function () {
-        $("li > button[class='refreshBtn']").click(function () {
+        $("li > span[class='refreshBtn']").click(function () {
             restoreDashboard(this.id);
         });
     };
 
     /**
-     * update refresh button visibility according to edit attribute
+     * update all refresh button visibility according to edit attribute
      */
     var updateRefreshBtnVisibility = function () {
         for (var page = 0; page < ues.global.dashboard.pages.length; page++) {
             if (ues.global.dashboard.pages[page].edited === true && isPersonalizeEnabled) {
-                $("#" + ues.global.dashboard.pages[page].id).show();
+                updateRefreshBtn(ues.global.dashboard.pages[page].id);
             }
         }
     };
+
+    /**
+     * update refresh button with given ID
+     */
+    var updateRefreshBtn = function (pageID) {
+        $("#" + pageID).css('display','inline');
+        $("#" + pageID).show();
+    }
 
     initDashboard();
     updateMenuList();
