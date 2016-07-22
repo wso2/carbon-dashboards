@@ -885,8 +885,9 @@
                             <div class="form-group">
                                  <div class="col-sm-12">
                                     <label for="input-name" class="control-label"><%= i18n.localize("timeout") %></label>
-                                    <input id="timeoutInterval" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                                    <input id="timeoutInterval" class="form-control input-timeout" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                                     name = "timeoutInterval" type="text"  value={{#if settings.timeoutInterval}}{{settings.timeoutInterval}}{{else}}60000{{/if}} />
+                                    <label><%= i18n.localize("milli.seconds") %></label>
                                 </div>
                             </div>
                          </form>
