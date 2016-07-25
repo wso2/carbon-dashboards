@@ -866,7 +866,15 @@ $(function () {
      */
     var registerRefreshBtnHandler = function () {
         $("li > span[class='refreshBtn']").click(function () {
-            restoreDashboard(this.id);
+            var confirmRevertBlockHbs = Handlebars.compile($('#ds-modal-confirm-revert-block-hbs').html());
+            var pageID = $(this)[0].id;
+            showHtmlModal(confirmRevertBlockHbs(), function () {
+                var designerModal = $('#dashboardViewModal');
+                designerModal.find('#btn-revert').on('click', function () {
+                    restoreDashboard(pageID);
+                    designerModal.modal('hide');
+                });
+            });
         });
     };
 
