@@ -107,9 +107,6 @@
                     response.sendRedirect(relayState);
                     return;
                 } else {
-                    var saml2Cookie = require('/modules/saml-to-cookie.js');
-                    var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
-                    session.put('authToken', authToken);
                     response.sendRedirect(relayState);
                 }
             }
