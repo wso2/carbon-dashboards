@@ -19,6 +19,7 @@
     var i18n = require("i18n");
     var utils = require('/modules/utils.js');
     i18n.init(request, utils.getLocaleResourcePath());
+    var isEditor = false;
 
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
@@ -39,6 +40,7 @@
         var tempRoles = usr.getUserRoles();
         if (isPreview) {
             userRoles.push(constants.ANONYMOUS_ROLE);
+            isEditor = utils.allowed(user.roles, dashboard.permissions.owners) || utils.allowed(user.roles, dashboard.permissions.editors);
         }
         for (var i = 0; i < tempRoles.length; i++) {
             userRoles.push(tempRoles[i]);
@@ -674,6 +676,7 @@
         var userRolesList = <%= userRoles %>;
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;
+        var isEditor = <%= isEditor%>;
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
         <% } %>

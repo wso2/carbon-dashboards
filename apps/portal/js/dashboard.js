@@ -66,7 +66,11 @@ $(function () {
      * @const
      */
     var dashboardsApiRestore = ues.utils.tenantPrefix() + 'apis/dashboards/restore';
-
+    /**
+     * Role for all logged in users
+     * @const
+     */
+    var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
     var page;
     var selectedViewId;
     /**
@@ -76,6 +80,7 @@ $(function () {
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
     var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
     var viewOptionHbs = Handlebars.compile($("#view-option-hbs").html());
+    var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
 
     /**
      * Initializes the component toolbar.
@@ -178,15 +183,14 @@ $(function () {
 
                     if (id) {
                         removeComponent(findComponent(id), function (err) {
-                            if (!err) {
-                                removeBlock = false;
+                            if (err) {
+                                throw err;
                             }
                             saveDashboard();
                             $("#" + ues.global.page).show();
-                            getGridstack().remove_widget(componentBox.parent());
-                            updateLayout();
                         });
                     }
+                    componentBox.html(componentBoxContentHbs());
                     designerModal.modal('hide');
                 });
             });
@@ -301,7 +305,7 @@ $(function () {
             $('#ds-allowed-view-list').empty();
         }
         var allowedViews = [];
-        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             var viewRoles = page.views.content[views[i]].roles;
             if (isAllowedView(viewRoles)) {
@@ -381,13 +385,16 @@ $(function () {
         var length = components.length;
         var tasks = [];
         for (i = 0; i < length; i++) {
-            tasks.push((function (component) {
-                return function (done) {
-                    destroyComponent(component, function (err) {
-                        done(err);
-                    });
-                };
-            }(components[i])));
+            if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
+                tasks.push((function (component) {
+                    return function (done) {
+                        destroyComponent(component, function (err) {
+                            done(err);
+                        });
+
+                    };
+                }(components[i])));
+            }
         }
         async.parallel(tasks, function (err, results) {
             done(err);
@@ -416,7 +423,7 @@ $(function () {
      * @returns {String} View id
      */
     var getViewId = function (viewName) {
-        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             if (page.views.content[views[i]].name) {
                 if (page.views.content[views[i]].name === viewName) {
@@ -437,7 +444,7 @@ $(function () {
         for (var i = 0; i < userRolesList.length; i++) {
             var tempUserRole = userRolesList[i];
             for (var j = 0; j < viewRoles.length; j++) {
-                if (viewRoles[j] === tempUserRole) {
+                if (isEditor || viewRoles[j] === tempUserRole) {
                     return true;
                 }
             }
@@ -493,7 +500,7 @@ $(function () {
         var pids = [];
 
         for (var j = 0; j < pages.length; j++) {
-            var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
+            var views = Object.keys(pages[j].views.content);
             for (var i = 0; i < views.length; i++) {
                 var viewRoles = pages[j].views.content[views[i]].roles;
                 if (viewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
@@ -625,6 +632,15 @@ $(function () {
         $('.nano').nanoScroller();
     };
 
+    /**
+     * Check whether the container has any components
+     * @param {Object} container
+     * @returns {boolean}
+     * @private
+     */
+    var hasComponents = function (container) {
+        return (container.find('.ues-component .ues-component-body div').length > 0);
+    };
     /**
      * Update the layout after modification.
      * @return {null}

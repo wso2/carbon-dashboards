@@ -515,13 +515,15 @@ $(function () {
         var length = components.length;
         var tasks = [];
         for (i = 0; i < length; i++) {
-            tasks.push((function (component) {
-                return function (done) {
-                    destroyComponent(component, function (err) {
-                        done(err);
-                    });
-                };
-            }(components[i])));
+            if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
+                tasks.push((function (component) {
+                    return function (done) {
+                            destroyComponent(component, function (err) {
+                                done(err);
+                            });
+                    };
+                }(components[i])));
+            }
         }
         async.parallel(tasks, function (err, results) {
             done(err);
@@ -1001,20 +1003,22 @@ $(function () {
                         2. If it is a landing page, and if there are more than 1 page, check whether there is atleast one
                             view for internal/everyone role
                      */
-                    if (page.id !== dashboard.landing) {
-                        var landingPage = getPage(dashboard.landing);
-                        if (!isRoleExist(landingPage, ANONYMOUS_ROLE)) {
-                            showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
-                                i18n_data["landing.page.minimal"] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
-                            return;
-                        }
-                    } else {
-                        if (dashboard.pages.length > 1) {
-                            if (!isRoleExist(page, INTERNAL_EVERYONE_ROLE, viewId)) {
+                    if (dashboard.landing) {
+                        if (page.id !== dashboard.landing) {
+                            var landingPage = getPage(dashboard.landing);
+                            if (!isRoleExist(landingPage, ANONYMOUS_ROLE)) {
                                 showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
-                                    i18n_data["landing.page.minimal"] + " " + INTERNAL_EVERYONE_ROLE + " " +
-                                    i18n_data['role']);
+                                    i18n_data["landing.page.minimal"] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
                                 return;
+                            }
+                        } else {
+                            if (dashboard.pages.length > 1) {
+                                if (!isRoleExist(page, INTERNAL_EVERYONE_ROLE, viewId)) {
+                                    showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
+                                        i18n_data["landing.page.minimal"] + " " + INTERNAL_EVERYONE_ROLE + " " +
+                                        i18n_data['role']);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -1936,6 +1940,10 @@ $(function () {
         var views;
         var tempViewRoles;
         var k;
+
+        if (pages.length === 1) {
+            return true;
+        }
         for (var i = 0; i < pages.length; i++) {
             if (pages[i].id !== page.id) {
                 if (isRoleExist(pages[i], ANONYMOUS_ROLE)) {
@@ -2095,6 +2103,8 @@ $(function () {
                         dashboard.menu.unshift(menuItem);
                         spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
                     }
+                } else {
+                    dashboard.landing = dashboard.landing || null;
                 }
             },
             fluidLayout: function () {
@@ -2892,10 +2902,12 @@ $(function () {
             drop: handleDropEvent
         });
 
-        //Disable draggable state for landing page
-        $("ul.menu-customize li:nth-child(3)").draggable('disable');
-        //Disable menu hide option for landing page
-        $("ul.menu-customize li:nth-child(3) .hide-menu-item:first").hide();
+        if (dashboard.landing) {
+            //Disable draggable state for landing page
+            $("ul.menu-customize li:nth-child(3)").draggable('disable');
+            //Disable menu hide option for landing page
+            $("ul.menu-customize li:nth-child(3) .hide-menu-item:first").hide();
+        }
 
         $('#ds-menu-hide-all').change(function () {
             if ($(this).is(":checked")) {
@@ -2986,7 +2998,7 @@ $(function () {
                             dashboard.isanon = isAnonDashboard();
                             saveDashboard();
                             visibleViews = [];
-                            renderPage(dashboard.landing);
+                            renderPage(dashboard.pages[0].id);
                         });
                         return true;
                     } else {
@@ -3442,7 +3454,7 @@ $(function () {
                     default: {}
                 }
             };
-            dashboard.landing = dashboard.landing || id;
+            dashboard.landing = dashboard.landing || null;
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
 
@@ -3498,10 +3510,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            renderPage(pid, function(err) {
-                var removingComponents = getRestrictedGadgetsToBeViewed();
-                removeGadgets(removingComponents, removingComponents.length);
-            });
+            renderPage(pid);
         });
     };
 
@@ -3649,7 +3658,7 @@ $(function () {
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-        var views = Object.keys(page.content);
+        var views = Object.keys(page.views.content);
         $('#more-views').addClass('hidden');
         if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
             visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
@@ -3677,8 +3686,8 @@ $(function () {
                         pageType = tempView;
                     }
                 }
-            } catch (Exception) {
-                generateMessage(viewTempName + " view is no longer available", null, null, "error", "topCenter", 2000, null);
+            } catch (e) {
+                throw e;
             }
         }
 
@@ -3753,8 +3762,6 @@ $(function () {
         updatePagesList();
         updateMenuList();
         initBanner();
-        //var removingComponents = getRestrictedGadgetsToBeViewed();
-        //removeGadgets(removingComponents, removingComponents.length);
     };
 
     /**
@@ -3826,7 +3833,7 @@ $(function () {
                     throw err;
                 }
                 var removingComponents = getRestrictedGadgetsToBeViewed();
-                removeGadgets(removingComponents, removingComponents.length);
+                removeGadgets(removingComponents, removingComponents.length, true);
             });
         } else {
             renderPage(null)
@@ -4050,7 +4057,7 @@ $(function () {
             }
         }
 
-    }
+    };
 
     /**
      * Hide/show particular menu item.
@@ -4072,18 +4079,30 @@ $(function () {
                         menu[i].ishidden = false;
                     } else {
                         // hide if there are no subordinates
-                        if (menu[i].subordinates.length === 0) {
-                            menu[i].ishidden = true;
-                        }
+                        menu[i].ishidden = true;
+                        makeSubordinatesHidden(menu[i].subordinates);
                     }
                     saveDashboard();
                     return;
                 }
 
-                if (menu[i].subordinates.length > 0) {
+                if (menu[i].subordinates.length > 0 && !menu[i].ishidden) {
                     manipulateSubordinates(menu[i].subordinates, landing);
+                } else if (menu[i].ishidden) {
+                    showInformation(i18n_data['cannot.hide.page'], i18n_data['parents.hidden']);
                 }
             }
+        }
+    };
+
+    /**
+     * To make all the subordinates of a particular menu hidden
+     * @param menu Subordinates menu to make hidden
+     */
+    var makeSubordinatesHidden = function(menu) {
+        for (var j = 0; j < menu.length; j++) {
+            menu[j].ishidden = true;
+            makeSubordinatesHidden(menu[j].subordinates);
         }
     };
 
@@ -4095,7 +4114,7 @@ $(function () {
         var menu = dashboard.menu;
         var visibleMenuItems = [];
         traverseSubordinates(menu);
-        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1) ? true : false;
+        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1 && dashboard.landing)  || (visibleMenuItems.length === 0);
         saveDashboard();
         updateMenuList();
 
