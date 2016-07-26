@@ -261,5 +261,6 @@
     "dashboard.pdf.selectSize" : "Select Size",
     "milli.seconds" : "ms",
     "dashboard.view.revert.message" : "The selected page wil be reverted into original dashboard page. Do want to proceed ?",
-    "revert" : "Revert"
+    "revert" : "Revert",
+    "view.enable.edit" : "Enable Edit Mode"
 }
