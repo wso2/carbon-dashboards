@@ -515,13 +515,15 @@ $(function () {
         var length = components.length;
         var tasks = [];
         for (i = 0; i < length; i++) {
-            tasks.push((function (component) {
-                return function (done) {
-                    destroyComponent(component, function (err) {
-                        done(err);
-                    });
-                };
-            }(components[i])));
+            if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
+                tasks.push((function (component) {
+                    return function (done) {
+                        destroyComponent(component, function (err) {
+                            done(err);
+                        });
+                    };
+                }(components[i])));
+            }
         }
         async.parallel(tasks, function (err, results) {
             done(err);
@@ -2679,7 +2681,6 @@ $(function () {
      * @private
      */
     var initComponents = function () {
-
         $('#sidebarNavGadgets .ues-thumbnails').on('mouseenter', '.ues-thumbnail', function () {
             $(this).draggable({
                 cancel: false,
