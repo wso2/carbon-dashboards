@@ -2692,7 +2692,6 @@ $(function () {
      * @private
      */
     var initComponents = function () {
-
         $('#sidebarNavGadgets .ues-thumbnails').on('mouseenter', '.ues-thumbnail', function () {
             $(this).draggable({
                 cancel: false,
