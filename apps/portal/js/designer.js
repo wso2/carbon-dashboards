@@ -815,11 +815,13 @@ $(function () {
             //if user have click on another view's properties button (not on current view's properties button),
             //we render the new view
             if (currentPageType !== viewId) {
+                $('.fw-right-arrow').click();
                 renderView(currentPageType, viewId);
+                $('li[data-view-mode="' + viewId +'"] .ues-view-component-properties-handle').click();
             }
 
             if ($('#right-sidebar').hasClass('toggled')) {
-                $('#right-sidebar').removeClass('toggled');
+               $('#right-sidebar').removeClass('toggled');
                 return;
             }
             $('#view-configuration').empty();
@@ -1327,6 +1329,7 @@ $(function () {
 
         //event handler for clicking on a view name
         $('#designer-view-mode').on('click', '.ues-view-name', function () {
+            $('.fw-right-arrow').click();
             if ($('#right-sidebar').hasClass('toggled')) {
                 $('#right-sidebar').removeClass('toggled');
             }
@@ -2747,11 +2750,10 @@ $(function () {
             createPage(options, $(this).data('id'), function (err) {
                 // reload pages list
                 updatePagesList();
-                // hide the sidebar
-                $('#sidebarNavPages button[rel="createPage"]').click();
+                // hide the sidebar;
+                $('#left-sidebar-sub .close-handle').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
-
             });
         });
 
@@ -2770,6 +2772,9 @@ $(function () {
                 var currentViewId = getViewId(selectedView);
                 saveViewContent(currentViewId, newViewId, newViewName, viewRoles, layout);
                 isNewView = false;
+
+                // To close the popped up layouts
+                $('.fw-left-arrow').click();
             } else {
                 //if tries to change the layout of an existing view, after confiramtion destroy the page
                 showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
@@ -2788,6 +2793,8 @@ $(function () {
                             viewRoles = [INTERNAL_EVERYONE_ROLE];
                         }
                         saveViewContent(viewId, viewId, viewName, viewRoles, layout);
+                        // To close the popped up layouts
+                        $('.fw-left-arrow').click();
                     });
                     return true;
                 });
@@ -3828,13 +3835,7 @@ $(function () {
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
         if (pages.length > 0) {
-            renderPage(page || db.landing || pages[0].id,function (err) {
-                if (err) {
-                    throw err;
-                }
-                var removingComponents = getRestrictedGadgetsToBeViewed();
-                removeGadgets(removingComponents, removingComponents.length, true);
-            });
+            renderPage(page || db.landing || pages[0].id);
         } else {
             renderPage(null)
         }

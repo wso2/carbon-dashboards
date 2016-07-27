@@ -162,29 +162,30 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * Find an asset based on the type and asset id
      * @param type
      * @param id
+     * @param isShared
      * @returns {*}
      */
-    getAsset = function (type, id) {
-        var ctx;
-        var server;
+    getAsset = function (type, id, isShared) {
+        var ctx = utils.currentContext();
+        var server = new carbon.server.Server();
         var um;
         var userRoles;
-        if (user) {
-            ctx = utils.currentContext();
-            server = new carbon.server.Server();
-            um = new carbon.user.UserManager(server, ctx.tenantId);
-            userRoles = um.getRoleListOfUser(ctx.username);
-        } else {
-            userRoles = [constants.ANONYMOUS_ROLE];
-        }
-        
         var storeTypes = config.store.types;
+
+        if (!isShared || !user || user.domain === String(carbon.server.superTenant.domain)) {
+            if (user) {
+                um = new carbon.user.UserManager(server, ctx.tenantId);
+                userRoles = um.getRoleListOfUser(ctx.username);
+            } else {
+                userRoles = [constants.ANONYMOUS_ROLE];
+            }
+        }
         for (var i = 0; i < storeTypes.length; i++) {
             var specificStore = require(storeExtension(storeTypes[i]));
             var asset = specificStore.getAsset(type, id);
             if (asset) {
                 var allowedRoles = asset.allowedRoles;
-                if (allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                if (userRoles && allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
                     return null;
                 }
                 break;
