@@ -20,6 +20,14 @@
     var LEGACY_STORE = 'store';
     var SUPER_DOMAIN = 'carbon.super';
     var loadingFinishedCount;
+    var content;
+    var componentBoxContentHbs;
+    var isDesignerView;
+    var doneCallback;
+    var componentBoxNum;
+    var componentBoxList;
+    var prePriority;
+    var dashboardLoadingState = true;
 
     /**
      * Find a component.
@@ -352,7 +360,17 @@
                 finishedLoading();
             }
 
+        } else {
+            dashboardLoadingState = false;
         }
+    };
+
+    /**
+     * get the dashboard loading state as a boolean. If it is loaded completely, returns null
+     * @returns {boolean}
+     */
+    var getDashboardLoadingState = function () {
+        return dashboardLoadingState;
     };
 
     /**
@@ -473,7 +491,8 @@
         finishedLoadingGadget: finishedLoading,
         findComponent: findComponent,
         getDashboardID: getDashboardID,
-        getDashboardName: getDashboardName
+        getDashboardName: getDashboardName,
+        getDashboardLoadingState: getDashboardLoadingState
     };
 
     ues.assets = {};

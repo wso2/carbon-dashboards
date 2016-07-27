@@ -618,28 +618,17 @@
         }
         
         var iframesReadyInterval = setInterval(function() {
-            var done = false;
-            
-            $('.gadget-body').each(function(i){
-                if($(this).hasClass('loading')){
-                    done = false;
-                }
-                else {
-                    if($('iframe').length == (i+1)){
-                        done = true;
-                    }
-                }
-            });
-            
-            if(done == true) {
+            if(!ues.dashboards.getDashboardLoadingState() === true) {
                 clearInterval(iframesReadyInterval);
-                $('[data-toggle="loading"]').loading('hide');
-            }    
+                $('.body-wrapper').loading('hide');
+            }
         }, 200);
 
         $(document).ready(function() {
-            $('[data-toggle="loading"]').loading('show');
-            $('.gadget-body').addClass('loading');
+            if($('.gadget-body').length > 0){
+                $('.body-wrapper').loading('show');
+                $('.gadget-body').addClass('loading');
+            }
             
             if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
                 $('.grid-stack-item[data-banner=true]')
