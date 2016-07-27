@@ -184,6 +184,9 @@
   "select.view" : "Select View",
   "dashboard.pdf.generatePDF" : "Generate PDF",
   "dashboard.pdf.downloadPDF" : "Download the view",
-  "dashboard.pdf.selectSize" : "Select Size"
+  "dashboard.pdf.selectSize" : "Select Size",
+  "dashboard.view.revert.message" : "The selected page wil be reverted into original dashboard page. Do want to proceed ?",
+  "revert" : "Revert",
+  "view.enable.edit" : "Enable Edit Mode"
 }
 

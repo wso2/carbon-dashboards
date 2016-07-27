@@ -493,6 +493,21 @@
         </div>
         {{/if}}
     </script>
+    <!--Handlebar templates for revert button confirmation of reverting into original dashboard page -->
+     <script id="ds-modal-confirm-revert-block-hbs" type="text/x-handlebars-template">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+            <h3 class="modal-title" id="deleteModalLabel">
+				<%=i18n.localize("dashboard.view.revert.message")%>
+            </h3>
+        </div>
+        <div class="pull-right">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-revert"><%=i18n.localize("revert")%></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><%=i18n.localize("cancel")%></button>
+            </div>
+        </div>
+    </script>
    <!-- View options for a particular page -->
     <script id="view-option-hbs" type="text/x-handlebars-template">
         <option value = {{viewId}}>{{viewName}}</option>

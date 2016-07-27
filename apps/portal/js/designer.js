@@ -518,9 +518,9 @@ $(function () {
             if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
                 tasks.push((function (component) {
                     return function (done) {
-                            destroyComponent(component, function (err) {
-                                done(err);
-                            });
+                        destroyComponent(component, function (err) {
+                            done(err);
+                        });
                     };
                 }(components[i])));
             }

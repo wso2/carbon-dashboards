@@ -16,7 +16,7 @@
  */
 %>
 <div class="light-dark-switcher">
-    <label class="light-dark-switcher-label">View</label>
+    <label class="light-dark-switcher-label"><%=i18n.localize("view.enable.edit")%></label>
     <label class="switch">
 		<% if(isPersonalizeEnabled === 'true'){ %>
         <input type="checkbox" id="edit-view-toggler" checked="checked">
@@ -25,5 +25,4 @@
 		<% } %>
         <span class="helper"></span>
     </label>
-    <label class="light-dark-switcher-label">Edit</label>
 </div>	
