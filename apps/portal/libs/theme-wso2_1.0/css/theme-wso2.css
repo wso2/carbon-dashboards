@@ -1656,7 +1656,7 @@ footer a, footer a:hover {
 }
 
 @supports (-ms-accelerator:true) {
-    // Fix for IE dasharray animation not supporting
+    /* Fix for IE dasharray animation not supporting */
     .loading .loading-animation .logo .pulse-line {
         stroke-dasharray: 100;
     }
