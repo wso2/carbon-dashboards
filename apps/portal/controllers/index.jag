@@ -53,17 +53,13 @@
             }
         });
 
-        if ((dashboardCountPerPortal > 0 && dashboardCountPerUser <= 0) || dashboardCountPerUser > 1) {
+        if (dashboardCountPerUser > 1) {
             response.sendRedirect(DASHBOARDS + "/");
             return;
-        }
-
-        if (dashboardCountPerUser == 1) {
+        } else if (dashboardCountPerUser == 1) {
             response.sendRedirect(DASHBOARDS + "/" + assetsForUser[0].id + "/");
             return;
-        }
-
-        if (dashboardCountPerPortal <= 0) {
+        } else {
             response.sendRedirect("create-dashboard");
             return;
         }
