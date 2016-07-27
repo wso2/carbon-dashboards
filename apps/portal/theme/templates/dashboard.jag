@@ -627,7 +627,6 @@
         $(document).ready(function() {
             if($('.gadget-body').length > 0){
                 $('.body-wrapper').loading('show');
-                $('.gadget-body').addClass('loading');
             }
             
             if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
