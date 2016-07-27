@@ -596,6 +596,10 @@ ul.sidebar-messages > li:last-child {
     margin-left: 15px;
 }
 
+.light-dark-switcher-label {
+    color: #333;
+}
+
 .progress {
     position: relative;
     height: 2px;

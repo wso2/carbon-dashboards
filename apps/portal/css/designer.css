@@ -196,3 +196,7 @@
     bottom: 2px;
 }
 
+.input-timeout {
+    width: 85%;
+    display: inline;
+}

@@ -36,6 +36,34 @@
     var anonRole = carbon.user.anonRole;
     var method = request.getMethod();
     var matcher = new URIMatcher(request.getRequestURI());
+    if (matcher.match('/dashboards/restore/{id}/{pageID}')) {
+        var dashboard = request.getContent();
+        var parameters = matcher.elements();
+        var originalDashboard;
+        if (!user) {
+            response.sendError(401, JSON.stringify({
+                error: 'Unauthorized to access the dashboard'
+            }));
+            return;
+        }
+        utils.sandbox(context, function () {
+            originalDashboard = dashboards.getAsset(parameters.id, true);
+        });
+        try {
+            for (var pageCount = 0; pageCount < dashboard.pages.length; pageCount++) {
+                if (dashboard.pages[pageCount].edited == true && dashboard.pages[pageCount].id === parameters.pageID) {
+                    dashboard.pages[pageCount] = originalDashboard.pages[pageCount];
+                }
+            }
+        } catch (err) {
+            response.sendError(500, JSON.stringify({
+                error: 'pageID or dashboard ID is not correct'
+            }));
+            return;
+        }
+        print(dashboard);
+        return;
+    }
     if (matcher.match('/dashboards/{id}')) {
         vars = matcher.elements();
         utils.sandbox(context, function () {
@@ -77,7 +105,7 @@
             if (personalize && !utils.allowed(user.roles, editors)) {
                 dashboard.isUserCustom = true;
             }
-            if ((!user || !(utils.allowed(user.roles, owners)|| utils.allowed(user.roles, editors))) && !(utils.allowed(user.roles, viewers) && dashboard.isUserCustom)) {
+            if ((!user || !(utils.allowed(user.roles, owners) || utils.allowed(user.roles, editors))) && !(utils.allowed(user.roles, viewers) && dashboard.isUserCustom)) {
                 response.sendError(401, JSON.stringify({
                     error: 'Unauthorized to access the dashboard'
                 }));

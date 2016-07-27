@@ -179,7 +179,6 @@
                         </div>
                     </div>
                 </div>
-                <% include(utils.getThemeTemplatePath('templates/includes/light-dark-switcher.jag')); %>
 
             </div>
         </div>
@@ -595,6 +594,15 @@
                 document.cookie = "dashboardTheme=light";
             }
         });
+
+        $("#edit-view-toggler").change(function(){
+			if($(this).prop('checked') == true){
+                location.href = "<%=dbRoot%><%=pageId%>?personalize=true";
+            }
+            else{
+               location.href = "<%=dbRoot%><%=pageId%>?personalize=false";
+            }
+		})
 
         var nanoScrollerSelector = $(".nano");
         nanoScrollerSelector.nanoScroller();

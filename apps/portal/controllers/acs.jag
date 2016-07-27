@@ -65,8 +65,9 @@
 
     if (samlResponse) {
         samlRespObj = sso.client.getSamlObject(samlResponse);
-        // validating the signature during both login and logout
-        if (attr.responseSigningEnabled && !sso.client.validateSignature(samlRespObj, keyStoreProps)) {
+        //If response signing is enabled we  to validate it before performing
+        //login or logout operations
+        if ((!samlRespObj)||(!sso.client.validateSamlResponse(samlRespObj,attr,keyStoreProps))) {
             log.error('SAML response object validation failure.');
             response.sendError(401, 'You do not have permission to login to this application.Please contact your administrator and request permission.');
             return;
@@ -106,9 +107,6 @@
                     response.sendRedirect(relayState);
                     return;
                 } else {
-                    var saml2Cookie = require('/modules/saml-to-cookie.js');
-                    var authToken = saml2Cookie.exchangeSAMLTokenForCookie(samlResponse);
-                    session.put('authToken', authToken);
                     response.sendRedirect(relayState);
                 }
             }
