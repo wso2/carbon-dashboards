@@ -1655,6 +1655,13 @@ footer a, footer a:hover {
   filter: "alpha(opacity=0)";
 }
 
+@supports (-ms-accelerator:true) {
+    // Fix for IE dasharray animation not supporting
+    .loading .loading-animation .logo .pulse-line {
+        stroke-dasharray: 100;
+    }
+}
+
 @keyframes dash {
   0% {
     opacity: 0.9;
