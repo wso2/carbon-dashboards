@@ -18,10 +18,34 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 (function () {
 
     var PROVIDERS_LOCATION = '/extensions/providers/';
-
     /**
      * require the existing config.json and push any dynamic fields that needs to be populated in the UI
      */
+
+    var typeMap = {
+        "bool" : "ordinal",
+        "boolean" : "ordinal",
+        "varchar" : "ordinal",
+        "character" : "ordinal",
+        "binary" : "ordinal",
+        "text" : "ordinal",
+        "string" : "ordinal",
+        "date" :  "ordinal",
+        "time" :  "ordinal",
+        "decimal" : "linear",
+        "smallint" : "linear",
+        "bigint" : "linear",
+        "numeric" : "linear",
+        "real" : "linear",
+        "int" : "linear",
+        "integer" : "linear",
+        "long" : "linear",
+        "double" : "linear",
+        "float" : "linear",
+        "timestamp" : "linear"
+    };
+
+
     getConfig = function () {
         var formConfig = require(PROVIDERS_LOCATION + '/rdbms/config.json');
         return formConfig;
@@ -83,7 +107,9 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
             if (schema.length != 0) {
                 for (var i in schema) {
                     schema[i].fieldName = schema[i][COLUMN_NAME];
-                    schema[i].fieldType = schema[i][COLUMN_TYPE];
+                    var dbColType = schema[i][COLUMN_TYPE].toLowerCase();
+                    var fieldType = dbColType.substring(0, dbColType.indexOf('('));
+                    schema[i].fieldType = typeMap[fieldType];
                     delete schema[i][COLUMN_NAME];
                     delete schema[i][COLUMN_TYPE];
                 }
