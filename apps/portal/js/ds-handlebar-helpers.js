@@ -111,7 +111,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
             } else {
                 var cls = menu[i].id === currentPageId ? 'active' : '';
                 var divLi = "<li class='" + cls + "'><a style = 'width:75%; display:inline-block' href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>"+
-                    "<span id='" + menu[i].id + "' class='refreshBtn' style='background-color:#1e2531; display:none;'><i class='icon fw fw-refresh'></i></span>";
+                    "<span id='" + menu[i].id + "' class='refreshBtn' style='background-color:#1e2531; display:none;'><i class='icon fw fw-undo'></i></span>";
                 if (!menu[i].ishidden) {
                     if (allowedViews) {
                         if (allowedViews.indexOf(menu[i].id) > -1) {
