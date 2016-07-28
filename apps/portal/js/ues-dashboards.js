@@ -15,11 +15,11 @@
  */
 
 (function () {
-
     var DEFAULT_STORE = 'fs';
     var LEGACY_STORE = 'store';
     var SUPER_DOMAIN = 'carbon.super';
     var loadingFinishedCount;
+    var err;
 
     /**
      * Find a component.
@@ -118,7 +118,7 @@
             sandbox.find('.ues-component-heading').show();
             sandbox.removeClass('ues-no-heading');
         }
-    }
+    };
 
     /**
      * Get a component ID.
@@ -212,7 +212,7 @@
         var container = $('<div />').addClass('grid-stack');
         $(componentBoxListHbs(json)).appendTo(container);
         return container;
-    }
+    };
 
     /**
      * Renders a page in the dashboard designer and the view modes.
@@ -250,16 +250,18 @@
     var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
         if(ues.global.dashboard.shareDashboard){
-            ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
+            ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error, data) {
+                err = data.status;
                 isGadgetExists = error
             });
         } else {
-            ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
-                isGadgetExists = error
+            ues.store.asset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error, data) {
+                err = data.status;
+                isGadgetExists = error;
             });
         }
         return isGadgetExists;
-    }
+    };
 
     var rederingInitiator = function () {
         while (true) {
@@ -272,7 +274,7 @@
                 if (!doneCallback) {
                     return;
                 }
-                doneCallback();
+                doneCallback(err);
             } else {
                 break;
             }
@@ -341,7 +343,8 @@
             if (isDesignerView || hasComponent) {
                 container.html(componentBoxContentHbs());
             }
-            if (hasComponent && !(isGadgetUnavailable(componentBoxList[componentBoxNum]))) {
+            err = null;
+            if (hasComponent && !isGadgetUnavailable(componentBoxList[componentBoxNum])) {
                 createComponent(container, content[id][0], function (err) {
                     if (err) {
                         log(err);

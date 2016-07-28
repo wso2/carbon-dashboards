@@ -47,8 +47,15 @@
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.getAsset(assetType, id, isShared);
             });
+
             if (!assets) {
                 response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            if (!assets.id) {
+                response.sendError(401, JSON.stringify({
                     error: true
                 }));
                 return;

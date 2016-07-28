@@ -423,11 +423,14 @@
                             ' "cannot.create.new.page" : "<%= i18n.localize("cannot.create.new.page")%>",' +
                             ' "landing.page.changed" : "<%= i18n.localize("landing.page.changed")%>",' +
                             ' "parents.hidden" : "<%= i18n.localize("parents.hidden")%>",' +
+                            ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
                             ' "cannot.hide.page" : "<%= i18n.localize("cannot.hide.page")%>",' +
+                            ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
+                            ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
                             ' "cannot.remove.hidden.page" : "<%= i18n.localize("cannot.remove.hidden.page")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
-
     </script>
 
     <!-- Handlebar templates -->
@@ -465,7 +468,7 @@
         </div>
         {{/each}}
     </script>
-        
+
     <!-- Template to add new gridstack block -->
     <script id="ues-new-block-hbs" type="text/x-handlebars-template">
         <div data-id="{{id}}">

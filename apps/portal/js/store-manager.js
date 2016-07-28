@@ -186,7 +186,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             if (asset) {
                 var allowedRoles = asset.allowedRoles;
                 if (userRoles && allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
-                    return null;
+                    return {};
                 }
                 break;
             }

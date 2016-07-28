@@ -231,6 +231,8 @@ $(function () {
 
     var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
 
+    var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
+
     /**
      * Generate unique gadget ID.
      * @param {String} gadgetName Name of the gadget
@@ -1500,17 +1502,20 @@ $(function () {
         // event handler for trash button
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
             var that = $(this);
+            var componentBox = that.closest('.ues-component-box');
+            var componentBoxId = componentBox.attr('id');
             var confirmDeleteBlockHbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html());
             var hasComponent = false;
+            var hasHidden = hasHiddenGadget(componentBox);
             if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
                 hasComponent = true;
             }
+            hasComponent = hasComponent ? hasComponent : hasHidden;
 
             showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-component-box');
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
 
@@ -1521,6 +1526,14 @@ $(function () {
                             }
                             saveDashboard();
                         });
+                    }
+                    if (hasHidden) {
+                        for (var i = 0; i < dashboard.pages.length; i++) {
+                            if (dashboard.pages[i].id === page.id) {
+                                dashboard.pages[i].content[pageType][componentBoxId] = [];
+                            }
+                        }
+                        saveDashboard();
                     }
                     if (removeBlock) {
                         getGridstack().remove_widget(componentBox.parent());
@@ -1627,6 +1640,7 @@ $(function () {
         content.push(component);
         ues.components.create(container, component, function (err, block) {
             if (err) {
+                console.log(err);
                 throw err;
             }
             renderComponentToolbar(component);
@@ -3396,7 +3410,7 @@ $(function () {
             drop: function (event, ui) {
                 var id = ui.helper.data('id');
                 var type = ui.helper.data('type');
-                if (!hasComponents($(this))) {
+                if (!hasHiddenGadget($(this)) && !hasComponents($(this))) {
                     createComponent($(this), findStoreCache(type, id));
                 }
             }
@@ -3411,6 +3425,20 @@ $(function () {
      */
     var hasComponents = function (container) {
         return (container.find('.ues-component .ues-component-body div').length > 0);
+    };
+
+    /**
+     * To check whether a box has a hidden gadget that is not visible due to authorization or missing file problem
+     * @param componentBox
+     * @returns {*|boolean}
+     */
+    var hasHiddenGadget = function (componentBox) {
+        for (var i = 0; i < dashboard.pages.length; i++) {
+            if (dashboard.pages[i].id === page.id) {
+                var component = dashboard.pages[i].content[pageType][componentBox.attr('id')];
+                return (component && component.length > 0);
+            }
+        }
     };
 
     /**
@@ -3726,6 +3754,15 @@ $(function () {
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
+                if (err === 401) {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['no.permission.to.view.gadget']}));
+                    err = null;
+                } else if (err === 404)  {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['gadget.missing']}));
+                    err = null;
+                }
             });
             listenLayout();
             $('.grid-stack').gridstack({

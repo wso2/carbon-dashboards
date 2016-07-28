@@ -508,6 +508,14 @@
             </div>
         </div>
     </script>
+
+    <!-- Handle bar template to hid the gadgets that are not available or viewable by particular user-->
+    <script id="ds-error-hbs" type="text/x-handlebars-template">
+      <div class="alert alert-danger" id = "delete-error" role="alert">
+        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
+        <h3>{{error}}</h3>
+      </div>
+    </script>
    <!-- View options for a particular page -->
     <script id="view-option-hbs" type="text/x-handlebars-template">
         <option value = {{viewId}}>{{viewName}}</option>
@@ -682,6 +690,14 @@
         $('#left-sidebar').on('shown.sidebar', function(e){
             toggleProductLogo(e.type)
         });
+
+          var i18n_object = '{ ' +
+                            ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
+                            ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
+                            ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>"' +
+                            ' }';
+        var i18n_data = JSON.parse(i18n_object);
 
         //usage : in traverseMenu helper
         var user = <%= user %>;

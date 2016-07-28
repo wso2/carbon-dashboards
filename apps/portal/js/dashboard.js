@@ -81,6 +81,7 @@ $(function () {
     var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
     var viewOptionHbs = Handlebars.compile($("#view-option-hbs").html());
     var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
+    var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
 
     /**
      * Initializes the component toolbar.
@@ -179,6 +180,7 @@ $(function () {
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
                     var componentBox = that.closest('.ues-component-box');
+                    var componentBoxId = componentBox.attr('id');
                     var id = componentBox.find('.ues-component').attr('id');
 
                     if (id) {
@@ -190,11 +192,34 @@ $(function () {
                             $("#" + ues.global.page).show();
                         });
                     }
+
+                    if (hasHiddenGadget(componentBox)) {
+                        for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
+                            if (ues.global.dashboard.pages[i].id === page.id) {
+                                ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                            }
+                        }
+                        saveDashboard();
+                    }
                     componentBox.html(componentBoxContentHbs());
                     designerModal.modal('hide');
                 });
             });
         });
+    };
+
+    /**
+     * To check whether a box has a hidden gadget that is not visible due to authorization or missing file problem
+     * @param componentBox
+     * @returns {*|boolean}
+     */
+    var hasHiddenGadget = function (componentBox) {
+        for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
+            if (ues.global.dashboard.pages[i].id === page.id) {
+                var component = ues.global.dashboard.pages[i].content[pageType][componentBox.attr('id')];
+                return (component && component.length > 0);
+            }
+        }
     };
 
     /**
@@ -522,11 +547,20 @@ $(function () {
                 $('#ds-allowed-view-list').val(viewId);
             }
         });
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function () {
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function (err) {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
+                if (err === 401) {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['no.permission.to.view.gadget']}));
+                    err = null;
+                } else if (err === 404)  {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['gadget.missing']}));
+                    err = null;
+                }
             });
             $('.grid-stack').gridstack({
                 width: 12,
@@ -548,11 +582,20 @@ $(function () {
                 $('#ds-allowed-view-list').val(viewId);
             }
         });
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function (err) {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
+                if (err === 401) {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['no.permission.to.view.gadget']}));
+                    err = null;
+                } else if (err === 404)  {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['gadget.missing']}));
+                    err = null;
+                }
             });
             $('.grid-stack').gridstack({
                 width: 12,
