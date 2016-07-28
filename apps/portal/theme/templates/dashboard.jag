@@ -498,7 +498,6 @@
                 
             if($('.gadget-body').length > 0){
                 $('.body-wrapper').loading('show');
-                $('.gadget-body').addClass('loading');
             }
             
             if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
@@ -540,23 +539,10 @@
         }
         
         var iframesReadyInterval = setInterval(function() {
-            var done = false;
-            
-            $('.gadget-body').each(function(i){
-                if($(this).hasClass('loading')){
-                    done = false;
-                }
-                else {
-                    if($('iframe[id^="sandbox-gadget"]').length == (i+1)){
-                        done = true;
-                    }
-                }
-            });
-            
-            if(done == true) {
+            if(!ues.dashboards.getDashboardLoadingState() === true) {
                 clearInterval(iframesReadyInterval);
                 $('.body-wrapper').loading('hide');
-            }    
+            }
         }, 200);
         
         function toggleProductLogo(sidebarEventType){
