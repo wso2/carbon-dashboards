@@ -18,10 +18,37 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 (function () {
 
     var PROVIDERS_LOCATION = '/extensions/providers/';
+    var ORDINAL = "ordinal";
+    var LINEAR = "linear";
 
     /**
      * require the existing config.json and push any dynamic fields that needs to be populated in the UI
      */
+
+    var typeMap = {
+        "bool" : ORDINAL,
+        "boolean" : ORDINAL,
+        "varchar" : ORDINAL,
+        "character" : ORDINAL,
+        "binary" : ORDINAL,
+        "text" : ORDINAL,
+        "string" : ORDINAL,
+        "date" :  ORDINAL,
+        "time" :  ORDINAL,
+        "decimal" : LINEAR,
+        "smallint" : LINEAR,
+        "bigint" : LINEAR,
+        "numeric" : LINEAR,
+        "real" : LINEAR,
+        "int" : LINEAR,
+        "integer" : LINEAR,
+        "long" : LINEAR,
+        "double" : LINEAR,
+        "float" : LINEAR,
+        "timestamp" : LINEAR
+    };
+
+
     getConfig = function () {
         var formConfig = require(PROVIDERS_LOCATION + '/rdbms/config.json');
         return formConfig;
@@ -80,12 +107,27 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
             }
             db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
             var schema = db.query(db_query);
+            var selectQuerySchema = getSelectQueryFields(providerConfig);
             if (schema.length != 0) {
                 for (var i in schema) {
                     schema[i].fieldName = schema[i][COLUMN_NAME];
-                    schema[i].fieldType = schema[i][COLUMN_TYPE];
+                    var indexOfFieldInSelect = selectQuerySchema.indexOf(schema[i][COLUMN_NAME]);
+                    if ( indexOfFieldInSelect > -1){
+                        selectQuerySchema.splice(indexOfFieldInSelect, 1);
+                    }
+                    var dbColType = schema[i][COLUMN_TYPE].toLowerCase();
+                    var fieldType = dbColType.substring(0, dbColType.indexOf('('));
+                    schema[i].fieldType = typeMap[fieldType];
                     delete schema[i][COLUMN_NAME];
                     delete schema[i][COLUMN_TYPE];
+                }
+                if (selectQuerySchema.length != 0) {
+                    for (var i in selectQuerySchema) {
+                        schema.push({
+                            fieldName: selectQuerySchema[i],
+                            fieldType: ORDINAL
+                        });
+                    }
                 }
                 return schema;
             }
@@ -99,6 +141,17 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                 db.close();
             }
         }
+    };
+
+    var getSelectQueryFields = function (providerConfig) {
+        var schema = [];
+        var selectQueryResult = getData(providerConfig, 1);
+        if (selectQueryResult[0]){
+            for (var key in selectQueryResult[0]){
+                schema.push(key);
+            }
+        }
+        return schema;
     };
 
     /**
@@ -125,5 +178,4 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         return data;
 
     };
-
 }());

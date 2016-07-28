@@ -76,6 +76,14 @@
     if (request.getParameter('isAnonView') == 'true') {
         dashboardUrl += '?isAnonView=true';
     }
+
+    // Getting dashboard color theme
+    var gadgetTheme;
+    if(request.getCookie('dashboardTheme') != null) {
+        gadgetTheme = request.getCookie('dashboardTheme').value;
+    } else {
+        gadgetTheme = 'dark';
+    }
 %>
 <html lang="en">
 <head>
@@ -105,7 +113,7 @@
 
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
-<body class="dashboard lang_<%=request.getLocale()%> dark">
+<body class="dashboard lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
     <!-- Modal -->
     <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -292,10 +300,10 @@
                     data-style="btn-default" data-width="100px" style="width: 200px">
                     </select>
                 </div>
-                <div class="container-fluid body-wrapper">
+                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" >
             <% } else { %>
-                <div class="container-fluid body-wrapper" style="height: 100%;">
+                <div class="container-fluid body-wrapper" style="height: 100%;" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" style="position: absolute;">
             <% } %>
                     <div class="nano-content" >
@@ -645,28 +653,16 @@
         }
         
         var iframesReadyInterval = setInterval(function() {
-            var done = false;
-            
-            $('.gadget-body').each(function(i){
-                if($(this).hasClass('loading')){
-                    done = false;
-                }
-                else {
-                    if($('iframe').length == (i+1)){
-                        done = true;
-                    }
-                }
-            });
-            
-            if(done == true) {
+            if(!ues.dashboards.getDashboardLoadingState() === true) {
                 clearInterval(iframesReadyInterval);
-                $('[data-toggle="loading"]').loading('hide');
-            }    
+                $('.body-wrapper').loading('hide');
+            }
         }, 200);
 
         $(document).ready(function() {
-            $('[data-toggle="loading"]').loading('show');
-            $('.gadget-body').addClass('loading');
+            if($('.gadget-body').length > 0){
+                $('.body-wrapper').loading('show');
+            }
             
             if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
                 $('.grid-stack-item[data-banner=true]')
