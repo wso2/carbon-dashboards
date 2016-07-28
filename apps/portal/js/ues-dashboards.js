@@ -28,7 +28,6 @@
     var prePriority;
     var dashboardLoadingState = true;
     var err;
-
     /**
      * Find a component.
      * @param {String} type Type of the plugin
