@@ -40,7 +40,8 @@
         var tempRoles = usr.getUserRoles();
         if (isPreview) {
             userRoles.push(constants.ANONYMOUS_ROLE);
-            isEditor = utils.allowed(user.roles, dashboard.permissions.owners) || utils.allowed(user.roles, dashboard.permissions.editors);
+            isEditor = utils.allowed(user.roles, dashboard.permissions.owners) ||
+                    utils.allowed(user.roles, dashboard.permissions.editors);
         }
         for (var i = 0; i < tempRoles.length; i++) {
             userRoles.push(tempRoles[i]);
@@ -509,13 +510,14 @@
         </div>
     </script>
 
-    <!-- Handle bar template to hid the gadgets that are not available or viewable by particular user-->
+    <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
     <script id="ds-error-hbs" type="text/x-handlebars-template">
       <div class="alert alert-danger" id = "delete-error" role="alert">
         <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
         <h3>{{error}}</h3>
       </div>
     </script>
+
    <!-- View options for a particular page -->
     <script id="view-option-hbs" type="text/x-handlebars-template">
         <option value = {{viewId}}>{{viewName}}</option>
@@ -691,7 +693,7 @@
             toggleProductLogo(e.type)
         });
 
-          var i18n_object = '{ ' +
+        var i18n_object = '{ ' +
                             ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
                             ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
                             ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +

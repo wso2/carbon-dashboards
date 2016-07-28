@@ -56,6 +56,19 @@ $(function () {
      * @const
      */
     var DEFAULT_VIEW_NAME = 'Default View';
+    /**
+     * Http status code for not found
+     * @type {number}
+     * @const
+     */
+    var NOT_FOUND_ERROR_CODE = 404;
+
+    /**
+     * Http status code for un authorized
+     * @type {number}
+     * @const
+     */
+    var UNAUTHORIZED_ERROR_CODE = 401;
 
     //Keep the number of visible views of a page
     var NO_OF_VISIBLE_VIEWS = 6;
@@ -819,11 +832,11 @@ $(function () {
             if (currentPageType !== viewId) {
                 $('.fw-right-arrow').click();
                 renderView(currentPageType, viewId);
-                $('li[data-view-mode="' + viewId +'"] .ues-view-component-properties-handle').click();
+                $('li[data-view-mode="' + viewId + '"] .ues-view-component-properties-handle').click();
             }
 
             if ($('#right-sidebar').hasClass('toggled')) {
-               $('#right-sidebar').removeClass('toggled');
+                $('#right-sidebar').removeClass('toggled');
                 return;
             }
             $('#view-configuration').empty();
@@ -1640,7 +1653,6 @@ $(function () {
         content.push(component);
         ues.components.create(container, component, function (err, block) {
             if (err) {
-                console.log(err);
                 throw err;
             }
             renderComponentToolbar(component);
@@ -2785,7 +2797,6 @@ $(function () {
                 var currentViewId = getViewId(selectedView);
                 saveViewContent(currentViewId, newViewId, newViewName, viewRoles, layout);
                 isNewView = false;
-
                 // To close the popped up layouts
                 $('.fw-left-arrow').click();
             } else {
@@ -3018,7 +3029,7 @@ $(function () {
                             dashboard.isanon = isAnonDashboard();
                             saveDashboard();
                             visibleViews = [];
-                            renderPage(dashboard.pages[0].id);
+                            renderPage(dashboard.landing || dashboard.pages[0].id);
                         });
                         return true;
                     } else {
@@ -3754,15 +3765,14 @@ $(function () {
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
-                if (err === 401) {
+                if (err === UNAUTHORIZED_ERROR_CODE) {
                     $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['no.permission.to.view.gadget']}));
-                    err = null;
-                } else if (err === 404)  {
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+                } else if (err === NOT_FOUND_ERROR_CODE) {
                     $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['gadget.missing']}));
-                    err = null;
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
                 }
+                err = null;
             });
             listenLayout();
             $('.grid-stack').gridstack({
@@ -4115,7 +4125,7 @@ $(function () {
                     if (menu[i].ishidden) {
                         menu[i].ishidden = false;
                     } else {
-                        // hide if there are no subordinates
+                        // hide all the subordinates of the menu item as well
                         menu[i].ishidden = true;
                         makeSubordinatesHidden(menu[i].subordinates);
                     }
@@ -4136,7 +4146,7 @@ $(function () {
      * To make all the subordinates of a particular menu hidden
      * @param menu Subordinates menu to make hidden
      */
-    var makeSubordinatesHidden = function(menu) {
+    var makeSubordinatesHidden = function (menu) {
         for (var j = 0; j < menu.length; j++) {
             menu[j].ishidden = true;
             makeSubordinatesHidden(menu[j].subordinates);
@@ -4151,7 +4161,8 @@ $(function () {
         var menu = dashboard.menu;
         var visibleMenuItems = [];
         traverseSubordinates(menu);
-        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1 && dashboard.landing)  || (visibleMenuItems.length === 0);
+        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1 &&
+            dashboard.landing) || (visibleMenuItems.length === 0);
         saveDashboard();
         updateMenuList();
 
@@ -4165,7 +4176,7 @@ $(function () {
                 }
             }
         }
-    }
+    };
 });
 
 // Initialize nano scrollers

@@ -157,7 +157,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         }
         return storeType.concat('://' + url);
     };
-    
+
     /**
      * Find an asset based on the type and asset id
      * @param type
@@ -168,9 +168,9 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     getAsset = function (type, id, isShared) {
         var ctx = utils.currentContext();
         var server = new carbon.server.Server();
+        var storeTypes = config.store.types;
         var um;
         var userRoles;
-        var storeTypes = config.store.types;
 
         if (!isShared || !user || user.domain === String(carbon.server.superTenant.domain)) {
             if (user) {

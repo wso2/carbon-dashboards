@@ -249,7 +249,7 @@
 
     var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
-        if(ues.global.dashboard.shareDashboard){
+        if (ues.global.dashboard.shareDashboard) {
             ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error, data) {
                 err = data.status;
                 isGadgetExists = error

@@ -262,11 +262,11 @@
     "milli.seconds" : "ms",
     "dashboard.view.revert.message" : "The selected page wil be reverted into original dashboard page. Do want to proceed ?",
     "revert" : "Revert",
-    "view.enable.edit" : "Enable Edit Mode",
-    "parents.hidden" : "One or more parent(s) of this page is hidden. So cannot make this page visible",
-    "cannot.hide.page" : "Cannot hide page",
-    "unauthorized" : "Unauthorized Error",
-    "gadget.not.found" :  "Gadget not found",
-    "no.permission.to.view.gadget" :  "You do not have necessary permission to view the gadget",
-    "gadget.missing" : "Gadget folder is missing. Please Check again."
+    "view.enable.edit": "Enable Edit Mode",
+    "parents.hidden": "One or more parent(s) of this page is hidden. So cannot make this page visible",
+    "cannot.hide.page": "Cannot hide page",
+    "unauthorized": "Unauthorized Error",
+    "gadget.not.found": "Gadget not found",
+    "no.permission.to.view.gadget": "You do not have necessary permission to view the gadget",
+    "gadget.missing": "Gadget folder is missing. Please Check again."
 }

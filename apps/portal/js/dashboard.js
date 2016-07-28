@@ -54,10 +54,18 @@ $(function () {
     var ANONYMOUS_ROLE = 'anonymous';
 
     /**
-     * Anonymous dashboard view mode.
+     * Http status code for not found
+     * @type {number}
      * @const
      */
-    var ANONYMOUS_DASHBOARD_VIEW = 'anon';
+    var NOT_FOUND_ERROR_CODE = 404;
+
+    /**
+     * Http status code for un authorized
+     * @type {number}
+     * @const
+     */
+    var UNAUTHORIZED_ERROR_CODE = 401;
 
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
 
@@ -66,11 +74,6 @@ $(function () {
      * @const
      */
     var dashboardsApiRestore = ues.utils.tenantPrefix() + 'apis/dashboards/restore';
-    /**
-     * Role for all logged in users
-     * @const
-     */
-    var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
     var page;
     var selectedViewId;
     /**
@@ -416,7 +419,6 @@ $(function () {
                         destroyComponent(component, function (err) {
                             done(err);
                         });
-
                     };
                 }(components[i])));
             }
@@ -538,6 +540,20 @@ $(function () {
     };
 
     /**
+     * To show the errors that happen in the gadget rendering
+     * @param err Status code for the particular error
+     */
+    var showGadgetErrors = function(err) {
+        if (err === UNAUTHORIZED_ERROR_CODE) {
+            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+        } else if (err === NOT_FOUND_ERROR_CODE) {
+            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+        }
+    };
+
+    /**
      * Render the view content
      * @param viewId View id
      */
@@ -552,13 +568,8 @@ $(function () {
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
-                if (err === 401) {
-                    $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['no.permission.to.view.gadget']}));
-                    err = null;
-                } else if (err === 404)  {
-                    $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['gadget.missing']}));
+                if (err) {
+                    showGadgetErrors(err);
                     err = null;
                 }
             });
@@ -587,13 +598,8 @@ $(function () {
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
-                if (err === 401) {
-                    $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['no.permission.to.view.gadget']}));
-                    err = null;
-                } else if (err === 404)  {
-                    $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                    $(this).find('.ues-component-body').html(dsErrorHbs({error : i18n_data['gadget.missing']}));
+                if (err) {
+                    showGadgetErrors(err);
                     err = null;
                 }
             });
@@ -684,6 +690,7 @@ $(function () {
     var hasComponents = function (container) {
         return (container.find('.ues-component .ues-component-body div').length > 0);
     };
+    
     /**
      * Update the layout after modification.
      * @return {null}
