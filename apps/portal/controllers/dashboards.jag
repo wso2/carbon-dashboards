@@ -25,9 +25,35 @@ var fresh;
     var constants = require('/modules/constants.js');
     var log = new Log("/controllers/dashboards.jag");
 
+    /**
+     * Sanitize the input value.
+     * @param input {String}
+     * @return string
+     * @private
+     */
+    var sanitizeInput = function (input) {
+        if (!input) {
+            return "";
+        }
+        return input.replace(/[^a-z0-9-\s]/gim, "");
+    };
+
+    /**
+     * Sanitize the user given id to the standards.
+     * @param id {String}
+     * @return string
+     * @private
+     * */
+    var sanitizeDashboardID = function (id) {
+        if (!id) {
+            return "";
+        }
+        return id.replace(/[^\w]/g, '-').toLowerCase();
+    };
+
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
-        dashboardId = vars.id;
+        dashboardId = sanitizeDashboardID(sanitizeInput(vars.id));
         pageId = vars.page;
     }
 
@@ -58,17 +84,17 @@ var fresh;
         if (!request.getParameter("shared")) {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getAsset(dashboardId);
-                if(!dashboard.menu && dashboard.pages.length > 0){
-                    if(log.isDebugEnabled()){
+                if (!dashboard.menu && dashboard.pages.length > 0) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Unable to locate menu object, updating dashboard.json for: " + dashboardId);
                     }
 
                     dashboard = decorateDashboard(dashboard);
-                    utils.sandbox(context, function() {
+                    utils.sandbox(context, function () {
                         dashboards.update(dashboard);
                     });
 
-                    if(log.isDebugEnabled()){
+                    if (log.isDebugEnabled()) {
                         log.debug("Updated dashboard.json for: " + dashboardId);
                     }
                 }
@@ -160,25 +186,25 @@ var fresh;
         constants = require('/modules/constants.js');
         dashboard = {
             id: dashboardId,
-            title: request.getParameter('title'),
-            description: request.getParameter('description'),
+            title: sanitizeInput(request.getParameter('title')),
+            description: sanitizeInput(request.getParameter('description')),
             permissions: {
                 viewers: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_VIEWER)],
                 editors: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_EDITOR)],
                 owners: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_OWNER)]
             },
             pages: [],
-            menu:[],
+            menu: [],
             hideAllMenuItems: false,
             identityServerUrl: "",
             accessTokenUrl: "",
             apiKey: "",
             apiSecret: "",
             theme: request.getParameter('select-theme'),
-            shareDashboard : false
-    };
+            shareDashboard: false
+        };
 
-        utils.sandbox(context, function() {
+        utils.sandbox(context, function () {
             dashboards.create(dashboard);
         });
 
@@ -186,15 +212,15 @@ var fresh;
         return;
     }
 
-    function decorateDashboard(dashboard){
+    function decorateDashboard(dashboard) {
         dashboard.menu = [];
-        for(var i=0,length=dashboard.pages.length; i < length; i++){
+        for (var i = 0, length = dashboard.pages.length; i < length; i++) {
             var menu = {
-                "id" : dashboard.pages[i].id,
-                "isanon" : false,
-                "ishidden" : false,
+                "id": dashboard.pages[i].id,
+                "isanon": false,
+                "ishidden": false,
                 "title": dashboard.pages[i].title,
-                "subordinates" : []
+                "subordinates": []
             };
             dashboard.menu.push(menu);
         }
