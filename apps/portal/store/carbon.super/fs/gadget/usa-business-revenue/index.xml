@@ -44,7 +44,7 @@
 <body>
 <p id="init-text" style="font-size: 12px;">This gadget is a subscriber gadget to the USA Map gadget. Based on the selected state on the US map, corresponding business revenue graph will be displayed. Hence please add the US Map gadget and wire with it.</p>
 <svg id="chart"></svg>
-<script src="js/d3.v3.min.js"></script>
+<script src="/portal/libs/d3/d3.v3.min.js"></script>
 <script src="js/revenue.js"></script>
 </body>
 </html>
