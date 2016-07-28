@@ -19,6 +19,15 @@
     var DEFAULT_STORE = 'fs';
     var LEGACY_STORE = 'store';
     var SUPER_DOMAIN = 'carbon.super';
+    var loadingFinishedCount;
+    var content;
+    var componentBoxContentHbs;
+    var isDesignerView;
+    var doneCallback;
+    var componentBoxNum;
+    var componentBoxList;
+    var prePriority;
+    var dashboardLoadingState = true;
     /**
      * Find a component.
      * @param {String} type Type of the plugin
@@ -45,7 +54,7 @@
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
-        setupTitleBar(sandbox,component);
+        setupTitleBar(sandbox, component);
         if (component.content.styles.hide_gadget) {
             hideGadget(sandbox);
         } else {
@@ -63,7 +72,7 @@
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
-        setupTitleBar(container,component);
+        setupTitleBar(container, component);
         if (component.content.styles.hide_gadget) {
             hideGadget(container);
         } else {
@@ -247,7 +256,7 @@
 
     var isGadgetUnavailable = function (gadgetComponetBox) {
         var isGadgetExists = false;
-        if(ues.global.dashboard.shareDashboard){
+        if (ues.global.dashboard.shareDashboard) {
             ues.store.sharedAsset("gadget", content[$(gadgetComponetBox).attr('id')][0].content.id, function (error) {
                 isGadgetExists = error
             });
@@ -350,7 +359,17 @@
                 finishedLoading();
             }
 
+        } else {
+            dashboardLoadingState = false;
         }
+    };
+
+    /**
+     * get the dashboard loading state as a boolean. If it is loaded completely, returns null
+     * @returns {boolean}
+     */
+    var getDashboardLoadingState = function () {
+        return dashboardLoadingState;
     };
 
     /**
@@ -461,7 +480,8 @@
         findPage: findPage,
         resolveURI: resolveURI,
         finishedLoadingGadget: finishedLoading,
-        findComponent: findComponent
+        findComponent: findComponent,
+        getDashboardLoadingState: getDashboardLoadingState
     };
 
     ues.assets = {};
