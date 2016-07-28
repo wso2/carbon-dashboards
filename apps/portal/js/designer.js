@@ -1805,7 +1805,7 @@ $(function () {
                 updatePagesList();
 
                 // hide the sidebar
-                $('#sidebarNavPages button[rel="createPage"]').click();
+                $('#left-sidebar-sub .close-handle').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
 
