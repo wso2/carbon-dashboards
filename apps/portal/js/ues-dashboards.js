@@ -359,9 +359,11 @@
                 });
             }
             else {
+                if (doneCallback){
+                    doneCallback(err);
+                }
                 finishedLoading();
             }
-
         } else {
             dashboardLoadingState = false;
         }

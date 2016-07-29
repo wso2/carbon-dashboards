@@ -543,13 +543,13 @@ $(function () {
      * To show the errors that happen in the gadget rendering
      * @param err Status code for the particular error
      */
-    var showGadgetErrors = function(err) {
+    var showGadgetErrors = function(element, err) {
         if (err === UNAUTHORIZED_ERROR_CODE) {
-            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+            element.find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
         } else if (err === NOT_FOUND_ERROR_CODE) {
-            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+            element.find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
         }
     };
 
@@ -569,7 +569,7 @@ $(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
                 if (err) {
-                    showGadgetErrors(err);
+                    showGadgetErrors($(this), err);
                     err = null;
                 }
             });
@@ -599,7 +599,7 @@ $(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
                 if (err) {
-                    showGadgetErrors(err);
+                    showGadgetErrors($(this), err);
                     err = null;
                 }
             });
