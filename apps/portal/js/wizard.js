@@ -120,10 +120,14 @@ $('#test-connection').click(function () {
         contentType: "application/json",
         async: false,
         success: function () {
+            $('#tab2-validation-errors > .text').empty();
+            $('#tab2-validation-errors').hide();
             $('#test-verification-label').show();
         },
         error: function (xhr, message, errorObj) {
-            $('#tab2-validation-errors').html('Error in database configuration');
+            $('#tab2-validation-errors > .text').html('<strong>Error!</strong> in database configuration');
+            $('#tab2-validation-errors').show();
+            $('#test-verification-label').hide();
         }
     })
 });
@@ -139,12 +143,14 @@ $('#show-data').click(function () {
         success: function (data) {
             if(!data.error) {
                 $('#sample-data-message').show();
-                $('#tab2-validation-errors').html('');
+                $('#tab2-validation-errors > .text').empty();
+                $('#tab2-validation-errors').hide();
                 var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
                 $('#data-preview').html(dataPreviewHbs(data));
                 $('#rootwizard').find('.pager .next').removeClass("disabled");
             } else {
-                $('#tab2-validation-errors').html(data.message);
+                $('#tab2-validation-errors > .text').html(data.message);
+                $('#tab2-validation-errors').show();
                 $('#data-preview').html('');
                 $('#rootwizard').find('.pager .next').addClass("disabled");
             }
@@ -181,7 +187,8 @@ $('#gadget-name').on('keyup', function () {
 
 $('#tab2').on('keypress', function() {
     $('#test-verification-label').hide();
-    $('#tab2-validation-errors').empty();
+    $('#tab2-validation-errors > .text').empty();
+    $('#tab2-validation-errors').hide();
     $('input[required="true"]').each(function () {
         $(this).on('keyup', function (e) {
             if ($(this).val()) {
@@ -192,7 +199,8 @@ $('#tab2').on('keypress', function() {
 });
 
 $('#tab3').on('keypress', function () {
-    $('#tab3-validation-errors').empty();
+    $('#tab3-validation-errors > .text').empty();
+    $('#tab3-validation-errors').hide();
 });
 
 $("#preview").click(function () {
@@ -215,10 +223,12 @@ $("#preview").click(function () {
             async: false,
             success: function (data) {
                 if (!data.error) {
-                    $('#tab3-validation-errors').html('');
+                    $('#tab3-validation-errors > .text').empty();
+                    $('#tab3-validation-errors').hide();
                     $('#preview-pane').html($('#preview-hbs').html());
                 } else {
-                    $('#tab3-validation-errors').html(data.message);
+                    $('#tab3-validation-errors > .text').html(data.message);
+                    $('#tab3-validation-errors').show();
                     $('#preview-pane').html('');
                     $('#rootwizard').find('.pager .finish').hide();
                 }
@@ -422,7 +432,8 @@ function getChartConfig(providerConfig) {
                 $("#chart-config").html(chartHbs(chartConfig));
                 $("#preview").removeAttr("style");
             }else {
-                $('#tab3-validation-errors').html(chartConfig.message);
+                $('#tab3-validation-errors > .text').html(chartConfig.message);
+                $('#tab3-validation-errors').show();
                 $('#rootwizard').find('.pager .next').addClass("disabled");
             }
         }

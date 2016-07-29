@@ -23,7 +23,6 @@ var exchangeSAMLTokenForCookie = function (samlResponse) {
     try {
         ssoStub.login(authRequest);
         var authToken = ssoStub._getServiceClient().getServiceContext().getProperty(HTTPConstants.COOKIE_STRING);
-        log.info("Exchanged the SAML token to session cookie: " + authToken);
         return authToken;
     } catch(e) {
         log.error(e);

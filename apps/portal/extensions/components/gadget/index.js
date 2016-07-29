@@ -152,6 +152,15 @@
                 site: site
             };
             done(false, comp);
+            
+            var theme = $('body').data('gadget-theme');
+          
+            sandbox.find('iframe').on('load', function(){
+                if (this.contentWindow.document.readyState == "complete") {
+                    $(this).contents().find('body').addClass(theme);
+                    $(this).closest('.gadget-body').removeClass('loading');
+                }
+            });
         });
     };
 
