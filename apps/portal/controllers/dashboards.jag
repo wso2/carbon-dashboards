@@ -38,22 +38,9 @@ var fresh;
         return input.replace(/[^a-z0-9-\s]/gim, "");
     };
 
-    /**
-     * Sanitize the user given id to the standards.
-     * @param id {String}
-     * @return string
-     * @private
-     * */
-    var sanitizeDashboardID = function (id) {
-        if (!id) {
-            return "";
-        }
-        return id.replace(/[^\w]/g, '-').toLowerCase();
-    };
-
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
-        dashboardId = sanitizeDashboardID(sanitizeInput(vars.id));
+        dashboardId = sanitizeInput(vars.id);
         pageId = vars.page;
     }
 
