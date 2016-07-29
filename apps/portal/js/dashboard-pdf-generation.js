@@ -24,8 +24,8 @@
      * register event handler to toggle the class to collapse the generate pdf panel
      */
     $("#download-pdf-panel").click(function () {
-        $("#pdf-size").text(CURRENT_SIZE);
-        populatePredefinedSizesIntoUI(CURRENT_SIZE);
+        $("#pdf-size").text(DEFAULT_SIZE);
+        populatePredefinedSizesIntoUI(DEFAULT_SIZE);
         $("#pdf-size-panel").toggleClass("in");
     });
 
@@ -67,7 +67,7 @@
                 $("#pdf-width").val(A1_WIDTH);
                 $("#pdf-height").val(A1_HEIGHT);
                 break;
-            case CURRENT_SIZE:
+            case DEFAULT_SIZE:
                 $("#pdf-width").val($("#gadgets-grid").width());
                 $("#pdf-height").val($("#gadgets-grid").height());
                 break;
