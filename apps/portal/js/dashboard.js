@@ -171,43 +171,45 @@ $(function () {
 
         // event handler for trash button
         viewer.on('click', '.ues-component-box .ues-trash-handle', function () {
-            var that = $(this);
-            var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
-            var hasComponent = false;
-            if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
-                hasComponent = true;
-            }
+            if (isPersonalizeEnabled) {
+                var that = $(this);
+                var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
+                var hasComponent = false;
+                if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
+                    hasComponent = true;
+                }
 
-            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
-                var designerModal = $('#dashboardViewModal');
-                designerModal.find('#btn-delete').on('click', function () {
-                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-component-box');
-                    var componentBoxId = componentBox.attr('id');
-                    var id = componentBox.find('.ues-component').attr('id');
+                showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
+                    var designerModal = $('#dashboardViewModal');
+                    designerModal.find('#btn-delete').on('click', function () {
+                        var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
+                        var componentBox = that.closest('.ues-component-box');
+                        var componentBoxId = componentBox.attr('id');
+                        var id = componentBox.find('.ues-component').attr('id');
 
-                    if (id) {
-                        removeComponent(findComponent(id), function (err) {
-                            if (err) {
-                                throw err;
+                        if (id) {
+                            removeComponent(findComponent(id), function (err) {
+                                if (err) {
+                                    throw err;
+                                }
+                                saveDashboard();
+                                $("#" + ues.global.page).show();
+                            });
+                        }
+
+                        if (hasHiddenGadget(componentBox)) {
+                            for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
+                                if (ues.global.dashboard.pages[i].id === page.id) {
+                                    ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                                }
                             }
                             saveDashboard();
-                            $("#" + ues.global.page).show();
-                        });
-                    }
-
-                    if (hasHiddenGadget(componentBox)) {
-                        for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
-                            if (ues.global.dashboard.pages[i].id === page.id) {
-                                ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
-                            }
                         }
-                        saveDashboard();
-                    }
-                    componentBox.html(componentBoxContentHbs());
-                    designerModal.modal('hide');
+                        componentBox.html(componentBoxContentHbs());
+                        designerModal.modal('hide');
+                    });
                 });
-            });
+            }
         });
     };
 
@@ -543,13 +545,13 @@ $(function () {
      * To show the errors that happen in the gadget rendering
      * @param err Status code for the particular error
      */
-    var showGadgetErrors = function(err) {
+    var showGadgetErrors = function(element, err) {
         if (err === UNAUTHORIZED_ERROR_CODE) {
-            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+            element.find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
         } else if (err === NOT_FOUND_ERROR_CODE) {
-            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+            element.find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
         }
     };
 
@@ -569,7 +571,7 @@ $(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
                 if (err) {
-                    showGadgetErrors(err);
+                    showGadgetErrors($(this), err);
                     err = null;
                 }
             });
@@ -599,7 +601,7 @@ $(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
                 if (err) {
-                    showGadgetErrors(err);
+                    showGadgetErrors($(this), err);
                     err = null;
                 }
             });
