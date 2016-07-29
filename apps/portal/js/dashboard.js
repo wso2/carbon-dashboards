@@ -171,43 +171,45 @@ $(function () {
 
         // event handler for trash button
         viewer.on('click', '.ues-component-box .ues-trash-handle', function () {
-            var that = $(this);
-            var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
-            var hasComponent = false;
-            if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
-                hasComponent = true;
-            }
+            if (isPersonalizeEnabled) {
+                var that = $(this);
+                var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
+                var hasComponent = false;
+                if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
+                    hasComponent = true;
+                }
 
-            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
-                var designerModal = $('#dashboardViewModal');
-                designerModal.find('#btn-delete').on('click', function () {
-                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-component-box');
-                    var componentBoxId = componentBox.attr('id');
-                    var id = componentBox.find('.ues-component').attr('id');
+                showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
+                    var designerModal = $('#dashboardViewModal');
+                    designerModal.find('#btn-delete').on('click', function () {
+                        var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
+                        var componentBox = that.closest('.ues-component-box');
+                        var componentBoxId = componentBox.attr('id');
+                        var id = componentBox.find('.ues-component').attr('id');
 
-                    if (id) {
-                        removeComponent(findComponent(id), function (err) {
-                            if (err) {
-                                throw err;
+                        if (id) {
+                            removeComponent(findComponent(id), function (err) {
+                                if (err) {
+                                    throw err;
+                                }
+                                saveDashboard();
+                                $("#" + ues.global.page).show();
+                            });
+                        }
+
+                        if (hasHiddenGadget(componentBox)) {
+                            for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
+                                if (ues.global.dashboard.pages[i].id === page.id) {
+                                    ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                                }
                             }
                             saveDashboard();
-                            $("#" + ues.global.page).show();
-                        });
-                    }
-
-                    if (hasHiddenGadget(componentBox)) {
-                        for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
-                            if (ues.global.dashboard.pages[i].id === page.id) {
-                                ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
-                            }
                         }
-                        saveDashboard();
-                    }
-                    componentBox.html(componentBoxContentHbs());
-                    designerModal.modal('hide');
+                        componentBox.html(componentBoxContentHbs());
+                        designerModal.modal('hide');
+                    });
                 });
-            });
+            }
         });
     };
 
