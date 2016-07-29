@@ -56,6 +56,19 @@ $(function () {
      * @const
      */
     var DEFAULT_VIEW_NAME = 'Default View';
+    /**
+     * Http status code for not found
+     * @type {number}
+     * @const
+     */
+    var NOT_FOUND_ERROR_CODE = 404;
+
+    /**
+     * Http status code for un authorized
+     * @type {number}
+     * @const
+     */
+    var UNAUTHORIZED_ERROR_CODE = 401;
 
     //Keep the number of visible views of a page
     var NO_OF_VISIBLE_VIEWS = 6;
@@ -230,6 +243,8 @@ $(function () {
     var viewListingHbs = Handlebars.compile($('#view-listing-hbs').html());
 
     var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
+
+    var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
 
     /**
      * Generate unique gadget ID.
@@ -815,7 +830,9 @@ $(function () {
             //if user have click on another view's properties button (not on current view's properties button),
             //we render the new view
             if (currentPageType !== viewId) {
+                $('.fw-right-arrow').click();
                 renderView(currentPageType, viewId);
+                $('li[data-view-mode="' + viewId + '"] .ues-view-component-properties-handle').click();
             }
 
             if ($('#right-sidebar').hasClass('toggled')) {
@@ -1003,20 +1020,22 @@ $(function () {
                         2. If it is a landing page, and if there are more than 1 page, check whether there is atleast one
                             view for internal/everyone role
                      */
-                    if (page.id !== dashboard.landing) {
-                        var landingPage = getPage(dashboard.landing);
-                        if (!isRoleExist(landingPage, ANONYMOUS_ROLE)) {
-                            showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
-                                i18n_data["landing.page.minimal"] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
-                            return;
-                        }
-                    } else {
-                        if (dashboard.pages.length > 1) {
-                            if (!isRoleExist(page, INTERNAL_EVERYONE_ROLE, viewId)) {
+                    if (dashboard.landing) {
+                        if (page.id !== dashboard.landing) {
+                            var landingPage = getPage(dashboard.landing);
+                            if (!isRoleExist(landingPage, ANONYMOUS_ROLE)) {
                                 showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
-                                    i18n_data["landing.page.minimal"] + " " + INTERNAL_EVERYONE_ROLE + " " +
-                                    i18n_data['role']);
+                                    i18n_data["landing.page.minimal"] + " " + ANONYMOUS_ROLE + " " + i18n_data['role']);
                                 return;
+                            }
+                        } else {
+                            if (dashboard.pages.length > 1) {
+                                if (!isRoleExist(page, INTERNAL_EVERYONE_ROLE, viewId)) {
+                                    showInformation(i18n_data["cannot.add"] + " " + ANONYMOUS_ROLE + " " + i18n_data["role"],
+                                        i18n_data["landing.page.minimal"] + " " + INTERNAL_EVERYONE_ROLE + " " +
+                                        i18n_data['role']);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -1325,6 +1344,7 @@ $(function () {
 
         //event handler for clicking on a view name
         $('#designer-view-mode').on('click', '.ues-view-name', function () {
+            $('.fw-right-arrow').click();
             if ($('#right-sidebar').hasClass('toggled')) {
                 $('#right-sidebar').removeClass('toggled');
             }
@@ -1495,17 +1515,20 @@ $(function () {
         // event handler for trash button
         designer.on('click', '.ues-component-box .ues-trash-handle', function () {
             var that = $(this);
+            var componentBox = that.closest('.ues-component-box');
+            var componentBoxId = componentBox.attr('id');
             var confirmDeleteBlockHbs = Handlebars.compile($('#ues-modal-confirm-delete-block-hbs').html());
             var hasComponent = false;
+            var hasHidden = hasHiddenGadget(componentBox);
             if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
                 hasComponent = true;
             }
+            hasComponent = hasComponent ? hasComponent : hasHidden;
 
             showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-component-box');
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
 
@@ -1516,6 +1539,14 @@ $(function () {
                             }
                             saveDashboard();
                         });
+                    }
+                    if (hasHidden) {
+                        for (var i = 0; i < dashboard.pages.length; i++) {
+                            if (dashboard.pages[i].id === page.id) {
+                                dashboard.pages[i].content[pageType][componentBoxId] = [];
+                            }
+                        }
+                        saveDashboard();
                     }
                     if (removeBlock) {
                         getGridstack().remove_widget(componentBox.parent());
@@ -1938,6 +1969,10 @@ $(function () {
         var views;
         var tempViewRoles;
         var k;
+
+        if (pages.length === 1) {
+            return true;
+        }
         for (var i = 0; i < pages.length; i++) {
             if (pages[i].id !== page.id) {
                 if (isRoleExist(pages[i], ANONYMOUS_ROLE)) {
@@ -2097,6 +2132,8 @@ $(function () {
                         dashboard.menu.unshift(menuItem);
                         spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
                     }
+                } else {
+                    dashboard.landing = dashboard.landing || null;
                 }
             },
             fluidLayout: function () {
@@ -2738,11 +2775,10 @@ $(function () {
             createPage(options, $(this).data('id'), function (err) {
                 // reload pages list
                 updatePagesList();
-                // hide the sidebar
-                $('#sidebarNavPages button[rel="createPage"]').click();
+                // hide the sidebar;
+                $('#left-sidebar-sub .close-handle').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
-
             });
         });
 
@@ -2761,6 +2797,8 @@ $(function () {
                 var currentViewId = getViewId(selectedView);
                 saveViewContent(currentViewId, newViewId, newViewName, viewRoles, layout);
                 isNewView = false;
+                // To close the popped up layouts
+                $('.fw-left-arrow').click();
             } else {
                 //if tries to change the layout of an existing view, after confiramtion destroy the page
                 showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
@@ -2779,6 +2817,8 @@ $(function () {
                             viewRoles = [INTERNAL_EVERYONE_ROLE];
                         }
                         saveViewContent(viewId, viewId, viewName, viewRoles, layout);
+                        // To close the popped up layouts
+                        $('.fw-left-arrow').click();
                     });
                     return true;
                 });
@@ -2893,10 +2933,12 @@ $(function () {
             drop: handleDropEvent
         });
 
-        //Disable draggable state for landing page
-        $("ul.menu-customize li:nth-child(3)").draggable('disable');
-        //Disable menu hide option for landing page
-        $("ul.menu-customize li:nth-child(3) .hide-menu-item:first").hide();
+        if (dashboard.landing) {
+            //Disable draggable state for landing page
+            $("ul.menu-customize li:nth-child(3)").draggable('disable');
+            //Disable menu hide option for landing page
+            $("ul.menu-customize li:nth-child(3) .hide-menu-item:first").hide();
+        }
 
         $('#ds-menu-hide-all').change(function () {
             if ($(this).is(":checked")) {
@@ -2987,7 +3029,7 @@ $(function () {
                             dashboard.isanon = isAnonDashboard();
                             saveDashboard();
                             visibleViews = [];
-                            renderPage(dashboard.landing);
+                            renderPage(dashboard.landing || dashboard.pages[0].id);
                         });
                         return true;
                     } else {
@@ -3379,7 +3421,7 @@ $(function () {
             drop: function (event, ui) {
                 var id = ui.helper.data('id');
                 var type = ui.helper.data('type');
-                if (!hasComponents($(this))) {
+                if (!hasHiddenGadget($(this)) && !hasComponents($(this))) {
                     createComponent($(this), findStoreCache(type, id));
                 }
             }
@@ -3394,6 +3436,20 @@ $(function () {
      */
     var hasComponents = function (container) {
         return (container.find('.ues-component .ues-component-body div').length > 0);
+    };
+
+    /**
+     * To check whether a box has a hidden gadget that is not visible due to authorization or missing file problem
+     * @param componentBox
+     * @returns {*|boolean}
+     */
+    var hasHiddenGadget = function (componentBox) {
+        for (var i = 0; i < dashboard.pages.length; i++) {
+            if (dashboard.pages[i].id === page.id) {
+                var component = dashboard.pages[i].content[pageType][componentBox.attr('id')];
+                return (component && component.length > 0);
+            }
+        }
     };
 
     /**
@@ -3443,7 +3499,7 @@ $(function () {
                     default: {}
                 }
             };
-            dashboard.landing = dashboard.landing || id;
+            dashboard.landing = dashboard.landing || null;
             dashboard.isanon = dashboard.isanon ? dashboard.isanon : false;
             dashboard.pages.push(page);
 
@@ -3499,10 +3555,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            renderPage(pid, function(err) {
-                var removingComponents = getRestrictedGadgetsToBeViewed();
-                removeGadgets(removingComponents, removingComponents.length);
-            });
+            renderPage(pid);
         });
     };
 
@@ -3650,7 +3703,7 @@ $(function () {
         if (!page) {
             throw 'specified page : ' + pid + ' cannot be found';
         }
-        var views = Object.keys(page.content);
+        var views = Object.keys(page.views.content);
         $('#more-views').addClass('hidden');
         if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
             visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
@@ -3678,8 +3731,8 @@ $(function () {
                         pageType = tempView;
                     }
                 }
-            } catch (Exception) {
-                generateMessage(viewTempName + " view is no longer available", null, null, "error", "topCenter", 2000, null);
+            } catch (e) {
+                throw e;
             }
         }
 
@@ -3712,6 +3765,14 @@ $(function () {
             $('.gadgets-grid').find('.ues-component').each(function () {
                 var id = $(this).attr('id');
                 renderComponentToolbar(findComponent(id));
+                if (err === UNAUTHORIZED_ERROR_CODE) {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+                } else if (err === NOT_FOUND_ERROR_CODE) {
+                    $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+                    $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+                }
+                err = null;
             });
             listenLayout();
             $('.grid-stack').gridstack({
@@ -3754,8 +3815,6 @@ $(function () {
         updatePagesList();
         updateMenuList();
         initBanner();
-        //var removingComponents = getRestrictedGadgetsToBeViewed();
-        //removeGadgets(removingComponents, removingComponents.length);
     };
 
     /**
@@ -3822,13 +3881,7 @@ $(function () {
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
         if (pages.length > 0) {
-            renderPage(page || db.landing || pages[0].id,function (err) {
-                if (err) {
-                    throw err;
-                }
-                var removingComponents = getRestrictedGadgetsToBeViewed();
-                removeGadgets(removingComponents, removingComponents.length);
-            });
+            renderPage(page || db.landing || pages[0].id);
         } else {
             renderPage(null)
         }
@@ -4051,7 +4104,7 @@ $(function () {
             }
         }
 
-    }
+    };
 
     /**
      * Hide/show particular menu item.
@@ -4072,19 +4125,31 @@ $(function () {
                     if (menu[i].ishidden) {
                         menu[i].ishidden = false;
                     } else {
-                        // hide if there are no subordinates
-                        if (menu[i].subordinates.length === 0) {
-                            menu[i].ishidden = true;
-                        }
+                        // hide all the subordinates of the menu item as well
+                        menu[i].ishidden = true;
+                        makeSubordinatesHidden(menu[i].subordinates);
                     }
                     saveDashboard();
                     return;
                 }
 
-                if (menu[i].subordinates.length > 0) {
+                if (menu[i].subordinates.length > 0 && !menu[i].ishidden) {
                     manipulateSubordinates(menu[i].subordinates, landing);
+                } else if (menu[i].ishidden) {
+                    showInformation(i18n_data['cannot.hide.page'], i18n_data['parents.hidden']);
                 }
             }
+        }
+    };
+
+    /**
+     * To make all the subordinates of a particular menu hidden
+     * @param menu Subordinates menu to make hidden
+     */
+    var makeSubordinatesHidden = function (menu) {
+        for (var j = 0; j < menu.length; j++) {
+            menu[j].ishidden = true;
+            makeSubordinatesHidden(menu[j].subordinates);
         }
     };
 
@@ -4096,7 +4161,8 @@ $(function () {
         var menu = dashboard.menu;
         var visibleMenuItems = [];
         traverseSubordinates(menu);
-        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1) ? true : false;
+        dashboard.hideAllMenuItems = (visibleMenuItems.length === 1 &&
+            dashboard.landing) || (visibleMenuItems.length === 0);
         saveDashboard();
         updateMenuList();
 
@@ -4110,7 +4176,7 @@ $(function () {
                 }
             }
         }
-    }
+    };
 });
 
 // Initialize nano scrollers

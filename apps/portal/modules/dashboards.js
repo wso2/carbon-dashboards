@@ -524,6 +524,8 @@ var getConvertedDashboardContent = function (registry, dashboard) {
         if (!dashboardContent.version || dashboardContent.version !== dashboardJsonVersion) {
             dashboardContent.version = dashboardJsonVersion;
             dashboardContent.pages.forEach(function (page) {
+                page.views = {};
+                page.views.content = {};
                 if (page.layout.content.loggedIn) {
                     page.views.content.default = page.layout.content.loggedIn;
                     page.views.content.default.name = constants.DEFAULT_VIEW_NAME;
@@ -535,6 +537,7 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                     page.views.content.anon.roles = [constants.ANONYMOUS_ROLE];
                     delete page.layout.content.anon;
                 }
+                delete page.layout;
             });
             var path = registryPath(dashboardContent.id);
             registry.put(path, {

@@ -34,19 +34,28 @@
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
     var method = request.getMethod();
-    response.contentType = 'application/json';
+    var isShared = request.getParameter('shared');
     var assets;
     var i18n = require('i18n');
     i18n.init(request, utils.getLocaleResourcePath());
     var matcher = new URIMatcher(request.getRequestURI());
+    response.contentType = 'application/json';
+
     if (matcher.match('/assets/publicAssets/{id}')) {
         id = matcher.elements().id;
         if (method === 'GET') {
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.getAsset(assetType, id);
+                assets = store.getAsset(assetType, id, isShared);
             });
+
             if (!assets) {
                 response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            if (!assets.id) {
+                response.sendError(401, JSON.stringify({
                     error: true
                 }));
                 return;
