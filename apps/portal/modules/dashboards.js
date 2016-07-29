@@ -130,7 +130,7 @@ var getAsset = function (id, originalDashboardOnly) {
     var contentDashboardJSON = JSON.parse(content);
     var dashboard = contentDashboardJSON;
     if (dashboard) {
-        if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
+        if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
             contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
         }
         var dashboard = contentDashboardJSON;
@@ -217,6 +217,26 @@ var create = function (dashboard) {
 };
 
 /**
+ * deploy dashboard with given dashboard json and the content.
+ * @param {Object} dashboard Dashboard object to be saved.
+ * @return {null}
+ * */
+var deployDashboard = function (dashboard) {
+    var server = new carbon.server.Server();
+    var registry = getRegistry();
+    var userManager = new carbon.user.UserManager(server);
+    var path = registryPath(dashboard.id);
+    if (registry.exists(path)) {
+        throw 'a dashboard exists with the same id ' + dashboard.id;
+    }
+    registry.put(path, {
+        content: JSON.stringify(dashboard),
+        mediaType: 'application/json'
+    });
+    userManager.denyRole('internal/everyone', path, 'read');
+};
+
+/**
  * Update an existing dashboard with given data.
  * @param {Object} dashboard                    Dashboard object to be updated.
  * @return {null}
@@ -293,6 +313,20 @@ var remove = function (id) {
         registry.remove(path);
     }
     usr.removeRoles(id);
+};
+
+
+/**
+ * Undeploy an existing dashboard from registry.
+ * @param {String} id                          Id of the dashboard.
+ * @return {null}
+ * */
+var unDeployDashboard = function (id) {
+    var registry = getRegistry();
+    var path = registryPath(id);
+    if (registry.exists(path)) {
+        registry.remove(path);
+    }
 };
 
 /**
