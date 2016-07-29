@@ -24,8 +24,8 @@
      * register event handler to toggle the class to collapse the generate pdf panel
      */
     $("#download-pdf-panel").click(function () {
-        $("#pdf-size").text(A4);
-        populatePredefinedSizesIntoUI(A4);
+        $("#pdf-size").text(DEFAULT_SIZE);
+        populatePredefinedSizesIntoUI(DEFAULT_SIZE);
         $("#pdf-size-panel").toggleClass("in");
     });
 
@@ -66,6 +66,10 @@
             case A1:
                 $("#pdf-width").val(A1_WIDTH);
                 $("#pdf-height").val(A1_HEIGHT);
+                break;
+            case DEFAULT_SIZE:
+                $("#pdf-width").val($("#gadgets-grid").width());
+                $("#pdf-height").val($("#gadgets-grid").height());
                 break;
         }
 
@@ -130,7 +134,7 @@
                 var divGen = document.createElement("div");
                 imageHTML.src = canvas.toDataURL(IMAGEPNG);
                 $(divGen).insertAfter($($(".gadget-body")[gadgetsCount]).find("iframe"));
-                $(imageHTML).width(parseInt($($(".gadget-body")[gadgetsCount]).css("width")) - 15);
+                $(imageHTML).width('100%');
                 $(divGen).append(imageHTML);
                 callback();
             }
@@ -167,7 +171,7 @@
                     unit: "px",
                     format: [width, height]
                 });
-                doc.text(width * .40, 100, ues.global.dashboard.title);
+                doc.text(width * .40, height*.025, ues.global.dashboard.title);
                 doc.addImage(canvas.toDataURL(IMAGEPNG), 'PNG', 0, 0, width, height);
                 doc.setFontType(PDF_WATERMARK_ITALIC);
                 doc.setFontSize(10);
