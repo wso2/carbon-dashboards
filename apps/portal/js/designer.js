@@ -2775,6 +2775,7 @@ $(function () {
                 }
             }
             createPage(options, $(this).data('id'), function (err) {
+                $('.fw-right-arrow').click();
                 // reload pages list
                 updatePagesList();
                 // hide the sidebar;
@@ -3554,6 +3555,7 @@ $(function () {
             return renderPage(pid);
         }
         destroyPage(page, currentPageType, function (err) {
+            $('.fw-right-arrow').click();
             if (err) {
                 throw err;
             }
