@@ -28,11 +28,12 @@
     var user = usr.current();
     var isAnonView = request.getParameter('isAnonView');
     var isPreview = request.getParameter('preview');
-    var queryString = request.getQueryString();
+    var queryString;
     var isPersonalizeEnabled = request.getParameter('dashboardeditor');
     var userRoles = [];
     var viewId = request.getParameter('currentView');
     var constants = require('/modules/constants.js');
+    var shared = request.getParameter('shared');
 
     if (!user) {
         userRoles.push(constants.ANONYMOUS_ROLE);
@@ -47,6 +48,11 @@
             userRoles.push(tempRoles[i]);
         }
     }
+
+    queryString = shared ? "shared=" + shared : queryString;
+    queryString = isPersonalizeEnabled ? (queryString ? queryString + "&" : "") + "dashboardeditor=" + isPersonalizeEnabled : queryString;
+    queryString = isPreview ? (queryString ? queryString + "&" : "") + "preview=" + isPreview : queryString;
+
     // Get the anon view
     if (!user) {
         if (isAnonView) {

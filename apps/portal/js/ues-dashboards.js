@@ -466,7 +466,7 @@
         var path = uri.substring(index + 3);
 
         path = uriPlugin(path);
-        if ((typeof(dashboard) !== 'undefined') && dashboard.shareDashboard) {
+        if ((typeof(dashboard) !== 'undefined') && user && dashboard.shareDashboard) {
             path = path.replace(user.domain, SUPER_DOMAIN);
         }
 
