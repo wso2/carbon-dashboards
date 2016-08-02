@@ -551,8 +551,9 @@ $(function () {
     /**
      * To show the errors that happen in the gadget rendering
      * @param err Status code for the particular error
+     * @param element UI element to show error
      */
-    var showGadgetErrors = function (element, err) {
+    var showGadgetError = function(element, err) {
         if (err === UNAUTHORIZED_ERROR_CODE) {
             element.find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
             element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
@@ -578,7 +579,7 @@ $(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
                 if (err) {
-                    showGadgetErrors($(this), err);
+                    showGadgetError($(this), err);
                     err = null;
                 }
             });
@@ -608,7 +609,7 @@ $(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
                 if (err) {
-                    showGadgetErrors($(this), err);
+                    showGadgetError($(this), err);
                     err = null;
                 }
             });

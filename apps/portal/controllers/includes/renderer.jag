@@ -75,13 +75,17 @@ var portalRoot;
                 currentPage = page;
             }
         });
-    }
-
-    for (var i = 0; i < dashboard.menu.length && pageId === null; i++) {
-        if (!dashboard.menu[i].ishidden) {
-            getPage(dashboard.menu[i].id);
+    } else {
+        for (var i = 0; i < dashboard.menu.length; i++) {
+            if (!dashboard.menu[i].ishidden) {
+                getPage(dashboard.menu[i].id);
+                if (pageId !== null) {
+                    break;
+                }
+            }
         }
     }
+
     function getPage(id) {
         dashboard.pages.forEach(function (page) {
             if (page.id === id) {

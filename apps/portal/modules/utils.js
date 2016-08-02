@@ -315,11 +315,7 @@ var isPageHasUserAllowedView = function (page) {
     var views = Object.keys(page.views.content);
     for (var i = 0; i < views.length; i++) {
         var viewRoles = page.views.content[views[i]].roles;
-        if (user && isAllowedView(viewRoles)) {
-            return true;
-        } else if (!user && viewRoles.indexOf(constants.ANONYMOUS_ROLE) > -1) {
-            return true;
-        }
+        return (user && isAllowedView(viewRoles)) || (!user && viewRoles.indexOf(constants.ANONYMOUS_ROLE) > -1);
     }
 };
 
