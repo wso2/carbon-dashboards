@@ -34,6 +34,27 @@ wso2.gadgets.identity = (function () {
     var RPC_SERVICE_GET_ACCESS_TOKEN = 'RPC_SERVICE_GET_ACCESS_TOKEN';
 
     /**
+     * Service name to get logged-in user domain.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_TENANT_DOMAIN = 'RPC_SERVICE_GET_TENANT_DOMAIN';
+
+    /**
+     * Service name to get hostname.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_SERVER_HOSTNAME = 'RPC_SERVICE_SERVER_HOSTNAME';
+
+    /**
+     * Service name to get port.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_SERVER_PORT = 'RPC_SERVICE_GET_SERVER_PORT';
+
+    /**
      * Get logged in user's username.
      * @param {function} callback Callback function
      * @return {null}
@@ -59,8 +80,50 @@ wso2.gadgets.identity = (function () {
         });
     };
 
+    /**
+     * Get logged-in user domain.
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var getTenantDomain = function (callback) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_GET_TENANT_DOMAIN, null, function (tenantDomain) {
+            if (callback) {
+                callback(tenantDomain);
+            }
+        });
+    };
+
+    /**
+     * Get logged-in user domain.
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var getHostname = function (callback) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_SERVER_HOSTNAME, null, function (hostname) {
+            if (callback) {
+                callback(hostname);
+            }
+        });
+    };
+
+    /**
+     * Get logged-in user domain.
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var getPort = function (httpType, callback) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_GET_SERVER_PORT, httpType, function (port) {
+            if (callback) {
+                callback(port);
+            }
+        });
+    };
+
     return {
         getUsername: getUsername,
-        getAccessToken: getAccessToken
+        getAccessToken: getAccessToken,
+        getTenantDomain: getTenantDomain,
+        getHostname: getHostname,
+        getPort: getPort
     };
 })();

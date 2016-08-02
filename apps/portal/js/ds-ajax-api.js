@@ -106,7 +106,30 @@
      */
     var RPC_SERVICE_GETDASHBOARDNAME_CALL = 'RPC_SERVICE_GETDASHBOARDNAME_CALL';
 
+    /**
+     * RPC service name of getting logged-in user domain
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_TENANT_DOMAIN = 'RPC_SERVICE_GET_TENANT_DOMAIN';
+
+    /**
+     * RPC service name of getting hostname
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_SERVER_HOSTNAME = 'RPC_SERVICE_SERVER_HOSTNAME';
+
+    /**
+     * RPC service name of getting port
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_SERVER_PORT = 'RPC_SERVICE_GET_SERVER_PORT';
+
     var username;
+    var hostname;
+    var port;
     var encodeHash = false;
 
     /**
@@ -223,6 +246,53 @@
             },
             error: function () {
                 sendGadgetResponse(target, RPC_SERVICE_GET_USERNAME, '');
+            }
+        });
+    });
+
+    // Get current tenantDomain
+    gadgets.rpc.register(RPC_SERVICE_GET_TENANT_DOMAIN, function () {
+        sendGadgetResponse(this.f, RPC_SERVICE_GET_TENANT_DOMAIN, ues.dashboards.getTenantDomain());
+    });
+
+    // Get port of the server
+    gadgets.rpc.register(RPC_SERVICE_GET_SERVER_PORT, function (httpType) {
+        var target = this.f;
+        if (port) {
+            sendGadgetResponse(target, RPC_SERVICE_GET_SERVER_PORT, port);
+            return;
+        }
+
+        $.ajax({
+            url: '/portal/apis/server/port/'+httpType,
+            type: 'GET',
+            success: function (data) {
+                port = data;
+                sendGadgetResponse(target, RPC_SERVICE_GET_SERVER_PORT, port);
+            },
+            error: function () {
+                sendGadgetResponse(target, RPC_SERVICE_GET_SERVER_PORT, '');
+            }
+        });
+    });
+
+    // Get hostname of the server
+    gadgets.rpc.register(RPC_SERVICE_SERVER_HOSTNAME, function () {
+        var target = this.f;
+        if (hostname) {
+            sendGadgetResponse(target, RPC_SERVICE_SERVER_HOSTNAME, hostname);
+            return;
+        }
+
+        $.ajax({
+            url: '/portal/apis/server/hostname',
+            type: 'GET',
+            success: function (data) {
+                hostname = data;
+                sendGadgetResponse(target, RPC_SERVICE_SERVER_HOSTNAME, hostname);
+            },
+            error: function () {
+                sendGadgetResponse(target, RPC_SERVICE_SERVER_HOSTNAME, '');
             }
         });
     });
