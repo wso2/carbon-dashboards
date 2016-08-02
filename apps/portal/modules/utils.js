@@ -156,8 +156,8 @@ var store = function () {
  */
 var getThemeStylesPath = function () {
     var theme = "";
-    if (dashboard.theme) {
-        theme = dashboard.theme;
+    if (dashboard.theme.name) {
+        theme = dashboard.theme.name;
     }
     var stylesPath = getCustomThemePath() + theme + constants.CSS_PATH;
     var folder = new File('/' + stylesPath);
@@ -176,8 +176,8 @@ var getThemeStylesPath = function () {
  */
 var getThemeScriptPath = function (fileName) {
     var theme = "";
-    if (dashboard.theme) {
-        theme = dashboard.theme;
+    if (dashboard.theme.name) {
+        theme = dashboard.theme.name;
     }
     var path = getCustomThemePath() + theme + '/' + constants.JS_PATH + fileName + '.js';
     var defaultPath = constants.JS_PATH + fileName + '.js';
@@ -193,8 +193,8 @@ var getThemeScriptPath = function (fileName) {
  */
 var getThemeTemplatePath = function (path) {
     var theme = "";
-    if (dashboard.theme) {
-        theme = dashboard.theme;
+    if (dashboard.theme.name) {
+        theme = dashboard.theme.name;
     }
     var extendedPath = getCustomThemePath() + theme + '/' + path;
     var defaultPath = '/theme/' + path;

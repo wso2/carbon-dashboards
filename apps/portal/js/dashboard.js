@@ -74,7 +74,14 @@ $(function () {
      * @const
      */
     var dashboardsApiRestore = ues.utils.tenantPrefix() + 'apis/dashboards/restore';
+
+    /**
+     * url for update theme properties
+     * @const
+     */
+    var themeApi = ues.utils.tenantPrefix() + 'apis/theme';
     var page;
+    var dashboardTheme = {};
     var selectedViewId;
     /**
      * Pre-compiling Handlebar templates
@@ -94,7 +101,7 @@ $(function () {
     var initComponentToolbar = function () {
         var viewer = $('.ues-components-grid');
         if (isPersonalizeEnabled) {
-            $(".gadget-heading").css("cursor","move");
+            $(".gadget-heading").css("cursor", "move");
         }
         // gadget title bar custom button function handler
         viewer.on('click', '.ues-custom-action', function (e) {
@@ -364,7 +371,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
             initComponentToolbar();
         });
     });
@@ -545,7 +552,7 @@ $(function () {
      * To show the errors that happen in the gadget rendering
      * @param err Status code for the particular error
      */
-    var showGadgetErrors = function(element, err) {
+    var showGadgetErrors = function (element, err) {
         if (err === UNAUTHORIZED_ERROR_CODE) {
             element.find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
             element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
@@ -692,7 +699,7 @@ $(function () {
     var hasComponents = function (container) {
         return (container.find('.ues-component .ues-component-body div').length > 0);
     };
-    
+
     /**
      * Update the layout after modification.
      * @return {null}
@@ -755,6 +762,35 @@ $(function () {
             contentType: 'application/json'
         }).success(function (data) {
             //generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
+            console.log("Dashboard saved successfully.");
+            if (isRedirect) {
+                isRedirect = false;
+                window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
+            }
+        }).error(function (xhr, status, err) {
+            if (xhr.status === 403) {
+                window.location.reload();
+                return;
+            }
+        });
+    };
+
+    /**
+     * update the dashboard theme with given theme.
+     * @return {null}
+     * @private
+     */
+    var updateThemeProperties = function () {
+        var method = 'PUT';
+        var url = themeApi + '/' + dashboard.id;
+        var isRedirect = false;
+        $.ajax({
+            url: url,
+            method: method,
+            data: JSON.stringify(dashboardTheme),
+            async: false,
+            contentType: 'application/json'
+        }).success(function (data) {
             console.log("Dashboard saved successfully.");
             if (isRedirect) {
                 isRedirect = false;
@@ -916,7 +952,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
             initComponentToolbar();
         });
     };
@@ -961,9 +997,9 @@ $(function () {
      * update refresh button with given ID
      */
     var updateRefreshBtn = function (pageID) {
-        $("#" + pageID).css('display','inline');
+        $("#" + pageID).css('display', 'inline');
         $("#" + pageID).show();
-    }
+    };
 
     initDashboard();
     updateMenuList();

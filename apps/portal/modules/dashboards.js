@@ -130,7 +130,7 @@ var getAsset = function (id, originalDashboardOnly) {
     var contentDashboardJSON = getConvertedDashboardContent(registry, path);
     var dashboard = contentDashboardJSON;
     if (dashboard) {
-        if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
+        if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
             contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
         }
         var dashboard = contentDashboardJSON;
@@ -255,6 +255,47 @@ var update = function (dashboard) {
             throw 'a dashboard cannot be found with the id ' + dashboard.id;
         }
     }
+    registry.put(path, {
+        content: JSON.stringify(dashboard),
+        mediaType: 'application/json'
+    });
+};
+
+/**
+ * Update an existing dashboard with given theme.
+ * @param theme
+ * @param dashboardID DashboardID of dashboard object to be updated
+ */
+var updateThemeProperties = function (theme, dashboardID) {
+    var registry = getRegistry();
+    var dashboard = null;
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    if (!user) {
+        throw 'User is not logged in ';
+    }
+    var userDashboardPath = registryUserPath(dashboardID, user.username);
+    var path = null;
+    if (!registry.exists(userDashboardPath)) {
+        var originalDashboardPath = registryPath(dashboardID);
+        if (!registry.exists(originalDashboardPath)) {
+            throw 'a dashboard cannot be found with the id ' + dashboard.id;
+        }
+        dashboard = getAsset(dashboardID, true);
+        var permission = {};
+        permission.edit = true;
+        path = allowed(dashboard,permission) ? originalDashboardPath : userDashboardPath;
+    } else {
+        dashboard = getAsset(dashboardID, false);
+        path = userDashboardPath;
+    }
+    dashboard.theme = {};
+    dashboard.theme.properties = {};
+    dashboard.theme.name = theme.name;
+    for (var i = 0; i < Object.keys(theme.properties).length; i++) {
+        dashboard.theme.properties[Object.keys(theme.properties)[i]] = theme.properties[Object.keys(theme.properties)[i]];
+    }
+
     registry.put(path, {
         content: JSON.stringify(dashboard),
         mediaType: 'application/json'
@@ -544,6 +585,12 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                 content: JSON.stringify(dashboardContent),
                 mediaType: 'application/json'
             });
+        }
+        if (!dashboardContent.theme.name) {
+            var themeName = dashboardContent.theme;
+            dashboardContent.theme = {};
+            dashboardContent.theme.name = themeName;
+            dashboardContent.theme.properties = {};
         }
     }
     return dashboardContent;

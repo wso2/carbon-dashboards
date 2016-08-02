@@ -586,55 +586,15 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('gadget-properties')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-handlebar-helpers')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard-theme')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-ajax-api')%>"></script>
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>
-        
-        function getCookie(cname) {
-            var name = cname + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0; i<ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1);
-                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-            }
-            return "";
-        }
-        
         $(document).ready(function() {
-            if((getCookie('dashboardTheme') == 'dark') || (getCookie('dashboardTheme') == '')){
-                $('[data-toggle="theme"]').attr('checked', 'checked');
-                $('body').addClass('dark');  
-            }
-            else{
-                $('[data-toggle="theme"]').removeAttr('checked');
-                $('body').removeClass('dark');
-            }
-
-            <% if(typeof  bgColor != 'undefined'){ %>
+           <% if(typeof  bgColor != 'undefined'){ %>
                 $('.dashboard').css({'background-color': '<%=bgColor%>'});
            <% } %>
-
-        });
-                
-        $('[data-toggle="theme"]').change(function(){
-            if($(this).prop('checked') == true){
-                $('[data-toggle="theme"]').each(function(){
-                    $('[data-toggle="theme"]').attr('checked', 'checked');
-                });
-                $('body').addClass('dark');
-                $('iframe').contents().find('body').addClass('dark');
-                document.cookie = "dashboardTheme=dark";
-            }
-            else{
-                $('[data-toggle="theme"]').each(function(){
-                    $(this).removeAttr('checked');
-                });
-                $('body').removeClass('dark');
-                $('iframe').contents().find('body').removeClass('dark');
-                document.cookie = "dashboardTheme=light";
-            }
         });
 
         $("#edit-view-toggler").change(function(){
@@ -644,56 +604,6 @@
             else{
                location.href = "<%=dbRoot%><%=pageId%>?personalize=false";
             }
-		})
-
-        var nanoScrollerSelector = $(".nano");
-        nanoScrollerSelector.nanoScroller();
-
-        function updateSidebarNav(target) {
-            $(target).show();
-            $(target).siblings().hide();
-            nanoScrollerSelector[0].nanoscroller.reset();
-        }
-
-        if (!ues.global.renderFromExtension) {
-            ues.dashboards.render($('.ues-components-grid'), ues.global.dashboard, ues.global.page);
-        }
-        
-        var iframesReadyInterval = setInterval(function() {
-            if(!ues.dashboards.getDashboardLoadingState() === true) {
-                clearInterval(iframesReadyInterval);
-                $('.body-wrapper').loading('hide');
-            }
-        }, 200);
-
-        $(document).ready(function() {
-            if($('.gadget-body').length > 0){
-                $('.body-wrapper').loading('show');
-            }
-            
-            if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
-                $('.grid-stack-item[data-banner=true]')
-                    .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
-            }
-        });
-        
-        function toggleProductLogo(sidebarEventType){
-            var logo = $('#product-logo');
-            
-            if (sidebarEventType == 'hidden'){
-                logo.show();
-            }
-            else if (sidebarEventType == 'shown'){
-                logo.hide();
-            }
-        }
-
-        $('#left-sidebar').on('hidden.sidebar', function(e){
-            toggleProductLogo(e.type)
-        });
-        
-        $('#left-sidebar').on('shown.sidebar', function(e){
-            toggleProductLogo(e.type)
         });
 
         var i18n_object = '{ ' +

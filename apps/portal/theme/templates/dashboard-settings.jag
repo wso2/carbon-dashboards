@@ -128,7 +128,7 @@
                         <div class="input-group-btn select" id="ues-dashboard-theme">
                             <button class="btn btn-default dropdown-toggle" type="button"
                                 data-toggle="dropdown" aria-expanded="false">
-                                <span class="selected"><%=utils.getDashboardTheme(dashboard.theme)%></span><span class="caret"></span>
+                                <span class="selected"><%=utils.getDashboardTheme(dashboard.theme.name)%></span><span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu option" role="menu">
                                <li><a href="#"><%=i18n.localize("theme.default")%></a></li>
