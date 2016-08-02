@@ -70,6 +70,7 @@ $(function () {
     var iframesReadyInterval = setInterval(function () {
         if (!ues.dashboards.getDashboardLoadingState() === true) {
             clearInterval(iframesReadyInterval);
+            updateGadgetTheme();
             $('.body-wrapper').loading('hide');
         }
     }, 200);
@@ -83,7 +84,6 @@ $(function () {
             $('.grid-stack-item[data-banner=true]')
                 .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
         }
-
         if ((ues.global.dashboard.theme.properties.lightDark == 'dark') ||
             (ues.global.dashboard.theme.properties.lightDark == '') || !(ues.global.dashboard.theme.properties.lightDark)) {
             $('[data-toggle="theme"]').attr('checked', 'checked');
@@ -94,6 +94,19 @@ $(function () {
             $('body').removeClass('dark');
         }
     });
+
+    /**
+     * update the gadget theme of gadgets
+     */
+    var updateGadgetTheme = function () {
+        if ((ues.global.dashboard.theme.properties.lightDark == 'dark') ||
+            (ues.global.dashboard.theme.properties.lightDark == '') || !(ues.global.dashboard.theme.properties.lightDark)) {
+            $('iframe').contents().find('body').addClass('dark');
+        }
+        else {
+            $('iframe').contents().find('body').removeClass('dark');
+        }
+    };
 
     /**
      * hide the left-side bar in view mode
