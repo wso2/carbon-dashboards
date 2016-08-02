@@ -79,7 +79,7 @@ var portalRoot;
         for (var i = 0; i < dashboard.menu.length; i++) {
             if (!dashboard.menu[i].ishidden) {
                 getPage(dashboard.menu[i].id);
-                if (pageId === null) {
+                if (pageId !== null) {
                     break;
                 }
             }
@@ -92,7 +92,6 @@ var portalRoot;
                 if (utils.isPageHasUserAllowedView(page)) {
                     currentPage = page;
                     pageId = page.id;
-                    return;
                 }
             }
         });
