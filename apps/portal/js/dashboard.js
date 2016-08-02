@@ -74,7 +74,14 @@ $(function () {
      * @const
      */
     var dashboardsApiRestore = ues.utils.tenantPrefix() + 'apis/dashboards/restore';
+
+    /**
+     * url for update theme properties
+     * @const
+     */
+    var themeApi = ues.utils.tenantPrefix() + 'apis/theme';
     var page;
+    var dashboardTheme = {};
     var selectedViewId;
     /**
      * Pre-compiling Handlebar templates
@@ -769,6 +776,35 @@ $(function () {
     };
 
     /**
+     * update the dashboard theme with given theme.
+     * @return {null}
+     * @private
+     */
+    var updateThemeProperties = function () {
+        var method = 'PUT';
+        var url = themeApi + '/' + dashboard.id;
+        var isRedirect = false;
+        $.ajax({
+            url: url,
+            method: method,
+            data: JSON.stringify(dashboardTheme),
+            async: false,
+            contentType: 'application/json'
+        }).success(function (data) {
+            console.log("Dashboard saved successfully.");
+            if (isRedirect) {
+                isRedirect = false;
+                window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
+            }
+        }).error(function (xhr, status, err) {
+            if (xhr.status === 403) {
+                window.location.reload();
+                return;
+            }
+        });
+    };
+
+    /**
      * Triggers update hook of a given component.
      * @param {String} id   Component ID
      * @return {null}
@@ -963,13 +999,103 @@ $(function () {
     var updateRefreshBtn = function (pageID) {
         $("#" + pageID).css('display','inline');
         $("#" + pageID).show();
+    };
+
+    /**
+     * hide the left-side bar in view mode
+     */
+    var hideSideBar = function () {
+        $(".page-content-wrapper").css('padding-left', '0');
+        $("#left-sidebar").css('left', '-260px');
+        $(".sidebar-toggle-button").removeClass('active');
+        $(".sidebar-toggle-button").attr('aria-expanded', false)
     }
 
+    /**
+     * toggles the product logo according to the event type
+     * @param sidebarEventType
+     */
+    function toggleProductLogo(sidebarEventType) {
+        var logo = $('#product-logo');
+
+        if (sidebarEventType == 'hidden') {
+            logo.show();
+        }
+        else if (sidebarEventType == 'shown') {
+            logo.hide();
+        }
+    }
+
+    /**
+     * generate theme data to send to backend in order to update the theme
+     */
+    function generateThemeData() {
+        var showSideBar = $(".sidebar-toggle-button").attr('aria-expanded');
+        var lightDark = $('body').hasClass('dark') ? 'dark' : 'light';
+        dashboardTheme.properties = {};
+        dashboardTheme.properties.lightDark = lightDark;
+        dashboardTheme.properties.showSideBar = showSideBar;
+        dashboardTheme.name = ues.global.dashboard.theme.name ? ues.global.dashboard.theme.name : ues.global.dashboard.theme;
+    }
+
+    if(ues.global.dashboard.theme.properties.showSideBar==="false"){
+        hideSideBar();
+    }
     initDashboard();
     updateMenuList();
     updateRefreshBtnVisibility();
     registerRefreshBtnHandler();
     initComponentToolbar();
+
+    $('#left-sidebar').on('hidden.sidebar', function (e) {
+        ues.global.dashboard.theme.properties.showSideBar = true;
+        generateThemeData()
+        updateThemeProperties();
+        toggleProductLogo(e.type)
+    });
+
+    $('#left-sidebar').on('shown.sidebar', function (e) {
+        ues.global.dashboard.theme.properties.showSideBar = false;
+        generateThemeData();
+        updateThemeProperties();
+        toggleProductLogo(e.type)
+    });
+
+    $(document).ready(function () {
+        if ((ues.global.dashboard.theme.properties.lightDark == 'dark') ||
+            (ues.global.dashboard.theme.properties.lightDark == '') || !(ues.global.dashboard.theme.properties.lightDark)) {
+            $('[data-toggle="theme"]').attr('checked', 'checked');
+            $('body').addClass('dark');
+        }
+        else {
+            $('[data-toggle="theme"]').removeAttr('checked');
+            $('body').removeClass('dark');
+        }
+    });
+
+    $('[data-toggle="theme"]').change(function () {
+        if ($(this).prop('checked') == true) {
+            $('[data-toggle="theme"]').each(function () {
+                $('[data-toggle="theme"]').attr('checked', 'checked');
+            });
+            $('body').addClass('dark');
+            $('iframe').contents().find('body').addClass('dark');
+            ues.global.dashboard.theme.properties.lightDark = 'dark';
+            generateThemeData();
+            updateThemeProperties();
+        }
+        else {
+            $('[data-toggle="theme"]').each(function () {
+                $(this).removeAttr('checked');
+            });
+            $('body').removeClass('dark');
+            $('iframe').contents().find('body').removeClass('dark');
+            ues.global.dashboard.theme.properties.lightDark = 'light';
+            generateThemeData();
+            updateThemeProperties();
+        }
+    });
+    
 });
 
 /**
