@@ -468,12 +468,28 @@
         return path;
     };
 
+    /**
+     * returns dahsboard id - used in dashboardInfo feature
+     * @returns dashboard id
+     */
     var getDashboardID = function () {
         return ues.global.dashboard.id;
     };
 
+    /**
+     * returns dahsboard name - used in dashboardInfo feature
+     * @returns dashboard name
+     */
     var getDashboardName = function () {
         return ues.global.dashboard.title;
+    };
+
+    /**
+     * returns tenant domain - used in identity feature
+     * @returns tenant domain
+     */
+    var getTenantDomain = function () {
+        return ues.global.userDomain;
     };
 
     ues.components = {
@@ -491,7 +507,8 @@
         findComponent: findComponent,
         getDashboardID: getDashboardID,
         getDashboardName: getDashboardName,
-        getDashboardLoadingState: getDashboardLoadingState
+        getDashboardLoadingState: getDashboardLoadingState,
+        getTenantDomain: getTenantDomain
     };
 
     ues.assets = {};

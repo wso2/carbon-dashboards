@@ -20,4 +20,5 @@ wso2features/controls/feature.xml
 wso2features/navigate/feature.xml
 wso2features/remoteClient/feature.xml
 wso2features/dashboardInfo/feature.xml
+wso2features/server/feature.xml
 wso2features/container.site.gadget/feature.xml
