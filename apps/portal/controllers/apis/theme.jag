@@ -46,7 +46,6 @@
         owners = permissions.owners;
         if (method === 'PUT') {
             var theme = request.getContent();
-
             if ((!user || !(utils.allowed(user.roles, owners) || utils.allowed(user.roles, editors) || (utils.allowed(user.roles, viewers))))) {
                 response.sendError(401, JSON.stringify({
                     error: 'Unauthorized to access the dashboard'
@@ -54,7 +53,7 @@
                 return;
             }
             utils.sandbox(context, function () {
-                dashboards.updateThemeProperties(theme,vars.id);
+                dashboards.updateThemeProperties(theme, vars.id);
             });
             print({
                 error: false

@@ -101,7 +101,7 @@ $(function () {
     var initComponentToolbar = function () {
         var viewer = $('.ues-components-grid');
         if (isPersonalizeEnabled) {
-            $(".gadget-heading").css("cursor","move");
+            $(".gadget-heading").css("cursor", "move");
         }
         // gadget title bar custom button function handler
         viewer.on('click', '.ues-custom-action', function (e) {
@@ -371,7 +371,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
             initComponentToolbar();
         });
     });
@@ -552,7 +552,7 @@ $(function () {
      * To show the errors that happen in the gadget rendering
      * @param err Status code for the particular error
      */
-    var showGadgetErrors = function(element, err) {
+    var showGadgetErrors = function (element, err) {
         if (err === UNAUTHORIZED_ERROR_CODE) {
             element.find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
             element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
@@ -699,7 +699,7 @@ $(function () {
     var hasComponents = function (container) {
         return (container.find('.ues-component .ues-component-body div').length > 0);
     };
-    
+
     /**
      * Update the layout after modification.
      * @return {null}
@@ -952,7 +952,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
             initComponentToolbar();
         });
     };
@@ -997,105 +997,16 @@ $(function () {
      * update refresh button with given ID
      */
     var updateRefreshBtn = function (pageID) {
-        $("#" + pageID).css('display','inline');
+        $("#" + pageID).css('display', 'inline');
         $("#" + pageID).show();
     };
 
-    /**
-     * hide the left-side bar in view mode
-     */
-    var hideSideBar = function () {
-        $(".page-content-wrapper").css('padding-left', '0');
-        $("#left-sidebar").css('left', '-260px');
-        $(".sidebar-toggle-button").removeClass('active');
-        $(".sidebar-toggle-button").attr('aria-expanded', false)
-    }
-
-    /**
-     * toggles the product logo according to the event type
-     * @param sidebarEventType
-     */
-    function toggleProductLogo(sidebarEventType) {
-        var logo = $('#product-logo');
-
-        if (sidebarEventType == 'hidden') {
-            logo.show();
-        }
-        else if (sidebarEventType == 'shown') {
-            logo.hide();
-        }
-    }
-
-    /**
-     * generate theme data to send to backend in order to update the theme
-     */
-    function generateThemeData() {
-        var showSideBar = $(".sidebar-toggle-button").attr('aria-expanded');
-        var lightDark = $('body').hasClass('dark') ? 'dark' : 'light';
-        dashboardTheme.properties = {};
-        dashboardTheme.properties.lightDark = lightDark;
-        dashboardTheme.properties.showSideBar = showSideBar;
-        dashboardTheme.name = ues.global.dashboard.theme.name ? ues.global.dashboard.theme.name : ues.global.dashboard.theme;
-    }
-
-    if(ues.global.dashboard.theme.properties.showSideBar==="false"){
-        hideSideBar();
-    }
     initDashboard();
     updateMenuList();
     updateRefreshBtnVisibility();
     registerRefreshBtnHandler();
     initComponentToolbar();
 
-    $('#left-sidebar').on('hidden.sidebar', function (e) {
-        ues.global.dashboard.theme.properties.showSideBar = true;
-        generateThemeData()
-        updateThemeProperties();
-        toggleProductLogo(e.type)
-    });
-
-    $('#left-sidebar').on('shown.sidebar', function (e) {
-        ues.global.dashboard.theme.properties.showSideBar = false;
-        generateThemeData();
-        updateThemeProperties();
-        toggleProductLogo(e.type)
-    });
-
-    $(document).ready(function () {
-        if ((ues.global.dashboard.theme.properties.lightDark == 'dark') ||
-            (ues.global.dashboard.theme.properties.lightDark == '') || !(ues.global.dashboard.theme.properties.lightDark)) {
-            $('[data-toggle="theme"]').attr('checked', 'checked');
-            $('body').addClass('dark');
-        }
-        else {
-            $('[data-toggle="theme"]').removeAttr('checked');
-            $('body').removeClass('dark');
-        }
-    });
-
-    $('[data-toggle="theme"]').change(function () {
-        if ($(this).prop('checked') == true) {
-            $('[data-toggle="theme"]').each(function () {
-                $('[data-toggle="theme"]').attr('checked', 'checked');
-            });
-            $('body').addClass('dark');
-            $('iframe').contents().find('body').addClass('dark');
-            ues.global.dashboard.theme.properties.lightDark = 'dark';
-            generateThemeData();
-            updateThemeProperties();
-        }
-        else {
-            $('[data-toggle="theme"]').each(function () {
-                $(this).removeAttr('checked');
-            });
-            $('body').removeClass('dark');
-            $('iframe').contents().find('body').removeClass('dark');
-            ues.global.dashboard.theme.properties.lightDark = 'light';
-            generateThemeData();
-            updateThemeProperties();
-        }
-    });
-    
 });
 
 /**
