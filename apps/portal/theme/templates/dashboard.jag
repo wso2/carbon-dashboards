@@ -586,7 +586,7 @@
 
     <script>
         $(document).ready(function() {
-            <% if(typeof  bgColor != 'undefined'){ %>
+           <% if(typeof  bgColor != 'undefined'){ %>
                 $('.dashboard').css({'background-color': '<%=bgColor%>'});
            <% } %>
         });
