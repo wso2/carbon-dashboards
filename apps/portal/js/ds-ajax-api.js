@@ -78,7 +78,7 @@
      */
     var RPC_SERVICE_GADGET_CALLBACK = 'RPC_SERVICE_GADGET_CALLBACK';
 
-	/**
+    /**
      * RPC service name of lost focus event notifications.
      * @const
      * @private
@@ -264,7 +264,7 @@
         }
 
         $.ajax({
-            url: '/portal/apis/server/port/'+httpType,
+            url: '/portal/apis/server/port/' + httpType,
             type: 'GET',
             success: function (data) {
                 port = data;
@@ -377,8 +377,8 @@
     });
 
     // Notify each gadgets when the user clicks on the dashboard.
-    $(document).on('click', function() {
-        $('.ues-component-box iframe').each(function() {
+    $(document).on('click', function () {
+        $('.ues-component-box iframe').each(function () {
             gadgets.rpc.call($(this).attr('id'), RPC_SERVICE_LOST_FOCUS_CALLBACK, null, null);
         });
     });
