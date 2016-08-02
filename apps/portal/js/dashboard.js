@@ -1006,7 +1006,6 @@ $(function () {
     updateRefreshBtnVisibility();
     registerRefreshBtnHandler();
     initComponentToolbar();
-
 });
 
 /**

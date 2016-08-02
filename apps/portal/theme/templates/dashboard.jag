@@ -585,7 +585,7 @@
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>
-		$(document).ready(function() {
+        $(document).ready(function() {
             <% if(typeof  bgColor != 'undefined'){ %>
                 $('.dashboard').css({'background-color': '<%=bgColor%>'});
            <% } %>
@@ -598,7 +598,7 @@
             else{
                location.href = "<%=dbRoot%><%=pageId%>?personalize=false";
             }
-		});
+        });
 
         var i18n_object = '{ ' +
                             ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
