@@ -33,7 +33,6 @@ $(function () {
      * @private
      */
     var updateThemeProperties = function () {
-        var dashboardTheme = generateThemeData();
         var method = 'PUT';
         var url = themeApi + '/' + dashboard.id;
         var isRedirect = false;
@@ -142,7 +141,7 @@ $(function () {
         dashboardTheme.properties = {};
         dashboardTheme.properties.lightDark = lightDark;
         dashboardTheme.properties.showSideBar = showSideBar;
-        dashboardTheme.name = ues.global.dashboard.theme.name ? ues.global.dashboard.theme.name : ues.global.dashboard.theme;
+        dashboardTheme.name = ues.global.dashboard.theme.name;
         return dashboardTheme;
     }
 

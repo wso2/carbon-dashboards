@@ -586,7 +586,7 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                 mediaType: 'application/json'
             });
         }
-        if (!dashboardContent.theme.name) {
+        if (!dashboardContent.theme.properties) {
             var themeName = dashboardContent.theme;
             dashboardContent.theme = {};
             dashboardContent.theme.name = themeName;
