@@ -26,10 +26,6 @@
         response.sendError(401, 'unauthorized to access assets');
         return;
     }
-    if (permission.isAllowed(constants.GADGET_GENERATE)) {
-        response.sendError(401, 'unauthorized to access assets');
-        return;
-    }
     var utils = require('/modules/utils.js');
     var configs = require('/configs/designer.json');
     var fileUtils = require('/modules/file-utils.js');
