@@ -481,6 +481,10 @@
         return ues.global.dashboard.title;
     };
 
+    var getTenantDomain = function () {
+        return ues.global.userDomain;
+    };
+
     ues.components = {
         create: createComponent,
         update: updateComponent,
@@ -496,7 +500,8 @@
         findComponent: findComponent,
         getDashboardID: getDashboardID,
         getDashboardName: getDashboardName,
-        getDashboardLoadingState: getDashboardLoadingState
+        getDashboardLoadingState: getDashboardLoadingState,
+        getTenantDomain: getTenantDomain
     };
 
     ues.assets = {};
