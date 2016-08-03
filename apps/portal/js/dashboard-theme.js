@@ -62,7 +62,7 @@ $(function () {
         nanoScrollerSelector[0].nanoscroller.reset();
     }
 
-    if (!ues.global.renderFromExtension) {
+    if (!ues.global.renderFromExtension && typeof(isStandAloneGadget) === 'undefined') {
         ues.dashboards.render($('.ues-components-grid'), ues.global.dashboard, ues.global.page);
     }
 
@@ -182,8 +182,10 @@ $(function () {
         }
     });
 
-    var nanoScrollerSelector = $(".nano");
-    nanoScrollerSelector.nanoScroller();
+    if (typeof(isStandAloneGadget) === 'undefined') {
+        var nanoScrollerSelector = $(".nano");
+        nanoScrollerSelector.nanoScroller();
+    }
 
     if (ues.global.dashboard.theme.properties.showSideBar === "false") {
         hideSideBar();
