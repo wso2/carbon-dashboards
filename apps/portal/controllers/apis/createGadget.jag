@@ -19,8 +19,14 @@
  */
 (function () {
     var log = new Log();
+    var permission = require('/modules/permission.js');
+    var constants = require('/modules/constants.js');
 
     if (!user) {
+        response.sendError(401, 'unauthorized to access assets');
+        return;
+    }
+    if (permission.isAllowed(constants.GADGET_GENERATE)) {
         response.sendError(401, 'unauthorized to access assets');
         return;
     }
