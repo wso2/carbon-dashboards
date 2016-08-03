@@ -189,7 +189,7 @@ var getAssets = function (paging) {
     var registry = getRegistry();
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
-    if (dashboards!==null){
+    if (dashboards !== null) {
         dashboards.forEach(function (dashboard) {
             dashboardz.push(getConvertedDashboardContent(registry, dashboard));
         });

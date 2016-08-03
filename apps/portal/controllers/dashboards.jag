@@ -182,7 +182,7 @@ var DASHBOARD_VERSION = "1.0.20";
         }
         if (!permission.isAllowed(constants.CREATE)) {
             // If the user is not permitted to access it, send unauthorized error message.
-            response.sendError(403, ""+i18n.localize("access.not.authorized"));
+            response.sendError(403, "" + i18n.localize("access.not.authorized"));
             return;
         }
         dashboards = require('/modules/dashboards.js');

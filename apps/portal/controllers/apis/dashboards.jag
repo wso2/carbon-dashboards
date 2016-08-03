@@ -63,7 +63,7 @@
             utils.sandbox(context, function () {
                 originalDashboard = dashboards.getAsset(parameters.id, true);
             });
-            if(!originalDashboard){
+            if (!originalDashboard) {
                 response.sendError(404, "Dashboard '" + parameters.id + "' cannot be found");
                 return;
             }
