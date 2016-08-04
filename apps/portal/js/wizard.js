@@ -225,7 +225,8 @@ $("#preview").click(function () {
                 if (!data.error) {
                     $('#tab3-validation-errors > .text').empty();
                     $('#tab3-validation-errors').hide();
-                    $('#preview-pane').html($('#preview-hbs').html());
+                    var previewHbs = Handlebars.compile($('#preview-hbs').html());
+                    $('#preview-pane').html(previewHbs(data));
                 } else {
                     $('#tab3-validation-errors > .text').html(data.message);
                     $('#tab3-validation-errors').show();
