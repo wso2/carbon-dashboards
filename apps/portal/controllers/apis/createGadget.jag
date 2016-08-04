@@ -313,7 +313,9 @@
             var chartApiFile = new File(chartApiLocation);
             fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/core/' + chart + '-api.js');
 
-            var previewFile = new File('/theme/templates/preview.jag');
+            var previewTempLocation = '/temp/' + gadgetID + '_' + session.get('user').domain + '/preview.jag';
+            var previewFile = new File(previewTempLocation);
+            fileUtils.createDirs(previewTempLocation);
             if(previewFile.isExists()){
                 previewFile.del();
             }
@@ -321,13 +323,14 @@
             previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + gadgetDirLocation +
                     GADGET_XML_FILE + '?' + new Date().getTime();
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
-                    '/theme/templates/preview.jag', previewData);
+                    previewTempLocation, previewData);
 
             var thumbnail = new File(GADGET_TEMPLATE_LOCATION + 'thumbnail.png');
             fileUtils.copyFile(thumbnail,gadgetDirLocation + '/thumbnail.png');
 
             fileUtils.writeToFile(data, gadgetDirLocation + '/conf.json');
             print({
+                location: previewTempLocation.substring(1),
                 error: false
             });
             return;
@@ -355,6 +358,11 @@
         var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
         fileUtils.copyDir(gadgetDir, GADGETS_LOCATION);
 
+        var previewTempDirectory = '/temp/' + gadgetID + '_' + session.get('user').domain;
+        var tempPreviewDir = new File(previewTempDirectory);
+        if (tempPreviewDir.isExists()) {
+            tempPreviewDir.del();
+        }
         if(gadgetDir.isExists()) {
             gadgetDir.del();
         }

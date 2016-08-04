@@ -77,6 +77,10 @@ var originalURI;
     var isAPI = relativeURI.match(/^\/apis\/.*/ig);
     relativeURI = isAPI ? relativeURI.replace(/^\/apis/ig, '') : relativeURI;
 
+    var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
+    if (user && PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() !== user.tenantId) {
+        PrivilegedCarbonContext.startTenantFlow();
+    }
     request.getRequestURI = function () {
         return relativeURI;
     };
