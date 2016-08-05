@@ -18,34 +18,34 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
 (function () {
 
     var PROVIDERS_LOCATION = '/extensions/providers/';
-    var ORDINAL = "ordinal";
-    var LINEAR = "linear";
+    var STRING = "string";
+    var NUMBER = "number";
 
     /**
      * require the existing config.json and push any dynamic fields that needs to be populated in the UI
      */
 
     var typeMap = {
-        "bool" : ORDINAL,
-        "boolean" : ORDINAL,
-        "varchar" : ORDINAL,
-        "character" : ORDINAL,
-        "binary" : ORDINAL,
-        "text" : ORDINAL,
-        "string" : ORDINAL,
-        "date" :  ORDINAL,
-        "time" :  ORDINAL,
-        "decimal" : LINEAR,
-        "smallint" : LINEAR,
-        "bigint" : LINEAR,
-        "numeric" : LINEAR,
-        "real" : LINEAR,
-        "int" : LINEAR,
-        "integer" : LINEAR,
-        "long" : LINEAR,
-        "double" : LINEAR,
-        "float" : LINEAR,
-        "timestamp" : LINEAR
+        "bool" : STRING,
+        "boolean" : STRING,
+        "varchar" : STRING,
+        "character" : STRING,
+        "binary" : STRING,
+        "text" : STRING,
+        "string" : STRING,
+        "date" :  STRING,
+        "time" :  STRING,
+        "decimal" : NUMBER,
+        "smallint" : NUMBER,
+        "bigint" : NUMBER,
+        "numeric" : NUMBER,
+        "real" : NUMBER,
+        "int" : NUMBER,
+        "integer" : NUMBER,
+        "long" : NUMBER,
+        "double" : NUMBER,
+        "float" : NUMBER,
+        "timestamp" : NUMBER
     };
 
 
@@ -128,7 +128,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                     for (var i in selectQuerySchema) {
                         schema.push({
                             fieldName: selectQuerySchema[i],
-                            fieldType: ORDINAL
+                            fieldType: STRING
                         });
                     }
                 }
