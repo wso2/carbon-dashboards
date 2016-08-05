@@ -1,4 +1,4 @@
-                                                          <%
+<%
 /**
  * Copyright 2016 WSO2, Inc. (http://wso2.com)
  *
@@ -18,18 +18,5 @@
  */
 
 (function () {
-    var utils = require('/modules/utils.js');
-    var i18n = require("i18n");
-    i18n.init(request, utils.getLocaleResourcePath());
-
-    if (!user) {
-        // If the user is not permitted to access it, send unauthorized error message.
-        response.sendError(401, "" + i18n.localize("access.not.authorized"));
-        return;
-    }
-    if (userDomain !== (urlDomain || superDomain)) {
-        response.sendRedirect(utils.tenantedPrefix(urlPrefix, userDomain));
-        return;
-    }
     include("../" + request.getRequestURI());
 }()); %>
