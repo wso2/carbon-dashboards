@@ -116,7 +116,10 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                         selectQuerySchema.splice(indexOfFieldInSelect, 1);
                     }
                     var dbColType = schema[i][COLUMN_TYPE].toLowerCase();
-                    var fieldType = dbColType.substring(0, dbColType.indexOf('('));
+                    var fieldType = dbColType;
+                    if (dbColType.indexOf('(') > -1) {
+                        fieldType = dbColType.substring(0, dbColType.indexOf('('));
+                    }
                     schema[i].fieldType = typeMap[fieldType];
                     delete schema[i][COLUMN_NAME];
                     delete schema[i][COLUMN_TYPE];
