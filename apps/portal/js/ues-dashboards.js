@@ -485,6 +485,10 @@
         return ues.global.userDomain;
     };
 
+    var setDashboardLoadingState = function(state) {
+        dashboardLoadingState = state;
+    };
+
     ues.components = {
         create: createComponent,
         update: updateComponent,
@@ -501,7 +505,8 @@
         getDashboardID: getDashboardID,
         getDashboardName: getDashboardName,
         getDashboardLoadingState: getDashboardLoadingState,
-        getTenantDomain: getTenantDomain
+        getTenantDomain: getTenantDomain,
+        setDashboardLoadingState : setDashboardLoadingState
     };
 
     ues.assets = {};
