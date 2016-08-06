@@ -30,16 +30,6 @@
     height: auto;
 }
 
-/* Gadgets Styles */
-.emb-gadget {
-    background: #f5f5f5;
-
-}
-
-.embGadget .emb-gadget {
-    background: transparent;
-}
-
 .gadget-wrapper {
     background: #fff;
     overflow: scroll;
@@ -52,11 +42,6 @@
 .gadget .gadget-heading {
     border-bottom: 1px solid #e4e4e4;
     height: 42px;
-}
-
-.embGadget .gadget .gadget-heading {
-    background: #206898;
-    color: #fff;
 }
 
 .gadget .gadget-heading:after {
@@ -109,4 +94,180 @@
 
 .ues-component {
     height: 100%;
+}
+
+/**
+ * Gadget settings
+ */
+.gadget-setting {
+    padding: 6px 12px;
+    height: calc(100% - 42px);
+    background: #fff;
+    overflow: auto;
+}
+
+.gadget-setting h4 {
+    padding-bottom: 6px;
+    border-bottom: 1px solid #ddd;
+}
+
+.gadget-setting label {
+    display: block;
+}
+
+.gadget-setting textarea {
+    width: 100%;
+}
+
+/**
+ * Theme overrides
+ */
+.gadget-title {
+    max-width: 90%;
+}
+
+.page-title h1 span {
+    font-size: 16px;
+    display: inline-block;
+}
+
+.page-title h1 span a {
+    color: #aaa;
+    display: inline-block;
+    float: right;
+}
+
+.page-title h1 span a:hover {
+    color: #000;
+}
+
+.dashboard .page-header .page-title > h1 {
+    padding: 20px 0;
+    font-size: 25px;
+}
+
+.page-header .page-title > h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.gadgets-grid {
+    margin-bottom: 20px;
+}
+
+.gadget-wrapper {
+    background: none;
+}
+
+body.dark .ues-component {
+    border: none;
+}
+
+body.dashboard {
+    background: #fff;
+    margin: 0;
+}
+
+body.dashboard.dark {
+    background: #353C48;
+}
+
+body.dashboard .body-wrapper {
+    height: 100%
+}
+
+body.dashboard .body-wrapper.loading[data-loading-style=overlay] .loading-bg {
+    opacity: 1;
+    background: #fff;
+    z-index: 100;
+}
+
+body.dashboard .body-wrapper.loading .loading-animation .logo .pulse-line,
+body.dashboard .body-wrapper.loading .loading-animation .logo .circle {
+    stroke: #222;
+}
+
+body.dashboard .body-wrapper.loading .loading-animation p {
+    color: #222;
+}
+
+body.dashboard.dark .body-wrapper.loading[data-loading-style=overlay] .loading-bg {
+    background: #121822;
+}
+
+body.dashboard.dark .body-wrapper.loading .loading-animation .logo .pulse-line,
+body.dashboard.dark .body-wrapper.loading .loading-animation .logo .circle {
+    stroke: #fff;
+}
+
+body.dashboard.dark .body-wrapper.loading .loading-animation p {
+    color: #fff;
+}
+
+body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
+    right: -34px !important;
+}
+
+.dashboard .btn-default.active,
+.dashboard .btn-default.active:focus {
+    background-color: #29313E;
+    color: #fff;
+}
+
+.dashboard .btn-default.active:hover {
+    background-color: #53627B;
+    color: #fff;
+}
+
+.dashboard .page-content {
+    overflow: inherit;
+}
+
+.dashboard.dark .gadget-wrapper {
+    border: none;
+}
+
+.dashboard .gadget .gadget-heading {
+    background: transparent;
+    border-bottom: none;
+    color: #29313e;
+}
+
+.dashboard.dark .gadget .gadget-heading {
+    background: #29313E;
+    color: #E3E5E6;
+}
+
+.dashboard.dark .gadget .gadget-heading > .gadget-actions button {
+    background: transparent;
+    color: #E3E5E6;
+}
+
+.ues-component[type="widget"] {
+    height: auto;
+    border: none;
+}
+
+.dashboard.dark .daterangepicker,
+.dashboard.dark .daterangepicker .calendar-table,
+.dashboard.dark .daterangepicker td.off,
+.dashboard.dark .daterangepicker td.off.in-range,
+.dashboard.dark .daterangepicker td.off.start-date,
+.dashboard.dark .daterangepicker td.off.end-date {
+    background: #E3E5E6;
+}
+
+.dashboard.dark .daterangepicker td.active,
+.dashboard.dark .daterangepicker td.active:hover {
+    background: #438CAD;
+}
+
+.dashboard.dark .daterangepicker .input-mini {
+    border: 1px solid #BFCBDE;
+    background: #F3F3F3;
+}
+
+.dashboard.dark .daterangepicker.opensleft:after {
+    border-bottom: 6px solid #E3E5E6;
 }
