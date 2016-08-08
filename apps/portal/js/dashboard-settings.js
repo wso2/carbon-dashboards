@@ -637,7 +637,7 @@ $(function () {
         $('#ues-dashboard-theme').on("click", '.option li', function (e) {
             var text = $(this).children().text();
             $('#ues-dashboard-theme .selected').text(text);
-            dashboard.theme = text;
+            dashboard.theme.name = text;
         });
 
         //Share dashboard among tenants

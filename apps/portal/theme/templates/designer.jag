@@ -21,8 +21,9 @@
     var userRoles = [];
     var tempRoles = usr.getUserRoles();
     var constants = require('/modules/constants.js');
+    var isViewer = utils.allowed(user.roles, dashboard.permissions.viewers) && !utils.allowed(user.roles,
+                dashboard.permissions.owners) && !utils.allowed(user.roles, dashboard.permissions.editors);
     userRoles.push(constants.ANONYMOUS_ROLE);
-
     for (var i = 0; i < tempRoles.length; i++) {
         userRoles.push(tempRoles[i]);
     }
@@ -422,10 +423,16 @@
                             ' "cannot.delete.last.page" : "<%= i18n.localize("cannot.delete.last.page")%>",' +
                             ' "cannot.create.new.page" : "<%= i18n.localize("cannot.create.new.page")%>",' +
                             ' "landing.page.changed" : "<%= i18n.localize("landing.page.changed")%>",' +
+                            ' "parents.hidden" : "<%= i18n.localize("parents.hidden")%>",' +
+                            ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
+                            ' "cannot.hide.page" : "<%= i18n.localize("cannot.hide.page")%>",' +
+                            ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
+                            ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
                             ' "cannot.remove.hidden.page" : "<%= i18n.localize("cannot.remove.hidden.page")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
-
+        var isViewer = <%= isViewer%>;
     </script>
 
     <!-- Handlebar templates -->
@@ -463,7 +470,7 @@
         </div>
         {{/each}}
     </script>
-        
+
     <!-- Template to add new gridstack block -->
     <script id="ues-new-block-hbs" type="text/x-handlebars-template">
         <div data-id="{{id}}">
@@ -623,7 +630,7 @@
                     <div class="col-sm-12">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" name="landing"{{#if landing}} checked disabled{{/if}} /> <%= i18n.localize("use.as.landing") %>
+                                <input type="checkbox" name="landing"{{#if landing}} checked {{/if}} /> <%= i18n.localize("use.as.landing") %>
                             </label>
                         </div>
                         <div class="checkbox">
@@ -1029,6 +1036,14 @@
                         
     <script id="ues-no-components-hbs" type="text/x-handlebars-template">
         <%= i18n.localize("no.items.found") %>
+    </script>
+
+   <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
+    <script id="ds-error-hbs" type="text/x-handlebars-template">
+      <div class="alert alert-danger" id = "delete-error" role="alert">
+        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
+        <h3>{{error}}</h3>
+      </div>
     </script>
 
     <!-- Jquery/Jquery UI JS -->

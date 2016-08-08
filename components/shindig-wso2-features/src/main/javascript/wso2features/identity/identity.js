@@ -34,6 +34,13 @@ wso2.gadgets.identity = (function () {
     var RPC_SERVICE_GET_ACCESS_TOKEN = 'RPC_SERVICE_GET_ACCESS_TOKEN';
 
     /**
+     * Service name to get logged-in user domain.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_TENANT_DOMAIN = 'RPC_SERVICE_GET_TENANT_DOMAIN';
+
+    /**
      * Get logged in user's username.
      * @param {function} callback Callback function
      * @return {null}
@@ -59,8 +66,22 @@ wso2.gadgets.identity = (function () {
         });
     };
 
+    /**
+     * Get logged-in user domain.
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var getTenantDomain = function (callback) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_GET_TENANT_DOMAIN, null, function (tenantDomain) {
+            if (callback) {
+                callback(tenantDomain);
+            }
+        });
+    };
+    
     return {
         getUsername: getUsername,
-        getAccessToken: getAccessToken
+        getAccessToken: getAccessToken,
+        getTenantDomain: getTenantDomain
     };
 })();

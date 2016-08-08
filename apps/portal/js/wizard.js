@@ -216,7 +216,8 @@ $("#preview").click(function () {
             success: function (data) {
                 if (!data.error) {
                     $('#tab3-validation-errors').html('');
-                    $('#preview-pane').html($('#preview-hbs').html());
+                    var previewHbs = Handlebars.compile($('#preview-hbs').html());
+                    $('#preview-pane').html(previewHbs(data));
                 } else {
                     $('#tab3-validation-errors').html(data.message);
                     $('#preview-pane').html('');

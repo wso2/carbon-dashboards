@@ -23,10 +23,12 @@ var downloadAsset;
 
 (function () {
     var log = new Log();
+
     var carbon = require('carbon');
     var utils = require('/modules/utils.js');
     var moduleDashboards = require('/modules/dashboards.js');
     var config = require('/configs/designer.json');
+    var constants = require('/modules/constants.js');
 
     /**
      * Default Store.
@@ -88,48 +90,6 @@ var downloadAsset;
             start: start,
             count: count
         });
-    };
-
-    /**
-     * Check whether a view is allowed for the current user
-     * according to his/her list of roles
-     * @param viewRoles Allowed roles list for the view
-     * @param userRolesList Particular user`s roles
-     * @returns {boolean} View is allowed or not
-     * @private
-     */
-    var isAllowedView = function (viewRoles, userRolesList) {
-        for (var i = 0; i < userRolesList.length; i++) {
-            var tempUserRole = userRolesList[i];
-            for (var j = 0; j < viewRoles.length; j++) {
-                if (viewRoles[j] === String(tempUserRole)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-
-    /**
-     * Returns the list of allowed views for the current user
-     * @param dashboard Current Dashboard
-     * @param userRoles roles of the current user
-     * @returns {Boolean} true if there is a allowed view
-     * @private
-     */
-    var getUserAllowedViews = function (dashboard, userRoles) {
-        var pages = dashboard.pages;
-        for (var j = 0; j < pages.length; j++) {
-            var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
-            var allowedViews = [];
-            for (var i = 0; i < views.length; i++) {
-                var viewRoles = pages[j].views.content[views[i]].roles;
-                if (isAllowedView(viewRoles, userRoles)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     };
 
     /**
@@ -206,7 +166,7 @@ var downloadAsset;
                         id: dashboard.id,
                         title: dashboard.title,
                         description: dashboard.description,
-                        pagesAvailable: getUserAllowedViews(dashboard, userRoles),
+                        pagesAvailable: dashboard.hideAllMenuItems ? false : utils.getUserAllowedViews(dashboard, userRoles),
                         editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         owner: true
@@ -265,23 +225,33 @@ var downloadAsset;
      * Find an asset based on the type and asset id
      * @param type
      * @param id
+     * @param isShared
      * @returns {*}
      */
-    getAsset = function (type, id, storeType) {
+    getAsset = function (type, id, isShared) {
+        var ctx = utils.currentContext();
+        var server = new carbon.server.Server();
         var storeTypes = config.store.types;
-        var storeTypesLength = storeTypes.length;
+        var um;
+        var userRoles;
         var asset;
-        for (var i = 0; i < storeTypesLength; i++) {
-            var specificStore;
-            if (!storeType) {
-                specificStore = require(storeExtension(storeTypes[i]));
-                asset = specificStore.getAsset(type, id);
-                if (asset) {
-                    break;
+
+        if (!isShared || !user || user.domain === String(carbon.server.superTenant.domain)) {
+            if (user) {
+                um = new carbon.user.UserManager(server, ctx.tenantId);
+                userRoles = um.getRoleListOfUser(ctx.username);
+            } else {
+                userRoles = [constants.ANONYMOUS_ROLE];
+            }
+        }
+        for (var i = 0; i < storeTypes.length; i++) {
+            var specificStore = require(storeExtension(storeTypes[i]));
+            asset = specificStore.getAsset(type, id);
+            if (asset) {
+                var allowedRoles = asset.allowedRoles;
+                if (userRoles && allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                    return {};
                 }
-            } else if (storeType === storeTypes[i]) {
-                specificStore = require(storeExtension(storeTypes[i]));
-                asset = specificStore.getAsset(type, id);
                 break;
             }
         }
@@ -301,7 +271,6 @@ var downloadAsset;
         if (type === 'dashboard') {
             return findDashboards(ctx, type, query, start, count);
         }
-
         var server = new carbon.server.Server();
         var um = new carbon.user.UserManager(server, ctx.tenantId);
         var userRoles = um.getRoleListOfUser(ctx.username);
@@ -332,7 +301,6 @@ var downloadAsset;
                             } else {
                                 log.warn('Url is not defined for ' + assets[j].title);
                             }
-
                             assets[j].isDownloadable = isDownloadable;
                             assets[j].isDeletable = isDeletable;
                         }

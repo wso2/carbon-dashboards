@@ -25,6 +25,8 @@ var DASHBOARD_VERSION = "1.0.20";
     var matcher = new URIMatcher(request.getRequestURI());
     var constants = require('/modules/constants.js');
     var log = new Log("/controllers/dashboards.jag");
+    var permission = require('/modules/permission.js');
+    var i18n = require("i18n");
 
     /**
      * Sanitize the input value.
@@ -187,6 +189,15 @@ var DASHBOARD_VERSION = "1.0.20";
     }
 
     if (method === 'POST') {
+        if (!user) {
+            sendLogin();
+            return;
+        }
+        if (!permission.isAllowed(constants.CREATE)) {
+            // If the user is not permitted to access it, send unauthorized error message.
+            response.sendError(403, "" + i18n.localize("access.not.authorized"));
+            return;
+        }
         dashboards = require('/modules/dashboards.js');
         utils = require('/modules/utils.js');
         constants = require('/modules/constants.js');

@@ -19,6 +19,9 @@
     var configs = require('/configs/designer.json');
     var utils = require('/modules/utils.js');
     var dashboards = require('/modules/dashboards.js');
+    var permission = require('/modules/permission.js');
+    var constants = require('/modules/constants.js');
+    var i18n = require("i18n");
     response.contentType = 'application/json';
     var DEFAULT_START = 0;
     var DEFAULT_COUNT = 10;
@@ -37,31 +40,51 @@
     var method = request.getMethod();
     var matcher = new URIMatcher(request.getRequestURI());
     if (matcher.match('/dashboards/restore/{id}/{pageID}')) {
-        var dashboard = request.getContent();
-        var parameters = matcher.elements();
-        var originalDashboard;
-        if (!user) {
-            response.sendError(401, JSON.stringify({
-                error: 'Unauthorized to access the dashboard'
-            }));
-            return;
-        }
-        utils.sandbox(context, function () {
-            originalDashboard = dashboards.getAsset(parameters.id, true);
-        });
-        try {
-            for (var pageCount = 0; pageCount < dashboard.pages.length; pageCount++) {
-                if (dashboard.pages[pageCount].edited == true && dashboard.pages[pageCount].id === parameters.pageID) {
-                    dashboard.pages[pageCount] = originalDashboard.pages[pageCount];
-                }
+        if (method === 'PUT') {
+            var dashboard = request.getContent();
+            var parameters = matcher.elements();
+            permissions = dashboard.permissions;
+            viewers = permissions.viewers;
+            editors = permissions.editors;
+            owners = permissions.owners;
+            var originalDashboard;
+            if (!user) {
+                response.sendError(401, JSON.stringify({
+                    error: 'Unauthorized to access the dashboard'
+                }));
+                return;
             }
-        } catch (err) {
-            response.sendError(500, JSON.stringify({
-                error: 'pageID or dashboard ID is not correct'
-            }));
+            if (!(utils.allowed(user.roles, owners) || utils.allowed(user.roles, editors) || utils.allowed(user.roles, viewers))) {
+                response.sendError(401, JSON.stringify({
+                    error: 'Unauthorized to access the dashboard'
+                }));
+                return;
+            }
+            utils.sandbox(context, function () {
+                originalDashboard = dashboards.getAsset(parameters.id, true);
+            });
+            if (!originalDashboard) {
+                response.sendError(404, "Dashboard '" + parameters.id + "' cannot be found");
+                return;
+            }
+            try {
+                for (var pageCount = 0; pageCount < dashboard.pages.length; pageCount++) {
+                    if (dashboard.pages[pageCount].edited == true && dashboard.pages[pageCount].id === parameters.pageID) {
+                        dashboard.pages[pageCount] = originalDashboard.pages[pageCount];
+                    }
+                }
+            } catch (err) {
+                response.sendError(500, JSON.stringify({
+                    error: 'pageID or dashboard ID is not correct'
+                }));
+                return;
+            }
+            print(dashboard);
             return;
         }
-        print(dashboard);
+        response.sendError(405, JSON.stringify({
+            error: true
+        }));
         return;
     }
     if (matcher.match('/dashboards/{id}')) {
@@ -91,9 +114,9 @@
                 return;
             }
             if (!utils.allowed(user.roles, owners)) {
-                response.sendError(401, {
+                response.sendError(401, JSON.stringify({
                     error: 'Unauthorized to access the dashboard'
-                });
+                }));
                 return;
             }
             print(dashboard);
@@ -185,6 +208,11 @@
                 response.sendError(401, JSON.stringify({
                     error: 'Unauthorized to access the dashboard'
                 }));
+                return;
+            }
+            if (!permission.isAllowed(constants.CREATE)) {
+                // If the user is not permitted to access it, send unauthorized error message.
+                response.sendError(403, "" + i18n.localize("access.not.authorized"));
                 return;
             }
             dashboard = request.getContent();

@@ -53,7 +53,7 @@
 
     store.sharedAsset = function (type, id, cb) {
         $.ajax({
-            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + SUPERTENANT_DOMAIN + '&' : '') + 'type=' + type,
+            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + SUPERTENANT_DOMAIN + '&' : '') + 'type=' + type + '&shared=true',
             method: "GET",
             contentType: "application/json",
             async: false,

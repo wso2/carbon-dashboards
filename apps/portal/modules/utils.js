@@ -156,8 +156,8 @@ var store = function () {
  */
 var getThemeStylesPath = function () {
     var theme = "";
-    if (dashboard.theme) {
-        theme = dashboard.theme;
+    if (dashboard.theme.name) {
+        theme = dashboard.theme.name;
     }
     var stylesPath = getCustomThemePath() + theme + constants.CSS_PATH;
     var folder = new File('/' + stylesPath);
@@ -176,8 +176,8 @@ var getThemeStylesPath = function () {
  */
 var getThemeScriptPath = function (fileName) {
     var theme = "";
-    if (dashboard.theme) {
-        theme = dashboard.theme;
+    if (dashboard.theme.name) {
+        theme = dashboard.theme.name;
     }
     var path = getCustomThemePath() + theme + '/' + constants.JS_PATH + fileName + '.js';
     var defaultPath = constants.JS_PATH + fileName + '.js';
@@ -193,8 +193,8 @@ var getThemeScriptPath = function (fileName) {
  */
 var getThemeTemplatePath = function (path) {
     var theme = "";
-    if (dashboard.theme) {
-        theme = dashboard.theme;
+    if (dashboard.theme.name) {
+        theme = dashboard.theme.name;
     }
     var extendedPath = getCustomThemePath() + theme + '/' + path;
     var defaultPath = '/theme/' + path;
@@ -304,4 +304,74 @@ var getDashboardTheme = function (dashboardThemeName) {
     } else {
         return constants.DEFAULT_THEME;
     }
+};
+
+/**
+ * To check whether the particular page has atleast one user allowed view
+ * @param page
+ * @returns {Array}
+ */
+var isPageHasUserAllowedView = function (page) {
+    var views = Object.keys(page.views.content);
+    for (var i = 0; i < views.length; i++) {
+        var viewRoles = page.views.content[views[i]].roles;
+        return (user && isAllowedView(viewRoles)) || (!user && viewRoles.indexOf(constants.ANONYMOUS_ROLE) > -1);
+    }
+};
+
+/**
+ * Check whether a view is allowed for the current user
+ * according to his/her list of roles
+ * @param viewRoles Allowed roles list for the view
+ * @returns {boolean} View is allowed or not
+ */
+var isAllowedView = function (viewRoles) {
+    var userRolesList = user.roles;
+    for (var i = 0; i < userRolesList.length; i++) {
+        var tempUserRole = userRolesList[i];
+        for (var j = 0; j < viewRoles.length; j++) {
+            if (viewRoles[j] === String(tempUserRole)) {
+                return true;
+            }
+        }
+    }
+};
+
+
+/**
+ * To check whether a particular page is hidden
+ * @param page Page to be hidden
+ * @param menu Menu of the particular dashboard
+ * @returns {boolean|*} true if the particular page is hidden otherwise false
+ */
+var isPageHidden = function (page, menu) {
+    for (var i = 0; i < menu.length; i++) {
+        if (menu[i].id === page.id) {
+            return menu[i].ishidden;
+        }
+    }
+    return true;
+};
+
+
+/**
+ * To check whether the particular user has any of the viewable pages in the particular dashboard
+ * @param dashboard Current Dashboard
+ * @param userRoles roles of the current user
+ * @returns {Boolean} true if there is a allowed view
+ */
+var getUserAllowedViews = function (dashboard, userRoles) {
+    var pages = dashboard.pages;
+    for (var j = 0; j < pages.length; j++) {
+        if (!isPageHidden(pages[j], dashboard.menu)) {
+            var views = Object.keys(pages[j].views.content);
+            for (var i = 0; i < views.length; i++) {
+                var viewRoles = pages[j].views.content[views[i]].roles;
+                if (isAllowedView(viewRoles, userRoles)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 };
