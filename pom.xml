@@ -33,6 +33,7 @@
         <module>components/shindig-wso2-features</module>
         <module>components/shindig-server</module>
         <module>components/dashboard-deployment</module>
+        <module>components/store-filter</module>
         <module>features/org.wso2.carbon.dashboards.shindig.feature</module>
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>features/org.wso2.carbon.dashboards.deployment.feature</module>
@@ -105,6 +106,16 @@
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>shindig-wso2-extensions</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboard.deployment</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboard.store.filter</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
             <dependency>
