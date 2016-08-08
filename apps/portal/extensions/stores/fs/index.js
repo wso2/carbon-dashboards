@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getAsset, getAssets, addAsset, deleteAsset;
+var getAsset;
+var getAssets;
+var addAsset;
+var deleteAsset;
+var getAssetFilePath;
+var isDeletable;
+var isDownloadable;
 
 (function () {
     var log = new Log();
-
     var dir = '/store/';
-
     var utils = require('/modules/utils.js');
     var constants = require('/modules/constants.js');
+    var deletable = true;
+    var downloadable = true;
 
     var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
@@ -79,6 +85,26 @@ var getAsset, getAssets, addAsset, deleteAsset;
     };
 
     /**
+     * Get the asset file path.
+     *
+     * @param type {String} asset type
+     * @param id {String} asset ID
+     * @return {String} asset path
+     * */
+    getAssetFilePath = function (type, id) {
+        var ctx = utils.currentContext();
+        var parent = assetsDir(ctx, type);
+        var file = new File(parent + id);
+        if (!file.isExists()) {
+            return null;
+        }
+
+        var path = file.getPath();
+        file.close();
+        return path;
+    };
+
+    /**
      * To add an asset to File Store
      * @param {String} type Type of the asset
      * @param {String} id Id of the asset
@@ -118,5 +144,21 @@ var getAsset, getAssets, addAsset, deleteAsset;
         }
         file.del();
         return true;
+    };
+
+    /**
+     * Return whether gadgets from this store is deletable or not.
+     * @return {boolean}
+     * */
+    isDeletable = function () {
+        return deletable;
+    };
+
+    /**
+     * Return whether gadgets from this store is downloadable or not.
+     * @return {boolean}
+     * */
+    isDownloadable = function () {
+        return downloadable;
     };
 }());

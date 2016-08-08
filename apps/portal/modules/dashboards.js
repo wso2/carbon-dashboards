@@ -130,7 +130,7 @@ var getAsset = function (id, originalDashboardOnly) {
     var contentDashboardJSON = getConvertedDashboardContent(registry, path);
     var dashboard = contentDashboardJSON;
     if (dashboard) {
-        if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
+        if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
             contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
         }
         var dashboard = contentDashboardJSON;
