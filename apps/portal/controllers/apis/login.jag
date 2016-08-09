@@ -35,7 +35,7 @@ var user;
         if (!destination) {
             return "";
         }
-        return destination.replace(/[^a-zA-Z0-9-_/?&= ]/g, "");
+        return destination.replace(/[^a-zA-Z0-9-_/?&=. ]/g, "");
     };
 
     if (request.getMethod() === 'POST') {
