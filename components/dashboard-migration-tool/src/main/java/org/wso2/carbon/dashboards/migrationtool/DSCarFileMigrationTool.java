@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -39,12 +40,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.Enumeration;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class DSCarFileMigrationTool extends DSMigrationTool {
-    private static final Log log = LogFactory.getLog(DSCarFileMigrationTool.class);
+    private static final Logger log = Logger.getLogger(DSCarFileMigrationTool.class);
     private static final String ARTIFACT_XML = "artifact.xml";
     private static final String GADGET_ARTIFACT = "dashboards/gadget";
     private static final String DASHBOARD_ARTIFACT = "registry/resource";
@@ -53,7 +55,7 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
     private static String tempDir ;
 
     public static void main(String arg[]) {
-        BasicConfigurator.configure();
+      //  BasicConfigurator.configure();
         DSCarFileMigrationTool dsMigrationTool = new DSCarFileMigrationTool();
         srcCarDir = arg[0];
         destCarDir = arg[1];
@@ -162,9 +164,11 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
     private void dashboardUpdater(File artifactPath) {
         try {
             File[] dashboardsList = artifactPath.listFiles();
-
             JSONParser parser = new JSONParser();
             for (int i = 0; i < dashboardsList.length; i++) {
+                if(!dashboardsList[i].getAbsolutePath().contains(".json")){
+                    continue;
+                }
                 Object obj = parser.parse(new FileReader(dashboardsList[i].getAbsolutePath()));
                 JSONObject dashboardJSONObject = (JSONObject) obj;
                 obj = dashboardJSONObject.get("pages");
@@ -181,7 +185,6 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                     }
                     updateDashboardBlocks(blocksArray);
                 }
-
                 FileWriter file = new FileWriter(dashboardsList[i].getAbsolutePath());
                 file.write(dashboardJSONObject.toJSONString());
                 file.flush();
@@ -189,7 +192,7 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                 log.info("Dashboard " + dashboardJSONObject.get("id") + " is successfully updated !");
             }
         } catch (ParseException e) {
-            //  log.error("Error in parsing json file in "+artifactPath,e);
+              log.error("Error in parsing json file in "+artifactPath,e);
         } catch (IOException e) {
             log.error("Error in writing/saving json file in " + artifactPath, e);
         }

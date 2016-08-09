@@ -20,6 +20,7 @@ package org.wso2.carbon.dashboards.migrationtool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -33,8 +34,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DSMigrationTool {
-    private static final Log log = LogFactory.getLog(DSMigrationTool.class);
+    private static final Logger log = Logger.getLogger(DSMigrationTool.class);
     private static final String GADGET_JSON = "gadget.json";
+    private static String tenantDomain = null;
 
     /**
      * Update the gadgetJSON in the gadgets folders.iterate through all the gadgets and update the gadget jsons
@@ -74,7 +76,11 @@ public class DSMigrationTool {
                     file.flush();
                     file.close();
                     listOfFiles[i].renameTo(new File(artifactPath + File.separator + modifiedGadgetID));
-                    log.info("Store - Gadget "+gadgetJSONObject.get("id")+" is updated successfully !");
+                    if(tenantDomain==null){
+                        log.info("Store - Gadget "+gadgetJSONObject.get("id")+" is updated successfully !");
+                    } else {
+                        log.info("Store - Gadget "+gadgetJSONObject.get("id")+" in "+tenantDomain+" tenant Domain is updated successfully !");
+                    }
                 } catch (IOException e) {
                     log.error("Error in reading the gadget json "+gadgetJSONObject.get("id"));
                 } catch (ParseException e) {
@@ -162,7 +168,11 @@ public class DSMigrationTool {
                 url = replace(url, "gadget", "fs/gadget");
             }
             gadgetDataObj.put("url", replace(url, gadgetID, gadgetID));
-            log.info("Dashboard - Gadget "+gadgetContentObj.get("id")+" is successfully updated !");
+            if(tenantDomain==null){
+                log.info("Dashboard - Gadget "+gadgetContentObj.get("id")+" is successfully updated !");
+            } else {
+                log.info("Store - Gadget "+gadgetContentObj.get("id")+" in "+tenantDomain+" tenant Domain is updated successfully !");
+            }
         }
     }
 
@@ -176,6 +186,14 @@ public class DSMigrationTool {
         String[] splittedArray = url.split("/");
         String gadgetID = splittedArray[splittedArray.length - 2];
         return gadgetID.toLowerCase();
+    }
+
+    /**
+     * set tenant domain in portal app migration for logging purposes
+     * @param tenantDomain given tenantId
+     */
+    public void setTenantDomain(String tenantDomain){
+        this.tenantDomain = tenantDomain;
     }
 
 }
