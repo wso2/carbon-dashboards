@@ -21,7 +21,7 @@
         if (!destination) {
             return "/portal";
         }
-        return destination.replace(/[^a-zA-Z0-9-_/&?= ]/g, "");
+        return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
     };
 
     if (configs.authentication.activeMethod === 'sso') {
