@@ -25,6 +25,7 @@ import java.io.IOException;
 
 public class TenantStoreFilter implements Filter {
     private static final String STORE = "/portal/store/";
+    private static final String TEMP = "/portal/temp/";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,11 +36,13 @@ public class TenantStoreFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
-        if (httpServletRequest.getRequestURI().startsWith(STORE)){
+        if (httpServletRequest.getRequestURI().startsWith(STORE) || httpServletRequest.getRequestURI()
+                .startsWith(TEMP)) {
+            String stringToReplace = httpServletRequest.getRequestURI().startsWith(STORE) ? STORE : TEMP;
             String uri = httpServletRequest.getRequestURI();
-            uri = uri.replace(STORE, "");
+            uri = uri.replace(stringToReplace, "");
             String[] uriComponents = uri.split("/");
-            if (uriComponents.length > 1){
+            if (uriComponents.length > 1) {
                 String tenantDomain = uriComponents[0];
                 PrivilegedCarbonContext.startTenantFlow();
                 PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantDomain(tenantDomain, true);
