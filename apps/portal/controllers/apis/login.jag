@@ -25,8 +25,21 @@ var user;
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
+    /**
+     * Sanitize the input value.
+     * @param destination {String}
+     * @return string
+     * @private
+     */
+    var sanitizeDestination = function (destination) {
+        if (!destination) {
+            return "";
+        }
+        return destination.replace(/[^a-zA-Z0-9-_/?&=. ]/g, "");
+    };
+
     if (request.getMethod() === 'POST') {
-        var dest = request.getParameter("destination");
+        var dest = sanitizeDestination(request.getParameter("destination"));
         if (dest) {
             // Check whether the dest. URL starts with either http:// or https://. If so remove the authority and get
             // the rest of the URL.
