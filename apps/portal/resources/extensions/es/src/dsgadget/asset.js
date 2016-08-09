@@ -37,8 +37,16 @@ asset.manager = function (ctx) {
 
     return {
         update: function (options) {
-            options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;
-            this._super.update.call(this, options);
+            var asset = this.get(options.id);
+            var allowToUpdate = (String(asset.lifecycleState) !== constants.PUBLISHED_LIFECYCLE_STATE);
+
+            if (allowToUpdate) {
+                options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;
+                this._super.update.call(this, options);
+            } else {
+                log.error('Cannot update the asset in published state');
+                throw 'Cannot update the asset in published state';
+            }
         },
         remove: function (id) {
             utils.deleteGadget(id);
@@ -143,4 +151,14 @@ asset.configure = function () {
             }
         }
     };
+};
+
+asset.renderer = function(ctx){
+    return {
+        pageDecorators:{
+            temp:function(page){
+                require('/extensions/assets/dsgadget/modules/utils.js').api.hideUpdate(ctx,page,this);
+            }
+        }
+    }
 };
