@@ -19,7 +19,7 @@
     var configs = require('/configs/portal.js').config();
     var sanitizeDestination = function (destination) {
         if (!destination) {
-            return "/portal";
+            return "/portal/";
         }
         return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
     };
