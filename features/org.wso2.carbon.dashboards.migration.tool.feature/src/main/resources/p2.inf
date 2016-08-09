@@ -1,0 +1,8 @@
+instructions.configure = \
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../migration/);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../migration/dashboards/);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../plugins/org.wso2.carbon.dashboard.migration.tool_2.0.2.SNAPSHOT.jar,target:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/org.wso2.carbon.dashboard.migration.tool_2.0.2.SNAPSHOT.jar,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../plugins/org.wso2.carbon.logging_4.4.7.jar,target:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/org.wso2.carbon.logging_4.4.7.jar,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../plugins/commons-io_2.4.0.wso2v1.jar,target:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/commons-io_2.4.0.wso2v1.jar,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../plugins/json-simple_1.1.0.wso2v1.jar,target:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/json-simple_1.1.0.wso2v1.jar,overwrite:true);\

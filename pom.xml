@@ -32,13 +32,15 @@
     <modules>
         <module>components/shindig-wso2-features</module>
         <module>components/shindig-server</module>
+        <module>components/shindig-wso2-extensions</module>
         <module>components/dashboard-deployment</module>
         <module>components/store-filter</module>
+        <module>components/dashboard-migration-tool</module>
         <module>features/org.wso2.carbon.dashboards.shindig.feature</module>
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>features/org.wso2.carbon.dashboards.deployment.feature</module>
         <module>features/org.wso2.carbon.dashboards.sso.feature</module>
-        <module>components/shindig-wso2-extensions</module>
+        <module>features/org.wso2.carbon.dashboards.migration.tool.feature</module>
     </modules>
 
     <properties>
