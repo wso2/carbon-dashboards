@@ -389,5 +389,29 @@ var api = {};
         if (gadgetZip.isExists()) {
             gadgetZip.del();
         }
-    }
+    };
+
+    /**
+     * To hide the update UI component when the state of the asset is in published asset
+     * @param ctx Context
+     * @param page Page to hide the edit
+     * @param utils
+     */
+    api.hideUpdate = function (ctx, page, utils) {
+        if ((!page.assets) && (!page.assets.id)) {
+            return;
+        }
+        var leftNav = page.leftNav;
+        var indexToRemove = -1;
+        leftNav.forEach(function (entry, index) {
+            if (entry.name === 'Edit') {
+                indexToRemove = index;
+            }
+        });
+        var showUpdatePage = (String(page.assets.lifecycleState) !== 'Published');
+        if ((showUpdatePage) || (indexToRemove === -1)) {
+            return;
+        }
+        leftNav.splice(indexToRemove, 1);
+    };
 }(api));
