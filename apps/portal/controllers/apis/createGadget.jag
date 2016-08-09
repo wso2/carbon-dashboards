@@ -230,9 +230,7 @@
             if(gadgetDir.isExists()) {
                 gadgetDir.del();
             }
-
             fileUtils.createDirs(gadgetDirLocation);
-
             var provider = data[PROVIDER_CONF][PROVIDER_NAME];
             var isPushMode = false;
             if(providerApi.getMode().toLowerCase() === 'push'){
