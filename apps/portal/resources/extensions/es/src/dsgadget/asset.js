@@ -38,7 +38,7 @@ asset.manager = function (ctx) {
     return {
         update: function (options) {
             var asset = this.get(options.id);
-            var allowToUpdate = (String(asset.lifecycleState) !== 'Published');
+            var allowToUpdate = (String(asset.lifecycleState) !== constants.PUBLISHED_LIFECYCLE_STATE);
 
             if (allowToUpdate) {
                 options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;

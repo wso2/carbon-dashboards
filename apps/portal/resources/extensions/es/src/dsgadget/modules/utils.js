@@ -408,7 +408,7 @@ var api = {};
                 indexToRemove = index;
             }
         });
-        var showUpdatePage = (String(page.assets.lifecycleState) !== 'Published');
+        var showUpdatePage = (String(page.assets.lifecycleState) !== constants.PUBLISHED_LIFECYCLE_STATE);
         if ((showUpdatePage) || (indexToRemove === -1)) {
             return;
         }
