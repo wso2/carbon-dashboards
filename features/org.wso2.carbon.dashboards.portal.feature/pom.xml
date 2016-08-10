@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
-            <artifactId>org.wso2.carbon.dashboard.store.filter</artifactId>
+            <artifactId>org.wso2.carbon.dashboard.portal.core</artifactId>
         </dependency>
     </dependencies>
 
@@ -95,7 +95,7 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboard.store.filter:${carbon.dashboards.version}
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboard.portal.core.feature:${carbon.dashboards.version}
                                 </bundleDef>
                             </bundles>
                         </configuration>
