@@ -95,7 +95,7 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboard.portal.core.feature:${carbon.dashboards.version}
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboard.portal.core:${carbon.dashboards.version}
                                 </bundleDef>
                             </bundles>
                         </configuration>
