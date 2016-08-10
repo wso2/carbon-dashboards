@@ -73,5 +73,10 @@
         "hostname": "localhost",
         "port": "",
         "protocol": ""
+    },
+    "houseKeeping" : {
+        "location" : "/temp/",
+        "interval" : "1",
+        "maxTempFileLifeTime" : "60"
     }
 }

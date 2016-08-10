@@ -98,6 +98,11 @@
                                     org.wso2.carbon.dashboards:org.wso2.carbon.dashboard.portal.core:${carbon.dashboards.version}
                                 </bundleDef>
                             </bundles>
+                            <importFeatures>
+                                <importFeatureDef>
+                                    org.wso2.carbon.ntask.core:compatible:${carbon.commons.version}
+                                </importFeatureDef>
+                            </importFeatures>
                         </configuration>
                     </execution>
                 </executions>
