@@ -189,6 +189,8 @@
     "upload.layout.label": "Upload Layout",
     "delete.gadget": "Delete Gadget",
     "delete.layout": "Delete Layout",
+    "download.gadget": "Download Gadget",
+    "download.layout": "Download Layout",
     "file.upload": "Select File to Upload (Select a zip file)",
     "browse": "Browse",
     "upload": "Upload",

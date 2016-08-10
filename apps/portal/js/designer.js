@@ -245,7 +245,6 @@ $(function () {
     var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
 
     var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
-
     /**
      * Generate unique gadget ID.
      * @param {String} gadgetName Name of the gadget
@@ -1053,10 +1052,10 @@ $(function () {
             if (!isExistingPermission(viewRolesList, role)) {
                 if (role === ANONYMOUS_ROLE) {
                     /*
-                      Before allowing addition of anon view check
-                        1. If it is not a landing page, check whether landing page has atelast one anon view
-                        2. If it is a landing page, and if there are more than 1 page, check whether there is atleast one
-                            view for internal/everyone role
+                     Before allowing addition of anon view check
+                     1. If it is not a landing page, check whether landing page has atelast one anon view
+                     2. If it is a landing page, and if there are more than 1 page, check whether there is atleast one
+                     view for internal/everyone role
                      */
                     if (dashboard.landing) {
                         if (page.id !== dashboard.landing) {
@@ -1319,7 +1318,7 @@ $(function () {
                             isAnonExists = true;
                         }
 
-                        if (isAnonExists && isInternalExists && isAnonViewNeeded){
+                        if (isAnonExists && isInternalExists && isAnonViewNeeded) {
                             isAllowed = true;
                         }
                     }
@@ -1331,7 +1330,7 @@ $(function () {
                         return;
                     } else {
                         showInformation(i18n_data['cannot.delete.view'], i18n_data['landing.page.minimal'] + " "
-                            + ANONYMOUS_ROLE + " ."+ i18n_data['other.pages.contains.views'] + " " + ANONYMOUS_ROLE);
+                            + ANONYMOUS_ROLE + " ." + i18n_data['other.pages.contains.views'] + " " + ANONYMOUS_ROLE);
                         return;
                     }
                 }
@@ -1977,7 +1976,7 @@ $(function () {
      * @param page Page to made as landing
      * @returns {boolean} true if it is eligible for landing page
      */
-    var isEligibleForLanding = function(page) {
+    var isEligibleForLanding = function (page) {
         var pages = dashboard.pages;
         var viewsWithAnon = false;
         var isAnonExist = false;
@@ -2171,6 +2170,7 @@ $(function () {
                 }
             }
         }
+
         return ret;
     };
 
@@ -2778,6 +2778,7 @@ $(function () {
                 $('#left-sidebar-sub .close-handle').click();
                 // open page options
                 $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
+
             });
         });
 
@@ -3095,7 +3096,7 @@ $(function () {
             } else {
                 updatePagesList();
             }
-        }
+        };
 
         $('#sidebarNavPages .ues-search-box input[type=text]').on('keypress', function (e) {
             if (e.which !== 13) {
@@ -3177,7 +3178,7 @@ $(function () {
         spliceOrDiscardChild(dashboard.menu, menuItem.id, 'discard');
         if ((pid === dashboard.landing && dashboard.hideAllMenuItems) || menuItem.subordinates.length > 0) {
             return false;
-        } else if (dashboard.landing === pid && dashboard.pages.length > 2){
+        } else if (dashboard.landing === pid && dashboard.pages.length > 2) {
             var pages = dashboard.pages;
             var viewsWithAnon = 0;
             var viewsWithInternal = 0;
@@ -3201,7 +3202,7 @@ $(function () {
                         }
                     }
                 }
-                if (j === pages.length-1) {
+                if (j === pages.length - 1) {
                     return ((viewsWithAnon === 0) && viewsWithInternal > 0);
                 }
             }
@@ -3216,7 +3217,7 @@ $(function () {
      * @param removingComponents Gadgets to be removed
      * @param length Number of gadgets to be removed
      */
-    var removeGadgets = function(removingComponents, length) {
+    var removeGadgets = function (removingComponents, length) {
         for (var i = 0; i < length; i++) {
             var componentBox = $("#" + removingComponents[i].id).closest(".ues-component-box");
             removeComponent(removingComponents[i], function (err) {
@@ -3679,8 +3680,8 @@ $(function () {
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
-                showCreatePage();
-            });
+                    showCreatePage();
+                });
 
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
@@ -3718,7 +3719,7 @@ $(function () {
         if (visibleViews.length === 0) {
             $('#add-view').click();
         }
-            //render all view tabs in the page
+        //render all view tabs in the page
         for (var i = 0; i < visibleViews.length; i++) {
             try {
                 var tempView = visibleViews[i];
@@ -3738,6 +3739,7 @@ $(function () {
                 throw e;
             }
         }
+
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
         $('#designer-view-mode li').removeClass('active');
         $('#designer-view-mode li[data-view-mode=' + pageType + ']').addClass('active');

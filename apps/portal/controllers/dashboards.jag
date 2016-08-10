@@ -28,9 +28,22 @@ var DASHBOARD_VERSION = "1.0.20";
     var permission = require('/modules/permission.js');
     var i18n = require("i18n");
 
+    /**
+     * Sanitize the input value.
+     * @param input {String}
+     * @return string
+     * @private
+     */
+    var sanitizeInput = function (input) {
+        if (!input) {
+            return "";
+        }
+        return input.replace(/[^a-z0-9-\s]/gim, "");
+    };
+
     if (matcher.match('/dashboards/{id}') || matcher.match('/dashboards/{id}/{page}')) {
         vars = matcher.elements();
-        dashboardId = vars.id;
+        dashboardId = sanitizeInput(vars.id);
         pageId = vars.page;
     }
 
@@ -62,17 +75,17 @@ var DASHBOARD_VERSION = "1.0.20";
         if (!request.getParameter("shared")) {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getAsset(dashboardId);
-                if(!dashboard.menu && dashboard.pages.length > 0){
-                    if(log.isDebugEnabled()){
+                if (!dashboard.menu && dashboard.pages.length > 0) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Unable to locate menu object, updating dashboard.json for: " + dashboardId);
                     }
 
                     dashboard = decorateDashboard(dashboard);
-                    utils.sandbox(context, function() {
+                    utils.sandbox(context, function () {
                         dashboards.update(dashboard);
                     });
 
-                    if(log.isDebugEnabled()){
+                    if (log.isDebugEnabled()) {
                         log.debug("Updated dashboard.json for: " + dashboardId);
                     }
                 }
@@ -191,26 +204,26 @@ var DASHBOARD_VERSION = "1.0.20";
         dashboard = {
             version: DASHBOARD_VERSION,
             id: dashboardId,
-            title: request.getParameter('title'),
-            description: request.getParameter('description'),
+            title: sanitizeInput(request.getParameter('title')),
+            description: sanitizeInput(request.getParameter('description')),
             permissions: {
                 viewers: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_VIEWER)],
                 editors: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_EDITOR)],
                 owners: [constants.INTERNAL_ROLE.concat(constants.INTERNAL_ROLE_FORWARDSLASH, dashboardId, constants.INTERNAL_ROLE_SEPERATOR, constants.INTERNAL_ROLE_OWNER)]
             },
             pages: [],
-            menu:[],
+            menu: [],
             hideAllMenuItems: false,
             identityServerUrl: "",
             accessTokenUrl: "",
             apiKey: "",
             apiSecret: "",
             theme: request.getParameter('select-theme'),
-            shareDashboard : false,
-            personalizeDashboard : false
-    };
+            shareDashboard: false,
+            personalizeDashboard: false
+        };
 
-        utils.sandbox(context, function() {
+        utils.sandbox(context, function () {
             dashboards.create(dashboard);
         });
 
@@ -218,15 +231,15 @@ var DASHBOARD_VERSION = "1.0.20";
         return;
     }
 
-    function decorateDashboard(dashboard){
+    function decorateDashboard(dashboard) {
         dashboard.menu = [];
-        for(var i=0,length=dashboard.pages.length; i < length; i++){
+        for (var i = 0, length = dashboard.pages.length; i < length; i++) {
             var menu = {
-                "id" : dashboard.pages[i].id,
-                "isanon" : false,
-                "ishidden" : false,
+                "id": dashboard.pages[i].id,
+                "isanon": false,
+                "ishidden": false,
                 "title": dashboard.pages[i].title,
-                "subordinates" : []
+                "subordinates": []
             };
             dashboard.menu.push(menu);
         }

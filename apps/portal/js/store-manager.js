@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
+var getAsset;
+var getAssets;
+var addAsset;
+var deleteAsset;
+var getDashboardsFromRegistry;
+var getListOfStore;
+var downloadAsset;
 
 (function () {
     var log = new Log();
@@ -22,21 +28,57 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     var utils = require('/modules/utils.js');
     var moduleDashboards = require('/modules/dashboards.js');
     var config = require('/configs/designer.json');
-    var DEFAULT_STORE_TYPE = 'fs';
-    var LEGACY_STORE_TYPE = 'store';
     var constants = require('/modules/constants.js');
+
+    /**
+     * Default Store.
+     * @const
+     * */
+    var DEFAULT_STORE_TYPE = 'fs';
+    /**
+     * Legacy store type.
+     * @const
+     * */
+    var LEGACY_STORE_TYPE = 'store';
+    /**
+     * Store extension location.
+     * @const
+     * */
     var STORE_EXTENSIONS_LOCATION = '/extensions/stores/';
+    /**
+     * Default thumbnail location.
+     * @const
+     * */
     var DEFAULT_THUMBNAIL = 'local://images/gadgetIcon.png';
 
+    /**
+     * Get the registry path.
+     * @param id {Number}
+     * @return {String}
+     * @private
+     * */
     var registryPath = function (id) {
         var path = '/_system/config/ues/dashboards';
         return id ? path + '/' + id : path;
     };
 
+    /**
+     * Get the store extension script.
+     * @param storeType {String}
+     * @return {String}
+     * @private
+     * */
     var storeExtension = function (storeType) {
         return STORE_EXTENSIONS_LOCATION + storeType + '/index.js';
     };
 
+    /**
+     * Get dashboards from registry.
+     * @param start {Number}
+     * @param count {Number}
+     * @param registry {String}
+     * @return {Object}
+     * */
     getDashboardsFromRegistry = function (start, count, registry) {
         if (!registry) {
             var server = new carbon.server.Server();
@@ -50,7 +92,16 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         });
     };
 
-
+    /**
+     * Find dashboards.
+     * @param ctx {Object}
+     * @param type {String}
+     * @param query {String}
+     * @param start {Number}
+     * @param count {Number}
+     * @return {Object}
+     * @private
+     * */
     var findDashboards = function (ctx, type, query, start, count) {
         if (!ctx.username) {
             return [];
@@ -144,6 +195,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * @param url
      * @param storeType
      * @returns corrected url
+     * @private
      */
     var fixLegacyURL = function (url, storeType) {
         if (url) {
@@ -159,6 +211,17 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     };
 
     /**
+     * Get the list of stores from the designer config.
+     * @return types {Object}
+     * */
+    getListOfStore = function () {
+        if (!config.store.types || config.store.types.length <= 0) {
+            return null;
+        }
+        return config.store.types;
+    };
+
+    /**
      * Find an asset based on the type and asset id
      * @param type
      * @param id
@@ -171,6 +234,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         var storeTypes = config.store.types;
         var um;
         var userRoles;
+        var asset;
 
         if (!isShared || !user || user.domain === String(carbon.server.superTenant.domain)) {
             if (user) {
@@ -182,7 +246,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         }
         for (var i = 0; i < storeTypes.length; i++) {
             var specificStore = require(storeExtension(storeTypes[i]));
-            var asset = specificStore.getAsset(type, id);
+            asset = specificStore.getAsset(type, id);
             if (asset) {
                 var allowedRoles = asset.allowedRoles;
                 if (userRoles && allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
@@ -216,6 +280,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             if ((storeType && storeTypes[i] === storeType) || !storeType) {
                 var specificStore = require(storeExtension(storeTypes[i]));
                 var assets = specificStore.getAssets(type, query);
+                var isDownloadable = specificStore.isDownloadable();
+                var isDeletable = specificStore.isDeletable();
                 if (assets) {
                     for (var j = 0; j < assets.length; j++) {
                         var allowedRoles = assets[j].allowedRoles;
@@ -235,6 +301,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                             } else {
                                 log.warn('Url is not defined for ' + assets[j].title);
                             }
+                            assets[j].isDownloadable = isDownloadable;
+                            assets[j].isDeletable = isDeletable;
                         }
                     }
                     allAssets = assets.concat(allAssets);
@@ -282,4 +350,23 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             }
         }
     };
+
+    /**
+     * Get the download path for asset.
+     * @param type {String} asset type
+     * @param id {String} asset ID
+     * @param storeType {String} store type which asset belongs to
+     * @return {String}
+     * */
+    downloadAsset = function (type, id, storeType) {
+        var storeTypes = config.store.types;
+        var storeTypesLength = storeTypes.length;
+        for (var i = 0; i < storeTypesLength; i++) {
+            if (storeType === storeTypes[i]) {
+                var store = require(storeExtension(storeType));
+                return store.getAssetFilePath(type, id);
+            }
+        }
+        return null;
+    }
 }());

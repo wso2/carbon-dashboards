@@ -37,7 +37,6 @@ var user;
         }
         return destination.replace(/[^a-zA-Z0-9-_/?&=. ]/g, "");
     };
-
     if (request.getMethod() === 'POST') {
         var dest = sanitizeDestination(request.getParameter("destination"));
         if (dest) {

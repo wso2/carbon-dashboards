@@ -23,7 +23,7 @@ $(function () {
      * Store type
      * @const
      */
-    var STORE_TYPE = "fs";
+    var DEFAULT_STORE_TYPE = "fs";
 
     /**
      * gadget count.
@@ -45,13 +45,16 @@ $(function () {
      * Load the list of assets available.
      * @private
      * */
-    var listAssets = function () {
+    var listAssets = function (store) {
         isStillLoading = true;
 
         if (!hasMore) {
             isStillLoading = false;
             return;
         }
+
+        var artifactStore = !store ? DEFAULT_STORE_TYPE : store;
+
         ues.store.assets(assetType, {
             start: nextStart,
             count: ASSET_COUNT
@@ -72,7 +75,60 @@ $(function () {
                 return;
             }
             listAssets();
-        }, STORE_TYPE);
+        }, artifactStore);
+    };
+
+    /**
+     * Get the list of stores available.
+     * @return null
+     * @private
+     * */
+    var getListOfStores = function () {
+        ues.store.getStoreList(function (error, data) {
+            if (!error && data) {
+                var length = data.length;
+                for (var i = 0; i < length; i++) {
+                    addStoreToList(data[i]);
+                }
+                $('#storeSelector').show();
+            } else {
+                $('#storeSelector').hide();
+            }
+        });
+    };
+
+    /**
+     * Add the store to the store list.
+     * @param store {string}
+     * @return null
+     * @private
+     * */
+    var addStoreToList = function (store) {
+        $('#selectStore').append('<option value="' + store + '">' + store.toUpperCase() + '</option>');
+    };
+
+    /**
+     * Download Assets as a ZIP.
+     * @param type {String}
+     * @param id {String}
+     * @param store {String}
+     * @private
+     * */
+    var downloadAsset = function (type, id, store) {
+        ues.store.downloadAsset(type, id, store, function (error, data) {
+            if (!error && data) {
+                window.location = data;
+            }
+        });
+    };
+
+    /**
+     * Clear existing gadgets in the DOM
+     * @return null
+     * @private
+     * */
+    var clearExistingGadgets = function () {
+        $('#ds-assets-portal').find('.ds-assets').empty();
     };
 
     /**
@@ -96,9 +152,9 @@ $(function () {
      * @private
      */
     var deleteAsset = function (id) {
-        ues.store.deleteAsset(assetType, id, STORE_TYPE, function (err, data) {
+        ues.store.deleteAsset(assetType, id, DEFAULT_STORE_TYPE, function (err, data) {
             if (err) {
-                $('#'+id).html(assetsDeleteErrorHbs(findAsset(id)));
+                $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
             } else {
                 location.reload();
             }
@@ -111,6 +167,26 @@ $(function () {
      * */
     var initUI = function () {
         var portal = $('#ds-assets-portal');
+        var selectStore = $('#selectStore');
+
+        getListOfStores();
+
+        selectStore.selectpicker({
+            style: 'btn-default',
+            size: 4
+        });
+
+        selectStore.selectpicker('val', DEFAULT_STORE_TYPE);
+
+        selectStore.on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var store = optionSelected.val();
+            hasMore = true;
+            nextStart = 0;
+            clearExistingGadgets();
+            listAssets(store);
+        });
+
         portal.on('click', '.ds-assets .ds-asset-trash-handle', function (e) {
             e.preventDefault();
             var assetElement = $(this).closest('.ds-asset');
@@ -138,6 +214,13 @@ $(function () {
             var id = assetElement.data('id');
             var asset = findAsset(id);
             assetElement.html(assetThumbnailHbs(asset));
+        });
+
+        portal.on('click', '.ds-assets .ds-asset-download-handle', function (e) {
+            var assetElement = $(this).closest('.ds-asset');
+            var id = assetElement.data('id');
+            var store = $('#selectStore').selectpicker('val');
+            downloadAsset(assetType, id, store);
         });
 
         $(window).scroll(function () {

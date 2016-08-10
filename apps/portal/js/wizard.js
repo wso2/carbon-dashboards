@@ -35,53 +35,53 @@ var CHART_CONF = 'chart-conf';
 var CHART_NAME = 'chart-name';
 var PARTIAL = 'partial';
 
-var CREATE_GADGET_API  = 'apis/createGadget';
+var CREATE_GADGET_API = 'apis/createGadget';
 
 ///////////////////////////////////////////// event handlers //////////////////////////////////////////
 
 $('#rootwizard').bootstrapWizard({
     nextSelector: '.btn-next',
     previousSelector: '.btn-previous',
-    onNext: function(tab, navigation, index) {
+    onNext: function (tab, navigation, index) {
         var isRequiredFieldsFilled = true;
 
         $(tab.children('a').attr('href')).find('input[required="true"]').each(function () {
             if (!$.trim($(this).val())) {
                 isRequiredFieldsFilled = false;
                 showInlineError($(this), $("#" + $(this).attr("name") + "-error"));
-            }else{
+            } else {
                 hideInlineError($(this), $("#" + $(this).attr("name") + "-error"));
             }
         });
 
-        if(index == 2) {
-            if(isRequiredFieldsFilled){
+        if (index == 2) {
+            if (isRequiredFieldsFilled) {
                 $('.btn-next a').text('Add to store').removeClass('disabled');
                 $('#lastTab').removeClass("tab-link-disabled");
             }
         }
 
-        if(index == 3 && isRequiredFieldsFilled){
+        if (index == 3 && isRequiredFieldsFilled) {
             $('.btn-next').addClass('complete');
         }
 
-        if(isRequiredFieldsFilled){
+        if (isRequiredFieldsFilled) {
             $($('.wiz-nav-inner li')[index]).removeClass('current').addClass('completed');
-            $($('.wiz-nav-inner li')[index+1]).addClass('current');
+            $($('.wiz-nav-inner li')[index + 1]).addClass('current');
         }
-        
-        
+
+
         return isRequiredFieldsFilled;
     },
-    onPrevious: function(tab, navigation, index){
-        if(index != -1){
+    onPrevious: function (tab, navigation, index) {
+        if (index != -1) {
             $('.btn-next a').text('Next');
             tab.removeClass('current');
             tab.prev().removeClass('completed').addClass('current');
         }
-        
+
     },
-    onTabClick: function(tab, navigation, index){
+    onTabClick: function (tab, navigation, index) {
         return false;
     },
     onTabShow: function (tab, navigation, index) {
@@ -91,9 +91,9 @@ $('#rootwizard').bootstrapWizard({
             $("#btnPreview").hide();
             $('#rootwizard').find('.pager .next').addClass("disabled");
             $('#rootwizard').find('.pager .finish').hide();
-        }else if (index == 1 && !step1Done) {
-                step1Done = true;
-                getProviderConfig();
+        } else if (index == 1 && !step1Done) {
+            step1Done = true;
+            getProviderConfig();
         } else if (index == 2 && !step2Done) {
             step2Done = true
             wizardData = getProviderConfigData();
@@ -137,7 +137,7 @@ $('#show-data').click(function () {
         contentType: "application/json",
         async: false,
         success: function (data) {
-            if(!data.error) {
+            if (!data.error) {
                 $('#sample-data-message').show();
                 $('#tab2-validation-errors').html('');
                 var dataPreviewHbs = Handlebars.compile($('#data-preview-hbs').html());
@@ -166,7 +166,7 @@ $('#show-data').click(function () {
     });
 });
 
-$('#chart-list').change(function(){
+$('#chart-list').change(function () {
     chartType = $("#chart-type").val();
     wizardData['chartType'] = chartType;
     getChartConfig(wizardData);
@@ -179,7 +179,7 @@ $('#gadget-name').on('keyup', function () {
 
 });
 
-$('#tab2').on('keypress', function() {
+$('#tab2').on('keypress', function () {
     $('#test-verification-label').hide();
     $('#tab2-validation-errors').empty();
     $('input[required="true"]').each(function () {
@@ -204,7 +204,7 @@ $("#preview").click(function () {
     wizardData[CHART_CONF] = getChartConfigData();
 
     if (!$.trim($("#gadget-name").val())) {
-        showInlineError($("#gadget-name"),$("#gadget-name-error"),null);
+        showInlineError($("#gadget-name"), $("#gadget-name-error"), null);
     }
     else {
         $.ajax({
@@ -241,7 +241,7 @@ $("#preview").click(function () {
     }
 });
 
-$(document).on('click','.complete',function(){
+$(document).on('click', '.complete', function () {
     $("#preview").click();
     $.ajax({
         url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=addGadgetToStore',
@@ -268,7 +268,6 @@ $(document).on('click','.complete',function(){
         }
     });
 })
-
 
 
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
@@ -315,7 +314,7 @@ function getProviderConfig() {
     provider = $("#providers").val();
     var providerConf = {};
     var configInput = {};
-    configInput[PROVIDER_NAME] = provider ;
+    configInput[PROVIDER_NAME] = provider;
     providerConf[PROVIDER_CONF] = configInput;
     $.ajax({
         url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getProviderConfig',
@@ -365,8 +364,8 @@ function registerAdvancedProviderUI(data) {
                 }
                 var providerConf = {};
                 var configInput = {};
-                configInput[PROVIDER_NAME] = provider ;
-                configInput[PARTIAL] =  config[key]['childPartial'];
+                configInput[PROVIDER_NAME] = provider;
+                configInput[PARTIAL] = config[key]['childPartial'];
                 providerConf[PROVIDER_CONF] = configInput;
                 $.ajax({
                     url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getProviderAdvancedUI',
@@ -391,7 +390,7 @@ function getProviderConfigData() {
     $.map(formData, function (n) {
         configInput[n['name']] = n['value'];
     });
-    configInput[PROVIDER_NAME] = provider ;
+    configInput[PROVIDER_NAME] = provider;
     providerConf[PROVIDER_CONF] = configInput;
     return providerConf;
 }
@@ -417,12 +416,12 @@ function getChartConfig(providerConfig) {
         contentType: "application/json",
         async: false,
         success: function (chartConfig) {
-            if(!chartConfig.error) {
+            if (!chartConfig.error) {
                 registerAdvancedChartUI(chartConfig);
                 var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
                 $("#chart-config").html(chartHbs(chartConfig));
                 $("#preview").removeAttr("style");
-            }else {
+            } else {
                 $('#tab3-validation-errors').html(chartConfig.message);
                 $('#rootwizard').find('.pager .next').addClass("disabled");
             }
@@ -439,7 +438,7 @@ function registerAdvancedChartUI(data) {
                     for (var i in wizardCssList) {
                         var link = document.createElement('link')
                         link.rel = 'stylesheet';
-                        link.href = CHART_LOCATION + chartType + WIZARD_LIB_LOCATION+ wizardCssList[i];
+                        link.href = CHART_LOCATION + chartType + WIZARD_LIB_LOCATION + wizardCssList[i];
                         document.body.appendChild(link);
                     }
                     var wizardJsList = config[key]['wizard-imports']["js"];
@@ -476,6 +475,6 @@ function getChartConfigData() {
         configInput[n['name']] = n['value'];
     });
     configInput[$('#gadget-name').attr("name")] = $('#gadget-name').val();
-    configInput[CHART_NAME] = chartType ;
+    configInput[CHART_NAME] = chartType;
     return configInput;
 }
