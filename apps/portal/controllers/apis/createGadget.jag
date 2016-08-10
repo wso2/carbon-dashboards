@@ -127,10 +127,10 @@
             } else {
                 log.error('No data found');
                 print(
-                        {
-                            "error": true,
-                            "message": "No data found"
-                        }
+                      {
+                          "error": true,
+                          "message": "No data found"
+                      }
                 );
                 return;
             }
@@ -163,7 +163,7 @@
             print(validate);
             return;
         }
-        chartApi = require(CHART_LOCATION + data.chartType + CHART_API_FILE);
+        chartApi = require(CHART_LOCATION + data.chartType + CHART_API_FILE );
         if (!schema.error) {
             var modifiedChartConfig = chartApi.getConfig(schema);
             for (var i in modifiedChartConfig) {
@@ -205,13 +205,14 @@
         var chartConf = data[CHART_CONF];
         var chart = chartConf[CHART_NAME];
         var chartApiLocation = CHART_LOCATION + chart + CHART_API_FILE;
+        var userDomain = session.get('user').domain;
         chartApi = require(chartApiLocation);
         validate = chartApi.validate(chartConf);
-        if (!validate.error) {
-            gadgetID = chartConf[GADGET_NAME].replace(/ /g, "_");
+        if(!validate.error){
+            gadgetID = chartConf[GADGET_NAME].replace(/ /g,"_");
 
             var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
-            if (gadgetStoreFile.isExists()) {
+            if(gadgetStoreFile.isExists()){
                 print({
                     error: true,
                     message: "Gadget with the same name already exists"
@@ -220,23 +221,24 @@
             }
 
             var tempDir = new File(TEMP_GADGET_LOCATION);
-            if (!tempDir.isExists()) {
+            if(!tempDir.isExists()){
                 tempDir.mkdir();
             }
 
-            var gadgetDirLocation = TEMP_GADGET_LOCATION + gadgetID;
+            var gadgetDirLocation = TEMP_GADGET_LOCATION + userDomain + "/" + gadgetID;
             var gadgetDir = new File(gadgetDirLocation);
-            if (gadgetDir.isExists()) {
+            if(gadgetDir.isExists()) {
                 gadgetDir.del();
             }
 
+            fileUtils.createDirs(gadgetDirLocation);
             var provider = data[PROVIDER_CONF][PROVIDER_NAME];
             var isPushMode = false;
-            if (providerApi.getMode().toLowerCase() === 'push') {
+            if(providerApi.getMode().toLowerCase() === 'push'){
                 isPushMode = true;
             }
 
-            if (isPushMode) {
+            if(isPushMode){
                 var providerClient = new File(PROVIDERS_LOCATION + provider + '/client.js');
                 fileUtils.copyFile(providerClient, gadgetDirLocation + '/js/core/provider-client.js');
             }
@@ -244,19 +246,19 @@
             var gadgetJsonData = {};
             gadgetJsonData['gadget_id'] = gadgetID;
             gadgetJsonData['gadget_title'] = chartConf[GADGET_NAME];
-            gadgetJsonData['gadget_url'] = 'gadget/' + gadgetID + GADGET_XML_FILE;
+            gadgetJsonData['gadget_url'] = 'gadget/'+ gadgetID + GADGET_XML_FILE;
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.json.hbs',
-                    gadgetDirLocation + '/gadget.json', gadgetJsonData);
+                            gadgetDirLocation +'/gadget.json', gadgetJsonData );
 
             var gadgetUtilData = {};
             gadgetUtilData['gadget_location'] = CONTEXT + gadgetDirLocation;
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-util.js.hbs',
-                    gadgetDirLocation + '/js/core/gadget-util.js', gadgetUtilData);
+                    gadgetDirLocation +'/js/core/gadget-util.js', gadgetUtilData);
 
             var gadgetCoreJsData = {};
             gadgetCoreJsData['isPullMode'] = !isPushMode;
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'js/gadget-core.js.hbs',
-                    gadgetDirLocation + '/js/core/gadget-core.js', gadgetCoreJsData);
+                            gadgetDirLocation +'/js/core/gadget-core.js', gadgetCoreJsData);
 
             var gadgetXmlData = {};
             gadgetXmlData['gadget_title'] = chartConf[GADGET_NAME];
@@ -264,15 +266,15 @@
             gadgetXmlData['chart-type'] = chart;
             var chartConfigFile = require(CHART_LOCATION + chart + CHART_CONFIG_FILE);
 
-            if (chartConfigFile['imports']) {
+            if(chartConfigFile['imports']) {
                 gadgetXmlData['chart-js'] = chartConfigFile['imports']["js"];
                 gadgetXmlData['chart-css'] = chartConfigFile['imports']["css"];
-                if (chartConfigFile['imports']["libs"]) {
+                if(chartConfigFile['imports']["libs"]) {
                     gadgetXmlData['chart-vendor-js'] = chartConfigFile['imports']["libs"]["js"];
                     gadgetXmlData['chart-vendor-css'] = chartConfigFile['imports']["libs"]["css"];
                 }
-                if (chartConfigFile['imports']["shared-libs"]) {
-                    gadgetXmlData['shared-js'] = chartConfigFile['imports']["shared-libs"]["js"];
+                if(chartConfigFile['imports']["shared-libs"]) {
+                    gadgetXmlData['shared-js'] =chartConfigFile['imports']["shared-libs"]["js"];
                     gadgetXmlData['shared-css'] = chartConfigFile['imports']["shared-libs"]["css"];
                 }
             }
@@ -282,7 +284,7 @@
             gadgetXmlData['provider-libs'] = providerLibs;
             gadgetXmlData['gadget_location'] = CONTEXT + gadgetDirLocation;
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'gadget.xml.hbs',
-                    gadgetDirLocation + GADGET_XML_FILE, gadgetXmlData);
+                            gadgetDirLocation + GADGET_XML_FILE, gadgetXmlData);
 
             var gadgetControllerFile = new File(GADGET_TEMPLATE_LOCATION + 'gadget-controller.jag');
             fileUtils.copyFile(gadgetControllerFile, gadgetDirLocation + '/gadget-controller.jag');
@@ -306,17 +308,17 @@
             if (providerApis) {
                 for (var f in providerApis) {
                     fileUtils.copyFile(new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + '/' + providerApis[f]),
-                            gadgetDirLocation + '/js/core/' + providerApis[f]);
+                                    gadgetDirLocation + '/js/core/' + providerApis[f]);
                 }
             }
 
             var chartApiFile = new File(chartApiLocation);
             fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/core/' + chart + '-api.js');
 
-            var previewTempLocation = '/temp/' + gadgetID + '_' + session.get('user').domain + '/preview.jag';
+            var previewTempLocation = TEMP_GADGET_LOCATION + gadgetID + '_' + userDomain + '/preview.jag';
             var previewFile = new File(previewTempLocation);
             fileUtils.createDirs(previewTempLocation);
-            if (previewFile.isExists()) {
+            if(previewFile.isExists()){
                 previewFile.del();
             }
             var previewData = {};
@@ -326,7 +328,7 @@
                     previewTempLocation, previewData);
 
             var thumbnail = new File(GADGET_TEMPLATE_LOCATION + 'thumbnail.png');
-            fileUtils.copyFile(thumbnail, gadgetDirLocation + '/thumbnail.png');
+            fileUtils.copyFile(thumbnail,gadgetDirLocation + '/thumbnail.png');
 
             fileUtils.writeToFile(data, gadgetDirLocation + '/conf.json');
             print({
@@ -340,30 +342,31 @@
             print(validate);
             return;
         }
-    } else if (action === 'addGadgetToStore') {
+    } else if(action === 'addGadgetToStore'){
         providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
         providerApi = require(providerApiLocation);
-        gadgetID = data[CHART_CONF][GADGET_NAME].replace(/ /g, "_");
+        gadgetID = data[CHART_CONF][GADGET_NAME].replace(/ /g,"_");
         var isPushMode = false;
-        if (providerApi.getMode().toLowerCase() === 'push') {
+        var userDomain = session.get('user').domain;
+        if(providerApi.getMode().toLowerCase() === 'push'){
             isPushMode = true;
         }
 
-        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID + '/js/core/gadget-util.js', CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
+        fileUtils.replaceText(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID +'/js/core/gadget-util.js', CONTEXT + TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID,
                 CONTEXT + GADGETS_LOCATION + gadgetID);
 
-        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID + GADGET_XML_FILE, CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
-                CONTEXT + GADGETS_LOCATION + gadgetID);
+        fileUtils.replaceText(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID + GADGET_XML_FILE, CONTEXT + TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID,
+                           CONTEXT + GADGETS_LOCATION + gadgetID);
 
-        var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
+        var gadgetDir = new File(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID);
         fileUtils.copyDir(gadgetDir, GADGETS_LOCATION);
 
-        var previewTempDirectory = '/temp/' + gadgetID + '_' + session.get('user').domain;
+        var previewTempDirectory = TEMP_GADGET_LOCATION + gadgetID + '_' + userDomain;
         var tempPreviewDir = new File(previewTempDirectory);
         if (tempPreviewDir.isExists()) {
             tempPreviewDir.del();
         }
-        if (gadgetDir.isExists()) {
+        if(gadgetDir.isExists()) {
             gadgetDir.del();
         }
         print({
@@ -376,7 +379,7 @@
         validate = providerApi.validate(data[PROVIDER_CONF]);
         var dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
         if (validate.error) {
-            print({
+              print({
                 error: true,
                 message: "Database configuration error"
             });
