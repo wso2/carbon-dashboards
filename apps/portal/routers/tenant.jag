@@ -32,7 +32,7 @@ var originalURI;
     var matcher;
     var log = new Log();
     var carbon = require('carbon');
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var usr = require('/modules/user.js');
 
     utils = require('/modules/utils.js');

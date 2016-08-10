@@ -17,20 +17,17 @@
 (function () {
     var permission = require('/modules/permission.js');
     var constants = require('/modules/constants.js');
+    var config = require('/modules/config.js').getConfigFile();
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
     if (!user) {
         sendLogin();
         return;
     }
-
     if (userDomain !== (urlDomain || superDomain)) {
         response.sendError(401, 'designer access not authorized of this tenant');
         return;
     }
-
-    var configs = require('/configs/designer.json');
-
     if (!permission.isAllowed(constants.CREATE)) {
         // If the user is not permitted to access it, send unauthorized error message.
         response.sendError(401, ""+i18n.localize("access.not.authorized"));

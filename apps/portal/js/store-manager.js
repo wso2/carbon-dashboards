@@ -27,7 +27,7 @@ var downloadAsset;
     var carbon = require('carbon');
     var utils = require('/modules/utils.js');
     var moduleDashboards = require('/modules/dashboards.js');
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
     var constants = require('/modules/constants.js');
 
     /**

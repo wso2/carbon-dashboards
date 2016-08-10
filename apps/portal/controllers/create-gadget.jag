@@ -25,7 +25,7 @@
         return;
     }
 
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     
     if (!configs.isCreateGadgetEnable) {
         response.sendError(404, 'file not found');

@@ -16,7 +16,7 @@
  */
 (function () {
     var log = new Log();
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var utils = require('/modules/utils.js');
     var dashboards = require('/modules/dashboards.js');
     response.contentType = 'application/json';

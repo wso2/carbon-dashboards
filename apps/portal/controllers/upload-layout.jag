@@ -19,7 +19,7 @@
 
 var errorMessage;
 var assetType = "layout";
-var configs = require('/configs/designer.json');
+var configs = require('/modules/config.js').getConfigFile();
 (function () {
     errorMessage = request.getParameter("message");
     var permission = require('/modules/permission.js');

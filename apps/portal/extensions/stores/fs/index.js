@@ -31,7 +31,7 @@ var isDownloadable;
 
     var assetsDir = function (ctx, type) {
         var carbon = require('carbon');
-        var config = require('/configs/designer.json');
+        var config = require('/modules/config.js').getConfigFile();
         var domain = config.shareStore ? carbon.server.superTenant.domain : ctx.domain;
         return dir + domain + '/' + constants.FILE_STORE + '/' + type + '/';
     };
