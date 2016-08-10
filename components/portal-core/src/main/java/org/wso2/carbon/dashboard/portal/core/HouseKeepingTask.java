@@ -49,32 +49,33 @@ public class HouseKeepingTask implements Task {
         }
     }
 
-    private void cleanupDir(String location, int maxFileLifeTime){
-         File dir = new File(location);
+    private void cleanupDir(String location, int maxFileLifeTime) {
+        File dir = new File(location);
         long timeStamp = System.currentTimeMillis() - maxFileLifeTime * 60 * 1000;
         deleteFiles(dir.listFiles(), timeStamp);
     }
 
-    private void deleteFiles(File[] files, long maxTimeStamp ) {
+    private void deleteFiles(File[] files, long maxTimeStamp) {
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
                     deleteFiles(file.listFiles(), maxTimeStamp);
                     File[] filesAfterDelete = file.listFiles();
-                    if (filesAfterDelete == null || filesAfterDelete.length == 0){
-                        if (!file.delete()) {
-                            log.warn("Unable to delete the file : " + file.getPath() + "during the house keeping task " +
-                                    "for the portal application");
-                        }
+                    if (filesAfterDelete == null || filesAfterDelete.length == 0) {
+                        deleteFile(file, maxTimeStamp);
                     }
                 } else {
-                    if (file.lastModified() < maxTimeStamp) {
-                        if (!file.delete()) {
-                            log.warn("Unable to delete the file : " + file.getPath() + "during the house keeping task " +
-                                    "for the portal application");
-                        }
-                    }
+                    deleteFile(file, maxTimeStamp);
                 }
+            }
+        }
+    }
+
+    private void deleteFile(File file, long maxTimeStamp) {
+        if (file.lastModified() < maxTimeStamp) {
+            if (!file.delete()) {
+                log.warn("Unable to delete the file : " + file.getPath() + "during the house keeping task " +
+                        "for the portal application");
             }
         }
     }

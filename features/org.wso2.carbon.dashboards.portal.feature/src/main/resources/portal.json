@@ -76,7 +76,7 @@
     },
     "houseKeeping" : {
         "location" : "/temp/",
-        "interval" : "1",
-        "maxTempFileLifeTime" : "60"
+        "interval" : "60",
+        "maxTempFileLifeTime" : "120"
     }
 }

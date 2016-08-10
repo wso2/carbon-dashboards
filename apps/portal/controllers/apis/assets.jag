@@ -53,7 +53,7 @@
      * Download file location.
      * @const
      */
-    var DOWNLOAD_LOCATION = "/extensions/download/";
+    var DOWNLOAD_LOCATION = "dashboards/";
 
     /**
      * Download file extention
@@ -69,7 +69,10 @@
     var store = utils.store();
     var asset = require('/modules/assets.js');
     var constants = require('/modules/constants.js');
+    var fileUtils = require('/modules/file-utils.js');
     var esConfig = require('/extensions/stores/es/config.json');
+    var config = require('/modules/config.js').getConfigFile();
+    var downloadLocation = config.houseKeeping.location + DOWNLOAD_LOCATION;
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
     var method = request.getMethod();
@@ -139,8 +142,9 @@ if (matcher.match('/assets/download/{id}')) {
                 return;
             }
             var file = new File(assetPath);
-            file.zip(DOWNLOAD_LOCATION + id + DOWNLOAD_FILE_EXTENSION);
-            print(stringify(relativeURLPrefix + "portal" + DOWNLOAD_LOCATION + id + DOWNLOAD_FILE_EXTENSION));
+            fileUtils.createDirs(relativeURLPrefix + "portal" + downloadLocation);
+            file.zip(downloadLocation + id + DOWNLOAD_FILE_EXTENSION);
+            print(stringify(relativeURLPrefix + "portal" + downloadLocation + id + DOWNLOAD_FILE_EXTENSION));
             return;
         }
         return;
