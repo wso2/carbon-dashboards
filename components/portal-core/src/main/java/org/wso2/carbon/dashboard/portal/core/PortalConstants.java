@@ -24,13 +24,14 @@ public class PortalConstants {
         //Avoid Instantiation
     }
 
-    public static final String PORTAL = "portal";
+    public static final String PORTAL_LOCATION = "jaggeryapps" + File.separator + "portal";
     public static final String STORE = "/portal/store/";
     public static final String TEMP = "/portal/temp/";
     public static final String TASK_TYPE = "PORTAL_APP_TASK";
     public static final String PORTAL_CONFIG_NAME = "portal.json";
     public static final String PORTAL_CONFIG_LOCATION = "dashboards" + File.separator + PORTAL_CONFIG_NAME;
     public static final String PORTAL_HOUSE_KEEPING_TASK = "PORTAL_HOUSE_KEEPING_TASK";
+    public static final String HOUSE_KEEPING_CONFIG_PROPERTY = "houseKeeping";
     public static final String HOUSE_KEEPING_INTERVAL_CONFIG_PROPERTY = "interval";
     public static final String HOUSE_KEEPTING_MAX_FILE_LIFE_TIME_CONFIG_PROPERTY = "maxTempFileLifeTime";
     public static final String HOUSE_KEEPING_LOCATION = "location";

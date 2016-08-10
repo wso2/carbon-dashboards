@@ -35,7 +35,7 @@ public class HouseKeepingTask implements Task {
 
     @Override
     public void init() {
-        String portalLocation = CarbonUtils.getCarbonRepository() + File.separator + PortalConstants.PORTAL;
+        String portalLocation = CarbonUtils.getCarbonRepository() + File.separator + PortalConstants.PORTAL_LOCATION;
         try {
             String houseKeepingLocation = HouseKeepingConfiguration.getInstance().getLocation();
             if (houseKeepingLocation.startsWith("/")) {
@@ -43,28 +43,36 @@ public class HouseKeepingTask implements Task {
             } else {
                 houseKeepingLocation = portalLocation + File.separator + houseKeepingLocation;
             }
-            deleteFiles(houseKeepingLocation, HouseKeepingConfiguration.getInstance().getMaxFileLifeTime());
+            cleanupDir(houseKeepingLocation, HouseKeepingConfiguration.getInstance().getMaxFileLifeTime());
         } catch (DashboardPortalException e) {
             log.error("Error while performing house keeping task for the portal application. ", e);
         }
     }
 
-    private void deleteFiles(String location, int maxFileLifeTime){
-        File dir = new File(location);
+    private void cleanupDir(String location, int maxFileLifeTime){
+         File dir = new File(location);
         long timeStamp = System.currentTimeMillis() - maxFileLifeTime * 60 * 1000;
-        showFiles(dir.listFiles(), timeStamp);
+        deleteFiles(dir.listFiles(), timeStamp);
     }
 
-    private void showFiles(File[] files, long maxTimeStamp ) {
-        for (File file : files) {
-            if (file.isDirectory()) {
-                System.out.println("Directory: " + file.getName());
-                showFiles(file.listFiles(), maxTimeStamp);
-            } else {
-                if (file.lastModified() < maxTimeStamp){
-                    if (!file.delete()){
-                        log.warn("Unable to delete the file : "+ file.getPath() + "during the house keeping task " +
-                                "for the portal application");
+    private void deleteFiles(File[] files, long maxTimeStamp ) {
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteFiles(file.listFiles(), maxTimeStamp);
+                    File[] filesAfterDelete = file.listFiles();
+                    if (filesAfterDelete == null || filesAfterDelete.length == 0){
+                        if (!file.delete()) {
+                            log.warn("Unable to delete the file : " + file.getPath() + "during the house keeping task " +
+                                    "for the portal application");
+                        }
+                    }
+                } else {
+                    if (file.lastModified() < maxTimeStamp) {
+                        if (!file.delete()) {
+                            log.warn("Unable to delete the file : " + file.getPath() + "during the house keeping task " +
+                                    "for the portal application");
+                        }
                     }
                 }
             }

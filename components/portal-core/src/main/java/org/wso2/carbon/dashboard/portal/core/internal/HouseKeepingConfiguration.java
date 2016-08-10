@@ -34,6 +34,10 @@ public class HouseKeepingConfiguration {
     private int maxFileLifeTime;
     private String location;
 
+    private static final int DEFAULT_INTERVAL = 60;
+    private static final int DEFAULT_MAX_FILE_LIFE_TIME = 60;
+    private static final String DEFAULT_LOCATION = File.separator + "temp" + File.separator;
+
     public static HouseKeepingConfiguration getInstance() throws DashboardPortalException {
         if (instance == null){
             synchronized (HouseKeepingConfiguration.class){
@@ -46,14 +50,17 @@ public class HouseKeepingConfiguration {
     }
 
     private HouseKeepingConfiguration() throws DashboardPortalException {
-        String configLocation = CarbonUtils.getCarbonConfigDirPath() + PortalConstants.PORTAL_CONFIG_LOCATION;
+        this.interval = DEFAULT_INTERVAL;
+        this.maxFileLifeTime = DEFAULT_MAX_FILE_LIFE_TIME;
+        this.location = DEFAULT_LOCATION;
+        String configLocation = CarbonUtils.getCarbonConfigDirPath() + File.separator + PortalConstants.PORTAL_CONFIG_LOCATION;
         JSONParser jsonParser = new JSONParser();
         try {
             JSONObject portalConfig = (JSONObject) jsonParser.parse(new FileReader(configLocation));
             JSONObject houseKeepingConfig = (JSONObject) portalConfig.
-                    get(PortalConstants.HOUSE_KEEPING_INTERVAL_CONFIG_PROPERTY);
+                    get(PortalConstants.HOUSE_KEEPING_CONFIG_PROPERTY);
             this.interval = Integer.parseInt(houseKeepingConfig.
-                    get(PortalConstants.HOUSE_KEEPING_INTERVAL_CONFIG_PROPERTY).toString());
+                    get(PortalConstants.HOUSE_KEEPING_INTERVAL_CONFIG_PROPERTY).toString()) * 60 * 1000;
             this.maxFileLifeTime = Integer.parseInt(houseKeepingConfig.
                     get(PortalConstants.HOUSE_KEEPTING_MAX_FILE_LIFE_TIME_CONFIG_PROPERTY).toString());
             this.location = houseKeepingConfig.get(PortalConstants.HOUSE_KEEPING_LOCATION).
