@@ -25,7 +25,7 @@
         return;
     }
     var utils = require('/modules/utils.js');
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var fileUtils = require('/modules/file-utils.js');
 
     var CONTEXT = '/portal';

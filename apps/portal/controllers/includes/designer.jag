@@ -25,7 +25,7 @@
         return;
     }
 
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
 
     if (!utils.allowed(user.roles, configs.designers) && !dashboard.isUserCustom) {
         response.sendError(401, 'Designer access not authorized');
