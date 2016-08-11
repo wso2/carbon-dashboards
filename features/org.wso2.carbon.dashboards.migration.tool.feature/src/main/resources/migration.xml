@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- There are two ways of using the migration script. If you uncomment the CAR file section, you can migrate your car files.
+If you want to migrate the portal app, you can uncomment the Portal File migration section -->
+
+<!-- CAR File Migration-->
+<!--
+	1.Type - Specifiy the migration type CAR or Portal
+
+	2.SourceDir - Specify the car file direcotory or single car file path. If you put directory, it will get all the CAR files in
+	it and migrate it
+
+	3.DestinationDir - Specify the destination directory for migrated car files
+-->
+
+<!-- Uncomment the below part to enable CAR file migration -->
+<DSMigration>
+    <Type>CAR</Type>
+    <SourceDir>/home/nisala/WSO2/TR/CAR/</SourceDir>
+    <DestinationDir>/home/nisala/WSO2/TR/Btest/Modified/</DestinationDir>
+</DSMigration>
+
+        <!-- Portal File Migration-->
+        <!--
+            1.Type - Specifiy the migration type CAR or Portal
+
+            2.SourceDir - Specify the older PRODUCT_HOME direcotory.
+
+            3.DestinationDir - Specify the destination directory for migrated Store and Dashboards
+
+            4.TrustStoreLocation - Specify the trustedstore location. EX:- PRODUCT_HOME/repository/resources/security/wso2carbon.jks
+
+            5.TrustStorePassword - Specify the trustedstore password. EX:- wso2carbon
+
+            6.SourceURL - Specify the source url - Older version of your product . EX:-https://hostname:port
+
+            7.SourceUsername - Specify the carbon.super user's username EX:-admin
+
+            8.SourcePassword - Specify the carbon.super user's password EX:-admin
+
+            9.DestinationURL - Specify the destination url - Newer version of your product. EX:-https://hostname:port
+
+            10.DestinationUsername - Specify the carbon.super user's username EX:-admin
+
+            11.DestinationPassword - Specify the carbon.super user's password EX:-admin
+
+            12.TenantDomains - Specify the tenant domain - This will migrate all the dashboards within these tenants. If you do not put anything here, It will update all the tenant dashboards
+
+        -->
+        <!-- Uncomment the below part to enable CAR file migration -->
+        <!--
+        <DSMmigration>
+            <Type>Portal</Type>
+            <SourceDir>/home/nisala/WSO2/TR/wso2ds-2.1.0-SNAPSHOT</SourceDir>
+            <DestinationDir>/home/nisala/WSO2/TR/Btest/</DestinationDir>
+            <TrustStoreLocation>/home/nisala/WSO2/TR/wso2ds-2.1.0-SNAPSHOT/repository/resources/security/wso2carbon.jks</TrustStoreLocation>
+            <TrustStorePassword>wso2carbon</TrustStorePassword>
+            <SourceURL>https://localhost:9443</SourceURL>
+            <SourceUsername>admin</SourceUsername>
+            <SourcePassword>admin</SourcePassword>
+            <DestinationURL>https://localhost:9444</DestinationURL>
+            <DestinationUsername>admin</DestinationUsername>
+            <DestinationPassword>admin</DestinationPassword>
+            <TenantDomains></TenantDomains>
+        </DSMigration>
+        -->

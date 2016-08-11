@@ -1,83 +1,68 @@
-#!/bin/sh
-if [ "$2" = "CAR" ]; then
-	if [ "$3" = "-Dsrcdir" ]; then
-		if [ "$4" != "" ]; then
-			SRC_DIR=$4
-		else
-			echo "Source Directory cannot be null"
-			echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir>'"
-			exit 1
-		fi
-	else
-		echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir>'"
+#!/bin/bash
+cat migration.xml | sed '/<!--.*-->/d' | sed '/<!--/,/-->/d' > modified.xml
+input='cat modified.xml'
+Type=($($input | grep -oP '(?<=Type>)[^<]+'))
+if [ "$Type" = "CAR" ]; then
+	SourceDir=($($input | grep -oP '(?<=SourceDir>)[^<]+'))
+	if [ "$SourceDir" = "" ]; then
+		echo "Source Directory cannot be empty"
 		exit 1
 	fi
-	if [ "$5" = "-Ddestdir" ]; then
-		if [ "$6" != "" ]; then
-			DEST_DIR=$6
-		else
-			echo "Destination Directory cannot be null"
-			echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir>'"
-			exit 1
-		fi
-	else
-		echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir>'"
+	DestinationDir=($($input | grep -oP '(?<=DestinationDir>)[^<]+'))
+	if [ "$DestinationDir" = "" ]; then
+		echo "Destination Directory cannot be empty"
 		exit 1
 	fi
 	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-	java -cp $SCRIPT_DIR/org.wso2.carbon.dashboard.migration.tool-2.0.2-SNAPSHOT.jar:$SCRIPT_DIR/* org.wso2.carbon.dashboards.migrationtool.DSCarFileMigrationTool $SRC_DIR $DEST_DIR
-elif [ "$2" = "Portal" ]; then
-	if [ "$3" = "-Dsrcdir" ]; then
-		if [ "$4" != "" ]; then
-			SRC_DIR=$4
-		else
-			echo "Source Directory cannot be null"
-			echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-			exit 1
-		fi
-	else
-		echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-		exit 1
+	java -cp $SCRIPT_DIR/org.wso2.carbon.dashboard.migration.tool-2.0.2-SNAPSHOT.jar:$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSCarFileMigrationTool $SourceDir $DestinationDir
+elif [ "$Type" = "Portal" ]; then
+	SourceDir=($($input | grep -oP '(?<=SourceDir>)[^<]+'))
+	if [ "$SourceDir" = "" ]; then
+		SourceDir="notDefined"
 	fi
-	if [ "$5" = "-Ddestdir" ]; then
-		if [ "$6" != "" ]; then
-			DEST_DIR=$6
-		else
-			echo "Destination Directory cannot be null"
-			echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-			exit 1
-		fi
-	else
-		echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-		exit 1
+	DestinationDir=($($input | grep -oP '(?<=DestinationDir>)[^<]+'))
+	if [ "$DestinationDir" = "" ]; then
+		DestinationDir="notDefined"
 	fi
-	if [ "$7" = "-Dadmin.username" ]; then
-		if [ "$8" != "" ]; then
-			USERNAME=$8
-		else
-			echo "Admin Username cannot be null"
-			echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-			exit 1
-		fi
-	else
-		echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-		exit 1
+	SourceURL=($($input | grep -oP '(?<=SourceURL>)[^<]+'))
+	if [ "$SourceURL" = "" ]; then
+		SourceURL="notDefined"
 	fi
-	if [ "$9" = "-Dadmin.password" ]; then
-		if [ "$10" != "" ]; then
-			PASSWORD=$10
-		else
-			echo "Admin password cannot be null"
-			echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-			exit 1
-		fi
-	else
-		echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
-		exit 1
+	DestinationURL=($($input | grep -oP '(?<=DestinationURL>)[^<]+'))
+	if [ "$DestinationURL" = "" ]; then
+		DestinationURL=""
+	fi
+	SourceUsername=($($input | grep -oP '(?<=SourceUsername>)[^<]+'))
+	if [ "$SourceUsername" = "" ]; then
+		SourceUsername="notDefined"
+	fi
+	SourcePassword=($($input | grep -oP '(?<=SourcePassword>)[^<]+'))
+	if [ "$SourcePassword" = "" ]; then
+		SourcePassword="notDefined"
+	fi
+	DestinationUsername=($($input | grep -oP '(?<=DestinationUsername>)[^<]+'))
+	if [ "$DestinationUsername" = "" ]; then
+		DestinationUsername="notDefined"
+	fi
+	DestinationPassword=($($input | grep -oP '(?<=DestinationPassword>)[^<]+'))
+	if [ "$DestinationPassword" = "" ]; then
+		DestinationPassword="notDefined"
+	fi
+	TenantDomains=($($input | grep -oP '(?<=TenantDomains>)[^<]+'))
+	if [ "$TenantDomains" = "" ]; then
+		TenantDomains="notDefined"
+	fi
+	TrustStorePassword=($($input | grep -oP '(?<=TrustStorePassword>)[^<]+'))
+	if [ "$TrustStorePassword" = "" ]; then
+		TrustStorePassword="notDefined"
+	fi
+	TrustStoreLocation=($($input | grep -oP '(?<=TrustStoreLocation>)[^<]+'))
+	if [ "$TrustStoreLocation" = "" ]; then
+		TrustStoreLocation="notDefined"
 	fi
 	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-	java -cp $SCRIPT_DIR/org.wso2.carbon.dashboard.migration.tool-2.0.2-SNAPSHOT.jar:$SCRIPT_DIR/* org.wso2.carbon.dashboards.migrationtool.DSPortalAppMigrationTool $SRC_DIR $DEST_DIR $USERNAME $PASSWORD
+	java -cp $SCRIPT_DIR/../../../repository/components/plugins/org.wso2.carbon.dashboard.migration.tool-2.0.2-SNAPSHOT.jar:$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSPortalAppMigrationTool $SourceDir $DestinationDir $SourceURL $SourceUsername $SourcePassword $DestinationURL $DestinationUsername $DestinationPassword $TenantDomains $TrustStoreLocation $TrustStorePassword
 else
-	echo "Please enter arugments as '-Dmode <CAR/Portal> -Dsrcdir <source dir> -Destdir <destination dir> -Dadmin.username <username> -Dadmin.password <password>'"
+	echo "Error in input.xml file. 'Type' attribute should be 'CAR' or 'Portal'"
 	exit 1
 fi
