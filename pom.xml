@@ -47,11 +47,17 @@
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
         <carbon.dashboards.version>2.0.2-SNAPSHOT</carbon.dashboards.version>
+        <json.simple.version>1.1.wso2v1</json.simple.version>
+        <org.wso2.carbon.logging.version>4.4.7</org.wso2.carbon.logging.version>
+        <commons-io.version>2.4.0.wso2v1</commons-io.version>
         <carbon.kernel.version>4.4.7</carbon.kernel.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <apache.google.guice.version>3.0</apache.google.guice.version>
         <javax.servlet.api.version>2.5</javax.servlet.api.version>
         <maven.antrunplugin.version>1.7</maven.antrunplugin.version>
+        <org.wso2.carbon.tenant.mgt.stub.version>4.6.0</org.wso2.carbon.tenant.mgt.stub.version>
+        <org.wso2.carbon.authenticator.stub>4.4.7</org.wso2.carbon.authenticator.stub>
+        <org.wso2.carbon.utils>4.4.7</org.wso2.carbon.utils>
     </properties>
 
     <scm>
