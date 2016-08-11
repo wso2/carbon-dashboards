@@ -16,7 +16,7 @@
  */
 (function () {
     var utils = require('/modules/utils.js');
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var store = utils.store();
     var dashboardCountPerUser = 0;
     var dashboardCountPerPortal = 0;

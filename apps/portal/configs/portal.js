@@ -1,13 +1,13 @@
 var config;
 (function () {
     config = function () {
-        var log = new Log(),
-            pinch = require('/modules/pinch.min.js').pinch,
-            config = require('/configs/designer.json'),
-            process = require('process'),
-            localIP = process.getProperty('server.host'),
-            httpPort = process.getProperty('http.port'),
-            httpsPort = process.getProperty('https.port');
+        var log = new Log();
+        var pinch = require('/modules/pinch.min.js').pinch;
+        var config = require('/modules/config.js').getConfigFile();
+        var process = require('process');
+        var localIP = process.getProperty('server.host');
+        var httpPort = process.getProperty('http.port');
+        var httpsPort = process.getProperty('https.port');
         var carbonLocalIP = process.getProperty('carbon.local.ip');
 
         pinch(config, /^/, function (path, key, value) {

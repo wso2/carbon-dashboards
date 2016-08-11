@@ -15,7 +15,7 @@
 * under the License.
 *
 */
-package org.wso2.carbon.dashboard.store.filter;
+package org.wso2.carbon.dashboard.portal.core;
 
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 
@@ -24,9 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class TenantStoreFilter implements Filter {
-    private static final String STORE = "/portal/store/";
-    private static final String TEMP = "/portal/temp/";
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -36,9 +33,10 @@ public class TenantStoreFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
-        if (httpServletRequest.getRequestURI().startsWith(STORE) || httpServletRequest.getRequestURI()
-                .startsWith(TEMP)) {
-            String stringToReplace = httpServletRequest.getRequestURI().startsWith(STORE) ? STORE : TEMP;
+        if (httpServletRequest.getRequestURI().startsWith(PortalConstants.STORE) || httpServletRequest.getRequestURI()
+                .startsWith(PortalConstants.TEMP)) {
+            String stringToReplace = httpServletRequest.getRequestURI().startsWith(PortalConstants.STORE) ?
+                    PortalConstants.STORE : PortalConstants.TEMP;
             String uri = httpServletRequest.getRequestURI();
             uri = uri.replace(stringToReplace, "");
             String[] uriComponents = uri.split("/");

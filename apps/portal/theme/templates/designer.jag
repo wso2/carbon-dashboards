@@ -49,7 +49,7 @@
 
     <!-- header -->
     <% include(utils.resolvePath('templates/global-navigation.jag')); %>
-    <% var configs = require('/configs/designer.json'); %>
+    <% var configs = require('/modules/config.js').getConfigFile(); %>
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">

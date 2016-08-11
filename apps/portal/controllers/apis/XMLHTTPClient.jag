@@ -23,7 +23,7 @@
 
     var log = new Log("/controllers/apis/XMLHTTPClient.jag");
     var carbon = require('carbon');
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var constants = require("/modules/constants.js");
     var RESTClientInvoker = require("/controllers/apis/RESTClientInvoker.jag").RESTClientInvoker;
     var utils = require('/modules/utils.js');

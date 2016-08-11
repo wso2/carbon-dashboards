@@ -8,9 +8,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.dashboard.store.filter</artifactId>
+    <artifactId>org.wso2.carbon.dashboard.portal.core</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Dashboard Store Filter</name>
+    <name>WSO2 Carbon - Dashboard Portal Core</name>
     <url>http://maven.apache.org</url>
 
     <dependencies>
@@ -21,6 +21,14 @@
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.commons</groupId>
+            <artifactId>org.wso2.carbon.ntask.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple.wso2</groupId>
+            <artifactId>json-simple</artifactId>
         </dependency>
     </dependencies>
 
@@ -38,8 +46,12 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Private-Package>
+                            org.wso2.carbon.dashboard.portal.core.internal.*
+                        </Private-Package>
                         <Export-Package>
-                            org.wso2.carbon.dashboard.store.filter.*
+                            !org.wso2.carbon.dashboard.portal.core.internal.*,
+                            org.wso2.carbon.dashboard.portal.core.*
                         </Export-Package>
                         <Import-Package>
                             *;resolution:=optional
