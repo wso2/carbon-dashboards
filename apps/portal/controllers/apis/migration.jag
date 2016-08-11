@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 (function () {
-    var dashboards = require('/modules/dashboards.js');
+    var migration = require('/modules/migration-tool.js');
     var i18n = require("i18n");
     response.contentType = 'application/json';
     var vars;
@@ -34,14 +34,14 @@
         }
         if (method === 'GET') {
             vars = matcher.elements();
-            var responseData = dashboards.getTenantDashboards(vars.tenantDomain);
+            var responseData = migration.getTenantDashboards(vars.tenantDomain);
             print(responseData);
             return;
         }
         if (method === 'POST') {
             vars = matcher.elements();
             var dashboard = request.getContent();
-            dashboards.updateTenantDashboards(vars.tenantDomain, dashboard);
+            migration.updateTenantDashboards(vars.tenantDomain, dashboard);
             return;
         }
         response.sendError(405, JSON.stringify({
