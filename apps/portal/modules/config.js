@@ -22,7 +22,7 @@ var getConfigFile;
         try {
             return carbon.server.loadConfig('dashboards/portal.json');
         } catch (e) {
-            log.error("Config " + e);
+            log.error("Cannot load portal.json config file " + e);
             throw e;
         }
     }
