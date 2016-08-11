@@ -50,9 +50,9 @@ If you want to migrate the portal app, you can uncomment the Portal File migrati
         <!--
         <DSMmigration>
             <Type>Portal</Type>
-            <SourceDir>/home/nisala/WSO2/TR/wso2ds-2.1.0-SNAPSHOT</SourceDir>
-            <DestinationDir>/home/nisala/WSO2/TR/Btest/</DestinationDir>
-            <TrustStoreLocation>/home/nisala/WSO2/TR/wso2ds-2.1.0-SNAPSHOT/repository/resources/security/wso2carbon.jks</TrustStoreLocation>
+            <SourceDir></SourceDir>
+            <DestinationDir></DestinationDir>
+            <TrustStoreLocation>YOUR_PRODUCT_HOME/repository/resources/security/wso2carbon.jks</TrustStoreLocation>
             <TrustStorePassword>wso2carbon</TrustStorePassword>
             <SourceURL>https://localhost:9443</SourceURL>
             <SourceUsername>admin</SourceUsername>
