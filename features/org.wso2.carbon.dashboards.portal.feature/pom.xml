@@ -28,6 +28,14 @@
     <name>WSO2 Carbon - Portal Feature</name>
     <url>http://wso2.org</url>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>org.wso2.carbon.dashboard.portal.core</artifactId>
+        </dependency>
+    </dependencies>
+
+
     <build>
         <plugins>
             <plugin>
@@ -85,6 +93,16 @@
                             <adviceFile>
                                 <properties />
                             </adviceFile>
+                            <bundles>
+                                <bundleDef>
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboard.portal.core:${carbon.dashboards.version}
+                                </bundleDef>
+                            </bundles>
+                            <importFeatures>
+                                <importFeatureDef>
+                                    org.wso2.carbon.ntask.core:compatible:${carbon.commons.version}
+                                </importFeatureDef>
+                            </importFeatures>
                         </configuration>
                     </execution>
                 </executions>

@@ -25,7 +25,7 @@
         return;
     }
     var utils = require('/modules/utils.js');
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var fileUtils = require('/modules/file-utils.js');
 
     var CONTEXT = '/portal';
@@ -205,6 +205,7 @@
         var chartConf = data[CHART_CONF];
         var chart = chartConf[CHART_NAME];
         var chartApiLocation = CHART_LOCATION + chart + CHART_API_FILE;
+        var userDomain = session.get('user').domain;
         chartApi = require(chartApiLocation);
         validate = chartApi.validate(chartConf);
         if(!validate.error){
@@ -224,12 +225,13 @@
                 tempDir.mkdir();
             }
 
-            var gadgetDirLocation = TEMP_GADGET_LOCATION + gadgetID;
+            var gadgetDirLocation = TEMP_GADGET_LOCATION + userDomain + "/" + gadgetID;
             var gadgetDir = new File(gadgetDirLocation);
             if(gadgetDir.isExists()) {
                 gadgetDir.del();
             }
 
+            fileUtils.createDirs(gadgetDirLocation);
             var provider = data[PROVIDER_CONF][PROVIDER_NAME];
             var isPushMode = false;
             if(providerApi.getMode().toLowerCase() === 'push'){
@@ -313,7 +315,9 @@
             var chartApiFile = new File(chartApiLocation);
             fileUtils.copyFile(chartApiFile, gadgetDirLocation + '/js/core/' + chart + '-api.js');
 
-            var previewFile = new File('/theme/templates/preview.jag');
+            var previewTempLocation = TEMP_GADGET_LOCATION + gadgetID + '_' + userDomain + '/preview.jag';
+            var previewFile = new File(previewTempLocation);
+            fileUtils.createDirs(previewTempLocation);
             if(previewFile.isExists()){
                 previewFile.del();
             }
@@ -321,13 +325,14 @@
             previewData['absolute_gadget_url'] = utils.getCarbonServerAddress('https') + CONTEXT + gadgetDirLocation +
                     GADGET_XML_FILE + '?' + new Date().getTime();
             fileUtils.transformCopyFile(GADGET_TEMPLATE_LOCATION + 'preview.jag.hbs',
-                    '/theme/templates/preview.jag', previewData);
+                    previewTempLocation, previewData);
 
             var thumbnail = new File(GADGET_TEMPLATE_LOCATION + 'thumbnail.png');
             fileUtils.copyFile(thumbnail,gadgetDirLocation + '/thumbnail.png');
 
             fileUtils.writeToFile(data, gadgetDirLocation + '/conf.json');
             print({
+                location: previewTempLocation.substring(1),
                 error: false
             });
             return;
@@ -342,19 +347,25 @@
         providerApi = require(providerApiLocation);
         gadgetID = data[CHART_CONF][GADGET_NAME].replace(/ /g,"_");
         var isPushMode = false;
+        var userDomain = session.get('user').domain;
         if(providerApi.getMode().toLowerCase() === 'push'){
             isPushMode = true;
         }
 
-        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID +'/js/core/gadget-util.js', CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
+        fileUtils.replaceText(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID +'/js/core/gadget-util.js', CONTEXT + TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID,
                 CONTEXT + GADGETS_LOCATION + gadgetID);
 
-        fileUtils.replaceText(TEMP_GADGET_LOCATION + gadgetID + GADGET_XML_FILE, CONTEXT + TEMP_GADGET_LOCATION + gadgetID,
+        fileUtils.replaceText(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID + GADGET_XML_FILE, CONTEXT + TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID,
                            CONTEXT + GADGETS_LOCATION + gadgetID);
 
-        var gadgetDir = new File(TEMP_GADGET_LOCATION + gadgetID);
+        var gadgetDir = new File(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID);
         fileUtils.copyDir(gadgetDir, GADGETS_LOCATION);
 
+        var previewTempDirectory = TEMP_GADGET_LOCATION + gadgetID + '_' + userDomain;
+        var tempPreviewDir = new File(previewTempDirectory);
+        if (tempPreviewDir.isExists()) {
+            tempPreviewDir.del();
+        }
         if(gadgetDir.isExists()) {
             gadgetDir.del();
         }

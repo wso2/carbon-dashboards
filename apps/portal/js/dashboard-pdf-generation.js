@@ -171,7 +171,7 @@
                     unit: "px",
                     format: [width, height]
                 });
-                doc.text(width * .40, height*.025, ues.global.dashboard.title);
+                doc.text(width * .40, height * .025, ues.global.dashboard.title);
                 doc.addImage(canvas.toDataURL(IMAGEPNG), 'PNG', 0, 0, width, height);
                 doc.setFontType(PDF_WATERMARK_ITALIC);
                 doc.setFontSize(10);

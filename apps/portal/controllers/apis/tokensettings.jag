@@ -20,7 +20,7 @@
 function getApplicationKeyAndSecret(){
     var log = new Log();
     var ws = require('ws');
-    var config = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var dashboards = require('/modules/dashboards.js');
     var usr = require('/modules/user.js');
     var util = require('/modules/utils.js');

@@ -23,6 +23,15 @@
     text-align: right;
 }
 
+.ds-asset-download-handle {
+    position: absolute;
+    top: 10px;
+    right: 45px;
+    width: 20px;
+    font-size: 12px;
+    text-align: right;
+}
+
 #ds-assets-portal .ds-asset {
     height: 200px;
     background-color: #edeeef;
@@ -44,7 +53,6 @@
     font-size: 18px;
 }
 
-
 #ds-assets-portal .ds-asset h2 {
     font-size: 14px;
 }
@@ -56,4 +64,9 @@
 
 #delete-error {
     height: 100%;
+}
+
+#storeSelector {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

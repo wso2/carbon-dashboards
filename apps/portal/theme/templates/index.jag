@@ -25,7 +25,7 @@
     <% var utils = require('/modules/utils.js'); %>
     <% var constants = require('/modules/constants.js'); %>
     <title><%= i18n.localize("dashboards.label")%></title>
-    <% var config = require('/configs/designer.json'); %>
+    <% var config = require('/modules/config.js').getConfigFile(); %>
 </head>
 <body>
     <% include(utils.resolvePath('templates/global-navigation.jag')); %>

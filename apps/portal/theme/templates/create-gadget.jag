@@ -255,7 +255,7 @@
 </script>
 
 <script id="preview-hbs" type="text/x-handlebars-template">
-     <iframe src= "theme/templates/preview.jag" width="100%" height="80%"  scrolling="no" ></iframe>
+     <iframe src= "{{location}}" width="100%" height="500" scrolling="no" ></iframe>
 </script>
 
 <script id="success-hbs" type="text/x-handlebars-template">

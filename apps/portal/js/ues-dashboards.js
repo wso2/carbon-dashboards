@@ -54,7 +54,7 @@
 
         var sandbox = container.find('.ues-component');
         sandbox.attr('id', component.id).attr('data-component-id', component.id);
-        setupTitleBar(sandbox,component);
+        setupTitleBar(sandbox, component);
         if (component.content.styles.hide_gadget) {
             hideGadget(sandbox);
         } else {
@@ -72,7 +72,7 @@
     var updateComponent = function (component, done) {
         var plugin = findPlugin(component.content.type);
         var container = $('#' + component.id);
-        setupTitleBar(container,component);
+        setupTitleBar(container, component);
         if (component.content.styles.hide_gadget) {
             hideGadget(container);
         } else {
@@ -309,7 +309,7 @@
         else {
             return priorityA ? -1 : 1;
         }
-    }
+    };
 
     var sortGadgets = function () {
         var defaultPriorityVal = ues.global.dashboard.defaultPriority;
@@ -359,7 +359,7 @@
                 });
             }
             else {
-                if (doneCallback){
+                if (doneCallback) {
                     doneCallback(err);
                 }
                 finishedLoading();
@@ -489,6 +489,10 @@
         return ues.global.userDomain;
     };
 
+    var setDashboardLoadingState = function (state) {
+        dashboardLoadingState = state;
+    };
+
     ues.components = {
         create: createComponent,
         update: updateComponent,
@@ -505,7 +509,8 @@
         getDashboardID: getDashboardID,
         getDashboardName: getDashboardName,
         getDashboardLoadingState: getDashboardLoadingState,
-        getTenantDomain: getTenantDomain
+        getTenantDomain: getTenantDomain,
+        setDashboardLoadingState: setDashboardLoadingState
     };
 
     ues.assets = {};

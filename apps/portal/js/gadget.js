@@ -30,8 +30,10 @@ $(function () {
         var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
         componentBox.html(componentBoxContentHbs());
         ues.components.create(componentBox, component, function (err) {
-            if (err)
+            ues.dashboards.setDashboardLoadingState(false);
+            if (err) {
                 throw err;
+            }
         });
     };
     renderGadget();

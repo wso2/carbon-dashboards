@@ -16,7 +16,7 @@ var tenantedPrefix = function (prefix, domain) {
     if (!domain) {
         return prefix;
     }
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     return prefix + configs.tenantPrefix.replace(/^\//, '') + '/' + domain + '/';
 };
 
@@ -212,7 +212,7 @@ var dashboardLayouts = function () {
 };
 
 var getScript = function (fileName) {
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
     var theme = config.theme;
     var path = constants.EXTENSIONS_THEMES_PATH + theme + '/' + constants.JS_PATH + fileName + '.js';
     var file = new File('/' + path);
@@ -220,7 +220,7 @@ var getScript = function (fileName) {
 };
 
 var getStyle = function (fileName) {
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
     var theme = config.theme;
     var path = constants.EXTENSIONS_THEMES_PATH + theme + constants.CSS_PATH + '/' + fileName + '.css';
     var file = new File('/' + path);
@@ -228,7 +228,7 @@ var getStyle = function (fileName) {
 };
 
 var resolvePath = function (path) {
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
     var theme = config.theme;
     var extendedPath = constants.EXTENSIONS_THEMES_PATH + theme + '/' + path;
     var file = new File(extendedPath);
@@ -236,7 +236,7 @@ var resolvePath = function (path) {
 };
 
 var resolveUrl = function (path) {
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
     var theme = config.theme;
     var extendedPath = constants.EXTENSIONS_THEMES_PATH + theme + '/' + path;
     var file = new File('/' + extendedPath);
@@ -245,7 +245,7 @@ var resolveUrl = function (path) {
 
 var getCarbonServerAddress = function (trans) {
     var carbon = require('carbon');
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
     var host = config.host;
     var url;
     var carbonServerAddress = carbon.server.address(trans);

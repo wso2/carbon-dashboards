@@ -19,13 +19,14 @@
 %>
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>libs/bootstrap-select-1.10.0/css/bootstrap-select.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
     <% include('/controllers/includes/theme-portal-styles.jag'); %>
     <% var permission = require('/modules/permission.js'); %>
     <% var constants = require('/modules/constants.js'); %>
     <title><%= i18n.localize(assetType+"s")%></title>
-    <% var config = require('/configs/designer.json'); %>
+    <% var config = require('/modules/config.js').getConfigFile(); %>
 </head>
 <body>
     <% include(utils.resolvePath('templates/global-navigation.jag')); %>
@@ -113,6 +114,20 @@
                 <h1 class="page-sub-title"><%= i18n.localize(assetType+"s") %></h1>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table id="storeSelector">
+                    <tr>
+                        <td>
+                            <h5>Loaded <%= i18n.localize(assetType+"s") %> from </h5>
+                        </td>
+                        <td>
+                            <select id="selectStore" name="store"></select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
         <div class="row thumbnails ds-assets"></div>
     </div>
 
@@ -144,10 +159,18 @@
         <h5 class="title">{{title}}</h5>
         <% var isDeleteAllowed = (assetType === 'gadget') ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
         <% if (isDeleteAllowed) { %>
-             <a href="#" class="ds-asset-trash-handle">
-                <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
-                <%= i18n.localize("delete."+assetType)%>"></i>
-            </a>
+            {{#if isDownloadable}}
+                <a href="#" class="ds-asset-download-handle">
+                    <i class="fw fw-download ladda-label" data-toggle="tooltip" data-placement="left" title="
+                    <%= i18n.localize("download."+assetType)%>"></i>
+                </a>
+            {{/if}}
+            {{#if isDeletable}}
+                <a href="#" class="ds-asset-trash-handle">
+                    <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
+                    <%= i18n.localize("delete."+assetType)%>"></i>
+                </a>
+            {{/if}}
         <% } %>
         <img src="{{resolveURI thumbnail}}" style="height : 150px;"/>
     </script>
@@ -184,8 +207,11 @@
     <!-- Bootstrap JS -->
     <script src="<%=urlPrefix%>libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
 
+    <!-- Bootstarp Select JS -->
+    <script src="<%=urlPrefix%>libs/bootstrap-select-1.10.0/js/bootstrap-select.min.js"></script>
+
     <!-- Handlebars -->
-   <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
+    <script src="<%=urlPrefix%>libs/handlebars-v4.0.2/handlebars.min.js"></script>
 
     <script src="<%=urlPrefix%>js/spin.min.js"></script>
     <script src="<%=urlPrefix%>js/ladda.min.js"></script>

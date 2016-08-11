@@ -32,7 +32,7 @@ var originalURI;
     var matcher;
     var log = new Log();
     var carbon = require('carbon');
-    var configs = require('/configs/designer.json');
+    var configs = require('/modules/config.js').getConfigFile();
     var usr = require('/modules/user.js');
 
     utils = require('/modules/utils.js');
@@ -77,6 +77,11 @@ var originalURI;
     var isAPI = relativeURI.match(/^\/apis\/.*/ig);
     relativeURI = isAPI ? relativeURI.replace(/^\/apis/ig, '') : relativeURI;
 
+    var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
+
+    if (user && PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() !== user.tenantId) {
+        utils.startTenantFlow(user.tenantId);
+    }
     request.getRequestURI = function () {
         return relativeURI;
     };
