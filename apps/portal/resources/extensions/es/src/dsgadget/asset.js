@@ -41,7 +41,9 @@ asset.manager = function (ctx) {
             var allowToUpdate = (String(asset.lifecycleState) !== constants.PUBLISHED_LIFECYCLE_STATE);
 
             if (allowToUpdate) {
-                options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;
+                if (!asset.lifecycleState && utils.addThumbnail(asset, ctx.tenantId)) {
+                    options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;
+                }
                 this._super.update.call(this, options);
             } else {
                 log.error('Cannot update the asset in published state');
@@ -57,9 +59,6 @@ asset.manager = function (ctx) {
             var states = lc.nextStates(asset.lifecycleState);
             var success;
 
-            if (asset.lifecycleState === constants.INITIAL_LIFECYCLE_STATE) {
-                utils.addThumbnail(asset, ctx.tenantId);
-            }
             for (var index = 0; index < states.length; states++) {
                 if (states[index].action === action) {
                     if (states[index].state === constants.PUBLISHED_LIFECYCLE_STATE) {
