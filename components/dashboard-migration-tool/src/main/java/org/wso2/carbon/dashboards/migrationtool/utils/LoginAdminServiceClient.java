@@ -38,16 +38,12 @@ public class LoginAdminServiceClient {
 
     public String authenticate(String userName, String password)
             throws RemoteException, LoginAuthenticationExceptionException {
-
         String sessionCookie = null;
-
         if (authenticationAdminStub.login(userName, password, "localhost")) {
-
             ServiceContext serviceContext = authenticationAdminStub.
                     _getServiceClient().getLastOperationContext().getServiceContext();
             sessionCookie = (String) serviceContext.getProperty(HTTPConstants.COOKIE_STRING);
         }
-
         return sessionCookie;
     }
 

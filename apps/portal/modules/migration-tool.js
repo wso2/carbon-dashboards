@@ -15,6 +15,7 @@
  */
 var carbon = require('carbon');
 var utils = require('/modules/utils.js');
+var constants = require('/modules/constants.js');
 
 /**
  * get all the dashboards of a given tenant
@@ -62,10 +63,10 @@ var updateTenantDashboards = function (tenantDomain, dashboard) {
 
 /**
  * Get the registry path for the id.
- * @param {String} id                       Id of the dashboard
- * @return {String}                         Registry Path to dashboard
+ * @param {String} id Id of the dashboard
+ * @return {String} Registry Path to dashboard
  * */
 var registryPath = function (id) {
     var path = '/_system/config/ues/dashboards';
-    return id ? path + '/' + id : path;
+    return id ? constants.DASHBOARD_REGISTRY_PATH + '/' + id : constants.DASHBOARD_REGISTRY_PATH;
 };

@@ -44,7 +44,7 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
     static String destPath;
     static String tempDir;
 
-    public static void main(String arg[]) {
+    public static void main(String arg[]) throws ParseException {
         productHome = arg[0];
         destPath = arg[1];
         String sourceURL = arg[2];
@@ -54,7 +54,6 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
         String destinationUsername = arg[6];
         String destinationPassword = arg[7];
         String tenantDomains = arg[8];
-        ArrayList<String> listOfTenantDomains = null;
         String[] tenantDomain = new String[0];
         tempDir = productHome + File.separator + Constants.TEMP_DIR;
 
@@ -65,17 +64,7 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
         if (productHome.equals("notDefined")) {
             log.error("Please specify your Product Home as source directory");
         }
-        if (!destPath.equals(Constants.NOT_DEFINED)) {
-            try {
-                FileUtils.copyDirectory(new File(productHome + Constants.STOREPATH), new File(tempDir));
-                dsPortalAppMigrationTool.migrateArtifactsInStore();
-                FileUtils.copyDirectory(new File(tempDir), new File(destPath + File.separator + Constants.STORE));
-                dsPortalAppMigrationTool
-                        .updateMigratedStoreWithStoreType(new File(destPath + File.separator + Constants.STORE));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        dsPortalAppMigrationTool.migrateStoreIntoNewerVersion();
         if (!sourceURL.equals(Constants.NOT_DEFINED)) {
             String srcSessionId = dsPortalAppMigrationTool
                     .loginToPortal(sourceURL + Constants.LOGIN_URI_EXTENSTION, sourceUsername, sourcePassword);
@@ -83,21 +72,8 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
                     .loginToPortal(destinationURL + Constants.LOGIN_URI_EXTENSTION, destinationUsername,
                             destinationPassword);
 
-            if (tenantDomains.equals(Constants.NOT_DEFINED)) {
-                try {
-                    LoginAdminServiceClient loginAdminServiceClient = new LoginAdminServiceClient(sourceURL);
-                    listOfTenantDomains = dsPortalAppMigrationTool.getAllTenantDomains(sourceURL,
-                            loginAdminServiceClient.authenticate(sourceUsername, sourcePassword));
-                    tenantDomain = listOfTenantDomains.toArray(new String[listOfTenantDomains.size()]);
-
-                } catch (RemoteException e) {
-                    log.error("Error in authenticating to the Login Admin Service", e);
-                } catch (LoginAuthenticationExceptionException e) {
-                    log.error("Error in authenticating to the Login Admin Service", e);
-                }
-            } else {
-                tenantDomain = tenantDomains.split(",");
-            }
+            tenantDomain = dsPortalAppMigrationTool
+                    .manageTenantDomains(tenantDomains, sourceURL, sourceUsername, sourcePassword);
 
             JSONArray responseArr;
             for (int i = 0; i < tenantDomain.length; i++) {
@@ -123,6 +99,22 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
     }
 
     /**
+     * Get the gadgets,layouts in the store and migrate it. Migrated store will be copied into destination directory
+     */
+    private void migrateStoreIntoNewerVersion() {
+        if (!destPath.equals(Constants.NOT_DEFINED)) {
+            try {
+                FileUtils.copyDirectory(new File(productHome + Constants.STOREPATH), new File(tempDir));
+                migrateArtifactsInStore();
+                FileUtils.copyDirectory(new File(tempDir), new File(destPath + File.separator + Constants.STORE));
+                updateMigratedStoreWithStoreType(new File(destPath + File.separator + Constants.STORE));
+            } catch (IOException e) {
+                log.info("Error in migrating the store into newer version", e);
+            }
+        }
+    }
+
+    /**
      * Update the given modified directory adding store type as fs
      *
      * @param migratedDir migrated directory
@@ -141,11 +133,41 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
                             new File(destPath + File.separator + Constants.STORE));
                     FileUtils.deleteDirectory(new File(tempDir));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("Error in updating the migrated store with store type", e);
                 }
             }
         }
 
+    }
+
+    /**
+     * If user does not specify the tenants, get all tenants and return to migrate
+     *
+     * @param tenantDomains  user input of tenant domains
+     * @param sourceUsername username of source server
+     * @param sourcePassword password of source server
+     * @param sourceURL      url of source server
+     * @return array of tenant domains
+     */
+    private String[] manageTenantDomains(String tenantDomains, String sourceURL, String sourceUsername,
+            String sourcePassword) {
+        String[] tenantDomain = new String[0];
+        ArrayList<String> listOfTenantDomains;
+        if (tenantDomains.equals(Constants.NOT_DEFINED)) {
+            try {
+                LoginAdminServiceClient loginAdminServiceClient = new LoginAdminServiceClient(sourceURL);
+                listOfTenantDomains = getAllTenantDomains(sourceURL,
+                        loginAdminServiceClient.authenticate(sourceUsername, sourcePassword));
+                tenantDomain = listOfTenantDomains.toArray(new String[listOfTenantDomains.size()]);
+            } catch (RemoteException e) {
+                log.error("Error in authenticating to the Login Admin Service", e);
+            } catch (LoginAuthenticationExceptionException e) {
+                log.error("Error in authenticating to the Login Admin Service", e);
+            }
+        } else {
+            tenantDomain = tenantDomains.split(",");
+        }
+        return tenantDomain;
     }
 
     /**
@@ -179,20 +201,26 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
     private void migrateLayoutsInStore(File layouts) {
         File[] listOflayouts = layouts.listFiles();
         JSONParser parser = new JSONParser();
+        FileWriter file = null;
         for (int layoutCount = 0; layoutCount < listOflayouts.length; layoutCount++) {
             try {
                 JSONObject layoutObj = (JSONObject) parser.parse(new FileReader(
                         listOflayouts[layoutCount].getAbsolutePath() + File.separator + Constants.INDEX_JSON));
                 updateDashboardBlocks(((JSONArray) layoutObj.get(Constants.BLOCKS)));
-                FileWriter file = new FileWriter(
+                file = new FileWriter(
                         listOflayouts[layoutCount].getAbsolutePath() + File.separator + Constants.INDEX_JSON);
                 file.write(layoutObj.toJSONString());
-                file.flush();
-                file.close();
             } catch (IOException e) {
                 log.error("Error in opening the file " + listOflayouts[layoutCount].getName(), e);
             } catch (ParseException e) {
                 log.error("Error in parsing the index.json file in " + listOflayouts[layoutCount].getAbsolutePath());
+            } finally {
+                try {
+                    file.flush();
+                    file.close();
+                } catch (IOException e) {
+                    log.error("Error in closing the file " + listOflayouts[layoutCount].getName());
+                }
             }
         }
     }
@@ -205,17 +233,12 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
      * @param password password for login to the portal
      * @return String session id
      */
-    private String loginToPortal(String url, String username, String password) {
+    private String loginToPortal(String url, String username, String password) throws ParseException {
         String response = invokeRestAPI(url + Constants.USERNAME_QUERY + username + Constants.PASSWORD_QUREY + password,
                 Constants.POST_REQUEST, null, null);
-        try {
-            JSONObject responseObj = (JSONObject) new JSONParser().parse(response.toString());
-            String sessionId = (String) responseObj.get(Constants.SESSION_ID);
-            return sessionId;
-        } catch (ParseException e) {
-            log.error("Error in getting dashboards from Portal", e);
-        }
-        return null;
+        JSONObject responseObj = (JSONObject) new JSONParser().parse(response.toString());
+        String sessionId = (String) responseObj.get(Constants.SESSION_ID);
+        return sessionId;
     }
 
     /**
@@ -313,6 +336,7 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
      * @param tenantDomain
      */
     private void copyModifiedDashboardIntoDestination(JSONObject dashboardObj, String tenantDomain) {
+        FileWriter filewriter = null;
         try {
             File file = new File(
                     destPath + File.separator + Constants.DASHBOARDS + File.separator + tenantDomain + File.separator
@@ -320,14 +344,19 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
             file.getParentFile().getParentFile().mkdir();
             file.getParentFile().mkdir();
             file.createNewFile();
-            FileWriter filew = new FileWriter(
+            filewriter = new FileWriter(
                     destPath + File.separator + Constants.DASHBOARDS + File.separator + tenantDomain + File.separator
                             + dashboardObj.get(Constants.ID) + Constants.JSON_EXTENSION);
-            filew.write(dashboardObj.toJSONString());
-            filew.flush();
-            filew.close();
+            filewriter.write(dashboardObj.toJSONString());
         } catch (IOException e) {
             log.error("Error in writing dashboard " + dashboardObj.get(Constants.ID) + " into destination path", e);
+        } finally {
+            try {
+                filewriter.flush();
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -359,7 +388,7 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
             option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, sessionCookie);
             TenantInfoBean[] tenantInfoBeen = adminServiceStub.retrieveTenants();
             ArrayList<String> tenantDomains = new ArrayList<String>();
-            if(tenantInfoBeen!=null) {
+            if (tenantInfoBeen != null) {
                 for (int tenantCount = 0; tenantCount < tenantInfoBeen.length; tenantCount++) {
                     tenantDomains.add(tenantInfoBeen[tenantCount].getTenantDomain());
                 }

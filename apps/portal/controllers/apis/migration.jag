@@ -29,8 +29,15 @@
         }
 
         if (userDomain !== (urlDomain || superDomain)) {
-            response.sendError(401, 'designer access not authorized of this tenant');
-            return;
+            response.sendError(401, JSON.stringify({
+                error: true
+            }));
+        }
+
+        if (user.isAdmin) {
+            response.sendError(401, JSON.stringify({
+                error: true
+            }));
         }
         if (method === 'GET') {
             vars = matcher.elements();
