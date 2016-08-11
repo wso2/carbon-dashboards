@@ -211,39 +211,22 @@ $(function () {
     var gadgetComponentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
 
     var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
-
     var newViewHbs = Handlebars.compile($('#add-new-view-hbs').html());
-
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
-
     var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
-
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
-
     var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
-
     var noPagesHbs = Handlebars.compile($('#ues-no-pages-hbs').html());
-
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
-
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
-
     var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html());
-
     var viewCopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
-
     var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
-
     var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
-
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
-
     var viewListingHbs = Handlebars.compile($('#view-listing-hbs').html());
-
     var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
-
     var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
-
     var gadgetAddHbs = Handlebars.compile($("#ds-add-gadget-hbs").html());
     Handlebars.registerPartial('ds-add-gadget-hbs', gadgetAddHbs);
 
