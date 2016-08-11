@@ -359,8 +359,10 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
             option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, sessionCookie);
             TenantInfoBean[] tenantInfoBeen = adminServiceStub.retrieveTenants();
             ArrayList<String> tenantDomains = new ArrayList<String>();
-            for (int tenantCount = 0; tenantCount < tenantInfoBeen.length; tenantCount++) {
-                tenantDomains.add(tenantInfoBeen[tenantCount].getTenantDomain());
+            if(tenantInfoBeen!=null) {
+                for (int tenantCount = 0; tenantCount < tenantInfoBeen.length; tenantCount++) {
+                    tenantDomains.add(tenantInfoBeen[tenantCount].getTenantDomain());
+                }
             }
             tenantDomains.add(Constants.CARBON_SUPER);
             return tenantDomains;
