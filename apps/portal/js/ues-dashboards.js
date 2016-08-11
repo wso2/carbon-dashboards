@@ -369,6 +369,10 @@
         }
     };
 
+    $('.context-menu').click(function(){
+        alert();
+    })
+
     /**
      * get the dashboard loading state as a boolean. If it is loaded completely, returns null
      * @returns {boolean}
@@ -512,3 +516,4 @@
         uris: {}
     };
 }());
+
