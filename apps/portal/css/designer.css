@@ -22,6 +22,18 @@
     opacity: 0.1;
 }
 
+.add-asset {
+    text-align: center;
+    height: 200px;
+}
+
+.add-icon {
+    font-size: 80px;
+}
+
+.add-layout-icon {
+    font-size: 70px;
+}
 /**
  * Designer styles
  */
