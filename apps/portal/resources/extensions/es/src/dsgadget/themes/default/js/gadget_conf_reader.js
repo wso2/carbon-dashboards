@@ -42,8 +42,8 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    messages.alertInfo("gadget.json found. Populating the data from values in gadget.json");
-                    if (data) {
+                    if (data && data.data.indexOf('not found') < 0) {
+                        messages.alertInfo("gadget.json found. Populating the data from values in gadget.json");
                         data = data.data;
                         var gadgetConf = JSON.parse(data);
                         if (gadgetConf.hasOwnProperty('id') && !$('#overview_id').prop('disabled')) {
