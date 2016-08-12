@@ -1,8 +1,8 @@
 #!/bin/bash
 cat migration.xml | sed '/<!--.*-->/d' | sed '/<!--/,/-->/d' > modified.xml
 input='cat modified.xml'
-Type=($($input | grep -oP '(?<=Type>)[^<]+'))
-if [ "$Type" = "CAR" ]; then
+Mode=($($input | grep -oP '(?<=Mode>)[^<]+'))
+if [ "$Mode" = "CAR" ]; then
 	SourceDir=($($input | grep -oP '(?<=SourceDir>)[^<]+'))
 	if [ "$SourceDir" = "" ]; then
 		echo "Source Directory cannot be empty"
@@ -15,7 +15,7 @@ if [ "$Type" = "CAR" ]; then
 	fi
 	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 	java -cp :$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSCarFileMigrationTool $SourceDir $DestinationDir
-elif [ "$Type" = "Portal" ]; then
+elif [ "$Mode" = "Portal" ]; then
 	SourceDir=($($input | grep -oP '(?<=SourceDir>)[^<]+'))
 	if [ "$SourceDir" = "" ]; then
 		SourceDir="notDefined"
@@ -63,6 +63,6 @@ elif [ "$Type" = "Portal" ]; then
 	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 	java -cp :$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSPortalAppMigrationTool $SourceDir $DestinationDir $SourceURL $SourceUsername $SourcePassword $DestinationURL $DestinationUsername $DestinationPassword $TenantDomains $TrustStoreLocation $TrustStorePassword
 else
-	echo "Error in input.xml file. 'Type' attribute should be 'CAR' or 'Portal'"
+	echo "Error in input.xml file. 'Mode' attribute should be 'CAR' or 'Portal'"
 	exit 1
 fi

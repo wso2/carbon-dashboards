@@ -51,7 +51,8 @@ public class DSMigrationTool {
                 try {
                     JSONParser jsonParser = new JSONParser();
                     Object obj = jsonParser.parse(new FileReader(
-                            artifactPath + File.separator + listOfFiles[i].getName() + File.separator + Constants.GADGET_JSON));
+                            artifactPath + File.separator + listOfFiles[i].getName() + File.separator
+                                    + Constants.GADGET_JSON));
                     gadgetJSONObject = (JSONObject) obj;
                     modifiedGadgetID = listOfFiles[i].getName().toLowerCase();
                     gadgetJSONObject.put(Constants.ID, modifiedGadgetID);
@@ -60,15 +61,29 @@ public class DSMigrationTool {
                     url = (String) (gadgetDataObj).get(Constants.URL);
                     if ((thumbnail).contains(modifiedGadgetID)) {
                         gadgetJSONObject.remove(Constants.THUMBNAIL);
-                        gadgetJSONObject.put(Constants.THUMBNAIL, replace(thumbnail, modifiedGadgetID, modifiedGadgetID));
+                        gadgetJSONObject
+                                .put(Constants.THUMBNAIL, replace(thumbnail, modifiedGadgetID, modifiedGadgetID));
+                    }
+                    thumbnail = (String) gadgetJSONObject.get(Constants.THUMBNAIL);
+                    if(thumbnail.contains(Constants.IMAGE_PATH_OLDER)){
+                        String modifiedThumbnail = thumbnail.replaceFirst(Constants.IMAGE_PATH_OLDER, Constants.IMAGE_PATH_NEWER);
+                        gadgetJSONObject.remove(Constants.THUMBNAIL);
+                        gadgetJSONObject.put(Constants.THUMBNAIL, modifiedThumbnail);
+                    } else {
+                        int index = thumbnail.indexOf(Constants.GADGET);
+                        String currentStore = thumbnail.substring(0, index);
+                        String modifiedThumbnail = thumbnail.replaceFirst(currentStore, "");
+                        gadgetJSONObject.remove(Constants.THUMBNAIL);
+                        gadgetJSONObject.put(Constants.THUMBNAIL, modifiedThumbnail);
                     }
                     gadgetDataObj.remove(Constants.URL);
                     if (url.toLowerCase().contains(Constants.LOCAL)) {
-                        url = replace(url, Constants.GADGET, Constants.FS_STORE+File.separator+Constants.GADGET);
+                        url = replace(url, Constants.GADGET, Constants.FS_STORE + File.separator + Constants.GADGET);
                     }
                     gadgetDataObj.put(Constants.URL, replace(url, modifiedGadgetID, modifiedGadgetID));
                     FileWriter file = new FileWriter(
-                            artifactPath + File.separator + listOfFiles[i].getName() + File.separator + Constants.GADGET_JSON);
+                            artifactPath + File.separator + listOfFiles[i].getName() + File.separator
+                                    + Constants.GADGET_JSON);
                     file.write(gadgetJSONObject.toJSONString());
                     file.flush();
                     file.close();
@@ -162,10 +177,21 @@ public class DSMigrationTool {
                 gadgetContentObj.remove(Constants.THUMBNAIL);
                 gadgetContentObj.put(Constants.THUMBNAIL, replace(thumbnail, gadgetID, gadgetID));
             }
-            gadgetDataObj.remove(Constants.URL);
-            if (url.toLowerCase().contains(Constants.LOCAL)) {
-                url = replace(url, Constants.GADGET, Constants.FS_STORE+File.separator+Constants.GADGET);
+            thumbnail = (String) gadgetContentObj.get(Constants.THUMBNAIL);
+            if(thumbnail.contains(Constants.IMAGE_PATH_OLDER)){
+                String modifiedThumbnail = thumbnail.replaceFirst(Constants.IMAGE_PATH_OLDER, Constants.IMAGE_PATH_NEWER);
+                gadgetContentObj.remove(Constants.THUMBNAIL);
+                gadgetContentObj.put(Constants.THUMBNAIL, modifiedThumbnail);
+            } else {
+                int index = thumbnail.indexOf(Constants.GADGET);
+                String currentStore = thumbnail.substring(0, index);
+                String modifiedThumbnail = thumbnail.replaceFirst(currentStore, "");
+                gadgetContentObj.remove(Constants.THUMBNAIL);
+                gadgetContentObj.put(Constants.THUMBNAIL, modifiedThumbnail);
             }
+            gadgetDataObj.remove(Constants.URL);
+            url = replace(url, Constants.GADGET, Constants.FS_STORE + File.separator + Constants.GADGET);
+            gadgetContentObj.put(Constants.THUMBNAIL, url);
             gadgetDataObj.put(Constants.URL, replace(url, gadgetID, gadgetID));
             if (tenantDomain == null) {
                 log.info("Dashboard - Gadget " + gadgetContentObj.get(Constants.ID) + " is successfully updated !");
