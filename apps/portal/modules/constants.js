@@ -118,3 +118,5 @@ var A3 = 'A3';
 var A2 = 'A2';
 var A1 = 'A1';
 var DEFAULT_SIZE = 'Default Size';
+
+var DASHBOARD_REGISTRY_PATH = '/_system/config/ues/dashboards';
