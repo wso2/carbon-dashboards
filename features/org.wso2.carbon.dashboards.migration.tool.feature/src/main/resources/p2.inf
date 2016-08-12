@@ -1,0 +1,6 @@
+instructions.configure = \
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../migration/);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../migration/dashboards/);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.dashboards.migration.tool_${feature.version}/ds-migration-1.0.x-2.0.x.sh,target:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/ds-migration-1.0.x-2.0.x.sh,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.dashboards.migration.tool_${feature.version}/migration.xml,target:${installFolder}/../../../migration/dashboards/migration-1.0.x-2.0.x/migration.xml,overwrite:true);\
