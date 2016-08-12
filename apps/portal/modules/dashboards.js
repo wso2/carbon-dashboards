@@ -286,7 +286,7 @@ var updateThemeProperties = function (theme, dashboardID) {
         dashboard = getAsset(dashboardID, true);
         var permission = {};
         permission.edit = true;
-        path = allowed(dashboard,permission) ? originalDashboardPath : userDashboardPath;
+        path = allowed(dashboard, permission) ? originalDashboardPath : userDashboardPath;
     } else {
         dashboard = getAsset(dashboardID, false);
         path = userDashboardPath;
@@ -588,7 +588,7 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                 mediaType: 'application/json'
             });
         }
-        if (!dashboardContent.theme.properties) {
+        if (!dashboardContent.theme || !dashboardContent.theme.properties) {
             var themeName = dashboardContent.theme;
             dashboardContent.theme = {};
             dashboardContent.theme.name = themeName;
