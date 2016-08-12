@@ -854,17 +854,17 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
   padding: 0 8px;
   line-height: 50px;
   font-size: 18px;
-  background: #007D85;
+  background: #05426C;
   color: #ffffff;
 }
 
 .navbar-menu-toggle:hover, .navbar-menu-toggle:focus, .navbar-menu-toggle:active {
   color: #ffffff;
-  background: #004d52;
+  background: #05426C;
 }
 
 .navbar-menu-toggle[aria-expanded=true] {
-  background: #00575c;
+  background: #05426C;
 }
 
 .navbar-toggle {

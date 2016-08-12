@@ -328,11 +328,21 @@
 
             <div class="page-content">
                 <div class="view-container1" style="">
-                    <div style="display:inline-block;margin:5px;height:50px">
+                    <button id="slide-left" >
+                        <span class="icon fw-stack">
+                            <i class="fw fw-left fw-stack-1x toggle-icon-up"></i>
+                        </span>
+                    </button>
+                    <div style="display:inline-block;width:87%;vertical-align: bottom">
                         <ul class="nav nav-tabs" id="designer-view-mode">
                         </ul>
                     </div>
-                    <div class ="ds-add-view-btn" style="display:inline-block;margin:5px;position:relative;top:-25px;">
+                    <button id="slide-right" >
+                        <span class="icon fw-stack">
+                            <i class="fw fw-right fw-stack-1x toggle-icon-up"></i>
+                        </span>
+                    </button>
+                    <div class ="ds-add-view-btn" style="display:inline-block; vertical-align: top;position: relative;">
                         <button id="more-views" data-toggle="dropdown" aria-expanded="false" hidden>
                             <span class="icon fw-stack">
                                 <i class="fw fw-down fw-stack-1x toggle-icon-up"></i>
@@ -819,21 +829,24 @@
     <script id="add-new-view-hbs" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
             <div class="view-heading ues-component-heading">
-                <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
-                <div class="gadget-actions ues-component-actions" style="display:inline-block;margin:2px;height:40px">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
-                        data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
-                            <i class="icon fw fw-configarations"></i>
-                        </button>
-                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
-                            <i class="icon fw fw-delete"></i>
-                        </button>
-                        <button type="button" class="btn btn-default ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
-                            <i class="icon fw fw-cancel"></i>
-                        </button>
+                <div class="context-menu">
+                    <i class="fw fw-ellipsis fw-rotate-90"></i>
+                    <div class="gadget-actions action-buttons ues-component-actions">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
+                            data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
+                                <i class="icon fw fw-configarations"></i>
+                            </button>
+                            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+                                <i class="icon fw fw-delete"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
+                <button type="button" class="btn btn-default ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
+                    <i class="icon fw fw-cancel"></i>
+                </button>
             </div>
         </li>
     </script>

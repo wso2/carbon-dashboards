@@ -71,7 +71,7 @@ $(function () {
     var UNAUTHORIZED_ERROR_CODE = 401;
 
     //Keep the number of visible views of a page
-    var NO_OF_VISIBLE_VIEWS = 6;
+    var NO_OF_VISIBLE_VIEWS = 12;
 
     //Variable to distinguish between creating a new view using a new layout and changing the layout of a current view
     var isNewView = false;
@@ -4020,6 +4020,17 @@ $(function () {
             loadBanner();
         });
 
+        $('#slide-right').click(function(){
+            var leftPos = $('.view-container1 .nav').scrollLeft();
+            $(".view-container1 .nav").animate({scrollLeft: leftPos + 200}, 800);
+        })
+
+        $('#slide-left').click(function(){
+            var leftPos = $('.view-container1 .nav').scrollLeft();
+            $(".view-container1 .nav").animate({scrollLeft: leftPos - 200}, 800);
+        })
+
+
         // event handler for the banner remove button
         $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
@@ -4145,6 +4156,14 @@ $(function () {
             }
         }
     };
+
+    $(document).on('click','.context-menu i',function(){
+        if($(this).parent().find('.gadget-actions').is(':visible')){
+            $(this).parent().find('.gadget-actions').hide();
+        }else{
+            $(this).parent().find('.gadget-actions').show();
+        }
+    })
 
     /**
      * update dashboard.hideAllMenuItems state
@@ -4302,3 +4321,5 @@ $('input[type=number]').on('change', function () {
         input.val(input.attr('min'));
     }
 });
+
+
