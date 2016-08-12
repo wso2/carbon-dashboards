@@ -14,7 +14,7 @@ if [ "$Type" = "CAR" ]; then
 		exit 1
 	fi
 	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-	java -cp $SCRIPT_DIR/org.wso2.carbon.dashboard.migration.tool-2.0.2-SNAPSHOT.jar:$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSCarFileMigrationTool $SourceDir $DestinationDir
+	java -cp :$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSCarFileMigrationTool $SourceDir $DestinationDir
 elif [ "$Type" = "Portal" ]; then
 	SourceDir=($($input | grep -oP '(?<=SourceDir>)[^<]+'))
 	if [ "$SourceDir" = "" ]; then
@@ -61,7 +61,7 @@ elif [ "$Type" = "Portal" ]; then
 		TrustStoreLocation="notDefined"
 	fi
 	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-	java -cp $SCRIPT_DIR/../../../repository/components/plugins/org.wso2.carbon.dashboard.migration.tool-2.0.2-SNAPSHOT.jar:$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSPortalAppMigrationTool $SourceDir $DestinationDir $SourceURL $SourceUsername $SourcePassword $DestinationURL $DestinationUsername $DestinationPassword $TenantDomains $TrustStoreLocation $TrustStorePassword
+	java -cp :$SCRIPT_DIR/../../../repository/components/plugins/* org.wso2.carbon.dashboards.migrationtool.DSPortalAppMigrationTool $SourceDir $DestinationDir $SourceURL $SourceUsername $SourcePassword $DestinationURL $DestinationUsername $DestinationPassword $TenantDomains $TrustStoreLocation $TrustStorePassword
 else
 	echo "Error in input.xml file. 'Type' attribute should be 'CAR' or 'Portal'"
 	exit 1
