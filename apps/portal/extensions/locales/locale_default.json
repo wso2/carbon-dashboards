@@ -270,5 +270,6 @@
     "unauthorized": "Unauthorized Error",
     "gadget.not.found": "Gadget not found",
     "no.permission.to.view.gadget": "You do not have necessary permission to view the gadget",
-    "gadget.missing": "Gadget folder is missing. Please Check again."
+    "gadget.missing": "Gadget folder is missing. Please Check again.",
+    "add.layouts" : "Add Layouts"
 }
