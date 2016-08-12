@@ -355,7 +355,7 @@ public class DSPortalAppMigrationTool extends DSMigrationTool {
                 filewriter.flush();
                 filewriter.close();
             } catch (IOException e) {
-                log.error("Error in closing json file"+dashboardObj.get(Constants.ID));
+                log.error("Error in closing json file" + dashboardObj.get(Constants.ID));
             }
         }
     }

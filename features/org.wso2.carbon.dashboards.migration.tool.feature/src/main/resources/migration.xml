@@ -19,63 +19,57 @@
 If you want to migrate the portal app, you can uncomment the Portal File migration section -->
 
 <!-- CAR File Migration-->
-<!--
-	1.Type - Specifiy the migration type CAR or Portal
-
-	2.SourceDir - Specify the car file direcotory or single car file path. If you put directory, it will get all the CAR files in
-	it and migrate it
-
-	3.DestinationDir - Specify the destination directory for migrated car files
--->
 
 <!-- Uncomment the below part to enable CAR file migration -->
 <DSMigration>
-    <Type>CAR</Type>
+    <!-- Mode - Specifiy the migration type CAR or Portal -->
+    <Mode>CAR</Mode>
+
+    <!-- SourceDir - Specify the older PRODUCT_HOME direcotory.-->
     <SourceDir>CAR_FILE_SOURCE_DIRECTORY</SourceDir>
+
+    <!-- DestinationDir - Specify the destination directory for migrated Store and Dashboards -->
     <DestinationDir>CAR_FILE_DESTINATION_DIRECTORY</DestinationDir>
 </DSMigration>
 
         <!-- Portal File Migration-->
-        <!--
-            1.Type - Specifiy the migration type CAR or Portal
+        <!-- Uncomment the below part to enable Portal migration -->
 
-            2.SourceDir - Specify the older PRODUCT_HOME direcotory.
+        <!-- DSMmigration-->
 
-            3.DestinationDir - Specify the destination directory for migrated Store and Dashboards
+            <!-- Mode - Specifiy the migration type CAR or Portal -->
+            <!-- Mode>Portal</Mode-->
 
-            4.TrustStoreLocation - Specify the trustedstore location. EX:- PRODUCT_HOME/repository/resources/security/wso2carbon.jks
+            <!-- SourceDir - Specify the older PRODUCT_HOME direcotory.-->
+            <!-- <SourceDir></SourceDir> -->
 
-            5.TrustStorePassword - Specify the trustedstore password. EX:- wso2carbon
+            <!-- DestinationDir - Specify the destination directory for migrated Store and Dashboards -->
+            <!-- <DestinationDir></DestinationDir>-->
 
-            6.SourceURL - Specify the source url - Older version of your product . EX:-https://hostname:port
+            <!-- TrustStoreLocation - Specify the trustedstore location. EX:- PRODUCT_HOME/repository/resources/security/wso2carbon.jks -->
+            <!-- <TrustStoreLocation>YOUR_PRODUCT_HOME/repository/resources/security/wso2carbon.jks</TrustStoreLocation> -->
 
-            7.SourceUsername - Specify the carbon.super user's username EX:-admin
+            <!-- TrustStorePassword - Specify the trustedstore password. EX:- wso2carbon -->
+            <!-- <TrustStorePassword>wso2carbon</TrustStorePassword> -->
 
-            8.SourcePassword - Specify the carbon.super user's password EX:-admin
+            <!-- SourceURL - Specify the source url - Older version of your product . EX:-https://hostname:port -->
+            <!-- <SourceURL>https://localhost:9443</SourceURL> -->
 
-            9.DestinationURL - Specify the destination url - Newer version of your product. EX:-https://hostname:port
+            <!-- SourceUsername - Specify the carbon.super user's username EX:-admin -->
+            <!-- <SourceUsername>admin</SourceUsername> -->
 
-            10.DestinationUsername - Specify the carbon.super user's username EX:-admin
+            <!-- SourcePassword - Specify the carbon.super user's password EX:-admin -->
+            <!-- <SourcePassword>admin</SourcePassword> -->
 
-            11.DestinationPassword - Specify the carbon.super user's password EX:-admin
+            <!-- DestinationURL - Specify the destination url - Newer version of your product. EX:-https://hostname:port -->
+            <!-- <DestinationURL>https://localhost:9444</DestinationURL> -->
 
-            12.TenantDomains - Specify the tenant domain - This will migrate all the dashboards within these tenants. If you do not put anything here, It will update all the tenant dashboards
+            <!-- DestinationUsername - Specify the carbon.super user's username EX:-admin -->
+            <!-- <DestinationUsername>admin</DestinationUsername> -->
 
-        -->
-        <!-- Uncomment the below part to enable CAR file migration -->
-        <!--
-        <DSMmigration>
-            <Type>Portal</Type>
-            <SourceDir></SourceDir>
-            <DestinationDir></DestinationDir>
-            <TrustStoreLocation>YOUR_PRODUCT_HOME/repository/resources/security/wso2carbon.jks</TrustStoreLocation>
-            <TrustStorePassword>wso2carbon</TrustStorePassword>
-            <SourceURL>https://localhost:9443</SourceURL>
-            <SourceUsername>admin</SourceUsername>
-            <SourcePassword>admin</SourcePassword>
-            <DestinationURL>https://localhost:9444</DestinationURL>
-            <DestinationUsername>admin</DestinationUsername>
-            <DestinationPassword>admin</DestinationPassword>
-            <TenantDomains></TenantDomains>
-        </DSMigration>
-        -->
+            <!-- DestinationPassword - Specify the carbon.super user's password EX:-admin -->
+            <!-- <DestinationPassword>admin</DestinationPassword> -->
+
+            <!-- TenantDomains - Specify the tenant domain - This will migrate all the dashboards within these tenants. If you do not put anything here, It will update all the tenant dashboards -->
+            <!-- <TenantDomains></TenantDomains>-->
+        <!-- </DSMigration> -->

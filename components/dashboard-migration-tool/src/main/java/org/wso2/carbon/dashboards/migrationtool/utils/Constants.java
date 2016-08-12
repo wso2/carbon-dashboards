@@ -71,5 +71,8 @@ public class Constants {
     public static final String WIDTH = "width";
     public static final String HEIGHT = "height";
     public static final String GADGET_JSON = "gadget.json";
-
+    public static final String LEGACY_STORE_TYPE = "store";
+    public static final String DEFAULT_STORE_TYPE = "fs";
+    public static final String IMAGE_PATH_OLDER = "local://images";
+    public static final String IMAGE_PATH_NEWER = "../../../images";
 }
