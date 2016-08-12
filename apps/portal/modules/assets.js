@@ -78,7 +78,8 @@ var addAsset = function (type, id, fileRequest, storeType) {
 
         for (var entries = fileInZip; entries.hasMoreElements();) {
             var entry = entries.nextElement();
-            if ((entry.getName().toLowerCase() + "").indexOf(configurationFileName) > -1) {
+            var entryIndex = (entry.getName().toLowerCase() + "").indexOf(configurationFileName);
+            if (entryIndex === 0 || entryIndex === 1) {
                 var assetDirectory = new File(assetPath);
                 var files = assetDirectory.listFiles();
                 fileName = (storeType === constants.FILE_STORE) ? fileName : id;
