@@ -67,6 +67,5 @@ var updateTenantDashboards = function (tenantDomain, dashboard) {
  * @return {String} Registry Path to dashboard
  * */
 var registryPath = function (id) {
-    var path = '/_system/config/ues/dashboards';
     return id ? constants.DASHBOARD_REGISTRY_PATH + '/' + id : constants.DASHBOARD_REGISTRY_PATH;
 };
