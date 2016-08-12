@@ -211,40 +211,25 @@ $(function () {
     var gadgetComponentPropertiesHbs = Handlebars.compile($("#ues-component-properties-hbs").html());
 
     var viewComponentPropertiesHbs = Handlebars.compile($("#ues-component-view-properties-hbs").html());
-
     var newViewHbs = Handlebars.compile($('#add-new-view-hbs').html());
-
     var pagesListHbs = Handlebars.compile($("#ues-pages-list-hbs").html());
-
     var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
-
     var bannerHbs = Handlebars.compile($('#ues-dashboard-banner-hbs').html());
-
-    var componentBoxListHbs = Handlebars.compile($("#ues-component-box-list-hbs").html());
-
     var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
-
     var noPagesHbs = Handlebars.compile($('#ues-no-pages-hbs').html());
-
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
-
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
-
     var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html());
-
     var viewCopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
-
     var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
-
     var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
-
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
-
     var viewListingHbs = Handlebars.compile($('#view-listing-hbs').html());
-
     var viewRoleHbs = Handlebars.compile($("#ues-view-role-hbs").html());
-
     var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
+    var gadgetAddHbs = Handlebars.compile($("#ds-add-gadget-hbs").html());
+    Handlebars.registerPartial('ds-add-gadget-hbs', gadgetAddHbs);
+
     /**
      * Generate unique gadget ID.
      * @param {String} gadgetName Name of the gadget
@@ -2751,77 +2736,81 @@ $(function () {
      * */
     var initLayoutWorkspace = function () {
         $('#ues-page-layouts').on('click', '.thumbnail', function (e) {
-            e.preventDefault();
-            var options = pageOptions();
-            var landingPageId = dashboard.landing;
+            if ($(this).data('id')) {
+                e.preventDefault();
+                var options = pageOptions();
+                var landingPageId = dashboard.landing;
 
-            /**
-             * When creating a new page check whether the landing page contains the view
-             * with internal/everyone, if not don`t allow the user to create a new page
-             */
-            if (landingPageId) {
-                var pages = dashboard.pages;
-                var landingPage = getPage(landingPageId);
-                var isAllowed = isRoleExist(landingPage, INTERNAL_EVERYONE_ROLE);
+                /**
+                 * When creating a new page check whether the landing page contains the view
+                 * with internal/everyone, if not don`t allow the user to create a new page
+                 */
+                if (landingPageId) {
+                    var pages = dashboard.pages;
+                    var landingPage = getPage(landingPageId);
+                    var isAllowed = isRoleExist(landingPage, INTERNAL_EVERYONE_ROLE);
 
-                if (!isAllowed) {
-                    showInformation(i18n_data['cannot.create.new.page'], i18n_data['landing.page.minimal'] +
-                        " " + INTERNAL_EVERYONE_ROLE + " " + i18n_data['role']);
-                    return;
+                    if (!isAllowed) {
+                        showInformation(i18n_data['cannot.create.new.page'], i18n_data['landing.page.minimal'] +
+                            " " + INTERNAL_EVERYONE_ROLE + " " + i18n_data['role']);
+                        return;
+                    }
                 }
-            }
-            createPage(options, $(this).data('id'), function (err) {
-                $('.fw-right-arrow').click();
-                // reload pages list
-                updatePagesList();
-                // hide the sidebar;
-                $('#left-sidebar-sub .close-handle').click();
-                // open page options
-                $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
+                createPage(options, $(this).data('id'), function (err) {
+                    $('.fw-right-arrow').click();
+                    // reload pages list
+                    updatePagesList();
+                    // hide the sidebar;
+                    $('#left-sidebar-sub .close-handle').click();
+                    // open page options
+                    $('#ues-dashboard-pages .ues-page-list-heading[data-id="' + options.id + '"]').click();
 
-            });
+                });
+            }
         });
 
         //event handler when user clicks on a layout from the layout pane
         $('#ues-view-layouts').on('click', '.thumbnail', function (event) {
-            event.preventDefault();
-            var layout = findStoreCache('layout', $(this).data('id'));
-            if (isNewView) {
-                //if creating a new view
-                visibleViews = [];
-                var viewOptions = getNewViewOptions(page.content);
-                var newViewId = viewOptions.id;
-                var newViewName = viewOptions.name;
-                var viewRoles = [INTERNAL_EVERYONE_ROLE];
-                var selectedView = getSelectedView();
-                var currentViewId = getViewId(selectedView);
-                saveViewContent(currentViewId, newViewId, newViewName, viewRoles, layout);
-                isNewView = false;
-                // To close the popped up layouts
-                $('.fw-left-arrow').click();
-            } else {
-                //if tries to change the layout of an existing view, after confiramtion destroy the page
-                showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
-                    destroyPage(page, pageType, function (err) {
-                        if (err) {
-                            throw err;
-                        }
-                        var selectedView = getSelectedView();
-                        var viewId = getViewId(selectedView);
-                        var viewName = page.views.content[viewId].name;
-                        var viewRoles = page.views.content[viewId].roles;
-                        if (!viewName) {
-                            viewName = viewId;
-                        }
-                        if (!viewRoles) {
-                            viewRoles = [INTERNAL_EVERYONE_ROLE];
-                        }
-                        saveViewContent(viewId, viewId, viewName, viewRoles, layout);
-                        // To close the popped up layouts
-                        $('.fw-left-arrow').click();
+            if ($(this).data('id')) {
+                event.preventDefault();
+                var layout = findStoreCache('layout', $(this).data('id'));
+                if (isNewView) {
+                    //if creating a new view
+                    visibleViews = [];
+                    var viewOptions = getNewViewOptions(page.content);
+                    var newViewId = viewOptions.id;
+                    var newViewName = viewOptions.name;
+                    var viewRoles = [INTERNAL_EVERYONE_ROLE];
+                    var selectedView = getSelectedView();
+                    var currentViewId = getViewId(selectedView);
+                    saveViewContent(currentViewId, newViewId, newViewName, viewRoles, layout);
+                    isNewView = false;
+                    // To close the popped up layouts
+                    $('.fw-left-arrow').click();
+                } else {
+                    //if tries to change the layout of an existing view, after confiramtion destroy the page
+                    showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
+                        destroyPage(page, pageType, function (err) {
+                            if (err) {
+                                throw err;
+                            }
+                            var selectedView = getSelectedView();
+                            var viewId = getViewId(selectedView);
+                            var viewName = page.views.content[viewId].name;
+                            var viewRoles = page.views.content[viewId].roles;
+                            if (!viewName) {
+                                viewName = viewId;
+                            }
+                            if (!viewRoles) {
+                                viewRoles = [INTERNAL_EVERYONE_ROLE];
+                            }
+                            saveViewContent(viewId, viewId, viewName, viewRoles, layout);
+                            // To close the popped up layouts
+                            $('.fw-left-arrow').click();
+                        });
+                        return true;
                     });
-                    return true;
-                });
+                }
             }
         });
         loadLayouts();
