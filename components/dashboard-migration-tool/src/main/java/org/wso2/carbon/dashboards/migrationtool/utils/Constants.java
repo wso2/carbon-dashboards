@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package migrationtool.utils;
+package org.wso2.carbon.dashboards.migrationtool.utils;
 
 public class Constants {
     public static final String GADGET = "gadget";

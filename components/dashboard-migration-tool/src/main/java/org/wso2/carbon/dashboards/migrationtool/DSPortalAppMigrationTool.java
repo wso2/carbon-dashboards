@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package migrationtool;
+package org.wso2.carbon.dashboards.migrationtool;
 
 import org.apache.axis2.client.Options;
 import org.apache.commons.io.FileUtils;

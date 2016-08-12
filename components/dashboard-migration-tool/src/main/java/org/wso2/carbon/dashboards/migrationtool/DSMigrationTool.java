@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package migrationtool;
+package org.wso2.carbon.dashboards.migrationtool;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
