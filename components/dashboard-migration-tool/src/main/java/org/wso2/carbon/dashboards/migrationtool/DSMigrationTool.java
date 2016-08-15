@@ -42,10 +42,11 @@ public class DSMigrationTool {
      */
     protected void gadgetJSONUpdater(File artifactPath) {
         File[] listOfFiles = artifactPath.listFiles();
-        String modifiedGadgetID;
+        String modifiedGadgetID = null;
         JSONObject gadgetJSONObject = null, gadgetDataObj;
         String thumbnail;
         String url;
+        FileWriter file = null;
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isDirectory()) {
                 try {
@@ -65,8 +66,9 @@ public class DSMigrationTool {
                                 .put(Constants.THUMBNAIL, replace(thumbnail, modifiedGadgetID, modifiedGadgetID));
                     }
                     thumbnail = (String) gadgetJSONObject.get(Constants.THUMBNAIL);
-                    if(thumbnail.contains(Constants.IMAGE_PATH_OLDER)){
-                        String modifiedThumbnail = thumbnail.replaceFirst(Constants.IMAGE_PATH_OLDER, Constants.IMAGE_PATH_NEWER);
+                    if (thumbnail.contains(Constants.IMAGE_PATH_OLDER)) {
+                        String modifiedThumbnail = thumbnail
+                                .replaceFirst(Constants.IMAGE_PATH_OLDER, Constants.IMAGE_PATH_NEWER);
                         gadgetJSONObject.remove(Constants.THUMBNAIL);
                         gadgetJSONObject.put(Constants.THUMBNAIL, modifiedThumbnail);
                     } else {
@@ -81,9 +83,8 @@ public class DSMigrationTool {
                         url = replace(url, Constants.GADGET, Constants.FS_STORE + File.separator + Constants.GADGET);
                     }
                     gadgetDataObj.put(Constants.URL, replace(url, modifiedGadgetID, modifiedGadgetID));
-                    FileWriter file = new FileWriter(
-                            artifactPath + File.separator + listOfFiles[i].getName() + File.separator
-                                    + Constants.GADGET_JSON);
+                    file = new FileWriter(artifactPath + File.separator + listOfFiles[i].getName() + File.separator
+                            + Constants.GADGET_JSON);
                     file.write(gadgetJSONObject.toJSONString());
                     file.flush();
                     file.close();
@@ -98,7 +99,16 @@ public class DSMigrationTool {
                     log.error("Error in reading the gadget json " + gadgetJSONObject.get("id"));
                 } catch (ParseException e) {
                     log.error("Error in parsing the gadget json " + gadgetJSONObject.get("id"));
+                } finally {
+                    try {
+                        file.flush();
+                        file.close();
+                        listOfFiles[i].renameTo(new File(artifactPath + File.separator + modifiedGadgetID));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
         }
     }
@@ -178,8 +188,9 @@ public class DSMigrationTool {
                 gadgetContentObj.put(Constants.THUMBNAIL, replace(thumbnail, gadgetID, gadgetID));
             }
             thumbnail = (String) gadgetContentObj.get(Constants.THUMBNAIL);
-            if(thumbnail.contains(Constants.IMAGE_PATH_OLDER)){
-                String modifiedThumbnail = thumbnail.replaceFirst(Constants.IMAGE_PATH_OLDER, Constants.IMAGE_PATH_NEWER);
+            if (thumbnail.contains(Constants.IMAGE_PATH_OLDER)) {
+                String modifiedThumbnail = thumbnail
+                        .replaceFirst(Constants.IMAGE_PATH_OLDER, Constants.IMAGE_PATH_NEWER);
                 gadgetContentObj.remove(Constants.THUMBNAIL);
                 gadgetContentObj.put(Constants.THUMBNAIL, modifiedThumbnail);
             } else {
