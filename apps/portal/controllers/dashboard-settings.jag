@@ -61,7 +61,7 @@ var dashboardId;
 
     var permissions = dashboard.permissions;
     // Check whether the user has global permissions to access the dashboard settings.
-    if (permission.isAllowed(constants.SETTINGS) || utils.allowed(user.roles, permissions.owners)) {
+    if (utils.allowed(user.roles, permissions.owners)) {
         include(utils.resolvePath('templates/dashboard-settings.jag'));
     } else {
         response.sendError(401, 'settings access not authorized of this tenant');

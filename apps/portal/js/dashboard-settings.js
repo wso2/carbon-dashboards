@@ -31,6 +31,7 @@ $(function () {
     // Pre-compiling handlebar templates
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
+    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
     var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html());
 
     /**
@@ -688,7 +689,16 @@ $(function () {
 
         // Save dashboard
         $('#ues-dashboard-saveBtn').on('click', function () {
-            saveDashboard();
+            if ($('.ues-shared-owner > .ues-shared-role').data('role')) {
+                saveDashboard();
+            } else {
+                var modalElement = $('#designerModal');
+                modalElement.find('.modal-content').html(modalInfoHbs({
+                    title: i18n_data['cannot.save.dashboard'],
+                    message: i18n_data['atleast.one.owner.role']
+                }));
+                modalElement.modal();
+            }
         });
 
         // Reset the changes

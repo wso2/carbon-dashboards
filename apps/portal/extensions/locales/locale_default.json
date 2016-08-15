@@ -271,5 +271,7 @@
     "gadget.not.found": "Gadget not found",
     "no.permission.to.view.gadget": "You do not have necessary permission to view the gadget",
     "gadget.missing": "Gadget folder is missing. Please Check again.",
-    "add.layouts" : "Add Layouts"
+    "add.layouts" : "Add Layouts",
+    "cannot.save.dashboard" : "Cannot Save the Dashboard",
+    "atleast.one.owner.role" : "At least one role should be there as the owner of the dashboard"
 }

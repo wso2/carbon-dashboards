@@ -35,10 +35,6 @@
             <ResourceId>/permission/admin/manage/portal/dashboard/create</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
-            <DisplayName>Settings</DisplayName>
-            <ResourceId>/permission/admin/manage/portal/dashboard/settings</ResourceId>
-        </ManagementPermission>
-        <ManagementPermission>
             <DisplayName>Gadget</DisplayName>
             <ResourceId>/permission/admin/manage/portal/gadget</ResourceId>
         </ManagementPermission>
