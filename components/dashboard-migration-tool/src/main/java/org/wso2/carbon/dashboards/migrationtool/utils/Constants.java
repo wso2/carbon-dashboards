@@ -76,5 +76,7 @@ public class Constants {
 
     public static final String IMAGE_PATH_OLDER = "local://images";
     public static final String IMAGE_PATH_NEWER = "../../../images";
+    public static final String TYPE = "type";
+    public static final String FILE = "file";
 
 }
