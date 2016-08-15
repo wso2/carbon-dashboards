@@ -86,6 +86,9 @@ public class DSMigrationTool {
                             artifactPath + File.separator + listOfFiles[i].getName() + File.separator
                                     + Constants.GADGET_JSON);
                     file.write(gadgetJSONObject.toJSONString());
+                    file.flush();
+                    file.close();
+                    listOfFiles[i].renameTo(new File(artifactPath + File.separator + modifiedGadgetID));
                     if (tenantDomain == null) {
                         log.info("Store - Gadget " + gadgetJSONObject.get(Constants.ID) + " is updated successfully !");
                     } else {
@@ -96,14 +99,6 @@ public class DSMigrationTool {
                     log.error("Error in reading the gadget json " + gadgetJSONObject.get("id"));
                 } catch (ParseException e) {
                     log.error("Error in parsing the gadget json " + gadgetJSONObject.get("id"));
-                } finally {
-                    try {
-                        file.flush();
-                        file.close();
-                        listOfFiles[i].renameTo(new File(artifactPath + File.separator + modifiedGadgetID));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         }
