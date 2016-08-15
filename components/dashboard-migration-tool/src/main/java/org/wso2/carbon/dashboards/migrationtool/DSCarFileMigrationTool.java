@@ -91,6 +91,66 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
     }
 
     /**
+     * To add a file to zip
+     *
+     * @param path    Root path name
+     * @param srcFile Source File that need to be added to zip
+     * @param zip     ZipOutputStream
+     * @throws IOException
+     */
+    private static void addFileToZip(String path, String srcFile, ZipOutputStream zip) throws IOException {
+        FileInputStream in = null;
+        try {
+            File folder = new File(srcFile);
+            if (folder.isDirectory()) {
+                addFolderToZip(path, srcFile, zip);
+            } else {
+                byte[] buf = new byte[1024];
+                int len;
+                in = new FileInputStream(srcFile);
+                zip.putNextEntry(new ZipEntry(path + File.separator + folder.getName()));
+                while ((len = in.read(buf)) > 0) {
+                    zip.write(buf, 0, len);
+                }
+            }
+        } catch (IOException e) {
+            log.error("Cannot add file to zip ", e);
+            throw new IOException(e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    log.error("Unable to close file input stream. ", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * To add a folder to zip
+     *
+     * @param path      Path of the file or folder from root directory of zip
+     * @param srcFolder Source folder to be made as zip
+     * @param zip       ZipOutputStream
+     */
+    private static void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws IOException {
+        File folder = new File(srcFolder);
+        if (path.isEmpty()) {
+            zip.putNextEntry(new ZipEntry(folder.getName() + File.separator));
+        } else {
+            zip.putNextEntry(new ZipEntry(path + File.separator + folder.getName() + File.separator));
+        }
+        for (String fileName : folder.list()) {
+            if (path.isEmpty()) {
+                addFileToZip(folder.getName(), srcFolder + File.separator + fileName, zip);
+            } else {
+                addFileToZip(path + File.separator + folder.getName(), srcFolder + File.separator + fileName, zip);
+            }
+        }
+    }
+
+    /**
      * Extract given CAR file into temporary directory for processing
      *
      * @param zipFile       CAR File Directory
@@ -271,66 +331,6 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                 } catch (IOException e) {
                     log.error("Unable to close the zip output stream ", e);
                 }
-            }
-        }
-    }
-
-    /**
-     * To add a file to zip
-     *
-     * @param path    Root path name
-     * @param srcFile Source File that need to be added to zip
-     * @param zip     ZipOutputStream
-     * @throws IOException
-     */
-    private static void addFileToZip(String path, String srcFile, ZipOutputStream zip) throws IOException {
-        FileInputStream in = null;
-        try {
-            File folder = new File(srcFile);
-            if (folder.isDirectory()) {
-                addFolderToZip(path, srcFile, zip);
-            } else {
-                byte[] buf = new byte[1024];
-                int len;
-                in = new FileInputStream(srcFile);
-                zip.putNextEntry(new ZipEntry(path + File.separator + folder.getName()));
-                while ((len = in.read(buf)) > 0) {
-                    zip.write(buf, 0, len);
-                }
-            }
-        } catch (IOException e) {
-            log.error("Cannot add file to zip ", e);
-            throw new IOException(e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    log.error("Unable to close file input stream. ", e);
-                }
-            }
-        }
-    }
-
-    /**
-     * To add a folder to zip
-     *
-     * @param path      Path of the file or folder from root directory of zip
-     * @param srcFolder Source folder to be made as zip
-     * @param zip       ZipOutputStream
-     */
-    private static void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws IOException {
-        File folder = new File(srcFolder);
-        if (path.isEmpty()) {
-            zip.putNextEntry(new ZipEntry(folder.getName() + File.separator));
-        } else {
-            zip.putNextEntry(new ZipEntry(path + File.separator + folder.getName() + File.separator));
-        }
-        for (String fileName : folder.list()) {
-            if (path.isEmpty()) {
-                addFileToZip(folder.getName(), srcFolder + File.separator + fileName, zip);
-            } else {
-                addFileToZip(path + File.separator + folder.getName(), srcFolder + File.separator + fileName, zip);
             }
         }
     }
