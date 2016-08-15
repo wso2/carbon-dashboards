@@ -222,7 +222,7 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                 file.close();
                 log.info("Dashboard " + dashboardJSONObject.get(Constants.ID) + " is successfully updated !");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Error in closing the json file " + dashboardJSONObject.get(Constants.ID));
             }
         }
     }
