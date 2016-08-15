@@ -42,10 +42,11 @@ public class DSMigrationTool {
      */
     protected void gadgetJSONUpdater(File artifactPath) {
         File[] listOfFiles = artifactPath.listFiles();
-        String modifiedGadgetID;
+        String modifiedGadgetID = null;
         JSONObject gadgetJSONObject = null, gadgetDataObj;
         String thumbnail;
         String url;
+        FileWriter file = null;
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isDirectory()) {
                 try {
@@ -81,13 +82,10 @@ public class DSMigrationTool {
                         url = replace(url, Constants.GADGET, Constants.FS_STORE + File.separator + Constants.GADGET);
                     }
                     gadgetDataObj.put(Constants.URL, replace(url, modifiedGadgetID, modifiedGadgetID));
-                    FileWriter file = new FileWriter(
+                    file = new FileWriter(
                             artifactPath + File.separator + listOfFiles[i].getName() + File.separator
                                     + Constants.GADGET_JSON);
                     file.write(gadgetJSONObject.toJSONString());
-                    file.flush();
-                    file.close();
-                    listOfFiles[i].renameTo(new File(artifactPath + File.separator + modifiedGadgetID));
                     if (tenantDomain == null) {
                         log.info("Store - Gadget " + gadgetJSONObject.get(Constants.ID) + " is updated successfully !");
                     } else {
@@ -98,6 +96,14 @@ public class DSMigrationTool {
                     log.error("Error in reading the gadget json " + gadgetJSONObject.get("id"));
                 } catch (ParseException e) {
                     log.error("Error in parsing the gadget json " + gadgetJSONObject.get("id"));
+                } finally {
+                    try {
+                        file.flush();
+                        file.close();
+                        listOfFiles[i].renameTo(new File(artifactPath + File.separator + modifiedGadgetID));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

@@ -181,6 +181,8 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
      * @param artifactPath artifact path which consists the dashboard folders
      */
     private void dashboardUpdater(File artifactPath) {
+        JSONObject dashboardJSONObject = null;
+        FileWriter file = null;
         try {
             File[] dashboardsList = artifactPath.listFiles();
             JSONParser parser = new JSONParser();
@@ -189,7 +191,7 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                     continue;
                 }
                 Object obj = parser.parse(new FileReader(dashboardsList[i].getAbsolutePath()));
-                JSONObject dashboardJSONObject = (JSONObject) obj;
+                dashboardJSONObject = (JSONObject) obj;
                 obj = dashboardJSONObject.get(Constants.PAGES);
                 JSONArray pagesJSONArray = (JSONArray) obj;
                 for (int pageCount = 0; pageCount < pagesJSONArray.size(); pageCount++) {
@@ -206,16 +208,22 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                     }
                     updateDashboardBlocks(blocksArray);
                 }
-                FileWriter file = new FileWriter(dashboardsList[i].getAbsolutePath());
+                file = new FileWriter(dashboardsList[i].getAbsolutePath());
                 file.write(dashboardJSONObject.toJSONString());
-                file.flush();
-                file.close();
                 log.info("Dashboard " + dashboardJSONObject.get(Constants.ID) + " is successfully updated !");
             }
         } catch (ParseException e) {
             log.error("Error in parsing json file in " + artifactPath, e);
         } catch (IOException e) {
             log.error("Error in writing/saving json file in " + artifactPath, e);
+        } finally {
+            try {
+                file.flush();
+                file.close();
+                log.info("Dashboard " + dashboardJSONObject.get(Constants.ID) + " is successfully updated !");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
