@@ -152,13 +152,13 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                     Document doc = docBuilder.parse(artifactXML);
                     doc.getDocumentElement().normalize();
 
-                    if (doc.getFirstChild().getAttributes().getNamedItem("type").getTextContent()
+                    if (doc.getFirstChild().getAttributes().getNamedItem(Constants.TYPE).getTextContent()
                             .equals(Constants.GADGET_ARTIFACT)) {
-                        Node file = doc.getElementsByTagName("file").item(0);
+                        Node file = doc.getElementsByTagName(Constants.FILE).item(0);
                         file.setTextContent(file.getTextContent().toLowerCase());
                         saveArtifactXML(doc, artifactXML);
                         gadgetJSONUpdater(artifactPath);
-                    } else if (doc.getFirstChild().getAttributes().getNamedItem("type").getTextContent()
+                    } else if (doc.getFirstChild().getAttributes().getNamedItem(Constants.TYPE).getTextContent()
                             .equals(Constants.DASHBOARD_ARTIFACT)) {
                         dashboardUpdater(new File(artifactPath.getPath()));
                     }
