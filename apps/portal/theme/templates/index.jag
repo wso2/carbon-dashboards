@@ -169,15 +169,7 @@
                 </span>
                 <%= i18n.localize("design") %>
             </a>
-            <%  if (permission.isAllowed(constants.SETTINGS)) { %>
-            <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-settings fw-stack-1x"></i>
-                </span>
-                <%= i18n.localize("settings") %>
-            </a>
-            <% } else { %>
+
 		{{#if owner}}
             <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
                 <span class="fw-stack">
@@ -187,7 +179,6 @@
                 <%= i18n.localize("settings") %>
 	    </a>
 		{{/if}}
-	    <% } %>
             {{/if}}
             <% } %>
         </div>
