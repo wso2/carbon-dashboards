@@ -99,16 +99,7 @@ public class DSMigrationTool {
                     log.error("Error in reading the gadget json " + gadgetJSONObject.get("id"));
                 } catch (ParseException e) {
                     log.error("Error in parsing the gadget json " + gadgetJSONObject.get("id"));
-                } finally {
-                    try {
-                        file.flush();
-                        file.close();
-                        listOfFiles[i].renameTo(new File(artifactPath + File.separator + modifiedGadgetID));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
-
             }
         }
     }
