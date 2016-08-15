@@ -693,7 +693,10 @@ $(function () {
                 saveDashboard();
             } else {
                 var modalElement = $('#designerModal');
-                modalElement.find('.modal-content').html(modalInfoHbs({title: i18n_data['cannot.save.dashboard'], message: i18n_data['atleast.one.owner.role']}));
+                modalElement.find('.modal-content').html(modalInfoHbs({
+                    title: i18n_data['cannot.save.dashboard'],
+                    message: i18n_data['atleast.one.owner.role']
+                }));
                 modalElement.modal();
             }
         });
