@@ -32,24 +32,32 @@
     <modules>
         <module>components/shindig-wso2-features</module>
         <module>components/shindig-server</module>
+        <module>components/shindig-wso2-extensions</module>
         <module>components/dashboard-deployment</module>
         <module>components/store-filter</module>
+        <module>components/dashboard-migration-tool</module>
         <module>features/org.wso2.carbon.dashboards.shindig.feature</module>
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>features/org.wso2.carbon.dashboards.deployment.feature</module>
         <module>features/org.wso2.carbon.dashboards.sso.feature</module>
-        <module>components/shindig-wso2-extensions</module>
+        <module>features/org.wso2.carbon.dashboards.migration.tool.feature</module>
     </modules>
 
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <shindig.version>2.5.2</shindig.version>
         <carbon.dashboards.version>2.0.2-SNAPSHOT</carbon.dashboards.version>
+        <json.simple.version>1.1.wso2v1</json.simple.version>
+        <org.wso2.carbon.logging.version>4.4.7</org.wso2.carbon.logging.version>
+        <commons-io.version>2.4.0.wso2v1</commons-io.version>
         <carbon.kernel.version>4.4.7</carbon.kernel.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <apache.google.guice.version>3.0</apache.google.guice.version>
         <javax.servlet.api.version>2.5</javax.servlet.api.version>
         <maven.antrunplugin.version>1.7</maven.antrunplugin.version>
+        <org.wso2.carbon.tenant.mgt.stub.version>4.6.0</org.wso2.carbon.tenant.mgt.stub.version>
+        <org.wso2.carbon.authenticator.stub>4.4.7</org.wso2.carbon.authenticator.stub>
+        <org.wso2.carbon.utils>4.4.7</org.wso2.carbon.utils>
     </properties>
 
     <scm>
@@ -133,6 +141,41 @@
                 <artifactId>servlet-api</artifactId>
                 <version>${javax.servlet.api.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.json-simple.wso2</groupId>
+                <artifactId>json-simple</artifactId>
+                <version>${json.simple.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.logging</artifactId>
+                <version>${org.wso2.carbon.logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io.wso2</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.multitenancy</groupId>
+                <artifactId>org.wso2.carbon.tenant.mgt.stub</artifactId>
+                <version>${org.wso2.carbon.tenant.mgt.stub.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.authenticator.stub</artifactId>
+                <version>${org.wso2.carbon.authenticator.stub}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.utils</artifactId>
+                <version>${org.wso2.carbon.utils}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboard.migration.tool</artifactId>
+                <version>${carbon.dashboards.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

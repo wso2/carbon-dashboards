@@ -1,0 +1,61 @@
+<%
+/**
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+(function () {
+    var migration = require('/modules/migration-tool.js');
+    var i18n = require("i18n");
+    response.contentType = 'application/json';
+    var vars;
+    var carbon = require('carbon');
+    var method = request.getMethod();
+    var matcher = new URIMatcher(request.getRequestURI());
+    if (matcher.match('/migration/tenantDashboards/{tenantDomain}')) {
+        if (!user) {
+            sendLogin();
+            return;
+        }
+
+        if (userDomain !== (urlDomain || superDomain)) {
+            response.sendError(401, JSON.stringify({
+                error: true
+            }));
+        }
+
+        if (user.isAdmin) {
+            response.sendError(401, JSON.stringify({
+                error: true
+            }));
+        }
+        if (method === 'GET') {
+            vars = matcher.elements();
+            var responseData = migration.getTenantDashboards(vars.tenantDomain);
+            print(responseData);
+            return;
+        }
+        if (method === 'POST') {
+            vars = matcher.elements();
+            var dashboard = request.getContent();
+            migration.updateTenantDashboards(vars.tenantDomain, dashboard);
+            return;
+        }
+        response.sendError(405, JSON.stringify({
+            error: true
+        }));
+        return;
+    }
+
+}());
+%>

@@ -89,3 +89,5 @@ var GADGET_TYPE = 'gadget';
 var LAYOUT_TYPE = 'layout';
 
 var ES_STORE_DELIMITER = '_';
+
+var DASHBOARD_REGISTRY_PATH = '/_system/config/ues/dashboards';
