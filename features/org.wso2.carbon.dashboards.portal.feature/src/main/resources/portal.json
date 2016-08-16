@@ -78,5 +78,8 @@
         "location" : "/temp/",
         "interval" : "60",
         "maxTempFileLifeTime" : "120"
+    },
+    "dataSource" : {
+        "fileName" : "ds"
     }
 }
