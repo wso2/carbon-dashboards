@@ -4020,12 +4020,12 @@ $(function () {
             loadBanner();
         });
 
-        $('#slide-right').click(function(){
+        $('#slide-right').click(function () {
             var leftPos = $('.view-container1 .nav').scrollLeft();
             $(".view-container1 .nav").animate({scrollLeft: leftPos + 200}, 800);
         })
 
-        $('#slide-left').click(function(){
+        $('#slide-left').click(function () {
             var leftPos = $('.view-container1 .nav').scrollLeft();
             $(".view-container1 .nav").animate({scrollLeft: leftPos - 200}, 800);
         })
@@ -4157,13 +4157,13 @@ $(function () {
         }
     };
 
-    $(document).on('click','.context-menu i',function(){
-        if($(this).parent().find('.gadget-actions').is(':visible')){
+    $(document).on('click', '.context-menu i', function () {
+        if ($(this).parent().find('.gadget-actions').is(':visible')) {
             $(this).parent().find('.gadget-actions').hide();
-        }else{
+        } else {
             $(this).parent().find('.gadget-actions').show();
         }
-    })
+    });
 
     /**
      * update dashboard.hideAllMenuItems state
