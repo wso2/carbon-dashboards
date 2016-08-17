@@ -19,7 +19,13 @@
 package org.wso2.carbon.dashboard.portal.core.datasource;
 
 /**
- * Created by megala on 8/16/16.
+ * This class has all the constants related to the data source queries
  */
-public class DataSourceConstants {
+class DataSourceConstants {
+    private DataSourceConstants() {
+        // To avoid initialization
+    }
+
+    static final String SQL_INSERT_USAGE_OPERATION = "INSERT INTO GADGET_USAGE(TENANT_ID, DASHBOARD_ID, "
+            + "GADGET_ID, GADGET_STATE, USAGE_DATA) VALUES (?,?,?,?,?)";
 }

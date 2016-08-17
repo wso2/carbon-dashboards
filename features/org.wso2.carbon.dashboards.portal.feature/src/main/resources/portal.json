@@ -80,6 +80,6 @@
         "maxTempFileLifeTime" : "120"
     },
     "dataSource" : {
-        "fileName" : "ds"
+        "name" : "WSO2_DS_USAGE_STORE_DB"
     }
 }
