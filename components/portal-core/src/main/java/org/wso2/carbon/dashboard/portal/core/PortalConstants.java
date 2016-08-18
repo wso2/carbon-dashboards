@@ -37,5 +37,6 @@ public class PortalConstants {
     public static final String HOUSE_KEEPING_LOCATION = "location";
     public static final String DATASOURCE_CONFIG_PROPERTY = "dataSource";
     public static final String DATASOURCE_NAME_PROPERTY = "name";
+    public static final String DB_SCRIPTS_LOCATION = "/dbscripts/dashboards/";
 }
 

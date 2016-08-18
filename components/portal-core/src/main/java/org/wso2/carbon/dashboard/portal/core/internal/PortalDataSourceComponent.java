@@ -26,33 +26,36 @@ import org.wso2.carbon.dashboard.portal.core.PortalDataSourceService;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 
 /**
- * Service component implementation for analytics data sources.
+ * Service component implementation for portal data sources.
+ *
  * @scr.component name="name="dashboard.portal.core" immediate="true"
  * @scr.reference name="datasource.service" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
  * cardinality="1..1" policy="dynamic"  bind="setDataSourceService" unbind="unsetDataSourceService"
  */
 public class PortalDataSourceComponent {
-    
+
     private static final Log log = LogFactory.getLog(PortalDataSourceComponent.class);
-    
+
     protected void activate(ComponentContext ctx) {
         if (log.isDebugEnabled()) {
             log.debug("Starting PortalDataSourceComponent#activate");
         }
-        log.error("************              Here");
         BundleContext bundleContext = ctx.getBundleContext();
-        bundleContext.registerService(PortalDataSourceService.class, new PortalDataSourceService() { }, null);
+        bundleContext.registerService(PortalDataSourceService.class, new PortalDataSourceService() {
+        }, null);
         if (log.isDebugEnabled()) {
             log.debug("Finished PortalDataSourceComponent#activate");
         }
     }
-    
+
+    protected void deactivate(ComponentContext ctx) {
+    }
+
     protected void setDataSourceService(DataSourceService service) {
         ServiceHolder.setDataSourceService(service);
     }
-    
+
     protected void unsetDataSourceService(DataSourceService service) {
         ServiceHolder.setDataSourceService(null);
     }
-    
 }

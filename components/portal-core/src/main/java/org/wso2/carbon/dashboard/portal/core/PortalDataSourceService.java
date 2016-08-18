@@ -19,7 +19,7 @@
 package org.wso2.carbon.dashboard.portal.core;
 
 /**
- * This class represents the analytics data source service interface,
+ * This class represents the portal data source service interface,
  * at the moment, used as a dummy service for other services to acquire this
  * to make sure this component is initialized.
  */

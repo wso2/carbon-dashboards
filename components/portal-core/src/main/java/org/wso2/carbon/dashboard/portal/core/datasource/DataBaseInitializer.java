@@ -38,16 +38,22 @@ import java.sql.*;
 import java.util.StringTokenizer;
 
 /**
- * To initialize the Database configuration
+ * To initialize the Database and create the relevant tables
  */
-public class DataBaseInitializer {
+class DataBaseInitializer {
     private static DataBaseInitializer instance;
     private static final Log log = LogFactory.getLog(DataBaseInitializer.class);
     private static DataSource dataSource;
     private static Statement statement;
     private static String delimiter = ";";
 
-    public static DataBaseInitializer getInstance() throws DashboardPortalException {
+    /**
+     * To maintain a single ative instance
+     *
+     * @return currently active instance of the DatabaseInitializer
+     * @throws DashboardPortalException
+     */
+    static DataBaseInitializer getInstance() throws DashboardPortalException {
         if (instance == null) {
             synchronized (DataBaseInitializer.class) {
                 if (instance == null) {
@@ -90,6 +96,13 @@ public class DataBaseInitializer {
         }
     }
 
+    /**
+     * To get the databasetype used by the user
+     *
+     * @param conn Connection of the datasource
+     * @return type of the database
+     * @throws DashboardPortalException
+     */
     private String getDatabaseType(Connection conn) throws DashboardPortalException {
         String type = null;
         try {
@@ -156,6 +169,11 @@ public class DataBaseInitializer {
         return true;
     }
 
+    /**
+     * To create the gadget usage table
+     *
+     * @throws DashboardPortalException
+     */
     private void createUsageDatabase() throws DashboardPortalException {
         Connection conn = null;
         try {
@@ -190,8 +208,13 @@ public class DataBaseInitializer {
         }
     }
 
+    /**
+     * To execute the table creation script depending on the datasource user using
+     *
+     * @throws DashboardPortalException
+     */
     private void executeSQLScript() throws DashboardPortalException {
-        String databaseType = null;
+        String databaseType;
         try {
             databaseType = getDatabaseType(getDBConnection());
         } catch (DashboardPortalException e) {
@@ -208,7 +231,6 @@ public class DataBaseInitializer {
         }
 
         String dbScriptLocation = getDbScriptLocation(databaseType);
-
         StringBuffer sql = new StringBuffer();
         BufferedReader reader = null;
 
@@ -270,8 +292,7 @@ public class DataBaseInitializer {
             log.debug("Loading database script from :" + scriptName);
         }
         String carbonHome = System.getProperty("carbon.home");
-        return carbonHome +
-                "/dbscripts/dashboards/" + scriptName;
+        return carbonHome + PortalConstants.DB_SCRIPTS_LOCATION + scriptName;
     }
 
     /**
@@ -318,8 +339,10 @@ public class DataBaseInitializer {
             conn = dataSource.getConnection();
             SQLWarning warning = conn.getWarnings();
             while (warning != null) {
-                log.debug(warning + " sql warning");
-                warning = warning.getNextWarning();
+                if (log.isDebugEnabled()) {
+                    log.debug(warning + " sql warning");
+                    warning = warning.getNextWarning();
+                }
             }
             conn.clearWarnings();
         } catch (SQLException e) {
@@ -350,10 +373,10 @@ public class DataBaseInitializer {
     }
 
     /**
-     * Returns an database connection for Identity data source.
+     * Returns an database connection for the Dashboards Data source
      *
      * @return Database connection
-     * @throws DashboardPortalException Exception to be thrown ewhen we cannot connect to the DB source
+     * @throws DashboardPortalException Exception to be thrown when we cannot connect to the DB source
      */
     Connection getDBConnection() throws DashboardPortalException {
         try {
