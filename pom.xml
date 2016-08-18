@@ -52,7 +52,6 @@
         <apache.google.guice.version>3.0</apache.google.guice.version>
         <javax.servlet.api.version>2.5</javax.servlet.api.version>
         <maven.antrunplugin.version>1.7</maven.antrunplugin.version>
-        <orbit.version.h2.database.engine>1.2.140.wso2v3</orbit.version.h2.database.engine>
     </properties>
 
     <scm>
@@ -145,11 +144,6 @@
                 <groupId>org.apache.shindig</groupId>
                 <artifactId>shindig-common</artifactId>
                 <version>${shindig.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.h2database.wso2</groupId>
-                <artifactId>h2-database-engine</artifactId>
-                <version>${orbit.version.h2.database.engine}</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>

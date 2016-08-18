@@ -19,10 +19,14 @@ package org.wso2.carbon.dashboard.portal.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.dashboard.portal.core.HouseKeepingTask;
 import org.wso2.carbon.dashboard.portal.core.DashboardPortalException;
 import org.wso2.carbon.dashboard.portal.core.PortalConstants;
+import org.wso2.carbon.dashboard.portal.core.PortalDataSourceService;
+import org.wso2.carbon.dashboard.portal.core.datasource.DataBaseInitializer;
+import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.ntask.common.TaskException;
 import org.wso2.carbon.ntask.core.TaskInfo;
 import org.wso2.carbon.ntask.core.TaskManager;
@@ -32,6 +36,8 @@ import org.wso2.carbon.ntask.core.service.TaskService;
  * @scr.component name="dashboard.portal.core" immediate="true"
  * @scr.reference name="ntask.component" interface="org.wso2.carbon.ntask.core.service.TaskService"
  * cardinality="1..1" policy="dynamic" bind="setTaskService" unbind="unsetTaskService"
+ * @scr.reference name="datasource.service" interface="org.wso2.carbon.ndatasource.core.DataSourceService"
+ * cardinality="1..1" policy="dynamic"  bind="setDataSourceService" unbind="unsetDataSourceService"
  */
 
 public class PortalDSComponent {
@@ -53,6 +59,10 @@ public class PortalDSComponent {
             TaskInfo taskInfo = new TaskInfo(PortalConstants.PORTAL_HOUSE_KEEPING_TASK, HouseKeepingTask.class.getCanonicalName(),
                     null, triggerInfo);
             taskManager.registerTask(taskInfo);
+            BundleContext bundleContext = ctx.getBundleContext();
+            bundleContext.registerService(PortalDataSourceService.class, new PortalDataSourceService() {
+            }, null);
+            DataBaseInitializer.init();
         } catch (TaskException exception) {
             log.error("Error while registering the task type : " + PortalConstants.TASK_TYPE, exception);
         } catch (DashboardPortalException exception) {
@@ -73,4 +83,12 @@ public class PortalDSComponent {
         ServiceHolder.setTaskService(null);
     }
 
+
+    protected void setDataSourceService(DataSourceService service) {
+        ServiceHolder.setDataSourceService(service);
+    }
+
+    protected void unsetDataSourceService(DataSourceService service) {
+        ServiceHolder.setDataSourceService(null);
+    }
 }

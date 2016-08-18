@@ -40,7 +40,7 @@ import java.util.StringTokenizer;
 /**
  * To initialize the Database and create the relevant tables
  */
-class DataBaseInitializer {
+public class DataBaseInitializer {
     private static DataBaseInitializer instance;
     private static final Log log = LogFactory.getLog(DataBaseInitializer.class);
     private static DataSource dataSource;
@@ -50,17 +50,13 @@ class DataBaseInitializer {
     /**
      * To maintain a single ative instance
      *
-     * @return currently active instance of the DatabaseInitializer
      * @throws DashboardPortalException
      */
-    static DataBaseInitializer getInstance() throws DashboardPortalException {
-        if (instance == null) {
-            synchronized (DataBaseInitializer.class) {
-                if (instance == null) {
-                    instance = new DataBaseInitializer();
-                }
-            }
-        }
+    public static void init() throws DashboardPortalException {
+        instance = new DataBaseInitializer();
+    }
+
+    public static DataBaseInitializer getInstance() {
         return instance;
     }
 

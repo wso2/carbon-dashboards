@@ -33,55 +33,11 @@
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboard.portal.core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.h2database.wso2</groupId>
-            <artifactId>h2-database-engine</artifactId>
-        </dependency>
     </dependencies>
 
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>clean-ml-h2-database</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <delete file="src/main/resources/WSO2DS_DB.h2.db"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>create-carbon-ml-database</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <path id="h2.classpath">
-                                    <path refid="maven.compile.classpath"/>
-                                </path>
-                                <sql driver="org.h2.Driver"
-                                     url="jdbc:h2:${basedir}/src/main/resources/WSO2DS_DB;create=true"
-                                     userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
-                                    <classpath>
-                                        <path refid="h2.classpath"/>
-                                    </classpath>
-                                    <fileset file="${basedir}/src/main/resources/dashboards/h2.sql"/>
-                                </sql>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
