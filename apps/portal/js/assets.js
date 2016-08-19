@@ -36,8 +36,10 @@ $(function () {
     var assetsListHbs = Handlebars.compile($("#ds-assets-list-hbs").html());
     var assetThumbnailHbs = Handlebars.compile($("#ds-asset-thumbnail-hbs").html());
     var assetConfirmHbs = Handlebars.compile($("#ds-asset-confirm-hbs").html());
+    var gadgetUsageConfimrHbs = Handlebars.compile($("#ds-gadget-usage-confirm-hbs").html());
     var assetsEmptyHbs = Handlebars.compile($("#ds-assets-empty-hbs").html());
     var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
+    var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
     Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
 
 
@@ -146,6 +148,49 @@ $(function () {
         }
     };
 
+
+    /**
+     * To get the gadget usage information for a particular gadget id
+     * @param gadgetId Id of the gadget
+     */
+    var getGadgetUsageInfo = function(gadgetId) {
+        var gadgetUsageData;
+        $.ajax({
+            url: DATABASE_API + '/' + gadgetId + '?task=usage',
+            method: "POST",
+            async: false,
+            contentType: 'application/json',
+            success: function (data) {
+                console.log("Successfully retrieved gadget usage information");
+                gadgetUsageData = JSON.parse(data);
+            },
+            error: function (xhr, message) {
+                console.log("something went wrong while retrieving the usage data. " + message);
+            }
+        });
+        return gadgetUsageData;
+    };
+
+    /**
+     * To update the gadget state information in database
+     * @param gadgetId Id of the gadget
+     */
+    var updateGadgetStateInfo = function(gadgetId) {
+        $.ajax({
+            url: DATABASE_API + '/' + gadgetId + '?task=stateupdate',
+            method: "POST",
+            async: false,
+            data: JSON.stringify({newState : "DELETED"}),
+            contentType: 'application/json',
+            success: function () {
+                console.log("Successfully updated gadget state information");
+            },
+            error: function (xhr, message) {
+                console.log("something went wrong while retrieving the usage data. " + message);
+            }
+        });
+    };
+
     /**
      * To delete the asset with the given id
      * @param {String} id Id of the asset to be deleted
@@ -156,9 +201,30 @@ $(function () {
             if (err) {
                 $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
             } else {
+                if (assetType === 'gadget'){
+                    updateGadgetStateInfo(id);
+                }
                 location.reload();
             }
         });
+    };
+
+    var manipulateGadgetUsageInfo = function (usage) {
+        var message = 'This gadget is used in '
+        for (var index = 0; index < usage.length; index++) {
+            if (usage[index].indexOf("$") > -1) {
+                usage[index] = usage[index].substr(0, usage[index].length - 1);
+            }
+            if (index !== usage.length-1) {
+                message += usage[index] +  ','
+            } else {
+                message += usage[index] + " database(s). Deleting this gadget will " +
+                    "affect the functionality of those databases";
+            }
+        }
+
+        return message;
+
     };
 
     /**
@@ -188,11 +254,22 @@ $(function () {
         });
 
         portal.on('click', '.ds-assets .ds-asset-trash-handle', function (e) {
+            var gadgetUsageInfo;
             e.preventDefault();
             var assetElement = $(this).closest('.ds-asset');
             var id = assetElement.data('id');
             var asset = findAsset(id);
-            assetElement.html(assetConfirmHbs(asset));
+            if (assetType === 'gadget') {
+                gadgetUsageInfo = getGadgetUsageInfo(id);
+            }
+            if (!gadgetUsageInfo || gadgetUsageInfo.dashboards.length === 0) {
+                assetElement.html(assetConfirmHbs(asset));
+            } else {
+                gadgetUsageInfo = manipulateGadgetUsageInfo(gadgetUsageInfo.dashboards);
+                var data = {title : asset.title};
+                data.message = gadgetUsageInfo;
+                assetElement.html(gadgetUsageConfimrHbs(data));
+            }
         });
 
         portal.on('click', '.ds-assets .ds-asset-trash-confirm', function (e) {

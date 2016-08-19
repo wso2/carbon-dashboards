@@ -24,6 +24,9 @@
     var dataBaseUtils = require('/modules/database-utils.js');
     var task = request.getParameter('task');
     var INSERT_TASK = 'insert';
+    var DELETE_TASK = 'delete';
+    var USAGE_TASK = 'usage';
+    var STATUS_UPDATE_TASK = 'stateupdate';
     var matcher = new URIMatcher(request.getRequestURI());
     var i18n = require('i18n');
     var content = request.getContent();
@@ -32,12 +35,32 @@
     i18n.init(request, utils.getLocaleResourcePath());
 
     if (request.getMethod() === 'POST') {
-        if (matcher.match('/database/{gid}/{did}')) {
+        if (matcher.match('/database/{did}/{gid}') || matcher.match('/database/{did}$/{gid}')) {
             gadgetId = matcher.elements().gid;
             dashboardId = matcher.elements().did;
-            if (task === INSERT_TASK) {
-                dataBaseUtils.insertOrUpdateGadgetUsage(gadgetId, dashboardId, content);
+
+            if (matcher.match('/database/{did}$/{gid}')) {
+                dashboardId = dashboardId + '$';
             }
+            if (task === INSERT_TASK) {
+                var state = request.getParameter('state');
+                dataBaseUtils.insertOrUpdateGadgetUsage(dashboardId, gadgetId, content, state);
+            } else if (task === DELETE_TASK) {
+                dataBaseUtils.deleteGadgetUsage(dashboardId, gadgetId);
+            }
+        } else if (matcher.match('/database/{gid}')) {
+            gadgetId = matcher.elements().gid;
+            if (task === USAGE_TASK) {
+                var assetInfo = dataBaseUtils.getGadgetUsage(gadgetId);
+                print(assetInfo);
+            } else if (task === STATUS_UPDATE_TASK) {
+                dataBaseUtils.updateGadgetState(gadgetId, content);
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Cannot understand the request " + request.getRequestURI());
+            }
+            response.sendError(400, i18n.localize("bad.request"));
         }
     } else {
         response.sendError(403, i18n.localize("forbidden"));

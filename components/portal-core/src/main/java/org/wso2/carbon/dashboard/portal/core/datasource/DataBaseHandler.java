@@ -212,6 +212,60 @@ public class DataBaseHandler {
     }
 
     /**
+     * To delete the gadget usage information of partciular gadget in particular dashboard
+     * @param tenantId Id of the tenant, dashboard belongs to
+     * @param dashboardId Id of the dashboard
+     * @param gadgetId Id of the gadget
+     * @throws DashboardPortalException
+     */
+    public void deleteGadgetUsageInformation (int tenantId, String dashboardId, String gadgetId) throws DashboardPortalException{
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataBaseInitializer.getDBConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_DELETE_GADGET_USAGE_OPERATION);
+            preparedStatement.setInt(1, tenantId);
+            preparedStatement.setString(2, dashboardId);
+            preparedStatement.setString(3, gadgetId);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            log.error("Cannot insert the gadget usage info ", e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /**
+     * To update the gadget state information
+     * @param tenantId Id of the tenant which gadget belongs to
+     * @param gadgetId Id of the gadget
+     * @param gadgetState State of the gadget, whether is it in active or delete state
+     * @throws DashboardPortalException
+     */
+    public void updateGadgetStateInformation(int tenantId, String gadgetId, String gadgetState) throws DashboardPortalException{
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataBaseInitializer.getDBConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_UPDATE_GADGET_STATE_OPERATION);
+            preparedStatement.setString(1, gadgetState);
+            preparedStatement.setInt(2, tenantId);
+            preparedStatement.setString(3, gadgetId);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            log.error("Cannot insert the gadget usage info ", e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /**
      * Close a given set of database resources.
      *
      * @param connection        Connection to be closed

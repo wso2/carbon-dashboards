@@ -178,7 +178,22 @@
     <script id="ds-asset-confirm-hbs" type="text/x-handlebars-template">
         <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
-            <i class="icon fw fw-error"></i><strong>Warning!</strong> <%= i18n.localize(assetType+".delete.warning")%>
+            <i class="icon fw fw-error"></i><strong>Warning! </strong> <%= i18n.localize(assetType+".delete.warning")%>
+        </div>
+        <div class="ds-trash-actions" >
+            <a href="#" class="btn btn-danger ladda-button ds-asset-trash-confirm" role="button"
+            data-style="expand-left" data-size="l">
+                <span class="ladda-label"><%= i18n.localize("delete")%></span>
+            </a>
+            <a href="#" class="btn btn-default ds-asset-trash-cancel" role="button" ><%= i18n.localize("cancel")%></a>
+        </div>
+    </script>
+
+    <!-- confirmation message when trying to delete a used gadget-->
+     <script id="ds-gadget-usage-confirm-hbs" type="text/x-handlebars-template">
+        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <div class="alert alert-warning" role="alert">
+            <i class="icon fw fw-error"></i><strong>Warning! </strong>{{message}}
         </div>
         <div class="ds-trash-actions" >
             <a href="#" class="btn btn-danger ladda-button ds-asset-trash-confirm" role="button"

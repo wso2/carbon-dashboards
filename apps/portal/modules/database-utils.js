@@ -14,22 +14,50 @@
  * limitations under the License.
  */
 
-var insertOrUpdateGadgetUsage;
+var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetState;
 
 (function () {
     var DataBaseHandler = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DataBaseHandler;
     var databaseHandler = DataBaseHandler.getInstance();
     var log = new Log();
+    var usr = require('/modules/user.js');
+    var carbon = require('carbon');
+    var tenantId = carbon.server.tenantId();
+    var user = usr.current();
 
-    insertOrUpdateGadgetUsage = function (dashboardId, gadgetID, usageData) {
-        var carbon = require('carbon');
-        var tenantId = carbon.server.tenantId();
-
+    insertOrUpdateGadgetUsage = function (dashboardId, gadgetID, usageData, state) {
         if (log.isDebugEnabled()) {
             log.debug('Usage data for gadget id - ' + gadgetID + ', dashboard id - ' +
                 dashboardId + ',tenantId -' + tenantId + ':' + stringify(usageData))
         }
-        databaseHandler.updateOrInsertGadgetUsageInfo(tenantId, dashboardId, gadgetID, "ACTIVE",
+        if (dashboardId.indexOf('$') > 0) {
+            dashboardId = dashboardId + user.username;
+        }
+        databaseHandler.updateOrInsertGadgetUsageInfo(tenantId, dashboardId, gadgetID, state,
             stringify(usageData));
     };
+
+    deleteGadgetUsage = function (dashboardId, gadgetID) {
+        if (log.isDebugEnabled()) {
+            log.debug('Deleteing the usage data for gadget id - ' + gadgetID + ', dashboard id - ' +
+                dashboardId + ',tenantId -' + tenantId);
+        }
+        if (dashboardId.indexOf('$') > 0) {
+            dashboardId = dashboardId + user.username;
+        }
+        databaseHandler.deleteGadgetUsageInformation(tenantId, dashboardId, gadgetID);
+    };
+
+    getGadgetUsage = function (gadgetId) {
+        var gadgetUsage = databaseHandler.getDashboardUsingGadget(tenantId, gadgetId);
+        var usage = {dashboards: []};
+        for (var index = 0; index < gadgetUsage.size(); index++) {
+            usage.dashboards.push(gadgetUsage.get(index));
+        }
+        return usage;
+    };
+
+    updateGadgetState = function (gadgetId, gadgetState) {
+        databaseHandler.updateGadgetStateInformation(tenantId, gadgetId, gadgetState.newState);
+    }
 }());

@@ -39,6 +39,8 @@ $(function () {
     var roleAddAction = 'add';
     var roleRemoveAction = 'remove';
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
+    var ASSET_API = ues.utils.tenantPrefix() + 'apis/assets/publicAssets/';
+
 
     /**
      * Role for all logged in users
@@ -477,7 +479,7 @@ $(function () {
             var index = area.indexOf(component);
             area.splice(index, 1);
             container.remove();
-
+            updateUsageData(component.id);
             var compId = $('.ues-component-properties').data('component');
             if (compId !== component.id) {
                 return done();
@@ -499,8 +501,40 @@ $(function () {
             if (err) {
                 return err;
             }
+            updateUsageData(component.id);
             done(err);
         });
+    };
+
+    /**
+     * To update the usage data
+     * @param id Id of the component id
+     */
+    var updateUsageData = function(id) {
+        var assetId = getAssetId(id);
+        var usageData = createUsageData(assetId);
+
+        if (usageData.length > 0) {
+            sendUsageData(usageData, assetId);
+        } else {
+            deleteUsageData(assetId);
+        }
+    };
+
+
+    var isGadgetExist = function(id) {
+        var status = 'ACTIVE';
+        $.ajax({
+            url: ASSET_API + id,
+            method: 'GET',
+            async: false,
+            contentType: 'application/json'
+        }).error(function (xhr, status, err) {
+            if (xhr.status === 404) {
+                status = 'DELETED';
+            }
+        });
+        return status;
     };
 
     /**
@@ -514,6 +548,7 @@ $(function () {
         var i;
         var length = components.length;
         var tasks = [];
+
         for (i = 0; i < length; i++) {
             if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
                 tasks.push((function (component) {
@@ -525,9 +560,21 @@ $(function () {
                 }(components[i])));
             }
         }
+
         async.parallel(tasks, function (err, results) {
             done(err);
         });
+    };
+
+    /**
+     * To get the gadget id from component id
+     * @param id Id of the component
+     * @returns {string|*} Id of the gadget
+     */
+    var getAssetId = function(id){
+        var index = id.lastIndexOf("-");
+        id = index > 0 ? id.substr(0, index) : id;
+        return id;
     };
 
     /**
@@ -559,7 +606,6 @@ $(function () {
             if (!done) {
                 return;
             }
-
             done(err);
         });
     };
@@ -1322,12 +1368,13 @@ $(function () {
                 }
             }
             showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
-                destroyPage(page, pageType, function (err) {
+                var p = clone(page);
+                delete page.views.content[viewId];
+                delete page.content[viewId];
+                destroyPage(p, pageType, function (err) {
                     if (err) {
                         throw err;
                     }
-                    delete page.views.content[viewId];
-                    delete page.content[viewId];
                     visibleViews = [];
                     dashboard.isanon = isAnonDashboard();
                     saveDashboard();
@@ -1569,6 +1616,7 @@ $(function () {
                                 dashboard.pages[i].content[pageType][componentBoxId] = [];
                             }
                         }
+                        updateUsageData(hasHidden[0].id);
                         saveDashboard();
                     }
                     if (removeBlock) {
@@ -1693,8 +1741,13 @@ $(function () {
      * @param id ID of the gadget
      */
     var sendUsageData = function (usageData, id) {
+        var dashboardID = dashboard.id;
+        if (dashboard.isUserCustom){
+            dashboardID = dashboardID + '$'
+        }
+        var state = isGadgetExist(id);
         $.ajax({
-            url: DATABASE_API + '/' + dashboard.id + '/' + id + '?task=insert',
+            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=insert&state='+state,
             method: "POST",
             data: JSON.stringify(usageData),
             contentType: "application/json",
@@ -1708,6 +1761,28 @@ $(function () {
         })
     };
 
+    /**
+     * To delete the usage data in the back end when the relevant gadget is deleted
+     * @param id ID of the gadget
+     */
+    var deleteUsageData = function (id) {
+        var dashboardID = dashboard.id;
+        if (dashboard.isUserCustom){
+            dashboardID = dashboardID + '$'
+        }
+        $.ajax({
+            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=delete',
+            method: "POST",
+            contentType: "application/json",
+            async: false,
+            success: function () {
+                console.log("successfully updated the usage data to database");
+            },
+            error: function (xhr, message) {
+                console.log("something went wrong. Could not update the database data due to " + message);
+            }
+        })
+    };
     /**
      * To create usage data for the particular gadget in this dashboard
      * @param id ID of the gadget
@@ -2864,14 +2939,18 @@ $(function () {
                 } else {
                     //if tries to change the layout of an existing view, after confiramtion destroy the page
                     showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
-                        destroyPage(page, pageType, function (err) {
+                        var p = clone(page);
+                        var selectedView = getSelectedView();
+                        var viewId = getViewId(selectedView);
+                        var viewName = page.views.content[viewId].name;
+                        var viewRoles = page.views.content[viewId].roles;
+                        delete page.views.content[pageType];
+                        delete page.content[pageType];
+                        destroyPage(p, pageType, function (err) {
                             if (err) {
                                 throw err;
                             }
-                            var selectedView = getSelectedView();
-                            var viewId = getViewId(selectedView);
-                            var viewName = page.views.content[viewId].name;
-                            var viewRoles = page.views.content[viewId].roles;
+
                             if (!viewName) {
                                 viewName = viewId;
                             }
@@ -3510,7 +3589,7 @@ $(function () {
         for (var i = 0; i < dashboard.pages.length; i++) {
             if (dashboard.pages[i].id === page.id) {
                 var component = dashboard.pages[i].content[pageType][componentBox.attr('id')];
-                return (component && component.length > 0);
+                return (component && component.length > 0) ? component : null;
             }
         }
     };
@@ -3833,14 +3912,17 @@ $(function () {
                 $('.gadgets-grid').find('.ues-component').each(function () {
                     var id = $(this).attr('id');
                     renderComponentToolbar(findComponent(id));
-                    if (err === UNAUTHORIZED_ERROR_CODE) {
-                        $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                        $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
-                        err = null;
-                    } else if (err === NOT_FOUND_ERROR_CODE) {
-                        $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                        $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
-                        err = null;
+
+                    if (!id) {
+                        if (err === UNAUTHORIZED_ERROR_CODE) {
+                            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+                            err = null;
+                        } else if (err === NOT_FOUND_ERROR_CODE) {
+                            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+                            err = null;
+                        }
                     }
                 });
                 listenLayout();

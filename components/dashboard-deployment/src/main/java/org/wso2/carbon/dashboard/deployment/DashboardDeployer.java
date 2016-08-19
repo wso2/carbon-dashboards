@@ -17,7 +17,6 @@ package org.wso2.carbon.dashboard.deployment;
 
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.application.deployer.CarbonApplication;
@@ -27,8 +26,10 @@ import org.wso2.carbon.application.deployer.config.CappFile;
 import org.wso2.carbon.application.deployer.handler.AppDeploymentHandler;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.dashboard.deployment.util.DeploymentUtil;
+import org.wso2.carbon.dashboard.portal.core.datasource.DataBaseHandler;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.utils.CarbonUtils;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -44,19 +45,25 @@ import java.util.List;
  */
 public class DashboardDeployer implements AppDeploymentHandler {
     private static final Log log = LogFactory.getLog(DashboardDeployer.class);
+    private DataBaseHandler dataBaseHandler;
 
     @Override public void deployArtifacts(CarbonApplication carbonApp, AxisConfiguration axisConfig)
             throws DeploymentException {
-        checkForTenantDirectory();
-        ApplicationConfiguration appConfig = carbonApp.getAppConfig();
-        List<Artifact.Dependency> deps = appConfig.getApplicationArtifact().getDependencies();
-        List<Artifact> artifacts = new ArrayList<Artifact>();
-        for (Artifact.Dependency dep : deps) {
-            if (dep.getArtifact() != null) {
-                artifacts.add(dep.getArtifact());
+        try {
+            checkForTenantDirectory();
+            dataBaseHandler = DataBaseHandler.getInstance();
+            ApplicationConfiguration appConfig = carbonApp.getAppConfig();
+            List<Artifact.Dependency> deps = appConfig.getApplicationArtifact().getDependencies();
+            List<Artifact> artifacts = new ArrayList<Artifact>();
+            for (Artifact.Dependency dep : deps) {
+                if (dep.getArtifact() != null) {
+                    artifacts.add(dep.getArtifact());
+                }
             }
+            deploy(artifacts);
+        } catch(Throwable throwable){
+            throw new DeploymentException("Error in deploying ", throwable);
         }
-        deploy(artifacts);
     }
 
     /**
@@ -135,6 +142,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
                             String storePath = getArtifactPath("gadget");
                             File destination = new File(storePath + file.getName());
                             DeploymentUtil.copyFolder(file, destination);
+                            dataBaseHandler.updateGadgetStateInformation(CarbonContext.getThreadLocalCarbonContext().getTenantId(), file.getName(), "ACTIVE");
                             log.info("Gadget directory [" + file.getName() + "] has been copied to path " + destination
                                     .getAbsolutePath());
                         }
@@ -142,6 +150,8 @@ public class DashboardDeployer implements AppDeploymentHandler {
                         String errorMsg = "Error while reading from the file : " + file.getAbsolutePath();
                         log.error(errorMsg, e);
                         throw new DashboardDeploymentException(errorMsg, e);
+                    } catch (Throwable throwable){
+                        throw new DashboardDeploymentException("Error in updating gadget usage information", throwable);
                     }
                 } else if (DashboardConstants.LAYOUT_ARTIFACT_TYPE.equals(artifact.getType())) {
                     try {
