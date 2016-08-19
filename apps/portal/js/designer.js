@@ -38,6 +38,7 @@ $(function () {
     var VIEW_NAME_PREFIX = 'View';
     var roleAddAction = 'add';
     var roleRemoveAction = 'remove';
+    var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
 
     /**
      * Role for all logged in users
@@ -1673,6 +1674,7 @@ $(function () {
             content: asset
         };
         content.push(component);
+        createUsageData(asset.id);
         ues.components.create(container, component, function (err, block) {
             if (err) {
                 throw err;
@@ -1680,7 +1682,79 @@ $(function () {
             renderComponentToolbar(component);
             container.find('.ues-component-actions .ues-component-properties-handle').click();
             saveDashboard();
+            var usageData = createUsageData(asset.id);
+            sendUsageData(usageData, asset.id);
         });
+    };
+
+    /**
+     * To send the usage data to back end
+     * @param usageData Usage data to be send to back end
+     * @param id ID of the gadget
+     */
+    var sendUsageData = function (usageData, id) {
+        $.ajax({
+            url: DATABASE_API + '/' + dashboard.id + '/' + id + '?task=insert',
+            method: "POST",
+            data: JSON.stringify(usageData),
+            contentType: "application/json",
+            async: false,
+            success: function () {
+                console.log("successfully updated the usage data to database");
+            },
+            error: function (xhr, message) {
+                console.log("something went wrong. Could not update the database data due to " + message);
+            }
+        })
+    };
+
+    /**
+     * To create usage data for the particular gadget in this dashboard
+     * @param id ID of the gadget
+     * @returns {Array} Usage data as a JSON object
+     */
+    var createUsageData = function (id) {
+        var usageData = [];
+        var area;
+        var components;
+        var length;
+        var component;
+        var componentId;
+        var index;
+        if (dashboard.pages) {
+            for (var i = 0; i < dashboard.pages.length; i++) {
+                var pageViewCount = 0;
+                var pageUsageData = {};
+                pageUsageData[dashboard.pages[i].id] = {};
+                var views = Object.keys(dashboard.pages[i].content);
+                for (var j = 0; j < views.length; j++) {
+                    var content = dashboard.pages[i].content[views[j]];
+                    var count = 0;
+                    for (area in content) {
+                        if (content.hasOwnProperty(area)) {
+                            components = content[area];
+                            length = components.length;
+                            for (var k = 0; k < length; k++) {
+                                component = components[k];
+                                index = component.id ? component.id.lastIndexOf("-") : 0;
+                                componentId = index > 0 ? component.id.substr(0, index) : component.id;
+                                if (componentId === id) {
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    if (count > 0) {
+                        pageUsageData[dashboard.pages[i].id][views[j]] = count;
+                        pageViewCount += count;
+                    }
+                }
+                if (pageViewCount > 0) {
+                    usageData.push(clone(pageUsageData));
+                }
+            }
+        }
+        return usageData;
     };
 
     /**
@@ -3867,6 +3941,7 @@ $(function () {
      * @private
      */
     var initDashboard = function (db, page) {
+
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
         if (pages.length > 0) {

@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-var insertUsageData;
+var insertOrUpdateGadgetUsage;
 
 (function () {
     var DataBaseHandler = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DataBaseHandler;
     var databaseHandler = DataBaseHandler.getInstance();
+    var log = new Log();
 
-    insertUsageData = function (dashboardId, gadgetID, usageData) {
+    insertOrUpdateGadgetUsage = function (dashboardId, gadgetID, usageData) {
         var carbon = require('carbon');
         var tenantId = carbon.server.tenantId();
-        databaseHandler.insertGadgetUsageInfo(Integer(tenantId),dashboardId, gadgetID, "ACTIVE", usageData);
+
+        if (log.isDebugEnabled()) {
+            log.debug('Usage data for gadget id - ' + gadgetID + ', dashboard id - ' +
+                dashboardId + ',tenantId -' + tenantId + ':' + stringify(usageData))
+        }
+        databaseHandler.updateOrInsertGadgetUsageInfo(tenantId, dashboardId, gadgetID, "ACTIVE",
+            stringify(usageData));
     };
 }());
