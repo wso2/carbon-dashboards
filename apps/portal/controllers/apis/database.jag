@@ -24,15 +24,23 @@
     var dataBaseUtils = require('/modules/database-utils.js');
     var task = request.getParameter('task');
     var INSERT_TASK = 'insert';
+    var matcher = new URIMatcher(request.getRequestURI());
     var i18n = require('i18n');
+    var content = request.getContent();
+    var gadgetId;
+    var dashboardId;
     i18n.init(request, utils.getLocaleResourcePath());
 
-    if (request.getMethod('POST')) {
-        if (task === insert) {
-
+    if (request.getMethod() === 'POST') {
+        if (matcher.match('/database/{gid}/{did}')) {
+            gadgetId = matcher.elements().gid;
+            dashboardId = matcher.elements().did;
+            if (task === INSERT_TASK) {
+                dataBaseUtils.insertOrUpdateGadgetUsage(gadgetId, dashboardId, content);
+            }
         }
     } else {
-        response.sendError(403,  i18n.localize("forbidden"));
+        response.sendError(403, i18n.localize("forbidden"));
     }
 }());
 
