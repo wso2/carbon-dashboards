@@ -162,7 +162,13 @@
                             </label>
                             </div>
                             <div class="col-md-3">
-                                <p id="share-dashboard-state" class="dashboard-state-disabled"><%if (dashboard.shareDashboard){ %>
+                                <p id="share-dashboard-state" class="<%if (dashboard.shareDashboard) {%>
+                                    <%="dashboard-state-enabled"%>
+                                    <%}else{%>
+                                    <%="dashboard-state-disabled"%>
+                                    <%}%>
+                                    ">
+                                    <%if (dashboard.shareDashboard){ %>
                                         <%=i18n.localize("share.dashboard.enabled")%>
                                     <%}else {%>
                                         <%=i18n.localize("share.dashboard.disabled")%>
@@ -188,7 +194,13 @@
                         </label>
                         </div>
                         <div class="col-md-3">
-                                <p id="personalize-dashboard-state" class="dashboard-state-disabled"><%if (dashboard.personalizeDashboard){ %>
+                                <p id="personalize-dashboard-state" class="<%if (dashboard.personalizeDashboard) {%>
+                                    <%="dashboard-state-enabled"%>
+                                    <%}else{%>
+                                    <%="dashboard-state-disabled"%>
+                                    <%}%>
+                                    ">
+                                    <%if (dashboard.personalizeDashboard){ %>
                                         <%=i18n.localize("personalize.dashboard.enabled")%>
                                     <%}else {%>
                                         <%=i18n.localize("personalize.dashboard.disabled")%>
