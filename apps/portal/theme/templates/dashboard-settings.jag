@@ -161,7 +161,21 @@
                                 <span class="helper"></span>
                             </label>
                             </div>
-                             <div class = "col-sm-10">
+                            <div class="col-md-3">
+                                <p id="share-dashboard-state" class="<%if (dashboard.shareDashboard) {%>
+                                    <%="dashboard-state-enabled"%>
+                                    <%}else{%>
+                                    <%="dashboard-state-disabled"%>
+                                    <%}%>
+                                    ">
+                                    <%if (dashboard.shareDashboard){ %>
+                                        <%=i18n.localize("share.dashboard.enabled")%>
+                                    <%}else {%>
+                                        <%=i18n.localize("share.dashboard.disabled")%>
+                                    <%}%>
+                                </p>
+                            </div>
+                             <div class = "col-sm-7">
                                  <p id="share-info" class = <%= dashboard.shareDashboard ? "show" : "hide" %>><%= i18n.localize("share.information.message")%></p>
                              </div>
                         </div>
@@ -179,7 +193,21 @@
                             <span class="helper"></span>
                         </label>
                         </div>
-                         <div class = "col-sm-10">
+                        <div class="col-md-3">
+                                <p id="personalize-dashboard-state" class="<%if (dashboard.personalizeDashboard) {%>
+                                    <%="dashboard-state-enabled"%>
+                                    <%}else{%>
+                                    <%="dashboard-state-disabled"%>
+                                    <%}%>
+                                    ">
+                                    <%if (dashboard.personalizeDashboard){ %>
+                                        <%=i18n.localize("personalize.dashboard.enabled")%>
+                                    <%}else {%>
+                                        <%=i18n.localize("personalize.dashboard.disabled")%>
+                                    <%}%>
+                                </p>
+                            </div>
+                         <div class = "col-sm-7">
                              <p id="personalize-info" class = <%= dashboard.personalizeDashboard ? "show" : "hide" %>><%= i18n.localize("personalize.information.message")%></p>
                          </div>
                     </div>
@@ -301,7 +329,11 @@
 <script>
         var i18n_object = '{ ' +
                             ' "cannot.save.dashboard" : "<%= i18n.localize("cannot.save.dashboard")%>",' +
-                            ' "atleast.one.owner.role" : "<%= i18n.localize("atleast.one.owner.role")%>"' +
+                            ' "atleast.one.owner.role" : "<%= i18n.localize("atleast.one.owner.role")%>",' +
+                            ' "personalize.dashboard.enabled" : "<%= i18n.localize("personalize.dashboard.enabled")%>",' +
+                            ' "personalize.dashboard.disabled" : "<%= i18n.localize("personalize.dashboard.disabled")%>",' +
+                            ' "share.dashboard.enabled" : "<%= i18n.localize("share.dashboard.enabled")%>",' +
+                            ' "share.dashboard.disabled" : "<%= i18n.localize("share.dashboard.disabled")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
 </script>
