@@ -647,9 +647,15 @@ $(function () {
             if (dashboard.shareDashboard) {
                 $('#share-info').removeClass("hide");
                 $('#share-info').addClass("show");
+                $('#share-dashboard-state').removeClass();
+                $('#share-dashboard-state').addClass('dashboard-state-enabled');
+                $('#share-dashboard-state').text(i18n_data['share.dashboard.enabled']);
             } else {
                 $('#share-info').removeClass("show");
                 $('#share-info').addClass("hide");
+                $('#share-dashboard-state').removeClass();
+                $('#share-dashboard-state').addClass('dashboard-state-disabled');
+                $('#share-dashboard-state').text(i18n_data['share.dashboard.disabled']);
             }
 
         });
@@ -659,11 +665,16 @@ $(function () {
             if (dashboard.personalizeDashboard) {
                 $('#personalize-info').removeClass("hide");
                 $('#personalize-info').addClass("show");
+                $('#personalize-dashboard-state').removeClass();
+                $('#personalize-dashboard-state').addClass('dashboard-state-enabled');
+                $('#personalize-dashboard-state').text(i18n_data['personalize.dashboard.enabled']);
             } else {
                 $('#personalize-info').removeClass("show");
                 $('#personalize-info').addClass("hide");
+                $('#personalize-dashboard-state').removeClass();
+                $('#personalize-dashboard-state').addClass('dashboard-state-disabled');
+                $("#personalize-dashboard-state").text(i18n_data['personalize.dashboard.disabled']);
             }
-
         });
 
         // Enable Oauth settings
