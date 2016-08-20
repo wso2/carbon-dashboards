@@ -213,12 +213,14 @@ public class DataBaseHandler {
 
     /**
      * To delete the gadget usage information of partciular gadget in particular dashboard
-     * @param tenantId Id of the tenant, dashboard belongs to
+     *
+     * @param tenantId    Id of the tenant, dashboard belongs to
      * @param dashboardId Id of the dashboard
-     * @param gadgetId Id of the gadget
+     * @param gadgetId    Id of the gadget
      * @throws DashboardPortalException
      */
-    public void deleteGadgetUsageInformation (int tenantId, String dashboardId, String gadgetId) throws DashboardPortalException{
+    public void deleteGadgetUsageInformation(int tenantId, String dashboardId, String gadgetId)
+            throws DashboardPortalException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -240,12 +242,14 @@ public class DataBaseHandler {
 
     /**
      * To update the gadget state information
-     * @param tenantId Id of the tenant which gadget belongs to
-     * @param gadgetId Id of the gadget
+     *
+     * @param tenantId    Id of the tenant which gadget belongs to
+     * @param gadgetId    Id of the gadget
      * @param gadgetState State of the gadget, whether is it in active or delete state
      * @throws DashboardPortalException
      */
-    public void updateGadgetStateInformation(int tenantId, String gadgetId, String gadgetState) throws DashboardPortalException{
+    public void updateGadgetStateInformation(int tenantId, String gadgetId, String gadgetState)
+            throws DashboardPortalException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -263,6 +267,64 @@ public class DataBaseHandler {
         } finally {
             closeDatabaseResources(connection, preparedStatement, null);
         }
+    }
+
+    /**
+     * To update the databse when a dashboard is deleted
+     *
+     * @param tenantId    Id of the tenant which the dashboard belongs to
+     * @param dashboardId Id of the dashboard
+     * @throws DashboardPortalException
+     */
+    public void updateAfterDeletingDashboard(int tenantId, String dashboardId) throws DashboardPortalException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataBaseInitializer.getDBConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_DELETE_DASHBOARD_OPERATION);
+            preparedStatement.setInt(1, tenantId);
+            preparedStatement.setString(2, dashboardId);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            log.error("Cannot insert the gadget usage info ", e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /**
+     * To check whether a dashboard related usage information is updated in database
+     *
+     * @param tenantId    Id of the tenant which the dashboard belongs to
+     * @param dashboardId Id of the dashboard
+     * @return whether a dashboard related information exist in database
+     * @throws DashboardPortalException
+     */
+    public boolean checkDashboard(int tenantId, String dashboardId) throws DashboardPortalException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataBaseInitializer.getDBConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DASHBOARD_OPERATION);
+            preparedStatement.setInt(1, tenantId);
+            preparedStatement.setString(2, dashboardId);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            if (resultSet.first()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Cannot insert the gadget usage info ", e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+        return false;
     }
 
     /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetState;
+var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetState, updateDeleteDashboard, isDashboardExistInDatabase;
 
 (function () {
     var DataBaseHandler = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DataBaseHandler;
@@ -59,5 +59,14 @@ var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetSt
 
     updateGadgetState = function (gadgetId, gadgetState) {
         databaseHandler.updateGadgetStateInformation(tenantId, gadgetId, gadgetState.newState);
-    }
+    };
+
+    updateDeleteDashboard = function (dashboardId) {
+        databaseHandler.updateAfterDeletingDashboard(tenantId, dashboardId);
+    };
+
+
+    isDashboardExistInDatabase = function (dashboardId) {
+        return databaseHandler.checkDashboard(tenantId, dashboardId);
+    };
 }());

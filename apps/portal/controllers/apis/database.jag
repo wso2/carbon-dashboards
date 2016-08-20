@@ -62,6 +62,12 @@
             }
             response.sendError(400, i18n.localize("bad.request"));
         }
+    } else if (request.getMethod() === 'DELETE') {
+        if (matcher.match('/database/{did}')) {
+            dashboardId = matcher.elements().did;
+            dataBaseUtils.updateDeleteDashboard(dashboardId);
+        }
+
     } else {
         response.sendError(403, i18n.localize("forbidden"));
     }

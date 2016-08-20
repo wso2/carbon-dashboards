@@ -193,6 +193,7 @@ $(function () {
                         var componentBox = that.closest('.ues-component-box');
                         var componentBoxId = componentBox.attr('id');
                         var id = componentBox.find('.ues-component').attr('id');
+                        var hasHidden = hasHiddenGadget(componentBox);
 
                         if (id) {
                             removeComponent(findComponent(id), function (err) {
@@ -202,14 +203,13 @@ $(function () {
                                 saveDashboard();
                                 $("#" + ues.global.page).show();
                             });
-                        }
-
-                        if (hasHiddenGadget(componentBox)) {
+                        } else if (hasHidden) {
                             for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
                                 if (ues.global.dashboard.pages[i].id === page.id) {
                                     ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
                                 }
                             }
+                            ds.database.updateUsageData(ues.global.dashboard, hasHidden[0].content.id);
                             saveDashboard();
                         }
                         componentBox.html(componentBoxContentHbs());
@@ -226,10 +226,10 @@ $(function () {
      * @returns {*|boolean}
      */
     var hasHiddenGadget = function (componentBox) {
-        for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
-            if (ues.global.dashboard.pages[i].id === page.id) {
-                var component = ues.global.dashboard.pages[i].content[pageType][componentBox.attr('id')];
-                return (component && component.length > 0);
+        for (var i = 0; i < dashboard.pages.length; i++) {
+            if (dashboard.pages[i].id === page.id) {
+                var component = dashboard.pages[i].content[pageType][componentBox.attr('id')];
+                return (component && component.length > 0) ? component : null;
             }
         }
     };
@@ -578,7 +578,7 @@ $(function () {
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
-                if (err) {
+                if (!component && err) {
                     showGadgetError($(this), err);
                     err = null;
                 }
@@ -608,7 +608,7 @@ $(function () {
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
-                if (err) {
+                if (!component && err) {
                     showGadgetError($(this), err);
                     err = null;
                 }
@@ -884,7 +884,7 @@ $(function () {
             var index = area.indexOf(component);
             area.splice(index, 1);
             container.remove();
-
+            ds.database.updateUsageData(ues.global.dashboard, component.content.id);
             var compId = $('.ues-component-properties').data('component');
             if (compId !== component.id) {
                 return done();

@@ -15,8 +15,16 @@
  */
 package org.wso2.carbon.dashboard.deployment.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.wso2.carbon.dashboard.deployment.DashboardDeploymentException;
 import org.wso2.carbon.dashboard.deployment.internal.ServiceHolder;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.dashboard.portal.core.DashboardPortalException;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
@@ -27,6 +35,7 @@ import java.io.*;
  * Utility methods used at Dashboard CApp deployment process
  */
 public class DeploymentUtil {
+    private static final Log log = LogFactory.getLog(DeploymentUtil.class);
 
     public static void createRegistryResource(String url, Object content) throws RegistryException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -86,5 +95,28 @@ public class DeploymentUtil {
             stringBuilder.append(ls);
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * To update the database when dashboard is added through car file
+     *
+     * @param path Path of the dashboard.json
+     * @throws DashboardDeploymentException
+     */
+    public static void updateDatabase(String path) throws DashboardDeploymentException {
+        JSONParser jsonParser = new JSONParser();
+        try {
+            JSONObject dashboardConfig = (JSONObject) jsonParser.parse(new FileReader(path));
+
+            JSONArray pages = (JSONArray) dashboardConfig.get("pages");
+            log.error(pages);
+            log.info(pages.size());
+
+        } catch (IOException e) {
+            throw new DashboardDeploymentException("Error in reading dashboard json ", e);
+        } catch (ParseException e) {
+            throw new DashboardDeploymentException("Error in parsing dashboard json ", e);
+        }
+
     }
 }

@@ -286,7 +286,7 @@ var updateThemeProperties = function (theme, dashboardID) {
         dashboard = getAsset(dashboardID, true);
         var permission = {};
         permission.edit = true;
-        path = allowed(dashboard,permission) ? originalDashboardPath : userDashboardPath;
+        path = allowed(dashboard, permission) ? originalDashboardPath : userDashboardPath;
     } else {
         dashboard = getAsset(dashboardID, false);
         path = userDashboardPath;

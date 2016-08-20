@@ -187,16 +187,6 @@ $(function () {
     };
 
     /**
-     * Clone JSON object.
-     * @param {Object} o    Object to be cloned
-     * @return {Object}
-     * @private
-     */
-    var clone = function (o) {
-        return JSON.parse(JSON.stringify(o));
-    };
-
-    /**
      * Precompiling Handlebar templates
      */
     var layoutsListHbs = Handlebars.compile($("#ues-layouts-list-hbs").html());
@@ -479,7 +469,7 @@ $(function () {
             var index = area.indexOf(component);
             area.splice(index, 1);
             container.remove();
-            updateUsageData(component.id);
+            ds.database.updateUsageData(dashboard, component.content.id);
             var compId = $('.ues-component-properties').data('component');
             if (compId !== component.id) {
                 return done();
@@ -501,42 +491,11 @@ $(function () {
             if (err) {
                 return err;
             }
-            updateUsageData(component.id);
+            ds.database.updateUsageData(dashboard, component.content.id);
             done(err);
         });
     };
-
-    /**
-     * To update the usage data
-     * @param id Id of the component id
-     */
-    var updateUsageData = function(id) {
-        var assetId = getAssetId(id);
-        var usageData = createUsageData(assetId);
-
-        if (usageData.length > 0) {
-            sendUsageData(usageData, assetId);
-        } else {
-            deleteUsageData(assetId);
-        }
-    };
-
-
-    var isGadgetExist = function(id) {
-        var status = 'ACTIVE';
-        $.ajax({
-            url: ASSET_API + id,
-            method: 'GET',
-            async: false,
-            contentType: 'application/json'
-        }).error(function (xhr, status, err) {
-            if (xhr.status === 404) {
-                status = 'DELETED';
-            }
-        });
-        return status;
-    };
-
+    
     /**
      * Destroys a given list of components of an area.
      * @param {Object[]} components Components to be removed
@@ -558,23 +517,14 @@ $(function () {
                         });
                     };
                 }(components[i])));
+            } else if (components[i].id) {
+                ds.database.updateUsageData(dashboard, components[i].content.id);
             }
         }
 
         async.parallel(tasks, function (err, results) {
             done(err);
         });
-    };
-
-    /**
-     * To get the gadget id from component id
-     * @param id Id of the component
-     * @returns {string|*} Id of the gadget
-     */
-    var getAssetId = function(id){
-        var index = id.lastIndexOf("-");
-        id = index > 0 ? id.substr(0, index) : id;
-        return id;
     };
 
     /**
@@ -626,7 +576,41 @@ $(function () {
         if (page.id !== pid) {
             return done(false);
         }
+        var views = Object.keys(p.content);
+        for (var i = 0; i < views.length; i++){
+            updateUsageForViews(p, views[i]);
+        }
         destroyPage(p, type, done);
+    };
+
+    /**
+     * When deleting the dashboard, update the usages of different respective gadgets
+     * @param page Page
+     * @param pageType view of the page
+     */
+    var updateUsageForViews = function(page, pageType) {
+        var i;
+        var length;
+        var area;
+        var component;
+        var components;
+        var gadgetIds = [];
+        var content = page.content[pageType];
+        for (area in content) {
+            if (content.hasOwnProperty(area)) {
+                components = content[area];
+                length = components.length;
+                for (i = 0; i < length; i++) {
+                    component = components[i];
+                    var gadgetId = component.content.id;
+                    if (gadgetIds.indexOf(gadgetId) < 0) {
+                        ds.database.updateUsageData(dashboard, gadgetId);
+                        gadgetIds.push(gadgetId);
+                    }
+
+                }
+            }
+        }
     };
 
     /**
@@ -883,6 +867,7 @@ $(function () {
             pageType = newViewId;
             $('button[data-target=#left-sidebar]').click();
             $('.gadgets-grid').empty();
+            updateUsageForViews(page, pageType);
             renderView('', newViewId);
         });
 
@@ -1610,13 +1595,13 @@ $(function () {
                             saveDashboard();
                         });
                     }
-                    if (hasHidden) {
+                    else if (hasHidden) {
                         for (var i = 0; i < dashboard.pages.length; i++) {
                             if (dashboard.pages[i].id === page.id) {
                                 dashboard.pages[i].content[pageType][componentBoxId] = [];
                             }
                         }
-                        updateUsageData(hasHidden[0].id);
+                        ds.database.updateUsageData(dashboard, hasHidden[0].content.id);
                         saveDashboard();
                     }
                     if (removeBlock) {
@@ -1722,7 +1707,6 @@ $(function () {
             content: asset
         };
         content.push(component);
-        createUsageData(asset.id);
         ues.components.create(container, component, function (err, block) {
             if (err) {
                 throw err;
@@ -1730,35 +1714,8 @@ $(function () {
             renderComponentToolbar(component);
             container.find('.ues-component-actions .ues-component-properties-handle').click();
             saveDashboard();
-            var usageData = createUsageData(asset.id);
-            sendUsageData(usageData, asset.id);
+            ds.database.updateUsageData(dashboard, asset.id);
         });
-    };
-
-    /**
-     * To send the usage data to back end
-     * @param usageData Usage data to be send to back end
-     * @param id ID of the gadget
-     */
-    var sendUsageData = function (usageData, id) {
-        var dashboardID = dashboard.id;
-        if (dashboard.isUserCustom){
-            dashboardID = dashboardID + '$'
-        }
-        var state = isGadgetExist(id);
-        $.ajax({
-            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=insert&state='+state,
-            method: "POST",
-            data: JSON.stringify(usageData),
-            contentType: "application/json",
-            async: false,
-            success: function () {
-                console.log("successfully updated the usage data to database");
-            },
-            error: function (xhr, message) {
-                console.log("something went wrong. Could not update the database data due to " + message);
-            }
-        })
     };
 
     /**
@@ -1784,53 +1741,7 @@ $(function () {
         })
     };
     /**
-     * To create usage data for the particular gadget in this dashboard
-     * @param id ID of the gadget
-     * @returns {Array} Usage data as a JSON object
-     */
-    var createUsageData = function (id) {
-        var usageData = [];
-        var area;
-        var components;
-        var length;
-        var component;
-        var componentId;
-        var index;
-        if (dashboard.pages) {
-            for (var i = 0; i < dashboard.pages.length; i++) {
-                var pageViewCount = 0;
-                var pageUsageData = {};
-                pageUsageData[dashboard.pages[i].id] = {};
-                var views = Object.keys(dashboard.pages[i].content);
-                for (var j = 0; j < views.length; j++) {
-                    var content = dashboard.pages[i].content[views[j]];
-                    var count = 0;
-                    for (area in content) {
-                        if (content.hasOwnProperty(area)) {
-                            components = content[area];
-                            length = components.length;
-                            for (var k = 0; k < length; k++) {
-                                component = components[k];
-                                index = component.id ? component.id.lastIndexOf("-") : 0;
-                                componentId = index > 0 ? component.id.substr(0, index) : component.id;
-                                if (componentId === id) {
-                                    count++;
-                                }
-                            }
-                        }
-                    }
-                    if (count > 0) {
-                        pageUsageData[dashboard.pages[i].id][views[j]] = count;
-                        pageViewCount += count;
-                    }
-                }
-                if (pageViewCount > 0) {
-                    usageData.push(clone(pageUsageData));
-                }
-            }
-        }
-        return usageData;
-    };
+    
 
     /**
      * Triggers update hook of a given component.
@@ -2409,6 +2320,15 @@ $(function () {
         return childObj;
     };
 
+    /**
+     * Clone JSON object.
+     * @param {Object} o    Object to be cloned
+     * @return {Object}
+     * @private
+     */
+    var clone = function (o) {
+        return JSON.parse(JSON.stringify(o));
+    };
 
     /**
      * Splice the child object

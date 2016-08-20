@@ -38,4 +38,8 @@ class DataSourceConstants {
             " AND DASHBOARD_ID = ? AND GADGET_ID = ?";
     static final String SQL_UPDATE_GADGET_STATE_OPERATION = "UPDATE GADGET_USAGE SET GADGET_STATE = ? WHERE "
             + "TENANT_ID = ? AND GADGET_ID = ?";
+    static final String SQL_DELETE_DASHBOARD_OPERATION = "DELETE FROM GADGET_USAGE WHERE TENANT_ID = ?" +
+            " AND DASHBOARD_ID = ?";
+    static final String SQL_CHECK_DASHBOARD_OPERATION = "SELECT GADGET_ID FROM GADGET_USAGE WHERE TENANT_ID = ?" +
+            " AND DASHBOARD_ID = ?";
 }

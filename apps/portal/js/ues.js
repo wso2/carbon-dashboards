@@ -1,4 +1,5 @@
 var ues = ues || {};
+var ds = ds || {};
 ues.plugins = {};
 ues.global = {};
 
