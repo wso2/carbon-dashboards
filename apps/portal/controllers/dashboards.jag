@@ -183,6 +183,10 @@ var DASHBOARD_VERSION = "1.0.20";
                 return;
             }
         }
+        var databaseUtils = require('/modules/database-utils.js');
+        if (!databaseUtils.isDashboardExistInDatabase(dashboard.id)) {
+            dashboards.updateGadgetUsageInDashboard(dashboard);
+        }
         editor = request.getParameter('editor');
         editor ? include('includes/designer.jag') : include('includes/renderer.jag');
         return;

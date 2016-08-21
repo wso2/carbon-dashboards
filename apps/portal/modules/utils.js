@@ -91,7 +91,8 @@ var tenantExists = function (domain) {
 var currentContext = function () {
     var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
     var context = PrivilegedCarbonContext.getThreadLocalCarbonContext();
-    var username = context.getUsername();
+    var usr = require('/modules/user.js');
+    var username = context.getUsername() || usr.current().username;
     return {
         username: username,
         domain: context.getTenantDomain(),
@@ -345,12 +346,16 @@ var isAllowedView = function (viewRoles) {
  * @returns {boolean|*} true if the particular page is hidden otherwise false
  */
 var isPageHidden = function (page, menu) {
-    for (var i = 0; i < menu.length; i++) {
-        if (menu[i].id === page.id) {
-            return menu[i].ishidden;
+    if (menu) {
+        for (var i = 0; i < menu.length; i++) {
+            if (menu[i].id === page.id) {
+                return menu[i].ishidden;
+            }
         }
+        return true;
+    } else {
+        return false;
     }
-    return true;
 };
 
 

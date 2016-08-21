@@ -328,6 +328,75 @@ public class DataBaseHandler {
     }
 
     /**
+     * To check whether a dashboard contains a gadget that is already deleted
+     *
+     * @param tenantId    Id of the tenant which the dashboard belongs to
+     * @param dashboardId Id of the dashboard
+     * @return true if the dashboard contains gadget that is already deleted, otherwise false
+     * @throws DashboardPortalException
+     */
+    public boolean isDashboardDefective(int tenantId, String dashboardId) throws DashboardPortalException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String deletedGadgetState = "DELETED";
+        try {
+            connection = dataBaseInitializer.getDBConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DEFECTIVE_DASHBOARD);
+            preparedStatement.setInt(1, tenantId);
+            preparedStatement.setString(2, dashboardId);
+            preparedStatement.setString(3, deletedGadgetState);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            if (resultSet.first()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Cannot check defective dashboard ", e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+        return false;
+    }
+
+    /**
+     * To get the details of the defective usage data
+     * @param tenantId Id of the tenant which dashboard belongs to
+     * @param dashboardId Id of the dashboard
+     * @return Array list of usage data which has the deleted gadgets
+     * @throws DashboardPortalException
+     */
+    public List<String> getDefectiveUsageData(int tenantId, String dashboardId) throws DashboardPortalException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<String> defectiveUsageData = new ArrayList<String>();
+        String deletedGadgetState = "DELETED";
+
+        try {
+            connection = dataBaseInitializer.getDBConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DEFECTIVE_DASHBOARD);
+            preparedStatement.setInt(1, tenantId);
+            preparedStatement.setString(2, dashboardId);
+            preparedStatement.setString(3, deletedGadgetState);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            while (resultSet.next()) {
+                defectiveUsageData.add(resultSet.getString("USAGE_DATA"));
+            }
+        } catch (SQLException e) {
+            log.error("Cannot check defective dashboard ", e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, resultSet);
+        }
+        return defectiveUsageData;
+    }
+
+    /**
      * Close a given set of database resources.
      *
      * @param connection        Connection to be closed

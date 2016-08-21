@@ -39,8 +39,6 @@ $(function () {
     var roleAddAction = 'add';
     var roleRemoveAction = 'remove';
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
-    var ASSET_API = ues.utils.tenantPrefix() + 'apis/assets/publicAssets/';
-
 
     /**
      * Role for all logged in users
@@ -1717,31 +1715,6 @@ $(function () {
             ds.database.updateUsageData(dashboard, asset.id);
         });
     };
-
-    /**
-     * To delete the usage data in the back end when the relevant gadget is deleted
-     * @param id ID of the gadget
-     */
-    var deleteUsageData = function (id) {
-        var dashboardID = dashboard.id;
-        if (dashboard.isUserCustom){
-            dashboardID = dashboardID + '$'
-        }
-        $.ajax({
-            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=delete',
-            method: "POST",
-            contentType: "application/json",
-            async: false,
-            success: function () {
-                console.log("successfully updated the usage data to database");
-            },
-            error: function (xhr, message) {
-                console.log("something went wrong. Could not update the database data due to " + message);
-            }
-        })
-    };
-    /**
-    
 
     /**
      * Triggers update hook of a given component.
@@ -3528,11 +3501,74 @@ $(function () {
 
         $('#ues-dashboard-pages').html(pagesListHbs({
             current: current,
-            pages: pages || dashboard.pages,
-            home: landing || dashboard.landing,
+            pages: updateDefectiveInformtaion(pages || dashboard.pages),
+            home: landing || dashboard.landing
         }));
 
         $('#ues-dashboard-pages #pagesButton' + current.id).click();
+    };
+
+    /**
+     * To update the defective information to pages
+     * @param pages Pages object
+     * @returns {Object} Pages object with defective information
+     */
+    var updateDefectiveInformtaion = function (pages) {
+        var updatedPages = clone(pages);
+        var defectivePages = getDefectivePages();
+        console.log(defectivePages);
+        for (var i = 0; i < updatedPages.length; i++) {
+            if (defectivePages.indexOf(updatedPages[i].id) > -1) {
+                updatedPages[i].isDefective = true;
+            } else {
+                updatedPages[i].isDefective = false;
+            }
+        }
+        return updatedPages;
+    };
+
+    /**
+     * To get the defective usage data for particular database
+     * @returns Defective usage data
+     */
+    var getDefectiveUsageData = function () {
+        var defectiveUsageData = [];
+        var dashboardID = dashboard.id;
+        if (dashboard.isUserCustom) {
+            dashboardID = dashboardID + '$'
+        }
+        $.ajax({
+            url: DATABASE_API + '/' + dashboardID + '?task=getDefectivePages',
+            method: "POST",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                console.log("asasas " + data)
+                defectiveUsageData = JSON.parse(data);
+            }
+        });
+        return defectiveUsageData;
+    };
+
+    /**
+     * To get the defective pages of a dashboard
+     * @returns {Array} Arry of defective pages
+     */
+    var getDefectivePages = function () {
+        var defectiveUsageData = getDefectiveUsageData();
+        var defectivePages = [];
+        if (defectiveUsageData && defectiveUsageData.data.length > 0) {
+            defectiveUsageData = defectiveUsageData.data;
+            for (var i = 0; i < dashboard.pages.length; i++) {
+                for (var index = 0; index < defectiveUsageData.length; index++) {
+                    if (defectiveUsageData[index].indexOf(dashboard.pages[i].id) > -1) {
+                        defectivePages.push(dashboard.pages[i].id);
+                        break;
+                    }
+                }
+            }
+        }
+        return defectivePages;
     };
 
     /**

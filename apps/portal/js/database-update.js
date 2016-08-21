@@ -102,7 +102,7 @@
             error: function (xhr, message) {
                 console.log("something went wrong. Could not update the database data due to " + message);
             }
-        })
+        });
     };
 
     /**
@@ -126,7 +126,7 @@
             error: function (xhr, message) {
                 console.log("something went wrong. Could not update the database data due to " + message);
             }
-        })
+        });
     };
 
 

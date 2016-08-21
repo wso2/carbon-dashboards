@@ -26,10 +26,6 @@
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.application.deployer</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards</groupId>
-            <artifactId>org.wso2.carbon.dashboard.portal.core</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -59,7 +55,6 @@
                         <Import-Package>
                             org.wso2.carbon.dashboard.deployment.*
                             org.apache.commons.logging.*,
-                            org.wso2.carbon.dashboard.portal.core.*,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>

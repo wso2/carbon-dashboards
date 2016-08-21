@@ -148,7 +148,6 @@ $(function () {
         }
     };
 
-
     /**
      * To get the gadget usage information for a particular gadget id
      * @param gadgetId Id of the gadget
@@ -210,7 +209,7 @@ $(function () {
     };
 
     var manipulateGadgetUsageInfo = function (usage) {
-        var message = 'This gadget is used in '
+        var message = 'This gadget is used in ';
         for (var index = 0; index < usage.length; index++) {
             if (usage[index].indexOf("$") > -1) {
                 usage[index] = usage[index].substr(0, usage[index].length - 1);

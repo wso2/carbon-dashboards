@@ -26,6 +26,7 @@
     var INSERT_TASK = 'insert';
     var DELETE_TASK = 'delete';
     var USAGE_TASK = 'usage';
+    var DEFECTIVE_USAGE_TASK = 'getDefectivePages';
     var STATUS_UPDATE_TASK = 'stateupdate';
     var matcher = new URIMatcher(request.getRequestURI());
     var i18n = require('i18n');
@@ -48,13 +49,19 @@
             } else if (task === DELETE_TASK) {
                 dataBaseUtils.deleteGadgetUsage(dashboardId, gadgetId);
             }
-        } else if (matcher.match('/database/{gid}')) {
+        } else if (matcher.match('/database/{gid}') || matcher.match('/database/{gid}$')) {
             gadgetId = matcher.elements().gid;
             if (task === USAGE_TASK) {
                 var assetInfo = dataBaseUtils.getGadgetUsage(gadgetId);
                 print(assetInfo);
             } else if (task === STATUS_UPDATE_TASK) {
                 dataBaseUtils.updateGadgetState(gadgetId, content);
+            } else if (task === DEFECTIVE_USAGE_TASK) {
+                if (matcher.match('/database/{gid}$')) {
+                    gadgetId = gadgetId + '$';
+                }
+                var usageInfo = dataBaseUtils.checkDefectivePages(gadgetId);
+                print(usageInfo);
             }
         } else {
             if (log.isDebugEnabled()) {

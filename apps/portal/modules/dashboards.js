@@ -582,13 +582,26 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                 }
                 delete page.layout;
             });
+
+            if (!dashboardContent.menu) {
+                dashboardContent.menu = [];
+                dashboardContent.pages.forEach(function (page) {
+                    dashboardContent.menu.push({
+                        "id": page.id,
+                        "ishidden":false,
+                        "title": page.title,
+                        "subordinates":[]
+                    })
+
+                });
+            }
             var path = registryPath(dashboardContent.id);
             registry.put(path, {
                 content: JSON.stringify(dashboardContent),
                 mediaType: 'application/json'
             });
         }
-        if (!dashboardContent.theme.properties) {
+        if (!dashboardContent.theme || !dashboardContent.theme.properties) {
             var themeName = dashboardContent.theme;
             dashboardContent.theme = {};
             dashboardContent.theme.name = themeName;
@@ -596,4 +609,95 @@ var getConvertedDashboardContent = function (registry, dashboard) {
         }
     }
     return dashboardContent;
+};
+
+var updateGadgetUsageInDashboard = function (dashboard) {
+    var databaseUtils = require('/modules/database-utils.js');
+    var storeManager = require('/js/store-manager.js');
+    var i;
+    var length;
+    var area;
+    var component;
+    var components;
+    var gadgetIds = [];
+    for (i = 0; i < dashboard.pages.length; i++) {
+        var page = dashboard.pages[i];
+        var views = Object.keys(page.content);
+
+        for (var j = 0; j < views.length; j++) {
+            var content = page.content[views[0]];
+            for (area in content) {
+                if (content.hasOwnProperty(area)) {
+                    components = content[area];
+                    length = components.length;
+                    for (var k = 0; k < length; k++) {
+                        component = components[i];
+                        var gadgetId = component.content.id;
+                        if (gadgetIds.indexOf(gadgetId) < 0) {
+                            var usageData = createUsageData(dashboard, gadgetId);
+                            var isAssetExist = storeManager.getAsset('gadget', gadgetId);
+                            var state = isAssetExist ? 'ACTIVE' : 'DELETED';
+                            databaseUtils.insertOrUpdateGadgetUsage(dashboard.id, gadgetId, usageData, state);
+                            gadgetIds.push(gadgetId);
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
+/* To create usage data for the particular gadget in this dashboard
+ * @param id ID of the gadget
+ * @param dahshboard which the gadget belongs to
+ * @returns {Array} Usage data as a JSON object
+ */
+var createUsageData = function (dashboard, id) {
+    var usageData = [];
+    var area;
+    var components;
+    var length;
+    var component;
+    if (dashboard.pages) {
+        for (var i = 0; i < dashboard.pages.length; i++) {
+            var pageViewCount = 0;
+            var pageUsageData = {};
+            pageUsageData[dashboard.pages[i].id] = {};
+            var views = Object.keys(dashboard.pages[i].content);
+            for (var j = 0; j < views.length; j++) {
+                var content = dashboard.pages[i].content[views[j]];
+                var count = 0;
+                for (area in content) {
+                    if (content.hasOwnProperty(area)) {
+                        components = content[area];
+                        length = components.length;
+                        for (var k = 0; k < length; k++) {
+                            component = components[k];
+                            if (component.content.id === id) {
+                                count++;
+                            }
+                        }
+                    }
+                }
+                if (count > 0) {
+                    pageUsageData[dashboard.pages[i].id][views[j]] = count;
+                    pageViewCount += count;
+                }
+            }
+            if (pageViewCount > 0) {
+                usageData.push(clone(pageUsageData));
+            }
+        }
+    }
+    return usageData;
+};
+
+/**
+ * Clone JSON object.
+ * @param {Object} o    Object to be cloned
+ * @return {Object}
+ * @private
+ */
+var clone = function (o) {
+    return JSON.parse(JSON.stringify(o));
 };

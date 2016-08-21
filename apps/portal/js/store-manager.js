@@ -103,6 +103,7 @@ var downloadAsset;
      * @private
      * */
     var findDashboards = function (ctx, type, query, start, count) {
+        var databaseUtils = require('/modules/database-utils.js');
         if (!ctx.username) {
             return [];
         }
@@ -169,6 +170,7 @@ var downloadAsset;
                         pagesAvailable: dashboard.hideAllMenuItems ? false : utils.getUserAllowedViews(dashboard, userRoles),
                         editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                        defective : databaseUtils.checkDefectiveDashboard(dashboard.id, dashboard.isUserCustom),
                         owner: true
                     };
                 if (utils.allowed(userRoles, permissions.owners)) {
@@ -326,9 +328,14 @@ var downloadAsset;
     addAsset = function (type, id, assertFile, storeType) {
         var storeTypes = config.store.types;
         var storeTypesLength = config.store.types.length;
+        var databaseUtils = require('/modules/database-utils.js');
+
         for (var i = 0; i < storeTypesLength; i++) {
             if (storeType === storeTypes[i]) {
                 var specificStore = require(storeExtension(storeTypes[i]));
+                if (type === 'gadget') {
+                    databaseUtils.updateGadgetState(id, {newState : 'ACTIVE'});
+                }
                 return specificStore.addAsset(type, id, assertFile);
             }
         }

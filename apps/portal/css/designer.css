@@ -22,6 +22,11 @@
     opacity: 0.1;
 }
 
+.fw-alert {
+    color : #d9534f;
+    padding-bottom: 3px;
+}
+
 .add-asset {
     text-align: center;
     height: 200px;

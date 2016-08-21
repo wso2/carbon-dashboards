@@ -42,4 +42,6 @@ class DataSourceConstants {
             " AND DASHBOARD_ID = ?";
     static final String SQL_CHECK_DASHBOARD_OPERATION = "SELECT GADGET_ID FROM GADGET_USAGE WHERE TENANT_ID = ?" +
             " AND DASHBOARD_ID = ?";
+    static final String SQL_CHECK_DEFECTIVE_DASHBOARD = "SELECT USAGE_DATA FROM GADGET_USAGE WHERE TENANT_ID = ? "
+            + "AND DASHBOARD_ID = ? AND GADGET_STATE = ?";
 }
