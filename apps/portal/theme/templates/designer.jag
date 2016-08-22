@@ -595,21 +595,21 @@
             {{/each}}
         {{/each}}
          <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
-                <hr>
                 {{>ds-add-gadget-hbs}}
          <% } %>
     </script>
 
     <!-- Handlebar to render the add gadget button -->
     <script id="ds-add-gadget-hbs" type="text/x-handlebars-template">
-       <div class="thumbnail selectable tiles add-asset">
-            <a href="<%=tenantedUrlPrefix%>gadget/">
-                <span class="fw-stack fw-lg add-icon ">
-                    <i class="fw fw-circle-outline fw-stack-2x" ></i>
-                    <i class="fw fw-add fw-stack-1x"></i>
-                </span> <h5><%=i18n.localize("add.gadgets")%></h5>
-            </a>
-       </div>
+      <hr>
+      <a href="<%=tenantedUrlPrefix%>gadget/">
+        <button type="button" class="btn btn-primary btn-stack btn-block">
+            <span class="icon fw-stack fw-lg">
+                <i class="fw fw-circle-outline fw-stack-2x"></i>
+                <i class="fw fw-add fw-stack-1x"></i>
+            </span> <%=i18n.localize("add.gadgets")%>
+        </button>
+      </a>
     </script>
 
     <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
@@ -682,15 +682,14 @@
         <h4><%= i18n.localize("no.layout.found")%></h4>
         {{/if}}
          <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
-               <div class="thumbnail selectable tiles add-asset">
-                    <a href="<%=tenantedUrlPrefix%>layout/">
-                        <span class="fw-stack fw-lg add-icon ">
-                           <i class="fw fw-circle-outline fw-stack-2x" ></i>
-                           <i class="fw fw-add fw-stack-1x"></i>
-                        </span>
-                        <h4><%=i18n.localize("add.layouts")%></h4>
-                    </a>
-               </div>
+              <a href="<%=tenantedUrlPrefix%>layout/">
+                <button type="button" class="btn btn-primary btn-stack btn-block">
+                    <span class="icon fw-stack fw-lg">
+                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                        <i class="fw fw-add fw-stack-1x"></i>
+                    </span> <%=i18n.localize("add.layouts")%>
+                </button>
+              </a>
          <% } %>
 
     </script>

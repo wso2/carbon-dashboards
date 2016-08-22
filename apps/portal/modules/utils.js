@@ -92,7 +92,11 @@ var currentContext = function () {
     var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
     var context = PrivilegedCarbonContext.getThreadLocalCarbonContext();
     var usr = require('/modules/user.js');
-    var username = context.getUsername() || usr.current().username;
+    var username = context.getUsername();
+
+    if (!username && usr.current()) {
+        username = usr.current().username;
+    }
     return {
         username: username,
         domain: context.getTenantDomain(),
