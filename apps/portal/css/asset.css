@@ -49,6 +49,10 @@
     padding-right: 20px;
 }
 
+.ds-asset-error {
+    background-color: #fe8c8c !important;
+}
+
 #ds-assets-portal .ds-asset h1 {
     font-size: 18px;
 }

@@ -58,27 +58,40 @@ var isDownloadable;
         var parent = new File(assetsDir(ctx, type));
         var assetz = parent.listFiles();
         var assets = [];
+        var gadgetJSON = {};
+        var gadgetID = null;
         query = query ? new RegExp(query, 'i') : null;
         assetz.forEach(function (file) {
             if (!file.isDirectory()) {
                 return;
             }
+            gadgetID = file.getPath().substr(file.getPath().lastIndexOf(constants.FORWARD_SLASH) + 1);
             file = new File(file.getPath() + '/' + type + '.json');
             if (file.isExists()) {
                 file.open('r');
-                var asset = JSON.parse(file.readAll());
-                if (!query) {
+                try {
+                    var asset = JSON.parse(file.readAll());
+                    if (!query) {
+                        assets.push(asset);
+                        file.close();
+                        return;
+                    }
+                    var title = asset.title || '';
+                    if (!query.test(title)) {
+                        file.close();
+                        return;
+                    }
                     assets.push(asset);
+                } catch (error) {
+                    gadgetJSON = {};
+                    gadgetJSON.id = gadgetID;
+                    gadgetJSON.thumbnail = constants.WARNING_THUMBNAIL_URL;
+                    gadgetJSON.title = constants.ERROR_TTILE_PART1 + type + constants.ERROR_TITLE_PART2 + gadgetID;
+                    gadgetJSON.error = true;
+                    assets.push(gadgetJSON);
+                } finally {
                     file.close();
-                    return;
                 }
-                var title = asset.title || '';
-                if (!query.test(title)) {
-                    file.close();
-                    return;
-                }
-                assets.push(asset);
-                file.close();
             }
         });
         return assets;

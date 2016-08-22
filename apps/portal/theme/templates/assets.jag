@@ -137,11 +137,19 @@
     <!-- Handlebar templates -->
     <script id="ds-assets-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
-            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="thumbnail ds-asset" id="{{id}}" data-id="{{id}}">
-                    {{>ds-asset-thumbnail-hbs}}
+            {{#if error}}
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="thumbnail ds-asset ds-asset-error" id="{{id}}" data-id="{{id}}">
+                        {{>ds-asset-thumbnail-hbs}}
+                    </div>
                 </div>
-            </div>
+            {{else}}
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="thumbnail ds-asset" id="{{id}}" data-id="{{id}}">
+                        {{>ds-asset-thumbnail-hbs}}
+                    </div>
+                </div>
+            {{/if}}
         {{/each}}
     </script>
 

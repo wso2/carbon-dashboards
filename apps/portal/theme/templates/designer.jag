@@ -588,10 +588,12 @@
                 <h4>{{category}}</h4>
             {{/if_neq}}
             {{#each components}}
-            <div class="thumbnail ues-thumbnail selectable" id="{{id}}" data-id="{{id}}" data-type="{{../../type}}">
-                <h5 class="title ues-title">{{#if (lookup locale_titles ../../lang)}}{{lookup locale_titles ../../lang}}{{else}}{{title}}{{/if}}</h5>
-                <img src="{{resolveURI thumbnail}}" style="width: 192px;"/>
-            </div>
+                {{#unless error}}
+                    <div class="thumbnail ues-thumbnail selectable" id="{{id}}" data-id="{{id}}" data-type="{{../../type}}">
+                        <h5 class="title ues-title">{{#if (lookup locale_titles ../../lang)}}{{lookup locale_titles ../../lang}}{{else}}{{title}}{{/if}}</h5>
+                        <img src="{{resolveURI thumbnail}}" style="width: 192px;"/>
+                    </div>
+                {{/unless}}
             {{/each}}
         {{/each}}
          <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
@@ -673,10 +675,12 @@
     <script id="ues-layouts-list-hbs" type="text/x-handlebars-template">
         {{#if length}}
         {{#each .}}
-        <div class="thumbnail selectable" data-id="{{id}}">
-            <h5 class="title">{{title}}</h5>
-            <img src="{{resolveURI thumbnail}}" />
-        </div>
+            {{#unless error}}
+                <div class="thumbnail selectable" data-id="{{id}}">
+                    <h5 class="title">{{title}}</h5>
+                    <img src="{{resolveURI thumbnail}}" />
+                </div>
+            {{/unless}}
         {{/each}}
         {{else}}
         <h4><%= i18n.localize("no.layout.found")%></h4>

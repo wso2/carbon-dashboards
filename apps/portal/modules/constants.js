@@ -117,3 +117,8 @@ var A3 = 'A3';
 var A2 = 'A2';
 var A1 = 'A1';
 var DEFAULT_SIZE = 'Default Size';
+
+var WARNING_THUMBNAIL_URL = '../../../images/warning.png';
+var ERROR_TTILE_PART1 = "Error in "
+var ERROR_TITLE_PART2 = " with the ID - ";
+var FORWARD_SLASH = "/";

@@ -278,34 +278,38 @@ var downloadAsset;
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
             if ((storeType && storeTypes[i] === storeType) || !storeType) {
-                var specificStore = require(storeExtension(storeTypes[i]));
-                var assets = specificStore.getAssets(type, query);
-                var isDownloadable = specificStore.isDownloadable();
-                var isDeletable = specificStore.isDeletable();
-                if (assets) {
-                    for (var j = 0; j < assets.length; j++) {
-                        var allowedRoles = assets[j].allowedRoles;
-                        if (allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
-                            assets.splice(j, 1);
-                        } else {
-                            if (assets[j].thumbnail) {
-                                assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
+                try {
+                    var specificStore = require(storeExtension(storeTypes[i]));
+                    var assets = specificStore.getAssets(type, query);
+                    var isDownloadable = specificStore.isDownloadable();
+                    var isDeletable = specificStore.isDeletable();
+                    if (assets) {
+                        for (var j = 0; j < assets.length; j++) {
+                            var allowedRoles = assets[j].allowedRoles;
+                            if (allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                                assets.splice(j, 1);
                             } else {
-                                log.warn('Thumbnail url is missing in ' + assets[j].title);
-                                assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                                if (assets[j].thumbnail) {
+                                    assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
+                                } else {
+                                    log.warn('Thumbnail url is missing in ' + assets[j].title);
+                                    assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                                }
+                                if (type === 'gadget' && assets[j].data && assets[j].data.url) {
+                                    assets[j].data.url = fixLegacyURL(assets[j].data.url, storeTypes[i]);
+                                } else if (type === 'layout' && assets[j].url) {
+                                    assets[j].url = fixLegacyURL(assets[j].url, storeTypes[i]);
+                                } else {
+                                    log.warn('Url is not defined for ' + assets[j].title);
+                                }
+                                assets[j].isDownloadable = isDownloadable;
+                                assets[j].isDeletable = isDeletable;
                             }
-                            if (type === 'gadget' && assets[j].data && assets[j].data.url) {
-                                assets[j].data.url = fixLegacyURL(assets[j].data.url, storeTypes[i]);
-                            } else if (type === 'layout' && assets[j].url) {
-                                assets[j].url = fixLegacyURL(assets[j].url, storeTypes[i]);
-                            } else {
-                                log.warn('Url is not defined for ' + assets[j].title);
-                            }
-                            assets[j].isDownloadable = isDownloadable;
-                            assets[j].isDeletable = isDeletable;
                         }
+                        allAssets = assets.concat(allAssets);
                     }
-                    allAssets = assets.concat(allAssets);
+                } catch (error) {
+                    log.error("Error in loading the store type " + storeTypes[i]);
                 }
             }
         }
