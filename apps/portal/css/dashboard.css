@@ -662,7 +662,6 @@ ul.sidebar-messages > li:last-child {
 
 .pagetype-selection-dropdown {
     display: inline;
-    margin-left: 85px;
 }
 
 .pagetype-div {
@@ -673,8 +672,21 @@ ul.sidebar-messages > li:last-child {
 .dropdown-select-label {
     width: 35%;
     display: inline;
+    margin-right: 25px;
 }
 
+.dropdown-menu-button-size {
+    width: 110px;
+}
+
+.dropdown-ul{
+    min-width: 110px;
+    width: 110px;
+}
+
+.dropdown-li{
+    text-indent: 0 !important;
+}
 @-webkit-keyframes indeterminate {
     0% {
         left: -35%;

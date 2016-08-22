@@ -20,11 +20,23 @@ var dest;
     var log = new Log();
     var configs = require('/configs/portal.js').config();
     
+    /**
+     * Sanitize the input value.
+     * @param destination {String}
+     * @return string
+     * @private
+     */
+    var sanitizeDestination = function (destination) {
+        if (!destination) {
+            return "/portal/";
+        }
+        return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
+    };
     //include this if sso enabled
     if(configs.authentication.activeMethod === 'sso'){
         include('sso-login.jag');
     }else{
-        dest = request.getParameter('destination');
+        dest = sanitizeDestination(request.getParameter('destination'));
         include(utils.resolvePath('templates/login.jag')); 
     }
 }()); %>

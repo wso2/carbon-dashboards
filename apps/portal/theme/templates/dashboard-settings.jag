@@ -128,7 +128,7 @@
                         <div class="input-group-btn select" id="ues-dashboard-theme">
                             <button class="btn btn-default dropdown-toggle" type="button"
                                 data-toggle="dropdown" aria-expanded="false">
-                                <span class="selected"><%=utils.getDashboardTheme(dashboard.theme)%></span><span class="caret"></span>
+                                <span class="selected"><%=utils.getDashboardTheme(dashboard.theme.name)%></span><span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu option" role="menu">
                                <li><a href="#"><%=i18n.localize("theme.default")%></a></li>
@@ -161,7 +161,21 @@
                                 <span class="helper"></span>
                             </label>
                             </div>
-                             <div class = "col-sm-10">
+                            <div class="col-md-3 share-label">
+                                <p id="share-dashboard-state" class="<%if (dashboard.shareDashboard) {%>
+                                    <%="dashboard-state-enabled"%>
+                                    <%}else{%>
+                                    <%="dashboard-state-disabled"%>
+                                    <%}%>
+                                    ">
+                                    <%if (dashboard.shareDashboard){ %>
+                                        <%=i18n.localize("share.dashboard.enabled")%>
+                                    <%}else {%>
+                                        <%=i18n.localize("share.dashboard.disabled")%>
+                                    <%}%>
+                                </p>
+                            </div>
+                             <div class = "col-sm-7">
                                  <p id="share-info" class = <%= dashboard.shareDashboard ? "show" : "hide" %>><%= i18n.localize("share.information.message")%></p>
                              </div>
                         </div>
@@ -179,7 +193,21 @@
                             <span class="helper"></span>
                         </label>
                         </div>
-                         <div class = "col-sm-10">
+                        <div class="col-md-3 personalize-label">
+                                <p id="personalize-dashboard-state" class="<%if (dashboard.personalizeDashboard) {%>
+                                    <%="dashboard-state-enabled"%>
+                                    <%}else{%>
+                                    <%="dashboard-state-disabled"%>
+                                    <%}%>
+                                    ">
+                                    <%if (dashboard.personalizeDashboard){ %>
+                                        <%=i18n.localize("personalize.dashboard.enabled")%>
+                                    <%}else {%>
+                                        <%=i18n.localize("personalize.dashboard.disabled")%>
+                                    <%}%>
+                                </p>
+                            </div>
+                         <div class = "col-sm-7">
                              <p id="personalize-info" class = <%= dashboard.personalizeDashboard ? "show" : "hide" %>><%= i18n.localize("personalize.information.message")%></p>
                          </div>
                     </div>
@@ -283,6 +311,31 @@
         <button type="button" class="btn btn-primary" id="ues-modal-confirm-yes"><%= i18n.localize("ok")%></button>
         <button type="button" class="btn btn-default" id="ues-modal-confirm-no" data-dismiss="modal"><%= i18n.localize("cancel")%></button>
     </div>
+</script>
+
+<script id="ues-modal-info-hbs" type="text/x-handlebars-template">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
+        <h3 class="modal-title" id="infoModalLabel">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        {{message}}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="ues-modal-info-ok" data-dismiss="modal">Ok</button>
+    </div>
+</script>
+
+<script>
+        var i18n_object = '{ ' +
+                            ' "cannot.save.dashboard" : "<%= i18n.localize("cannot.save.dashboard")%>",' +
+                            ' "atleast.one.owner.role" : "<%= i18n.localize("atleast.one.owner.role")%>",' +
+                            ' "personalize.dashboard.enabled" : "<%= i18n.localize("personalize.dashboard.enabled")%>",' +
+                            ' "personalize.dashboard.disabled" : "<%= i18n.localize("personalize.dashboard.disabled")%>",' +
+                            ' "share.dashboard.enabled" : "<%= i18n.localize("share.dashboard.enabled")%>",' +
+                            ' "share.dashboard.disabled" : "<%= i18n.localize("share.dashboard.disabled")%>"' +
+                            ' }';
+        var i18n_data = JSON.parse(i18n_object);
 </script>
 
 </body>

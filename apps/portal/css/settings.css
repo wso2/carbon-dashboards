@@ -24,7 +24,7 @@
     max-height: 200px;
     width: 100%;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     background-color: #ffffff;
 }
 
@@ -45,7 +45,7 @@
     margin-top: 6px;
 }
 
-.permission-menu-content{
+.permission-menu-content {
     display: block;
     background-color: #FFFFFF;
     width: 100%;
@@ -56,16 +56,16 @@
     line-height: 28px;
 }
 
-.permission-menu-content span{
+.permission-menu-content span {
     padding-left: 5px;
 }
 
-.permission-menu-content:hover{
+.permission-menu-content:hover {
     background-color: #191b1a;
     color: #fff;
 }
 
-.permission-item{
+.permission-item {
     margin: 0;
 }
 
@@ -75,4 +75,22 @@
 .breadcrumb li.dashboard-name {
     max-width: calc(100% - 300px);
     margin-bottom: -5px;
+}
+
+.dashboard-state-disabled {
+    color: #aca5a6;
+    padding-top: 8px;
+}
+
+.dashboard-state-enabled {
+    color: #2f2829;
+    padding-top: 8px;
+}
+
+.share-label {
+    padding-left: 0px;
+}
+
+.personalize-label {
+    padding-left: 0px;
 }

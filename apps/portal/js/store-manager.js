@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
+var getAsset;
+var getAssets;
+var addAsset;
+var deleteAsset;
+var getDashboardsFromRegistry;
+var getListOfStore;
+var downloadAsset;
 
 (function () {
     var log = new Log();
@@ -21,23 +27,58 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     var carbon = require('carbon');
     var utils = require('/modules/utils.js');
     var moduleDashboards = require('/modules/dashboards.js');
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
+    var constants = require('/modules/constants.js');
+
+    /**
+     * Default Store.
+     * @const
+     * */
     var DEFAULT_STORE_TYPE = 'fs';
+    /**
+     * Legacy store type.
+     * @const
+     * */
     var LEGACY_STORE_TYPE = 'store';
-
-
+    /**
+     * Store extension location.
+     * @const
+     * */
     var STORE_EXTENSIONS_LOCATION = '/extensions/stores/';
+    /**
+     * Default thumbnail location.
+     * @const
+     * */
     var DEFAULT_THUMBNAIL = 'local://images/gadgetIcon.png';
 
+    /**
+     * Get the registry path.
+     * @param id {Number}
+     * @return {String}
+     * @private
+     * */
     var registryPath = function (id) {
         var path = '/_system/config/ues/dashboards';
         return id ? path + '/' + id : path;
     };
 
+    /**
+     * Get the store extension script.
+     * @param storeType {String}
+     * @return {String}
+     * @private
+     * */
     var storeExtension = function (storeType) {
         return STORE_EXTENSIONS_LOCATION + storeType + '/index.js';
     };
 
+    /**
+     * Get dashboards from registry.
+     * @param start {Number}
+     * @param count {Number}
+     * @param registry {String}
+     * @return {Object}
+     * */
     getDashboardsFromRegistry = function (start, count, registry) {
         if (!registry) {
             var server = new carbon.server.Server();
@@ -52,45 +93,15 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
     };
 
     /**
-     * Check whether a view is allowed for the current user
-     * according to his/her list of roles
-     * @param viewRoles Allowed roles list for the view
-     * @param userRolesList Particular user`s roles
-     * @returns {boolean} View is allowed or not
-     */
-    var isAllowedView = function (viewRoles, userRolesList) {
-        for (var i = 0; i < userRolesList.length; i++) {
-            var tempUserRole = userRolesList[i];
-            for (var j = 0; j < viewRoles.length; j++) {
-                if (viewRoles[j] === String(tempUserRole)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-
-    /**
-     * Returns the list of allowed views for the current user
-     * @param dashboard Current Dashboard
-     * @param userRoles roles of the current user
-     * @returns {Boolean} true if there is a allowed view
-     */
-    var getUserAllowedViews = function (dashboard, userRoles) {
-        var pages = dashboard.pages;
-        for (var j = 0; j < pages.length; j++) {
-            var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
-            var allowedViews = [];
-            for (var i = 0; i < views.length; i++) {
-                var viewRoles = pages[j].views.content[views[i]].roles;
-                if (isAllowedView(viewRoles, userRoles)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-
+     * Find dashboards.
+     * @param ctx {Object}
+     * @param type {String}
+     * @param query {String}
+     * @param start {Number}
+     * @param count {Number}
+     * @return {Object}
+     * @private
+     * */
     var findDashboards = function (ctx, type, query, start, count) {
         if (!ctx.username) {
             return [];
@@ -155,7 +166,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                         id: dashboard.id,
                         title: dashboard.title,
                         description: dashboard.description,
-                        pagesAvailable: getUserAllowedViews(dashboard, userRoles),
+                        pagesAvailable: dashboard.hideAllMenuItems ? false : utils.getUserAllowedViews(dashboard, userRoles),
                         editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         owner: true
@@ -184,6 +195,7 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
      * @param url
      * @param storeType
      * @returns corrected url
+     * @private
      */
     var fixLegacyURL = function (url, storeType) {
         if (url) {
@@ -197,19 +209,49 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
         }
         return storeType.concat('://' + url);
     };
-    
+
+    /**
+     * Get the list of stores from the designer config.
+     * @return types {Object}
+     * */
+    getListOfStore = function () {
+        if (!config.store.types || config.store.types.length <= 0) {
+            return null;
+        }
+        return config.store.types;
+    };
+
     /**
      * Find an asset based on the type and asset id
      * @param type
      * @param id
+     * @param isShared
      * @returns {*}
      */
-    getAsset = function (type, id) {
+    getAsset = function (type, id, isShared) {
+        var ctx = utils.currentContext();
+        var server = new carbon.server.Server();
         var storeTypes = config.store.types;
+        var um;
+        var userRoles;
+        var asset;
+
+        if (!isShared || !user || user.domain === String(carbon.server.superTenant.domain)) {
+            if (user) {
+                um = new carbon.user.UserManager(server, ctx.tenantId);
+                userRoles = um.getRoleListOfUser(ctx.username);
+            } else {
+                userRoles = [constants.ANONYMOUS_ROLE];
+            }
+        }
         for (var i = 0; i < storeTypes.length; i++) {
             var specificStore = require(storeExtension(storeTypes[i]));
-            var asset = specificStore.getAsset(type, id);
+            asset = specificStore.getAsset(type, id);
             if (asset) {
+                var allowedRoles = asset.allowedRoles;
+                if (userRoles && allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                    return {};
+                }
                 break;
             }
         }
@@ -238,6 +280,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             if ((storeType && storeTypes[i] === storeType) || !storeType) {
                 var specificStore = require(storeExtension(storeTypes[i]));
                 var assets = specificStore.getAssets(type, query);
+                var isDownloadable = specificStore.isDownloadable();
+                var isDeletable = specificStore.isDeletable();
                 if (assets) {
                     for (var j = 0; j < assets.length; j++) {
                         var allowedRoles = assets[j].allowedRoles;
@@ -257,6 +301,8 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                             } else {
                                 log.warn('Url is not defined for ' + assets[j].title);
                             }
+                            assets[j].isDownloadable = isDownloadable;
+                            assets[j].isDeletable = isDeletable;
                         }
                     }
                     allAssets = assets.concat(allAssets);
@@ -304,4 +350,23 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
             }
         }
     };
+
+    /**
+     * Get the download path for asset.
+     * @param type {String} asset type
+     * @param id {String} asset ID
+     * @param storeType {String} store type which asset belongs to
+     * @return {String}
+     * */
+    downloadAsset = function (type, id, storeType) {
+        var storeTypes = config.store.types;
+        var storeTypesLength = storeTypes.length;
+        for (var i = 0; i < storeTypesLength; i++) {
+            if (storeType === storeTypes[i]) {
+                var store = require(storeExtension(storeType));
+                return store.getAssetFilePath(type, id);
+            }
+        }
+        return null;
+    }
 }());

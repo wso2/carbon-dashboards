@@ -22,6 +22,15 @@
     opacity: 0.1;
 }
 
+.add-asset {
+    text-align: center;
+    height: 200px;
+}
+
+.add-icon {
+    font-size: 70px;
+}
+
 /**
  * Designer styles
  */
@@ -41,11 +50,11 @@
 }
 
 .ues-store-assets .ues-thumbnail .ues-title {
-    text-align:  center;
+    text-align: center;
 }
 
 .ues-thumbnail {
-    z-index:  1000;
+    z-index: 1000;
 }
 
 /*
@@ -97,8 +106,8 @@
 }
 
 .ues-banner-placeholder .banner-image {
-    width: 100%; 
-    height: 100%; 
+    width: 100%;
+    height: 100%;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -199,4 +208,37 @@
 .input-timeout {
     width: 85%;
     display: inline;
+}
+
+.permission-menu-content {
+    display: block;
+    background-color: #FFFFFF;
+    color: black;
+    width: 100%;
+    height: 100%;
+    cursor: hand;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 28px;
+}
+
+.permission-menu-content span {
+    padding-left: 5px;
+}
+
+.permission-menu-content:hover {
+    background-color: #191b1a;
+    color: #fff;
+}
+
+.permission-menu-content .permission-item {
+    margin: 0;
+}
+
+.tt-menu {
+    max-height: 200px;
+    width: 100%;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
 }

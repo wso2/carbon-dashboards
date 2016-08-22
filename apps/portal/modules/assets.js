@@ -34,7 +34,7 @@ var addAsset = function (type, id, fileRequest, storeType) {
     var zipFile = process.getProperty('carbon.home') + '/repository/deployment/server/jaggeryapps/portal' + tempAssetPath;
     var assetPath = '/store/' + urlDomain + '/' + storeType + '/' + type + '/';
     var configurationFileName = type + ".json";
-    var config = require('/configs/designer.json');
+    var config = require('/modules/config.js').getConfigFile();
     var bytesToMB = 1048576;
     var fileSizeLimit = type === "gadget" ? config.assets.gadget.fileSizeLimit : config.assets.layout.fileSizeLimit;
     var fileUtils = require("/modules/file-utils.js");
@@ -78,7 +78,8 @@ var addAsset = function (type, id, fileRequest, storeType) {
 
         for (var entries = fileInZip; entries.hasMoreElements();) {
             var entry = entries.nextElement();
-            if ((entry.getName().toLowerCase() + "").indexOf(configurationFileName) > -1) {
+            var entryIndex = (entry.getName().toLowerCase() + "").indexOf(configurationFileName);
+            if (entryIndex === 0 || entryIndex === 1) {
                 var assetDirectory = new File(assetPath);
                 var files = assetDirectory.listFiles();
                 fileName = (storeType === constants.FILE_STORE) ? fileName : id;

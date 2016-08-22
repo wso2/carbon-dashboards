@@ -31,6 +31,7 @@ $(function () {
     // Pre-compiling handlebar templates
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
+    var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
     var sharedRoleHbs = Handlebars.compile($("#ues-shared-role-hbs").html());
 
     /**
@@ -637,7 +638,7 @@ $(function () {
         $('#ues-dashboard-theme').on("click", '.option li', function (e) {
             var text = $(this).children().text();
             $('#ues-dashboard-theme .selected').text(text);
-            dashboard.theme = text;
+            dashboard.theme.name = text;
         });
 
         //Share dashboard among tenants
@@ -646,9 +647,15 @@ $(function () {
             if (dashboard.shareDashboard) {
                 $('#share-info').removeClass("hide");
                 $('#share-info').addClass("show");
+                $('#share-dashboard-state').removeClass();
+                $('#share-dashboard-state').addClass('dashboard-state-enabled');
+                $('#share-dashboard-state').text(i18n_data['share.dashboard.enabled']);
             } else {
                 $('#share-info').removeClass("show");
                 $('#share-info').addClass("hide");
+                $('#share-dashboard-state').removeClass();
+                $('#share-dashboard-state').addClass('dashboard-state-disabled');
+                $('#share-dashboard-state').text(i18n_data['share.dashboard.disabled']);
             }
 
         });
@@ -658,11 +665,16 @@ $(function () {
             if (dashboard.personalizeDashboard) {
                 $('#personalize-info').removeClass("hide");
                 $('#personalize-info').addClass("show");
+                $('#personalize-dashboard-state').removeClass();
+                $('#personalize-dashboard-state').addClass('dashboard-state-enabled');
+                $('#personalize-dashboard-state').text(i18n_data['personalize.dashboard.enabled']);
             } else {
                 $('#personalize-info').removeClass("show");
                 $('#personalize-info').addClass("hide");
+                $('#personalize-dashboard-state').removeClass();
+                $('#personalize-dashboard-state').addClass('dashboard-state-disabled');
+                $("#personalize-dashboard-state").text(i18n_data['personalize.dashboard.disabled']);
             }
-
         });
 
         // Enable Oauth settings
@@ -688,7 +700,16 @@ $(function () {
 
         // Save dashboard
         $('#ues-dashboard-saveBtn').on('click', function () {
-            saveDashboard();
+            if ($('.ues-shared-owner > .ues-shared-role').data('role')) {
+                saveDashboard();
+            } else {
+                var modalElement = $('#designerModal');
+                modalElement.find('.modal-content').html(modalInfoHbs({
+                    title: i18n_data['cannot.save.dashboard'],
+                    message: i18n_data['atleast.one.owner.role']
+                }));
+                modalElement.modal();
+            }
         });
 
         // Reset the changes

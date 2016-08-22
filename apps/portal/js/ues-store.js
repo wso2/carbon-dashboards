@@ -21,6 +21,21 @@
     var store = (ues.store = {});
     var SUPERTENANT_DOMAIN = "carbon.super";
 
+    store.getStoreList = function (cb) {
+        $.ajax({
+            url: assetsUrl + '/storeList',
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
+            }
+        });
+    };
+
     store.asset = function (type, id, cb) {
         $.ajax({
             url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
@@ -38,7 +53,7 @@
 
     store.sharedAsset = function (type, id, cb) {
         $.ajax({
-            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + SUPERTENANT_DOMAIN + '&' : '') + 'type=' + type,
+            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + SUPERTENANT_DOMAIN + '&' : '') + 'type=' + type + '&shared=true',
             method: "GET",
             contentType: "application/json",
             async: false,
@@ -50,7 +65,7 @@
             }
         });
     };
-    
+
     store.assets = function (type, paging, cb, storeType) {
         var query = 'type=' + type;
         query += domain ? '&domain=' + domain : '';
@@ -64,6 +79,24 @@
         $.get(assetsUrl + '?' + query, function (data) {
             cb(false, data);
         }, 'json');
+    };
+
+    store.downloadAsset = function (type, id, storeType, cb) {
+        var query = 'type=' + type + "&storeType=" + storeType;
+        query += domain ? '&domain=' + domain : '';
+        $.ajax({
+            url: assetsUrl + '/download/' + id + '?' + query,
+            method: 'GET',
+            contentType: "application/json",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
+            }
+        });
     };
 
     store.deleteAsset = function (type, id, storeType, cb) {

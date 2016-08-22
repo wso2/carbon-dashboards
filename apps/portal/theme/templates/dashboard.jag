@@ -19,6 +19,7 @@
     var i18n = require("i18n");
     var utils = require('/modules/utils.js');
     i18n.init(request, utils.getLocaleResourcePath());
+    var isEditor = false;
 
     // If the pageId is null, render the landing page
     pageId = pageId || dashboard.landing;
@@ -27,11 +28,12 @@
     var user = usr.current();
     var isAnonView = request.getParameter('isAnonView');
     var isPreview = request.getParameter('preview');
-    var queryString = request.getQueryString();
+    var queryString;
     var isPersonalizeEnabled = request.getParameter('dashboardeditor');
     var userRoles = [];
     var viewId = request.getParameter('currentView');
     var constants = require('/modules/constants.js');
+    var shared = request.getParameter('shared');
 
     if (!user) {
         userRoles.push(constants.ANONYMOUS_ROLE);
@@ -39,11 +41,18 @@
         var tempRoles = usr.getUserRoles();
         if (isPreview) {
             userRoles.push(constants.ANONYMOUS_ROLE);
+            isEditor = utils.allowed(user.roles, dashboard.permissions.owners) ||
+                    utils.allowed(user.roles, dashboard.permissions.editors);
         }
         for (var i = 0; i < tempRoles.length; i++) {
             userRoles.push(tempRoles[i]);
         }
     }
+
+    queryString = shared ? "shared=" + shared : queryString;
+    queryString = isPersonalizeEnabled ? (queryString ? queryString + "&" : "") + "dashboardeditor=" + isPersonalizeEnabled : queryString;
+    queryString = isPreview ? (queryString ? queryString + "&" : "") + "preview=" + isPreview : queryString;
+
     // Get the anon view
     if (!user) {
         if (isAnonView) {
@@ -72,6 +81,14 @@
     var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
     if (request.getParameter('isAnonView') == 'true') {
         dashboardUrl += '?isAnonView=true';
+    }
+
+    // Getting dashboard color theme
+    var gadgetTheme;
+    if(request.getCookie('dashboardTheme') != null) {
+        gadgetTheme = request.getCookie('dashboardTheme').value;
+    } else {
+        gadgetTheme = 'dark';
     }
 %>
 <html lang="en">
@@ -102,7 +119,7 @@
 
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
-<body class="dashboard lang_<%=request.getLocale()%> dark">
+<body class="dashboard lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
     <!-- Modal -->
     <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -144,14 +161,15 @@
                                             <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
                                         </div>
                                         <div class="dropdown pagetype-selection-dropdown">
-                                            <div class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                            <div class="btn btn-primary dropdown-toggle dropdown-menu-button-size" data-toggle="dropdown">
                                                 <div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
                                             </div>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="#">A4</a></li>
-                                                <li><a href="#">A3</a></li>
-                                                <li><a href="#">A2</a></li>
-                                                <li><a href="#">A1</a></li>
+                                            <ul class="dropdown-menu dropdown-ul">
+                                                <li class="dropdown-li"><a href="#">Default Size</a></li>
+                                                <li class="dropdown-li"><a href="#">A4</a></li>
+                                                <li class="dropdown-li"><a href="#">A3</a></li>
+                                                <li class="dropdown-li"><a href="#">A2</a></li>
+                                                <li class="dropdown-li"><a href="#">A1</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -289,10 +307,10 @@
                     data-style="btn-default" data-width="100px" style="width: 200px">
                     </select>
                 </div>
-                <div class="container-fluid body-wrapper">
+                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" >
             <% } else { %>
-                <div class="container-fluid body-wrapper" style="height: 100%;">
+                <div class="container-fluid body-wrapper" style="height: 100%;" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" style="position: absolute;">
             <% } %>
                     <div class="nano-content" >
@@ -506,6 +524,15 @@
             </div>
         </div>
     </script>
+
+    <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
+    <script id="ds-error-hbs" type="text/x-handlebars-template">
+      <div class="alert alert-danger" id = "delete-error" role="alert">
+        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
+        <h3>{{error}}</h3>
+      </div>
+    </script>
+
    <!-- View options for a particular page -->
     <script id="view-option-hbs" type="text/x-handlebars-template">
         <option value = {{viewId}}>{{viewName}}</option>
@@ -559,55 +586,15 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('gadget-properties')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-handlebar-helpers')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard-theme')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-ajax-api')%>"></script>
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
 
     <script>
-        
-        function getCookie(cname) {
-            var name = cname + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0; i<ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1);
-                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-            }
-            return "";
-        }
-        
         $(document).ready(function() {
-            if((getCookie('dashboardTheme') == 'dark') || (getCookie('dashboardTheme') == '')){
-                $('[data-toggle="theme"]').attr('checked', 'checked');
-                $('body').addClass('dark');  
-            }
-            else{
-                $('[data-toggle="theme"]').removeAttr('checked');
-                $('body').removeClass('dark');
-            }
-
-            <% if(typeof  bgColor != 'undefined'){ %>
+           <% if(typeof  bgColor != 'undefined'){ %>
                 $('.dashboard').css({'background-color': '<%=bgColor%>'});
            <% } %>
-
-        });
-                
-        $('[data-toggle="theme"]').change(function(){
-            if($(this).prop('checked') == true){
-                $('[data-toggle="theme"]').each(function(){
-                    $('[data-toggle="theme"]').attr('checked', 'checked');
-                });
-                $('body').addClass('dark');
-                $('iframe[id^="sandbox-gadget"]').contents().find('body').addClass('dark');
-                document.cookie = "dashboardTheme=dark";
-            }
-            else{
-                $('[data-toggle="theme"]').each(function(){
-                    $(this).removeAttr('checked');
-                });
-                $('body').removeClass('dark');
-                $('iframe[id^="sandbox-gadget"]').contents().find('body').removeClass('dark');
-                document.cookie = "dashboardTheme=light";
-            }
         });
 
         $("#edit-view-toggler").change(function(){
@@ -617,71 +604,15 @@
             else{
                location.href = "<%=dbRoot%><%=pageId%>?personalize=false";
             }
-		})
-
-        var nanoScrollerSelector = $(".nano");
-        nanoScrollerSelector.nanoScroller();
-
-        function updateSidebarNav(target) {
-            $(target).show();
-            $(target).siblings().hide();
-            nanoScrollerSelector[0].nanoscroller.reset();
-        }
-
-        if (!ues.global.renderFromExtension) {
-            ues.dashboards.render($('.ues-components-grid'), ues.global.dashboard, ues.global.page);
-        }
-        
-        var iframesReadyInterval = setInterval(function() {
-            var done = false;
-            
-            $('.gadget-body').each(function(i){
-                if($(this).hasClass('loading')){
-                    done = false;
-                }
-                else {
-                    if($('iframe[id^="sandbox-gadget"]').length == (i+1)){
-                        done = true;
-                    }
-                }
-            });
-            
-            if(done == true) {
-                clearInterval(iframesReadyInterval);
-                $('.body-wrapper').loading('hide');
-            }    
-        }, 200);
-
-        $(document).ready(function() {
-            if($('.gadget-body').length > 0){
-                $('.body-wrapper').loading('show');
-                $('.gadget-body').addClass('loading');
-            }
-            
-            if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
-                $('.grid-stack-item[data-banner=true]')
-                    .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
-            }
         });
-        
-        function toggleProductLogo(sidebarEventType){
-            var logo = $('#product-logo');
-            
-            if (sidebarEventType == 'hidden'){
-                logo.show();
-            }
-            else if (sidebarEventType == 'shown'){
-                logo.hide();
-            }
-        }
 
-        $('#left-sidebar').on('hidden.sidebar', function(e){
-            toggleProductLogo(e.type)
-        });
-        
-        $('#left-sidebar').on('shown.sidebar', function(e){
-            toggleProductLogo(e.type)
-        });
+        var i18n_object = '{ ' +
+                            ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
+                            ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
+                            ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>"' +
+                            ' }';
+        var i18n_data = JSON.parse(i18n_object);
 
         //usage : in traverseMenu helper
         var user = <%= user %>;
@@ -691,6 +622,7 @@
         var userRolesList = <%= userRoles %>;
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;
+        var isEditor = <%= isEditor%>;
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
         <% } %>

@@ -130,7 +130,7 @@ var getAsset = function (id, originalDashboardOnly) {
     var contentDashboardJSON = getConvertedDashboardContent(registry, path);
     var dashboard = contentDashboardJSON;
     if (dashboard) {
-        if(!(contentDashboardJSON.permissions).hasOwnProperty("owners")){
+        if (!(contentDashboardJSON.permissions).hasOwnProperty("owners")) {
             contentDashboardJSON.permissions.owners = contentDashboardJSON.permissions.editors;
         }
         var dashboard = contentDashboardJSON;
@@ -189,9 +189,11 @@ var getAssets = function (paging) {
     var registry = getRegistry();
     var dashboards = registry.content(registryPath(), paging);
     var dashboardz = [];
-    dashboards.forEach(function (dashboard) {
-        dashboardz.push(getConvertedDashboardContent(registry, dashboard));
-    });
+    if (dashboards !== null) {
+        dashboards.forEach(function (dashboard) {
+            dashboardz.push(getConvertedDashboardContent(registry, dashboard));
+        });
+    }
     return dashboardz;
 };
 
@@ -217,6 +219,26 @@ var create = function (dashboard) {
 };
 
 /**
+ * deploy dashboard with given dashboard json and the content.
+ * @param {Object} dashboard Dashboard object to be saved.
+ * @return {null}
+ * */
+var deployDashboard = function (dashboard) {
+    var server = new carbon.server.Server();
+    var registry = getRegistry();
+    var userManager = new carbon.user.UserManager(server);
+    var path = registryPath(dashboard.id);
+    if (registry.exists(path)) {
+        throw 'a dashboard exists with the same id ' + dashboard.id;
+    }
+    registry.put(path, {
+        content: JSON.stringify(dashboard),
+        mediaType: 'application/json'
+    });
+    userManager.denyRole('internal/everyone', path, 'read');
+};
+
+/**
  * Update an existing dashboard with given data.
  * @param {Object} dashboard                    Dashboard object to be updated.
  * @return {null}
@@ -235,6 +257,47 @@ var update = function (dashboard) {
             throw 'a dashboard cannot be found with the id ' + dashboard.id;
         }
     }
+    registry.put(path, {
+        content: JSON.stringify(dashboard),
+        mediaType: 'application/json'
+    });
+};
+
+/**
+ * Update an existing dashboard with given theme.
+ * @param theme
+ * @param dashboardID DashboardID of dashboard object to be updated
+ */
+var updateThemeProperties = function (theme, dashboardID) {
+    var registry = getRegistry();
+    var dashboard = null;
+    var usr = require('/modules/user.js');
+    var user = usr.current();
+    if (!user) {
+        throw 'User is not logged in ';
+    }
+    var userDashboardPath = registryUserPath(dashboardID, user.username);
+    var path = null;
+    if (!registry.exists(userDashboardPath)) {
+        var originalDashboardPath = registryPath(dashboardID);
+        if (!registry.exists(originalDashboardPath)) {
+            throw 'a dashboard cannot be found with the id ' + dashboard.id;
+        }
+        dashboard = getAsset(dashboardID, true);
+        var permission = {};
+        permission.edit = true;
+        path = allowed(dashboard,permission) ? originalDashboardPath : userDashboardPath;
+    } else {
+        dashboard = getAsset(dashboardID, false);
+        path = userDashboardPath;
+    }
+    dashboard.theme = {};
+    dashboard.theme.properties = {};
+    dashboard.theme.name = theme.name;
+    for (var i = 0; i < Object.keys(theme.properties).length; i++) {
+        dashboard.theme.properties[Object.keys(theme.properties)[i]] = theme.properties[Object.keys(theme.properties)[i]];
+    }
+
     registry.put(path, {
         content: JSON.stringify(dashboard),
         mediaType: 'application/json'
@@ -293,6 +356,19 @@ var remove = function (id) {
         registry.remove(path);
     }
     usr.removeRoles(id);
+};
+
+/**
+ * Undeploy an existing dashboard from registry.
+ * @param {String} id                          Id of the dashboard.
+ * @return {null}
+ * */
+var unDeployDashboard = function (id) {
+    var registry = getRegistry();
+    var path = registryPath(id);
+    if (registry.exists(path)) {
+        registry.remove(path);
+    }
 };
 
 /**
@@ -491,6 +567,8 @@ var getConvertedDashboardContent = function (registry, dashboard) {
         if (!dashboardContent.version || dashboardContent.version !== dashboardJsonVersion) {
             dashboardContent.version = dashboardJsonVersion;
             dashboardContent.pages.forEach(function (page) {
+                page.views = {};
+                page.views.content = {};
                 if (page.layout.content.loggedIn) {
                     page.views.content.default = page.layout.content.loggedIn;
                     page.views.content.default.name = constants.DEFAULT_VIEW_NAME;
@@ -502,12 +580,19 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                     page.views.content.anon.roles = [constants.ANONYMOUS_ROLE];
                     delete page.layout.content.anon;
                 }
+                delete page.layout;
             });
             var path = registryPath(dashboardContent.id);
             registry.put(path, {
                 content: JSON.stringify(dashboardContent),
                 mediaType: 'application/json'
             });
+        }
+        if (!dashboardContent.theme.properties) {
+            var themeName = dashboardContent.theme;
+            dashboardContent.theme = {};
+            dashboardContent.theme.name = themeName;
+            dashboardContent.theme.properties = {};
         }
     }
     return dashboardContent;

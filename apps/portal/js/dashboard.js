@@ -54,10 +54,18 @@ $(function () {
     var ANONYMOUS_ROLE = 'anonymous';
 
     /**
-     * Anonymous dashboard view mode.
+     * Http status code for not found
+     * @type {number}
      * @const
      */
-    var ANONYMOUS_DASHBOARD_VIEW = 'anon';
+    var NOT_FOUND_ERROR_CODE = 404;
+
+    /**
+     * Http status code for un authorized
+     * @type {number}
+     * @const
+     */
+    var UNAUTHORIZED_ERROR_CODE = 401;
 
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
 
@@ -67,7 +75,13 @@ $(function () {
      */
     var dashboardsApiRestore = ues.utils.tenantPrefix() + 'apis/dashboards/restore';
 
+    /**
+     * url for update theme properties
+     * @const
+     */
+    var themeApi = ues.utils.tenantPrefix() + 'apis/theme';
     var page;
+    var dashboardTheme = {};
     var selectedViewId;
     /**
      * Pre-compiling Handlebar templates
@@ -76,6 +90,8 @@ $(function () {
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
     var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
     var viewOptionHbs = Handlebars.compile($("#view-option-hbs").html());
+    var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
+    var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
 
     /**
      * Initializes the component toolbar.
@@ -85,7 +101,7 @@ $(function () {
     var initComponentToolbar = function () {
         var viewer = $('.ues-components-grid');
         if (isPersonalizeEnabled) {
-            $(".gadget-heading").css("cursor","move");
+            $(".gadget-heading").css("cursor", "move");
         }
         // gadget title bar custom button function handler
         viewer.on('click', '.ues-custom-action', function (e) {
@@ -162,35 +178,60 @@ $(function () {
 
         // event handler for trash button
         viewer.on('click', '.ues-component-box .ues-trash-handle', function () {
-            var that = $(this);
-            var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
-            var hasComponent = false;
-            if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
-                hasComponent = true;
-            }
+            if (isPersonalizeEnabled) {
+                var that = $(this);
+                var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
+                var hasComponent = false;
+                if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
+                    hasComponent = true;
+                }
 
-            showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
-                var designerModal = $('#dashboardViewModal');
-                designerModal.find('#btn-delete').on('click', function () {
-                    var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
-                    var componentBox = that.closest('.ues-component-box');
-                    var id = componentBox.find('.ues-component').attr('id');
+                showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
+                    var designerModal = $('#dashboardViewModal');
+                    designerModal.find('#btn-delete').on('click', function () {
+                        var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
+                        var componentBox = that.closest('.ues-component-box');
+                        var componentBoxId = componentBox.attr('id');
+                        var id = componentBox.find('.ues-component').attr('id');
 
-                    if (id) {
-                        removeComponent(findComponent(id), function (err) {
-                            if (!err) {
-                                removeBlock = false;
+                        if (id) {
+                            removeComponent(findComponent(id), function (err) {
+                                if (err) {
+                                    throw err;
+                                }
+                                saveDashboard();
+                                $("#" + ues.global.page).show();
+                            });
+                        }
+
+                        if (hasHiddenGadget(componentBox)) {
+                            for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
+                                if (ues.global.dashboard.pages[i].id === page.id) {
+                                    ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                                }
                             }
                             saveDashboard();
-                            $("#" + ues.global.page).show();
-                            getGridstack().remove_widget(componentBox.parent());
-                            updateLayout();
-                        });
-                    }
-                    designerModal.modal('hide');
+                        }
+                        componentBox.html(componentBoxContentHbs());
+                        designerModal.modal('hide');
+                    });
                 });
-            });
+            }
         });
+    };
+
+    /**
+     * To check whether a box has a hidden gadget that is not visible due to authorization or missing file problem
+     * @param componentBox
+     * @returns {*|boolean}
+     */
+    var hasHiddenGadget = function (componentBox) {
+        for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
+            if (ues.global.dashboard.pages[i].id === page.id) {
+                var component = ues.global.dashboard.pages[i].content[pageType][componentBox.attr('id')];
+                return (component && component.length > 0);
+            }
+        }
     };
 
     /**
@@ -301,7 +342,7 @@ $(function () {
             $('#ds-allowed-view-list').empty();
         }
         var allowedViews = [];
-        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             var viewRoles = page.views.content[views[i]].roles;
             if (isAllowedView(viewRoles)) {
@@ -330,7 +371,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
             initComponentToolbar();
         });
     });
@@ -381,13 +422,15 @@ $(function () {
         var length = components.length;
         var tasks = [];
         for (i = 0; i < length; i++) {
-            tasks.push((function (component) {
-                return function (done) {
-                    destroyComponent(component, function (err) {
-                        done(err);
-                    });
-                };
-            }(components[i])));
+            if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
+                tasks.push((function (component) {
+                    return function (done) {
+                        destroyComponent(component, function (err) {
+                            done(err);
+                        });
+                    };
+                }(components[i])));
+            }
         }
         async.parallel(tasks, function (err, results) {
             done(err);
@@ -416,7 +459,7 @@ $(function () {
      * @returns {String} View id
      */
     var getViewId = function (viewName) {
-        var views = Object.keys(JSON.parse(JSON.stringify(page.views.content)));
+        var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             if (page.views.content[views[i]].name) {
                 if (page.views.content[views[i]].name === viewName) {
@@ -437,7 +480,7 @@ $(function () {
         for (var i = 0; i < userRolesList.length; i++) {
             var tempUserRole = userRolesList[i];
             for (var j = 0; j < viewRoles.length; j++) {
-                if (viewRoles[j] === tempUserRole) {
+                if (isEditor || viewRoles[j] === tempUserRole) {
                     return true;
                 }
             }
@@ -493,7 +536,7 @@ $(function () {
         var pids = [];
 
         for (var j = 0; j < pages.length; j++) {
-            var views = Object.keys(JSON.parse(JSON.stringify(pages[j].views.content)));
+            var views = Object.keys(pages[j].views.content);
             for (var i = 0; i < views.length; i++) {
                 var viewRoles = pages[j].views.content[views[i]].roles;
                 if (viewRoles.indexOf(ANONYMOUS_ROLE) > -1) {
@@ -506,6 +549,21 @@ $(function () {
     };
 
     /**
+     * To show the errors that happen in the gadget rendering
+     * @param err Status code for the particular error
+     * @param element UI element to show error
+     */
+    var showGadgetError = function (element, err) {
+        if (err === UNAUTHORIZED_ERROR_CODE) {
+            element.find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+        } else if (err === NOT_FOUND_ERROR_CODE) {
+            element.find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+        }
+    };
+
+    /**
      * Render the view content
      * @param viewId View id
      */
@@ -515,11 +573,15 @@ $(function () {
                 $('#ds-allowed-view-list').val(viewId);
             }
         });
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function () {
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function (err) {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
+                if (err) {
+                    showGadgetError($(this), err);
+                    err = null;
+                }
             });
             $('.grid-stack').gridstack({
                 width: 12,
@@ -541,11 +603,15 @@ $(function () {
                 $('#ds-allowed-view-list').val(viewId);
             }
         });
-        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function () {
+        ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function (err) {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
+                if (err) {
+                    showGadgetError($(this), err);
+                    err = null;
+                }
             });
             $('.grid-stack').gridstack({
                 width: 12,
@@ -626,6 +692,16 @@ $(function () {
     };
 
     /**
+     * Check whether the container has any components
+     * @param {Object} container
+     * @returns {boolean}
+     * @private
+     */
+    var hasComponents = function (container) {
+        return (container.find('.ues-component .ues-component-body div').length > 0);
+    };
+
+    /**
      * Update the layout after modification.
      * @return {null}
      */
@@ -687,6 +763,35 @@ $(function () {
             contentType: 'application/json'
         }).success(function (data) {
             //generateMessage("Dashboard saved successfully", null, null, "success", "topCenter", 2000, null);
+            console.log("Dashboard saved successfully.");
+            if (isRedirect) {
+                isRedirect = false;
+                window.location = dashboardsUrl + '/' + dashboard.id + "?editor=true";
+            }
+        }).error(function (xhr, status, err) {
+            if (xhr.status === 403) {
+                window.location.reload();
+                return;
+            }
+        });
+    };
+
+    /**
+     * update the dashboard theme with given theme.
+     * @return {null}
+     * @private
+     */
+    var updateThemeProperties = function () {
+        var method = 'PUT';
+        var url = themeApi + '/' + dashboard.id;
+        var isRedirect = false;
+        $.ajax({
+            url: url,
+            method: method,
+            data: JSON.stringify(dashboardTheme),
+            async: false,
+            contentType: 'application/json'
+        }).success(function (data) {
             console.log("Dashboard saved successfully.");
             if (isRedirect) {
                 isRedirect = false;
@@ -848,7 +953,7 @@ $(function () {
             if (err) {
                 throw err;
             }
-            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId):renderViewContentInViewMode(selectedViewId);
+            isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
             initComponentToolbar();
         });
     };
@@ -893,9 +998,9 @@ $(function () {
      * update refresh button with given ID
      */
     var updateRefreshBtn = function (pageID) {
-        $("#" + pageID).css('display','inline');
+        $("#" + pageID).css('display', 'inline');
         $("#" + pageID).show();
-    }
+    };
 
     initDashboard();
     updateMenuList();

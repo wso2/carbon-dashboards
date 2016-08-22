@@ -21,8 +21,9 @@
     var userRoles = [];
     var tempRoles = usr.getUserRoles();
     var constants = require('/modules/constants.js');
+    var isViewer = utils.allowed(user.roles, dashboard.permissions.viewers) && !utils.allowed(user.roles,
+                dashboard.permissions.owners) && !utils.allowed(user.roles, dashboard.permissions.editors);
     userRoles.push(constants.ANONYMOUS_ROLE);
-
     for (var i = 0; i < tempRoles.length; i++) {
         userRoles.push(tempRoles[i]);
     }
@@ -48,7 +49,7 @@
 
     <!-- header -->
     <% include(utils.resolvePath('templates/global-navigation.jag')); %>
-    <% var configs = require('/configs/designer.json'); %>
+    <% var configs = require('/modules/config.js').getConfigFile(); %>
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
@@ -73,7 +74,7 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <% if(! dashboard.isUserCustom) { %>
-                            <% if (permission.isAllowed(constants.SETTINGS) || utils.allowed(user.roles,dashboard.permissions.owners)) { %>
+                            <% if (utils.allowed(user.roles,dashboard.permissions.owners)) { %>
                             <li>
                                 <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
                                     <span class="icon fw-stack">
@@ -259,9 +260,9 @@
                                 </button>
                                 <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>..." />
                             </div>
-
                             <div class="ues-thumbnails">
                             </div>
+
                         </div>
                     </div>
 
@@ -327,11 +328,21 @@
 
             <div class="page-content">
                 <div class="view-container1" style="">
-                    <div style="display:inline-block;margin:5px;height:50px">
+                    <button id="slide-left" >
+                        <span class="icon fw-stack">
+                            <i class="fw fw-left fw-stack-1x toggle-icon-up"></i>
+                        </span>
+                    </button>
+                    <div style="display:inline-block;width:87%;vertical-align: bottom">
                         <ul class="nav nav-tabs" id="designer-view-mode">
                         </ul>
                     </div>
-                    <div class ="ds-add-view-btn" style="display:inline-block;margin:5px;position:relative;top:-25px;">
+                    <button id="slide-right" >
+                        <span class="icon fw-stack">
+                            <i class="fw fw-right fw-stack-1x toggle-icon-up"></i>
+                        </span>
+                    </button>
+                    <div class ="ds-add-view-btn" style="display:inline-block; vertical-align: top;position: relative;">
                         <button id="more-views" data-toggle="dropdown" aria-expanded="false" hidden>
                             <span class="icon fw-stack">
                                 <i class="fw fw-down fw-stack-1x toggle-icon-up"></i>
@@ -422,10 +433,16 @@
                             ' "cannot.delete.last.page" : "<%= i18n.localize("cannot.delete.last.page")%>",' +
                             ' "cannot.create.new.page" : "<%= i18n.localize("cannot.create.new.page")%>",' +
                             ' "landing.page.changed" : "<%= i18n.localize("landing.page.changed")%>",' +
+                            ' "parents.hidden" : "<%= i18n.localize("parents.hidden")%>",' +
+                            ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
+                            ' "cannot.hide.page" : "<%= i18n.localize("cannot.hide.page")%>",' +
+                            ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
+                            ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
                             ' "cannot.remove.hidden.page" : "<%= i18n.localize("cannot.remove.hidden.page")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
-
+        var isViewer = <%= isViewer%>;
     </script>
 
     <!-- Handlebar templates -->
@@ -463,7 +480,7 @@
         </div>
         {{/each}}
     </script>
-        
+
     <!-- Template to add new gridstack block -->
     <script id="ues-new-block-hbs" type="text/x-handlebars-template">
         <div data-id="{{id}}">
@@ -577,6 +594,22 @@
             </div>
             {{/each}}
         {{/each}}
+         <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
+                <hr>
+                {{>ds-add-gadget-hbs}}
+         <% } %>
+    </script>
+
+    <!-- Handlebar to render the add gadget button -->
+    <script id="ds-add-gadget-hbs" type="text/x-handlebars-template">
+       <div class="thumbnail selectable tiles add-asset">
+            <a href="<%=tenantedUrlPrefix%>gadget/">
+                <span class="fw-stack fw-lg add-icon ">
+                    <i class="fw fw-circle-outline fw-stack-2x" ></i>
+                    <i class="fw fw-add fw-stack-1x"></i>
+                </span> <h5><%=i18n.localize("add.gadgets")%></h5>
+            </a>
+       </div>
     </script>
 
     <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
@@ -623,7 +656,7 @@
                     <div class="col-sm-12">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" name="landing"{{#if landing}} checked disabled{{/if}} /> <%= i18n.localize("use.as.landing") %>
+                                <input type="checkbox" name="landing"{{#if landing}} checked {{/if}} /> <%= i18n.localize("use.as.landing") %>
                             </label>
                         </div>
                         <div class="checkbox">
@@ -648,6 +681,18 @@
         {{else}}
         <h4><%= i18n.localize("no.layout.found")%></h4>
         {{/if}}
+         <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
+               <div class="thumbnail selectable tiles add-asset">
+                    <a href="<%=tenantedUrlPrefix%>layout/">
+                        <span class="fw-stack fw-lg add-icon ">
+                           <i class="fw fw-circle-outline fw-stack-2x" ></i>
+                           <i class="fw fw-add fw-stack-1x"></i>
+                        </span>
+                        <h4><%=i18n.localize("add.layouts")%></h4>
+                    </a>
+               </div>
+         <% } %>
+
     </script>
 
     <script id="ues-modal-confirm-hbs" type="text/x-handlebars-template">
@@ -784,21 +829,24 @@
     <script id="add-new-view-hbs" type="text/x-handlebars-template">
         <li role="dashboard-view" data-view-mode="" id="new-view-id">
             <div class="view-heading ues-component-heading">
-                <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
-                <div class="gadget-actions ues-component-actions" style="display:inline-block;margin:2px;height:40px">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
-                        data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
-                            <i class="icon fw fw-configarations"></i>
-                        </button>
-                        <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
-                            <i class="icon fw fw-delete"></i>
-                        </button>
-                        <button type="button" class="btn btn-default ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
-                            <i class="icon fw fw-cancel"></i>
-                        </button>
+                <div class="context-menu">
+                    <i class="fw fw-ellipsis fw-rotate-90"></i>
+                    <div class="gadget-actions action-buttons ues-component-actions">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
+                            data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
+                                <i class="icon fw fw-configarations"></i>
+                            </button>
+                            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+                                <i class="icon fw fw-delete"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
+                <button type="button" class="btn btn-default ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
+                    <i class="icon fw fw-cancel"></i>
+                </button>
             </div>
         </li>
     </script>
@@ -1026,9 +1074,19 @@
             </div>
         </div>
     </script>
-                        
     <script id="ues-no-components-hbs" type="text/x-handlebars-template">
         <%= i18n.localize("no.items.found") %>
+        <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
+                {{>ds-add-gadget-hbs}}
+        <% } %>
+    </script>
+
+   <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
+    <script id="ds-error-hbs" type="text/x-handlebars-template">
+      <div class="alert alert-danger" id = "delete-error" role="alert">
+        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
+        <h3>{{error}}</h3>
+      </div>
     </script>
 
     <!-- Jquery/Jquery UI JS -->

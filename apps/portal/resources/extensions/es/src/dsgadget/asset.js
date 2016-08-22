@@ -37,8 +37,18 @@ asset.manager = function (ctx) {
 
     return {
         update: function (options) {
-            options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;
-            this._super.update.call(this, options);
+            var asset = this.get(options.id);
+            var allowToUpdate = (String(asset.lifecycleState) !== constants.PUBLISHED_LIFECYCLE_STATE);
+
+            if (allowToUpdate) {
+                if (!asset.lifecycleState && utils.addThumbnail(asset, ctx.tenantId)) {
+                    options.attributes.gadget_thumbnail = constants.THUMBNAIL_FILE_NAME;
+                }
+                this._super.update.call(this, options);
+            } else {
+                log.error('Cannot update the asset in published state');
+                throw 'Cannot update the asset in published state';
+            }
         },
         remove: function (id) {
             utils.deleteGadget(id);
@@ -49,9 +59,6 @@ asset.manager = function (ctx) {
             var states = lc.nextStates(asset.lifecycleState);
             var success;
 
-            if (asset.lifecycleState === constants.INITIAL_LIFECYCLE_STATE) {
-                utils.addThumbnail(asset, ctx.tenantId);
-            }
             for (var index = 0; index < states.length; states++) {
                 if (states[index].action === action) {
                     if (states[index].state === constants.PUBLISHED_LIFECYCLE_STATE) {
@@ -143,4 +150,14 @@ asset.configure = function () {
             }
         }
     };
+};
+
+asset.renderer = function(ctx){
+    return {
+        pageDecorators:{
+            temp:function(page){
+                require('/extensions/assets/dsgadget/modules/utils.js').api.hideUpdate(ctx,page,this);
+            }
+        }
+    }
 };

@@ -110,11 +110,11 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                     "'>" + iClass + "</span></span>";
             } else {
                 var cls = menu[i].id === currentPageId ? 'active' : '';
-                var divLi = "<li class='" + cls + "'><a style = 'width:75%; display:inline-block' href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>"+
+                var divLi = "<li class='" + cls + "'><a style = 'width:75%; display:inline-block' href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>" +
                     "<span id='" + menu[i].id + "' class='refreshBtn' style='background-color:#1e2531; display:none;'><i class='icon fw fw-undo'></i></span>";
                 if (!menu[i].ishidden) {
                     if (allowedViews) {
-                        if (allowedViews.indexOf(menu[i].id) > -1) {
+                        if ((parent === null || allowedViews.indexOf(parent) > -1) && allowedViews.indexOf(menu[i].id) > -1) {
                             divTree += divLi;
                         }
                     }
@@ -129,13 +129,14 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 }
             }
 
-            if (menu[i].subordinates.length > 0) {
+            if (menu[i].subordinates.length > 0 && (designer || (allowedViews && allowedViews.indexOf(menu[i].id) > -1))) {
                 divTree += "<ul class='' id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
-                updateSubordinates(menu[i].subordinates, menu[i].id);
+                updateSubordinates(menu[i].subordinates, menu[i].id, allowedViews);
                 divTree += "</ul>";
             } else {
                 divTree += "</li>";
             }
+
         }
     }
 

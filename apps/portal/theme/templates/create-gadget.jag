@@ -88,7 +88,6 @@
                 </div>
                 <div class="wiz-content tab-content">
                     <div class="tab-pane active" id="tab1">
-                        
                         <div class="alert alert-danger" role="alert" id="tab1-validation-errors" style="display: none;">
                             <i class="icon fw fw-error"></i>
                             <span class="text"></span>
@@ -106,11 +105,10 @@
                                     <div id="provider-list"></div>
                                 </div>
                             </div>
-                        </form>
-                            
+                        </form>    
                     </div>
+                    
                     <div class="tab-pane" id="tab2">
-                        
                         <div class="alert alert-danger" role="alert" id="tab2-validation-errors" style="display: none;">
                             <i class="icon fw fw-error"></i>
                             <span class="text"></span>
@@ -155,12 +153,10 @@
                             </button>
                         </div>
                             
-                        <div id="data-preview"></div>
-                            
+                        <div id="data-preview"></div>   
                     </div>
-                                
+                    
                     <div class="tab-pane" id="tab3">
-                        
                         <div class="alert alert-danger" role="alert" id="tab3-validation-errors" style="display: none;">
                             <i class="icon fw fw-error"></i>
                             <span class="text"></span>
@@ -184,13 +180,13 @@
                                 <div id="chart-list"></div>
                             </div>
                         </form>
-                                
+                        
                         <form id="chart-config-form" class="form-horizontal">
                             <div id="chart-config"></div>
                         </form>
-                                
+                        
                         <div class="form-group">
-                            <button type="button" id="preview" class="btn btn-default btn-bordered">
+                            <button type="button" id="preview" class="btn btn-default btn-bordered pull-left">
                                 <span class="icon fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-view fw-stack-1x"></i>
@@ -198,12 +194,11 @@
                             </button>
                             <br>
                         </div>
-
+                        
                         <input type="button" id="add.to.gadget.store" style="display:none;"
                             value="<%= i18n.localize("add.to.gadget.store")%>"/>
                             
                         <div id="preview-pane" style="max-width: 500px;"></div>
-                            
                     </div>
                 </div>
             </div>
@@ -219,11 +214,13 @@
         </strong></br><br/> {{error}}
     </div>
 </script>
+    
 <script id="wizard-zerods-hbs" type="text/x-handlebars-template">
     <div class="alert alert-danger" role="alert">
        No datasources available to create a gadget. Please create a datasource to proceed.
     </div>
 </script>
+    
 <script id="datasource-providers-hbs" type="text/x-handlebars-template">
      <section>
         <select id="providers" class="form-control ues-title-position">
@@ -233,6 +230,7 @@
         </select>
      </section>
 </script>
+    
 <script id="ui-config-hbs" type="text/x-handlebars-template">
     {{#each .}}
         <div class="form-group">
@@ -283,26 +281,26 @@
 </script>
 
 <script id="data-preview-hbs" type="text/x-handlebars-template">
-<div class="form-group">
-    <table class="table table-striped table-hover table-bordered display data-table dataTable no-footer dtr-inline" cellspacing="0" role="grid" style="table-layout: fixed">
-        <thead>
-            <tr role="row">
-            {{#each tableHeaders}}
-                <th style="text-align:center"> <strong>{{this}}</strong></th>
-            {{/each}}
-            </tr>
-        </thead>
-        <tbody>
-            {{#each tableRows}}
-            <tr role="row" align="center">
-                {{#each .}}
-                <td >{{this}}</td>
+    <div class="form-group">
+        <table class="table table-striped table-hover table-bordered display data-table dataTable no-footer dtr-inline" cellspacing="0" role="grid" style="table-layout: fixed">
+            <thead>
+                <tr role="row">
+                {{#each tableHeaders}}
+                    <th style="text-align:center"> <strong>{{this}}</strong></th>
                 {{/each}}
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-</div>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each tableRows}}
+                <tr role="row" align="center">
+                    {{#each .}}
+                    <td >{{this}}</td>
+                    {{/each}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
 </script>
 
 <script id="chart-list-hbs" type="text/x-handlebars-template">
@@ -317,7 +315,7 @@
 </script>
 
 <script id="preview-hbs" type="text/x-handlebars-template">
-     <iframe src= "theme/templates/preview.jag" width="100%" height="500" scrolling="no" ></iframe>
+     <iframe src="{{location}}" width="100%" height="500" scrolling="no"></iframe>
 </script>
 
 <script id="success-hbs" type="text/x-handlebars-template">

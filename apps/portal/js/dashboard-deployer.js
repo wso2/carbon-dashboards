@@ -31,9 +31,9 @@ try {
 
             if (dashboardJson.id) {
                 log.info("Deleting existing dashboard by same id: " + dashboardJson.id);
-                dashboard.remove(dashboardJson.id);
+                dashboard.unDeployDashboard(dashboardJson.id);
                 log.info("Deploying the dashboard: " + dashboardJson.title);
-                dashboard.create(dashboardJson);
+                dashboard.deployDashboard(dashboardJson);
                 file.del();
             }
         }

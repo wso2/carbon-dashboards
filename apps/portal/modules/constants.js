@@ -64,7 +64,6 @@ var PORTAL = '/permission/admin/manage/portal';
 var LOGIN = '/permission/admin/manage/portal/login';
 var DASHBOARD = '/permission/admin/manage/portal/dashboard';
 var CREATE = '/permission/admin/manage/portal/dashboard/create';
-var SETTINGS = '/permission/admin/manage/portal/dashboard/settings';
 
 var GADGET = '/permission/admin/manage/portal/gadget';
 var GADGET_UPLOAD = '/permission/admin/manage/portal/gadget/upload';
@@ -117,3 +116,4 @@ var A4 = 'A4';
 var A3 = 'A3';
 var A2 = 'A2';
 var A1 = 'A1';
+var DEFAULT_SIZE = 'Default Size';

@@ -18,35 +18,84 @@
  *
  */
 (function () {
-    var log = new Log();
-
+    /**
+     * Default start value.
+     * @const
+     */
     var DEFAULT_START = 0;
+    /**
+     * Default count value.
+     * @const
+     */
     var DEFAULT_COUNT = -1;
+    /**
+     * Request Method GET.
+     * @const
+     */
+    var GET = 'GET';
+    /**
+     * Request Method DELETE.
+     * @const
+     */
+    var DELETE = 'DELETE';
+    /**
+     * Request Method POST.
+     * @const
+     */
+    var POST = 'POST';
+    /**
+     * Request Method PUT.
+     * @const
+     */
+    var PUT = 'PUT';
+
+    /**
+     * Download file location.
+     * @const
+     */
+    var DOWNLOAD_LOCATION = "dashboards/";
+
+    /**
+     * Download file extention
+     * @const
+     */
+    var DOWNLOAD_FILE_EXTENSION = ".zip";
     var id;
     var start;
     var count;
     var query;
+    var log = new Log();
     var utils = require('/modules/utils.js');
     var store = utils.store();
     var asset = require('/modules/assets.js');
     var constants = require('/modules/constants.js');
+    var fileUtils = require('/modules/file-utils.js');
     var esConfig = require('/extensions/stores/es/config.json');
+    var config = require('/modules/config.js').getConfigFile();
+    var downloadLocation = config.houseKeeping.location + DOWNLOAD_LOCATION;
     var assetType = request.getParameter('type');
     var storeType = request.getParameter('storeType');
     var method = request.getMethod();
-    response.contentType = 'application/json';
+    var isShared = request.getParameter('shared');
     var assets;
     var i18n = require('i18n');
     i18n.init(request, utils.getLocaleResourcePath());
     var matcher = new URIMatcher(request.getRequestURI());
+    response.contentType = 'application/json';
     if (matcher.match('/assets/publicAssets/{id}')) {
         id = matcher.elements().id;
-        if (method === 'GET') {
+        if (method === GET) {
             utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.getAsset(assetType, id);
+                assets = store.getAsset(assetType, id, isShared);
             });
             if (!assets) {
                 response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            if (!assets.id) {
+                response.sendError(401, JSON.stringify({
                     error: true
                 }));
                 return;
@@ -61,9 +110,49 @@
         return;
     }
 
+if (matcher.match('/assets/storeList')) {
+        var list = null;
+        if (method === GET) {
+            utils.sandbox(utils.context(user, urlDomain), function () {
+                list = store.getListOfStore();
+            });
+            if (!list) {
+                response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            print(list);
+            return;
+        }
+    }
+
+if (matcher.match('/assets/download/{id}')) {
+        var assetPath = "";
+        var relativeURLPrefix = utils.relativePrefix(originalURI);
+        id = matcher.elements().id;
+        if (method === GET) {
+            utils.sandbox(utils.context(user, urlDomain), function () {
+                assetPath = store.downloadAsset(assetType, id, storeType);
+            });
+            if (!assetPath) {
+                response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            var file = new File(assetPath);
+            fileUtils.createDirs(relativeURLPrefix + "portal" + downloadLocation);
+            file.zip(downloadLocation + id + DOWNLOAD_FILE_EXTENSION);
+            print(stringify(relativeURLPrefix + "portal" + downloadLocation + id + DOWNLOAD_FILE_EXTENSION));
+            return;
+        }
+        return;
+    }
+
     if (matcher.match('/assets/{id}')) {
         id = matcher.elements().id;
-        if (method === 'GET') {
+        if (method === GET) {
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.getAsset(assetType, id);
             });
@@ -76,11 +165,11 @@
             print(assets);
             return;
         }
-        if (method === 'PUT') {
-            //TODO
+        if (method === PUT) {
+            //TODO: PUT method implementation.
         }
         // Check whether it is a delete request. If it is a delete request, delete the asset
-        if (method === 'DELETE') {
+        if (method === DELETE) {
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.deleteAsset(assetType, id, storeType);
             });
@@ -101,7 +190,7 @@
 
     if (matcher.match('/assets/{id}' + esConfig.dirNameDelimiter + '{version}')) {
         id = matcher.elements().id + esConfig.dirNameDelimiter + matcher.elements().version;
-        if (method === 'DELETE') {
+        if (method === DELETE) {
             assets = store.deleteAsset(assetType, id, storeType);
             if (!assets) {
                 response.sendError(404, JSON.stringify({
@@ -120,7 +209,7 @@
 
     if (matcher.match('/assets')) {
         id = matcher.elements().id;
-        if (method === 'GET') {
+        if (method === GET) {
             var startAsString = request.getParameter('start');
             if (startAsString != null && startAsString != undefined) {
                 start = parseInt(startAsString, 10);
@@ -140,10 +229,10 @@
             print(assets);
             return;
         }
-        if (method === 'PUT') {
+        if (method === PUT) {
             //TODO
         }
-        if (method === 'POST') {
+        if (method === POST) {
             var results = asset.addAsset(assetType, request.getParameter('id') + esConfig.dirNameDelimiter + request.getParameter('version'), request.getFile("selected-file"), storeType);
             if (storeType === constants.FILE_STORE) {
                 var urlPrefix = utils.relativePrefix(originalURI);
