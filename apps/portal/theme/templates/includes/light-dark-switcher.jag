@@ -18,7 +18,7 @@
 <div class="light-dark-switcher">
     <label class="light-dark-switcher-label">Light</label>
     <label class="switch">
-        <input type="checkbox" data-toggle="theme" checked="checked">
+        <input type="checkbox" data-toggle="theme" <% if (gadgetTheme == 'dark') { %> checked="checked" <% } %>>
         <span class="helper"></span>
     </label>
     <label class="light-dark-switcher-label">Dark</label>

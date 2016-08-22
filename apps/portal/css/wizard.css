@@ -1,3 +1,23 @@
 .wizard {
 	margin-top: 25px;
 }
+
+.btn > .icon {
+    font-size: 10px;
+}
+
+.label.label-test-connection {
+    display: none;
+    font-size: 14px;
+    padding: .6em 1em .7em;
+    border-radius: 0;
+}
+
+.label.label-test-connection > .icon {
+    font-size: 9px;
+}
+
+.alert.alert-sample-message {
+    display: none;
+    margin-top: 20px;
+}
