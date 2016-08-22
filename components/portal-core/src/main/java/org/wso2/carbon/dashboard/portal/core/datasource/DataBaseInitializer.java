@@ -93,7 +93,7 @@ public class DataBaseInitializer {
     }
 
     /**
-     * To get the databasetype used by the user
+     * To get the database type used by the user
      *
      * @param conn Connection of the datasource
      * @return type of the database
@@ -216,14 +216,8 @@ public class DataBaseInitializer {
         } catch (DashboardPortalException e) {
             throw new DashboardPortalException("Error occurred while getting database type", e);
         }
-        boolean keepFormat = false;
         if ("oracle".equals(databaseType)) {
             delimiter = "/";
-        } else if ("db2".equals(databaseType)) {
-            delimiter = "/";
-        } else if ("openedge".equals(databaseType)) {
-            delimiter = "/";
-            keepFormat = true;
         }
 
         String dbScriptLocation = getDbScriptLocation(databaseType);
@@ -236,27 +230,26 @@ public class DataBaseInitializer {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (!keepFormat) {
-                    if (line.startsWith("//")) {
+                if (line.startsWith("//")) {
+                    continue;
+                }
+                if (line.startsWith("--")) {
+                    continue;
+                }
+                StringTokenizer st = new StringTokenizer(line);
+                if (st.hasMoreTokens()) {
+                    String token = st.nextToken();
+                    if ("REM".equalsIgnoreCase(token)) {
                         continue;
-                    }
-                    if (line.startsWith("--")) {
-                        continue;
-                    }
-                    StringTokenizer st = new StringTokenizer(line);
-                    if (st.hasMoreTokens()) {
-                        String token = st.nextToken();
-                        if ("REM".equalsIgnoreCase(token)) {
-                            continue;
-                        }
                     }
                 }
-                sql.append(keepFormat ? "\n" : " ").append(line);
+
+                sql.append(" ").append(line);
 
                 // SQL defines "--" as a comment to EOL
                 // and in Oracle it may contain a hint
                 // so we cannot just remove it, instead we must end it
-                if (!keepFormat && line.contains("--")) {
+                if (line.contains("--")) {
                     sql.append("\n");
                 }
                 if ((checkStringBufferEndsWith(sql, delimiter))) {
