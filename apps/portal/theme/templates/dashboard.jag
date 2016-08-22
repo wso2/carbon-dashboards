@@ -578,6 +578,7 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-gadgets')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-store')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-dashboards')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('database-update')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard-pdf-generation')%>"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
