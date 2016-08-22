@@ -15,18 +15,26 @@
  */
 package org.wso2.carbon.dashboard.deployment.util;
 
-import org.wso2.carbon.dashboard.deployment.internal.ServiceHolder;
+import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.dashboard.deployment.internal.ServiceHolder;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 
 import java.io.*;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Utility methods used at Dashboard CApp deployment process
  */
 public class DeploymentUtil {
+
+    private static final Logger log = Logger.getLogger(DeploymentUtil.class);
 
     public static void createRegistryResource(String url, Object content) throws RegistryException {
         int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
@@ -86,5 +94,71 @@ public class DeploymentUtil {
             stringBuilder.append(ls);
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * Extract given CAR file into temporary directory for processing
+     *
+     * @param zipFile       zip File Directory
+     * @param tempDirectory temp directory to extract the CAR file
+     */
+    public static void extractCARFile(ZipFile zipFile, File tempDirectory) {
+        Enumeration files = zipFile.entries();
+        File file;
+        FileOutputStream fos = null;
+
+        while (files.hasMoreElements()) {
+            try {
+                ZipEntry entry = (ZipEntry) files.nextElement();
+                InputStream eis = zipFile.getInputStream(entry);
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                file = new File(tempDirectory.getAbsolutePath() + File.separator + entry.getName());
+
+                if (entry.isDirectory()) {
+                    file.mkdirs();
+                    continue;
+                } else {
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+                }
+                fos = new FileOutputStream(file);
+                while ((bytesRead = eis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                }
+            } catch (IOException e) {
+                log.error("Error while extracting the " + zipFile.getName() + ".car File", e);
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.flush();
+                        fos.close();
+                    } catch (IOException e) {
+                        log.error("Error in closing FileOutputStream", e);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the dashboard ID from dashboard json
+     *
+     * @param jsonFile dashboard json
+     * @return String dashboard ID
+     */
+    public static String getDashboardID(File jsonFile) {
+        org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
+        JSONObject dashboardJSONObject = null;
+        try {
+            Object obj = parser.parse(new FileReader(jsonFile.getAbsolutePath()));
+            dashboardJSONObject = (JSONObject) obj;
+            return (String) dashboardJSONObject.get("id");
+        } catch (ParseException e) {
+            log.error("Error in parsing the json file " + jsonFile.getName());
+        } catch (IOException e) {
+            log.error("Error in opening the json file " + jsonFile.getName());
+        }
+        return null;
     }
 }

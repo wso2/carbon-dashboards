@@ -17,7 +17,6 @@ package org.wso2.carbon.dashboard.deployment;
 
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.application.deployer.CarbonApplication;
@@ -34,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 /**
  * Deploys artifacts related to a dashboard.
@@ -113,12 +113,11 @@ public class DashboardDeployer implements AppDeploymentHandler {
                     try {
                         if (fileName.endsWith(DashboardConstants.DASHBOARD_EXTENSION)) {
                             String dashboardDefn = DeploymentUtil.readFile(file);
-                            String resourceName = fileName
-                                    .substring(0, fileName.lastIndexOf(DashboardConstants.DASHBOARD_EXTENSION));
-                            DeploymentUtil
-                                    .createRegistryResource(DashboardConstants.DASHBOARDS_RESOURCE_PATH + resourceName,
-                                            dashboardDefn);
-                            log.info("Dashboard definition [" + resourceName + "] has been created.");
+                            DeploymentUtil.createRegistryResource(
+                                    DashboardConstants.DASHBOARDS_RESOURCE_PATH + DeploymentUtil.getDashboardID(file),
+                                    dashboardDefn);
+                            log.info("Dashboard definition [" + DeploymentUtil.getDashboardID(file)
+                                    + "] has been created.");
                         }
                     } catch (IOException e) {
                         String errorMsg = "Error while reading from the file : " + file.getAbsolutePath();
@@ -137,6 +136,18 @@ public class DashboardDeployer implements AppDeploymentHandler {
                             DeploymentUtil.copyFolder(file, destination);
                             log.info("Gadget directory [" + file.getName() + "] has been copied to path " + destination
                                     .getAbsolutePath());
+                        } else if (file.getName().contains(".zip")) {
+                            String storePath = getArtifactPath("gadget");
+                            File tempExtractedFile = new File(file.getParent());
+                            DeploymentUtil.extractCARFile(new ZipFile(file), tempExtractedFile);
+                            File[] gadgetDirectoryList = tempExtractedFile.listFiles();
+                            for (File gadgetDir : gadgetDirectoryList) {
+                                if (gadgetDir.isDirectory()) {
+                                    DeploymentUtil.copyFolder(gadgetDir,
+                                            new File(storePath + File.separator + gadgetDir.getName()));
+                                }
+                            }
+                            log.info("Gadget directory [" + file.getName() + "] has been copied to path " + storePath);
                         }
                     } catch (IOException e) {
                         String errorMsg = "Error while reading from the file : " + file.getAbsolutePath();
@@ -151,6 +162,18 @@ public class DashboardDeployer implements AppDeploymentHandler {
                             DeploymentUtil.copyFolder(file, destination);
                             log.info("Layout directory [" + file.getName() + "] has been copied to path " + destination
                                     .getAbsolutePath());
+                        } else if (file.getName().contains(".zip")) {
+                            String storePath = getArtifactPath("layout");
+                            File tempExtractedFile = new File(file.getParent());
+                            DeploymentUtil.extractCARFile(new ZipFile(file), tempExtractedFile);
+                            File[] layoutDirectoryList = tempExtractedFile.listFiles();
+                            for (File layoutDir : layoutDirectoryList) {
+                                if (layoutDir.isDirectory()) {
+                                    DeploymentUtil.copyFolder(layoutDir,
+                                            new File(storePath + File.separator + layoutDir.getName()));
+                                }
+                            }
+                            log.info("Layout directory [" + file.getName() + "] has been copied to path " + storePath);
                         }
                     } catch (IOException e) {
                         String errorMsg = "Error while reading from the file : " + file.getAbsolutePath();
@@ -172,6 +195,32 @@ public class DashboardDeployer implements AppDeploymentHandler {
                                 log.error(errorMsg);
                             } else {
                                 DeploymentUtil.copyFolder(file, destination);
+                                log.info("Theme directory [" + file.getName() + "] has been copied to path " +
+                                        destination.getAbsolutePath());
+                            }
+                        } else if (file.getName().contains(".zip")) {
+                            String themeName = null;
+                            File themeFileDir = null;
+                            File tempExtractedFile = new File(file.getParent());
+                            DeploymentUtil.extractCARFile(new ZipFile(file), tempExtractedFile);
+                            File[] layoutDirectoryList = tempExtractedFile.listFiles();
+                            for (File layoutDir : layoutDirectoryList) {
+                                if (layoutDir.isDirectory()) {
+                                    themeName = layoutDir.getName();
+                                    themeFileDir = layoutDir;
+                                }
+                            }
+                            String storePath = getArtifactPath(DashboardConstants.THEME_TYPE);
+                            File themeFolder = new File(storePath);
+                            if (!themeFolder.exists()) {
+                                themeFolder.mkdir();
+                            }
+                            File destination = new File(storePath + themeName);
+                            if (destination.exists() || themeName.equalsIgnoreCase(DashboardConstants.DEFAULT_THEME)) {
+                                String errorMsg = "A theme already exists with the name " + themeName;
+                                log.error(errorMsg);
+                            } else {
+                                DeploymentUtil.copyFolder(themeFileDir, destination);
                                 log.info("Theme directory [" + file.getName() + "] has been copied to path " +
                                         destination.getAbsolutePath());
                             }
