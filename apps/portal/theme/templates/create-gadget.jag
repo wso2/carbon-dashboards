@@ -167,7 +167,7 @@
                             </button>
                         </div>
                         
-                        <form id="chart-config-form" class="form-horizontal">
+                        <form class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
