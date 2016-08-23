@@ -161,7 +161,7 @@
                                 <span class="helper"></span>
                             </label>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 share-label">
                                 <p id="share-dashboard-state" class="<%if (dashboard.shareDashboard) {%>
                                     <%="dashboard-state-enabled"%>
                                     <%}else{%>
@@ -193,7 +193,7 @@
                             <span class="helper"></span>
                         </label>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 personalize-label">
                                 <p id="personalize-dashboard-state" class="<%if (dashboard.personalizeDashboard) {%>
                                     <%="dashboard-state-enabled"%>
                                     <%}else{%>
