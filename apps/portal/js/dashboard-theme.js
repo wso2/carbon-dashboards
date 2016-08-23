@@ -165,7 +165,7 @@ $(function () {
                 $('[data-toggle="theme"]').attr('checked', 'checked');
             });
             $('body').addClass('dark');
-            $('iframe').contents().find('body').addClass('dark');
+            $('iframe[id^="sandbox-gadget"]').contents().find('body').addClass('dark');
             ues.global.dashboard.theme.properties.lightDark = 'dark';
             generateThemeData();
             updateThemeProperties();
@@ -175,7 +175,7 @@ $(function () {
                 $(this).removeAttr('checked');
             });
             $('body').removeClass('dark');
-            $('iframe').contents().find('body').removeClass('dark');
+            $('iframe[id^="sandbox-gadget"]').contents().find('body').removeClass('dark');
             ues.global.dashboard.theme.properties.lightDark = 'light';
             generateThemeData();
             updateThemeProperties();

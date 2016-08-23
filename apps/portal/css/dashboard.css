@@ -25,6 +25,7 @@
     left: -15px !important;
     width: calc(100% + 30px) !important;
     height: calc(100% - 40px) !important;
+    z-index: 10;
 }
 
 /**
