@@ -101,7 +101,7 @@ var portalRoot;
     if (!currentPage) {
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
         return;
-    } else if (!utils.isPageHasUserAllowedView(currentPage)) {
+    } else if (!request.getParameter('preview') && !utils.isPageHasUserAllowedView(currentPage)) {
         response.sendError(401, i18n.localize("access.not.authorized"));
         return;
     }

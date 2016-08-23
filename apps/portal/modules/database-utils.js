@@ -31,9 +31,7 @@ var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetSt
             log.debug('Usage data for gadget id - ' + gadgetID + ', dashboard id - ' +
                 dashboardId + ',tenantId -' + tenantId + ':' + stringify(usageData))
         }
-        if (dashboardId.indexOf('$') > 0) {
-            dashboardId = dashboardId + user.username;
-        }
+        dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
         databaseHandler.updateOrInsertGadgetUsageInfo(tenantId, dashboardId, gadgetID, state,
             stringify(usageData));
     };
@@ -43,9 +41,7 @@ var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetSt
             log.debug('Deleteing the usage data for gadget id - ' + gadgetID + ', dashboard id - ' +
                 dashboardId + ',tenantId -' + tenantId);
         }
-        if (dashboardId.indexOf('$') > 0) {
-            dashboardId = dashboardId + user.username;
-        }
+        dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
         databaseHandler.deleteGadgetUsageInformation(tenantId, dashboardId, gadgetID);
     };
 
@@ -63,30 +59,41 @@ var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetSt
     };
 
     updateDeleteDashboard = function (dashboardId) {
+        updateDashboardIdForPersonalizedDashboards(dashboardId);
         databaseHandler.updateAfterDeletingDashboard(tenantId, dashboardId);
     };
 
 
     isDashboardExistInDatabase = function (dashboardId) {
+        dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
         return databaseHandler.checkDashboard(tenantId, dashboardId);
     };
 
     checkDefectiveDashboard = function (dashboardId, isUserCustom) {
         if (isUserCustom){
-            dashboardId = dashboardId + '$' + user.username;
+            dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId + '$');
         }
         return databaseHandler.isDashboardDefective(tenantId, dashboardId);
     };
     
     checkDefectivePages = function (dashboardId) {
-        if (dashboardId.indexOf('$') > 0) {
-            dashboardId = dashboardId + user.username;
-        }
+        dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
         var usageData = databaseHandler. getDefectiveUsageData(tenantId, dashboardId);
         var usage = {data: []};
         for (var index = 0; index < usageData.size(); index++) {
             usage.data.push(usageData.get(index));
         }
         return usage;
-    }
+    };
+
+    /**
+     * Dashboard id for the personalized dashboards should be dashboard id + '$ + username
+     * @param dashboardId Id of the original dashboard to be updated
+     */
+    var updateDashboardIdForPersonalizedDashboards = function (dashboardId) {
+        if (dashboardId.indexOf('$') > 0) {
+            dashboardId = dashboardId + user.username;
+        }
+        return dashboardId;
+    };
 }());

@@ -342,6 +342,9 @@ var reset = function (id) {
         registry.remove(path);
     }
     deleteBanner(id, user.username);
+    var databaseUtils = require('/modules/database-utils.js');
+    databaseUtils.updateDeleteDashboard(dashboardId + '$');
+
 };
 
 /**
@@ -620,24 +623,28 @@ var updateGadgetUsageInDashboard = function (dashboard) {
     var component;
     var components;
     var gadgetIds = [];
+    var dashboardId = dashboard.id;
+    if (dashboard.isUserCustom){
+        dashboardId = dashboardId + '$';
+    }
     for (i = 0; i < dashboard.pages.length; i++) {
         var page = dashboard.pages[i];
         var views = Object.keys(page.content);
 
         for (var j = 0; j < views.length; j++) {
-            var content = page.content[views[0]];
+            var content = page.content[views[j]];
             for (area in content) {
                 if (content.hasOwnProperty(area)) {
                     components = content[area];
                     length = components.length;
                     for (var k = 0; k < length; k++) {
-                        component = components[i];
+                        component = components[k];
                         var gadgetId = component.content.id;
                         if (gadgetIds.indexOf(gadgetId) < 0) {
                             var usageData = createUsageData(dashboard, gadgetId);
                             var isAssetExist = storeManager.getAsset('gadget', gadgetId);
                             var state = isAssetExist ? 'ACTIVE' : 'DELETED';
-                            databaseUtils.insertOrUpdateGadgetUsage(dashboard.id, gadgetId, usageData, state);
+                            databaseUtils.insertOrUpdateGadgetUsage(dashboardId, gadgetId, usageData, state);
                             gadgetIds.push(gadgetId);
                         }
                     }

@@ -3254,48 +3254,49 @@ $(function () {
      */
     var removeGadgets = function (removingComponents, length) {
         for (var i = 0; i < length; i++) {
-            var componentBox = $("#" + removingComponents[i].id).closest(".ues-component-box");
-            removeComponent(removingComponents[i], function (err) {
-                if (err) {
-                    generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
-                        2000, null);
-                }
-            });
-            componentBox.html(componentBoxContentHbs());
-        }
-    };
+            var removingComponent = $("#" + removingComponents[i].id);
+            var componentBox = removingComponent.closest(".ues-component-box");
 
-    /**
-     * To get the list of gadgets that need to be hidden for particular user view
-     * @returns {Array} List of gadgets to be removed
-     */
-    var getRestrictedGadgetsToBeViewed = function () {
-        var removingComponents = [];
-        var content = page.content[pageType];
-        for (var area in content) {
-            if (content.hasOwnProperty(area)) {
-                var components = content[area];
-                var length = components.length;
-                for (var i = 0; i < length; i++) {
-                    var component = components[i];
-                    var gadgetRoles = component.content["allowedRoles"];
-                    var isGadgetRenderable = false;
-
-                    if (!gadgetRoles) {
-                        gadgetRoles = [INTERNAL_EVERYONE_ROLE];
+            if (removingComponent.length) {
+                removeComponent(removingComponents[i], function (err) {
+                    if (err) {
+                        generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
+                            2000, null);
                     }
-                    for (var j = 0; j < userRolesList.length && !isGadgetRenderable; j++) {
-                        if (isRoleExistInGadget(gadgetRoles, userRolesList[j])) {
-                            isGadgetRenderable = true;
+                });
+            } else {
+                var components;
+                var component;
+                var area;
+                pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+                var content = page.content[pageType];
+                var isComponentFound = false;
+
+                for (area in content) {
+                    if (content.hasOwnProperty(area)) {
+                        components = content[area];
+                        var componentLength = components.length;
+                        for (var j = 0; j < componentLength; j++) {
+                            component = components[i];
+                            if (component.id === removingComponents[i].id) {
+                                area = content[area];
+                                var index = area.indexOf(component);
+                                area.splice(index, 1);
+                                saveDashboard();
+                                ds.database.updateUsageData(dashboard, component.content.id);
+                                componentBox = $('#' + area + ".ues-component-box");
+                                isComponentFound = true;
+                                break;
+                            }
                         }
-                        if (j === userRolesList.length - 1 && !isGadgetRenderable) {
-                            removingComponents.push(component);
+                        if (isComponentFound) {
+                            break;
                         }
                     }
                 }
             }
+            componentBox.html(componentBoxContentHbs());
         }
-        return removingComponents;
     };
 
     /**
@@ -3516,13 +3517,8 @@ $(function () {
     var updateDefectiveInformtaion = function (pages) {
         var updatedPages = clone(pages);
         var defectivePages = getDefectivePages();
-        console.log(defectivePages);
         for (var i = 0; i < updatedPages.length; i++) {
-            if (defectivePages.indexOf(updatedPages[i].id) > -1) {
-                updatedPages[i].isDefective = true;
-            } else {
-                updatedPages[i].isDefective = false;
-            }
+            updatedPages[i].isDefective = defectivePages.indexOf(updatedPages[i].id) > -1;
         }
         return updatedPages;
     };
@@ -3543,7 +3539,6 @@ $(function () {
             contentType: "application/json",
             async: false,
             success: function (data) {
-                console.log("asasas " + data)
                 defectiveUsageData = JSON.parse(data);
             }
         });

@@ -208,22 +208,30 @@ $(function () {
         });
     };
 
+    /**
+     * To manipulate the gadget usage info to create a warning message to user
+     * @param usage Usage info of a particular gadget in dashboards
+     * @returns {string} Warning message to be sent to user based on the usages of the gadget
+     */
     var manipulateGadgetUsageInfo = function (usage) {
         var message = 'This gadget is used in ';
         for (var index = 0; index < usage.length; index++) {
             if (usage[index].indexOf("$") > -1) {
-                usage[index] = usage[index].substr(0, usage[index].length - 1);
+                usage[index] = usage[index].substr(0, usage[index].indexOf("$"));
+                usage[index] = "personalized version of " + usage[index];
+
+                if (message.indexOf("personalized version of " + usage[index]) > -1) {
+                    usage[index] = "";
+                }
             }
-            if (index !== usage.length-1) {
-                message += usage[index] +  ','
+            if (index !== usage.length - 1) {
+                message += usage[index] + ','
             } else {
                 message += usage[index] + " database(s). Deleting this gadget will " +
                     "affect the functionality of those databases";
             }
         }
-
         return message;
-
     };
 
     /**
