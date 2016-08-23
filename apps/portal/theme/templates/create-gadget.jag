@@ -343,7 +343,6 @@
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
-<script src="<%=urlPrefix%>js/create.js"></script>
 <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 <script src="<%=urlPrefix%>js/jquery.bootstrap.wizard.min.js"></script>
 <script src="<%=urlPrefix%>js/select2.min.js"></script>
