@@ -343,7 +343,7 @@ var reset = function (id) {
     }
     deleteBanner(id, user.username);
     var databaseUtils = require('/modules/database-utils.js');
-    databaseUtils.updateDeleteDashboard(dashboardId + '$');
+    databaseUtils.updateDeleteDashboard(id + '$');
 
 };
 
@@ -614,7 +614,7 @@ var getConvertedDashboardContent = function (registry, dashboard) {
     return dashboardContent;
 };
 
-var updateGadgetUsageInDashboard = function (dashboard) {
+var updateGadgetUsageInDashboard = function (dashboard, dashboardId) {
     var databaseUtils = require('/modules/database-utils.js');
     var storeManager = require('/js/store-manager.js');
     var i;
@@ -623,10 +623,7 @@ var updateGadgetUsageInDashboard = function (dashboard) {
     var component;
     var components;
     var gadgetIds = [];
-    var dashboardId = dashboard.id;
-    if (dashboard.isUserCustom){
-        dashboardId = dashboardId + '$';
-    }
+    
     for (i = 0; i < dashboard.pages.length; i++) {
         var page = dashboard.pages[i];
         var views = Object.keys(page.content);

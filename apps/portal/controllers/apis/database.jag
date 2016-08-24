@@ -22,6 +22,7 @@
 
     var log = new Log();
     var dataBaseUtils = require('/modules/database-utils.js');
+    var dashboards = require('/modules/dashboards.js');
     var task = request.getParameter('task');
     var INSERT_TASK = 'insert';
     var DELETE_TASK = 'delete';
@@ -74,7 +75,20 @@
             dashboardId = matcher.elements().did;
             dataBaseUtils.updateDeleteDashboard(dashboardId);
         }
-
+    } else if (request.getMethod() === 'PUT') {
+        if (matcher.match('/database/{did}')) {
+            dashboardId = matcher.elements().did;
+            var dashboard = dashboards.getAsset(dashboardId);
+            if (!dashboard) {
+                response.sendError(404, JSON.stringify({
+                    error: i18n.localize('dashboard.not.found')
+                }));
+                return;
+            }
+            dashboardId = dashboardId + (dashboard.isUserCustom ? '$' : '');
+            dataBaseUtils.updateDeleteDashboard(dashboardId);
+            dashboards.updateGadgetUsageInDashboard(dashboard, dashboardId);
+        }
     } else {
         response.sendError(403, i18n.localize("forbidden"));
     }

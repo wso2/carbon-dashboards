@@ -285,9 +285,16 @@ public class DataBaseHandler {
             preparedStatement.setInt(1, tenantId);
             preparedStatement.setString(2, dashboardId);
             preparedStatement.executeUpdate();
+            if (!dashboardId.contains("$")) {
+                preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_DELETE_ALL_DASHBOARD_OPERATION);
+                preparedStatement.setInt(1, tenantId);
+                preparedStatement.setString(2, dashboardId + "$%");
+                preparedStatement.executeUpdate();
+            }
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
+
         } catch (SQLException e) {
             log.error("Cannot insert the gadget usage info ", e);
         } finally {

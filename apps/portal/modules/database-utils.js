@@ -59,7 +59,7 @@ var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetSt
     };
 
     updateDeleteDashboard = function (dashboardId) {
-        updateDashboardIdForPersonalizedDashboards(dashboardId);
+        dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
         databaseHandler.updateAfterDeletingDashboard(tenantId, dashboardId);
     };
 
@@ -91,7 +91,7 @@ var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetSt
      * @param dashboardId Id of the original dashboard to be updated
      */
     var updateDashboardIdForPersonalizedDashboards = function (dashboardId) {
-        if (dashboardId.indexOf('$') > 0) {
+        if (dashboardId.indexOf('$') > -1) {
             dashboardId = dashboardId + user.username;
         }
         return dashboardId;

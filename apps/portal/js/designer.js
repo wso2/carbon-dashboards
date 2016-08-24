@@ -2160,10 +2160,29 @@ $(function () {
             fn[e.context.name]();
             updatePagesList();
             saveDashboard();
+            updateGadgetUsageAfterPagePropertiesChange();
         } else {
         }
-
         return true;
+    };
+
+    /**
+     * To update the gadget usage information after changing the page propertioes
+     */
+    var updateGadgetUsageAfterPagePropertiesChange = function(){
+        var method = 'PUT';
+        var url = DATABASE_API + '/' + dashboard.id;
+        var isRedirect = false;
+        $.ajax({
+            url: url,
+            method: method,
+            async: false,
+            contentType: 'application/json'
+        }).success(function (data) {
+            console.log("Updated the gadget usage info successfully");
+        }).error(function (err) {
+            console.log("Gadget usage update failed after page properties change" + err)
+        });
     };
 
     /**

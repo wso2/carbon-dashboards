@@ -102,13 +102,13 @@ var user;
             }
             else {
                 if (dest) {
-                    response.sendRedirect(dest + "login?loginAttempt=true");
+                    response.sendRedirect('/portal/login?loginAttempt=true');
                 }
             }
         }
         else {
             if (dest) {
-                response.sendRedirect(dest + "login?loginAttempt=true");
+                response.sendRedirect('/portal/login?loginAttempt=true');
             }
         }
     }
