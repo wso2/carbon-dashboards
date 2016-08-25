@@ -304,6 +304,7 @@ $(function () {
         var ctx = buildPropertiesContext(component, page);
         var propertiesContainer = $('#gadget-configuration');
         dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
+        $('#ds-properties-container #view-configuration').empty();
         propertiesContainer.empty();
         propertiesContainer
             .html(gadgetComponentPropertiesHbs(ctx))
@@ -859,8 +860,8 @@ $(function () {
 
             if ($('#right-sidebar').hasClass('toggled')) {
                 $('#right-sidebar').removeClass('toggled');
-                return;
             }
+
             $('#view-configuration').empty();
             $('#ds-properties-container #gadget-configuration').empty();
 
