@@ -583,17 +583,23 @@
 
     <script id="ues-components-list-hbs" type="text/x-handlebars-template">
         {{#each assets}}
-            {{#if_neq category "null"}}
-                <hr>
-                <h4>{{category}}</h4>
-            {{/if_neq}}
-            {{#each components}}
-            <div class="thumbnail ues-thumbnail selectable" id="{{id}}" data-id="{{id}}" data-type="{{../../type}}">
-                <h5 class="title ues-title">{{#if (lookup locale_titles ../../lang)}}{{lookup locale_titles ../../lang}}{{else}}{{title}}{{/if}}</h5>
-                <img src="{{resolveURI thumbnail}}" style="width: 192px;"/>
+            <div class="store-category">
+                <h3>{{storeType}}</h3>
             </div>
+            {{#each category}}
+                {{#if_neq categoryName "null"}}
+                    <hr>
+                    <h4 style="margin-left:10px;">{{categoryName}}</h4>
+                {{/if_neq}}
+                {{#each components}}
+                    <div class="thumbnail ues-thumbnail selectable" id="{{id}}" data-id="{{id}}" data-type="{{../../../type}}">
+                        <h5 class="title ues-title">{{#if (lookup locale_titles ../../../lang)}}{{lookup locale_titles ../../../lang}}{{else}}{{title}}{{/if}}</h5>
+                        <img src="{{resolveURI thumbnail}}" style="width: 192px;"/>
+                    </div>
+                {{/each}}
             {{/each}}
         {{/each}}
+
          <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
                 <hr>
                 {{>ds-add-gadget-hbs}}

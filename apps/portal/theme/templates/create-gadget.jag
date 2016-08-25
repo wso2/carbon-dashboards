@@ -167,7 +167,7 @@
                             </button>
                         </div>
                         
-                        <form id="chart-config-form" class="form-horizontal">
+                        <form class="form-horizontal">
                             <div class="form-group">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
@@ -343,7 +343,6 @@
 <script src="<%=urlPrefix%>js/jquery.noty.packaged.min.js"></script>
 <script src="<%=urlPrefix%>js/ues.js"></script>
 <script src="<%=urlPrefix%>js/ues-store.js"></script>
-<script src="<%=urlPrefix%>js/create.js"></script>
 <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 <script src="<%=urlPrefix%>js/jquery.bootstrap.wizard.min.js"></script>
 <script src="<%=urlPrefix%>js/select2.min.js"></script>
