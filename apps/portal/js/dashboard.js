@@ -497,7 +497,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
-            allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
+            allowedViews: isAnonView ? getUserAllowedPages() : getAnonViewPages()
         }));
         //menulist for small res
         $('#ues-pages-col').html(menuListHbs({
@@ -506,7 +506,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
-            allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
+            allowedViews: isAnonView ? getUserAllowedPages() : getAnonViewPages()
         }));
     };
 

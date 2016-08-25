@@ -65,6 +65,9 @@
         if ((user.domain != urlDomain && urlDomain) ||
                 (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
             isAnonView = true;
+
+            userRoles = [];
+            userRoles.push(constants.ANONYMOUS_ROLE);
         }
     }
 
