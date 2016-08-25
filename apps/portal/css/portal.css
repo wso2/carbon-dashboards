@@ -18,7 +18,7 @@
     padding: 10px 15px;
     position: relative;
     height: 125px;
-    background: #11375b;
+    background: #29313e;
     color: #fff;
 }
 
@@ -26,7 +26,7 @@
 TODO : This is temporary. We will later change this color
 */
 #ues-portal .shared {
-    background: #678ea9;
+    background: #438cad;
 }
 
 #ues-portal .ues-dashboard .ues-actions {

@@ -327,9 +327,9 @@
     </div><!-- /#page-content-wrapper -->
 
 
- <% if(typeof  bgColor === 'undefined'){ %>
-    <!--Footer -->
-    <% include(utils.getThemeTemplatePath('templates/includes/portal-footer.jag')); %>
+    <% if(typeof  bgColor === 'undefined'){ %>
+        <!--Footer -->
+        <% include(utils.getThemeTemplatePath('templates/includes/portal-footer.jag')); %>
     <% } %>
 
     <!-- Handlebar templates -->

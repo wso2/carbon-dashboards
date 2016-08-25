@@ -58,6 +58,10 @@ body > .page-content-wrapper > .container, body > .page-content-wrapper > .conta
     height: 0;
 }
 
+.header .auth .icon > .fw-inverse {
+    color: #29313E;
+}
+
 .dashboard .page-header .auth {
     min-height: 20px;
     margin-bottom: 15px;

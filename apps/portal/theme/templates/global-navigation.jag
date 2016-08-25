@@ -29,11 +29,13 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
         </div>
         <div class="pull-right auth float-remove-xs text-center-xs">
             <% if (user) { %>
-            <span class="hidden-xs">
-                <a href="#" class="dropdown" data-toggle="dropdown">
-                    <span class="add-margin-left-2x add-margin-right-1x"><%=user.username%></span>
-                    <span class="fw fw-user add-margin-right-1x"></span>
-                    <span class="caret add-margin-right-2x"></span>
+            <span class="hidden-xs add-padding-left-2x">
+                <a href="#" class="dropdown add-padding-left-2x add-padding-right-2x display-inline-block" data-toggle="dropdown">
+                    <span class="icon fw-stack fw-lg">
+                       <i class="fw fw-circle fw-stack-2x"></i>
+                       <i class="fw fw-user fw-stack-1x fw-inverse"></i>
+                    </span>
+                    <span><%=user.username%> <span class="caret"></span></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
                     <li class="dropdown-header visible-xs"><%=user.username%> <span class="caret"></span></li>
