@@ -195,6 +195,14 @@ $('#tab3').on('keypress', function () {
     $('#tab3-validation-errors').empty();
 });
 
+$('#Option').click(function () {
+    $("#provider-config-optional").removeClass('hidden').toggle();
+
+})
+
+$('#Mandatory').click(function () {
+    $("#provider-config").removeClass('hidden').toggle();
+});
 $("#preview").click(function () {
     var wizard = $('#rootwizard');
     $("#generate").removeAttr("style");
@@ -323,10 +331,22 @@ function getProviderConfig() {
         contentType: "application/json",
         async: false,
         success: function (data) {
-            registerAdvancedProviderUI(data);
-            var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#provider-config").html(providerHbs(data));
+                data1= data[0].elements;
+                $("#mandatory").html( data[0].title);
+                registerAdvancedProviderUI(data1);
+                var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
+                $("#provider-config").html(providerHbs(data1));
+
+                data2 = data[1].elements;
+                $("#optional").html(data[1].title);
+                registerAdvancedProviderUI(data2);
+                var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
+                $("#provider-config-optional").html(providerHbs(data2));
+
+
         },
+
+
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
@@ -342,6 +362,8 @@ function getProviderConfig() {
         }
     });
 };
+
+
 
 function registerAdvancedProviderUI(data) {
     for (var i = 0; i < data.length; i++) {

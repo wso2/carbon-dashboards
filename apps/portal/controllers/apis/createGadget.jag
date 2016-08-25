@@ -82,10 +82,10 @@
     } else if (action === 'getProviderConfig') {
         providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
         providerApi = require(providerApiLocation);
-        print(providerApi.getConfig().config);
+        print(providerApi.getConfig().config[0].grouping);
         return;
 
-    } else if (action === 'getProviderAdvancedUI') {
+    }else if (action === 'getProviderAdvancedUI') {
         var providerHbsFile = null;
         try {
             providerHbsFile = new File(PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PARTIAL_LOCATION +
