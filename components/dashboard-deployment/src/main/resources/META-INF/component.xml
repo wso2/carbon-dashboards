@@ -51,6 +51,10 @@
             <ResourceId>/permission/admin/manage/portal/gadget/delete</ResourceId>
         </ManagementPermission>
         <ManagementPermission>
+            <DisplayName>Download</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/gadget/download</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
             <DisplayName>Layout</DisplayName>
             <ResourceId>/permission/admin/manage/portal/layout</ResourceId>
         </ManagementPermission>
@@ -61,6 +65,10 @@
         <ManagementPermission>
             <DisplayName>Delete</DisplayName>
             <ResourceId>/permission/admin/manage/portal/layout/delete</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Download</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/layout/download</ResourceId>
         </ManagementPermission>
     </ManagementPermissions>
 </component>
