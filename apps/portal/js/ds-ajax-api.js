@@ -23,11 +23,25 @@
     var RPC_SERVICE_GET_STATE = 'RPC_SERVICE_GET_STATE';
 
     /**
+     * RPC service name to get global state.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_GLOBAL_STATE = 'RPC_SERVICE_GET_GLOBAL_STATE';
+
+    /**
      * RPC service name to set gadget state.
      * @const
      * @private
      */
     var RPC_SERVICE_SET_STATE = 'RPC_SERVICE_SET_STATE';
+
+    /**
+     * RPC service name to set global state.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_SET_GLOBAL_STATE = 'RPC_SERVICE_SET_GLOBAL_STATE';
 
     /**
      * RPC service name to get current username.
@@ -220,10 +234,26 @@
         sendGadgetResponse(this.f, RPC_SERVICE_GET_STATE, gadgetState);
     });
 
+    // Register RPC services
+    // Get global state
+    gadgets.rpc.register(RPC_SERVICE_GET_GLOBAL_STATE, function (key) {
+        var gadgetState = getPageState()[key];
+        sendGadgetResponse(this.f,RPC_SERVICE_GET_GLOBAL_STATE , gadgetState);
+    });
+
+
     // Set gadget state
     gadgets.rpc.register(RPC_SERVICE_SET_STATE, function (gadgetState) {
         var pageState = getPageState();
         pageState[getGadgetId(this.f)] = gadgetState;
+        window.location.hash = serialize(pageState);
+        sendGadgetResponse(this.f, RPC_SERVICE_SET_STATE);
+    });
+
+    // Set global state
+    gadgets.rpc.register(RPC_SERVICE_SET_GLOBAL_STATE, function (keyValue) {
+        var pageState = getPageState();
+        pageState[keyValue.key] = keyValue.value;
         window.location.hash = serialize(pageState);
         sendGadgetResponse(this.f, RPC_SERVICE_SET_STATE);
     });
