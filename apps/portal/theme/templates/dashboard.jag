@@ -484,7 +484,7 @@
 
     <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString null allowedViews}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString currentView allowedViews}}{{/traverseMenu}}
     </script>
 
     <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">

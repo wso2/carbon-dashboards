@@ -497,6 +497,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
+            currentView: page.id,
             allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
         }));
         //menulist for small res
@@ -506,6 +507,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
+            currentView: page.id,
             allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
         }));
     };

@@ -84,7 +84,7 @@ Handlebars.registerHelper('resolveURI', function (path) {
 });
 
 //handlebar helper which returns menu hierachy
-Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentPageId, allowedViews) {
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentView, allowedViews) {
     var divTree = "<ul class='nav nav-pills nav-stacked menu-customize pages'>";
     var checked = isHidden ? "checked=''" : "";
     var requestParam = (queryString !== null) ? "?" + queryString : "";
@@ -109,8 +109,8 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                     "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" + menu[i].id +
                     "'>" + iClass + "</span></span>";
             } else {
-                var cls = menu[i].id === currentPageId ? 'active' : '';
-                var divLi = "<li class='" + cls + "'><a style = 'width:75%; display:inline-block' href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>" +
+                var cls = menu[i].id === currentView ? 'active' : '';
+                var divLi = "<li class='" + cls + "'><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>" +
                     "<span id='" + menu[i].id + "' class='refreshBtn' style='background-color:#1e2531; display:none;'><i class='icon fw fw-undo'></i></span>";
                 if (!menu[i].ishidden) {
                     if (allowedViews) {
