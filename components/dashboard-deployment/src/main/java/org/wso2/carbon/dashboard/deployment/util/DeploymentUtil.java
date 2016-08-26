@@ -17,8 +17,10 @@ package org.wso2.carbon.dashboard.deployment.util;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.dashboard.deployment.DashboardConstants;
 import org.wso2.carbon.dashboard.deployment.internal.ServiceHolder;
 import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
@@ -97,12 +99,12 @@ public class DeploymentUtil {
     }
 
     /**
-     * Extract given CAR file into temporary directory for processing
+     * Extract given Zip file into temporary directory for processing
      *
      * @param zipFile       zip File Directory
      * @param tempDirectory temp directory to extract the CAR file
      */
-    public static void extractCARFile(ZipFile zipFile, File tempDirectory) {
+    public static void extractZipFile(ZipFile zipFile, File tempDirectory) {
         Enumeration files = zipFile.entries();
         File file;
         FileOutputStream fos = null;
@@ -127,7 +129,7 @@ public class DeploymentUtil {
                     fos.write(buffer, 0, bytesRead);
                 }
             } catch (IOException e) {
-                log.error("Error while extracting the " + zipFile.getName() + ".car File", e);
+                log.error("Error while extracting the " + zipFile.getName() + ".zip File", e);
             } finally {
                 if (fos != null) {
                     try {
@@ -148,12 +150,12 @@ public class DeploymentUtil {
      * @return String dashboard ID
      */
     public static String getDashboardID(File jsonFile) {
-        org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
+        JSONParser parser = new JSONParser();
         JSONObject dashboardJSONObject = null;
         try {
             Object obj = parser.parse(new FileReader(jsonFile.getAbsolutePath()));
             dashboardJSONObject = (JSONObject) obj;
-            return (String) dashboardJSONObject.get("id");
+            return (String) dashboardJSONObject.get(DashboardConstants.ID);
         } catch (ParseException e) {
             log.error("Error in parsing the json file " + jsonFile.getName());
         } catch (IOException e) {

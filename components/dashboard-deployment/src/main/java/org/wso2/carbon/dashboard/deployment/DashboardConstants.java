@@ -40,4 +40,6 @@ public class DashboardConstants {
     public static final String DEFAULT_THEME = "Default Theme";
     public static  final String DASHBOARDS_RESOURCE_PATH = RegistryConstants.PATH_SEPARATOR +
             "ues" + RegistryConstants.PATH_SEPARATOR +  "dashboards" + RegistryConstants.PATH_SEPARATOR;
+    public static final String ZIP_FILE_EXTENSION = ".zip";
+    public static final String ID = "id";
 }
