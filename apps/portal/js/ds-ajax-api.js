@@ -167,10 +167,9 @@
             if (typeof tokens[i + 1] != 'undefined') {
                 var key = tokens[i];
                 var val = tokens[i + 1];
-                if (encodeHash) {
-                    key = decodeURIComponent(key);
-                    val = decodeURIComponent(val);
-                }
+                // Must decode because firefox seems to return the encoded version
+                key = decodeURIComponent(key);
+                val = decodeURIComponent(val);
                 result[key] = JSON.parse(val);
             }
         }
