@@ -128,7 +128,7 @@ body > .page-content-wrapper > .container-fluid {
 }
 
 body.inverse {
-	background: #438CAD;
+	background: #4f6a80;
 	color: #ffffff;
 }
 
@@ -190,9 +190,9 @@ pre {
 
 body.inverse .fade-edge:after {
 	content: "";
-	background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(#438CAD, 0%)), color-stop(100%, fade(#438CAD, 100%)));
-	background-image: -webkit-linear-gradient(left, fade(#438CAD, 0%), fade(#438CAD, 100%));
-	background: linear-gradient(to right, fade(#438CAD, 0%), fade(#438CAD, 100%));
+	background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(#4f6a80, 0%)), color-stop(100%, fade(#4f6a80, 100%)));
+	background-image: -webkit-linear-gradient(left, fade(#4f6a80, 0%), fade(#4f6a80, 100%));
+	background: linear-gradient(to right, fade(#4f6a80, 0%), fade(#4f6a80, 100%));
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1, StartColorStr='#00$color', EndColorStr='$color');
 	bottom: 0;
 	max-height: 100%;
@@ -864,7 +864,7 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 }
 
 .navbar {
-	background: #438CAD;
+	background: #4f6a80;
 	border: none;
 	margin-bottom: 0;
 	-webkit-border-radius: 0;
@@ -911,17 +911,17 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 	padding: 0 8px;
 	line-height: 50px;
 	font-size: 18px;
-	background: #007D85;
+	background: #373E44;
 	color: #ffffff;
 }
 
 .navbar-menu-toggle:hover, .navbar-menu-toggle:focus, .navbar-menu-toggle:active {
 	color: #ffffff;
-	background: #004d52;
+	background: #4e5860;
 }
 
 .navbar-menu-toggle[aria-expanded=true] {
-	background: #00575c;
+	background: #373E44;
 }
 
 .navbar-toggle {
@@ -938,7 +938,7 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 	padding: 0 15px;
 	line-height: 50px;
 	text-transform: uppercase;
-	background: #356e88;
+	background: #3c5060;
 }
 
 .navbar > .container .navbar-brand a,
@@ -963,25 +963,25 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 }
 
 .navbar-default .navbar-nav > li a:hover, .navbar-default .navbar-nav > li a:focus, .navbar-default .navbar-nav > li a:active {
-	background: #61a4c2;
+	background: #63849f;
 	color: #ffffff;
 }
 
 .navbar-default .navbar-nav > li a:hover {
-	background: #61a4c2;
+	background: #63849f;
 }
 
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:active {
-	background: #61a4c2;
+	background: #63849f;
 	color: #ffffff;
 }
 
 .navbar-default .navbar-nav > .active > a:hover {
-	background: #61a4c2;
+	background: #63849f;
 }
 
 .navbar-collapse.dropdown {
-	background: #222;
+	background: #373E44;
 	margin-right: -10px;
 	margin-left: -10px;
 	padding-bottom: 0;
@@ -1013,22 +1013,22 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 	width: 120px;
 	height: 120px;
 	padding: 15px;
-	background: #444;
+	background: #49525A;
 	display: block;
 	overflow: hidden;
 	line-height: 1.4em;
 }
 
 .navbar-collapse.tiles ul.nav li li a {
-	background: #777777;
+	background: #788591;
 }
 
 .navbar-collapse.tiles ul.nav li a:hover {
-	background: #555;
+	background: #4F6A80;
 }
 
 .navbar-collapse.tiles ul.nav li li a:hover {
-	background: #888888;
+	background: #839db2;
 }
 
 .navbar-collapse.tiles ul.nav li a i {
@@ -1086,8 +1086,8 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 
 .nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
 	color: #ffffff;
-	background: #438CAD;
-	border-color: #438CAD;
+	background: #4f6a80;
+	border-color: #4f6a80;
 }
 
 /* ========================================================================
@@ -1534,7 +1534,7 @@ footer a, footer a:hover {
 }
 
 .dropdown-menu.dark {
-	background: #222;
+	background: #373E44;
 	color: #ffffff;
 	-webkit-border-radius: 0;
 	-moz-border-radius: 0;
@@ -1549,7 +1549,7 @@ footer a, footer a:hover {
 }
 
 .dropdown-menu.dark.arrow:before {
-	border-bottom-color: #222;
+	border-bottom-color: #373E44;
 }
 
 .dropdown-menu.tiles {
@@ -1575,11 +1575,11 @@ footer a, footer a:hover {
 	vertical-align: text-bottom;
 	color: #ffffff;
 	text-decoration: none;
-	background: #444;
+	background: #49525A;
 }
 
 .dropdown-menu.tiles li a:hover {
-	background: #555;
+	background: #4F6A80;
 }
 
 .dropdown-menu.tiles li a .icon {
@@ -1869,13 +1869,13 @@ a.btn:hover, .btn:hover {
 
 .btn-primary, .btn-primary:focus {
 	color: #ffffff;
-	background-color: #438CAD;
-	border-color: #438CAD;
+	background-color: #4f6a80;
+	border-color: #4f6a80;
 }
 
 .btn-primary:hover {
-	background-color: #61a4c2;
-	border-color: #438CAD;
+	background-color: #63849f;
+	border-color: #4f6a80;
 }
 
 .btn-bordered, .btn-bordered:focus, .btn-bordered:hover {
@@ -2484,7 +2484,7 @@ table.dataTable tr.filter-row th {
 .table.dataTable tbody tr.active th,
 .table.dataTable tbody tr.active:hover td,
 .table.dataTable tbody tr.active:hover th {
-	background-color: #438CAD !important;
+	background-color: #4f6a80 !important;
 }
 
 .table.dataTable tbody tr td.dataTables_empty {
@@ -2518,7 +2518,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:first-child {
 .thumbnail.icon {
 	border: none;
 	margin: 0;
-	background: #438CAD;
+	background: #4f6a80;
 	color: #fff;
 	text-align: center;
 	overflow: hidden;
@@ -2595,7 +2595,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:first-child {
 .pagination > li > span,
 .pagination > li > span:hover {
 	text-decoration: none;
-	color: #438CAD;
+	color: #4f6a80;
 }
 
 .pagination > .active > a,
@@ -2604,8 +2604,8 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:first-child {
 .pagination > .active > span,
 .pagination > .active > span:focus,
 .pagination > .active > span:hover {
-	background: #438CAD;
-	border-color: #438CAD;
+	background: #4f6a80;
+	border-color: #4f6a80;
 }
 
 .pagination > .disabled > a,
@@ -2822,8 +2822,8 @@ a.list-group-item:hover {
 
 .list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover, .active > .list-group-item, .active > .list-group-item:focus, .active > .list-group-item:hover {
 	color: #ffffff;
-	background: #438CAD;
-	border-color: #438CAD;
+	background: #4f6a80;
+	border-color: #4f6a80;
 }
 
 .list-group-item.active a {
@@ -2872,7 +2872,7 @@ a.list-group-item:hover {
 .tree-view li > .icon {
 	font-family: "font-wso2";
 	font-style: normal;
-	background: #438CAD;
+	background: #4f6a80;
 	color: #ffffff;
 	height: 20px;
 	width: 20px;
@@ -2946,7 +2946,7 @@ a.list-group-item:hover {
  * ======================================================================== */
 .asset-image {
 	max-width: 150px;
-	background: #438CAD;
+	background: #4f6a80;
 	float: none;
 }
 
@@ -3064,7 +3064,7 @@ a.list-group-item:hover {
 	position: absolute;
 	display: block;
 	content: "";
-	color: #438CAD;
+	color: #4f6a80;
 	z-index: 2;
 	font-size: 16px;
 	font-weight: bold;
@@ -3072,14 +3072,14 @@ a.list-group-item:hover {
 	margin-left: 0;
 	top: 50%;
 	margin-top: -5px;
-	background-color: #438CAD;
+	background-color: #4f6a80;
 	width: 10px;
 	height: 10px;
 	border-radius: 100%;
 }
 
 .radio > input[type=radio]:checked + .helper:before {
-	border: 2px #438CAD solid;
+	border: 2px #4f6a80 solid;
 }
 
 .radio > input[type=radio]:disabled + .helper:before {
@@ -3136,7 +3136,7 @@ a.list-group-item:hover {
 }
 
 .checkbox > input[type=checkbox]:checked + .helper:before {
-	border: 2px #438CAD solid;
+	border: 2px #4f6a80 solid;
 }
 
 .checkbox > input[type=checkbox]:checked + .helper:after {
@@ -3153,7 +3153,7 @@ a.list-group-item:hover {
 	left: 2px;
 	margin-left: 0;
 	text-align: center;
-	background: #438CAD;
+	background: #4f6a80;
 	color: #fff;
 	font-family: font-wso2;
 }

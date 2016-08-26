@@ -163,7 +163,7 @@ $base-info-color: #009DA7;
 $base-warning-color: #f0ad4e;
 $base-danger-color: #d9534f;
 
-$primary-color: #438CAD;
+$primary-color: #4f6a80;
 $secondary-color: #e4e4e4;
 $optional-color: #007D85;
 
@@ -205,10 +205,10 @@ $loading-inverse-background-color: $base-light-color;
 $loading-inverse-color: $base-dark-color;
 $loading-image-icon-max-width: 50px;
 
-$dropdown-menu-dark-background-color: $base-dark-color;
+$dropdown-menu-dark-background-color: #373E44;
 $dropdown-menu-dark-color: $base-light-color;
-$dropdown-menu-dark-tiles-background-color: #444;
-$dropdown-menu-dark-tiles-hover-background-color: #555;
+$dropdown-menu-dark-tiles-background-color: #49525A;
+$dropdown-menu-dark-tiles-hover-background-color: #4F6A80;
 $dropdown-menu-dark-tiles-color: $base-light-color;
 
 $button-default-background-color: $base-light-color;
@@ -733,15 +733,15 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
     padding: 0 8px;
     line-height: $navbar-height;
     font-size: 18px;
-    background: $optional-color;
+    background: $dropdown-menu-dark-background-color;
     color: $base-light-color;
 
     &:hover, &:focus, &:active {
         color: $base-light-color;
-        background: darken($optional-color, 10%);
+        background: lighten($dropdown-menu-dark-background-color, 10%);
     }
     &[aria-expanded=true] {
-        background: darken($optional-color, 8%);
+        background: $dropdown-menu-dark-background-color;
     }
 }
 
