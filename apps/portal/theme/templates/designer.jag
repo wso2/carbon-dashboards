@@ -601,21 +601,21 @@
         {{/each}}
 
          <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
-                <hr>
                 {{>ds-add-gadget-hbs}}
          <% } %>
     </script>
 
     <!-- Handlebar to render the add gadget button -->
     <script id="ds-add-gadget-hbs" type="text/x-handlebars-template">
-       <div class="thumbnail selectable tiles add-asset">
-            <a href="<%=tenantedUrlPrefix%>gadget/">
-                <span class="fw-stack fw-lg add-icon ">
-                    <i class="fw fw-circle-outline fw-stack-2x" ></i>
-                    <i class="fw fw-add fw-stack-1x"></i>
-                </span> <h5><%=i18n.localize("add.gadgets")%></h5>
-            </a>
-       </div>
+      <hr>
+      <a href="<%=tenantedUrlPrefix%>gadget/">
+        <button type="button" class="btn btn-primary btn-stack btn-block">
+            <span class="icon fw-stack fw-lg">
+                <i class="fw fw-circle-outline fw-stack-2x"></i>
+                <i class="fw fw-add fw-stack-1x"></i>
+            </span> <%=i18n.localize("add.gadgets")%>
+        </button>
+      </a>
     </script>
 
     <script id="ues-pages-list-hbs" type="text/x-handlebars-template">
@@ -628,7 +628,7 @@
                         <i class="fw fw-home fw-stack-1x"></i>
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                     </span>
-                    {{/equals}} {{title}}</h4><span class="caret"></span>
+                    {{/equals}} {{title}} {{#if isDefective}}<i class="fw fw-alert"></i>{{/if}}</h4><span class="caret"></span>
             </div>
             <div id="pages{{id}}" class="panel-collapse collapse ues-page-properties" role="tabpanel">
             </div>
@@ -688,15 +688,14 @@
         <h4><%= i18n.localize("no.layout.found")%></h4>
         {{/if}}
          <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
-               <div class="thumbnail selectable tiles add-asset">
-                    <a href="<%=tenantedUrlPrefix%>layout/">
-                        <span class="fw-stack fw-lg add-icon ">
-                           <i class="fw fw-circle-outline fw-stack-2x" ></i>
-                           <i class="fw fw-add fw-stack-1x"></i>
-                        </span>
-                        <h4><%=i18n.localize("add.layouts")%></h4>
-                    </a>
-               </div>
+              <a href="<%=tenantedUrlPrefix%>layout/">
+                <button type="button" class="btn btn-primary btn-stack btn-block">
+                    <span class="icon fw-stack fw-lg">
+                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                        <i class="fw fw-add fw-stack-1x"></i>
+                    </span> <%=i18n.localize("add.layouts")%>
+                </button>
+              </a>
          <% } %>
 
     </script>
@@ -1087,7 +1086,6 @@
         <% } %>
     </script>
 
-   <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
     <script id="ds-error-hbs" type="text/x-handlebars-template">
       <div class="alert alert-danger" id = "delete-error" role="alert">
         <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
@@ -1131,6 +1129,7 @@
     <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
     <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+    <script src="<%=urlPrefix%>js/database-update.js"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/uris/local/index.js"></script>

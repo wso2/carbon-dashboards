@@ -17,6 +17,8 @@
 (function () {
     var utils = require('/modules/utils.js');
     var configs = require('/modules/config.js').getConfigFile();
+    var permission = require('/modules/permission.js');
+    var constants = require('/modules/constants.js');
     var store = utils.store();
     var dashboardCountPerUser = 0;
     var dashboardCountPerPortal = 0;
@@ -59,11 +61,10 @@
         } else if (dashboardCountPerUser == 1) {
             response.sendRedirect(DASHBOARDS + "/" + assetsForUser[0].id + "/");
             return;
-        } else {
+        } else if (permission.isAllowed(constants.CREATE)) {
             response.sendRedirect("create-dashboard");
             return;
         }
     }
-
     response.sendRedirect(DASHBOARDS + "/");
 }()); %>

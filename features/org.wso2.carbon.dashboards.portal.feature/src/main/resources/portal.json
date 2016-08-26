@@ -78,5 +78,8 @@
         "location" : "/temp/",
         "interval" : "60",
         "maxTempFileLifeTime" : "120"
+    },
+    "dataSource" : {
+        "name" : "WSO2_DS_USAGE_STORE_DB"
     }
 }

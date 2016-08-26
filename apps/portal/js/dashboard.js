@@ -90,7 +90,6 @@ $(function () {
     var gadgetSettingsViewHbs = Handlebars.compile($('#ues-gadget-setting-hbs').html());
     var menuListHbs = Handlebars.compile($("#ues-menu-list-hbs").html());
     var viewOptionHbs = Handlebars.compile($("#view-option-hbs").html());
-    var componentBoxContentHbs = Handlebars.compile($('#ues-component-box-content-hbs').html());
     var dsErrorHbs = Handlebars.compile($("#ds-error-hbs").html());
 
     /**
@@ -202,17 +201,18 @@ $(function () {
                                 saveDashboard();
                                 $("#" + ues.global.page).show();
                             });
-                        }
-
-                        if (hasHiddenGadget(componentBox)) {
-                            for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
-                                if (ues.global.dashboard.pages[i].id === page.id) {
-                                    ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                        } else {
+                            var hasHidden = hasHiddenGadget(componentBox);
+                            if (hasHidden) {
+                                for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
+                                    if (ues.global.dashboard.pages[i].id === page.id) {
+                                        ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                                    }
                                 }
+                                ds.database.updateUsageData(ues.global.dashboard, hasHidden[0].content.id);
+                                saveDashboard();
                             }
-                            saveDashboard();
                         }
-                        componentBox.html(componentBoxContentHbs());
                         designerModal.modal('hide');
                     });
                 });
@@ -229,7 +229,7 @@ $(function () {
         for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
             if (ues.global.dashboard.pages[i].id === page.id) {
                 var component = ues.global.dashboard.pages[i].content[pageType][componentBox.attr('id')];
-                return (component && component.length > 0);
+                return (component && component.length > 0) ? component : null;
             }
         }
     };
@@ -497,7 +497,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
-            allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
+            allowedViews: isAnonView ? getAnonViewPages() : getUserAllowedPages()
         }));
         //menulist for small res
         $('#ues-pages-col').html(menuListHbs({
@@ -506,7 +506,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
-            allowedViews: user ? getUserAllowedPages() : getAnonViewPages()
+            allowedViews: isAnonView ? getAnonViewPages() : getUserAllowedPages()
         }));
     };
 
@@ -578,7 +578,7 @@ $(function () {
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
-                if (err) {
+                if (!component && err) {
                     showGadgetError($(this), err);
                     err = null;
                 }
@@ -608,7 +608,7 @@ $(function () {
             $('.ues-component-box .ues-component').each(function () {
                 var component = ues.dashboards.findComponent($(this).attr('id'), page);
                 renderComponentToolbar(component);
-                if (err) {
+                if (!component && err) {
                     showGadgetError($(this), err);
                     err = null;
                 }
@@ -884,7 +884,7 @@ $(function () {
             var index = area.indexOf(component);
             area.splice(index, 1);
             container.remove();
-
+            ds.database.updateUsageData(ues.global.dashboard, component.content.id);
             var compId = $('.ues-component-properties').data('component');
             if (compId !== component.id) {
                 return done();

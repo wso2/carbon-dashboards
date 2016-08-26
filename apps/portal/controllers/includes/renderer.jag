@@ -26,6 +26,7 @@ var portalRoot;
     var anonymous = permissions.viewers.indexOf(anonRole) !== -1;
     var db = require('/modules/dashboards.js');
     var i18n = require("i18n");
+    i18n.init(request, utils.getLocaleResourcePath());
     var ANON_VIEW = 'anon';
     var ANONYMOUS_ROLE = 'anonymous';
 
@@ -96,10 +97,12 @@ var portalRoot;
             }
         });
     }
-
     //check whether the page exists or not
     if (!currentPage) {
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
+        return;
+    } else if (!request.getParameter('preview') && !utils.isPageHasUserAllowedView(currentPage)) {
+        response.sendError(401, i18n.localize("access.not.authorized"));
         return;
     }
 

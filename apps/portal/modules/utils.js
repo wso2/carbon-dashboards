@@ -91,7 +91,12 @@ var tenantExists = function (domain) {
 var currentContext = function () {
     var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
     var context = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+    var usr = require('/modules/user.js');
     var username = context.getUsername();
+
+    if (!username && usr.current()) {
+        username = usr.current().username;
+    }
     return {
         username: username,
         domain: context.getTenantDomain(),
@@ -315,7 +320,10 @@ var isPageHasUserAllowedView = function (page) {
     var views = Object.keys(page.views.content);
     for (var i = 0; i < views.length; i++) {
         var viewRoles = page.views.content[views[i]].roles;
-        return (user && isAllowedView(viewRoles)) || (!user && viewRoles.indexOf(constants.ANONYMOUS_ROLE) > -1);
+        var isAllowed = (user && isAllowedView(viewRoles)) || (!user && viewRoles.indexOf(constants.ANONYMOUS_ROLE) > -1);
+        if (isAllowed) {
+            return true;
+        }
     }
 };
 
@@ -345,12 +353,16 @@ var isAllowedView = function (viewRoles) {
  * @returns {boolean|*} true if the particular page is hidden otherwise false
  */
 var isPageHidden = function (page, menu) {
-    for (var i = 0; i < menu.length; i++) {
-        if (menu[i].id === page.id) {
-            return menu[i].ishidden;
+    if (menu) {
+        for (var i = 0; i < menu.length; i++) {
+            if (menu[i].id === page.id) {
+                return menu[i].ishidden;
+            }
         }
+        return true;
+    } else {
+        return false;
     }
-    return true;
 };
 
 
