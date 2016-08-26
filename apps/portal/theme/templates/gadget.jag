@@ -1,59 +1,44 @@
-<%
-/*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-    // i18n
-    var i18n = require("i18n");
-    i18n.init(request, utils.getLocaleResourcePath());
-    var usr = require('/modules/user.js');
-    var user = usr.current();
-    var isStandAloneGadget = true;
-    // Getting dashboard color theme
-    var gadgetTheme;
-    if(request.getCookie('dashboardTheme') != null) {
-        gadgetTheme = request.getCookie('dashboardTheme').value;
-    } else {
-        gadgetTheme = 'dark';
-    }
-%>
+<!DOCTYPE html>
+
+<!--
+~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+   
+    <% 
+        include(utils.resolvePath('templates/includes/portal-header.jag'));
+    
+        var usr = require('/modules/user.js');
+        var user = usr.current();
+        var isStandAloneGadget = true;
+    
+        // Getting dashboard color theme
+        var gadgetTheme;
+        if(request.getCookie('dashboardTheme') != null) {
+            gadgetTheme = request.getCookie('dashboardTheme').value;
+        } else {
+            gadgetTheme = 'dark';
+        }
+    %>
+
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="<%=urlPrefix%>libs/theme-wso2_1.0/images/favicon.png" />
-
-    <!-- Font WSO2 CSS -->
-    <link href="<%=urlPrefix%>libs/font-wso2_1.0.0/css/font-wso2.min.css" rel="stylesheet" type="text/css" />
-
-    <!-- Theme WSO2 CSS -->
-    <link href="<%=urlPrefix%>libs/theme-wso2_1.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
-
-   <!-- Custom CSS specific to embeddable gadget -->
+    <!-- Custom CSS specific to embeddable gadget -->
     <link href="<%=urlPrefix%>css/gadget-custom.css" rel="stylesheet" type="text/css" />
-
-    <script type="text/javascript" src="<%=urlPrefix%>csrf.js"></script>
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="<%=urlPrefix%>libs/html5shiv_3.7.2/html5shiv.min.js"></script>
-    <script src="<%=urlPrefix%>libs/respond_1.4.2/respond.min.js"></script>
-    <![endif]-->
 
     <!-- JQuery UI -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
@@ -63,13 +48,16 @@
 
     <!-- Common CSS -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
+    
 </head>
 <body class="dashboard embGadget lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
-    <div class="<%= 'container'%> body-wrapper" data-toggle="loading" data-loading-style="overlay>
+    
+    <div class="<%= 'container'%> body-wrapper" data-toggle="loading" data-loading-style="overlay">
         <div class="page-content">
             <div class = "ues-component-box emb-gadget"></div>
         </div>
     </div>
+    
     <!-- Component container -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
             <div class="ues-component gadget">

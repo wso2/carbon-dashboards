@@ -1,99 +1,100 @@
-<%
-/*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+<!DOCTYPE html>
 
-    // i18n
-    var i18n = require("i18n");
-    var utils = require('/modules/utils.js');
-    i18n.init(request, utils.getLocaleResourcePath());
-    var isEditor = false;
+<!--
+~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
 
-    // If the pageId is null, render the landing page
-    pageId = pageId || dashboard.landing;
-
-    var usr = require('/modules/user.js');
-    var user = usr.current();
-    var isAnonView = request.getParameter('isAnonView');
-    var isPreview = request.getParameter('preview');
-    var queryString;
-    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
-    var userRoles = [];
-    var viewId = request.getParameter('currentView');
-    var constants = require('/modules/constants.js');
-    var shared = request.getParameter('shared');
-
-    if (!user) {
-        userRoles.push(constants.ANONYMOUS_ROLE);
-    } else {
-        var tempRoles = usr.getUserRoles();
-        if (isPreview) {
-            userRoles.push(constants.ANONYMOUS_ROLE);
-            isEditor = utils.allowed(user.roles, dashboard.permissions.owners) ||
-                    utils.allowed(user.roles, dashboard.permissions.editors);
-        }
-        for (var i = 0; i < tempRoles.length; i++) {
-            userRoles.push(tempRoles[i]);
-        }
-    }
-
-    queryString = shared ? "shared=" + shared : queryString;
-    queryString = isPersonalizeEnabled ? (queryString ? queryString + "&" : "") + "dashboardeditor=" + isPersonalizeEnabled : queryString;
-    queryString = isPreview ? (queryString ? queryString + "&" : "") + "preview=" + isPreview : queryString;
-
-    // Get the anon view
-    if (!user) {
-        if (isAnonView) {
-            response.sendRedirect(request.getRequestURL());
-        }
-        isAnonView = true;
-    } else {
-        isAnonView = JSON.parse(isAnonView);
-
-        if ((user.domain != urlDomain && urlDomain) ||
-                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
-            isAnonView = true;
-        }
-    }
-
-    // Get the current page
-    var pages = dashboard.pages,
-            page;
-    pages.forEach(function(p) {
-        if (p.id == pageId) {
-            page = p;
-        }
-    });
-
-    // Build the URL for the home page
-    var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
-    if (request.getParameter('isAnonView') == 'true') {
-        dashboardUrl += '?isAnonView=true';
-    }
-
-    // Getting dashboard color theme
-    var gadgetTheme;
-    if(request.getCookie('dashboardTheme') != null) {
-        gadgetTheme = request.getCookie('dashboardTheme').value;
-    } else {
-        gadgetTheme = 'dark';
-    }
-%>
 <html lang="en">
 <head>
-    <% include(utils.getThemeTemplatePath('templates/includes/portal-header.jag')); %>
+
+    <% 
+        include(utils.getThemeTemplatePath('templates/includes/portal-header.jag'));
+    
+        var isEditor = false;
+
+        // If the pageId is null, render the landing page
+        pageId = pageId || dashboard.landing;
+
+        var usr = require('/modules/user.js');
+        var user = usr.current();
+        var isAnonView = request.getParameter('isAnonView');
+        var isPreview = request.getParameter('preview');
+        var queryString;
+        var isPersonalizeEnabled = request.getParameter('dashboardeditor');
+        var userRoles = [];
+        var viewId = request.getParameter('currentView');
+        var constants = require('/modules/constants.js');
+        var shared = request.getParameter('shared');
+
+        if (!user) {
+            userRoles.push(constants.ANONYMOUS_ROLE);
+        } else {
+            var tempRoles = usr.getUserRoles();
+            if (isPreview) {
+                userRoles.push(constants.ANONYMOUS_ROLE);
+                isEditor = utils.allowed(user.roles, dashboard.permissions.owners) ||
+                        utils.allowed(user.roles, dashboard.permissions.editors);
+            }
+            for (var i = 0; i < tempRoles.length; i++) {
+                userRoles.push(tempRoles[i]);
+            }
+        }
+
+        queryString = shared ? "shared=" + shared : queryString;
+        queryString = isPersonalizeEnabled ? (queryString ? queryString + "&" : "") + "dashboardeditor=" + isPersonalizeEnabled : queryString;
+        queryString = isPreview ? (queryString ? queryString + "&" : "") + "preview=" + isPreview : queryString;
+
+        // Get the anon view
+        if (!user) {
+            if (isAnonView) {
+                response.sendRedirect(request.getRequestURL());
+            }
+            isAnonView = true;
+        } else {
+            isAnonView = JSON.parse(isAnonView);
+
+            if ((user.domain != urlDomain && urlDomain) ||
+                    (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+                isAnonView = true;
+            }
+        }
+
+        // Get the current page
+        var pages = dashboard.pages,
+                page;
+        pages.forEach(function(p) {
+            if (p.id == pageId) {
+                page = p;
+            }
+        });
+
+        // Build the URL for the home page
+        var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
+        if (request.getParameter('isAnonView') == 'true') {
+            dashboardUrl += '?isAnonView=true';
+        }
+
+        // Getting dashboard color theme
+        var gadgetTheme;
+        if(request.getCookie('dashboardTheme') != null) {
+            gadgetTheme = request.getCookie('dashboardTheme').value;
+        } else {
+            gadgetTheme = 'dark';
+        }
+    %>
+    
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
     <!-- JQuery UI -->
@@ -105,17 +106,17 @@
 
     <!-- Custom theme overrides -->
     <%
-    var path = utils.getThemeStylesPath();
-    var folder = new File('/' + path);
-    var filePath = "";
-    var fileList = folder.listFiles();
-    fileList.forEach(function(file){
-        filePath = '/' + path +'/' + file.getName();
-    %>
+        var path = utils.getThemeStylesPath();
+        var folder = new File('/' + path);
+        var filePath = "";
+        var fileList = folder.listFiles();
+        fileList.forEach(function(file){
+            filePath = '/' + path +'/' + file.getName();
+    s%>
         <link rel="stylesheet" href="<%=urlPrefix%><%=filePath%>">
     <%
-    });
-%>
+        });
+    %>
 
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
@@ -625,7 +626,7 @@
         var isEditor = <%= isEditor%>;
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
-        <% } %>
+        <% } %>      
     </script>
 </body>
 </html>
