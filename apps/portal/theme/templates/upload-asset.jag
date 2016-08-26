@@ -28,8 +28,6 @@
     
     <title><%= i18n.localize("upload."+assetType+".label")%></title>
     
-    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
-    
 </head>
 <body>
     

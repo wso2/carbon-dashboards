@@ -302,7 +302,7 @@ $sidebar-width-default: 350px;
 
 html {
     position: relative;
-    min-height: 100%;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
@@ -310,11 +310,17 @@ html {
 
 body {
     color: $base-dark-color;
-    margin-bottom: $footer-height;
+    padding-bottom: $footer-height;
     font-family: $font-default;
     font-weight: $font-default-weight;
     width: 100%;
     overflow-x: hidden;
+    min-height: 100%;
+    position: relative;
+}
+
+body.fixed {
+    height: 100%;
 }
 
 body > .page-content-wrapper > .container,

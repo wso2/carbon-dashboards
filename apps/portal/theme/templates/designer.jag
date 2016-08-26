@@ -42,11 +42,10 @@
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
     
 </head>
-<body>
+<body class="fixed">
     <!-- Modal -->
     <div class="modal fade" id="designerModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -180,7 +179,7 @@
     </nav>
 
     <!-- #page-content-wrapper -->
-    <div class="page-content-wrapper fixed">
+    <div class="page-content-wrapper">
 
         <!-- .left-sidebar -->
         <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55">

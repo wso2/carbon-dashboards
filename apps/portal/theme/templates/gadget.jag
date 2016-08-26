@@ -45,9 +45,6 @@
 
     <!-- Gridstack -->
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
-
-    <!-- Common CSS -->
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     
 </head>
 <body class="dashboard embGadget lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
