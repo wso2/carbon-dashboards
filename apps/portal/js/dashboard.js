@@ -591,6 +591,10 @@ $(function () {
                 disableDrag: true
             });
         });
+        if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
+            $('.grid-stack-item[data-banner=true]')
+                .css("background-image", "url(" + ues.utils.tenantPrefix() + 'banners/' + ues.global.dashboard.id + ")");
+        }
     };
 
     /**
@@ -646,6 +650,10 @@ $(function () {
                 updateRefreshBtn(ues.global.page);
             });
         });
+        if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
+            $('.grid-stack-item[data-banner=true]')
+                .css("background-image", "url(" + ues.utils.tenantPrefix() + 'banners/' + ues.global.dashboard.id + ")");
+        }
     };
 
     /**
