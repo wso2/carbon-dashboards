@@ -162,8 +162,8 @@
                                             <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
                                         </div>
                                         <div class="dropdown pagetype-selection-dropdown">
-                                            <div class="btn btn-primary dropdown-toggle dropdown-menu-button-size" data-toggle="dropdown">
-                                                <div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
+                                            <div class="btn btn-secondary btn-bordered dropdown-toggle dropdown-menu-button-size" data-toggle="dropdown">
+                                                <div id = "pdf-size" class="pagetype-div"></div> <span class="caret"></span>
                                             </div>
                                             <ul class="dropdown-menu dropdown-ul">
                                                 <li class="dropdown-li"><a href="#">Default Size</a></li>
@@ -190,9 +190,11 @@
                                     </div>
                                 </div>
                                 <ul class="nav nav-pills nav-stacked pages">
-                                    <div id="generate-pdf">
-                                        <li><%=i18n.localize("dashboard.pdf.downloadPDF")%></li>
-                                    </div>
+                                    <li>
+                                        <button class="btn btn-primary" id="generate-pdf">
+                                            <%=i18n.localize("dashboard.pdf.downloadPDF")%>
+                                        </button>
+                                    </li>
                                 </ul>
                             </form>
                         </div>
@@ -303,28 +305,30 @@
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
-                <div class="form-group hide" id="list-user-views">
-                    <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
-                    data-style="btn-default" data-width="100px" style="width: 200px">
-                    </select>
-                </div>
                 <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" >
             <% } else { %>
                 <div class="container-fluid body-wrapper" style="height: 100%;" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" style="position: absolute;">
             <% } %>
-                    <div class="nano-content" >
-                        <div class="page-content">
-                            <div class="progress hidden">
-                                    <div class="indeterminate"></div>
+                <div class="nano-content" >
+                    <div class="page-content">
+                        <div class="clearfix add-margin-top-5x add-margin-right-5x">
+                            <div id="list-user-views">
+                                <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
+                                    data-style="btn-default" data-width="100px" style="width: 200px">
+                                </select>
                             </div>
-                            <!-- Components grid -->
-                                <div class="ues-components-grid gadgets-grid" id = "gadgets-grid"></div>
                         </div>
+                        <div class="progress hidden">
+                            <div class="indeterminate"></div>
+                        </div>
+                        <!-- Components grid -->
+                        <div class="ues-components-grid gadgets-grid" id = "gadgets-grid"></div>
                     </div>
                 </div>
             </div>
+        </div>
     </div><!-- /#page-content-wrapper -->
 
 
@@ -510,8 +514,9 @@
         </div>
         {{/if}}
     </script>
+                    
     <!--Handlebar templates for revert button confirmation of reverting into original dashboard page -->
-     <script id="ds-modal-confirm-revert-block-hbs" type="text/x-handlebars-template">
+    <script id="ds-modal-confirm-revert-block-hbs" type="text/x-handlebars-template">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
             <h3 class="modal-title" id="deleteModalLabel">
