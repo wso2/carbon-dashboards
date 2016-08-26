@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2005 - 2013, WSO2 Inc. (http://www.wso2.com) All Rights Reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,8 +38,8 @@ public class DashboardConstants {
 
     public static final String DASHBOARD_EXTENSION = ".json";
     public static final String DEFAULT_THEME = "Default Theme";
-    public static  final String DASHBOARDS_RESOURCE_PATH = RegistryConstants.PATH_SEPARATOR +
-            "ues" + RegistryConstants.PATH_SEPARATOR +  "dashboards" + RegistryConstants.PATH_SEPARATOR;
+    public static final String DASHBOARDS_RESOURCE_PATH = RegistryConstants.PATH_SEPARATOR +
+            "ues" + RegistryConstants.PATH_SEPARATOR + "dashboards" + RegistryConstants.PATH_SEPARATOR;
     public static final String ZIP_FILE_EXTENSION = ".zip";
     public static final String ID = "id";
 }

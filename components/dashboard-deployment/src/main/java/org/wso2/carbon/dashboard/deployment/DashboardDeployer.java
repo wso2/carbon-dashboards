@@ -110,7 +110,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
                 String path = artifact.getExtractedPath() + File.separator + fileName;
                 File file = new File(path);
                 if (DashboardConstants.DASHBOARD_ARTIFACT_TYPE.equals(artifact.getType())) {
-                    deployDashboardArtifact(fileName,file);
+                    deployDashboardArtifact(fileName, file);
                 } else if (DashboardConstants.GADGET_ARTIFACT_TYPE.equals(artifact.getType())) {
                     deployGadgetArtifact(file);
                 } else if (DashboardConstants.LAYOUT_ARTIFACT_TYPE.equals(artifact.getType())) {
@@ -122,15 +122,14 @@ public class DashboardDeployer implements AppDeploymentHandler {
         }
     }
 
-    private void deployDashboardArtifact(String fileName, File file) throws DashboardDeploymentException{
+    private void deployDashboardArtifact(String fileName, File file) throws DashboardDeploymentException {
         try {
             if (fileName.endsWith(DashboardConstants.DASHBOARD_EXTENSION)) {
                 String dashboardDefn = DeploymentUtil.readFile(file);
                 DeploymentUtil.createRegistryResource(
                         DashboardConstants.DASHBOARDS_RESOURCE_PATH + DeploymentUtil.getDashboardID(file),
                         dashboardDefn);
-                log.info("Dashboard definition [" + DeploymentUtil.getDashboardID(file)
-                        + "] has been created.");
+                log.info("Dashboard definition [" + DeploymentUtil.getDashboardID(file) + "] has been created.");
             }
         } catch (IOException e) {
             String errorMsg = "Error while reading from the file : " + file.getAbsolutePath();
@@ -143,7 +142,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
         }
     }
 
-    private void deployGadgetArtifact(File file) throws DashboardDeploymentException{
+    private void deployGadgetArtifact(File file) throws DashboardDeploymentException {
         try {
             if (file.isDirectory()) {
                 String storePath = getArtifactPath(DashboardConstants.GADGET_TYPE);
@@ -158,8 +157,8 @@ public class DashboardDeployer implements AppDeploymentHandler {
                 File[] gadgetDirectoryList = tempExtractedFile.listFiles();
                 for (File gadgetDir : gadgetDirectoryList) {
                     if (gadgetDir.isDirectory()) {
-                        DeploymentUtil.copyFolder(gadgetDir,
-                                new File(storePath + File.separator + gadgetDir.getName()));
+                        DeploymentUtil
+                                .copyFolder(gadgetDir, new File(storePath + File.separator + gadgetDir.getName()));
                     }
                 }
                 log.info("Gadget directory [" + file.getName() + "] has been copied to path " + storePath);
@@ -171,7 +170,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
         }
     }
 
-    private void deployLayoutArtifact(File file) throws DashboardDeploymentException{
+    private void deployLayoutArtifact(File file) throws DashboardDeploymentException {
         try {
             if (file.isDirectory()) {
                 String storePath = getArtifactPath(DashboardConstants.LAYOUT_TYPE);
@@ -186,8 +185,8 @@ public class DashboardDeployer implements AppDeploymentHandler {
                 File[] layoutDirectoryList = tempExtractedFile.listFiles();
                 for (File layoutDir : layoutDirectoryList) {
                     if (layoutDir.isDirectory()) {
-                        DeploymentUtil.copyFolder(layoutDir,
-                                new File(storePath + File.separator + layoutDir.getName()));
+                        DeploymentUtil
+                                .copyFolder(layoutDir, new File(storePath + File.separator + layoutDir.getName()));
                     }
                 }
                 log.info("Layout directory [" + file.getName() + "] has been copied to path " + storePath);
@@ -199,7 +198,7 @@ public class DashboardDeployer implements AppDeploymentHandler {
         }
     }
 
-    private void deployThemeArtifact(File file) throws DashboardDeploymentException{
+    private void deployThemeArtifact(File file) throws DashboardDeploymentException {
         try {
             if (file.isDirectory()) {
                 String themeName = file.getName();
