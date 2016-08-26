@@ -295,6 +295,7 @@ $(function () {
         var ctx = buildPropertiesContext(component, page);
         var propertiesContainer = $('#gadget-configuration');
         dashboard.defaultPriority = propertiesContainer.find('#priorityPicker').attr("value");
+        $('#ds-properties-container #view-configuration').empty();
         propertiesContainer.empty();
         propertiesContainer
             .html(gadgetComponentPropertiesHbs(ctx))
@@ -889,8 +890,8 @@ $(function () {
 
             if ($('#right-sidebar').hasClass('toggled')) {
                 $('#right-sidebar').removeClass('toggled');
-                return;
             }
+
             $('#view-configuration').empty();
             $('#ds-properties-container #gadget-configuration').empty();
 
@@ -2492,11 +2493,23 @@ $(function () {
      * Check whether given category is already existing or not.
      * @param {Object} categories   All the categories
      * @param {String} category     Category to be checked
+     * @param {String} storeType    store type which this category belongs to
      * @return {Boolean}
      * @private
      */
-    var checkForExistingCategory = function (categories, category) {
-        return categories[category] ? true : false;
+    var checkForExistingCategory = function (categories, category, storeType) {
+        return categories[storeType].categories[category] ? true : false;
+    };
+
+    /**
+     * Check whether given category is already existing or not.
+     * @param {Object} stores   All the stores
+     * @param {String} storeType    Store type to be tested
+     * @return {Boolean}
+     * @private
+     */
+    var checkForExistingStoreType = function (stores, storeType) {
+        return stores[storeType] ? true : false;
     };
 
     /**
@@ -2506,24 +2519,48 @@ $(function () {
      * @private
      */
     var filterComponentByCategories = function (data) {
-        var componentsWithCategories = {};
+        var componentsWithStoreType = {};
         var categories = {};
+        var stores = {};
+
         for (var i = 0; i < data.length; i++) {
             var category = data[i].category ? data[i].category : nonCategoryKeyWord;
-            if (checkForExistingCategory(categories, category)) {
-                componentsWithCategories[category].components.push(data[i]);
+            var storeType = data[i].storeType;
+            if (checkForExistingStoreType(stores, storeType)) {
+                if (checkForExistingCategory(categories, category, storeType)) {
+                    componentsWithStoreType[storeType].category[category].components.push(data[i]);
+                } else {
+                    var newCategory = {
+                        components: [],
+                        categoryName: category
+                    };
+                    categories[storeType].categories[category] = category;
+                    newCategory.components.push(data[i]);
+                    componentsWithStoreType[storeType].category[category] = newCategory;
+                }
             } else {
                 var newCategory = {
                     components: [],
-                    category: category
+                    categoryName: category
                 };
-
-                categories[category] = category;
+                var newStore = {
+                    category: {},
+                    storeType: storeType
+                };
+                categories[storeType] = {
+                    categories: {}
+                };
+                stores[storeType] = storeType;
+                categories[storeType].categories[category] = category;
                 newCategory.components.push(data[i]);
-                componentsWithCategories[category] = newCategory;
+                newStore.category[category] = newCategory;
+                componentsWithStoreType[storeType] = newStore;
             }
         }
-        return componentsWithCategories;
+        return {
+            componentsWithStoreType: componentsWithStoreType,
+            stores: stores
+        };
     };
 
     /**
@@ -2537,16 +2574,23 @@ $(function () {
     /**
      * Sort the Filtered component to show the non categorized components first
      * @param {String} nonCategoryString
-     * @param {String} componentsWithCategories
+     * @param {Object} componentWithStore
      * @return {Object}
      * @private
      */
-    var sortComponentsByCategory = function (nonCategoryString, componentsWithCategories) {
+    var sortComponentsByCategory = function (nonCategoryString, componentWithStore) {
         var sortedList = {};
-        sortedList[nonCategoryString] = componentsWithCategories[nonCategoryString];
-        for (var i in componentsWithCategories) {
-            if (i != nonCategoryString) {
-                sortedList[i] = componentsWithCategories[i];
+        for (var store in componentWithStore.stores) {
+            var sortedCategory = {
+                category: {},
+                storeType: store.toUpperCase()
+            };
+            sortedCategory.category[nonCategoryString] = componentWithStore.componentsWithStoreType[store].category[nonCategoryString];
+            sortedList[store] = sortedCategory;
+            for (var category in componentWithStore.componentsWithStoreType[store].category) {
+                if (category !== nonCategoryString) {
+                    sortedList[store].category[category] = componentWithStore.componentsWithStoreType[store].category[category];
+                }
             }
         }
         return sortedList;

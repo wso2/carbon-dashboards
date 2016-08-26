@@ -308,6 +308,7 @@ var downloadAsset;
                             }
                             assets[j].isDownloadable = isDownloadable;
                             assets[j].isDeletable = isDeletable;
+                            assets[j].storeType = storeTypes[i];
                         }
                     }
                     allAssets = assets.concat(allAssets);

@@ -157,14 +157,17 @@
 
     <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
         <h5 class="title">{{title}}</h5>
-        <% var isDeleteAllowed = (assetType === 'gadget') ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
-        <% if (isDeleteAllowed) { %>
+        <% var isDeleteAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
+        <% var isDownloadAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DOWNLOAD) : permission.isAllowed(constants.LAYOUT_DOWNLOAD); %>
+        <% if (isDownloadAllowed) { %>
             {{#if isDownloadable}}
                 <a href="#" class="ds-asset-download-handle">
                     <i class="fw fw-download ladda-label" data-toggle="tooltip" data-placement="left" title="
                     <%= i18n.localize("download."+assetType)%>"></i>
                 </a>
             {{/if}}
+        <% } %>
+        <% if (isDeleteAllowed) { %>
             {{#if isDeletable}}
                 <a href="#" class="ds-asset-trash-handle">
                     <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
