@@ -1080,7 +1080,6 @@
         <% } %>
     </script>
 
-   <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
     <script id="ds-error-hbs" type="text/x-handlebars-template">
       <div class="alert alert-danger" id = "delete-error" role="alert">
         <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
