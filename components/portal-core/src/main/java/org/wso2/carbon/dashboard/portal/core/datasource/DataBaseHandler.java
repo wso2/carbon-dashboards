@@ -163,7 +163,7 @@ public class DataBaseHandler {
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
-            if (resultSet.first()) {
+            if (resultSet.next()) {
                 gadgetUsageInfo = resultSet.getString(1);
             }
             return gadgetUsageInfo;
@@ -321,7 +321,7 @@ public class DataBaseHandler {
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
-            if (resultSet.first()) {
+            if (resultSet.next()) {
                 return true;
             }
         } catch (SQLException e) {
@@ -355,7 +355,7 @@ public class DataBaseHandler {
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
-            if (resultSet.first()) {
+            if (resultSet.next()) {
                 return true;
             }
         } catch (SQLException e) {

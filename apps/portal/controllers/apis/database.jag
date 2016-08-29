@@ -19,7 +19,6 @@
         response.sendError(401, 'unauthorized to access assets');
         return;
     }
-
     var log = new Log();
     var dataBaseUtils = require('/modules/database-utils.js');
     var dashboards = require('/modules/dashboards.js');

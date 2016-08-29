@@ -41,7 +41,6 @@ $(function () {
     var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
     Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
-
     /**
      * Load the list of assets available.
      * @private
