@@ -785,30 +785,15 @@
 
     <!-- Providing options to create a new view -->
     <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
-        <div class="form-group">
-            <div class="col-md-12 text-center">
+        <div class="form-group text-center">
+            <div class="btn-group" role="group">
                 <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("new.layout")%></button>
-                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view"><%=i18n.localize("use.existing.layout")%></button>
-            </div>
-        </div>
-    </script>
 
-    <!-- Template for copying from an existing view -->
-    <script id="select-copying-view-hbs" type="text/x-handlebars-template">
-        <div class="form-group">
-            <div class="col-md-12 text-center">
-                <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("new.layout")%></button>
-                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view"><%=i18n.localize("use.existing.layout")%></button>
-            </div>
-        </div>
-        <div class="form-horizontal center-block">
-            <div class="form-group" id="view-layout-select">
-                <div class="col-md-12 add-margin-top-5x text-center">
-                    <label for="ues-theme-list"><%=i18n.localize("available.views") %></label>
-                    <select class="form-control selectpicker dropdown"  role="menu" aria-labelledby="menu" id="page-views-menu"
-                    data-style = 'btn-default'>
-                        <option><a role="menuitem" tabindex="-1" href="#"><%=i18n.localize("select.view")%></a></option>
-                    </select>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="copy-view" value="copy-view">
+                        <%=i18n.localize("use.existing.layout")%> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="page-views-menu"></ul>
                 </div>
             </div>
         </div>
@@ -816,7 +801,7 @@
 
     <!-- Copying view option -->
     <script id="copying-view-options-hbs" type="text/x-handlebars-template">
-         <option><a role="menuitem" tabindex="-1" href="#">{{viewName}}</a></option>
+         <li><a role="menuitem" tabindex="-1" href="#">{{viewName}}</a></li>
     </script>
 
     <script id="ues-designer-heading-hbs" type="text/x-handlebars-template">

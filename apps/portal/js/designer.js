@@ -211,7 +211,6 @@ $(function () {
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
     var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html());
-    var viewCopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
     var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
     var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
@@ -847,11 +846,11 @@ $(function () {
         });
 
         // event handler for clicking on a view name to copy the content
-        designer.on('change', '#page-views-menu', function (event) {
+        designer.on('click', '#page-views-menu > li > a', function (event) {
             event.preventDefault();
             visibleViews = [];
-            var selectedViewId = getViewId($('#page-views-menu :selected').text());
-            $('#view-layout-select .selected').text(selectedViewId);
+            var selectedViewId = getViewId($(event.target).text());
+            $(event.target).text(selectedViewId);
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
@@ -1547,12 +1546,11 @@ $(function () {
                     $('#btn-sidebar-dashboard-layout').click();
                 }
             } else if (this.value === "copy-view") {
+                //if copy from an existing view
                 if ($('#left-sidebar').hasClass('toggled')) {
                     $('.close-sidebar[data-target="#left-sidebar"]').click();
                 }
-                $('.gadgets-grid').empty();
-                $('.gadgets-grid').html(viewCopyingSelection);
-                //$('#copy-view').prop("checked", true);
+                $('#page-views-menu').empty();
                 var views = getUserAllowedViews(Object.keys(page.views.content));
 
                 for (var i = 0; i < views.length; i++) {
