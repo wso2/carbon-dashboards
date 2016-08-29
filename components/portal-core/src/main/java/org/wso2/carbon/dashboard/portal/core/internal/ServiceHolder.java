@@ -18,9 +18,11 @@
 package org.wso2.carbon.dashboard.portal.core.internal;
 
 import org.wso2.carbon.ntask.core.service.TaskService;
+import org.wso2.carbon.ndatasource.core.DataSourceService;
 
 public class ServiceHolder {
     private static TaskService taskService;
+    private static DataSourceService dataSourceService;
 
     public static TaskService getTaskService() {
         return taskService;
@@ -28,5 +30,13 @@ public class ServiceHolder {
 
     public static void setTaskService(TaskService taskService) {
         ServiceHolder.taskService = taskService;
+    }
+
+    public static void setDataSourceService(DataSourceService dataSourceService) {
+        ServiceHolder.dataSourceService = dataSourceService;
+    }
+
+    public static DataSourceService getDataSourceService() {
+        return ServiceHolder.dataSourceService;
     }
 }

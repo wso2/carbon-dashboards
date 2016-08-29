@@ -103,6 +103,7 @@ var downloadAsset;
      * @private
      * */
     var findDashboards = function (ctx, type, query, start, count) {
+        var databaseUtils = require('/modules/database-utils.js');
         if (!ctx.username) {
             return [];
         }
@@ -161,26 +162,30 @@ var downloadAsset;
         }
         if (allDashboards) {
             allDashboards.forEach(function (dashboard) {
-                var permissions = dashboard.permissions,
-                    data = {
+                var permissions = dashboard.permissions;
+                var isViewer = utils.allowed(userRoles, permissions.viewers);
+                var isEditor = utils.allowed(userRoles, permissions.editors);
+                var isOwner = utils.allowed(userRoles, permissions.owners);
+                var data = {
                         id: dashboard.id,
                         title: dashboard.title,
                         description: dashboard.description,
                         pagesAvailable: dashboard.hideAllMenuItems ? false : utils.getUserAllowedViews(dashboard, userRoles),
                         editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                        defective : databaseUtils.checkDefectiveDashboard(dashboard.id, isViewer && !isEditor && isOwner),
                         owner: true
                     };
-                if (utils.allowed(userRoles, permissions.owners)) {
+                if (isOwner) {
                     userDashboards.push(data);
                     return;
                 }
-                if (utils.allowed(userRoles, permissions.editors)) {
+                if (isEditor) {
                     data.owner = false;
                     userDashboards.push(data);
                     return;
                 }
-                if (utils.allowed(userRoles, permissions.viewers)) {
+                if (isViewer) {
                     data.editable = false;
                     data.owner = false;
                     userDashboards.push(data);
@@ -327,9 +332,14 @@ var downloadAsset;
     addAsset = function (type, id, assertFile, storeType) {
         var storeTypes = config.store.types;
         var storeTypesLength = config.store.types.length;
+        var databaseUtils = require('/modules/database-utils.js');
+
         for (var i = 0; i < storeTypesLength; i++) {
             if (storeType === storeTypes[i]) {
                 var specificStore = require(storeExtension(storeTypes[i]));
+                if (type === 'gadget') {
+                    databaseUtils.updateGadgetState(id, {newState : 'ACTIVE'});
+                }
                 return specificStore.addAsset(type, id, assertFile);
             }
         }

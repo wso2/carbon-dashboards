@@ -38,6 +38,7 @@ $(function () {
     var VIEW_NAME_PREFIX = 'View';
     var roleAddAction = 'add';
     var roleRemoveAction = 'remove';
+    var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
 
     /**
      * Role for all logged in users
@@ -181,16 +182,6 @@ $(function () {
     var showInformation = function (title, message) {
         var content = modalInfoHbs({title: title, message: message});
         showHtmlModal(content, null);
-    };
-
-    /**
-     * Clone JSON object.
-     * @param {Object} o    Object to be cloned
-     * @return {Object}
-     * @private
-     */
-    var clone = function (o) {
-        return JSON.parse(JSON.stringify(o));
     };
 
     /**
@@ -477,7 +468,7 @@ $(function () {
             var index = area.indexOf(component);
             area.splice(index, 1);
             container.remove();
-
+            ds.database.updateUsageData(dashboard, component.content.id);
             var compId = $('.ues-component-properties').data('component');
             if (compId !== component.id) {
                 return done();
@@ -499,10 +490,11 @@ $(function () {
             if (err) {
                 return err;
             }
+            ds.database.updateUsageData(dashboard, component.content.id);
             done(err);
         });
     };
-
+    
     /**
      * Destroys a given list of components of an area.
      * @param {Object[]} components Components to be removed
@@ -514,6 +506,7 @@ $(function () {
         var i;
         var length = components.length;
         var tasks = [];
+
         for (i = 0; i < length; i++) {
             if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
                 tasks.push((function (component) {
@@ -523,8 +516,11 @@ $(function () {
                         });
                     };
                 }(components[i])));
+            } else if (components[i].id) {
+                ds.database.updateUsageData(dashboard, components[i].content.id);
             }
         }
+
         async.parallel(tasks, function (err, results) {
             done(err);
         });
@@ -559,7 +555,6 @@ $(function () {
             if (!done) {
                 return;
             }
-
             done(err);
         });
     };
@@ -580,7 +575,41 @@ $(function () {
         if (page.id !== pid) {
             return done(false);
         }
+        var views = Object.keys(p.content);
+        for (var i = 0; i < views.length; i++){
+            updateUsageForViews(p, views[i]);
+        }
         destroyPage(p, type, done);
+    };
+
+    /**
+     * When deleting the dashboard, update the usages of different respective gadgets
+     * @param page Page
+     * @param pageType view of the page
+     */
+    var updateUsageForViews = function(page, pageType) {
+        var i;
+        var length;
+        var area;
+        var component;
+        var components;
+        var gadgetIds = [];
+        var content = page.content[pageType];
+        for (area in content) {
+            if (content.hasOwnProperty(area)) {
+                components = content[area];
+                length = components.length;
+                for (i = 0; i < length; i++) {
+                    component = components[i];
+                    var gadgetId = component.content.id;
+                    if (gadgetIds.indexOf(gadgetId) < 0) {
+                        ds.database.updateUsageData(dashboard, gadgetId);
+                        gadgetIds.push(gadgetId);
+                    }
+
+                }
+            }
+        }
     };
 
     /**
@@ -837,6 +866,7 @@ $(function () {
             pageType = newViewId;
             $('button[data-target=#left-sidebar]').click();
             $('.gadgets-grid').empty();
+            updateUsageForViews(page, pageType);
             renderView('', newViewId);
         });
 
@@ -1322,12 +1352,13 @@ $(function () {
                 }
             }
             showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
-                destroyPage(page, pageType, function (err) {
+                var p = clone(page);
+                delete page.views.content[viewId];
+                delete page.content[viewId];
+                destroyPage(p, pageType, function (err) {
                     if (err) {
                         throw err;
                     }
-                    delete page.views.content[viewId];
-                    delete page.content[viewId];
                     visibleViews = [];
                     dashboard.isanon = isAnonDashboard();
                     saveDashboard();
@@ -1563,12 +1594,13 @@ $(function () {
                             saveDashboard();
                         });
                     }
-                    if (hasHidden) {
+                    else if (hasHidden) {
                         for (var i = 0; i < dashboard.pages.length; i++) {
                             if (dashboard.pages[i].id === page.id) {
                                 dashboard.pages[i].content[pageType][componentBoxId] = [];
                             }
                         }
+                        ds.database.updateUsageData(dashboard, hasHidden[0].content.id);
                         saveDashboard();
                     }
                     if (removeBlock) {
@@ -1681,6 +1713,7 @@ $(function () {
             renderComponentToolbar(component);
             container.find('.ues-component-actions .ues-component-properties-handle').click();
             saveDashboard();
+            ds.database.updateUsageData(dashboard, asset.id);
         });
     };
 
@@ -2128,10 +2161,29 @@ $(function () {
             fn[e.context.name]();
             updatePagesList();
             saveDashboard();
+            updateGadgetUsageAfterPagePropertiesChange();
         } else {
         }
-
         return true;
+    };
+
+    /**
+     * To update the gadget usage information after changing the page propertioes
+     */
+    var updateGadgetUsageAfterPagePropertiesChange = function(){
+        var method = 'PUT';
+        var url = DATABASE_API + '/' + dashboard.id;
+        var isRedirect = false;
+        $.ajax({
+            url: url,
+            method: method,
+            async: false,
+            contentType: 'application/json'
+        }).success(function (data) {
+            console.log("Updated the gadget usage info successfully");
+        }).error(function (err) {
+            console.log("Gadget usage update failed after page properties change" + err)
+        });
     };
 
     /**
@@ -2261,6 +2313,15 @@ $(function () {
         return childObj;
     };
 
+    /**
+     * Clone JSON object.
+     * @param {Object} o    Object to be cloned
+     * @return {Object}
+     * @private
+     */
+    var clone = function (o) {
+        return JSON.parse(JSON.stringify(o));
+    };
 
     /**
      * Splice the child object
@@ -2834,14 +2895,18 @@ $(function () {
                 } else {
                     //if tries to change the layout of an existing view, after confiramtion destroy the page
                     showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
-                        destroyPage(page, pageType, function (err) {
+                        var p = clone(page);
+                        var selectedView = getSelectedView();
+                        var viewId = getViewId(selectedView);
+                        var viewName = page.views.content[viewId].name;
+                        var viewRoles = page.views.content[viewId].roles;
+                        delete page.views.content[pageType];
+                        delete page.content[pageType];
+                        destroyPage(p, pageType, function (err) {
                             if (err) {
                                 throw err;
                             }
-                            var selectedView = getSelectedView();
-                            var viewId = getViewId(selectedView);
-                            var viewName = page.views.content[viewId].name;
-                            var viewRoles = page.views.content[viewId].roles;
+
                             if (!viewName) {
                                 viewName = viewId;
                             }
@@ -3252,48 +3317,49 @@ $(function () {
      */
     var removeGadgets = function (removingComponents, length) {
         for (var i = 0; i < length; i++) {
-            var componentBox = $("#" + removingComponents[i].id).closest(".ues-component-box");
-            removeComponent(removingComponents[i], function (err) {
-                if (err) {
-                    generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
-                        2000, null);
-                }
-            });
-            componentBox.html(componentBoxContentHbs());
-        }
-    };
+            var removingComponent = $("#" + removingComponents[i].id);
+            var componentBox = removingComponent.closest(".ues-component-box");
 
-    /**
-     * To get the list of gadgets that need to be hidden for particular user view
-     * @returns {Array} List of gadgets to be removed
-     */
-    var getRestrictedGadgetsToBeViewed = function () {
-        var removingComponents = [];
-        var content = page.content[pageType];
-        for (var area in content) {
-            if (content.hasOwnProperty(area)) {
-                var components = content[area];
-                var length = components.length;
-                for (var i = 0; i < length; i++) {
-                    var component = components[i];
-                    var gadgetRoles = component.content["allowedRoles"];
-                    var isGadgetRenderable = false;
-
-                    if (!gadgetRoles) {
-                        gadgetRoles = [INTERNAL_EVERYONE_ROLE];
+            if (removingComponent.length) {
+                removeComponent(removingComponents[i], function (err) {
+                    if (err) {
+                        generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
+                            2000, null);
                     }
-                    for (var j = 0; j < userRolesList.length && !isGadgetRenderable; j++) {
-                        if (isRoleExistInGadget(gadgetRoles, userRolesList[j])) {
-                            isGadgetRenderable = true;
+                });
+            } else {
+                var components;
+                var component;
+                var area;
+                pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+                var content = page.content[pageType];
+                var isComponentFound = false;
+
+                for (area in content) {
+                    if (content.hasOwnProperty(area)) {
+                        components = content[area];
+                        var componentLength = components.length;
+                        for (var j = 0; j < componentLength; j++) {
+                            component = components[i];
+                            if (component.id === removingComponents[i].id) {
+                                area = content[area];
+                                var index = area.indexOf(component);
+                                area.splice(index, 1);
+                                saveDashboard();
+                                ds.database.updateUsageData(dashboard, component.content.id);
+                                componentBox = $('#' + area + ".ues-component-box");
+                                isComponentFound = true;
+                                break;
+                            }
                         }
-                        if (j === userRolesList.length - 1 && !isGadgetRenderable) {
-                            removingComponents.push(component);
+                        if (isComponentFound) {
+                            break;
                         }
                     }
                 }
             }
+            componentBox.html(componentBoxContentHbs());
         }
-        return removingComponents;
     };
 
     /**
@@ -3480,7 +3546,7 @@ $(function () {
         for (var i = 0; i < dashboard.pages.length; i++) {
             if (dashboard.pages[i].id === page.id) {
                 var component = dashboard.pages[i].content[pageType][componentBox.attr('id')];
-                return (component && component.length > 0);
+                return (component && component.length > 0) ? component : null;
             }
         }
     };
@@ -3499,11 +3565,68 @@ $(function () {
 
         $('#ues-dashboard-pages').html(pagesListHbs({
             current: current,
-            pages: pages || dashboard.pages,
-            home: landing || dashboard.landing,
+            pages: updateDefectiveInformtaion(pages || dashboard.pages),
+            home: landing || dashboard.landing
         }));
 
         $('#ues-dashboard-pages #pagesButton' + current.id).click();
+    };
+
+    /**
+     * To update the defective information to pages
+     * @param pages Pages object
+     * @returns {Object} Pages object with defective information
+     */
+    var updateDefectiveInformtaion = function (pages) {
+        var updatedPages = clone(pages);
+        var defectivePages = getDefectivePages();
+        for (var i = 0; i < updatedPages.length; i++) {
+            updatedPages[i].isDefective = defectivePages.indexOf(updatedPages[i].id) > -1;
+        }
+        return updatedPages;
+    };
+
+    /**
+     * To get the defective usage data for particular database
+     * @returns Defective usage data
+     */
+    var getDefectiveUsageData = function () {
+        var defectiveUsageData = [];
+        var dashboardID = dashboard.id;
+        if (dashboard.isUserCustom) {
+            dashboardID = dashboardID + '$'
+        }
+        $.ajax({
+            url: DATABASE_API + '/' + dashboardID + '?task=getDefectivePages',
+            method: "POST",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                defectiveUsageData = JSON.parse(data);
+            }
+        });
+        return defectiveUsageData;
+    };
+
+    /**
+     * To get the defective pages of a dashboard
+     * @returns {Array} Arry of defective pages
+     */
+    var getDefectivePages = function () {
+        var defectiveUsageData = getDefectiveUsageData();
+        var defectivePages = [];
+        if (defectiveUsageData && defectiveUsageData.data.length > 0) {
+            defectiveUsageData = defectiveUsageData.data;
+            for (var i = 0; i < dashboard.pages.length; i++) {
+                for (var index = 0; index < defectiveUsageData.length; index++) {
+                    if (defectiveUsageData[index].indexOf(dashboard.pages[i].id) > -1) {
+                        defectivePages.push(dashboard.pages[i].id);
+                        break;
+                    }
+                }
+            }
+        }
+        return defectivePages;
     };
 
     /**
@@ -3803,14 +3926,17 @@ $(function () {
                 $('.gadgets-grid').find('.ues-component').each(function () {
                     var id = $(this).attr('id');
                     renderComponentToolbar(findComponent(id));
-                    if (err === UNAUTHORIZED_ERROR_CODE) {
-                        $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                        $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
-                        err = null;
-                    } else if (err === NOT_FOUND_ERROR_CODE) {
-                        $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                        $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
-                        err = null;
+
+                    if (!id) {
+                        if (err === UNAUTHORIZED_ERROR_CODE) {
+                            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
+                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+                            err = null;
+                        } else if (err === NOT_FOUND_ERROR_CODE) {
+                            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
+                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+                            err = null;
+                        }
                     }
                 });
                 listenLayout();
@@ -3911,6 +4037,7 @@ $(function () {
      * @private
      */
     var initDashboard = function (db, page) {
+
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
         if (pages.length > 0) {
@@ -3940,8 +4067,7 @@ $(function () {
             isEdit: bannerExists && !banner.cropMode,
             isCrop: banner.cropMode,
             isCustomBanner: customDashboard && banner.customBannerExists,
-            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard,
-            isEditable: (pageType == DEFAULT_DASHBOARD_VIEW)
+            showRemove: (customDashboard && banner.customBannerExists) || !customDashboard
         };
         $placeholder.html(bannerHbs(data));
 

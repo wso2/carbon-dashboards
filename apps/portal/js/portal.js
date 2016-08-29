@@ -16,6 +16,7 @@
 $(function () {
 
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
+    var databaseApi = ues.utils.tenantPrefix() + 'apis/database';
     var dashboards = [];
     var isStillLoading = false;
     var nextStart = 0;
@@ -67,10 +68,29 @@ $(function () {
             async : false,
             success: function () {
                 button.stop();
+                updateDatabase(id);
                 location.reload();
             },
             error: function () {
                 button.stop();
+            }
+        });
+    };
+
+    /**
+     * To update the database after deleting a dashboard
+     * @param id Id of the dashboard
+     */
+    var updateDatabase = function(id) {
+        $.ajax({
+            url: databaseApi + '/' + id,
+            method: 'DELETE',
+            async : false,
+            success: function () {
+                console.log("Successfully updated the gadget usage table after deleting the dashboard");
+            },
+            error: function (err) {
+                console.log("Cannot update the database due to " + err);
             }
         });
     };

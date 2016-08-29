@@ -68,6 +68,8 @@
             if ((user.domain != urlDomain && urlDomain) ||
                     (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
                 isAnonView = true;
+            userRoles = [];
+            userRoles.push(constants.ANONYMOUS_ROLE);
             }
         }
 
@@ -584,6 +586,7 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-gadgets')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-store')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ues-dashboards')%>"></script>
+    <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('database-update')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard-pdf-generation')%>"></script>
     <script src="<%=urlPrefix%>extensions/components/gadget/index.js"></script>
     <script src="<%=urlPrefix%>extensions/components/widget/index.js"></script>

@@ -20,7 +20,7 @@ package org.wso2.carbon.dashboard.portal.core;
 import java.io.File;
 
 public class PortalConstants {
-    private PortalConstants(){
+    private PortalConstants() {
         //Avoid Instantiation
     }
 
@@ -35,5 +35,8 @@ public class PortalConstants {
     public static final String HOUSE_KEEPING_INTERVAL_CONFIG_PROPERTY = "interval";
     public static final String HOUSE_KEEPTING_MAX_FILE_LIFE_TIME_CONFIG_PROPERTY = "maxTempFileLifeTime";
     public static final String HOUSE_KEEPING_LOCATION = "location";
+    public static final String DATASOURCE_CONFIG_PROPERTY = "dataSource";
+    public static final String DATASOURCE_NAME_PROPERTY = "name";
+    public static final String DB_SCRIPTS_LOCATION = "/dbscripts/dashboards/";
 }
 

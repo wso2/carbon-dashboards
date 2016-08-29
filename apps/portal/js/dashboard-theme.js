@@ -78,11 +78,6 @@ $(function () {
         if ($('.gadget-body').length > 0) {
             $('.body-wrapper').loading('show');
         }
-
-        if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
-            $('.grid-stack-item[data-banner=true]')
-                .css("background-image", "url('<%=tenantedUrlPrefix%>banners/<%=dashboard.id%>')");
-        }
         if ((ues.global.dashboard.theme.properties.lightDark == 'dark') ||
             (ues.global.dashboard.theme.properties.lightDark == '') || !(ues.global.dashboard.theme.properties.lightDark)) {
             $('[data-toggle="theme"]').attr('checked', 'checked');

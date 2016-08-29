@@ -19,6 +19,7 @@
     var configs = require('/modules/config.js').getConfigFile();
     var utils = require('/modules/utils.js');
     var dashboards = require('/modules/dashboards.js');
+    var databaseUtils = require('/modules/database-utils.js');
     var permission = require('/modules/permission.js');
     var constants = require('/modules/constants.js');
     var i18n = require("i18n");
@@ -39,6 +40,8 @@
     var anonRole = carbon.user.anonRole;
     var method = request.getMethod();
     var matcher = new URIMatcher(request.getRequestURI());
+
+
     if (matcher.match('/dashboards/restore/{id}/{pageID}')) {
         if (method === 'PUT') {
             var dashboard = request.getContent();
@@ -73,6 +76,8 @@
                         dashboard.pages[pageCount] = originalDashboard.pages[pageCount];
                     }
                 }
+                databaseUtils.updateDeleteDashboard(dashboard.id + '$');
+                dashboards.updateGadgetUsageInDashboard(dashboard, dashboard.id + '$');
             } catch (err) {
                 response.sendError(500, JSON.stringify({
                     error: 'pageID or dashboard ID is not correct'

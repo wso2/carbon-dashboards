@@ -146,7 +146,7 @@
     </script>
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-        <h2 id="ues-dashboard-title" class="truncate">{{title}}</h2>
+         <h2 id="ues-dashboard-title" class="truncate">{{title}}  {{#if defective}}<i class="fw fw-alert"></i>{{/if}}</h2>
         <p id="ues-dashboard-url" class="ues-dashboard-url truncate">
             <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
         </p>

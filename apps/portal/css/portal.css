@@ -22,6 +22,11 @@
     color: #fff;
 }
 
+.fw-alert {
+    color : #d9534f;
+    padding-bottom: 3px;
+}
+
 /*
 TODO : This is temporary. We will later change this color
 */
