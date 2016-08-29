@@ -785,26 +785,32 @@
 
     <!-- Providing options to create a new view -->
     <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
-        <div class="radio-button">
-            <label><input type="radio" name="new-view" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
-            <label><input type="radio" name="new-view" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
+        <div class="form-group">
+            <div class="col-md-12 text-center">
+                <button class="btn btn-primary btn-lg" id="new-view" value="new-view">New layout</button>
+                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view">Use an existing layout</button>
+            </div>
         </div>
     </script>
 
     <!-- Template for copying from an existing view -->
     <script id="select-copying-view-hbs" type="text/x-handlebars-template">
-        <div class="radio">
-            <label><input type="radio" name="new-view" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
+        <div class="form-group">
+            <div class="col-md-12 text-center">
+                <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></button>
+                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></button>
+            </div>
         </div>
-        <div class="radio">
-            <label><input type="radio" name="new-view" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
-        </div>
-        <div class ='form-group' id="view-layout-select">
-            <label for="ues-theme-list"><%=i18n.localize("available.views") %></label>
-            <select class="form-control selectpicker dropdown"  role="menu" aria-labelledby="menu" id="page-views-menu"
-            data-style = 'btn-default'>
-                <option><a role="menuitem" tabindex="-1" href="#"><%=i18n.localize("select.view")%></a></option>
-            </select>
+        <div class="form-horizontal center-block">
+            <div class="form-group" id="view-layout-select">
+                <div class="col-md-12 add-margin-top-5x text-center">
+                    <label for="ues-theme-list"><%=i18n.localize("available.views") %></label>
+                    <select class="form-control selectpicker dropdown"  role="menu" aria-labelledby="menu" id="page-views-menu"
+                    data-style = 'btn-default'>
+                        <option><a role="menuitem" tabindex="-1" href="#"><%=i18n.localize("select.view")%></a></option>
+                    </select>
+                </div>
+            </div>
         </div>
     </script>
 
