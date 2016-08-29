@@ -374,8 +374,7 @@ var isPageHidden = function (page, menu) {
  */
 var getUserAllowedViews = function (dashboard, userRoles) {
     var pages = dashboard.pages;
-
-    if(dashboard.shareDashboard && (userDomain !== superDomain) && pages.length > 0) {
+    if (dashboard.shareDashboard && (userDomain !== superDomain) && pages.length > 0) {
         return true;
     }
     for (var j = 0; j < pages.length; j++) {

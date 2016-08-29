@@ -56,7 +56,6 @@ var portalRoot;
             return;
         }
         isShared = dashboard.shareDashboard && userDomain !== superDomain;
-
         if (!isShared) {
             if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
                 response.sendError(401, UNAUTHORIZED_ERROR);
@@ -71,8 +70,6 @@ var portalRoot;
 
     pageId = pageId || dashboard.landing;
     var currentPage;
-
-
     if (pageId === null && isShared) {
         if (dashboard.menu.length > 0) {
             pageId = dashboard.menu[0].id;
@@ -105,7 +102,6 @@ var portalRoot;
             }
         });
     }
-
     //check whether the page exists or not
     if (!currentPage) {
         response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " + i18n.localize("page.not.found"));
