@@ -188,7 +188,6 @@ public class DataBaseHandler {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<String> dashboards = new ArrayList<String>();
-
         try {
             connection = dataBaseInitializer.getDBConnection();
             preparedStatement = connection
@@ -294,7 +293,6 @@ public class DataBaseHandler {
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
-
         } catch (SQLException e) {
             log.error("Cannot insert the gadget usage info ", e);
         } finally {
@@ -313,7 +311,7 @@ public class DataBaseHandler {
     public boolean checkDashboard(int tenantId, String dashboardId) throws DashboardPortalException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             connection = dataBaseInitializer.getDBConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DASHBOARD_OPERATION);
@@ -345,7 +343,7 @@ public class DataBaseHandler {
     public boolean isDashboardDefective(int tenantId, String dashboardId) throws DashboardPortalException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         String deletedGadgetState = "DELETED";
         try {
             connection = dataBaseInitializer.getDBConnection();
@@ -381,7 +379,6 @@ public class DataBaseHandler {
         ResultSet resultSet = null;
         List<String> defectiveUsageData = new ArrayList<String>();
         String deletedGadgetState = "DELETED";
-
         try {
             connection = dataBaseInitializer.getDBConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DEFECTIVE_DASHBOARD);

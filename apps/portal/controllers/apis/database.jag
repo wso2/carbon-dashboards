@@ -93,5 +93,4 @@
         response.sendError(403, i18n.localize("forbidden"));
     }
 }());
-
 %>

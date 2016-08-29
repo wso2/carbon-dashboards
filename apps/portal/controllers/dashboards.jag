@@ -139,17 +139,6 @@ var DASHBOARD_VERSION = "1.0.20";
                 response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '?editor=true');
                 return;
             }
-
-            if (isPersonalize === 'true') {
-                for (var i = 0; i < dashboard.pages.length; i++) {
-                    dashboard.pages[i].isanon = false;
-                }
-
-                dashboards.copy(dashboard);
-                response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId + '/' + pageId + '?dashboardeditor=true');
-                return;
-            }
-
             if (isPersonalize === 'true') {
                 for (var i = 0; i < dashboard.pages.length; i++) {
                     dashboard.pages[i].isanon = false;
@@ -161,7 +150,6 @@ var DASHBOARD_VERSION = "1.0.20";
             }
 
             toReset = request.getParameter('reset');
-
             if (toReset) {
                 dashboards.reset(dashboard.id);
                 response.sendRedirect(tenantedUrlPrefix + 'dashboards/' + dashboardId);
@@ -177,7 +165,6 @@ var DASHBOARD_VERSION = "1.0.20";
             if (user && !databaseUtils.isDashboardExistInDatabase(dashboardid)) {
                 dashboards.updateGadgetUsageInDashboard(dashboard, dashboardid);
             }
-
         } else {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getSharedDashboard(dashboardId);
@@ -251,7 +238,6 @@ var DASHBOARD_VERSION = "1.0.20";
         dashboard.hideAllMenuItems = false;
         return dashboard;
     }
-
     response.sendError(400, 'Bad dashboard request');
 }());
 %>

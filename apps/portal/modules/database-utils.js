@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-var insertOrUpdateGadgetUsage, deleteGadgetUsage, getGadgetUsage, updateGadgetState, updateDeleteDashboard,
-    isDashboardExistInDatabase, checkDefectiveDashboard, checkDefectivePages;
-
+var insertOrUpdateGadgetUsage;
+var deleteGadgetUsage;
+var getGadgetUsage;
+var updateGadgetState;
+var updateDeleteDashboard;
+var isDashboardExistInDatabase;
+var checkDefectiveDashboard;
+var checkDefectivePages;
 (function () {
     var DataBaseHandler = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DataBaseHandler;
     var databaseHandler = DataBaseHandler.getInstance();
