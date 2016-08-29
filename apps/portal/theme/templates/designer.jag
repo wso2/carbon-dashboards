@@ -787,8 +787,8 @@
     <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
         <div class="form-group">
             <div class="col-md-12 text-center">
-                <button class="btn btn-primary btn-lg" id="new-view" value="new-view">New layout</button>
-                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view">Use an existing layout</button>
+                <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("new.layout")%></button>
+                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view"><%=i18n.localize("use.existing.layout")%></button>
             </div>
         </div>
     </script>
@@ -797,8 +797,8 @@
     <script id="select-copying-view-hbs" type="text/x-handlebars-template">
         <div class="form-group">
             <div class="col-md-12 text-center">
-                <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></button>
-                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></button>
+                <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("new.layout")%></button>
+                <button class="btn btn-default btn-lg" id="copy-view" value="copy-view"><%=i18n.localize("use.existing.layout")%></button>
             </div>
         </div>
         <div class="form-horizontal center-block">
