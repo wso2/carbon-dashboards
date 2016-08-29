@@ -378,10 +378,13 @@
      * @returns {boolean}
      */
     var getDashboardLoadingState = function () {
-        return dashboardLoadingState;
+        if ((!dashboardLoadingState) && loadingFinishedCount == 1) {
+            return false;
+        }
+        return true;
     };
 
-    /**
+    /** 
      * Find a particular page within a dashboard
      * @param {Object} dashboard Dashboard object
      * @param {String} id Page id

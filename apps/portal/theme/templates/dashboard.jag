@@ -171,7 +171,6 @@
                                                 <li class="dropdown-li"><a href="#">A4</a></li>
                                                 <li class="dropdown-li"><a href="#">A3</a></li>
                                                 <li class="dropdown-li"><a href="#">A2</a></li>
-                                                <li class="dropdown-li"><a href="#">A1</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -304,12 +303,12 @@
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
+                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="form-group hide" id="list-user-views">
                     <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
                     data-style="btn-default" data-width="100px" style="width: 200px">
                     </select>
                 </div>
-                <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" >
             <% } else { %>
                 <div class="container-fluid body-wrapper" style="height: 100%;" data-toggle="loading" data-loading-style="overlay">

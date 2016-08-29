@@ -63,10 +63,6 @@
                 $("#pdf-width").val(A2_WIDTH);
                 $("#pdf-height").val(A2_HEIGHT);
                 break;
-            case A1:
-                $("#pdf-width").val(A1_WIDTH);
-                $("#pdf-height").val(A1_HEIGHT);
-                break;
             case DEFAULT_SIZE:
                 $("#pdf-width").val($("#gadgets-grid").width());
                 $("#pdf-height").val($("#gadgets-grid").height());
@@ -163,22 +159,26 @@
     var downloadPDF = function () {
         var height = getPDFHeight();
         var width = getPDFWidth();
-        html2canvas($("#gadgets-grid"), {
-            onrendered: function (canvas) {
-                restoreGadgetsGrid();
-                var doc = new jsPDF({
-                    orientation: "p",
-                    unit: "px",
-                    format: [width, height]
-                });
-                doc.text(width * .40, height * .025, ues.global.dashboard.title);
-                doc.addImage(canvas.toDataURL(IMAGEPNG), 'PNG', 0, 0, width, height);
-                doc.setFontType(PDF_WATERMARK_ITALIC);
-                doc.setFontSize(10);
-                doc.text(50, height - 25, PDF_WATERMARK_PART_1 + ues.global.dashboard.title + PDF_WATERMARK_PART_2 + new Date().toUTCString() + PDF_WATERMARK_PART_3);
-                doc.save(DASHBOARD_PDF_NAME + ues.global.dashboard.id + PDF_EXTENSION);
-                $("#download-pdf-panel").attr("val", "success");
-            }
+        var fontSize = height * .0075;
+        $('.nano-content').animate({'scrollTop': 0}, 'fast', function () {
+            html2canvas($("#gadgets-grid"), {
+                onrendered: function (canvas) {
+                    restoreGadgetsGrid();
+                    var doc = new jsPDF({
+                        orientation: "p",
+                        unit: "px",
+                        format: [width, (height * 1.1).toString()]
+                    });
+                    doc.setFontSize(fontSize);
+                    doc.text(width * .01, 0, DASHBOARD_TITLE + ues.global.dashboard.title + CURRENT_PAGE + ues.global.page + CURRENT_VIEW + ues.global.dbType + NEW_LINE);
+                    doc.addImage(canvas.toDataURL(IMAGEPNG), 'PNG', 0, (height * 1.1 - height * .03), width, height);
+                    doc.setFontType(PDF_WATERMARK_ITALIC);
+                    doc.setFontSize(fontSize / 2);
+                    doc.text(50, height * 1.1 - height * .025, PDF_WATERMARK_PART_1 + ues.global.dashboard.title + PDF_WATERMARK_PART_2 + new Date().toUTCString() + PDF_WATERMARK_PART_3);
+                    doc.save(DASHBOARD_PDF_NAME + ues.global.dashboard.id + PDF_EXTENSION);
+                    $("#download-pdf-panel").attr(VAL, SUCCESS);
+                }, height: $(".page-content").height()
+            });
         });
     };
 
