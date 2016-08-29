@@ -243,7 +243,7 @@
   "not.delete.view": "Cannot delete this view",
   "not.delete.view.message": "You cannot delete this view, since it is the only remaining view for this page",
   "not.delete.role": "Cannot delete the role",
-  "not.delete.role.message": "You cannot delete the role as it is the only role currently exist for this view",
+  "not.delete.role.message": "You cannot delete the role as it is the only role currently existing for this view",
   "remove.gadgets.with.role.addition": "Some gadgets will be removed form this view, as they no longer have permission with the removal of the role",
   "remove.gadgets.with.role.addition.message": "Do you want to continue removing this role?",
   "not.close.view": "Cannot close this view",
