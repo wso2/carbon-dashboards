@@ -679,14 +679,19 @@ ul.sidebar-messages > li:last-child {
     width: 110px;
 }
 
-.dropdown-ul{
+.dropdown-ul {
     min-width: 110px;
     width: 110px;
 }
 
-.dropdown-li{
+.dropdown-li {
     text-indent: 0 !important;
 }
+
+.download-view {
+    cursor: pointer;
+}
+
 @-webkit-keyframes indeterminate {
     0% {
         left: -35%;

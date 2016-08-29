@@ -189,9 +189,9 @@
                                         <label>px</label>
                                     </div>
                                 </div>
-                                <ul class="nav nav-pills nav-stacked pages">
+                                <ul class="btn btn-primary btn-block">
                                     <div id="generate-pdf">
-                                        <li><%=i18n.localize("dashboard.pdf.downloadPDF")%></li>
+                                        <%=i18n.localize("dashboard.pdf.downloadPDF")%>
                                     </div>
                                 </ul>
                             </form>

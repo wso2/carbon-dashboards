@@ -30,6 +30,13 @@
     });
 
     /**
+     * Assign clickable mouse pointer to download view
+     */
+    $("#generate-pdf").ready(function () {
+        $("#generate-pdf").addClass("download-view");
+    });
+
+    /**
      * validate input of width and height text fields
      */
     $("#pdf-width,#pdf-height").keyup(function () {
@@ -125,6 +132,9 @@
                 gadgetsCount++;
                 convertHTMLIntoImage();
             });
+        } else if (gadgetsCount < $(".gadget-body").find(IFRAME).length) {
+            gadgetsCount++;
+            convertHTMLIntoImage();
         }
     };
 
@@ -186,7 +196,6 @@
         var height = getPDFHeight();
         var width = getPDFWidth();
         var fontSize = height * .0075;
-        var isDownloaded = false;
         $('div.body-wrapper > div.nano > div.nano-content').animate({SCROLL_TOP: 0}, SCROLL_FAST, function () {
             html2canvas($("#gadgets-grid"), {
                 onrendered: function (canvas) {
