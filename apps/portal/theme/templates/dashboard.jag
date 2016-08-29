@@ -34,10 +34,12 @@
     var viewId = request.getParameter('currentView');
     var constants = require('/modules/constants.js');
     var shared = request.getParameter('shared');
+    var isUserFromSuperDomain = false;
 
     if (!user) {
         userRoles.push(constants.ANONYMOUS_ROLE);
     } else {
+        isUserFromSuperDomain = (user.domain === superDomain);
         var tempRoles = usr.getUserRoles();
         if (isPreview) {
             userRoles.push(constants.ANONYMOUS_ROLE);
@@ -626,6 +628,7 @@
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;
         var isEditor = <%= isEditor%>;
+        var isUserFromSuperDomain = <%= isUserFromSuperDomain%>
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
         <% } %>

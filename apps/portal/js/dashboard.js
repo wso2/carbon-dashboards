@@ -345,7 +345,7 @@ $(function () {
         var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             var viewRoles = page.views.content[views[i]].roles;
-            if (isAllowedView(viewRoles)) {
+            if ((ues.global.dashboard.shareDashboard && !isUserFromSuperDomain) || isAllowedView(viewRoles)) {
                 allowedViews.push(views[i]);
                 var tempViewName = page.views.content[views[i]].name;
                 var viewOption = {
