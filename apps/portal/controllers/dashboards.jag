@@ -67,6 +67,7 @@ var DASHBOARD_VERSION = "1.0.20";
     var isPersonalize;
     var toReset;
     var method = request.getMethod();
+    editor = request.getParameter('editor');
 
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');
@@ -187,8 +188,8 @@ var DASHBOARD_VERSION = "1.0.20";
                 response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
                 return;
             }
+            editor = false;
         }
-        editor = request.getParameter('editor');
         editor ? include('includes/designer.jag') : include('includes/renderer.jag');
         return;
     }
