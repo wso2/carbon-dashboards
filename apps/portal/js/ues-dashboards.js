@@ -369,7 +369,7 @@
         }
     };
 
-    $('.context-menu').click(function(){
+    $('.context-menu').click(function () {
         alert();
     })
 
@@ -384,7 +384,7 @@
         return true;
     };
 
-    /** 
+    /**
      * Find a particular page within a dashboard
      * @param {Object} dashboard Dashboard object
      * @param {String} id Page id
