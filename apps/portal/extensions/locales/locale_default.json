@@ -277,5 +277,6 @@
   "gadget.missing": "Gadget folder is missing. Please Check again.",
   "add.layouts": "Add Layouts",
   "cannot.save.dashboard": "Cannot Save the Dashboard",
-  "atleast.one.owner.role": "At least one role should be there as the owner of the dashboard"
+  "atleast.one.owner.role": "At least one role should be there as the owner of the dashboard",
+  "please.enter.to.change.name" : "Please press enter to change the view name"
 }
