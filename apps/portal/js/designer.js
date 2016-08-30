@@ -2158,7 +2158,6 @@ $(function () {
             updatePagesList();
             saveDashboard();
             updateGadgetUsageAfterPagePropertiesChange();
-        } else {
         }
         return true;
     };
@@ -3922,7 +3921,6 @@ $(function () {
                 $('.gadgets-grid').find('.ues-component').each(function () {
                     var id = $(this).attr('id');
                     renderComponentToolbar(findComponent(id));
-
                     if (!id) {
                         if (err === UNAUTHORIZED_ERROR_CODE) {
                             $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
@@ -4033,7 +4031,6 @@ $(function () {
      * @private
      */
     var initDashboard = function (db, page) {
-
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
         if (pages.length > 0) {
