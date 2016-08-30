@@ -195,14 +195,6 @@ $('#tab3').on('keypress', function () {
     $('#tab3-validation-errors').empty();
 });
 
-$('#Option').click(function () {
-    $("#provider-config-optional").removeClass('hidden').toggle();
-
-})
-
-$('#Mandatory').click(function () {
-    $("#provider-config").removeClass('hidden').toggle();
-});
 $("#preview").click(function () {
     var wizard = $('#rootwizard');
     $("#generate").removeAttr("style");
@@ -331,22 +323,22 @@ function getProviderConfig() {
         contentType: "application/json",
         async: false,
         success: function (data) {
-                data1= data[0].elements;
-                $("#mandatory").html( data[0].title);
-                registerAdvancedProviderUI(data1);
-                var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
-                $("#provider-config").html(providerHbs(data1));
-
-                data2 = data[1].elements;
-                $("#optional").html(data[1].title);
-                registerAdvancedProviderUI(data2);
-                var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
-                $("#provider-config-optional").html(providerHbs(data2));
-
-
+            var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
+            if(Object.keys(data[0]).indexOf("grouping")>-1){
+                data=(data[0].grouping);
+                for(i=0; i<data.length; i++){
+                    registerAdvancedProviderUI(data[i]);
+                    $("#provider-config").append(providerHbs(data[i]));
+                }
+            }
+            else{
+                var data ={
+                    "elements": data
+                };
+                registerAdvancedProviderUI(data);
+                $("#provider-config").html(providerHbs(data));
+            }
         },
-
-
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
@@ -362,8 +354,6 @@ function getProviderConfig() {
         }
     });
 };
-
-
 
 function registerAdvancedProviderUI(data) {
     for (var i = 0; i < data.length; i++) {
@@ -438,6 +428,10 @@ function getChartConfig(providerConfig) {
         contentType: "application/json",
         async: false,
         success: function (chartConfig) {
+            var chartConfig ={
+                "elements": chartConfig
+            };
+
             if (!chartConfig.error) {
                 registerAdvancedChartUI(chartConfig);
                 var chartHbs = Handlebars.compile($('#ui-config-hbs').html());

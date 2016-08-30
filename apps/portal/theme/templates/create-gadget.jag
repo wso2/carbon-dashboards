@@ -101,12 +101,7 @@
                             <fieldset>
                                 <div class="form-group">
                                      <div class="panel panel-info">
-                                         <div id="Mandatory" class="panel-heading" data-toggle="collapse" aria-expanded="true" ><a style="width: 75%; display: inline-block; " class="fw  fw-2x";  id="mandatory"></a> </div>
-                                          <div  id = "provider-config"></div>
-                                      </div>
-                                      <div class="panel panel-info">
-                                           <div id="Option" class="panel-heading"  data-toggle="collapse"   ><a style="width: 75%; display: inline-block; " class="fw  fw-2x";  id="optional"> </a></div>
-                                           <div id="provider-config-optional" hidden></div>
+                                        <div id="provider-config" ></div>
                                       </div>
                                 </div>
                             </fieldset>
@@ -198,9 +193,13 @@
         </select>
      </section>
 </script>
-<script id="ui-config-hbs" type="text/x-handlebars-template">
-   {{#each .}}
-    <div  class="form-group">
+<script id="ui-config-hbs" type="text/x-handlebars-template" >
+     {{#has title}} <div  class="config-group"  data-toggle="collapse" href="#{{title}}" aria-controls={{title}}  >
+      {{title}}
+    </div> {{/has}}
+    <div  class="form-group add-padding-top-3x {{#if collapsed}} collapse {{/if}}" id={{title}} >
+   {{#each elements}}
+
        {{#equalsIgnoreCase fieldType "string"}}
           <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label><input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
           placeholder="{{placeholderText}}" {{#if isRequired}}required="true"{{/if}}/>
@@ -225,8 +224,9 @@
        {{#equalsIgnoreCase fieldType "advanced"}}
             {{> (lookup . 'childPartial')}}
        {{/equalsIgnoreCase}}
+       {{/each}}
        </div>
-    {{/each}}
+
 </script>
 
 <script id="data-preview-hbs" type="text/x-handlebars-template">
