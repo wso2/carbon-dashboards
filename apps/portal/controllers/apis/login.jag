@@ -92,7 +92,7 @@ var user;
                             && superDomain === String(user.domain))) {
                         response.sendRedirect(dest);
                     } else {
-                        response.sendRedirect('/portal/');
+                        response.sendRedirect('/' + constants.APP_NAME + '/');
                     }
                 }
                 var content = {'sessionId': session.getId()};
@@ -102,13 +102,13 @@ var user;
             }
             else {
                 if (dest) {
-                    response.sendRedirect('/portal/login?loginAttempt=true');
+                    response.sendRedirect('/' + constants.APP_NAME + '/login?loginAttempt=true');
                 }
             }
         }
         else {
             if (dest) {
-                response.sendRedirect('/portal/login?loginAttempt=true');
+                response.sendRedirect('/' + constants.APP_NAME + '/login?loginAttempt=true');
             }
         }
     }

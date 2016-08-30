@@ -20,43 +20,237 @@ package org.wso2.carbon.dashboard.portal.core.datasource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.dashboard.portal.core.DashboardPortalException;
+import org.wso2.carbon.dashboard.portal.core.PortalConstants;
+import org.wso2.carbon.dashboard.portal.core.PortalUtils;
+import org.wso2.carbon.dashboard.portal.core.internal.ServiceHolder;
+import org.wso2.carbon.ndatasource.common.DataSourceException;
+import org.wso2.carbon.ndatasource.core.DataSourceService;
+import org.wso2.carbon.utils.CarbonUtils;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.sql.DataSource;
+import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
- * This class is used to handle all the database related operations related with
- * Dashboard Database
+ * To initialize the Database and create the relevant tables
  */
-public class DataBaseHandler {
-    private static final Log log = LogFactory.getLog(DataBaseHandler.class);
-    private static DataBaseHandler instance;
-    private DataBaseInitializer dataBaseInitializer;
+public class DSDataSourceManager {
+    private static DSDataSourceManager instance;
+    private static final Log log = LogFactory.getLog(DSDataSourceManager.class);
+    private static DataSource dataSource;
+    private static Statement statement;
+    private static String delimeter = ";";
 
     /**
-     * To maintain a single instance of DatabaseHandler
+     * To maintain a single ative instance
      *
-     * @return currently active instance of DatabaseHandler
      * @throws DashboardPortalException
      */
-    public static DataBaseHandler getInstance() throws DashboardPortalException {
+    public static DSDataSourceManager getInstance() throws DashboardPortalException {
         if (instance == null) {
-            synchronized (DataBaseHandler.class) {
+            synchronized (DSDataSourceManager.class) {
                 if (instance == null) {
-                    instance = new DataBaseHandler();
+                    instance = new DSDataSourceManager();
                 }
             }
         }
         return instance;
     }
 
-    private DataBaseHandler() throws DashboardPortalException {
-        dataBaseInitializer = DataBaseInitializer.getInstance();
+    private DSDataSourceManager() throws DashboardPortalException {
+        DataSourceService service = ServiceHolder.getDataSourceService();
+        Connection connection = null;
+        ResultSet resultSet = null;
+
+        if (service != null) {
+            try {
+                JSONObject dataSourceConfig = PortalUtils.getConfiguration(PortalConstants.DATASOURCE_CONFIG_PROPERTY);
+                String dataSourceName = dataSourceConfig.get(PortalConstants.DATASOURCE_NAME_PROPERTY).toString();
+                PrivilegedCarbonContext.startTenantFlow();
+                PrivilegedCarbonContext.getThreadLocalCarbonContext()
+                        .setTenantDomain(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME, true);
+                dataSource = (DataSource) service.getDataSource(dataSourceName).getDSObject();
+                createUsageDatabase();
+            } catch (DataSourceException e) {
+                throw new DashboardPortalException("Error in getting the datasource", e);
+            } catch (IOException e) {
+                throw new DashboardPortalException("Error in reading the configuration file portal.json", e);
+            } catch (ParseException e) {
+                throw new DashboardPortalException("Error in parsing the configuration file portal.json", e);
+            } finally {
+                PrivilegedCarbonContext.endTenantFlow();
+            }
+        } else {
+            throw new DashboardPortalException("Data source service is null, cannot execute queries", null);
+        }
+    }
+
+    /**
+     * To create the gadget usage table
+     *
+     * @throws DashboardPortalException
+     */
+    private void createUsageDatabase() throws DashboardPortalException {
+        Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            statement = conn.createStatement();
+            executeScript();
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Gadget usage table is created successfully.");
+            }
+        } catch (SQLException e) {
+            String msg = "Failed to create database tables for Identity meta-data store. " + e.getMessage();
+            throw new DashboardPortalException(msg, e);
+        } finally {
+            closeDatabaseResources(conn, statement, null);
+        }
+    }
+
+    /**
+     * To execute the table creation script depending on the datasource user using
+     *
+     * @throws DashboardPortalException
+     */
+    private void executeScript() throws DashboardPortalException {
+        String databaseType;
+        try {
+            databaseType = dataSource.getConnection().getMetaData().getDatabaseProductName().toLowerCase();
+        } catch (SQLException e) {
+            throw new DashboardPortalException("Error occurred while getting database type", e);
+        }
+        if (databaseType.equalsIgnoreCase(DataSourceConstants.MSSQL_PRODUCT_NAME)) {
+            databaseType = DataSourceConstants.MSSQL_SCRIPT_NAME;
+        }
+        if (databaseType.equalsIgnoreCase(DataSourceConstants.ORACLE_SCRIPT_NAME)) {
+            delimeter = "/";
+        }
+        String dbScriptLocation = getDbScriptLocation(databaseType);
+        StringBuffer sql = new StringBuffer();
+        BufferedReader reader = null;
+
+        try {
+            InputStream is = new FileInputStream(dbScriptLocation);
+            reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("//")) {
+                    continue;
+                }
+                if (line.startsWith("--")) {
+                    continue;
+                }
+                StringTokenizer st = new StringTokenizer(line);
+                if (st.hasMoreTokens()) {
+                    String token = st.nextToken();
+                    if ("REM".equalsIgnoreCase(token)) {
+                        continue;
+                    }
+                }
+                sql.append(" ").append(line);
+
+                if (sql.toString().endsWith(delimeter)) {
+                    executeQuery(sql.toString());
+                    sql.replace(0, sql.length(), "");
+                }
+            }
+            // Catch any statements not followed by ;
+            if (sql.length() > 0) {
+                executeQuery(sql.toString());
+            }
+        } catch (IOException e) {
+            throw new DashboardPortalException(
+                    "Error occurred while executing SQL script for creating Dashboard Server database", e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    log.error("Error occurred while closing stream for Identity SQL script", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * To get the location for the required db script to be executed
+     *
+     * @param databaseType Type of the database to be created
+     * @return the location of relevant db script
+     */
+    private String getDbScriptLocation(String databaseType) {
+        String scriptName = databaseType + DataSourceConstants.SQL_EXTENSION;
+        if (log.isDebugEnabled()) {
+            log.debug("Loading database script from :" + scriptName);
+        }
+        return CarbonUtils.getCarbonHome() + PortalConstants.DB_SCRIPTS_LOCATION + scriptName;
+    }
+
+    /**
+     * executes given sql
+     *
+     * @param sql Sql query to be executed
+     * @throws DashboardPortalException
+     */
+    private void executeQuery(String sql) throws DashboardPortalException {
+        // Check and ignore empty statements
+        if (sql.trim().isEmpty()) {
+            return;
+        }
+        ResultSet resultSet = null;
+        Connection conn = null;
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("SQL : " + sql);
+            }
+            boolean ret;
+            int updateCount, updateCountTotal = 0;
+            ret = statement.execute(sql);
+            updateCount = statement.getUpdateCount();
+            resultSet = statement.getResultSet();
+            do {
+                if (!ret) {
+                    if (updateCount != -1) {
+                        updateCountTotal += updateCount;
+                    }
+                }
+                ret = statement.getMoreResults();
+                if (ret) {
+                    updateCount = statement.getUpdateCount();
+                    resultSet = statement.getResultSet();
+                }
+            } while (ret);
+
+            if (log.isDebugEnabled()) {
+                log.debug(sql + " : " + updateCountTotal + " rows affected");
+            }
+            conn = dataSource.getConnection();
+            SQLWarning warning = conn.getWarnings();
+            while (warning != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug(warning + " sql warning");
+                    warning = warning.getNextWarning();
+                }
+            }
+            conn.clearWarnings();
+        } catch (SQLException e) {
+            throw new DashboardPortalException("Error occurred while executing : " + sql, e);
+        } finally {
+            closeDatabaseResources(conn, null, resultSet);
+        }
     }
 
     /**
@@ -71,10 +265,11 @@ public class DataBaseHandler {
      */
     public void insertGadgetUsageInfo(int tenantID, String dashboardID, String gadgetId, String gadgetState,
             String usageData) throws DashboardPortalException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = dataBaseInitializer.getDBConnection();
-            PreparedStatement preparedStatement = connection
-                    .prepareStatement(DataSourceConstants.SQL_INSERT_USAGE_OPERATION);
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_INSERT_USAGE_OPERATION);
             preparedStatement.setInt(1, tenantID);
             preparedStatement.setString(2, dashboardID);
             preparedStatement.setString(3, gadgetId);
@@ -86,6 +281,8 @@ public class DataBaseHandler {
             }
         } catch (SQLException e) {
             log.error("Cannot insert the gadget usage info ", e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
         }
     }
 
@@ -122,7 +319,7 @@ public class DataBaseHandler {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_UPDATE_USAGE_OPERATION);
             preparedStatement.setString(1, gadgetState);
             preparedStatement.setString(2, usageData);
@@ -154,7 +351,7 @@ public class DataBaseHandler {
         ResultSet resultSet = null;
         String gadgetUsageInfo = null;
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_SELECT_USAGE_OPERATION);
             preparedStatement.setInt(1, tenantID);
             preparedStatement.setString(2, dashboardID);
@@ -189,7 +386,7 @@ public class DataBaseHandler {
         ResultSet resultSet = null;
         List<String> dashboards = new ArrayList<String>();
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection
                     .prepareStatement(DataSourceConstants.SQL_GET_DASHBOARD_USING_GADGET_OPERATION);
             preparedStatement.setInt(1, tenantId);
@@ -223,7 +420,7 @@ public class DataBaseHandler {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_DELETE_GADGET_USAGE_OPERATION);
             preparedStatement.setInt(1, tenantId);
             preparedStatement.setString(2, dashboardId);
@@ -252,7 +449,7 @@ public class DataBaseHandler {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_UPDATE_GADGET_STATE_OPERATION);
             preparedStatement.setString(1, gadgetState);
             preparedStatement.setInt(2, tenantId);
@@ -279,7 +476,7 @@ public class DataBaseHandler {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_DELETE_DASHBOARD_OPERATION);
             preparedStatement.setInt(1, tenantId);
             preparedStatement.setString(2, dashboardId);
@@ -313,7 +510,7 @@ public class DataBaseHandler {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet;
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DASHBOARD_OPERATION);
             preparedStatement.setInt(1, tenantId);
             preparedStatement.setString(2, dashboardId);
@@ -344,13 +541,12 @@ public class DataBaseHandler {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet;
-        String deletedGadgetState = "DELETED";
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DEFECTIVE_DASHBOARD);
             preparedStatement.setInt(1, tenantId);
             preparedStatement.setString(2, dashboardId);
-            preparedStatement.setString(3, deletedGadgetState);
+            preparedStatement.setString(3, String.valueOf(DataSourceConstants.GADGET_STATES.DELETED));
             resultSet = preparedStatement.executeQuery();
             if (!connection.getAutoCommit()) {
                 connection.commit();
@@ -368,7 +564,8 @@ public class DataBaseHandler {
 
     /**
      * To get the details of the defective usage data
-     * @param tenantId Id of the tenant which dashboard belongs to
+     *
+     * @param tenantId    Id of the tenant which dashboard belongs to
      * @param dashboardId Id of the dashboard
      * @return Array list of usage data which has the deleted gadgets
      * @throws DashboardPortalException
@@ -380,7 +577,7 @@ public class DataBaseHandler {
         List<String> defectiveUsageData = new ArrayList<String>();
         String deletedGadgetState = "DELETED";
         try {
-            connection = dataBaseInitializer.getDBConnection();
+            connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_CHECK_DEFECTIVE_DASHBOARD);
             preparedStatement.setInt(1, tenantId);
             preparedStatement.setString(2, dashboardId);
@@ -407,7 +604,7 @@ public class DataBaseHandler {
      * @param preparedStatement PreparedStatement to be closed
      * @param resultSet         ResultSet to be closed
      */
-    private static void closeDatabaseResources(Connection connection, PreparedStatement preparedStatement,
+    private static void closeDatabaseResources(Connection connection, Statement preparedStatement,
             ResultSet resultSet) {
         // Close the resultSet
         if (resultSet != null) {

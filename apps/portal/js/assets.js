@@ -154,7 +154,7 @@ $(function () {
         var gadgetUsageData;
         $.ajax({
             url: DATABASE_API + '/' + gadgetId + '?task=usage',
-            method: "POST",
+            method: "GET",
             async: false,
             contentType: 'application/json',
             success: function (data) {

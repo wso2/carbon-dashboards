@@ -18,14 +18,14 @@ var insertOrUpdateGadgetUsage;
 var deleteGadgetUsage;
 var getGadgetUsage;
 var updateGadgetState;
-var updateDeleteDashboard;
+var updateAfterDeletingDashboard;
 var isDashboardExistInDatabase;
 var checkDefectiveDashboard;
 var checkDefectivePages;
 (function () {
-    var DataBaseHandler = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DataBaseHandler;
-    var databaseHandler = DataBaseHandler.getInstance();
-    var log = new Log();
+    var DSDataSourceManager = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
+    var dsDataSourceManager = DSDataSourceManager.getInstance();
+    var log = new Log("database-utils.js");
     var usr = require('/modules/user.js');
     var carbon = require('carbon');
     var tenantId = carbon.server.tenantId();
@@ -37,7 +37,7 @@ var checkDefectivePages;
                 dashboardId + ',tenantId -' + tenantId + ':' + stringify(usageData))
         }
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
-        databaseHandler.updateOrInsertGadgetUsageInfo(tenantId, dashboardId, gadgetID, state,
+        dsDataSourceManager.updateOrInsertGadgetUsageInfo(tenantId, dashboardId, gadgetID, state,
             stringify(usageData));
     };
 
@@ -47,11 +47,11 @@ var checkDefectivePages;
                 dashboardId + ',tenantId -' + tenantId);
         }
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
-        databaseHandler.deleteGadgetUsageInformation(tenantId, dashboardId, gadgetID);
+        dsDataSourceManager.deleteGadgetUsageInformation(tenantId, dashboardId, gadgetID);
     };
 
     getGadgetUsage = function (gadgetId) {
-        var gadgetUsage = databaseHandler.getDashboardUsingGadget(tenantId, gadgetId);
+        var gadgetUsage = dsDataSourceManager.getDashboardUsingGadget(tenantId, gadgetId);
         var usage = {dashboards: []};
         for (var index = 0; index < gadgetUsage.size(); index++) {
             usage.dashboards.push(gadgetUsage.get(index));
@@ -60,30 +60,30 @@ var checkDefectivePages;
     };
 
     updateGadgetState = function (gadgetId, gadgetState) {
-        databaseHandler.updateGadgetStateInformation(tenantId, gadgetId, gadgetState.newState);
+        dsDataSourceManager.updateGadgetStateInformation(tenantId, gadgetId, gadgetState.newState);
     };
 
-    updateDeleteDashboard = function (dashboardId) {
+    updateAfterDeletingDashboard = function (dashboardId) {
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
-        databaseHandler.updateAfterDeletingDashboard(tenantId, dashboardId);
+        dsDataSourceManager.updateAfterDeletingDashboard(tenantId, dashboardId);
     };
 
 
     isDashboardExistInDatabase = function (dashboardId) {
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
-        return databaseHandler.checkDashboard(tenantId, dashboardId);
+        return dsDataSourceManager.checkDashboard(tenantId, dashboardId);
     };
 
     checkDefectiveDashboard = function (dashboardId, isUserCustom) {
         if (isUserCustom){
             dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId + '$');
         }
-        return databaseHandler.isDashboardDefective(tenantId, dashboardId);
+        return dsDataSourceManager.isDashboardDefective(tenantId, dashboardId);
     };
     
     checkDefectivePages = function (dashboardId) {
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
-        var usageData = databaseHandler. getDefectiveUsageData(tenantId, dashboardId);
+        var usageData = dsDataSourceManager. getDefectiveUsageData(tenantId, dashboardId);
         var usage = {data: []};
         for (var index = 0; index < usageData.size(); index++) {
             usage.data.push(usageData.get(index));

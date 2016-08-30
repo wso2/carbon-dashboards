@@ -3593,7 +3593,7 @@ $(function () {
         }
         $.ajax({
             url: DATABASE_API + '/' + dashboardID + '?task=getDefectivePages',
-            method: "POST",
+            method: "GET",
             contentType: "application/json",
             async: false,
             success: function (data) {

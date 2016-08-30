@@ -116,7 +116,7 @@
         }
         $.ajax({
             url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=delete',
-            method: "POST",
+            method: "DELETE",
             contentType: "application/json",
             async: false,
             success: function () {
