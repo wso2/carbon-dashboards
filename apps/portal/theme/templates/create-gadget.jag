@@ -100,9 +100,7 @@
                         <form id="provider-config-form">
                             <fieldset>
                                 <div class="form-group">
-                                     <div class="panel panel-info">
-                                        <div id="provider-config" ></div>
-                                      </div>
+                                  <div id = "provider-config"></div>
                                 </div>
                             </fieldset>
                         </form>
