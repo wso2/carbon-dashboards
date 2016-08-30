@@ -214,7 +214,7 @@
                     doc.text(50, height * 1.1 - height * .025, PDF_WATERMARK_PART_1 + ues.global.dashboard.title + PDF_WATERMARK_PART_2 + new Date().toUTCString() + PDF_WATERMARK_PART_3);
                     doc.save(DASHBOARD_PDF_NAME + ues.global.dashboard.id + PDF_EXTENSION);
                     $("#download-pdf-panel").attr(VAL, SUCCESS);
-                }, height: $(".page-content").height()
+                }, height: $(".page-content").height(), allowTaint: true, useCORS: true
             });
         });
     };
