@@ -75,6 +75,10 @@ var DASHBOARD_VERSION = "1.0.20";
         if (!request.getParameter("shared")) {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getAsset(dashboardId);
+                if (!dashboard) {
+                    response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
+                    return;
+                }
                 if (!dashboard.menu && dashboard.pages.length > 0) {
                     if (log.isDebugEnabled()) {
                         log.debug("Unable to locate menu object, updating dashboard.json for: " + dashboardId);
@@ -90,12 +94,6 @@ var DASHBOARD_VERSION = "1.0.20";
                     }
                 }
             });
-
-            if (!dashboard) {
-                response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
-                return;
-            }
-
             // Verify the original dashboard when returning a custom dashboard
             if (dashboard.isUserCustom) {
 
