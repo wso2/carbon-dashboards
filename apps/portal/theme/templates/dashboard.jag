@@ -19,9 +19,9 @@
 <html lang="en">
 <head>
 
-    <% 
+    <%
         include(utils.getThemeTemplatePath('templates/includes/portal-header.jag'));
-    
+
         var isEditor = false;
 
         // If the pageId is null, render the landing page
@@ -96,7 +96,7 @@
             gadgetTheme = 'dark';
         }
     %>
-    
+
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
     <!-- JQuery UI -->
@@ -114,12 +114,11 @@
         var fileList = folder.listFiles();
         fileList.forEach(function(file){
             filePath = '/' + path +'/' + file.getName();
-    s%>
+    %>
         <link rel="stylesheet" href="<%=urlPrefix%><%=filePath%>">
     <%
         });
     %>
-
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard fixed lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
@@ -300,8 +299,7 @@
             </div>
         </div>
          <% } else { %>
-            <body class="dashboard lang_<%=request.getLocale()%>" style="padding-bottom: 0">
-            <body class="dashboard lang_<%=request.getLocale()%> dark" style="padding-bottom: 0">
+            <body class="dashboard fixed lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>" style="padding-bottom: 0;">
                 <div class="page-content-wrapper remove-padding-xs">
          <% } %>
 
@@ -316,7 +314,7 @@
                 <div class="nano-content" >
                     <div class="page-content">
                         <div class="clearfix add-margin-top-5x add-margin-right-5x">
-                            <div id="list-user-views">
+                            <div id="list-user-views" class="hide">
                                 <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
                                     data-style="btn-default" data-width="100px" style="width: 200px">
                                 </select>
@@ -634,7 +632,7 @@
         var isEditor = <%= isEditor%>;
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
-        <% } %>      
+        <% } %>
     </script>
 </body>
 </html>

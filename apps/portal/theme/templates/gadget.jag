@@ -47,14 +47,8 @@
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
     
 </head>
-<body class="dashboard embGadget lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
-    
-    <div class="<%= 'container'%> body-wrapper" data-toggle="loading" data-loading-style="overlay">
-        <div class="page-content">
-            <div class = "ues-component-box emb-gadget"></div>
-        </div>
-    </div>
-    
+<body class="dashboard fixed embGadget lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
+    <div class = "ues-component-box emb-gadget" data-toggle="loading" data-loading-style="overlay"></div>
     <!-- Component container -->
     <script id="ues-component-box-content-hbs" type="text/x-handlebars-template">
             <div class="ues-component gadget">
