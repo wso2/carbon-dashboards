@@ -99,9 +99,6 @@ $(function () {
      */
     var initComponentToolbar = function () {
         var viewer = $('.ues-components-grid');
-        if (isPersonalizeEnabled) {
-            $(".gadget-heading").css("cursor", "move");
-        }
         // gadget title bar custom button function handler
         viewer.on('click', '.ues-custom-action', function (e) {
             var fid = $(this).closest('.ues-component-box').find('iframe').attr('id');
@@ -111,6 +108,7 @@ $(function () {
 
         // gadget maximization handler
         viewer.on('click', '.ues-component-full-handle', function (e) {
+            e.preventDefault();
             var id = $(this).closest('.ues-component').attr('id');
             var component = ues.dashboards.findComponent(id, page);
             var componentBox = $(this).closest('.ues-component-box');
@@ -372,7 +370,7 @@ $(function () {
                 throw err;
             }
             isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
-            initComponentToolbar();
+            changeMousePointerToMove();
         });
     });
 
@@ -964,10 +962,19 @@ $(function () {
                 throw err;
             }
             isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
-            initComponentToolbar();
+            changeMousePointerToMove();
         });
     };
 
+    /**
+     * To change the mouse pointer on gadget-heading to move pointer when the editing mode is enabled
+     */
+    var changeMousePointerToMove = function() {
+        if (isPersonalizeEnabled) {
+            $(".gadget-heading").css("cursor", "move");
+        }
+    };
+    
     /**
      * Return the current selected view name
      * @returns {String} View name
