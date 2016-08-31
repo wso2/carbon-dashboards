@@ -65,8 +65,8 @@ wso2.gadgets.state = (function () {
      * @param {function} callback Callback function
      * @return {null}
      */
-    var getGlobalState = function (key, callback) {
-        wso2.gadgets.core.callContainerService(RPC_SERVICE_GET_GLOBAL_STATE, key, function (gadgetState) {
+    var getGlobalState = function (callback) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_GET_GLOBAL_STATE, null, function (gadgetState) {
             if (callback) {
                 callback(gadgetState);
             }
