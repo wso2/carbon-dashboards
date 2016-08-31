@@ -455,29 +455,26 @@ $(function () {
      * @private
      */
     var removeComponent = function (component, done) {
-        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        if (ds.database.updateUsageData(dashboard, component.content.id, page.id, pageType)) {
-            destroyComponent(component, function (err) {
-                if (err) {
-                    return done(err);
-                }
-                var container = $('#' + component.id);
-                var area = container.closest('.ues-component-box').attr('id');
-                var content = page.content[pageType];
-                area = content[area];
-                var index = area.indexOf(component);
-                area.splice(index, 1);
-                container.remove();
-                var compId = $('.ues-component-properties').data('component');
-                if (compId !== component.id) {
-                    return done();
-                }
-                $('.ues-component-properties .ues-component-properties-container').empty();
-                done();
-            });
-        } else {
-            done("Error updating the record in database");
-        }
+        destroyComponent(component, function (err) {
+            if (err) {
+                return done(err);
+            }
+            var container = $('#' + component.id);
+            var area = container.closest('.ues-component-box').attr('id');
+            pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+            var content = page.content[pageType];
+            area = content[area];
+            var index = area.indexOf(component);
+            area.splice(index, 1);
+            container.remove();
+            ds.database.updateUsageData(dashboard, component.content.id);
+            var compId = $('.ues-component-properties').data('component');
+            if (compId !== component.id) {
+                return done();
+            }
+            $('.ues-component-properties .ues-component-properties-container').empty();
+            done();
+        });
     };
 
     /**
@@ -492,6 +489,7 @@ $(function () {
             if (err) {
                 return err;
             }
+            ds.database.updateUsageData(dashboard, component.content.id);
             done(err);
         });
     };
@@ -503,31 +501,22 @@ $(function () {
      * @return {null}
      * @private
      */
-    var destroyArea = function (components, done, isSwitch) {
+    var destroyArea = function (components, done) {
         var i;
         var length = components.length;
         var tasks = [];
-        pageType = pageType || DEFAULT_DASHBOARD_VIEW;
 
         for (i = 0; i < length; i++) {
             if (hasComponents($("#" + components[i].id).closest(".ues-component-box"))) {
-                if (isSwitch || ds.database.updateUsageData(dashboard, components[i].content.id, page.id, pageType, false)) {
-                    tasks.push((function (component) {
-                        return function (done) {
-                            destroyComponent(component, function (err) {
-                                done(err);
-                            });
-                        };
-                    }(components[i])));
-                } else {
-                    done("Error updating usage data");
-                    return;
-                }
-            } else if (!isSwitch && components[i].id) {
-                if (!ds.database.updateUsageData(dashboard, components[i].content.id, page.id, pageType, false)) {
-                    done("Error updating usage data");
-                    return;
-                }
+                tasks.push((function (component) {
+                    return function (done) {
+                        destroyComponent(component, function (err) {
+                            done(err);
+                        });
+                    };
+                }(components[i])));
+            } else if (components[i].id) {
+                ds.database.updateUsageData(dashboard, components[i].content.id);
             }
         }
 
@@ -541,11 +530,10 @@ $(function () {
      * @param {Object} page     The page object
      * @param {String} pageType Type of the page
      * @param {function} done   Callback function
-     * @param {Boolean} isSwitch to check whether it is just a switch or actual delete
      * @return {null}
      * @private
      */
-    var destroyPage = function (page, pageType, done, isSwitch) {
+    var destroyPage = function (page, pageType, done) {
         var area;
         pageType = pageType || DEFAULT_DASHBOARD_VIEW;
         var content = page.content[pageType];
@@ -556,7 +544,7 @@ $(function () {
                     return function (done) {
                         destroyArea(area, function (err) {
                             done(err);
-                        }, isSwitch);
+                        });
                     };
                 }(content[area])));
             }
@@ -579,29 +567,18 @@ $(function () {
      * @private
      */
     var removePage = function (pid, type, done) {
-        var pageToBeDeleted = findPage(dashboard, pid);
+        var p = findPage(dashboard, pid);
         var pages = dashboard.pages;
-        var clonedPages = clone(pages);
-        var index = pages.indexOf(pageToBeDeleted);
-        var isError = false;
+        var index = pages.indexOf(p);
         pages.splice(index, 1);
         if (page.id !== pid) {
             return done(false);
         }
-        var views = Object.keys(pageToBeDeleted.content);
-        for (var i = 0; i < views.length; i++){
-            updateUsageForViews(pageToBeDeleted, views[i], function (err) {
-                if (err) {
-                    generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                    dashboard.pages = clonedPages;
-                    isError = true;
-                    i = views.length;
-                }
-            });
+        var views = Object.keys(p.content);
+        for (var i = 0; i < views.length; i++) {
+            updateUsageForViews(p, views[i]);
         }
-        if (!isError) {
-            destroyPage(pageToBeDeleted, type, done);
-        }
+        destroyPage(p, type, done);
     };
 
     /**
@@ -609,7 +586,7 @@ $(function () {
      * @param page Page
      * @param pageType view of the page
      */
-    var updateUsageForViews = function (page, pageType, done) {
+    var updateUsageForViews = function (page, pageType) {
         var i;
         var length;
         var area;
@@ -625,18 +602,13 @@ $(function () {
                     component = components[i];
                     var gadgetId = component.content.id;
                     if (gadgetIds.indexOf(gadgetId) < 0) {
-                        if (ds.database.updateUsageDataInMultipleViews(dashboard, gadgetId)) {
-                            gadgetIds.push(gadgetId);
-                        } else  {
-                            done("Error updating database");
-                            return;
-                        }
+                        ds.database.updateUsageData(dashboard, gadgetId);
+                        gadgetIds.push(gadgetId);
                     }
 
                 }
             }
         }
-        done();
     };
 
     /**
@@ -879,7 +851,6 @@ $(function () {
             visibleViews = [];
             var selectedViewId = getViewId($(event.target).text());
             $(event.target).text(selectedViewId);
-            var clonedPage = clone(page);
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
@@ -890,18 +861,12 @@ $(function () {
                 roles: layout.roles
             };
             page.content[newViewId] = JSON.parse(JSON.stringify(page.content[selectedViewId]));
-            updateUsageForViews(page, pageType, function(err) {
-                if (err) {
-                    generateMessage(err, null, null, 'error', 'topCenter', 2000, null);
-                    page = clonedPage;
-                } else {
-                    saveDashboard();
-                    pageType = newViewId;
-                    $('button[data-target=#left-sidebar]').click();
-                    $('.gadgets-grid').empty();
-                    renderView('', newViewId);
-                }
-            });
+            saveDashboard();
+            pageType = newViewId;
+            $('button[data-target=#left-sidebar]').click();
+            $('.gadgets-grid').empty();
+            updateUsageForViews(page, pageType);
+            renderView('', newViewId);
         });
 
         //event handler for clicking on view properties button
@@ -1127,21 +1092,13 @@ $(function () {
                         }
                     }
                     showConfirm(i18n_data["add.anonymous.role"], i18n_data["add.anonymous.role.message"], function () {
-                        var isError = false;
                         if (removingComponentsLength > 0) {
-                            removeGadgets(removingComponents, removingComponentsLength, function (err) {
-                                if (err) {
-                                    generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                                    isError = true;
-                                }
-                            });
+                            removeGadgets(removingComponents, removingComponentsLength);
                         }
-                        if (!isError) {
-                            dashboard.isanon = true;
-                            page.views.content[viewId].roles = [];
-                            $('#view-configuration').find('.ues-view-roles').empty();
-                            addRoleToView(viewId, role);
-                        }
+                        dashboard.isanon = true;
+                        page.views.content[viewId].roles = [];
+                        $('#view-configuration').find('.ues-view-roles').empty();
+                        addRoleToView(viewId, role);
                         return true;
                     });
 
@@ -1168,42 +1125,26 @@ $(function () {
                     }
                     showConfirm(i18n_data["add.new.role.removing.anonymous"],
                         i18n_data["add.new.role.removing.anonymous.message"], function () {
-                            var isError = false;
                             if (removingComponentsLength > 0) {
-                                removeGadgets(removingComponents, removingComponentsLength, function(err) {
-                                    if (err) {
-                                        generateMessage(err, null,null, "error", "topCenter", 2000, null);
-                                        isError = true;
-                                    }
-                                });
+                                removeGadgets(removingComponents, removingComponentsLength);
                             }
-                            if (!isError) {
-                                viewRolesList.splice(viewRolesList.indexOf(ANONYMOUS_ROLE), 1);
-                                $('#view-configuration').find('.ues-view-roles').empty();
-                                viewRolesList.push(role);
-                                for (var i = 0; i < viewRolesList.length; i++) {
-                                    var tempRole = viewRolesList[i];
-                                    $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(tempRole));
-                                }
-                                loadGadgetsWithViewRoles(viewId);
-                                dashboard.isanon = isAnonDashboard();
-                                saveDashboard();
-
+                            viewRolesList.splice(viewRolesList.indexOf(ANONYMOUS_ROLE), 1);
+                            $('#view-configuration').find('.ues-view-roles').empty();
+                            viewRolesList.push(role);
+                            for (var i = 0; i < viewRolesList.length; i++) {
+                                var tempRole = viewRolesList[i];
+                                $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(tempRole));
                             }
+                            loadGadgetsWithViewRoles(viewId);
+                            dashboard.isanon = isAnonDashboard();
+                            saveDashboard();
                             return true;
                         });
 
                 } else if (removingComponentsLength > 0) {
                     showConfirm(i18n_data["add.new.role"], i18n_data["add.new.role.message"], function () {
-                        var isError = false;
-                        removeGadgets(removingComponents, removingComponentsLength , function(err) {
-                            if (err) {
-                                generateMessage(err, null, null, "error", topCenter, 2000, null);
-                            }
-                        });
-                        if (!isError) {
-                            addRoleToView(viewId, role);
-                        }
+                        removeGadgets(removingComponents, removingComponentsLength);
+                        addRoleToView(viewId, role);
                         return true;
                     })
                 } else {
@@ -1410,25 +1351,19 @@ $(function () {
                 }
             }
             showConfirm(i18n_data["delete.view"], i18n_data["delete.view.message"], function () {
-                var clonedPage = clone(page);
+                var p = clone(page);
                 delete page.views.content[viewId];
                 delete page.content[viewId];
-                destroyPage(clonedPage, pageType, function (err) {
+                destroyPage(p, pageType, function (err) {
                     if (err) {
-                        generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                        page = clonedPage;
-                        views = getUserAllowedViews(Object.keys(page.content));
-                        renderView(viewId, views[0]);
-                        pageType = views[0];
-
-                    } else {
-                        visibleViews = [];
-                        dashboard.isanon = isAnonDashboard();
-                        saveDashboard();
-                        views = getUserAllowedViews(Object.keys(page.content));
-                        renderView(viewId, views[0]);
-                        pageType = views[0];
+                        throw err;
                     }
+                    visibleViews = [];
+                    dashboard.isanon = isAnonDashboard();
+                    saveDashboard();
+                    views = getUserAllowedViews(Object.keys(page.content));
+                    renderView(viewId, views[0]);
+                    pageType = views[0];
                 });
                 return true;
             });
@@ -1520,13 +1455,8 @@ $(function () {
             if (removingComponentsLength > 0) {
                 showConfirm(i18n_data["remove.gadgets.with.role.addition"],
                     i18n_data["remove.gadgets.with.role.addition.message"], function () {
-                        removeGadgets(removingComponents, removingComponentsLength, function(err) {
-                            if (err) {
-                                generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                            } else {
-                                removePermission();
-                            }
-                        });
+                        removeGadgets(removingComponents, removingComponentsLength);
+                        removePermission();
                         return true;
                     });
             } else {
@@ -1563,7 +1493,7 @@ $(function () {
                 }
                 $('.gadgets-grid').html(viewCreationOptions);
                 isInViewCreationView = true;
-            }, true);
+            });
         });
 
         //event handler for clicking on the toggle button to get more views
@@ -1651,40 +1581,31 @@ $(function () {
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
-                    var isError = false;
 
                     if (id) {
                         removeComponent(findComponent(id), function (err) {
                             if (err) {
                                 removeBlock = false;
-                                generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                                isError = true;
-                            } else {
-                                saveDashboard();
                             }
+                            saveDashboard();
                         });
                     }
                     else if (hasHidden) {
-                        if (ds.database.updateUsageData(dashboard, hasHidden[0].content.id, page.id, pageType, false)) {
-                            for (var i = 0; i < dashboard.pages.length; i++) {
-                                if (dashboard.pages[i].id === page.id) {
-                                    dashboard.pages[i].content[pageType][componentBoxId] = [];
-                                    break;
-                                }
+                        for (var i = 0; i < dashboard.pages.length; i++) {
+                            if (dashboard.pages[i].id === page.id) {
+                                dashboard.pages[i].content[pageType][componentBoxId] = [];
                             }
-                            saveDashboard();
-                        } else {
-                            isError = true;
-                            removeBlock = false;
-                            generateMessage('Error updating database', null, null, "error", 'topCenter', 2000, null);
                         }
+                        ds.database.updateUsageData(dashboard, hasHidden[0].content.id);
+                        saveDashboard();
                     }
                     if (removeBlock) {
                         getGridstack().remove_widget(componentBox.parent());
                         updateLayout();
-                    } else if(!isError) {
+                    } else {
                         componentBox.html(componentBoxContentHbs());
                     }
+
                     designerModal.modal('hide');
                 });
             });
@@ -1772,28 +1693,24 @@ $(function () {
     var createComponent = function (container, asset) {
         var id = generateGadgetId(asset.id);
         var area = container.attr('id');
-        var isDatabaseUpdateSuccess = false;
         pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-        if (ds.database.updateUsageData(dashboard, asset.id, page.id, pageType, true)) {
-            var content = page.content[pageType];
-            content = content[area] || (content[area] = []);
-            updateStyles(asset);
-            var component = {
-                id: id,
-                content: asset
-            };
-            content.push(component);
-            ues.components.create(container, component, function (err, block) {
-                if (err) {
-                    throw err;
-                }
-                renderComponentToolbar(component);
-                container.find('.ues-component-actions .ues-component-properties-handle').click();
-                saveDashboard();
-            });
-        } else {
-            generateMessage("Error updating database", null, null, "error", "topCenter", 2000, null);
-        }
+        var content = page.content[pageType];
+        content = content[area] || (content[area] = []);
+        updateStyles(asset);
+        var component = {
+            id: id,
+            content: asset
+        };
+        content.push(component);
+        ues.components.create(container, component, function (err, block) {
+            if (err) {
+                throw err;
+            }
+            renderComponentToolbar(component);
+            container.find('.ues-component-actions .ues-component-properties-handle').click();
+            saveDashboard();
+            ds.database.updateUsageData(dashboard, asset.id);
+        });
     };
 
     /**
@@ -2189,20 +2106,11 @@ $(function () {
                         "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
                 } else {
-                    var oldId = clone(page).id;
                     updateMenu(page.id, idVal, 'id');
                     //change subordinates with new ID
                     page.id = idVal;
                     if (landing.is(":checked")) {
                         dashboard.landing = idVal;
-                    }
-                    if (!updateGadgetUsageAfterPagePropertiesChange()) {
-                        updateMenu(page.id, oldId, 'id');
-                        //change subordinates with new ID
-                        page.id = oldId;
-                        if (landing.is(":checked")) {
-                            dashboard.landing = oldId;
-                        }
                     }
                 }
             },
@@ -2249,6 +2157,8 @@ $(function () {
             fn[e.context.name]();
             updatePagesList();
             saveDashboard();
+            updateGadgetUsageAfterPagePropertiesChange();
+        } else {
         }
         return true;
     };
@@ -2257,7 +2167,6 @@ $(function () {
      * To update the gadget usage information after changing the page propertioes
      */
     var updateGadgetUsageAfterPagePropertiesChange = function () {
-        var isSuccess = false;
         var method = 'PUT';
         var url = DATABASE_API + '/' + dashboard.id;
         var isRedirect = false;
@@ -2265,15 +2174,12 @@ $(function () {
             url: url,
             method: method,
             async: false,
-            contentType: 'application/json',
-            success: function () {
-                isSuccess = true;
-            },
-            error: function () {
-                isSuccess = false;
-            }
+            contentType: 'application/json'
+        }).success(function (data) {
+            console.log("Updated the gadget usage info successfully");
+        }).error(function (err) {
+            console.log("Gadget usage update failed after page properties change" + err)
         });
-        return isSuccess;
     };
 
     /**
@@ -2985,17 +2891,15 @@ $(function () {
                 } else {
                     //if tries to change the layout of an existing view, after confiramtion destroy the page
                     showConfirm(i18n_data["add.new.layout"], i18n_data["add.new.layout.message"], function () {
-                        var clonedPage = clone(page);
+                        var p = clone(page);
                         var selectedView = getSelectedView();
                         var viewId = getViewId(selectedView);
                         var viewName = page.views.content[viewId].name;
                         var viewRoles = page.views.content[viewId].roles;
                         delete page.views.content[pageType];
                         delete page.content[pageType];
-                        destroyPage(clonedPage, pageType, function (err) {
+                        destroyPage(p, pageType, function (err) {
                             if (err) {
-                                generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                                page = clonedPage;
                                 throw err;
                             }
 
@@ -3262,43 +3166,36 @@ $(function () {
                 showConfirm(i18n_data["delete.page"], i18n_data["delete.page.message"], function () {
                     //check whether there are any subordinates
                     if (isRemovablePage(pid) && dashboard.pages.length !== 1) {
-                        var clonedPages = clone(dashboard.pages);
                         removePage(pid, pageType, function (err) {
-                            if (err) {
-                                generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                                dashboard.pages = clonedPages;
+                            var pages = dashboard.pages;
+                            var childObj = getChild(dashboard.menu, pid);
 
-                            } else {
-                                var pages = dashboard.pages;
-                                var childObj = getChild(dashboard.menu, pid);
-
-                                // if the landing page was deleted, make the first page(in menu) to be the landing page
-                                if (dashboard.menu.length) {
-                                    if (pid === dashboard.landing) {
-                                        //get next possible landing page from the menu
-                                        var nextLandingpage = getNextLandingPage(pid, dashboard.menu);
-                                        dashboard.landing = nextLandingpage;//dashboard.menu[0].id;
-                                        generateMessage(i18n_data['landing.page.changed'] + " " + dashboard.landing, null,
-                                            null, "success", "topCenter", 2000, null);
-                                        var menuItem = getChild(dashboard.menu, nextLandingpage);
-                                        dashboard.menu.unshift(menuItem);
-                                        spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
-                                    }
-                                } else {
-                                    dashboard.landing = null;
-                                    // hide the sidebar if it is open
-                                    if ($('#left-sidebar').hasClass('toggled')) {
-                                        $('#btn-pages-sidebar').click();
-                                    }
+                            // if the landing page was deleted, make the first page(in menu) to be the landing page
+                            if (dashboard.menu.length) {
+                                if (pid === dashboard.landing) {
+                                    //get next possible landing page from the menu
+                                    var nextLandingpage = getNextLandingPage(pid, dashboard.menu);
+                                    dashboard.landing = nextLandingpage;//dashboard.menu[0].id;
+                                    generateMessage(i18n_data['landing.page.changed'] + " " + dashboard.landing, null,
+                                        null, "success", "topCenter", 2000, null);
+                                    var menuItem = getChild(dashboard.menu, nextLandingpage);
+                                    dashboard.menu.unshift(menuItem);
+                                    spliceOrDiscardChild(dashboard.menu, menuItem.id, 'perform');
                                 }
-
-                                // save the dashboard
-                                spliceOrDiscardChild(dashboard.menu, childObj.id, 'perform');
-                                dashboard.isanon = isAnonDashboard();
-                                saveDashboard();
-                                visibleViews = [];
-                                renderPage(dashboard.landing || dashboard.pages[0].id);
+                            } else {
+                                dashboard.landing = null;
+                                // hide the sidebar if it is open
+                                if ($('#left-sidebar').hasClass('toggled')) {
+                                    $('#btn-pages-sidebar').click();
+                                }
                             }
+
+                            // save the dashboard
+                            spliceOrDiscardChild(dashboard.menu, childObj.id, 'perform');
+                            dashboard.isanon = isAnonDashboard();
+                            saveDashboard();
+                            visibleViews = [];
+                            renderPage(dashboard.landing || dashboard.pages[0].id);
                         });
                         return true;
                     } else {
@@ -3486,7 +3383,7 @@ $(function () {
      * @param removingComponents Gadgets to be removed
      * @param length Number of gadgets to be removed
      */
-    var removeGadgets = function (removingComponents, length, done) {
+    var removeGadgets = function (removingComponents, length) {
         for (var i = 0; i < length; i++) {
             var removingComponent = $("#" + removingComponents[i].id);
             var componentBox = removingComponent.closest(".ues-component-box");
@@ -3494,9 +3391,8 @@ $(function () {
             if (removingComponent.length) {
                 removeComponent(removingComponents[i], function (err) {
                     if (err) {
-                        done(err);
-                        i = length;
-                        return;
+                        generateMessage("Error in removing gadgets from the view", null, null, "error", "topCenter",
+                            2000, null);
                     }
                 });
             } else {
@@ -3512,22 +3408,16 @@ $(function () {
                         components = content[area];
                         var componentLength = components.length;
                         for (var j = 0; j < componentLength; j++) {
-                            component = components[j];
+                            component = components[i];
                             if (component.id === removingComponents[i].id) {
-                                var isDatabaseUpdateSuccess = ds.database.updateUsageData(dashboard,
-                                    component.content.id, page.id, pageType, false);
-                                if (isDatabaseUpdateSuccess) {
-                                    area = content[area];
-                                    var index = area.indexOf(component);
-                                    area.splice(index, 1);
-                                    saveDashboard();
-                                    componentBox = $('#' + area + ".ues-component-box");
-                                    isComponentFound = true;
-                                    break;
-                                } else {
-                                    done("Error when updating database");
-                                    return;
-                                }
+                                area = content[area];
+                                var index = area.indexOf(component);
+                                area.splice(index, 1);
+                                saveDashboard();
+                                ds.database.updateUsageData(dashboard, component.content.id);
+                                componentBox = $('#' + area + ".ues-component-box");
+                                isComponentFound = true;
+                                break;
                             }
                         }
                         if (isComponentFound) {
@@ -3537,9 +3427,6 @@ $(function () {
                 }
             }
             componentBox.html(componentBoxContentHbs());
-        }
-        if (done) {
-            done();
         }
     };
 
@@ -3779,7 +3666,7 @@ $(function () {
         }
         $.ajax({
             url: DATABASE_API + '/' + dashboardID + '?task=getDefectivePages',
-            method: "GET",
+            method: "POST",
             contentType: "application/json",
             async: false,
             success: function (data) {
@@ -3894,7 +3781,7 @@ $(function () {
                 throw err;
             }
             renderPage(pid);
-        }, true);
+        });
     };
 
     /**
@@ -4218,6 +4105,7 @@ $(function () {
      * @private
      */
     var initDashboard = function (db, page) {
+
         dashboard = (ues.global.dashboard = db);
         var pages = dashboard.pages;
         if (pages.length > 0) {
