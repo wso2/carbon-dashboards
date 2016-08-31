@@ -22,6 +22,7 @@ var updateAfterDeletingDashboard;
 var isDashboardExistInDatabase;
 var checkDefectiveDashboard;
 var checkDefectivePages;
+var getGadgetUsageInfoOfADashboard;
 (function () {
     var DSDataSourceManager = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
     var dsDataSourceManager = DSDataSourceManager.getInstance();
@@ -53,10 +54,17 @@ var checkDefectivePages;
     getGadgetUsage = function (gadgetId) {
         var gadgetUsage = dsDataSourceManager.getDashboardUsingGadget(tenantId, gadgetId);
         var usage = {dashboards: []};
-        for (var index = 0; index < gadgetUsage.size(); index++) {
+        var gadgetUsageSize = gadgetUsage.size();
+        for (var index = 0; index < gadgetUsageSize; index++) {
             usage.dashboards.push(gadgetUsage.get(index));
         }
         return usage;
+    };
+
+    getGadgetUsageInfoOfADashboard = function (dashboardId, gadgetId) {
+        dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
+        var gadgetUsageInfoForDashboard = dsDataSourceManager.getGadgetUsageInfo(tenantId, dashboardId, gadgetId);
+        return gadgetUsageInfoForDashboard ? gadgetUsageInfoForDashboard : [];
     };
 
     updateGadgetState = function (gadgetId, gadgetState) {
@@ -85,7 +93,8 @@ var checkDefectivePages;
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
         var usageData = dsDataSourceManager. getDefectiveUsageData(tenantId, dashboardId);
         var usage = {data: []};
-        for (var index = 0; index < usageData.size(); index++) {
+        var usageDataSize = usageData.size();
+        for (var index = 0; index < usageDataSize; index++) {
             usage.data.push(usageData.get(index));
         }
         return usage;

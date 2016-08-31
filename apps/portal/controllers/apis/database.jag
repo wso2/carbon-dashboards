@@ -52,7 +52,7 @@
                 }
                 response.sendError(400, i18n.localize("bad.request"));
             }
-        } else if (matcher.match('/database/{gid}') || matcher.match('/database/{gid}$')) {
+        } else if (matcher.match('/database/{gid}')) {
             gadgetId = matcher.elements().gid;
             if (task === STATUS_UPDATE_TASK) {
                 dataBaseUtils.updateGadgetState(gadgetId, content);
@@ -64,11 +64,19 @@
             response.sendError(400, i18n.localize("bad.request"));
         }
     } else if (request.getMethod() === 'GET') {
-        if (matcher.match('/database/{gid}') || matcher.match('/database/{gid}$')) {
+        if (matcher.match('/database/{did}/{gid}') || matcher.match('/database/{did}$/{gid}')) {
+            dashboardId = matcher.elements().did;
+            gadgetId = matcher.elements().gid;
+            if (matcher.match('/database/{did}$/{gid}')) {
+                dashboardId = dashboardId + '$';
+            }
+            var gadgetUsageInfo = dataBaseUtils.getGadgetUsageInfoOfADashboard(dashboardId, gadgetId);
+            print(gadgetUsageInfo);
+        } else if (matcher.match('/database/{gid}') || matcher.match('/database/{gid}$')) {
             gadgetId = matcher.elements().gid;
             if (task === USAGE_TASK) {
-                var assetInfo = dataBaseUtils.getGadgetUsage(gadgetId);
-                print(assetInfo);
+                var gadgetUsageInfo = dataBaseUtils.getGadgetUsage(gadgetId);
+                print(gadgetUsageInfo);
             } else if (task === DEFECTIVE_USAGE_TASK) {
                 if (matcher.match('/database/{gid}$')) {
                     gadgetId = gadgetId + '$';
@@ -78,15 +86,18 @@
             }
         }
     } else if (request.getMethod() === 'DELETE') {
-        if (matcher.match('/database/{did}')) {
-            dashboardId = matcher.elements().did;
-            dataBaseUtils.updateAfterDeletingDashboard(dashboardId);
-        } else if (matcher.match('/database/{did}/{gid}') || matcher.match('/database/{did}$/{gid}')) {
+        if (matcher.match('/database/{did}/{gid}') || matcher.match('/database/{did}$/{gid}')) {
             gadgetId = matcher.elements().gid;
             dashboardId = matcher.elements().did;
+            if (matcher.match('/database/{did}$/{gid}')) {
+                dashboardId = dashboardId + '$';
+            }
             if (task === DELETE_TASK) {
                 dataBaseUtils.deleteGadgetUsage(dashboardId, gadgetId);
             }
+        } else if (matcher.match('/database/{did}')) {
+            dashboardId = matcher.elements().did;
+            dataBaseUtils.updateAfterDeletingDashboard(dashboardId);
         }
     } else if (request.getMethod() === 'PUT') {
         if (matcher.match('/database/{did}')) {

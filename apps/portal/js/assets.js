@@ -213,19 +213,26 @@ $(function () {
      */
     var manipulateGadgetUsageInfo = function (usage) {
         var message = 'This gadget is used in ';
-        for (var index = 0; index < usage.length; index++) {
+        var endMessage = " dashboard(s). Deleting this gadget will affect the functionality of those dashboard(s)";
+        var count = 0;
+        for (var index = 0; index < usage.length && count < 2; index++) {
             if (usage[index].indexOf("$") > -1) {
                 usage[index] = usage[index].substr(0, usage[index].indexOf("$"));
                 usage[index] = "personalized version of " + usage[index];
-                if (message.indexOf("personalized version of " + usage[index]) > -1) {
+                if (message.indexOf(usage[index]) > -1) {
                     usage[index] = "";
+                    count--;
                 }
             }
             if (index !== usage.length - 1) {
-                message += usage[index] + ','
+                count++;
+                if (count === 2) {
+                    message += usage[index] + "..." + endMessage;
+                } else {
+                    message += usage[index] + ','
+                }
             } else {
-                message += usage[index] + " database(s). Deleting this gadget will " +
-                    "affect the functionality of those databases";
+                message += usage[index] + endMessage;
             }
         }
         return message;

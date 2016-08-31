@@ -63,20 +63,120 @@
         return usageData;
     };
 
+
+    var manipulateUsageData = function (usageData, pageId, viewId, isAdd) {
+        var currentUsageValue = 0;
+        usageData = JSON.parse(usageData);
+        var usageDataLength = usageData.length;
+        if (usageDataLength > 0) {
+            for (var index = 0; index < usageDataLength; index++) {
+                var pageIndex = Object.keys(usageData[index]).indexOf(pageId);
+                if (Object.keys(usageData[index]).indexOf(pageId) > -1){
+                    if (Object.keys(usageData[index][pageId]).indexOf(viewId) > -1){
+                        currentUsageValue = usageData[index][pageId][viewId];
+                        if (isAdd) {
+                            currentUsageValue = currentUsageValue + 1;
+                            usageData[index][pageId][viewId] = currentUsageValue;
+                        } else {
+                            currentUsageValue = currentUsageValue - 1;
+                            usageData[index][pageId][viewId] = currentUsageValue;
+
+                            if (currentUsageValue === 0) {
+                                delete usageData[index][pageId][viewId];
+
+                                if (Object.keys(usageData[index][pageId]).length === 0) {
+                                    usageData.splice(index, 1);
+                                }
+                            }
+                        }
+                        return usageData;
+                    }
+                    if (isAdd) {
+                        usageData[index][pageId][viewId] = 1;
+                        return usageData;
+                    }
+                }
+            }
+            if (isAdd) {
+                var pageUsageData = {};
+                pageUsageData[pageId] = {};
+                pageUsageData[pageId][viewId] = 1;
+                usageData.push(pageUsageData);
+                return usageData;
+            }
+        } else {
+            if (isAdd) {
+                var pageUsageData = {};
+                pageUsageData[pageId] = {};
+                pageUsageData[pageId][viewId] = 1;
+                usageData.push(pageUsageData);
+                return usageData;
+            }
+        }
+    };
+
     /**
      * To update the usage data
      * @param dashboard which the component belongs to
      * @param id Id of the component id
+     * @param pageId Id of the page to change the usage
+     * @param viewId Id of the view with the change usage
+     * @param isAdd is it a addiion of gadget usage or delete of gadget usage
      */
-    var updateUsageData = function(dashboard, id) {
-        var usageData = createUsageData(dashboard, id);
+    var updateUsageData = function (dashboard, id, pageId, viewId, isAdd) {
+        var usageData = getGadgetUsageInfo(dashboard, id);
+        if (usageData) {
+            var updatedUsageInfo = manipulateUsageData(usageData, pageId, viewId, isAdd);
+
+            if (updatedUsageInfo && updatedUsageInfo.length > 0) {
+                return sendUsageData(dashboard, updatedUsageInfo, id);
+            } else if (updatedUsageInfo) {
+                return deleteUsageData(dashboard, id);
+            } else {
+                return true;
+            }
+        }
+        /*var usageData = createUsageData(dashboard, id);
+        console.log(usageData);
         if (usageData.length > 0) {
             sendUsageData(dashboard, usageData, id);
         } else {
             deleteUsageData(dashboard, id);
         }
+        return true;*/
+
     };
 
+    var updateUsageDataInMultipleViews = function(dashboard, gadgetId) {
+        var usageData = createUsageData(dashboard, gadgetId);
+        if (usageData.length > 0) {
+            return sendUsageData(dashboard, usageData, gadgetId);
+        } else {
+            return deleteUsageData(dashboard, gadgetId);
+        }
+    };
+
+    var getGadgetUsageInfo = function (dashboard, gadgetId) {
+        var gadgetUsageInfo;
+        var dashboardID = dashboard.id;
+        if (dashboard.isUserCustom) {
+            dashboardID = dashboardID + '$'
+        }
+        $.ajax({
+            url: DATABASE_API + '/' + dashboardID + '/' + gadgetId,
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (usageData) {
+                gadgetUsageInfo = usageData;
+            },
+            error: function () {
+                gadgetUsageInfo = null;
+            }
+        });
+
+        return gadgetUsageInfo;
+    };
     /**
      * To send the usage data to back end
      * @param dashboard
@@ -85,23 +185,25 @@
      */
     var sendUsageData = function (dashboard, usageData, id) {
         var dashboardID = dashboard.id;
-        if (dashboard.isUserCustom){
+        var isSuccess = false;
+        if (dashboard.isUserCustom) {
             dashboardID = dashboardID + '$'
         }
         var state = isGadgetExist(id);
         $.ajax({
-            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=insert&state='+state,
+            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=insert&state=' + state,
             method: "POST",
             data: JSON.stringify(usageData),
             contentType: "application/json",
             async: false,
             success: function () {
-                console.log("successfully updated the usage data to database");
+                isSuccess = true
             },
-            error: function (xhr, message) {
-                console.log("something went wrong. Could not update the database data due to " + message);
+            error: function () {
+                isSuccess = false;
             }
         });
+        return isSuccess;
     };
 
     /**
@@ -111,7 +213,8 @@
      */
     var deleteUsageData = function (dashboard, id) {
         var dashboardID = dashboard.id;
-        if (dashboard.isUserCustom){
+        var isSuccess = false;
+        if (dashboard.isUserCustom) {
             dashboardID = dashboardID + '$'
         }
         $.ajax({
@@ -120,12 +223,13 @@
             contentType: "application/json",
             async: false,
             success: function () {
-                console.log("successfully updated the usage data to database");
+                isSuccess = true;
             },
             error: function (xhr, message) {
-                console.log("something went wrong. Could not update the database data due to " + message);
+                isSuccess = false;
             }
         });
+        return isSuccess;
     };
 
     /**
@@ -133,7 +237,7 @@
      * @param id
      * @returns {string}
      */
-    var isGadgetExist = function(id) {
+    var isGadgetExist = function (id) {
         var status = 'ACTIVE';
         $.ajax({
             url: ASSET_API + id + '?type=gadget',
@@ -159,6 +263,7 @@
     };
 
     ds.database = {
-        updateUsageData : updateUsageData
+        updateUsageData: updateUsageData,
+        updateUsageDataInMultipleViews : updateUsageDataInMultipleViews
     };
 }());
