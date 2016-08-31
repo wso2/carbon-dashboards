@@ -67,9 +67,6 @@ public class DSDataSourceManager {
 
     private DSDataSourceManager() throws DashboardPortalException {
         DataSourceService service = ServiceHolder.getDataSourceService();
-        Connection connection = null;
-        ResultSet resultSet = null;
-
         if (service != null) {
             try {
                 JSONObject dataSourceConfig = PortalUtils.getConfiguration(PortalConstants.DATASOURCE_CONFIG_PROPERTY);
@@ -78,7 +75,9 @@ public class DSDataSourceManager {
                 PrivilegedCarbonContext.getThreadLocalCarbonContext()
                         .setTenantDomain(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME, true);
                 dataSource = (DataSource) service.getDataSource(dataSourceName).getDSObject();
-                createUsageDatabase();
+                if (!isGadgetUsageTableExist()) {
+                    createUsageDatabase();
+                }
             } catch (DataSourceException e) {
                 throw new DashboardPortalException("Error in getting the datasource", e);
             } catch (IOException e) {
@@ -94,6 +93,28 @@ public class DSDataSourceManager {
     }
 
     /**
+     * To check whether the gadget usage table is already created
+     * @return true if the gadget usage table is already exist otherwise false;
+     */
+    private boolean isGadgetUsageTableExist() {
+        Connection connection = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataSource.getConnection();
+            DatabaseMetaData meta = connection.getMetaData();
+            resultSet = meta.getTables(null, null, DataSourceConstants.GADGET_USAGE_TABLE_NAME, null);
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            return resultSet.next();
+        } catch (SQLException e) {
+            return false;
+        } finally {
+            closeDatabaseResources(connection, null, resultSet);
+        }
+    }
+
+    /**
      * To create the gadget usage table
      *
      * @throws DashboardPortalException
@@ -102,7 +123,6 @@ public class DSDataSourceManager {
         Connection conn = null;
         try {
             conn = dataSource.getConnection();
-            conn.setAutoCommit(false);
             statement = conn.createStatement();
             executeScript();
             if (!conn.getAutoCommit()) {
