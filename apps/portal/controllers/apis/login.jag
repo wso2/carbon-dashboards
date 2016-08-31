@@ -88,7 +88,7 @@ var user;
                     log.debug(session.get('user') + " is authorized.");
                 }
                 if (dest) {
-                    if ((dest.indexOf(conf.tenantPrefix + user.domain) > -1) || (dest.indexOf(conf.tenantPrefix) < 0
+                    if ((dest.indexOf(conf.tenantPrefix + user.domain) > -1) || (dest.indexOf(conf.tenantPrefix + "/") < 0
                             && superDomain === String(user.domain))) {
                         response.sendRedirect(dest);
                     } else {
