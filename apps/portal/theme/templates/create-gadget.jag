@@ -242,8 +242,12 @@
 </script>
     
 <script id="ui-config-hbs" type="text/x-handlebars-template">
-    {{#each .}}
-        <div class="form-group">
+   {{#has title}}
+       <div  class="config-group"  data-toggle="collapse" href="#{{title}}" aria-controls={{title}}  >
+            {{title}}
+       </div> {{/has}}
+    <div  class="form-group add-padding-top-3x {{#if collapsed}} collapse {{/if}}" id={{title}} >
+        {{#each elements}}
            {{#equalsIgnoreCase fieldType "string"}}
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                   <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label>
@@ -286,8 +290,9 @@
            {{#equalsIgnoreCase fieldType "advanced"}}
                 {{> (lookup . 'childPartial')}}
            {{/equalsIgnoreCase}}
-        </div>
-    {{/each}}
+
+        {{/each}}
+    </div>
 </script>
 
 <script id="data-preview-hbs" type="text/x-handlebars-template">
