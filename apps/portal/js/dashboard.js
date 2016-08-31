@@ -487,7 +487,7 @@ $(function () {
         }
         return false;
     };
-    
+
     //compile handlebar for the menu list
     var updateMenuList = function () {
         //menulist for big res
