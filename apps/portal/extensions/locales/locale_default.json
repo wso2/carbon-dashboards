@@ -280,8 +280,5 @@
   "add.layouts": "Add Layouts",
   "cannot.save.dashboard": "Cannot Save the Dashboard",
   "atleast.one.owner.role": "At least one role should be there as the owner of the dashboard",
-  "please.enter.to.change.name" : "Please press enter to change the view name",
-  "cannot.understand.method" : "Cannot understand the method",
-  "dashboard.portal" : "Dashboard Portal",
-  "customize.dashboard" : "Customize Dashboard"
+  "please.enter.to.change.name" : "Please press enter to change the view name"
 }
