@@ -609,7 +609,7 @@ $(function () {
      * @param page Page
      * @param pageType view of the page
      */
-    var updateUsageForViews = function(page, pageType, done) {
+    var updateUsageForViews = function (page, pageType, done) {
         var i;
         var length;
         var area;
