@@ -21,3 +21,24 @@
     display: none;
     margin-top: 20px;
 }
+
+.config-group{
+
+    background-image: none;
+    background-color: #d9d9d9;
+    width: 100%;
+    height: 40px;
+    font-size: large;
+    border-style: ridge;
+    border-color: #737373;
+    border-width: thin;
+    color: #0d1219;
+    data-toggle:"collapse";
+
+
+
+}
+
+.add-padding-top-3x{
+    padding-top: 15px !important;
+}
