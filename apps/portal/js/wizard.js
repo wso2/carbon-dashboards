@@ -17,6 +17,7 @@
  */
 var provider;
 var chartType;
+var configGroup;
 var wizardData = {};
 var columns = [];
 var step0Done = false;
@@ -342,7 +343,7 @@ function getProviderConfig() {
                 }
             }
             else {
-                var configGroup = {
+                configGroup = {
                     "elements": data
                 };
                 registerAdvancedProviderUI(configGroup);
@@ -431,7 +432,6 @@ function getChartList() {
 }
 
 function getChartConfig(providerConfig) {
-    var configGroup;
     $.ajax({
         url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getChartConfig',
         method: "POST",
@@ -442,7 +442,7 @@ function getChartConfig(providerConfig) {
             if (!chartConfig.error) {
                 var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
                 if (Object.keys(chartConfig[0]).indexOf(groups) > -1) {
-                    var configGroup = (chartConfig[0].grouping);
+                    configGroup = (chartConfig[0].grouping);
                     for (i = 0; i < configGroup.length; i++) {
                         registerAdvancedChartUI(configGroup[i]);
                         $("#chart-config").append(chartHbs(configGroup[i]));
@@ -450,7 +450,7 @@ function getChartConfig(providerConfig) {
                     $("#preview").removeAttr("style");
                 }
                 else {
-                    var configGroup = {
+                    configGroup = {
                         "elements": chartConfig
                     };
                     registerAdvancedChartUI(configGroup);
