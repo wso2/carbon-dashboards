@@ -40,7 +40,7 @@
             <div class="pull-left brand float-remove-xs text-center-xs">
                 <a href="<%=tenantedUrlPrefix%>./dashboards">
                     <img src="<%=urlPrefix%>libs/theme-wso2_1.0/images/logo-inverse.svg" alt="wso2" title="wso2" class="logo">
-                    <h1><%= i18n.localize("dashboard.designer")%></h1>
+                    <h1><%= i18n.localize("dashboard.server.label")%></h1>
                 </a>
             </div>
         </div>
