@@ -290,7 +290,6 @@
            {{#equalsIgnoreCase fieldType "advanced"}}
                 {{> (lookup . 'childPartial')}}
            {{/equalsIgnoreCase}}
-
         {{/each}}
     </div>
 </script>
