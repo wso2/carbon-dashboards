@@ -1679,7 +1679,6 @@ $(function () {
                             generateMessage('Error updating database', null, null, "error", 'topCenter', 2000, null);
                         }
                     }
-
                     if (removeBlock) {
                         getGridstack().remove_widget(componentBox.parent());
                         updateLayout();
@@ -2257,7 +2256,7 @@ $(function () {
     /**
      * To update the gadget usage information after changing the page propertioes
      */
-    var updateGadgetUsageAfterPagePropertiesChange = function(){
+    var updateGadgetUsageAfterPagePropertiesChange = function () {
         var isSuccess = false;
         var method = 'PUT';
         var url = DATABASE_API + '/' + dashboard.id;
@@ -4108,6 +4107,7 @@ $(function () {
                 $('.gadgets-grid').find('.ues-component').each(function () {
                     var id = $(this).attr('id');
                     renderComponentToolbar(findComponent(id));
+
                     if (!id) {
                         if (err === UNAUTHORIZED_ERROR_CODE) {
                             $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
