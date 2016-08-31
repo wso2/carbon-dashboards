@@ -94,6 +94,7 @@ public class DSDataSourceManager {
 
     /**
      * To check whether the gadget usage table is already created
+     *
      * @return true if the gadget usage table is already exist otherwise false;
      */
     private boolean isGadgetUsageTableExist() {
@@ -154,7 +155,8 @@ public class DSDataSourceManager {
         if (databaseType.equalsIgnoreCase(DataSourceConstants.MSSQL_PRODUCT_NAME)) {
             databaseType = DataSourceConstants.MSSQL_SCRIPT_NAME;
         }
-        if (databaseType.equalsIgnoreCase(DataSourceConstants.ORACLE_SCRIPT_NAME) || databaseType.equalsIgnoreCase(DataSourceConstants.DB2_SCRIPT_NAME) ||
+        if (databaseType.equalsIgnoreCase(DataSourceConstants.ORACLE_SCRIPT_NAME) || databaseType
+                .equalsIgnoreCase(DataSourceConstants.DB2_SCRIPT_NAME) ||
                 databaseType.equalsIgnoreCase(DataSourceConstants.ORACLE_RAC_SCRIPT_NAME)) {
             delimeter = "/";
         }
