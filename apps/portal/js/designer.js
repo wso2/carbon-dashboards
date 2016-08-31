@@ -3442,7 +3442,7 @@ $(function () {
                         components = content[area];
                         var componentLength = components.length;
                         for (var j = 0; j < componentLength; j++) {
-                            component = components[i];
+                            component = components[j];
                             if (component.id === removingComponents[i].id) {
                                 var isDatabaseUpdateSuccess = ds.database.updateUsageData(dashboard,
                                     component.content.id, page.id, pageType, false);
