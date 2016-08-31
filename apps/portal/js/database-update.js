@@ -77,7 +77,6 @@
         var usageDataLength = usageData.length;
         if (usageDataLength > 0) {
             for (var index = 0; index < usageDataLength; index++) {
-                var pageIndex = Object.keys(usageData[index]).indexOf(pageId);
                 if (Object.keys(usageData[index]).indexOf(pageId) > -1) {
                     if (Object.keys(usageData[index][pageId]).indexOf(viewId) > -1) {
                         currentUsageValue = usageData[index][pageId][viewId];
@@ -134,7 +133,6 @@
         var usageData = getGadgetUsageInfo(dashboard, id);
         if (usageData) {
             var updatedUsageInfo = manipulateUsageData(usageData, pageId, viewId, isAdd);
-
             if (updatedUsageInfo && updatedUsageInfo.length > 0) {
                 return sendUsageData(dashboard, updatedUsageInfo, id);
             } else if (updatedUsageInfo) {
@@ -166,7 +164,7 @@
      * @returns {*} gadget usage info for the particular dashboard
      */
     var getGadgetUsageInfo = function (dashboard, gadgetId) {
-        var gadgetUsageInfo;
+        var gadgetUsageInfo = null;
         var dashboardID = dashboard.id;
         if (dashboard.isUserCustom) {
             dashboardID = dashboardID + '$'
@@ -234,7 +232,7 @@
             success: function () {
                 isSuccess = true;
             },
-            error: function (xhr, message) {
+            error: function () {
                 isSuccess = false;
             }
         });
@@ -253,7 +251,7 @@
             method: 'GET',
             async: false,
             contentType: 'application/json'
-        }).error(function (xhr, err) {
+        }).error(function (xhr) {
             if (xhr.status === 404) {
                 status = 'DELETED';
             }

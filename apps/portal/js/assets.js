@@ -158,11 +158,7 @@ $(function () {
             async: false,
             contentType: 'application/json',
             success: function (data) {
-                console.log("Successfully retrieved gadget usage information");
                 gadgetUsageData = JSON.parse(data);
-            },
-            error: function (xhr, message) {
-                console.log("something went wrong while retrieving the usage data. " + message);
             }
         });
         return gadgetUsageData;
@@ -173,6 +169,7 @@ $(function () {
      * @param gadgetId Id of the gadget
      */
     var updateGadgetStateInfo = function(gadgetId) {
+        var isSuccess = false;
         $.ajax({
             url: DATABASE_API + '/' + gadgetId + '?task=stateupdate',
             method: "POST",
@@ -180,12 +177,13 @@ $(function () {
             data: JSON.stringify({newState : "DELETED"}),
             contentType: 'application/json',
             success: function () {
-                console.log("Successfully updated gadget state information");
+                isSuccess = true;
             },
-            error: function (xhr, message) {
-                console.log("something went wrong while retrieving the usage data. " + message);
+            error: function () {
+                isSuccess = false;
             }
         });
+        return isSuccess;
     };
 
     /**
@@ -194,16 +192,17 @@ $(function () {
      * @private
      */
     var deleteAsset = function (id) {
-        ues.store.deleteAsset(assetType, id, DEFAULT_STORE_TYPE, function (err, data) {
-            if (err) {
-                $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
-            } else {
-                if (assetType === 'gadget'){
-                    updateGadgetStateInfo(id);
+        if (assetType !== 'gadget' || updateGadgetStateInfo(id)) {
+            ues.store.deleteAsset(assetType, id, DEFAULT_STORE_TYPE, function (err, data) {
+                if (err) {
+                    $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
+                } else {
+                    location.reload();
                 }
-                location.reload();
-            }
-        });
+            });
+        } else {
+            $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
+        }
     };
 
     /**

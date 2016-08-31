@@ -2191,11 +2191,20 @@ $(function () {
                         "A page with entered URL already exists. Please select a different URL");
                     id.val(page.id);
                 } else {
+                    var oldId = clone(page).id;
                     updateMenu(page.id, idVal, 'id');
                     //change subordinates with new ID
                     page.id = idVal;
                     if (landing.is(":checked")) {
                         dashboard.landing = idVal;
+                    }
+                    if (!updateGadgetUsageAfterPagePropertiesChange()) {
+                        updateMenu(page.id, oldId, 'id');
+                        //change subordinates with new ID
+                        page.id = oldId;
+                        if (landing.is(":checked")) {
+                            dashboard.landing = oldId;
+                        }
                     }
                 }
             },
@@ -2242,7 +2251,6 @@ $(function () {
             fn[e.context.name]();
             updatePagesList();
             saveDashboard();
-            updateGadgetUsageAfterPagePropertiesChange();
         }
         return true;
     };
@@ -2251,6 +2259,7 @@ $(function () {
      * To update the gadget usage information after changing the page propertioes
      */
     var updateGadgetUsageAfterPagePropertiesChange = function(){
+        var isSuccess = false;
         var method = 'PUT';
         var url = DATABASE_API + '/' + dashboard.id;
         var isRedirect = false;
@@ -2258,12 +2267,15 @@ $(function () {
             url: url,
             method: method,
             async: false,
-            contentType: 'application/json'
-        }).success(function (data) {
-            console.log("Updated the gadget usage info successfully");
-        }).error(function (err) {
-            console.log("Gadget usage update failed after page properties change" + err)
+            contentType: 'application/json',
+            success: function () {
+                isSuccess = true;
+            },
+            error: function () {
+                isSuccess = false;
+            }
         });
+        return isSuccess;
     };
 
     /**
