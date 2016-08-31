@@ -1,44 +1,51 @@
-<%
-/*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-%>
-<%
-    var usr = require('/modules/user.js');
-    var user = usr.current();
-    var userRoles = [];
-    var tempRoles = usr.getUserRoles();
-    var constants = require('/modules/constants.js');
-    var isViewer = utils.allowed(user.roles, dashboard.permissions.viewers) && !utils.allowed(user.roles,
-                dashboard.permissions.owners) && !utils.allowed(user.roles, dashboard.permissions.editors);
-    userRoles.push(constants.ANONYMOUS_ROLE);
-    for (var i = 0; i < tempRoles.length; i++) {
-        userRoles.push(tempRoles[i]);
-    }
-%>
-    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
-    <% var permission = require('/modules/permission.js'); %>
-    <% var utilsss = require('/modules/utils.js'); %>
+<!DOCTYPE html>
+
+<!--
+~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+
+<html lang="en">
+<head>
+    
+    <% include(utils.resolvePath('templates/includes/portal-header.jag'));   
+
+        var usr = require('/modules/user.js');
+        var user = usr.current();
+        var userRoles = [];
+        var tempRoles = usr.getUserRoles();
+        var constants = require('/modules/constants.js');
+        var isViewer = utils.allowed(user.roles, dashboard.permissions.viewers) && !utils.allowed(user.roles,
+                    dashboard.permissions.owners) && !utils.allowed(user.roles, dashboard.permissions.editors);
+        userRoles.push(constants.ANONYMOUS_ROLE);
+        for (var i = 0; i < tempRoles.length; i++) {
+            userRoles.push(tempRoles[i]);
+        }
+    
+        var permission = require('/modules/permission.js');
+    
+    %>
+    
+    <title><%= i18n.localize("dashboard.designer")%></title>
+    
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/gridstack.js-0.2.5/gridstack.min.css" />
-    <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/common.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>css/designer.css" />
-    <title><%= i18n.localize("dashboard.designer")%></title>
+    
 </head>
-<body>
+<body class="fixed">
     <!-- Modal -->
     <div class="modal fade" id="designerModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -48,8 +55,10 @@
     </div>
 
     <!-- header -->
-    <% include(utils.resolvePath('templates/global-navigation.jag')); %>
+    <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+    
     <% var configs = require('/modules/config.js').getConfigFile(); %>
+    
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
@@ -170,7 +179,7 @@
     </nav>
 
     <!-- #page-content-wrapper -->
-    <div class="page-content-wrapper fixed">
+    <div class="page-content-wrapper">
 
         <!-- .left-sidebar -->
         <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55">
@@ -298,7 +307,7 @@
         <!-- page content -->
         <div class="container-fluid body-wrapper menu" data-view="menu" style="display: none;">
             <div class="page-content">
-                <div class="well add-padding-5x">
+                <div class="add-padding-5x">
                     <div id="ues-pages"></div>
                 </div>
             </div>
@@ -776,32 +785,23 @@
 
     <!-- Providing options to create a new view -->
     <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
-        <div class="radio-button">
-            <label><input type="radio" name="new-view" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
-            <label><input type="radio" name="new-view" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
-        </div>
-    </script>
+        <div class="form-group text-center">
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("new.layout")%></button>
 
-    <!-- Template for copying from an existing view -->
-    <script id="select-copying-view-hbs" type="text/x-handlebars-template">
-        <div class="radio">
-            <label><input type="radio" name="new-view" id="new-view" value="new-view"><%=i18n.localize("create.new.view")%></label>
-        </div>
-        <div class="radio">
-            <label><input type="radio" name="new-view" id="copy-view" value="copy-view"><%=i18n.localize("copy.existing.view")%></label>
-        </div>
-        <div class ='form-group' id="view-layout-select">
-            <label for="ues-theme-list"><%=i18n.localize("available.views") %></label>
-            <select class="form-control selectpicker dropdown"  role="menu" aria-labelledby="menu" id="page-views-menu"
-            data-style = 'btn-default'>
-                <option><a role="menuitem" tabindex="-1" href="#"><%=i18n.localize("select.view")%></a></option>
-            </select>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="copy-view" value="copy-view">
+                        <%=i18n.localize("use.existing.layout")%> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" id="page-views-menu"></ul>
+                </div>
+            </div>
         </div>
     </script>
 
     <!-- Copying view option -->
     <script id="copying-view-options-hbs" type="text/x-handlebars-template">
-         <option><a role="menuitem" tabindex="-1" href="#">{{viewName}}</a></option>
+         <li><a role="menuitem" tabindex="-1" href="#">{{viewName}}</a></li>
     </script>
 
     <script id="ues-designer-heading-hbs" type="text/x-handlebars-template">

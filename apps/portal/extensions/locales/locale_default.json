@@ -224,6 +224,8 @@
   "select.roles": "Select Role(s)",
   "create.new.view": "Create New view",
   "copy.existing.view": "Copy Existing View",
+  "new.layout": "New Layout",
+  "use.existing.layout": "Use an existing layout",
   "available.views": "Available Views",
   "new.view": "New View",
   "add.new.layout": "Adding a new layout for the view",

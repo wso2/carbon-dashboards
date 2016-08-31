@@ -170,6 +170,10 @@ body.dark .ues-component {
     right: 15px;
 }
 
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden;
+}
+
 @media screen and (min-width: 768px) {
     /**
      * Theme overrides
@@ -397,10 +401,6 @@ body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
     margin-left: -15px;
 }
 
-.sidebar-toggle-button > .icon {
-    line-height: 48px;
-}
-
 .sidebar-nav {
     background: #29313e;
     color: #e3e5e6;
@@ -465,11 +465,18 @@ body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
     background: #1a2332;
 }
 
-.dashboard.dark .nav li:hover > a,
-.dashboard.dark .nav li.open > a,
-.dashboard.dark .nav li.open > a:focus,
-.dashboard.dark .nav li.open > a:hover {
+.dashboard.dark .nav > li:hover > a,
+.dashboard.dark .nav > li.open > a,
+.dashboard.dark .nav > li.open > a:focus,
+.dashboard.dark .nav > li.open > a:hover {
     background: #141B27;
+}
+
+.dashboard.dark .nav > li li:hover > a,
+.dashboard.dark .nav > li li.open > a,
+.dashboard.dark .nav > li li.open > a:focus,
+.dashboard.dark .nav > li li.open > a:hover {
+    color: #fff;
 }
 
 .nav > li > a:focus {

@@ -487,7 +487,7 @@ $(function () {
         }
         return false;
     };
-
+    
     //compile handlebar for the menu list
     var updateMenuList = function () {
         //menulist for big res
@@ -497,6 +497,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
+            currentView: page.id,
             allowedViews: isAnonView ? getAnonViewPages() : getUserAllowedPages()
         }));
         //menulist for small res
@@ -506,6 +507,7 @@ $(function () {
             user: user,
             isHiddenMenu: ues.global.dashboard.hideAllMenuItems,
             queryString: queryString,
+            currentView: page.id,
             allowedViews: isAnonView ? getAnonViewPages() : getUserAllowedPages()
         }));
     };

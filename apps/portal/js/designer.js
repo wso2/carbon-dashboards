@@ -211,7 +211,6 @@ $(function () {
     var modalConfirmHbs = Handlebars.compile($('#ues-modal-confirm-hbs').html());
     var modalInfoHbs = Handlebars.compile($('#ues-modal-info-hbs').html());
     var newBlockHbs = Handlebars.compile($("#ues-new-block-hbs").html());
-    var viewCopyingSelection = Handlebars.compile($('#select-copying-view-hbs').html());
     var viewCreationOptions = Handlebars.compile($('#view-layout-selection-hbs').html());
     var viewCopyingOptions = Handlebars.compile($('#copying-view-options-hbs').html());
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
@@ -847,11 +846,11 @@ $(function () {
         });
 
         // event handler for clicking on a view name to copy the content
-        designer.on('change', '#page-views-menu', function (event) {
+        designer.on('click', '#page-views-menu > li > a', function (event) {
             event.preventDefault();
             visibleViews = [];
-            var selectedViewId = getViewId($('#page-views-menu :selected').text());
-            $('#view-layout-select .selected').text(selectedViewId);
+            var selectedViewId = getViewId($(event.target).text());
+            $(event.target).text(selectedViewId);
             var viewOptions = getNewViewOptions(page.content);
             var newViewId = viewOptions.id;
             var newViewName = viewOptions.name;
@@ -1535,7 +1534,7 @@ $(function () {
         });
 
         //event handler for selecting an option form copying an existing view or creating a new view
-        $(document).on('click', '.gadgets-grid input[type=radio]', function (event) {
+        $(document).on('click', '.gadgets-grid button', function (event) {
             event.preventDefault();
             isInViewCreationView = true;
             if (this.value === "new-view") {
@@ -1543,7 +1542,6 @@ $(function () {
                 isNewView = true;
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCreationOptions);
-                $('#new-view').prop("checked", true);
                 if (!$('#left-sidebar').hasClass('toggled')) {
                     $('#btn-sidebar-dashboard-layout').click();
                 }
@@ -1552,9 +1550,7 @@ $(function () {
                 if ($('#left-sidebar').hasClass('toggled')) {
                     $('.close-sidebar[data-target="#left-sidebar"]').click();
                 }
-                $('.gadgets-grid').empty();
-                $('.gadgets-grid').html(viewCopyingSelection);
-                $('#copy-view').prop("checked", true);
+                $('#page-views-menu').empty();
                 var views = getUserAllowedViews(Object.keys(page.views.content));
 
                 for (var i = 0; i < views.length; i++) {
@@ -3881,10 +3877,10 @@ $(function () {
                 var tempView = visibleViews[i];
                 var viewTempName = page.views.content[tempView].name;
                 $('#designer-view-mode').append(newViewHbs);
-                document.getElementById("new-view-id").setAttribute('data-view-mode', tempView);
-                document.getElementById("view-name").innerHTML = viewTempName;
-                document.getElementById("new-view-id").setAttribute('id', 'nav-tab-' + tempView);
-                document.getElementById("view-name").setAttribute('id', tempView);
+                $("#new-view-id").attr('data-view-mode', tempView);
+                $("#view-name").html(viewTempName);
+                $("#new-view-id").attr('id', 'nav-tab-' + tempView);
+                $("#view-name").attr('id', tempView);
                 if (i === 0) {
                     pageType = pageType || tempView;
                     if (visibleViews.indexOf(pageType) <= -1) {

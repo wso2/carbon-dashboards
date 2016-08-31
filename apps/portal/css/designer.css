@@ -197,6 +197,10 @@
     right: 15px;
 }
 
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden;
+}
+
 .grid-stack .gadget-wrapper {
     min-height: 100%;
 }
