@@ -24,6 +24,7 @@ var step1Done = false;
 var step2Done = false;
 var selectedTableCoulumns = [];
 var defaultTableColumns = [];
+var groups = "grouping";
 
 var PROVIDER_LOCATION = 'extensions/providers/';
 var CHART_LOCATION = 'extensions/chart-templates/';
@@ -333,19 +334,19 @@ function getProviderConfig() {
         async: false,
         success: function (data) {
             var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
-            if(Object.keys(data[0]).indexOf("grouping")>-1){
-                data=(data[0].grouping);
-                for(i=0; i<data.length; i++){
-                    registerAdvancedProviderUI(data[i]);
-                    $("#provider-config").append(providerHbs(data[i]));
+            if (Object.keys(data[0]).indexOf(groups) > -1) {
+                configGroup = (data[0].grouping);
+                for (i = 0; i < configGroup.length; i++) {
+                    registerAdvancedProviderUI(configGroup[i]);
+                    $("#provider-config").append(providerHbs(configGroup[i]));
                 }
             }
-            else{
-                var data ={
+            else {
+                var configGroup = {
                     "elements": data
                 };
-                registerAdvancedProviderUI(data);
-                $("#provider-config").html(providerHbs(data));
+                registerAdvancedProviderUI(configGroup);
+                $("#provider-config").html(providerHbs(configGroup));
             }
         },
         error: function (xhr, message, errorObj) {
@@ -430,6 +431,7 @@ function getChartList() {
 }
 
 function getChartConfig(providerConfig) {
+    var configGroup;
     $.ajax({
         url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getChartConfig',
         method: "POST",
@@ -437,14 +439,23 @@ function getChartConfig(providerConfig) {
         contentType: "application/json",
         async: false,
         success: function (chartConfig) {
-            var chartConfig ={
-                "elements": chartConfig
-            };
             if (!chartConfig.error) {
-                registerAdvancedChartUI(chartConfig);
                 var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
-                $("#chart-config").html(chartHbs(chartConfig));
-                $("#preview").removeAttr("style");
+                if (Object.keys(chartConfig[0]).indexOf(groups) > -1) {
+                    var configGroup = (chartConfig[0].grouping);
+                    for (i = 0; i < configGroup.length; i++) {
+                        registerAdvancedChartUI(configGroup[i]);
+                        $("#chart-config").append(chartHbs(configGroup[i]));
+                    }
+                    $("#preview").removeAttr("style");
+                }
+                else {
+                    var configGroup = {
+                        "elements": chartConfig
+                    };
+                    registerAdvancedChartUI(configGroup);
+                    $("#chart-config").html(chartHbs(configGroup));
+                }
             } else {
                 $('#tab3-validation-errors > .text').html(chartConfig.message);
                 $('#tab3-validation-errors').show();
