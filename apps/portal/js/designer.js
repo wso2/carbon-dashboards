@@ -1127,21 +1127,22 @@ $(function () {
                         }
                     }
                     showConfirm(i18n_data["add.anonymous.role"], i18n_data["add.anonymous.role.message"], function () {
+                        var isError = false;
                         if (removingComponentsLength > 0) {
                             removeGadgets(removingComponents, removingComponentsLength, function (err) {
                                 if (err) {
                                     generateMessage(err, null, null, "error", "topCenter", 2000, null);
-                                } else {
-                                    dashboard.isanon = true;
-                                    page.views.content[viewId].roles = [];
-                                    $('#view-configuration').find('.ues-view-roles').empty();
-                                    addRoleToView(viewId, role);
-                                    return true;
+                                    isError = true;
                                 }
-
                             });
                         }
-
+                        if (!isError) {
+                            dashboard.isanon = true;
+                            page.views.content[viewId].roles = [];
+                            $('#view-configuration').find('.ues-view-roles').empty();
+                            addRoleToView(viewId, role);
+                        }
+                        return true;
                     });
 
                 } else if (isAnonRoleExists(viewId)) {
@@ -1167,36 +1168,42 @@ $(function () {
                     }
                     showConfirm(i18n_data["add.new.role.removing.anonymous"],
                         i18n_data["add.new.role.removing.anonymous.message"], function () {
+                            var isError = false;
                             if (removingComponentsLength > 0) {
                                 removeGadgets(removingComponents, removingComponentsLength, function(err) {
                                     if (err) {
                                         generateMessage(err, null,null, "error", "topCenter", 2000, null);
-                                    } else {
-                                        viewRolesList.splice(viewRolesList.indexOf(ANONYMOUS_ROLE), 1);
-                                        $('#view-configuration').find('.ues-view-roles').empty();
-                                        viewRolesList.push(role);
-                                        for (var i = 0; i < viewRolesList.length; i++) {
-                                            var tempRole = viewRolesList[i];
-                                            $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(tempRole));
-                                        }
-                                        loadGadgetsWithViewRoles(viewId);
-                                        dashboard.isanon = isAnonDashboard();
-                                        saveDashboard();
+                                        isError = true;
                                     }
                                 });
+                            }
+                            if (!isError) {
+                                viewRolesList.splice(viewRolesList.indexOf(ANONYMOUS_ROLE), 1);
+                                $('#view-configuration').find('.ues-view-roles').empty();
+                                viewRolesList.push(role);
+                                for (var i = 0; i < viewRolesList.length; i++) {
+                                    var tempRole = viewRolesList[i];
+                                    $('#view-configuration').find('.ues-view-roles').append(viewRoleHbs(tempRole));
+                                }
+                                loadGadgetsWithViewRoles(viewId);
+                                dashboard.isanon = isAnonDashboard();
+                                saveDashboard();
+
                             }
                             return true;
                         });
 
                 } else if (removingComponentsLength > 0) {
                     showConfirm(i18n_data["add.new.role"], i18n_data["add.new.role.message"], function () {
+                        var isError = false;
                         removeGadgets(removingComponents, removingComponentsLength , function(err) {
                             if (err) {
                                 generateMessage(err, null, null, "error", topCenter, 2000, null);
-                            } else {
-                                addRoleToView(viewId, role);
                             }
-                        })
+                        });
+                        if (!isError) {
+                            addRoleToView(viewId, role);
+                        }
                         return true;
                     })
                 } else {
