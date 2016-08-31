@@ -176,16 +176,16 @@ var downloadAsset;
                         defective : databaseUtils.checkDefectiveDashboard(dashboard.id, (!isEditor && !isOwner && isViewer)),
                         owner: true
                     };
-                if (isOwner) {
+                if (isOwner && !data.shared) {
                     userDashboards.push(data);
                     return;
                 }
-                if (isEditor) {
+                if (isEditor && !data.shared) {
                     data.owner = false;
                     userDashboards.push(data);
                     return;
                 }
-                if (isViewer) {
+                if (isViewer || data.shared) {
                     data.editable = false;
                     data.owner = false;
                     userDashboards.push(data);

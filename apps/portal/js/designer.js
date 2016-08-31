@@ -2981,7 +2981,6 @@ $(function () {
                                 page = clonedPage;
                                 throw err;
                             } else {
-
                                 if (!viewName) {
                                     viewName = viewId;
                                 }
@@ -2992,7 +2991,6 @@ $(function () {
                             }
                             // To close the popped up layouts
                             $('.fw-left-arrow').click();
-
                         });
                         return true;
                     });
@@ -3451,7 +3449,6 @@ $(function () {
             }
             componentBox.html(componentBoxContentHbs());
         }
-
         if (done) {
             done();
         }

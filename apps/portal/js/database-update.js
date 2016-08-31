@@ -63,7 +63,14 @@
         return usageData;
     };
 
-
+    /**
+     * To re-create the new usage data for the particular gadget based on the user activity
+     * @param usageData Usage Data of the gadget that need to be updated
+     * @param pageId Id of the page which the gadget belongs to
+     * @param viewId Id of the view which the gadget belongs to
+     * @param isAdd true if it is a addition activity , unless false
+     * @returns the new usage data for the particular gadget
+     */
     var manipulateUsageData = function (usageData, pageId, viewId, isAdd) {
         var currentUsageValue = 0;
         usageData = JSON.parse(usageData);
@@ -71,8 +78,8 @@
         if (usageDataLength > 0) {
             for (var index = 0; index < usageDataLength; index++) {
                 var pageIndex = Object.keys(usageData[index]).indexOf(pageId);
-                if (Object.keys(usageData[index]).indexOf(pageId) > -1){
-                    if (Object.keys(usageData[index][pageId]).indexOf(viewId) > -1){
+                if (Object.keys(usageData[index]).indexOf(pageId) > -1) {
+                    if (Object.keys(usageData[index][pageId]).indexOf(viewId) > -1) {
                         currentUsageValue = usageData[index][pageId][viewId];
                         if (isAdd) {
                             currentUsageValue = currentUsageValue + 1;
@@ -136,18 +143,14 @@
                 return true;
             }
         }
-        /*var usageData = createUsageData(dashboard, id);
-        console.log(usageData);
-        if (usageData.length > 0) {
-            sendUsageData(dashboard, usageData, id);
-        } else {
-            deleteUsageData(dashboard, id);
-        }
-        return true;*/
-
     };
 
-    var updateUsageDataInMultipleViews = function(dashboard, gadgetId) {
+    /**
+     * When we do not know count of the gadget id. This is mainly used for creating views by copying views
+     * @param dashboard Dashboard which the specific data should be updated
+     * @param gadgetId Id of the gadget for which the usage data to be updated
+     */
+    var updateUsageDataInMultipleViews = function (dashboard, gadgetId) {
         var usageData = createUsageData(dashboard, gadgetId);
         if (usageData.length > 0) {
             return sendUsageData(dashboard, usageData, gadgetId);
@@ -156,6 +159,12 @@
         }
     };
 
+    /**
+     * To get the gadget usage information of the particular gadget in a dashboard
+     * @param dashboard Dashboard which the gadget belongs to
+     * @param gadgetId Id of the gadget
+     * @returns {*} gadget usage info for the particular dashboard
+     */
     var getGadgetUsageInfo = function (dashboard, gadgetId) {
         var gadgetUsageInfo;
         var dashboardID = dashboard.id;
@@ -264,6 +273,6 @@
 
     ds.database = {
         updateUsageData: updateUsageData,
-        updateUsageDataInMultipleViews : updateUsageDataInMultipleViews
+        updateUsageDataInMultipleViews: updateUsageDataInMultipleViews
     };
 }());
