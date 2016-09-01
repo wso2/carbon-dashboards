@@ -134,3 +134,6 @@ var SCROLL_TOP = 'scrollTop';
 var SCROLL_FAST = 'FAST';
 var PIXELS = 'px';
 var PORTRAIT = 'p';
+
+var APP_NAME = 'portal';
+
