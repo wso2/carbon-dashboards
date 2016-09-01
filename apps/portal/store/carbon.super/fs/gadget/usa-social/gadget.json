@@ -2,6 +2,7 @@
     "id": "usa-social",
     "title": "USA Social Media Usage",
     "type": "gadget",
+    "category": "Gadgets",
     "thumbnail": "gadget/usa-social/index.png",
     "data": {
         "url": "gadget/usa-social/index.xml"

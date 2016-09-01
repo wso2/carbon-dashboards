@@ -2,7 +2,7 @@
   "id": "date-range-picker",
   "title": "Date Range Picker",
   "type": "gadget",
-  "category": "Widgets",
+  "category": "Gadgets",
   "thumbnail": "gadget/date-range-picker/index.png",
   "data": {
     "url": "gadget/date-range-picker/index.xml"
