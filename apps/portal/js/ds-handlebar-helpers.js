@@ -85,15 +85,18 @@ Handlebars.registerHelper('resolveURI', function (path) {
 
 //handlebar helper which returns menu hierachy
 Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentView, allowedViews) {
-    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize pages'>";
+    var divTree = "";
     var checked = isHidden ? "checked=''" : "";
     var requestParam = (queryString !== null) ? "?" + queryString : "";
 
     if (designer) {
-        divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'>" +
-            "<i class='fw fw-up'></i> Make Root</li>" +
-            "<li class='hide-all' style='margin: 0 0 10px 0;'><input type='checkbox' " + checked +
-            " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'> <i class='fw fw-view'></i> Hide All</li>";
+        divTree += "<ul class='nav nav-pills nav-stacked menu-customize'>" +
+            "<li class='hide-all' style='margin: 0 0 10px 0;'>" +
+            "<input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'>" +
+            "<i class='fw fw-view'></i> Hide All</li></ul>" +
+            "<ul id='sortable' class='nav nav-pills nav-stacked connect dd dd-list'>";
+    } else {
+        divTree += "<ul id='sortable' class='nav nav-pills nav-stacked menu-customize pages'>";
     }
 
     updateSubordinates(menu, null, allowedViews);
@@ -105,9 +108,9 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 //todo use fw-hide class once latest wso2 icon project released
                 var iClass = menu[i].ishidden ? "<i class='fw fw-block'></i>" : "<i class='fw fw-view'></i>";
                 divTree += "<li id='" + menu[i].id + "' data-parent='" + parent +
-                    "' data-id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
-                    "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" + menu[i].id +
-                    "'>" + iClass + "</span></span>";
+                    "' data-id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "' class='dd-item'>" +
+                    "<div class='dd-handle'>" + menu[i].title + "<span class='controls hide-menu-item hide-" +
+                    menu[i].ishidden + "' id='" + menu[i].id + "'>" + iClass + "</span></div>";
             } else {
                 var cls = menu[i].id === currentView ? 'active' : '';
                 var divLi = "<li class='" + cls + "'><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>" +
@@ -128,15 +131,13 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                     }
                 }
             }
-
             if (menu[i].subordinates.length > 0 && (designer || (allowedViews && allowedViews.indexOf(menu[i].id) > -1))) {
-                divTree += "<ul class='' id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+                divTree += "<ul class='dd-list connect' id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
                 updateSubordinates(menu[i].subordinates, menu[i].id, allowedViews);
                 divTree += "</ul>";
             } else {
                 divTree += "</li>";
             }
-
         }
     }
 

@@ -1060,7 +1060,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="input-name" class="control-label"><%= i18n.localize("view.name") %></label>
-                                        <input type="text" class="form-control ds-view-title" name="title" placeholder="<%= i18n.localize("title") %>" value="{{name}}" maxlength="200" />
+                                        <input type="text" class="form-control ds-view-title" name="title" placeholder="<%= i18n.localize("title") %>" value="{{name}}" maxlength="200" data-toggle="tooltip" title="<%= i18n.localize("please.enter.to.change.name") %>" />
                                     </div>
                                 </div>
                                 <div class="form-group">
