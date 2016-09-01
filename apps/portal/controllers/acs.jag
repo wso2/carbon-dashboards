@@ -93,6 +93,12 @@
                 var server = new carbon.server.Server();
                 var um = new carbon.user.UserManager(server, user.tenantId);
                 user.roles = um.getRoleListOfUser(user.username);
+                if (!permission.isAllowedUser(user, constants.LOGIN)) {
+                    log.error('You do not have permission to login to this application.Please contact your administrator and request permission');
+                    response.addCookie(request.getAllCookies());
+                    response.sendRedirect("/portal/controllers/error-pages/sso-error.jag");
+                    return;
+                }
                 session.put('user', user);
                 session.put("samlResponse", samlResponse);
                 var idPServer = tokenUtil.getIdPServerURL();
