@@ -493,7 +493,7 @@ $(function () {
             done(err);
         });
     };
-    
+
     /**
      * Destroys a given list of components of an area.
      * @param {Object[]} components Components to be removed
@@ -575,7 +575,7 @@ $(function () {
             return done(false);
         }
         var views = Object.keys(p.content);
-        for (var i = 0; i < views.length; i++){
+        for (var i = 0; i < views.length; i++) {
             updateUsageForViews(p, views[i]);
         }
         destroyPage(p, type, done);
@@ -586,7 +586,7 @@ $(function () {
      * @param page Page
      * @param pageType view of the page
      */
-    var updateUsageForViews = function(page, pageType) {
+    var updateUsageForViews = function (page, pageType) {
         var i;
         var length;
         var area;
@@ -2166,7 +2166,7 @@ $(function () {
     /**
      * To update the gadget usage information after changing the page propertioes
      */
-    var updateGadgetUsageAfterPagePropertiesChange = function(){
+    var updateGadgetUsageAfterPagePropertiesChange = function () {
         var method = 'PUT';
         var url = DATABASE_API + '/' + dashboard.id;
         var isRedirect = false;
@@ -3002,57 +3002,129 @@ $(function () {
      * @private
      */
     var updateMenuList = function () {
+        var list = $("#sortable");
+        var dropLocation = {
+            subPage: false,
+            parent: null,
+            prev: null
+        };
         $('#ues-pages').html(menuListHbs({
             menu: dashboard.menu,
             ishiddenMenu: dashboard.hideAllMenuItems
         }));
-
-        $(".menu-hierarchy").draggable({
-            revert: function (dropped) {
-                var dropped = dropped && dropped[0].id == "droppable";
-                if (!dropped) return !dropped;
-            }
-        }).each(function () {
-            var top = $(this).position().top;
-            var left = $(this).position().left;
-            $(this).data('orgTop', top);
-            $(this).data('orgLeft', left);
-        });
-
-        $('.menu-hierarchy').droppable({
-            drop: handleDropEvent
-        });
-
-        $('.ds-menu-root').droppable({
-            drop: handleDropEvent
-        });
-
         if (dashboard.landing) {
+            dropLocation.landing = dashboard.landing;
+            $("#sortable").find("li").removeClass("disable-item");
             //Disable draggable state for landing page
-            $("ul.menu-customize li:nth-child(3)").draggable('disable');
+            $($("#sortable").children('li')[0]).addClass("disable-item");
             //Disable menu hide option for landing page
-            $("ul.menu-customize li:nth-child(3) .hide-menu-item:first").hide();
+            $($("#sortable").children('li')[0]).find('.hide-menu-item:first').hide();
         }
-
+        $('.connect').sortable({
+            connectWith: ".connect",
+            appendTo: document.body,
+            placeholder: "dd-placeholder",
+            start: function (event, ui) {
+                var element = $(ui.item);
+                dropLocation.prev = element.prev();
+            },
+            sort: function (event, ui) {
+                var placeHolderOffset = $(".dd-placeholder").offset();
+                var element = $(event.toElement).offset();
+                if (element.left && (element.left - placeHolderOffset.left) > 10 && $(".dd-placeholder").parent().children('li').length >= 3) {
+                    $(".dd-placeholder").css({
+                        'margin-left': "30px"
+                    });
+                    dropLocation.subPage = true;
+                    dropLocation.parent = $(".dd-placeholder").parent();
+                    if ((element.top - placeHolderOffset.top) > 0) {
+                        dropLocation.prev = $(".dd-placeholder").prev();
+                        if (dropLocation.prev.hasClass('ui-sortable-helper')) {
+                            dropLocation.prev = dropLocation.prev.prev();
+                        }
+                    } else {
+                        dropLocation.prev = $(ui.item).prev();
+                    }
+                } else {
+                    $(".dd-placeholder").css({
+                        'margin-left': "0px"
+                    });
+                    dropLocation.subPage = false;
+                    dropLocation.parent = null;
+                }
+            },
+            beforeStop: function (event, ui) {
+                if ($(ui.item).hasClass('disable-item') || $(".dd-placeholder").next("li").hasClass('disable-item')) {
+                    $(this).sortable('cancel');
+                }
+            },
+            stop: function (event, ui) {
+                if (dropLocation.subPage) {
+                    var dragItem = $(ui.item);
+                    var ul = $("<ul class='dd-list connect'></ul>");
+                    if ($(dropLocation.prev).children('ul').length <= 0) {
+                        $(dropLocation.prev).append(ul);
+                    }
+                    $(dropLocation.prev).children('ul').append(dragItem);
+                    dropLocation.prev = null;
+                    ues.global.dashboard.menu = [];
+                    serializeList($("#sortable"), ues.global.dashboard.menu);
+                    updateMenuList();
+                    saveDashboard();
+                } else {
+                    ues.global.dashboard.menu = [];
+                    serializeList($("#sortable"), ues.global.dashboard.menu);
+                    saveDashboard();
+                }
+            }
+        });
         $('#ds-menu-hide-all').change(function () {
             if ($(this).is(":checked")) {
                 manipulateAllMenuItems(true);
                 dashboard.hideAllMenuItems = true;
                 saveDashboard();
                 updateMenuList();
-                return;
             } else {
                 manipulateAllMenuItems(false);
                 dashboard.hideAllMenuItems = false;
                 saveDashboard();
                 updateMenuList();
-                return;
             }
         });
-
         $('.hide-menu-item').click(function () {
             manipulateMenuItem($(this).attr('id'));
         });
+    };
+
+    /**
+     * Serialize the list by reading DOM element.
+     *
+     * @param ul {Object} list element
+     * @param menu {Object} menu array
+     * @private
+     * */
+    var serializeList = function (ul, menu) {
+        var liElements = $(ul).children('li');
+        if (liElements.length > 0) {
+            for (var i = 0; i < liElements.length; i++) {
+                var item = {
+                    id: $.trim($(liElements[i]).attr("data-id")),
+                    ishidden: false,
+                    subordinates: [],
+                    title: $.trim($(liElements[i]).children('div').text())
+                };
+                if ($(liElements[i]).children().length === 2) {
+                    item.ishidden = $(liElements[i]).children('div').children('span').hasClass('hide-true');
+                    serializeList($(liElements[i]).children('ul'), item.subordinates);
+                    menu.push(item);
+                } else {
+                    item.ishidden = $(liElements[i]).children('div').children('span').hasClass('hide-true');
+                    menu.push(item);
+                }
+            }
+        } else {
+            $(ul).remove();
+        }
     };
 
     /**
@@ -4269,7 +4341,6 @@ $(function () {
                 }
             }
         }
-
     };
 
     /**
