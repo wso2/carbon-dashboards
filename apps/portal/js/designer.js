@@ -1101,6 +1101,10 @@ $(function () {
 
             if (!isExistingPermission(viewRolesList, role)) {
                 if (role === ANONYMOUS_ROLE) {
+                    if (dashboard.shareDashboard) {
+                        showInformation(i18n_data["cannot.delete.internal.everyone.role.for.share.dashboard"]);
+                        return;
+                    }
                     /*
                      Before allowing addition of anon view check
                      1. If it is not a landing page, check whether landing page has atelast one anon view
@@ -1508,6 +1512,9 @@ $(function () {
             if (viewRoles.length === 1) {
                 showInformation(i18n_data["not.delete.role"], i18n_data["not.delete.role.message"]);
                 return;
+            } else if (dashboard.shareDashboard && role === INTERNAL_EVERYONE_ROLE) {
+                showInformation(i18n_data["cannot.delete.internal.everyone.role.for.share.dashboard"]);
+                return;
             } else if (page.id === dashboard.landing && role === INTERNAL_EVERYONE_ROLE && dashboard.pages.length > 1) {
                 // If this view belongs to landing page and if there are more than 1 page and if only this view contains
                 // Internal/everyone, cannot allow the user to remove it
@@ -1553,17 +1560,22 @@ $(function () {
         //event handler for adding a new view
         $('#add-view').on('click', function (event) {
             event.preventDefault();
-            $('#designer-view-mode li').removeClass('active');
-            if ($('#left-sidebar').hasClass('toggled')) {
-                $('.close-sidebar[data-target="#left-sidebar"]').click();
-            }
-            destroyPage(page, pageType, function (err) {
-                if (err) {
-                    throw err;
+
+            if (visibleViews.length === 0 || !dashboard.shareDashboard) {
+                $('#designer-view-mode li').removeClass('active');
+                if ($('#left-sidebar').hasClass('toggled')) {
+                    $('.close-sidebar[data-target="#left-sidebar"]').click();
                 }
-                $('.gadgets-grid').html(viewCreationOptions);
-                isInViewCreationView = true;
-            }, true);
+                destroyPage(page, pageType, function (err) {
+                    if (err) {
+                        throw err;
+                    }
+                    $('.gadgets-grid').html(viewCreationOptions);
+                    isInViewCreationView = true;
+                }, true);
+            } else {
+                showInformation(i18n_data['cannot.create.view.for.share.dashboard']);
+            }
         });
 
         //event handler for clicking on the toggle button to get more views
@@ -2182,7 +2194,6 @@ $(function () {
         var landing = $('input[name=landing]', e);
         var toggleView = $('#toggle-dashboard-view');
         var anon = $('input[name=anon]', e);
-        var fluidLayout = $('input[name=fluidLayout]', e);
         var fn = {
             id: function () {
                 if (checkForPagesById(idVal) && page.id != idVal) {
@@ -2240,9 +2251,6 @@ $(function () {
                         dashboard.landing = null;
                     }
                 }
-            },
-            fluidLayout: function () {
-                page.views.fluidLayout = fluidLayout.is(':checked');
             }
         };
 

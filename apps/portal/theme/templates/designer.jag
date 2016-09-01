@@ -448,6 +448,8 @@
                             ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
                             ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
                             ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
+                            ' "cannot.create.view.for.share.dashboard" : "<%= i18n.localize("cannot.create.view.for.share.dashboard")%>",' +
+                            ' "cannot.delete.internal.everyone.role.for.share.dashboard" : "<%= i18n.localize("cannot.delete.internal.everyone.role.for.share.dashboard")%>",' +
                             ' "cannot.remove.hidden.page" : "<%= i18n.localize("cannot.remove.hidden.page")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
@@ -670,11 +672,6 @@
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="landing"{{#if landing}} checked {{/if}} /> <%= i18n.localize("use.as.landing") %>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="fluidLayout"{{#if fluidLayout}} checked{{/if}} /> <%= i18n.localize('fluid.layout') %>
                             </label>
                         </div>
                     </div>
