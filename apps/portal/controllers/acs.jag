@@ -17,7 +17,6 @@
  *  under the License.
  *
  */
-var user;
 (function () {
     var log = new Log("/controllers/acs.jag");
     var configs = require('/configs/portal.js').config();
@@ -90,12 +89,12 @@ var user;
                 //var user = require('store').user;
                 var username = sessionObj.loggedInUser;
                 var carbon = require('carbon');
-                user = carbon.server.tenantUser(username);
+                var user = carbon.server.tenantUser(username);
                 var utils = require('/modules/utils.js');
                 var server = new carbon.server.Server();
                 var um = new carbon.user.UserManager(server, user.tenantId);
                 user.roles = um.getRoleListOfUser(user.username);
-                if(!permission.isAllowed(constants.LOGIN)){
+                if (!permission.isAllowedUser(user, constants.LOGIN)) {
                     log.error('You do not have permission to login to this apphhlication.Please contact your administrator and request permission');
                     response.addCookie(request.getAllCookies());
                     response.sendRedirect("/portal/controllers/error-pages/sso-error.jag");
