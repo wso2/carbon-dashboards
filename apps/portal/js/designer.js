@@ -3030,7 +3030,7 @@ $(function () {
             },
             sort: function (event, ui) {
                 var placeHolderOffset = $(".dd-placeholder").offset();
-                var element = $(event.toElement).offset();
+                var element = $(ui.item).offset();
                 if (element.left && (element.left - placeHolderOffset.left) > 10 && $(".dd-placeholder").parent().children('li').length >= 3) {
                     $(".dd-placeholder").css({
                         'margin-left': "30px"
