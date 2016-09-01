@@ -759,3 +759,8 @@ ul.sidebar-messages > li:last-child {
 .nav.pages a[href*='esb-analytics/mediator'] {
     display: none;
 }
+
+.open-caret{
+    border-top: none;
+    border-bottom: 4px solid #fff;
+}

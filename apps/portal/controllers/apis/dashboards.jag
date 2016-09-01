@@ -40,8 +40,6 @@
     var anonRole = carbon.user.anonRole;
     var method = request.getMethod();
     var matcher = new URIMatcher(request.getRequestURI());
-
-
     if (matcher.match('/dashboards/restore/{id}/{pageID}')) {
         if (method === 'PUT') {
             var dashboard = request.getContent();
@@ -76,7 +74,7 @@
                         dashboard.pages[pageCount] = originalDashboard.pages[pageCount];
                     }
                 }
-                databaseUtils.updateDeleteDashboard(dashboard.id + '$');
+                databaseUtils.updateAfterDeletingDashboard(dashboard.id + '$');
                 dashboards.updateGadgetUsageInDashboard(dashboard, dashboard.id + '$');
             } catch (err) {
                 response.sendError(500, JSON.stringify({

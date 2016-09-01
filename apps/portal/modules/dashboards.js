@@ -343,7 +343,7 @@ var reset = function (id) {
     }
     deleteBanner(id, user.username);
     var databaseUtils = require('/modules/database-utils.js');
-    databaseUtils.updateDeleteDashboard(id + '$');
+    databaseUtils.updateAfterDeletingDashboard(id + '$');
 
 };
 

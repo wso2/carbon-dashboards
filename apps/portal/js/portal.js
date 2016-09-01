@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 $(function () {
-
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
     var databaseApi = ues.utils.tenantPrefix() + 'apis/database';
     var dashboards = [];
