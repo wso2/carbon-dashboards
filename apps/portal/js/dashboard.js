@@ -697,6 +697,13 @@ $(function () {
         ues.global.dbType = renderingView;
         isPersonalizeEnabled ? renderViewContentInEditMode(renderingView) : renderViewContentInViewMode(renderingView);
         $('.nano').nanoScroller();
+        $('#download-pdf-panel').on('click', function () {
+            if ($("#pdf-size-panel").hasClass("in")) {
+                $(this).find("span.caret").addClass("open-caret");
+            } else {
+                $(this).find("span.caret").removeClass("open-caret");
+            }
+        });
     };
 
     /**
@@ -969,12 +976,12 @@ $(function () {
     /**
      * To change the mouse pointer on gadget-heading to move pointer when the editing mode is enabled
      */
-    var changeMousePointerToMove = function() {
+    var changeMousePointerToMove = function () {
         if (isPersonalizeEnabled) {
             $(".gadget-heading").css("cursor", "move");
         }
     };
-    
+
     /**
      * Return the current selected view name
      * @returns {String} View name
