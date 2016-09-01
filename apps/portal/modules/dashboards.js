@@ -797,6 +797,7 @@ var getBootstrapLayout = function (pageId, isAnon) {
         }
         return content;
     };
+    
     var page;
     var result = '';
     dashboard.pages.forEach(function (p) {

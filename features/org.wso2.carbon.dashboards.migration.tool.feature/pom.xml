@@ -34,22 +34,18 @@
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboard.migration.tool</artifactId>
-            <version>${carbon.dashboards.version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple.wso2</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.logging</artifactId>
-            <version>4.4.7</version>
         </dependency>
         <dependency>
             <groupId>commons-io.wso2</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4.0.wso2v1</version>
         </dependency>
     </dependencies>
 
@@ -77,13 +73,13 @@
                                     org.wso2.carbon.dashboards:org.wso2.carbon.dashboard.migration.tool:${carbon.dashboards.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    com.googlecode.json-simple.wso2:json-simple:1.1.wso2v1
+                                    com.googlecode.json-simple.wso2:json-simple:${json.simple.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon:org.wso2.carbon.logging:4.4.7
+                                    org.wso2.carbon:org.wso2.carbon.logging:${org.wso2.carbon.logging.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    commons-io.wso2:commons-io:2.4.0.wso2v1
+                                    commons-io.wso2:commons-io:${commons-io.version}
                                 </bundleDef>
                             </bundles>
                         </configuration>

@@ -18,15 +18,14 @@
 package org.wso2.carbon.dashboards.migrationtool;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.wso2.carbon.dashboards.migrationtool.utils.Constants;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,32 +43,60 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class DSCarFileMigrationTool extends DSMigrationTool {
-    private static final Log log = LogFactory.getLog(DSCarFileMigrationTool.class);
-    private static final String ARTIFACT_XML = "artifact.xml";
-    private static final String GADGET_ARTIFACT = "dashboards/gadget";
-    private static final String DASHBOARD_ARTIFACT = "registry/resource";
+    private static final Logger log = Logger.getLogger(DSCarFileMigrationTool.class);
     private static String srcCarDir = null;
     private static String destCarDir = null;
-    private static String tempDir ;
+    private static String tempDir;
 
     public static void main(String arg[]) {
-        BasicConfigurator.configure();
-        DSCarFileMigrationTool dsMigrationTool = new DSCarFileMigrationTool();
         srcCarDir = arg[0];
         destCarDir = arg[1];
-        tempDir = srcCarDir.substring(0,srcCarDir.lastIndexOf(File.separator)) +File.separator+"Temp";
+        tempDir = srcCarDir.substring(0, srcCarDir.lastIndexOf(File.separator)) + File.separator + Constants.TEMP;
+        File inputFile = new File(srcCarDir);
+        if (inputFile.isDirectory()) {
+            File[] listOfCARFiles = inputFile.listFiles();
+            for (int carFileCount = 0; carFileCount < listOfCARFiles.length; carFileCount++) {
+                if (listOfCARFiles[carFileCount].getName().contains(Constants.CARFILE_EXTENSION)) {
+                    processCarFile(listOfCARFiles[carFileCount].getAbsolutePath(),
+                            destCarDir + File.separator + Constants.MODIFIED + listOfCARFiles[carFileCount].getName());
+                }
+            }
+        } else {
+            if (inputFile.getName().contains(Constants.CARFILE_EXTENSION)) {
+                processCarFile(srcCarDir, destCarDir + File.separator + Constants.MODIFIED + inputFile.getName());
+            }
+        }
+
+    }
+
+    /**
+     * Process CAR file and put the modified CAR file in destination directory
+     *
+     * @param sourceDir      source directory of car files
+     * @param destinationDir destination directory to copy modified files
+     */
+    private static void processCarFile(String sourceDir, String destinationDir) {
+        DSCarFileMigrationTool dsMigrationTool = new DSCarFileMigrationTool();
         try {
-            dsMigrationTool.extractCarFile(new ZipFile(srcCarDir), new File(tempDir));
-            dsMigrationTool.migrateUnZippedCarFile(new File(tempDir));
-            dsMigrationTool.generateModifiedCarFile();
-            FileUtils.cleanDirectory(new File(tempDir));
-            log.info("Car file migration is completed successfully !");
+            ZipFile srcCARFile = new ZipFile(sourceDir);
+            File tempDirectory = new File(tempDir);
+            dsMigrationTool.extractCARFile(srcCARFile, tempDirectory);
+            dsMigrationTool.migrateUnZippedCARFile(tempDirectory);
+            dsMigrationTool.generateModifiedCARFile(destinationDir);
+            FileUtils.cleanDirectory(tempDirectory);
+            log.info(srcCARFile.getName() + " - Car file migration is completed successfully !");
         } catch (IOException e) {
-            log.error("Error in opening car file in " + srcCarDir, e);
+            log.error("Error in opening car file in " + sourceDir, e);
         }
     }
 
-    private void extractCarFile(ZipFile zipFile, File tempDirectory) {
+    /**
+     * Extract given CAR file into temporary directory for processing
+     *
+     * @param zipFile       CAR File Directory
+     * @param tempDirectory temp directory to extract the CAR file
+     */
+    private void extractCARFile(ZipFile zipFile, File tempDirectory) {
         Enumeration files = zipFile.entries();
         File file;
         FileOutputStream fos = null;
@@ -113,11 +140,11 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
      *
      * @param tempDirectory tempDirectory of unzipped car file directory
      */
-    private void migrateUnZippedCarFile(File tempDirectory) {
+    private void migrateUnZippedCARFile(File tempDirectory) {
         for (int i = 0; i < tempDirectory.listFiles().length; i++) {
             File[] listOfFiles = tempDirectory.listFiles();
             File artifactPath = listOfFiles[i];
-            File artifactXML = new File(artifactPath.getPath() + File.separator + ARTIFACT_XML);
+            File artifactXML = new File(artifactPath.getPath() + File.separator + Constants.ARTIFACT_XML);
             if (listOfFiles[i].isDirectory() && artifactXML.exists()) {
                 try {
                     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -125,20 +152,14 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
                     Document doc = docBuilder.parse(artifactXML);
                     doc.getDocumentElement().normalize();
 
-                    if (doc.getFirstChild().getAttributes().getNamedItem("type").getTextContent()
-                            .equals(GADGET_ARTIFACT)) {
-                        Node file = doc.getElementsByTagName("file").item(0);
+                    if (doc.getFirstChild().getAttributes().getNamedItem(Constants.TYPE).getTextContent()
+                            .equals(Constants.GADGET_ARTIFACT)) {
+                        Node file = doc.getElementsByTagName(Constants.FILE).item(0);
                         file.setTextContent(file.getTextContent().toLowerCase());
                         saveArtifactXML(doc, artifactXML);
                         gadgetJSONUpdater(artifactPath);
-                    } else if (doc.getFirstChild().getAttributes().getNamedItem("type").getTextContent()
-                            .equals(DASHBOARD_ARTIFACT)) {
-                        Node file = doc.getElementsByTagName("file").item(0);
-                        if (isDashboardArtifact(artifactPath, file.getTextContent())) {
-                            dashboardUpdater(new File(artifactPath.getPath() + "/resources"));
-                        }
-                    } else if (doc.getFirstChild().getAttributes().getNamedItem("type").getTextContent()
-                            .equals("dashboards/dashboard")) {
+                    } else if (doc.getFirstChild().getAttributes().getNamedItem(Constants.TYPE).getTextContent()
+                            .equals(Constants.DASHBOARD_ARTIFACT)) {
                         dashboardUpdater(new File(artifactPath.getPath()));
                     }
 
@@ -155,46 +176,63 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
     }
 
     /**
-     * update dahboard json in the ds dashboard in order to compatible with carbon-dashboards version 1.0.15+
+     * Update dahboard json in the ds dashboard in order to compatible with carbon-dashboards version 1.0.15+
      *
      * @param artifactPath artifact path which consists the dashboard folders
      */
     private void dashboardUpdater(File artifactPath) {
+        FileWriter file = null;
+        JSONObject dashboardJSONObject = null;
         try {
             File[] dashboardsList = artifactPath.listFiles();
-
             JSONParser parser = new JSONParser();
             for (int i = 0; i < dashboardsList.length; i++) {
+                if (!dashboardsList[i].getAbsolutePath().contains(Constants.JSON_EXTENSION)) {
+                    continue;
+                }
                 Object obj = parser.parse(new FileReader(dashboardsList[i].getAbsolutePath()));
-                JSONObject dashboardJSONObject = (JSONObject) obj;
-                obj = dashboardJSONObject.get("pages");
+                dashboardJSONObject = (JSONObject) obj;
+                obj = dashboardJSONObject.get(Constants.PAGES);
                 JSONArray pagesJSONArray = (JSONArray) obj;
                 for (int pageCount = 0; pageCount < pagesJSONArray.size(); pageCount++) {
                     JSONObject pageObj = ((JSONObject) pagesJSONArray.get(pageCount));
                     JSONArray blocksArray = ((JSONArray) ((JSONObject) ((JSONObject) ((JSONObject) pageObj
-                            .get("layout")).get("content")).get("loggedIn")).get("blocks"));
-                    JSONObject gadgetSet = ((JSONObject) ((JSONObject) pageObj.get("content")).get("default"));
-                    Object[] keySet = ((JSONObject) ((JSONObject) pageObj.get("content")).get("default")).keySet()
-                            .toArray();
+                            .get(Constants.LAYOUT)).get(Constants.CONTENT)).get(Constants.LOGGED_IN))
+                            .get(Constants.BLOCKS));
+                    JSONObject gadgetSet = ((JSONObject) ((JSONObject) pageObj.get(Constants.CONTENT))
+                            .get(Constants.DEFAULT));
+                    Object[] keySet = ((JSONObject) ((JSONObject) pageObj.get(Constants.CONTENT))
+                            .get(Constants.DEFAULT)).keySet().toArray();
                     for (int gadgetCount = 0; gadgetCount < keySet.length; gadgetCount++) {
                         dashboardGadgetUpdater((JSONArray) gadgetSet.get(keySet[gadgetCount]));
                     }
                     updateDashboardBlocks(blocksArray);
                 }
-
-                FileWriter file = new FileWriter(dashboardsList[i].getAbsolutePath());
+                file = new FileWriter(dashboardsList[i].getAbsolutePath());
                 file.write(dashboardJSONObject.toJSONString());
-                file.flush();
-                file.close();
-                log.info("Dashboard " + dashboardJSONObject.get("id") + " is successfully updated !");
+                log.info("Dashboard " + dashboardJSONObject.get(Constants.ID) + " is successfully updated !");
             }
         } catch (ParseException e) {
-            //  log.error("Error in parsing json file in "+artifactPath,e);
+            log.error("Error in parsing json file in " + artifactPath, e);
         } catch (IOException e) {
             log.error("Error in writing/saving json file in " + artifactPath, e);
+        } finally {
+            try {
+                file.flush();
+                file.close();
+                log.info("Dashboard " + dashboardJSONObject.get(Constants.ID) + " is successfully updated !");
+            } catch (IOException e) {
+                log.error("Error in closing the json file " + dashboardJSONObject.get(Constants.ID));
+            }
         }
     }
 
+    /**
+     * Save artifact.xml after the modification
+     *
+     * @param doc         xml content as document
+     * @param artifactXML artifact.xml file to be saved
+     */
     private void saveArtifactXML(Document doc, File artifactXML) {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -208,42 +246,14 @@ public class DSCarFileMigrationTool extends DSMigrationTool {
     }
 
     /**
-     * Verify whether the given artifact is dashboard or not
+     * Generate modified car file to deploy with relevant changes
      *
-     * @param artifactPath artifact path
-     * @param fileName     file name of the artifact
-     * @return true, if artifact type is dashboard
+     * @param destinationFilePath destination directory of modified CAR files
      */
-    private boolean isDashboardArtifact(File artifactPath, String fileName) {
-        try {
-            File file = new File(artifactPath.getPath() + "/" + fileName);
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(file);
-            doc.getDocumentElement().normalize();
-            Node path = doc.getElementsByTagName("path").item(0);
-            if (path.getTextContent().contains("dashboards")) {
-                return true;
-            }
-
-        } catch (ParserConfigurationException e) {
-            log.error("Error in parsing xml of " + fileName, e);
-        } catch (IOException e) {
-            log.error("Error in opening xml of " + fileName, e);
-        } catch (SAXException e) {
-            log.error("Error in parsing xml of " + fileName, e);
-        }
-        return false;
-
-    }
-
-    /**
-     * generate modified car file to deploy with relevant changes
-     */
-    private void generateModifiedCarFile() {
+    private void generateModifiedCARFile(String destinationFilePath) {
         ZipOutputStream zip = null;
         try {
-            FileOutputStream fos = new FileOutputStream(destCarDir);
+            FileOutputStream fos = new FileOutputStream(destinationFilePath);
             zip = new ZipOutputStream(fos);
             File folder = new File(tempDir);
             if (folder.list() != null) {
