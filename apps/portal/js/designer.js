@@ -3570,7 +3570,14 @@ $(function () {
         initComponentToolbar();
         initComponents();
         initAddBlock();
-
+        $('#slide-right').on('click', function () {
+            var leftPos = $('.view-container1 .nav').scrollLeft();
+            $(".view-container1 .nav").animate({scrollLeft: leftPos + 200}, 800);
+        });
+        $('#slide-left').on('click', function () {
+            var leftPos = $('.view-container1 .nav').scrollLeft();
+            $(".view-container1 .nav").animate({scrollLeft: leftPos - 200}, 800);
+        });
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
             showInformation("Received Edit Permission", "You have given edit permission for this dashboard. Please " +
                 "reset the dashboard to receive the permission.");
@@ -4230,7 +4237,6 @@ $(function () {
         $('.ues-banner-placeholder').on('click', '#btn-edit-banner', function (e) {
             $('#file-banner').val('').click();
         });
-
         // event handler for the banner save button
         $('.ues-banner-placeholder').on('click', '#btn-save-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
@@ -4250,25 +4256,12 @@ $(function () {
                 loadBanner();
             });
         });
-
         // event handler for the banner cancel button
         $('.ues-banner-placeholder').on('click', '#btn-cancel-banner', function (e) {
             ues.global.dashboard.banner.cropMode = false;
             $('#file-banner').val('');
             loadBanner();
         });
-
-        $('#slide-right').click(function () {
-            var leftPos = $('.view-container1 .nav').scrollLeft();
-            $(".view-container1 .nav").animate({scrollLeft: leftPos + 200}, 800);
-        })
-
-        $('#slide-left').click(function () {
-            var leftPos = $('.view-container1 .nav').scrollLeft();
-            $(".view-container1 .nav").animate({scrollLeft: leftPos - 200}, 800);
-        })
-
-
         // event handler for the banner remove button
         $('.ues-banner-placeholder').on('click', '#btn-remove-banner', function (e) {
             var $form = $('#ues-dashboard-upload-banner-form');
