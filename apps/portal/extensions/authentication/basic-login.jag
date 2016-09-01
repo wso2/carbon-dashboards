@@ -19,11 +19,25 @@
 <html lang="en">
 <head>
     
-    <% 
-        include(utils.resolvePath('templates/includes/portal-header.jag')); 
+    <%
+        /**
+         * Sanitize the input value.
+         * @param destination {String}
+         * @return string
+         * @private
+         */
+        var sanitizeDestination = function (destination) {
+            if (!destination) {
+                return "/portal/";
+            }
+            return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
+        };
+
+        dest = sanitizeDestination(request.getParameter('destination'));
+        include(utils.resolvePath('templates/includes/portal-header.jag'));
         include('/controllers/includes/theme-portal-styles.jag');
     %>
-    
+
     <title><%= i18n.localize("dashboards.label")%></title>
     
     <link rel="stylesheet" href="<%=urlPrefix%>css/login.css">

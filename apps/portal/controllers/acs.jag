@@ -17,6 +17,7 @@
  *  under the License.
  *
  */
+var user;
 (function () {
     var log = new Log("/controllers/acs.jag");
     var configs = require('/configs/portal.js').config();
@@ -35,6 +36,7 @@
     var keyStorePassword = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Password");
     var keyStoreName = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Location");
     var identityAlias = attr.identityAlias;
+    var permission = require("/modules/permission.js");
     var keyStoreProps = {
         KEY_STORE_NAME: keyStoreName,
         KEY_STORE_PASSWORD: keyStorePassword,
@@ -88,11 +90,17 @@
                 //var user = require('store').user;
                 var username = sessionObj.loggedInUser;
                 var carbon = require('carbon');
-                var user = carbon.server.tenantUser(username);
+                user = carbon.server.tenantUser(username);
                 var utils = require('/modules/utils.js');
                 var server = new carbon.server.Server();
                 var um = new carbon.user.UserManager(server, user.tenantId);
                 user.roles = um.getRoleListOfUser(user.username);
+                if(!permission.isAllowed(constants.LOGIN)){
+                    log.error('You do not have permission to login to this apphhlication.Please contact your administrator and request permission');
+                    response.addCookie(request.getAllCookies());
+                    response.sendRedirect("/portal/controllers/error-pages/sso-error.jag");
+                    return;
+                }
                 session.put('user', user);
                 session.put("samlResponse", samlResponse);
                 var idPServer = tokenUtil.getIdPServerURL();

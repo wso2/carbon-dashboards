@@ -41,7 +41,7 @@ var dest;
                 log.debug("Login attempt failed.");
             }
         }
-        include(utils.resolvePath('templates/login.jag'));
+        include('/extensions/authentication/basic-login.jag');
     }
 
     function createDir(path) {
