@@ -151,10 +151,12 @@
                     <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
                         data-toggle="collapse" aria-expanded="true">
                         <h4 class="panel-title">
-                        <span class="icon fw-stack">
-                        <i class="fw fw-pdf fw-stack-2x"></i>
-                        </span>
-                            <%=i18n.localize("dashboard.pdf.generatePDF")%></h4><span class="caret"></span>
+                            <span class="icon fw-stack">
+                                <i class="fw fw-pdf fw-stack-2x"></i>
+                            </span>
+                            <%=i18n.localize("dashboard.pdf.generatePDF")%>
+                        </h4>
+                        <span class="caret"></span>
                     </div>
                     <div class="collapse" id="pdf-size-panel">
                         <div class="panel-body add-padding-3x generate-pdf-panel">
