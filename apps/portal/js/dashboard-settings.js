@@ -27,6 +27,11 @@ $(function () {
     var owners = permissions.owners;
     var url = dashboardsApi + '/' + dashboard.id;
     var user = null;
+    /**
+     * Role for all logged in users
+     * @const
+     */
+    var INTERNAL_EVERYONE_ROLE = 'Internal/everyone';
 
     // Pre-compiling handlebar templates
     var permissionMenuHbs = Handlebars.compile($("#permission-menu-hbs").html());
@@ -643,7 +648,33 @@ $(function () {
 
         //Share dashboard among tenants
         $('#share-dashboard').on('click', function () {
-            dashboard.shareDashboard = $(this).is(":checked");
+            var isSharable = true;
+            if ( $(this).is(":checked")){
+                var dashboardPagesLength = dashboard.pages.length;
+                for (var index = 0; index < dashboardPagesLength; index++) {
+                    var currentPage = dashboard.pages[index];
+                    if (Object.keys(currentPage.views.content).length > 1) {
+                        dashboard.shareDashbooard = false;
+                        isSharable = false;
+                        break;
+                    } else if (Object.keys(currentPage.views.content).length === 1) {
+                        var views = Object.keys(currentPage.views.content);
+                        if (currentPage.views.content[views[0]].roles.indexOf(INTERNAL_EVERYONE_ROLE) < 0) {
+                            dashboard.shareDashbooard = false;
+                            isSharable = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (isSharable) {
+                dashboard.shareDashboard = $(this).is(":checked");
+            } else  {
+                generateMessage("Cannot share dashboard that has multiple views or single view without internal everyone " +
+                    "role",  null, null, "error", "topCenter", 2000);
+                $(this).prop('checked', false);
+            }
             if (dashboard.shareDashboard) {
                 $('#share-info').removeClass("hide");
                 $('#share-info').addClass("show");

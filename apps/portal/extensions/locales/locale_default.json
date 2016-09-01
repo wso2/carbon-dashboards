@@ -280,5 +280,10 @@
   "add.layouts": "Add Layouts",
   "cannot.save.dashboard": "Cannot Save the Dashboard",
   "atleast.one.owner.role": "At least one role should be there as the owner of the dashboard",
-  "please.enter.to.change.name" : "Please press enter to change the view name"
+  "please.enter.to.change.name" : "Please press enter to change the view name",
+  "cannot.understand.method" : "Cannot understand the method",
+  "dashboard.portal" : "Dashboard Portal",
+  "customize.dashboard" : "Customize Dashboard",
+  "cannot.create.view.for.share.dashboard" : "Cannot create more than one view in a page for shared dashboard",
+  "cannot.delete.internal.everyone.role.for.share.dashboard" : "Cannot remove internal/everyone role from the view when the dashboard is shared"
 }

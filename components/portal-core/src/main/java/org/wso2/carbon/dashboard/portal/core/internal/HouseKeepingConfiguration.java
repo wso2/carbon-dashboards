@@ -22,6 +22,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.wso2.carbon.dashboard.portal.core.DashboardPortalException;
 import org.wso2.carbon.dashboard.portal.core.PortalConstants;
+import org.wso2.carbon.dashboard.portal.core.PortalUtils;
 import org.wso2.carbon.utils.CarbonUtils;
 
 import java.io.File;
@@ -53,12 +54,8 @@ public class HouseKeepingConfiguration {
         this.interval = DEFAULT_INTERVAL;
         this.maxFileLifeTime = DEFAULT_MAX_FILE_LIFE_TIME;
         this.location = DEFAULT_LOCATION;
-        String configLocation = CarbonUtils.getCarbonConfigDirPath() + File.separator + PortalConstants.PORTAL_CONFIG_LOCATION;
-        JSONParser jsonParser = new JSONParser();
         try {
-            JSONObject portalConfig = (JSONObject) jsonParser.parse(new FileReader(configLocation));
-            JSONObject houseKeepingConfig = (JSONObject) portalConfig.
-                    get(PortalConstants.HOUSE_KEEPING_CONFIG_PROPERTY);
+            JSONObject houseKeepingConfig = PortalUtils.getConfiguration(PortalConstants.HOUSE_KEEPING_CONFIG_PROPERTY);
             this.interval = Integer.parseInt(houseKeepingConfig.
                     get(PortalConstants.HOUSE_KEEPING_INTERVAL_CONFIG_PROPERTY).toString()) * 60 * 1000;
             this.maxFileLifeTime = Integer.parseInt(houseKeepingConfig.
