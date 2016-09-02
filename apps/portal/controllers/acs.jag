@@ -36,6 +36,7 @@
     var keyStoreName = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Location");
     var identityAlias = attr.identityAlias;
     var permission = require("/modules/permission.js");
+    var DEFAULT_TO_FALSE = false;
     var keyStoreProps = {
         KEY_STORE_NAME: keyStoreName,
         KEY_STORE_PASSWORD: keyStorePassword,
@@ -68,13 +69,13 @@
         samlRespObj = sso.client.getSamlObject(samlResponse);
         //If response signing is enabled we  to validate it before performing
         //login or logout operations
-        if ((!samlRespObj)||(!sso.client.validateSamlResponse(samlRespObj,attr,keyStoreProps))) {
-            log.error('SAML response object validation failure.');
-            response.sendError(401, 'You do not have permission to login to this application.Please contact your administrator and request permission.');
-            return;
-        }
 
         if (!sso.client.isLogoutResponse(samlRespObj)) {
+            if ((!samlRespObj) || (!sso.client.validateSamlResponse(samlRespObj, attr, keyStoreProps))) {
+                log.error('SAML response object validation failure.');
+                response.sendError(401, 'You do not have permission to login to this application.Please contact your administrator and request permission.');
+                return;
+            }
             var sessionObj = sso.client.decodeSAMLLoginResponse(samlRespObj, samlResponse, sessionId);
 
             if (sessionObj.sessionIndex != null || sessionObj.sessionIndex != 'undefined') {
@@ -122,6 +123,10 @@
             }
 
         } else {
+            var isResponseSigningEnabled = attr.responseSigningEnabled ? attr.responseSigningEnabled : DEFAULT_TO_FALSE;
+            if (isResponseSigningEnabled) {
+                sso.client.validateSignature(samlRespObj, keyStoreProps)
+            }
             session.invalidate();
             response.sendRedirect(relayState);
         }
