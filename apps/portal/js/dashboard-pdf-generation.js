@@ -78,7 +78,8 @@
     /**
      * register click event handler to generate and download the pdf
      */
-    $("#generate-pdf").click(function () {
+    $("#generate-pdf").click(function (e) {
+        e.preventDefault();
         gadgetsCount = 0;
         for (var i = 0; i < $("#gadgets-grid")[0].children[0].children.length; i++) {
             var gridStack = $("#gadgets-grid")[0].children[0].children[i];
