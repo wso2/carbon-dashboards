@@ -80,8 +80,7 @@ public class DSMigrationTool {
                     }
                     gadgetDataObj.remove(Constants.URL);
                     if (url.toLowerCase().contains(Constants.LOCAL)) {
-                        url = replace(url, url.substring(0, url.indexOf(Constants.GADGET + File.separator)),
-                                Constants.GADGET + File.separator);
+                        url = replace(url, url.substring(0, url.indexOf(Constants.GADGET + File.separator)), "");
                     }
                     gadgetDataObj.put(Constants.URL, replace(url, modifiedGadgetID, modifiedGadgetID));
                     file = new FileWriter(artifactPath + File.separator + listOfFiles[i].getName() + File.separator
