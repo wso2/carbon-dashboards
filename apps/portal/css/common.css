@@ -101,7 +101,17 @@ ul.dropdown-menu.more-actions-button > li > button {
 .btn-group.open .dropdown-toggle {
     -webkit-box-shadow: none;
     box-shadow: none;
-    border: 0px;
+/*    border: 0px;*/
+}
+
+.btn-default:hover,
+.btn-default:active {
+    border-color: #e6e6e6;
+}
+
+.open > .dropdown-toggle.btn-default:focus,
+.open > .dropdown-toggle.btn-default:hover {
+    border-color: #d4d4d4;
 }
 
 .btn-custom {

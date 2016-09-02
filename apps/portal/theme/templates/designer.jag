@@ -137,39 +137,35 @@
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
-                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav" 
                     onclick="updateSidebarNav('#sidebarNavPages', this)" title="<%=i18n.localize("pages.label")%>" 
                     id="btn-pages-sidebar">
                     <i class="icon fw fw-pages"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
-                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav" 
                     onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="<%=i18n.localize("add.block")%>" 
                     id="btn-sidebar-layouts">
                     <i class="icon fw fw-layout"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" 
-                    data-container-divide="true" aria-expanded="false" rel="sub-nav" 
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav" 
                     onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="<%=i18n.localize("gadgets")%>" 
                     id="btn-sidebar-gadgets">
                     <i class="icon fw fw-gadget"></i>
                 </a>
             </li>
             <li>
-                <a data-container-divide="true" aria-expanded="true" data-container=".page-content-wrapper" data-target="#left-sidebar" data-toggle="sidebar" data-handle="close" rel="sub-nav"
+                <a data-container-divide="true" aria-expanded="true" data-target="#left-sidebar" data-toggle="sidebar" data-handle="close" rel="sub-nav"
                     onclick="loadMenuCreator(this)" title="<%=i18n.localize("pages.menu.label")%>"
                     id="btn-sidebar-menu">
                     <i class="icon fw fw-menu"></i>
                 </a>
             </li>
             <li>
-                <a data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper"
-                    data-container-divide="true" aria-expanded="false" rel="sub-nav"
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
                     onclick="updateSidebarNav('#sidebarNavDashboardLayouts', this)" title="<%=i18n.localize("layouts")%>"
                     id="btn-sidebar-dashboard-layout">
                     <i class="icon fw fw-grid"></i>
@@ -182,11 +178,10 @@
     <div class="page-content-wrapper">
 
         <!-- .left-sidebar -->
-        <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55">
+        <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true">
 
             <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
-                data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" 
-                aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
+                data-target="#left-sidebar" aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
 
             <div class="nano">
                 <div class="nano-content">
@@ -287,7 +282,7 @@
         </div>
 
         <!-- .left-sidebar-sub -->
-        <div class="sidebar-wrapper sidebar-nav sidebar-nav-sub" id="left-sidebar-sub" data-side="left" data-width="250" data-offset-left="305">
+        <div class="sidebar-wrapper sidebar-nav sidebar-nav-sub" id="left-sidebar-sub" data-side="left" data-width="250" data-offset-left="55" data-offset-bottom="40" data-container=".page-content-wrapper">
             <div class="nano">
                 <div class="nano-content">
 
@@ -317,11 +312,10 @@
             <div class="page-header"></div>
 
             <!-- .right-sidebar -->
-            <div class="sidebar-wrapper sidebar-options" id="right-sidebar" data-side="right" data-width="235">
+            <div class="sidebar-wrapper sidebar-options" id="right-sidebar" data-side="right" data-container=".page-content" data-container-divide="true" data-width="235">
 
                 <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
-                    data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" 
-                    aria-expanded="true" rel="show-options" onclick="updateSidebarOptions(this)"><i class="fw fw-right-arrow"></i></button>
+                    data-target="#right-sidebar" aria-expanded="true" rel="show-options" onclick="updateSidebarOptions(this)"><i class="fw fw-right-arrow"></i></button>
 
                 <div class="nano" id="ds-properties-container">
                     <div class="nano-content">
@@ -520,7 +514,7 @@
                 {{/each}}
 
                 <li role="presentation">
-                    <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
+                    <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
                         <i class="fw fw-configarations"></i>
                     </button>
                 </li>
@@ -549,7 +543,7 @@
                 </button>
             {{/each}}
             
-            <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
+            <button type="button" class="btn btn-default ues-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar" aria-expanded="false" rel="show-options" onclick="updateSidebarOptions(this)" title="<%=i18n.localize("gadget.configuration.label")%>">
                 <i class="fw fw-configarations"></i>
             </button>
             <button type="button" class="btn btn-default ues-component-full-handle" title="<%= i18n.localize("maximize.label") %>" data-maximize-title="<%= i18n.localize("maximize.label") %>" data-minimize-title="<%= i18n.localize("minimize.label") %>">
@@ -787,11 +781,12 @@
     <script id="view-layout-selection-hbs" type="text/x-handlebars-template">
         <div class="form-group text-center">
             <div class="btn-group" role="group">
-                <button class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("new.layout")%></button>
+                <button type="button" class="btn btn-primary btn-lg" id="new-view" value="new-view"><%=i18n.localize("new.layout")%></button>
 
                 <div class="btn-group" role="group">
                     <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="copy-view" value="copy-view">
-                        <%=i18n.localize("use.existing.layout")%> <span class="caret"></span>
+                        <%=i18n.localize("use.existing.layout")%>
+                        <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" id="page-views-menu"></ul>
                 </div>

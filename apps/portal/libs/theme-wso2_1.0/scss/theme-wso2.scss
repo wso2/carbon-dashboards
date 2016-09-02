@@ -49,7 +49,7 @@
     transform: $val;
 }
 
-@mixin transition($val) {
+@mixin transition($val...) {
     -webkit-transition: $val;
     -moz-transition: $val;
     -ms-transition: $val;
@@ -932,7 +932,7 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
     left: 0;
     margin-left: 0;
     min-height: $page-content-wrapper-height;
-    @include transition(all 0.5s ease);
+    @include transition(left 0.5s ease, right 0.5s ease);
 }
 
 .page-content-wrapper.fixed,
@@ -988,7 +988,7 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
     overflow-y: auto;
     background: $base-dark-color;
     color: $base-light-color;
-    @include transition(all 0.5s ease);
+    @include transition(left 0.5s ease, right 0.5s ease);
 }
 
 .sidebar-wrapper.affix {

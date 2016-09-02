@@ -1543,13 +1543,13 @@ $(function () {
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCreationOptions);
                 if (!$('#left-sidebar').hasClass('toggled')) {
-                    $('#btn-sidebar-dashboard-layout').click();
+                    $.sidebar_toggle('show', '#left-sidebar', '.page-content-wrapper');
+                }
+                else {
+                    $.sidebar_toggle('hide', '#left-sidebar', '.page-content-wrapper');
                 }
             } else if (this.value === "copy-view") {
                 //if copy from an existing view
-                if ($('#left-sidebar').hasClass('toggled')) {
-                    $('.close-sidebar[data-target="#left-sidebar"]').click();
-                }
                 $('#page-views-menu').empty();
                 var views = getUserAllowedViews(Object.keys(page.views.content));
 
