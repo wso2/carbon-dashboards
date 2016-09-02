@@ -75,9 +75,14 @@ var drawGadget = function (){
     },pref.getInt(REFRESH_INTERVAL));
     {{else}}
         draw('#canvas', conf[CHART_CONF], schema, null);
-        registerCallBackforPush(conf[PROVIDER_CONF], schema, function(providerData) {
-            update(providerData);
-        });
+        registerCallBackforPush(conf[PROVIDER_CONF], schema,
+            function(providerData) {
+                update(providerData);
+            },
+            function(providerData) {
+                draw('#canvas', conf[CHART_CONF], schema, providerData, providerData);
+            }
+        );
     {{/if}}
 };
 init();
