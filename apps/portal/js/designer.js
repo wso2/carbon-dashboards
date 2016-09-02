@@ -589,7 +589,7 @@ $(function () {
             return done(false);
         }
         var views = Object.keys(pageToBeDeleted.content);
-        for (var i = 0; i < views.length; i++){
+        for (var i = 0; i < views.length; i++) {
             updateUsageForViews(pageToBeDeleted, views[i], function (err) {
                 if (err) {
                     generateMessage(err, null, null, "error", "topCenter", 2000, null);
@@ -609,7 +609,7 @@ $(function () {
      * @param page Page
      * @param pageType view of the page
      */
-    var updateUsageForViews = function(page, pageType, done) {
+    var updateUsageForViews = function (page, pageType, done) {
         var i;
         var length;
         var area;
@@ -627,7 +627,7 @@ $(function () {
                     if (gadgetIds.indexOf(gadgetId) < 0) {
                         if (ds.database.updateUsageDataInMultipleViews(dashboard, gadgetId)) {
                             gadgetIds.push(gadgetId);
-                        } else  {
+                        } else {
                             done("Error updating database");
                             return;
                         }
@@ -805,7 +805,6 @@ $(function () {
             var componentBody = componentContainer.find('.ues-component-body');
             var gsContainer = $('.grid-stack');
             var trashButton = componentContainer.find('.ues-component-actions .ues-trash-handle');
-
             if (component.fullViewPoped) {
                 // rendering normal view
                 getGridstack().enable();
@@ -890,7 +889,7 @@ $(function () {
                 roles: layout.roles
             };
             page.content[newViewId] = JSON.parse(JSON.stringify(page.content[selectedViewId]));
-            updateUsageForViews(page, pageType, function(err) {
+            updateUsageForViews(page, pageType, function (err) {
                 if (err) {
                     generateMessage(err, null, null, 'error', 'topCenter', 2000, null);
                     page = clonedPage;
@@ -1174,9 +1173,9 @@ $(function () {
                         i18n_data["add.new.role.removing.anonymous.message"], function () {
                             var isError = false;
                             if (removingComponentsLength > 0) {
-                                removeGadgets(removingComponents, removingComponentsLength, function(err) {
+                                removeGadgets(removingComponents, removingComponentsLength, function (err) {
                                     if (err) {
-                                        generateMessage(err, null,null, "error", "topCenter", 2000, null);
+                                        generateMessage(err, null, null, "error", "topCenter", 2000, null);
                                         isError = true;
                                     }
                                 });
@@ -1200,7 +1199,7 @@ $(function () {
                 } else if (removingComponentsLength > 0) {
                     showConfirm(i18n_data["add.new.role"], i18n_data["add.new.role.message"], function () {
                         var isError = false;
-                        removeGadgets(removingComponents, removingComponentsLength , function(err) {
+                        removeGadgets(removingComponents, removingComponentsLength, function (err) {
                             if (err) {
                                 generateMessage(err, null, null, "error", topCenter, 2000, null);
                             }
@@ -1527,7 +1526,7 @@ $(function () {
             if (removingComponentsLength > 0) {
                 showConfirm(i18n_data["remove.gadgets.with.role.addition"],
                     i18n_data["remove.gadgets.with.role.addition.message"], function () {
-                        removeGadgets(removingComponents, removingComponentsLength, function(err) {
+                        removeGadgets(removingComponents, removingComponentsLength, function (err) {
                             if (err) {
                                 generateMessage(err, null, null, "error", "topCenter", 2000, null);
                             } else {
@@ -1694,7 +1693,7 @@ $(function () {
                     if (removeBlock) {
                         getGridstack().remove_widget(componentBox.parent());
                         updateLayout();
-                    } else if(!isError) {
+                    } else if (!isError) {
                         componentBox.html(componentBoxContentHbs());
                     }
                     designerModal.modal('hide');
@@ -4033,8 +4032,8 @@ $(function () {
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
-                showCreatePage();
-            });
+                    showCreatePage();
+                });
 
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
