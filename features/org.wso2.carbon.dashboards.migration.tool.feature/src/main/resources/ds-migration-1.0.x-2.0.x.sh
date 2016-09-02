@@ -30,7 +30,7 @@ elif [ "$Mode" = "Portal" ]; then
 	fi
 	DestinationURL=($($input | grep -oP '(?<=DestinationURL>)[^<]+'))
 	if [ "$DestinationURL" = "" ]; then
-		DestinationURL=""
+		DestinationURL="notDefined"
 	fi
 	SourceUsername=($($input | grep -oP '(?<=SourceUsername>)[^<]+'))
 	if [ "$SourceUsername" = "" ]; then
