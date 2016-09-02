@@ -120,16 +120,16 @@ var getAsset, getAssets, addAsset, deleteAsset, getDashboardsFromRegistry;
                         shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                         owner: true
                     };
-                if (utils.allowed(userRoles, permissions.owners)) {
+                if (utils.allowed(userRoles, permissions.owners) && !data.shared) {
                     userDashboards.push(data);
                     return;
                 }
-                if (utils.allowed(userRoles, permissions.editors)) {
+                if (utils.allowed(userRoles, permissions.editors) && !data.shared) {
                     data.owner = false;
                     userDashboards.push(data);
                     return;
                 }
-                if (utils.allowed(userRoles, permissions.viewers)) {
+                if (utils.allowed(userRoles, permissions.viewers) || data.shared) {
                     data.editable = false;
                     data.owner = false;
                     userDashboards.push(data);

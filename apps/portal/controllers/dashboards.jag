@@ -67,7 +67,7 @@ var fresh;
 
     if (method === 'GET') {
         dashboards = require('/modules/dashboards.js');
-
+        editor = request.getParameter('editor');
         if (!request.getParameter("shared")) {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getAsset(dashboardId);
@@ -160,9 +160,8 @@ var fresh;
                 response.sendError(404, "Dashboard '" + dashboardId + "' cannot be found");
                 return;
             }
+            editor = false;
         }
-
-        editor = request.getParameter('editor');
         editor ? include('includes/designer.jag') : include('includes/renderer.jag');
         return;
     }
