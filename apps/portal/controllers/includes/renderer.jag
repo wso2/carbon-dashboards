@@ -20,12 +20,12 @@ var renderEngine = {};
 var portalRoot;
 (function () {
     var log = new Log();
-
     var carbon = require('carbon');
     var anonRole = String(carbon.user.anonRole);
     var permissions = dashboard.permissions;
     var anonymous = permissions.viewers.indexOf(anonRole) !== -1;
     var db = require('/modules/dashboards.js');
+    var isShared = false;
 
     /**
      * Unauthorized error message.
@@ -46,22 +46,22 @@ var portalRoot;
             user.isViewer = false;
         }
     }
-
     if (!anonymous) {
         if (!user && !dashboard.isanon) {
             sendLogin();
             return;
         }
+        isShared = dashboard.shareDashboard && userDomain !== superDomain;
+        if (!isShared) {
+            if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
+                response.sendError(401, UNAUTHORIZED_ERROR);
+                return;
+            }
 
-
-        if (userDomain !== (urlDomain || superDomain) && !dashboard.isanon) {
-            response.sendError(401, UNAUTHORIZED_ERROR);
-            return;
-        }
-
-        if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers) && !utils.allowed(user.roles, permissions.owners)) {
-            response.sendError(401, UNAUTHORIZED_ERROR);
-            return;
+            if (!dashboard.isanon && !utils.allowed(user.roles, permissions.editors) && !utils.allowed(user.roles, permissions.viewers) && !utils.allowed(user.roles, permissions.owners)) {
+                response.sendError(401, UNAUTHORIZED_ERROR);
+                return;
+            }
         }
     }
 
