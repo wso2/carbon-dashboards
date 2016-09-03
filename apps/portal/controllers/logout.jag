@@ -17,20 +17,8 @@
 
 (function () {
     var configs = require('/configs/portal.js').config();
-    var sanitizeDestination = function (destination) {
-        if (!destination) {
-            return "/portal/";
-        }
-        return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
-    };
 
-    if (configs.authentication.activeMethod === 'sso') {
-        include('sso-logout.jag');
-    } else {
-        var usr = require('/modules/user.js');
-        usr.logout();
-        var destination = sanitizeDestination(request.getParameter("destination"));
-        response.sendRedirect(destination);
-    }
+    include('/extensions/authentication/' + configs.authentication.activeMethod + '-logout.jag');
+
 }());
 %>
