@@ -89,7 +89,7 @@ var portalRoot;
     //check whether the user has no edit/view permission and the anonymous
     // view is undefined
     if (user) {
-        if (!(user.isEditor || user.isViewer|| user.isOwner) && !anonView) {
+        if (!isShared && !(user.isEditor || user.isViewer|| user.isOwner) && !anonView) {
             response.sendError(404, i18n.localize("page.label") + " '" + pageId + "' " +
                     i18n.localize("page.not.found"));
             return;
