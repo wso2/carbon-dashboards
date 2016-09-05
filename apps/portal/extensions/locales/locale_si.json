@@ -144,7 +144,7 @@
   "go.to.portal": "ද්වාරය වෙත යන්න",
   "dashboards": "පුවරු",
   "settings.savebutton": "සුරකින්න",
-  "settings.cancelbutton": "ආපසු",
+  "settings.resetbutton": "නැවත සකස් කරන්න",
   "designer.componentProperties.priority": "පූර්වතාව",
   "bad.request": "වැරදි ඉල්ලීමකි",
   "forbidden": "Forbidden",
