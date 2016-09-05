@@ -927,12 +927,20 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
  * sidebar styles
  * ======================================================================== */
 
-.page-content-wrapper, .page-content-wrapper[data-container-behaviour=static] {
+.page-content-wrapper,
+.page-content-wrapper[data-container-behaviour=static] {
     position: relative;
     left: 0;
     margin-left: 0;
     min-height: $page-content-wrapper-height;
-    @include transition(left 0.5s ease, right 0.5s ease);
+    @include transition(
+        left 0.5s ease,
+        right 0.5s ease,
+        padding-left 0.5s ease,
+        padding-right 0.5s ease,
+        margin-left 0.5s ease,
+        margin-right 0.5s ease
+    );
 }
 
 .page-content-wrapper.fixed,
@@ -1594,59 +1602,67 @@ footer a {
     }
 }
 
-.form-control, .btn {
+.form-control {
     @include border-radius;
     @include box-shadow;
 }
 
-a.btn, .btn {
+a.btn,
+.btn {
     text-decoration: none;
-
-    & .icon-caret {
-        padding: 0 0 0 8px;
-        margin-left: 5px;
-        border-left: 1px solid #e4e4e4;
-    }
-    &.active, &:active {
-        @include box-shadow;
-    }
-    &:hover {
-        text-decoration: none;
-        background: #eee;
-    }
+    
+    @include border-radius;
+    @include box-shadow;
 }
 
-.btn-default {
-    &, &:focus{
-        color: $button-default-color;
-        background-color: $button-default-background-color;
-        border-color: $button-default-border-color;
-    }
-
-    &:hover {
-        background-color: $button-default-hover-background-color;
-        border-color: $button-default-hover-border-color;
-    }
-}
-
-.btn-primary {
-    &, &:focus {
-        color: $button-primary-color;
-        background-color: $button-primary-background-color;
-        border-color: $button-primary-border-color;
-    }
-
-    &:hover {
-        background-color: $button-primary-hover-background-color;
-        border-color: $button-primary-hover-border-color;
-    }
-}
-
-.btn-bordered {
-    &, &:focus, &:hover {
-        border: 1px solid #ccc;
-    }
-}
+//a.btn, .btn {
+//    text-decoration: none;
+//
+//    & .icon-caret {
+//        padding: 0 0 0 8px;
+//        margin-left: 5px;
+//        border-left: 1px solid #e4e4e4;
+//    }
+//    &.active, &:active {
+//        @include box-shadow;
+//    }
+//    &:hover {
+//        text-decoration: none;
+//        background: #eee;
+//    }
+//}
+//
+//.btn-default {
+//    &, &:focus{
+//        color: $button-default-color;
+//        background-color: $button-default-background-color;
+//        border-color: $button-default-border-color;
+//    }
+//
+//    &:hover {
+//        background-color: $button-default-hover-background-color;
+//        border-color: $button-default-hover-border-color;
+//    }
+//}
+//
+//.btn-primary {
+//    &, &:focus {
+//        color: $button-primary-color;
+//        background-color: $button-primary-background-color;
+//        border-color: $button-primary-border-color;
+//    }
+//
+//    &:hover {
+//        background-color: $button-primary-hover-background-color;
+//        border-color: $button-primary-hover-border-color;
+//    }
+//}
+//
+//.btn-bordered {
+//    &, &:focus, &:hover {
+//        border: 1px solid #ccc;
+//    }
+//}
 
 .btn-group > .btn-label {
     position: relative;
