@@ -369,7 +369,7 @@
         }
     };
 
-    $('.context-menu').click(function(){
+    $('.context-menu').click(function () {
         alert();
     })
 
@@ -493,6 +493,14 @@
         dashboardLoadingState = state;
     };
 
+    var getCurrentView = function () {
+        return ues.global.dbType;
+    };
+
+    var getCurrentPage = function () {
+        return ues.global.page;
+    };
+
     ues.components = {
         create: createComponent,
         update: updateComponent,
@@ -510,7 +518,9 @@
         getDashboardName: getDashboardName,
         getDashboardLoadingState: getDashboardLoadingState,
         getTenantDomain: getTenantDomain,
-        setDashboardLoadingState: setDashboardLoadingState
+        setDashboardLoadingState: setDashboardLoadingState,
+        getCurrentView: getCurrentView,
+        getCurrentPage: getCurrentPage
     };
 
     ues.assets = {};
