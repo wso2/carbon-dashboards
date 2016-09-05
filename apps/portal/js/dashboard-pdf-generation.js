@@ -63,10 +63,6 @@
                 $("#pdf-width").val(A2_WIDTH);
                 $("#pdf-height").val(A2_HEIGHT);
                 break;
-            case A1:
-                $("#pdf-width").val(A1_WIDTH);
-                $("#pdf-height").val(A1_HEIGHT);
-                break;
             case DEFAULT_SIZE:
                 $("#pdf-width").val($("#gadgets-grid").width());
                 $("#pdf-height").val($("#gadgets-grid").height());
@@ -78,14 +74,22 @@
     /**
      * register click event handler to generate and download the pdf
      */
-    $("#generate-pdf").click(function (e) {
-        e.preventDefault();
+    $("#generate-pdf").click(function (event) {
+        event.preventDefault();
         gadgetsCount = 0;
+        var backGroundImageURL;
         for (var i = 0; i < $("#gadgets-grid")[0].children[0].children.length; i++) {
             var gridStack = $("#gadgets-grid")[0].children[0].children[i];
             var gadgetContainer = $(".grid-stack>.grid-stack-item[data-gs-y='" + $(gridStack).attr('data-gs-y') + "']");
-            var topValue = gadgetContainer.css("top");
-            gadgetContainer.attr("style", "top: " + topValue);
+            var topValue = gadgetContainer.css(TOP);
+            if (gadgetContainer.css(BACKGROUND_IMAGE) != NONE) {
+                var imageHTML = document.createElement(IMG);
+                backGroundImageURL = gadgetContainer.css(BACKGROUND_IMAGE)
+                backGroundImageURL = backGroundImageURL.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                imageHTML.src = backGroundImageURL;
+                $(gadgetContainer).append(imageHTML);
+            }
+            gadgetContainer.css(TOP, topValue);
         }
         convertHTMLIntoImage();
     });
@@ -94,17 +98,17 @@
      * go through each gadget and convert svg elemene into image. Then convert entire iframe into image
      */
     var convertHTMLIntoImage = function () {
-        if (gadgetsCount >= $(".gadget-body").length) {
+        if (gadgetsCount === $(".gadget-body").find(IFRAME).length) {
             downloadPDF();
             return;
         }
-        var canvas = document.createElement("canvas");
-        var imageSVG = document.createElement("img");
+        var canvas = document.createElement(CANVAS);
+        var imageSVG = document.createElement(IMG);
         var xmlSVG;
-        var svgContent = $($(".gadget-body")[gadgetsCount]).find("iframe").contents().find("svg");
+        var svgContent = $($(".gadget-body")[gadgetsCount]).find(IFRAME).contents().find(SVG);
         for (var y = 0; y < svgContent.length; y++) {
             var svgElement = svgContent[y];
-            imageSVG = document.createElement("img");
+            imageSVG = document.createElement(IMG);
             //convert SVG into a XML string
             xmlSVG = (new XMLSerializer()).serializeToString(svgElement);
             // Removing the name space as IE throws an error
@@ -116,11 +120,16 @@
             $(svgElement).hide();
         }
 
-        convertGadgetIntoImage($($($(".gadget-body")[gadgetsCount]).find("iframe").contents()[0]).get()[0].body, function () {
-            $($($(".gadget-body")[gadgetsCount]).find("iframe")[0]).hide();
+        if ($($(".gadget-body")[gadgetsCount]).find(IFRAME).contents()[0]) {
+            convertGadgetIntoImage($($($(".gadget-body")[gadgetsCount]).find(IFRAME).contents()[0]).get()[0].body, function () {
+                $($($(".gadget-body")[gadgetsCount]).find(IFRAME)[0]).hide();
+                gadgetsCount++;
+                convertHTMLIntoImage();
+            });
+        } else if (gadgetsCount < $(".gadget-body").find(IFRAME).length) {
             gadgetsCount++;
             convertHTMLIntoImage();
-        });
+        }
     };
 
     /**
@@ -131,10 +140,10 @@
     var convertGadgetIntoImage = function (content, callback) {
         html2canvas(content, {
             onrendered: function (canvas) {
-                var imageHTML = document.createElement("img");
-                var divGen = document.createElement("div");
+                var imageHTML = document.createElement(IMG);
+                var divGen = document.createElement(DIV);
                 imageHTML.src = canvas.toDataURL(IMAGEPNG);
-                $(divGen).insertAfter($($(".gadget-body")[gadgetsCount]).find("iframe"));
+                $(divGen).insertAfter($($(".gadget-body")[gadgetsCount]).find(IFRAME));
                 $(imageHTML).width('100%');
                 $(divGen).append(imageHTML);
                 callback();
@@ -147,14 +156,30 @@
      */
     var restoreGadgetsGrid = function () {
         for (var i = 0; i < $(".gadget-body").length; i++) {
-            var length = $($(".gadget-body")[i]).find("iframe").contents().find("svg").length;
+            var length = $($(".gadget-body")[i]).find(IFRAME).contents().find(SVG).length;
             for (var y = 0; y < length; y++) {
-                var svgElement = $($(".gadget-body")[i]).find("iframe").contents().find("svg")[y];
-                $($(".gadget-body")[i]).find("iframe").contents().find("img")[0].remove();
+                var svgElement = $($(".gadget-body")[i]).find(IFRAME).contents().find(SVG)[y];
+                $($(".gadget-body")[i]).find(IFRAME).contents().find(IMG)[0].remove();
                 $(svgElement).show();
             }
-            $($(".gadget-body")[i]).find("img")[0].remove();
-            $($($(".gadget-body")[i]).find("iframe")[0]).show();
+            if ($($(".gadget-body")[i]).find(IMG)[0] && $($($(".gadget-body")[i]).find(IFRAME)[0])) {
+                $($(".gadget-body")[i]).find(IMG)[0].remove();
+                $($($(".gadget-body")[i]).find(IFRAME)[0]).show();
+            }
+        }
+    };
+
+    /**
+     * restore banner after generating pdf
+     */
+    var restoreBanner = function () {
+        for (var i = 0; i < $("#gadgets-grid")[0].children[0].children.length; i++) {
+            var gridStack = $("#gadgets-grid")[0].children[0].children[i];
+            var gadgetContainer = $(".grid-stack>.grid-stack-item[data-gs-y='" + $(gridStack).attr('data-gs-y') + "']");
+            var topValue = gadgetContainer.css(TOP);
+            if (gadgetContainer.css(BACKGROUND_IMAGE) != NONE) {
+                gadgetContainer.find(IMG).remove();
+            }
         }
     };
 
@@ -164,22 +189,27 @@
     var downloadPDF = function () {
         var height = getPDFHeight();
         var width = getPDFWidth();
-        html2canvas($("#gadgets-grid"), {
-            onrendered: function (canvas) {
-                restoreGadgetsGrid();
-                var doc = new jsPDF({
-                    orientation: "p",
-                    unit: "px",
-                    format: [width, height]
-                });
-                doc.text(width * .40, height * .025, ues.global.dashboard.title);
-                doc.addImage(canvas.toDataURL(IMAGEPNG), 'PNG', 0, 0, width, height);
-                doc.setFontType(PDF_WATERMARK_ITALIC);
-                doc.setFontSize(10);
-                doc.text(50, height - 25, PDF_WATERMARK_PART_1 + ues.global.dashboard.title + PDF_WATERMARK_PART_2 + new Date().toUTCString() + PDF_WATERMARK_PART_3);
-                doc.save(DASHBOARD_PDF_NAME + ues.global.dashboard.id + PDF_EXTENSION);
-                $("#download-pdf-panel").attr("val", "success");
-            }
+        var fontSize = height * .0075;
+        $('div.body-wrapper > div.nano > div.nano-content').animate({SCROLL_TOP: 0}, SCROLL_FAST, function () {
+            html2canvas($("#gadgets-grid"), {
+                onrendered: function (canvas) {
+                    restoreGadgetsGrid();
+                    restoreBanner();
+                    var doc = new jsPDF({
+                        orientation: PORTRAIT,
+                        unit: PIXELS,
+                        format: [width, (height * 1.1).toString()]
+                    });
+                    doc.setFontSize(fontSize);
+                    doc.text(width * .01, 0, DASHBOARD_TITLE + ues.global.dashboard.title + CURRENT_PAGE + ues.global.page + CURRENT_VIEW + ues.global.dbType + NEW_LINE);
+                    doc.addImage(canvas.toDataURL(IMAGEPNG), 'PNG', 0, (height * 1.1 - height * .03), width, height);
+                    doc.setFontType(PDF_WATERMARK_ITALIC);
+                    doc.setFontSize(fontSize / 2);
+                    doc.text(50, height * 1.1 - height * .025, PDF_WATERMARK_PART_1 + ues.global.dashboard.title + PDF_WATERMARK_PART_2 + new Date().toUTCString() + PDF_WATERMARK_PART_3);
+                    doc.save(DASHBOARD_PDF_NAME + ues.global.dashboard.id + PDF_EXTENSION);
+                    $("#download-pdf-panel").attr(VAL, SUCCESS);
+                }, height: $(".page-content").height(), allowTaint: true, useCORS: true
+            });
         });
     };
 

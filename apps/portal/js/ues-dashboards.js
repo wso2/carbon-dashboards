@@ -369,7 +369,7 @@
         }
     };
 
-    $('.context-menu').click(function(){
+    $('.context-menu').click(function () {
         alert();
     })
 
@@ -378,7 +378,10 @@
      * @returns {boolean}
      */
     var getDashboardLoadingState = function () {
-        return dashboardLoadingState;
+        if ((!dashboardLoadingState) && loadingFinishedCount == 1) {
+            return false;
+        }
+        return true;
     };
 
     /**

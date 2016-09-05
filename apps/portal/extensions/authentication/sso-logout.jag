@@ -22,7 +22,7 @@
     var relayState = request.getHeader('referer') ? request.getHeader('referer') : "portal";
     var ignoreReferer = request.getParameter("ignoreReferer");
     var context = 'portal';
-    relayState = (!ignoreReferer) ? relayState : context + '/login?ignoreReferer=true';
+    relayState = (!ignoreReferer) ? relayState : "login-controller?ignoreReferer=true";
     if (user === null) {
         response.sendRedirect(relayState);
     } else {
