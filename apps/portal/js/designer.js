@@ -87,9 +87,9 @@ $(function () {
      * Number of assets to be loaded.
      * @const
      */
-    var COMPONENTS_PAGE_SIZE = 20;
+    var COMPONENTS_PAGE_SIZE = -1;
 
-    /**
+    /** 
      * Default dashboard view mode.
      * @const
      */
