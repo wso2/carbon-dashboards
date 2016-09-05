@@ -207,8 +207,7 @@
                                 <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>...">
                             </div>
                         </div>
-                        <div class="panel-group" id="ues-dashboard-pages" role="tablist" aria-multiselectable="true">
-                        </div>
+                        <div class="panel-group" id="ues-dashboard-pages" role="tablist" aria-multiselectable="true"></div>
                     </div>
 
                     <!-- Layouts -->
@@ -264,8 +263,8 @@
                                 </button>
                                 <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>..." />
                             </div>
-                            <div class="ues-thumbnails">
-                            </div>
+                            
+                            <div class="ues-thumbnails"></div>
 
                         </div>
                     </div>
@@ -277,6 +276,7 @@
                             <div id="ues-view-layouts"></div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -465,8 +465,7 @@
                     </div>
                 </div>
             </div>
-            <div class="gadget-body ues-component-body">
-            </div>
+            <div class="gadget-body ues-component-body"></div>
         </div>
     </script>
 
@@ -480,8 +479,7 @@
         {{#each blocks}}
         <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" 
              data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
-            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
-            </div>
+            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}"></div>
         </div>
         {{/each}}
     </script>
@@ -489,8 +487,7 @@
     <!-- Template to add new gridstack block -->
     <script id="ues-new-block-hbs" type="text/x-handlebars-template">
         <div data-id="{{id}}">
-            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
-            </div>
+            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}"></div>
         </div>
     </script>
 
@@ -585,6 +582,10 @@
     </script>
 
     <script id="ues-components-list-hbs" type="text/x-handlebars-template">
+        <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
+            {{>ds-add-gadget-hbs}}
+        <% } %>
+        
         {{#each assets}}
             <div class="store-category">
                 <h3>{{storeType}}</h3>
@@ -602,10 +603,6 @@
                 {{/each}}
             {{/each}}
         {{/each}}
-
-         <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
-                {{>ds-add-gadget-hbs}}
-         <% } %>
     </script>
 
     <!-- Handlebar to render the add gadget button -->
@@ -616,7 +613,7 @@
             <span class="icon fw-stack fw-lg">
                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                 <i class="fw fw-add fw-stack-1x"></i>
-            </span> <%=i18n.localize("add.gadgets")%>
+            </span> <%=i18n.localize("add.gadget")%>
         </button>
       </a>
     </script>
@@ -675,27 +672,27 @@
     </script>
 
     <script id="ues-layouts-list-hbs" type="text/x-handlebars-template">
-        {{#if length}}
-        {{#each .}}
-        <div class="thumbnail selectable" data-id="{{id}}">
-            <h5 class="title">{{title}}</h5>
-            <img src="{{resolveURI thumbnail}}" />
-        </div>
-        {{/each}}
-        {{else}}
-        <h4><%= i18n.localize("no.layout.found")%></h4>
-        {{/if}}
-         <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
+        <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
               <a href="<%=tenantedUrlPrefix%>layout/">
                 <button type="button" class="btn btn-primary btn-stack btn-block">
                     <span class="icon fw-stack fw-lg">
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-add fw-stack-1x"></i>
-                    </span> <%=i18n.localize("add.layouts")%>
+                    </span> <%=i18n.localize("add.layout")%>
                 </button>
               </a>
-         <% } %>
-
+        <% } %>
+        <br />
+        {{#if length}}
+            {{#each .}}
+                <div class="thumbnail selectable" data-id="{{id}}">
+                    <h5 class="title">{{title}}</h5>
+                    <img src="{{resolveURI thumbnail}}" />
+                </div>
+            {{/each}}
+        {{else}}
+            <h4><%= i18n.localize("no.layout.found")%></h4>
+        {{/if}}
     </script>
 
     <script id="ues-modal-confirm-hbs" type="text/x-handlebars-template">
