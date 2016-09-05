@@ -123,18 +123,10 @@
                 <h1 class="page-sub-title"><%= i18n.localize(assetType+"s") %></h1>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <table id="storeSelector">
-                    <tr>
-                        <td>
-                            <h5>Loaded <%= i18n.localize(assetType+"s") %> from </h5>
-                        </td>
-                        <td>
-                            <select id="selectStore" name="store"></select>
-                        </td>
-                    </tr>
-                </table>
+        <div class="form-inline">
+            <div class="form-group" id="storeSelector">
+                <label>Loaded <%= i18n.localize(assetType+"s") %> from</label>
+                <select id="selectStore" name="store"></select>
             </div>
         </div>
         <div class="row thumbnails ds-assets"></div>
