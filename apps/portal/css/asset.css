@@ -14,27 +14,51 @@
  * limitations under the License.
  */
 
-#ds-assets-portal .ds-asset .ds-asset-trash-handle {
-    position: absolute;
-    top: 10px;
-    right: 25px;
-    width: 20px;
-    font-size: 12px;
-    text-align: right;
-}
-
-.ds-asset-download-handle {
-    position: absolute;
-    top: 10px;
-    right: 45px;
-    width: 20px;
-    font-size: 12px;
-    text-align: right;
+body {
+    background: #eee;
 }
 
 #ds-assets-portal .ds-asset {
-    height: 200px;
-    background-color: #edeeef;
+    height: 230px;
+    background-color: #272C30;
+    padding: 0;
+    color: #fff;
+    position: relative;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-img {
+    height: 150px;
+    margin: 20px auto;
+}
+
+#ds-assets-portal .ds-asset > .title {
+    padding: 10px;
+    margin: 0;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-handles {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 12px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-handles > .ds-asset-handle {
+    display: inline-block;
+    background: #3d464f;
+    color: #d6dde5;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-handles > .ds-asset-handle:hover {
+    background: #e6e6e6;
+    color: #333;
 }
 
 .ds-asset-trash-cancel {
