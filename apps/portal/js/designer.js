@@ -89,7 +89,7 @@ $(function () {
      */
     var COMPONENTS_PAGE_SIZE = -1;
 
-    /** 
+    /**
      * Default dashboard view mode.
      * @const
      */
@@ -1624,7 +1624,7 @@ $(function () {
                 $('.gadgets-grid').empty();
                 $('.gadgets-grid').html(viewCreationOptions);
                 if (!$('#left-sidebar').hasClass('toggled')) {
-                    $.sidebar_toggle('show', '#left-sidebar', '.page-content-wrapper');
+                    $('#btn-sidebar-dashboard-layout').click();
                 }
                 else {
                     $.sidebar_toggle('hide', '#left-sidebar', '.page-content-wrapper');
