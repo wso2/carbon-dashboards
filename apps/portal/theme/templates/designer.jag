@@ -330,36 +330,19 @@
             </div>
 
             <div class="page-content">
-                <div class="view-container1" style="">
-                    <button id="slide-left" >
-                        <span class="icon fw-stack">
-                            <i class="fw fw-left fw-stack-1x toggle-icon-up"></i>
-                        </span>
-                    </button>
-                    <div style="display:inline-block;width:87%;vertical-align: bottom">
-                        <ul class="nav nav-tabs" id="designer-view-mode">
-                        </ul>
-                    </div>
-                    <button id="slide-right" >
-                        <span class="icon fw-stack">
-                            <i class="fw fw-right fw-stack-1x toggle-icon-up"></i>
-                        </span>
-                    </button>
-                    <div class ="ds-add-view-btn" style="display:inline-block; vertical-align: top;position: relative;">
-                        <button id="more-views" data-toggle="dropdown" aria-expanded="false" hidden>
-                            <span class="icon fw-stack">
-                                <i class="fw fw-down fw-stack-1x toggle-icon-up"></i>
-                            </span>
-                        </button>
-                        <button id="add-view" hidden>
-                            <span class="icon fw-stack" >
-                                <i class="fw fw-add fw-stack-1x"></i>
-                                <i class="fw fw-circle-outline fw-stack-2x"></i>
-                            </span>
-                        </button>
-                        <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu">
-                        </ul>
-                    </div>
+                <div class="page-views-container">
+                    <ul class="nav nav-tabs">
+                        <li id="slide-left"><a href="javascript:void(0)"><i class="fw fw-left"></i></a></li>
+                    </ul>
+                    <ul class="nav nav-tabs" id="designer-view-mode"><!-- Dynamic Content --></ul>
+                    <ul class="nav nav-tabs">
+                        <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
+                        <li id="add-view" hidden><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
+                        <li id="more-views" hidden>
+                            <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-down"></i></a>
+                            <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu"></ul>
+                        </li>
+                    </ul>                    
                 </div>
                 <div class="nano">
                     <div class="gird-guide">
@@ -819,27 +802,18 @@
 
     <!-- View label -->
     <script id="add-new-view-hbs" type="text/x-handlebars-template">
-        <li role="dashboard-view" data-view-mode="" id="new-view-id">
-            <div class="view-heading ues-component-heading">
-                <div class="context-menu">
-                    <i class="fw fw-ellipsis fw-rotate-90"></i>
-                    <div class="gadget-actions action-buttons ues-component-actions">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
-                            data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
-                                <i class="icon fw fw-configarations"></i>
-                            </button>
-                            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
-                                <i class="icon fw fw-delete"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
-                <button type="button" class="btn btn-default ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
-                    <i class="icon fw fw-cancel"></i>
-                </button>
-            </div>
+        <li role="dashboard-view" data-view-mode="" id="new-view-id" class="clearfix view-heading ues-component-heading">
+            <a role="tab" data-toggle="tab" class="ues-view-name  pull-left" id="view-name"><%=i18n.localize("new.view")%></a>
+            <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
+                data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
+                <i class="icon fw fw-configarations"></i>
+            </button>
+            <button type="button" class="ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
+                <i class="icon fw fw-contract"></i>
+            </button>
+            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+                <i class="icon fw fw-delete"></i>
+            </button>
         </li>
     </script>
 
