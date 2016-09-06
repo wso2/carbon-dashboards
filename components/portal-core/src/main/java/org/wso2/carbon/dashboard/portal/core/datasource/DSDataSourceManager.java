@@ -75,10 +75,11 @@ public class DSDataSourceManager {
                 PrivilegedCarbonContext.getThreadLocalCarbonContext()
                         .setTenantDomain(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME, true);
                 dataSource = (DataSource) service.getDataSource(dataSourceName).getDSObject();
-                if (System.getProperty("setup") == null) {
+                if (System.getProperty("setup") == null && !dataSource.getConnection().getMetaData()
+                        .getDatabaseProductName().toLowerCase().equals(DataSourceConstants.H2_SCRIPT_NAME)) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Dashboards Database schema initialization check was skipped since " +
-                                "\'setup\' variable was not given during startup");
+                        log.debug("Dashboards Database schema initialization check was skipped since "
+                                + "\'setup\' variable was not given during startup");
                     }
                 } else {
                     if (!isGadgetUsageTableExist()) {
@@ -94,6 +95,8 @@ public class DSDataSourceManager {
                 throw new DashboardPortalException("Error in reading the configuration file portal.json", e);
             } catch (ParseException e) {
                 throw new DashboardPortalException("Error in parsing the configuration file portal.json", e);
+            } catch (SQLException e) {
+                throw new DashboardPortalException("Error checking database type", e);
             } finally {
                 PrivilegedCarbonContext.endTenantFlow();
             }
