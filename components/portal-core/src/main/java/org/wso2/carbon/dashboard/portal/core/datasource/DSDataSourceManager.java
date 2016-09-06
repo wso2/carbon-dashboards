@@ -75,8 +75,18 @@ public class DSDataSourceManager {
                 PrivilegedCarbonContext.getThreadLocalCarbonContext()
                         .setTenantDomain(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME, true);
                 dataSource = (DataSource) service.getDataSource(dataSourceName).getDSObject();
-                if (!isGadgetUsageTableExist()) {
-                    createUsageDatabase();
+                if (System.getProperty("setup") == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Dashboards Database schema initialization check was skipped since " +
+                                "\'setup\' variable was not given during startup");
+                    }
+                } else {
+                    if (!isGadgetUsageTableExist()) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Tables not found in the databse. Creating GADGET_USAGE table");
+                        }
+                        createUsageDatabase();
+                    }
                 }
             } catch (DataSourceException e) {
                 throw new DashboardPortalException("Error in getting the datasource", e);
@@ -98,21 +108,30 @@ public class DSDataSourceManager {
      * @return true if the gadget usage table is already exist otherwise false;
      */
     private boolean isGadgetUsageTableExist() {
-        Connection connection = null;
-        ResultSet resultSet = null;
         try {
-            connection = dataSource.getConnection();
-            DatabaseMetaData meta = connection.getMetaData();
-            resultSet = meta.getTables(null, null, DataSourceConstants.GADGET_USAGE_TABLE_NAME, null);
-            if (!connection.getAutoCommit()) {
-                connection.commit();
+            if (log.isDebugEnabled()) {
+                log.debug("Running a query to test the database tables existence");
             }
-            return resultSet.next();
+            // check whether the tables are already created with a query
+            Connection conn = dataSource.getConnection();
+            Statement statement = null;
+            ResultSet rs = null;
+            try {
+                statement = conn.createStatement();
+                rs = statement.executeQuery(DataSourceConstants.DB_CHECK_SQL);
+                if (rs != null) {
+                    rs.close();
+                }
+            } finally {
+                closeDatabaseResources(conn, statement, rs);
+            }
         } catch (SQLException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Table does not exist, so skipping the table creation");
+            }
             return false;
-        } finally {
-            closeDatabaseResources(connection, null, resultSet);
         }
+        return true;
     }
 
     /**
@@ -133,7 +152,7 @@ public class DSDataSourceManager {
                 log.debug("Gadget usage table is created successfully.");
             }
         } catch (SQLException e) {
-            String msg = "Failed to create database tables for Identity meta-data store. " + e.getMessage();
+            String msg = "Failed to create database tables for dashboard server. " + e.getMessage();
             throw new DashboardPortalException(msg, e);
         } finally {
             closeDatabaseResources(conn, statement, null);
