@@ -316,7 +316,7 @@ var downloadAsset;
             }
         }
         var end = start + count;
-        end = end > allAssets.length ? allAssets.length : end;
+        end = end > allAssets.length || end < 0 ? allAssets.length : end;
         allAssets = allAssets.slice(start, end);
         return allAssets;
     };
