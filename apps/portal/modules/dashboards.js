@@ -597,6 +597,7 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                     })
 
                 });
+                dashboardContent.hideAllMenuItems = false;
             }
             var path = registryPath(dashboardContent.id);
             registry.put(path, {
