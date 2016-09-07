@@ -806,13 +806,13 @@
         <li role="dashboard-view" data-view-mode="" id="new-view-id" class="clearfix view-heading ues-component-heading">
             <a role="tab" data-toggle="tab" class="ues-view-name  pull-left" id="view-name"><%=i18n.localize("new.view")%></a>
             <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
-                data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
+                data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options"  title="<%=i18n.localize("settings")%>">
                 <i class="icon fw fw-configarations"></i>
             </button>
-            <button type="button" class="ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
-                <i class="icon fw fw-contract"></i>
+            <button type="button" class="ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("minimize")%>">
+                <i class="icon fw fw-minus"></i>
             </button>
-            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
+            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("delete")%>">
                 <i class="icon fw fw-delete"></i>
             </button>
         </li>

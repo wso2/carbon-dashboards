@@ -705,6 +705,11 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
     display: none;
 }
 
+.page-views-container .nav-tabs > li > button.ues-trash-handle:hover {
+    background: #d9534f;
+    color: #fff;
+}
+
 .page-views-container .nav-tabs > li.active > button.ues-view-component-properties-handle,
 .page-views-container .nav-tabs > li.active > button.ues-trash-handle {
     display: inline-block;
