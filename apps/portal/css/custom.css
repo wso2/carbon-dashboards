@@ -625,6 +625,11 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
     background: #4f6a80;
 }
 
+.page-views-container .nav-tabs > li#add-view:hover > a {
+    color: #fff;
+    border-color: #4f6a80;
+}
+
 .page-views-container .nav-tabs > li > button {
     float: left;
     display: block;
@@ -645,11 +650,12 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
 .page-views-container .nav-tabs > li:not(.active):hover > a,
 .page-views-container .nav-tabs > li:not(.active):hover > button {
     background: #dbdbdb;
+    color: #373e44;
     border: 1px solid #dbdbdb;
 }
 
 .page-views-container .nav-tabs > li.active > button:hover {
-    background: #eee;
+    background: #cbced0;
 }
 
 .page-views-container .nav-tabs > li > button.ues-view-component-properties-handle,
