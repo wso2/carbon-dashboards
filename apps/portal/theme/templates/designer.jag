@@ -133,7 +133,7 @@
     </div>
 
     <!-- navbar -->
-    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="58">
+    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="58" data-offset-bottom="40">
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
@@ -328,22 +328,23 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="page-views-container">
+                <ul class="nav nav-tabs">
+                    <li id="slide-left"><a href="javascript:void(0)"><i class="fw fw-left"></i></a></li>
+                </ul>
+                <ul class="nav nav-tabs" id="designer-view-mode"><!-- Dynamic Content --></ul>
+                <ul class="nav nav-tabs">
+                    <li id="add-view" hidden><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
+                    <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
+                    <li id="more-views" hidden>
+                        <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-down"></i></a>
+                        <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu"></ul>
+                    </li>
+                </ul>                    
+            </div>
 
             <div class="page-content">
-                <div class="page-views-container">
-                    <ul class="nav nav-tabs">
-                        <li id="slide-left"><a href="javascript:void(0)"><i class="fw fw-left"></i></a></li>
-                    </ul>
-                    <ul class="nav nav-tabs" id="designer-view-mode"><!-- Dynamic Content --></ul>
-                    <ul class="nav nav-tabs">
-                        <li id="add-view" hidden><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
-                        <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
-                        <li id="more-views" hidden>
-                            <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-down"></i></a>
-                            <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu"></ul>
-                        </li>
-                    </ul>                    
-                </div>
                 <div class="nano">
                     <div class="gird-guide">
                         <div class="row">
