@@ -206,9 +206,11 @@ public class DSDataSourceManager {
                     }
                 }
                 sql.append(" ").append(line);
-
+                if (line.contains("--")) {
+                    sql.append("\n");
+                }
                 if (sql.toString().endsWith(delimeter)) {
-                    executeQuery(sql.toString());
+                    executeQuery(sql.substring(0, sql.length() - delimeter.length()));
                     sql.replace(0, sql.length(), "");
                 }
             }
