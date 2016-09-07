@@ -733,6 +733,7 @@ $(function () {
         $('#ues-dashboard-saveBtn').on('click', function () {
             if ($('.ues-shared-owner > .ues-shared-role').data('role')) {
                 saveDashboard();
+                $('#ues-dashboard-saveBtn').attr('disabled', true);
             } else {
                 var modalElement = $('#designerModal');
                 modalElement.find('.modal-content').html(modalInfoHbs({
@@ -744,8 +745,16 @@ $(function () {
         });
 
         // Reset the changes
-        $('#ues-dashboard-cancelBtn').on('click', function () {
+        $('#ues-dashboard-resetBtn').on('click', function () {
             location.reload();
+        });
+
+        $("input#ues-dashboard-title, textArea#ues-dashboard-description, input#share-dashboard, input#personalize-dashboard").change(function () {
+            $('#ues-dashboard-saveBtn').attr('disabled', false);
+        });
+
+        $('div.ues-shared-view, div.ues-shared-edit,div.ues-shared-owner, div.select').bind("DOMSubtreeModified", function () {
+            $('#ues-dashboard-saveBtn').attr('disabled', false);
         });
     };
 

@@ -1,40 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-    <ModulePrefs title="Date Picker" description="g1">
+    <ModulePrefs title="Date Picker" description="Date Picker">
         <Require feature="pubsub-2"/>
         <Require feature="dynamic-height"/>
+        <Require feature="wso2-gadgets-controls"/>
     </ModulePrefs>
     <Content type="html">
         <![CDATA[
         <head>
-            <meta charset="utf-8">
-            <title>jQuery UI Datepicker - Default functionality</title>
-            <link rel="stylesheet" href="/portal/libs/bootstrap_3.3.5/css/bootstrap.min.css">
-            <link rel="stylesheet" href="css/bootstrap-datepicker.min.css" type="text/css"/>
-            <style>
-                .datepicker-inline {
-                    margin:0 auto;
+            <style type="text/css">
+                body {
+                    padding: 12px;
+                    box-sizing: border-box;
+                    background-color: transparent; /* Removes the background color added by Shindig */
                 }
             </style>
+            <!-- Styles -->
+            <link rel="stylesheet" type="text/css" href="/portal/libs/jquery-ui-1.11.4/jquery-ui.min.css" />
+        </head>
+        <body>
+            <p>Date: <input type="text" id="datepicker"></p>
+
+            <!-- JavaScript libraries scripts -->
             <script src="/portal/libs/jquery_1.11.0/jquery-1.11.3.min.js"></script>
-            <script src="/portal/libs/bootstrap_3.3.5/js/bootstrap.min.js"></script>
-            <script src="js/bootstrap-datepicker.min.js"></script>
+            <script src="/portal/libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
             <script>
-                $(function() {
-                    $("#datepicker").datepicker({
-                        orientation: 'top'
+                $(document).ready(function() {
+                    $(function() {
+                        // Bind the date picker control to the above textbox.
+                        $( "#datepicker" ).datepicker({
+                            // When the datepicker is closed, restore the size of the gadget to its original value.
+                            onClose: function() {
+                                wso2.gadgets.controls.restoreGadget();
+                            },
+                            onSelect: function(date) {
+                                gadgets.Hub.publish('date-selected', date);
+                            }
+                        }).on('focusin', function() {
+                            // When the textbox is focused, the gadget should be resized to cater the content.
+                            wso2.gadgets.controls.resizeGadget({
+                                // In this example only the height should be modified (other fields can be omitted).
+                                height: '300px'
+                            });
+                        });
+
+                        // Hide the date picker when the parent document is clicked.
+                        wso2.gadgets.controls.addLostFocusListener(function() {
+                            $( "#datepicker" ).datepicker('hide');
+                        });
                     });
                 });
             </script>
-        </head>
-        <body>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div id="datepicker"></div>
-                    </div>
-                </div>
-            </div>
         </body>
         ]]>
     </Content>

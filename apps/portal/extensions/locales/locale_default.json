@@ -146,7 +146,7 @@
   "delete.block.only.message": "Are you sure you want to delete the block?",
   "delete.block.only.header": "Deleting the block",
   "settings.savebutton": "Save",
-  "settings.cancelbutton": "Cancel",
+  "settings.resetbutton": "Reset",
   "generate.a.gadget": "Generate a Gadget",
   "select.provider": "Select Provider",
   "select.a.provider": ".. Select a provider ..",
