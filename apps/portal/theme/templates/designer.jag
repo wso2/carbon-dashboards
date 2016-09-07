@@ -336,8 +336,8 @@
                     </ul>
                     <ul class="nav nav-tabs" id="designer-view-mode"><!-- Dynamic Content --></ul>
                     <ul class="nav nav-tabs">
-                        <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
                         <li id="add-view" hidden><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
+                        <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
                         <li id="more-views" hidden>
                             <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-down"></i></a>
                             <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu"></ul>
