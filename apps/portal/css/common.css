@@ -148,33 +148,28 @@ ul.dropdown-menu.more-actions-button > li > button {
     position: relative;
     margin: 0;
     padding: 0;
-    min-height: 20px;
+    min-height: 40px;
     font-size: 13px;
-    line-height: 20px;
+    line-height: 40px;
 }
 
 .dd-handle {
     display: block;
-    height: 30px;
+    height: 40px;
+    line-height: 40px;
     margin: 5px 0;
-    padding: 5px 10px;
-    color: #333;
+    padding: 0 15px;
+    color: #f5f5f5;
     text-decoration: none;
-    font-weight: bold;
-    border: 1px solid #ccc;
-    background: #fafafa;
-    background: -webkit-linear-gradient(top, #fafafa 0%, #eee 100%);
-    background: -moz-linear-gradient(top, #fafafa 0%, #eee 100%);
-    background: linear-gradient(top, #fafafa 0%, #eee 100%);
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
+    background: #373e46;
     box-sizing: border-box;
+    cursor: move;
     -moz-box-sizing: border-box;
 }
 
 .dd-handle:hover {
-    color: #2ea8e5;
-    background: #fff;
+    color: #f5f5f5;
+    background: #4f6a80;
 }
 
 .dd-item > button {
