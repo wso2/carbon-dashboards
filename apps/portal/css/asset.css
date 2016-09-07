@@ -26,6 +26,25 @@ body {
     position: relative;
 }
 
+#ds-assets-portal .ds-asset.shared {
+    border-top: 5px solid #4aa624;
+    /*background: #4f6a80;*/
+}
+
+#ds-assets-portal .ds-asset.ues-dashboard {
+    height: 150px;
+}
+
+#ds-assets-portal .ds-asset .ds-asset-icon {
+    font-size: 80px;
+}
+
+#ds-assets-portal .ds-asset .ds-asset-shared {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+}
+
 #ds-assets-portal .ds-asset > .ds-asset-img {
     height: 150px;
     margin: 20px auto;

@@ -32,6 +32,7 @@
     
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
     
 </head>
 <body>
@@ -46,8 +47,8 @@
 
 	<% var showNavigation = (!isMobileDevice && permission.isAllowed(constants.CREATE)) || config.isCreateGadgetEnable; %>
     <% if (showNavigation) { %>
-    <!-- navbar -->
-    <div class="navbar-wrapper">
+        <!-- navbar -->
+        <div class="navbar-wrapper">
             <nav class="navbar navbar-default affix-top" data-spy="affix" data-offset-top="80" data-offset-bottom="40">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -117,7 +118,7 @@
                 </div>
             <% } %>
         </div>
-        <div class="row thumbnails ues-dashboards"></div>
+        <div class="row thumbnails ues-dashboards" id="ds-assets-portal"></div>
     </div>
 
     <!-- Footer -->
@@ -126,11 +127,11 @@
     <!-- Handlebar templates -->
     <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
-            <div class="thumbnail ues-dashboard" id="{{id}}" data-id="{{id}}">
-                {{>ues-dashboard-thumbnail-hbs}}
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
+                <div class="thumbnail ues-dashboard ds-asset {{#if shared}} shared {{/if}}"  id="{{id}}" data-id="{{id}}">
+                    {{>ues-dashboard-thumbnail-hbs}}
+                </div>
             </div>
-        </div>
         {{/each}}
     </script>
 
@@ -146,57 +147,62 @@
     </script>
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-         <h2 id="ues-dashboard-title" class="truncate">{{title}}  {{#if defective}}<i class="fw fw-alert"></i>{{/if}}</h2>
-        <p id="ues-dashboard-url" class="ues-dashboard-url truncate">
-            <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
-        </p>
-        <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
+        <h5 id="ues-dashboard-title" class="title truncate">{{title}}  {{#if defective}}<i class="fw fw-alert"></i>{{/if}}</h5>
+        <div class="add-padding-top-2x add-padding-left-3x">
+            <i class="ds-asset-icon fw fw-dashboard"></i>
+            <p id="ues-dashboard-url" class="ues-dashboard-url truncate hidden">
+                <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
+            </p>
+            <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
             {{#if shared}}
-                <span class="fw-stack ues-dashboard-share">
-                    <i class="fw fw-share fw-stack-1x"></i>
-                </span>
-                <p id = "shared-description"><%= i18n.localize("shared.by.supertenant") %></p>
+            <div class="ds-asset-shared">
+                <i class="fw fw-share"></i>
+                <span id="shared-description"><%= i18n.localize("shared.by.supertenant") %></span>
+            </div>
             {{/if}}
-        <div class="ues-actions">
-            <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
-                data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
-                href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-view fw-stack-1x"></i>
-                </span>
-                 <%= i18n.localize("view") %>
-            </a>
-            <% if (! isMobileDevice) { %>
-            {{#if editable}}
-            <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-edit fw-stack-1x"></i>
-                </span>
-                <%= i18n.localize("design") %>
-            </a>
-                {{#if owner}}
-                    <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+            <div class="ues-actions">
+                <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
+                    data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
+                    href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">
+                    <span class="fw-stack">
+                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                        <i class="fw fw-view fw-stack-1x"></i>
+                    </span>
+                    <%= i18n.localize("view") %>
+                </a>
+                <% if (! isMobileDevice) { %>
+                {{#if editable}}
+                    <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
                         <span class="fw-stack">
                             <i class="fw fw-circle-outline fw-stack-2x"></i>
-                            <i class="fw fw-settings fw-stack-1x"></i>
+                            <i class="fw fw-edit fw-stack-1x"></i>
                         </span>
-                        <%= i18n.localize("settings") %>
+                        <%= i18n.localize("design") %>
                     </a>
+                    {{#if owner}}
+                        <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+                            <span class="fw-stack">
+                                <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                <i class="fw fw-settings fw-stack-1x"></i>
+                            </span>
+                            <%= i18n.localize("settings") %>
+                        </a>
+                    {{/if}}
                 {{/if}}
-            {{/if}}
-            <% } %>
+                <% } %>
+            </div>
         </div>
         {{#if owner}}
-        <a href="#" class="ues-dashboard-trash-handle">
-            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.dashboard")%>"></i>
-        </a>
+         <div class="ds-asset-handles">
+            <a href="#" class="ds-asset-handle ues-dashboard-trash-handle">
+                <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.dashboard")%>"></i>
+            </a>
+        </div>
         {{/if}}
     </script>
 
     <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
-        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <h5 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h5>
         <div class="ues-trash-actions">
             <a href="#" class="btn btn-danger ladda-button ues-dashboard-trash-confirm" role="button" data-style="expand-left" data-size="l">
                 <span class="ladda-label"><%= i18n.localize("delete")%></span>

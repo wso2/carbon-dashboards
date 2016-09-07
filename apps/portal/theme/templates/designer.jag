@@ -133,7 +133,7 @@
     </div>
 
     <!-- navbar -->
-    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="58">
+    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="58" data-offset-bottom="40">
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
@@ -207,8 +207,7 @@
                                 <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>...">
                             </div>
                         </div>
-                        <div class="panel-group" id="ues-dashboard-pages" role="tablist" aria-multiselectable="true">
-                        </div>
+                        <div class="panel-group" id="ues-dashboard-pages" role="tablist" aria-multiselectable="true"></div>
                     </div>
 
                     <!-- Layouts -->
@@ -264,8 +263,8 @@
                                 </button>
                                 <input type="text" class="form-control" placeholder="<%=i18n.localize("search.label")%>..." />
                             </div>
-                            <div class="ues-thumbnails">
-                            </div>
+                            
+                            <div class="ues-thumbnails"></div>
 
                         </div>
                     </div>
@@ -277,6 +276,7 @@
                             <div id="ues-view-layouts"></div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -301,10 +301,8 @@
 
         <!-- page content -->
         <div class="container-fluid body-wrapper menu" data-view="menu" style="display: none;">
-            <div class="page-content">
-                <div class="add-padding-5x">
-                    <div id="ues-pages"></div>
-                </div>
+            <div class="add-padding-5x">
+                <div id="ues-pages"></div>
             </div>
         </div>
         <div class="container-fluid body-wrapper content" data-view="layout">
@@ -328,39 +326,23 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="page-views-container">
+                <ul class="nav nav-tabs">
+                    <li id="slide-left"><a href="javascript:void(0)"><i class="fw fw-left"></i></a></li>
+                </ul>
+                <ul class="nav nav-tabs" id="designer-view-mode"><!-- Dynamic Content --></ul>
+                <ul class="nav nav-tabs">
+                    <li id="add-view" hidden><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
+                    <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
+                    <li id="more-views" hidden>
+                        <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-down"></i></a>
+                        <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu"></ul>
+                    </li>
+                </ul>                    
+            </div>
 
             <div class="page-content">
-                <div class="view-container1" style="">
-                    <button id="slide-left" >
-                        <span class="icon fw-stack">
-                            <i class="fw fw-left fw-stack-1x toggle-icon-up"></i>
-                        </span>
-                    </button>
-                    <div style="display:inline-block;width:87%;vertical-align: bottom">
-                        <ul class="nav nav-tabs" id="designer-view-mode">
-                        </ul>
-                    </div>
-                    <button id="slide-right" >
-                        <span class="icon fw-stack">
-                            <i class="fw fw-right fw-stack-1x toggle-icon-up"></i>
-                        </span>
-                    </button>
-                    <div class ="ds-add-view-btn" style="display:inline-block; vertical-align: top;position: relative;">
-                        <button id="more-views" data-toggle="dropdown" aria-expanded="false" hidden>
-                            <span class="icon fw-stack">
-                                <i class="fw fw-down fw-stack-1x toggle-icon-up"></i>
-                            </span>
-                        </button>
-                        <button id="add-view" hidden>
-                            <span class="icon fw-stack" >
-                                <i class="fw fw-add fw-stack-1x"></i>
-                                <i class="fw fw-circle-outline fw-stack-2x"></i>
-                            </span>
-                        </button>
-                        <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu">
-                        </ul>
-                    </div>
-                </div>
                 <div class="nano">
                     <div class="gird-guide">
                         <div class="row">
@@ -465,8 +447,7 @@
                     </div>
                 </div>
             </div>
-            <div class="gadget-body ues-component-body">
-            </div>
+            <div class="gadget-body ues-component-body"></div>
         </div>
     </script>
 
@@ -480,8 +461,7 @@
         {{#each blocks}}
         <div class="grid-stack-item" data-id="{{id}}"  data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}" 
              data-gs-height="{{height}}" data-banner="{{banner}}"{{#if banner}} data-gs-no-resize="true"{{/if}}>
-            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
-            </div>
+            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}"></div>
         </div>
         {{/each}}
     </script>
@@ -489,8 +469,7 @@
     <!-- Template to add new gridstack block -->
     <script id="ues-new-block-hbs" type="text/x-handlebars-template">
         <div data-id="{{id}}">
-            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}">
-            </div>
+            <div class="grid-stack-item-content ues-component-box gadget-wrapper" id="{{id}}"></div>
         </div>
     </script>
 
@@ -585,6 +564,10 @@
     </script>
 
     <script id="ues-components-list-hbs" type="text/x-handlebars-template">
+        <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
+            {{>ds-add-gadget-hbs}}
+        <% } %>
+        
         {{#each assets}}
             <div class="store-category">
                 <h3>{{storeType}}</h3>
@@ -602,10 +585,6 @@
                 {{/each}}
             {{/each}}
         {{/each}}
-
-         <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
-                {{>ds-add-gadget-hbs}}
-         <% } %>
     </script>
 
     <!-- Handlebar to render the add gadget button -->
@@ -616,7 +595,7 @@
             <span class="icon fw-stack fw-lg">
                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                 <i class="fw fw-add fw-stack-1x"></i>
-            </span> <%=i18n.localize("add.gadgets")%>
+            </span> <%=i18n.localize("add.gadget")%>
         </button>
       </a>
     </script>
@@ -675,27 +654,27 @@
     </script>
 
     <script id="ues-layouts-list-hbs" type="text/x-handlebars-template">
-        {{#if length}}
-        {{#each .}}
-        <div class="thumbnail selectable" data-id="{{id}}">
-            <h5 class="title">{{title}}</h5>
-            <img src="{{resolveURI thumbnail}}" />
-        </div>
-        {{/each}}
-        {{else}}
-        <h4><%= i18n.localize("no.layout.found")%></h4>
-        {{/if}}
-         <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
+        <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
               <a href="<%=tenantedUrlPrefix%>layout/">
                 <button type="button" class="btn btn-primary btn-stack btn-block">
                     <span class="icon fw-stack fw-lg">
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-add fw-stack-1x"></i>
-                    </span> <%=i18n.localize("add.layouts")%>
+                    </span> <%=i18n.localize("add.layout")%>
                 </button>
               </a>
-         <% } %>
-
+        <% } %>
+        <br />
+        {{#if length}}
+            {{#each .}}
+                <div class="thumbnail selectable" data-id="{{id}}">
+                    <h5 class="title">{{title}}</h5>
+                    <img src="{{resolveURI thumbnail}}" />
+                </div>
+            {{/each}}
+        {{else}}
+            <h4><%= i18n.localize("no.layout.found")%></h4>
+        {{/if}}
     </script>
 
     <script id="ues-modal-confirm-hbs" type="text/x-handlebars-template">
@@ -822,27 +801,18 @@
 
     <!-- View label -->
     <script id="add-new-view-hbs" type="text/x-handlebars-template">
-        <li role="dashboard-view" data-view-mode="" id="new-view-id">
-            <div class="view-heading ues-component-heading">
-                <div class="context-menu">
-                    <i class="fw fw-ellipsis fw-rotate-90"></i>
-                    <div class="gadget-actions action-buttons ues-component-actions">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
-                            data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options">
-                                <i class="icon fw fw-configarations"></i>
-                            </button>
-                            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("remove")%>">
-                                <i class="icon fw fw-delete"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <a role="tab" data-toggle="tab" class="ues-view-name" id="view-name"><%=i18n.localize("new.view")%></a>
-                <button type="button" class="btn btn-default ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("cancel")%>">
-                    <i class="icon fw fw-cancel"></i>
-                </button>
-            </div>
+        <li role="dashboard-view" data-view-mode="" id="new-view-id" class="clearfix view-heading ues-component-heading">
+            <a role="tab" data-toggle="tab" class="ues-view-name  pull-left" id="view-name"><%=i18n.localize("new.view")%></a>
+            <button type="button" class="btn btn-default ues-view-component-properties-handle" data-toggle="sidebar" data-target="#right-sidebar"
+                data-container=".page-content" data-container-divide="true" aria-expanded="false" rel="show-options"  title="<%=i18n.localize("settings")%>">
+                <i class="icon fw fw-configarations"></i>
+            </button>
+            <button type="button" class="ues-close-view" data-toggle="modal" data-target="#modalClose" title="<%=i18n.localize("minimize")%>">
+                <i class="icon fw fw-minus"></i>
+            </button>
+            <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal" data-target="#modalDelete" title="<%=i18n.localize("delete")%>">
+                <i class="icon fw fw-delete"></i>
+            </button>
         </li>
     </script>
 
