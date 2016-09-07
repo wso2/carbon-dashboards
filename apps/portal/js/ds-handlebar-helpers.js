@@ -91,10 +91,14 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
 
     if (designer) {
         divTree += "<ul class='nav nav-pills nav-stacked menu-customize'>" +
-            "<li class='hide-all' style='margin: 0 0 10px 0;'>" +
-            "<input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'>" +
-            "<i class='fw fw-view'></i> Hide All</li></ul>" +
-            "<ul id='sortable' class='nav nav-pills nav-stacked connect dd dd-list'>";
+                        "<li class='hide-all add-margin-bottom-3x'>" +
+                            "<label class='checkbox'>" +
+                                "<input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'>" +
+                                "<span class='helper'> Hide All</span>" +
+                            "</label>" +
+                        "</li>" + 
+                    "</ul>" +
+                    "<ul id='sortable' class='nav nav-pills nav-stacked connect dd dd-list'>";
     } else {
         divTree += "<ul id='sortable' class='nav nav-pills nav-stacked menu-customize pages'>";
     }
@@ -110,7 +114,7 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 divTree += "<li id='" + menu[i].id + "' data-parent='" + parent +
                     "' data-id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "' class='dd-item'>" +
                     "<div class='dd-handle'>" + menu[i].title + "<span class='controls hide-menu-item hide-" +
-                    menu[i].ishidden + "' id='" + menu[i].id + "'>" + iClass + "</span></div>";
+                    menu[i].ishidden + "' id='" + menu[i].id + "' title='Hide page in Dashboard View Page'>" + iClass + "</span></div>";
             } else {
                 var cls = menu[i].id === currentView ? 'active' : '';
                 var divLi = "<li class='" + cls + "'><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>" +
