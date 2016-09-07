@@ -29,6 +29,7 @@ import org.wso2.carbon.ntask.common.TaskException;
 import org.wso2.carbon.ntask.core.TaskInfo;
 import org.wso2.carbon.ntask.core.TaskManager;
 import org.wso2.carbon.ntask.core.service.TaskService;
+import org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
 
 /**
  * @scr.component name="dashboard.portal.core" immediate="true"
@@ -57,6 +58,7 @@ public class PortalDSComponent {
             TaskInfo taskInfo = new TaskInfo(PortalConstants.PORTAL_HOUSE_KEEPING_TASK,
                     HouseKeepingTask.class.getCanonicalName(), null, triggerInfo);
             taskManager.registerTask(taskInfo);
+            DSDataSourceManager.getInstance();
         } catch (TaskException exception) {
             log.error("Error while registering the task type : " + PortalConstants.TASK_TYPE, exception);
         } catch (DashboardPortalException exception) {
