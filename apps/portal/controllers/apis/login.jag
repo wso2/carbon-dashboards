@@ -22,6 +22,7 @@ var user;
     var constants = require("/modules/constants.js");
     var dashboards = require('/modules/dashboards.js');
     var permission = require("/modules/permission.js");
+    var conf = require('/configs/designer.json');
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
@@ -37,7 +38,6 @@ var user;
         }
         return destination.replace(/[^a-zA-Z0-9-_/?&=. ]/g, "");
     };
-
     if (request.getMethod() === 'POST') {
         var dest = sanitizeDestination(request.getParameter("destination"));
         if (dest) {
@@ -88,7 +88,12 @@ var user;
                     log.debug(session.get('user') + " is authorized.");
                 }
                 if (dest) {
-                    response.sendRedirect(dest);
+                    if ((dest.indexOf(conf.tenantPrefix + "/" + user.domain) > -1) || (dest.indexOf(conf.tenantPrefix + "/") < 0
+                            && superDomain === String(user.domain))) {
+                        response.sendRedirect(dest);
+                    } else {
+                        response.sendRedirect('/portal/');
+                    }
                 }
                 var content = {'sessionId': session.getId()};
                 response.status = 200;
@@ -97,13 +102,13 @@ var user;
             }
             else {
                 if (dest) {
-                    response.sendRedirect(dest + "login?loginAttempt=true");
+                    response.sendRedirect("/portal/login?loginAttempt=true&destination=" + dest);
                 }
             }
         }
         else {
             if (dest) {
-                response.sendRedirect(dest + "login?loginAttempt=true");
+                response.sendRedirect("/portal/login?loginAttempt=true&destination=" + dest);
             }
         }
     }
