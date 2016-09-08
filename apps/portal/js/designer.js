@@ -1617,8 +1617,8 @@ $(function () {
         //event handler for selecting an option form copying an existing view or creating a new view
         $(document).on('click', '.gadgets-grid button', function (event) {
             event.preventDefault();
-            isInViewCreationView = true;
             if (this.value === "new-view") {
+                isInViewCreationView = true;
                 //if create a new view
                 isNewView = true;
                 $('.gadgets-grid').empty();
@@ -1630,6 +1630,7 @@ $(function () {
                     $.sidebar_toggle('hide', '#left-sidebar', '.page-content-wrapper');
                 }
             } else if (this.value === "copy-view") {
+                isInViewCreationView = true;
                 //if copy from an existing view
                 $('#page-views-menu').empty();
                 var views = getUserAllowedViews(Object.keys(page.views.content));
@@ -3869,13 +3870,14 @@ $(function () {
             page.views.content[DEFAULT_DASHBOARD_VIEW].name = DEFAULT_VIEW_NAME;
             page.views.content[DEFAULT_DASHBOARD_VIEW].roles = [INTERNAL_EVERYONE_ROLE];
             saveDashboard();
-            pageType = DEFAULT_DASHBOARD_VIEW;
             visibleViews = [];
             if (ues.global.page) {
                 currentPage(findPage(dashboard, ues.global.page.id));
                 switchPage(id, pageType);
+                pageType = DEFAULT_DASHBOARD_VIEW;
                 done();
             } else {
+                pageType = DEFAULT_DASHBOARD_VIEW;
                 renderPage(id, done);
             }
         }, 'html');
