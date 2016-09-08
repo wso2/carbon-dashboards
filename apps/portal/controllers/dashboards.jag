@@ -71,7 +71,7 @@ var fresh;
         if (!request.getParameter("shared")) {
             utils.sandbox(context, function () {
                 dashboard = dashboards.getAsset(dashboardId);
-                if (!dashboard.menu && dashboard.pages.length > 0) {
+                if (dashboard && !dashboard.menu && dashboard.pages.length > 0) {
                     if (log.isDebugEnabled()) {
                         log.debug("Unable to locate menu object, updating dashboard.json for: " + dashboardId);
                     }
