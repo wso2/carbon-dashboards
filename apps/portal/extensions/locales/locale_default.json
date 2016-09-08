@@ -125,6 +125,7 @@
   "width.label": "Width",
   "height.label": "Height",
   "add.gadgets": "Add Gadgets",
+  "add.gadget": "Add Gadget",
   "gadget.configuration.label": "Gadget configuration",
   "view.configuration.label": "View configuration",
   "layouts": "Layouts",
@@ -278,6 +279,7 @@
   "no.permission.to.view.gadget": "You do not have necessary permission to view the gadget",
   "gadget.missing": "Gadget folder is missing. Please Check again.",
   "add.layouts": "Add Layouts",
+  "add.layout": "Add Layout",
   "cannot.save.dashboard": "Cannot Save the Dashboard",
   "atleast.one.owner.role": "At least one role should be there as the owner of the dashboard",
   "please.enter.to.change.name" : "Please press enter to change the view name",
@@ -285,5 +287,6 @@
   "dashboard.portal" : "Dashboard Portal",
   "customize.dashboard" : "Customize Dashboard",
   "cannot.create.view.for.share.dashboard" : "Cannot create more than one view in a page for shared dashboard",
-  "cannot.delete.internal.everyone.role.for.share.dashboard" : "Cannot remove internal/everyone role from the view when the dashboard is shared"
+  "cannot.delete.internal.everyone.role.for.share.dashboard" : "Cannot remove internal/everyone role from the view when the dashboard is shared",
+  "minimize": "Minimize"
 }
