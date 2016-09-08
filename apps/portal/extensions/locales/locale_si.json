@@ -158,7 +158,7 @@
   "tenant.dashboards": "Tenant Specific Dashboards",
   "shared.by.supertenant": "Shared By Super-Tenant",
   "owners": "අයිතිකරුවන්",
-  "share.information.message": "This dashboard is visible to all the tenants"
+  "share.information.message": "This dashboard is now visible to all the tenants",
   "upload.gadget.label": "Upload Gadget",
   "create.layout.label": "Create Layout",
   "upload.layout.label": "Upload Layout",

@@ -29,20 +29,18 @@
 }
 
 #share-info {
-    padding-top: 8px;
-    font-weight: bold;
+    padding-top: 6px;
 }
 
 #personalize-info {
-    padding-top: 8px;
-    font-weight: bold;
+    padding-top: 4px;
 }
 
 /**
  * Theme overrides
  */
 .switch {
-    margin-top: 6px;
+    margin-top: 4px;
 }
 
 .permission-menu-content {
