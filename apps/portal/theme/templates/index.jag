@@ -147,13 +147,20 @@
     </script>
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-        <h5 id="ues-dashboard-title" class="title truncate">{{title}}  {{#if defective}}<i class="fw fw-alert"></i>{{/if}}</h5>
-        <div class="add-padding-top-2x add-padding-left-3x">
-            <i class="ds-asset-icon fw fw-dashboard"></i>
-            <p id="ues-dashboard-url" class="ues-dashboard-url truncate hidden">
-                <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
-            </p>
-            <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
+        <h5 id="ues-dashboard-title" class="title truncate">{{#if defective}}<i class="fw fw-alert"></i>{{/if}}</h5>
+        <div class="add-padding-2x">
+            <div class="media">
+                <div class="media-left add-padding-right-4x add-padding-left-2x">
+                    <i class="ds-asset-icon fw fw-dashboard media-object"></i>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading add-margin-top-1x">{{title}}</h4>
+                    <span id="ues-dashboard-url" class="ues-dashboard-url truncate text-muted">
+                        <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
+                    </span>
+                    <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
+                </div>
+            </div>
             {{#if shared}}
             <div class="ds-asset-shared">
                 <i class="fw fw-share"></i>
