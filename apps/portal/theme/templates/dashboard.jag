@@ -132,7 +132,7 @@
         </div>
     </div>
     <!-- .left-sidebar -->
-    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
+    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-container=".page-content-wrapper" data-container-divide="true" data-width="260" style="width:260px">
         <div class="nano">
             <div class="nano-content">
 
@@ -214,7 +214,7 @@
             <div class="container-fluid">
 
                 <div class="navbar-header">
-                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="true" rel="sub-nav">
+                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="true" rel="sub-nav">
                         <span class="icon fw-stack">
                             <i class="fw fw-menu fw-stack-1x toggle-icon-left"></i>
                         </span>
@@ -319,7 +319,7 @@
                         <div class="clearfix add-margin-top-5x add-margin-right-5x">
                             <div id="list-user-views" class="hide">
                                 <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
-                                    data-style="btn-default" data-width="100px" style="width: 200px">
+                                    data-style="btn-default" data-width="100px">
                                 </select>
                             </div>
                         </div>
