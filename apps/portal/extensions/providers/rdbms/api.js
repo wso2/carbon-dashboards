@@ -65,7 +65,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         } catch (e) {
             return {
                 "error" : true,
-                "message" : "Error Connecting to Database"
+                "message" : e.message
             }
         } finally {
             if (db != null) {
