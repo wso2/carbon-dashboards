@@ -84,11 +84,9 @@ body {
 }
 
 .ds-trash-actions {
-    right: 8px;
-    bottom: 7px;
+    right: 15px;
+    bottom: 15px;
     position: absolute;
-    padding-bottom: 20px;
-    padding-right: 20px;
 }
 
 #ds-assets-portal .ds-asset h1 {
