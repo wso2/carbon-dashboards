@@ -35,6 +35,7 @@ TODO : This is temporary. We will later change this color
 #ues-portal .ues-dashboard .ues-actions {
     padding: 8px 2px;
     text-align: right;
+    white-space: nowrap;
 }
 
 #ues-portal .ues-dashboard .ues-actions a {
@@ -104,8 +105,8 @@ TODO : This is temporary. We will later change this color
 }
 
 .ues-trash-actions {
-    right: 8px;
-    bottom: 7px;
+    right: 15px;
+    bottom: 15px;
     position: absolute;
 }
 

@@ -28,12 +28,10 @@ body {
 
 #ds-assets-portal .ds-asset.shared {
     border-top: 5px solid #4aa624;
-    /*background: #4f6a80;*/
 }
 
 #ds-assets-portal .ds-asset.ues-dashboard {
-    /*height: 150px;*/
-    height: auto;
+    height: 190px;
 }
 
 #ds-assets-portal .ds-asset .ds-asset-icon {
