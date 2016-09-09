@@ -147,14 +147,14 @@
     </script>
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-        <h5 id="ues-dashboard-title" class="title truncate">{{#if defective}}<i class="fw fw-alert"></i>{{/if}}</h5>
-        <div class="add-padding-2x">
+        <div class="add-padding-2x add-padding-top-5x">
+            {{#if defective}}<span class="defective-dashboard text-warning" title="<%= i18n.localize("missing.gadget") %>"><i class="icon fw fw-warning"></i> <%= i18n.localize("defective.dashboard") %></span>{{/if}}
             <div class="media">
                 <div class="media-left add-padding-right-4x add-padding-left-2x">
                     <i class="ds-asset-icon fw fw-dashboard media-object"></i>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading add-margin-top-1x">{{title}}</h4>
+                    <h4 id="ues-dashboard-title" class="media-heading add-margin-top-1x">{{title}}</h4>
                     <span id="ues-dashboard-url" class="ues-dashboard-url truncate text-muted">
                         <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
                     </span>

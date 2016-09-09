@@ -136,7 +136,7 @@
                         </select>
                     </div>
 
-                    <button type="button" class="btn btn-default btn-bordered" id="ues-dashboard-create"><%=i18n.localize("next")%></button>
+                    <button type="button" class="btn btn-primary btn-bordered" id="ues-dashboard-create"><%=i18n.localize("next")%></button>
 
                 </form>
             </div>
