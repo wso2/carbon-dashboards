@@ -200,7 +200,8 @@ $(function () {
                                     generateMessage(err, null, null, "error", 'topCenter', 2000, null);
                                     throw err;
                                 } else {
-                                    saveDashboard();
+                                    updateLayout();
+                                    updateRefreshBtn(ues.global.page);
                                 }
                                 $("#" + ues.global.page).show();
                             });
@@ -214,7 +215,8 @@ $(function () {
                                             break;
                                         }
                                     }
-                                    saveDashboard();
+                                    updateLayout();
+                                    updateRefreshBtn(ues.global.page);
                                     componentBox.html("");
                                 } else {
                                     generateMessage('Error updating database', null, null, "error", 'topCenter', 2000, null);
