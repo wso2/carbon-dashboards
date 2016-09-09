@@ -182,7 +182,7 @@
                                 </p>
                             </div>
                              <div class = "col-sm-7">
-                                 <p id="share-info" class = <%= dashboard.shareDashboard ? "show" : "hide" %>><%= i18n.localize("share.information.message")%></p>
+                                 <p id="share-info" class = "alert alert-info <%= dashboard.shareDashboard ? 'show' : 'hide' %>"><%= i18n.localize("share.information.message")%></p>
                              </div>
                         </div>
                     </div>
@@ -214,7 +214,7 @@
                                 </p>
                             </div>
                          <div class = "col-sm-7">
-                             <p id="personalize-info" class = <%= dashboard.personalizeDashboard ? "show" : "hide" %>><%= i18n.localize("personalize.information.message")%></p>
+                             <p id="personalize-info" class = "alert alert-info <%= dashboard.personalizeDashboard ? 'show' : 'hide' %>"><%= i18n.localize("personalize.information.message")%></p>
                          </div>
                     </div>
                 </div>
