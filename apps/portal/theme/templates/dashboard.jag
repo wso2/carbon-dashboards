@@ -132,7 +132,7 @@
         </div>
     </div>
     <!-- .left-sidebar -->
-    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-container=".page-content-wrapper" data-container-divide="true" data-width="260" style="width:260px">
+    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-container=".page-content-wrapper" data-container-divide="true" data-width="260" data-offset-bottom="40" style="width:260px">
         <div class="nano">
             <div class="nano-content">
 
