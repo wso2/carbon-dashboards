@@ -32,7 +32,8 @@ body {
 }
 
 #ds-assets-portal .ds-asset.ues-dashboard {
-    height: 150px;
+    /*height: 150px;*/
+    height: auto;
 }
 
 #ds-assets-portal .ds-asset .ds-asset-icon {
