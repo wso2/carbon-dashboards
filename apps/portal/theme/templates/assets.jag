@@ -200,7 +200,7 @@
 
     <!-- confirmation message when trying to delete a used gadget-->
      <script id="ds-gadget-usage-confirm-hbs" type="text/x-handlebars-template">
-        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <h2 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
             <i class="icon fw fw-error"></i><strong>Warning! </strong>{{message}}
         </div>
