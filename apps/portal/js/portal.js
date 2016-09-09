@@ -64,7 +64,7 @@ $(function () {
         $.ajax({
             url: dashboardsApi + '/' + id,
             method: 'DELETE',
-            async : false,
+            async: false,
             success: function () {
                 button.stop();
                 updateDatabase(id);
@@ -80,11 +80,11 @@ $(function () {
      * To update the database after deleting a dashboard
      * @param id Id of the dashboard
      */
-    var updateDatabase = function(id) {
+    var updateDatabase = function (id) {
         $.ajax({
             url: databaseApi + '/' + id,
             method: 'DELETE',
-            async : false,
+            async: false,
             success: function () {
                 console.log("Successfully updated the gadget usage table after deleting the dashboard");
             },
@@ -168,8 +168,8 @@ $(function () {
             var dashboard = findDashboard(id);
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
         });
-        
-        portal.on('click', '.ues-view:not(.disable)', function(e) {
+
+        portal.on('click', '.ues-view:not(.disable)', function (e) {
             e.preventDefault();
             window.open($(this).attr('href'), '_blank');
         });
@@ -182,7 +182,7 @@ $(function () {
                 if (filter === "All") {
                     $(this).show();
                 } else {
-                    if ($(this).find('.ues-dashboard-share').length) {
+                    if ($(this).find('.shared').length) {
                         filter === "Shared" ? $(this).show() : $(this).hide();
                     } else {
                         filter === "Shared" ? $(this).hide() : $(this).show();
