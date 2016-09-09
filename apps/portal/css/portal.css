@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-.fw-alert {
-    color : #d9534f;
-    padding-bottom: 3px;
-}
-
 /*
 TODO : This is temporary. We will later change this color
 */
@@ -43,13 +38,17 @@ TODO : This is temporary. We will later change this color
     display: inline-block;
 }
 
-#ues-portal .ues-dashboard h2 {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: 16px;
-    font-weight: 400;
-    height: 20px;
-    width: calc(100% - 20px);
+#ues-portal .ues-dashboard .defective-dashboard {
+    position: absolute;
+    top: 10px;
+}
+
+#ues-portal .ues-dashboard .text-warning {
+    color: #d29a31;
+}
+
+#ues-portal .ues-dashboard .defective-dashboard > .icon {
+    padding-bottom: 2px;
 }
 
 #ues-portal .ues-dashboard .ues-url-link {
