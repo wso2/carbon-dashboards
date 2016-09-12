@@ -125,7 +125,7 @@
         </div>
         <div class="form-inline">
             <div class="form-group" id="storeSelector">
-                <label>Loaded <%= i18n.localize(assetType+"s") %> from</label>
+                <label>Loaded <%= i18n.localize(assetType + "s") %> from</label>
                 <select id="selectStore" name="store"></select>
             </div>
         </div>
@@ -172,18 +172,24 @@
                 {{#if isDownloadable}}
                     <a href="#" class="ds-asset-handle ds-asset-download-handle">
                         <i class="fw fw-download ladda-label" data-toggle="tooltip" data-placement="left" title="
-                        <%= i18n.localize("download."+assetType)%>"></i>
-                    </a>
-                {{/if}}
-            <% } %>
+                        <%=
+    i18n.localize("download." + assetType)
+    %>"></i>
+                        </a>
+                    {{/if}}
+                <%
+} %>
             <% if (isDeleteAllowed) { %>
                 {{#if isDeletable}}
                     <a href="#" class="ds-asset-handle ds-asset-trash-handle">
                         <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
-                        <%= i18n.localize("delete."+assetType)%>"></i>
-                    </a>
-                {{/if}}
-            <% } %>
+                        <%=
+    i18n.localize("delete." + assetType)
+    %>"></i>
+                        </a>
+                    {{/if}}
+                <%
+} %>
         </div>
 
         <img src="{{resolveURI thumbnail}}" class="ds-asset-img img-responsive" />
@@ -192,7 +198,7 @@
     <script id="ds-asset-confirm-hbs" type="text/x-handlebars-template">
         <h2 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
-            <i class="icon fw fw-warning"></i><strong>Warning! </strong> <%= i18n.localize(assetType+".delete.warning")%>
+            <i class="icon fw fw-warning"></i><strong>Warning! </strong> <%= i18n.localize(assetType + ".delete.warning")%>
         </div>
         <div class="ds-trash-actions" >
             <a href="#" class="btn btn-danger ladda-button ds-asset-trash-confirm" role="button"

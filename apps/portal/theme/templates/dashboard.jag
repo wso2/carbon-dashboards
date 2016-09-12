@@ -37,7 +37,7 @@
         var viewId = request.getParameter('currentView');
         var constants = require('/modules/constants.js');
         var shared = request.getParameter('shared');
-        var isUserFromSuperDomain = false;
+var isUserFromSuperDomain = false;
 
         if (!user) {
             userRoles.push(constants.ANONYMOUS_ROLE);
@@ -154,17 +154,18 @@
                             <span class="icon fw-stack">
                                 <i class="fw fw-pdf fw-stack-2x"></i>
                             </span>
-                            <%=i18n.localize("dashboard.pdf.generatePDF")%>
-                        </h4>
-                        <span class="caret"></span>
-                    </div>
-                    <div class="collapse" id="pdf-size-panel">
-                        <div class="panel-body add-padding-3x generate-pdf-panel">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <div class="panel-heading text-truncate dropdown dropdown-select-label">
-                                            <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
+                            <%=i18n.localize("dashboard.pdf.generatePDF")
+    %>
+                            </h4>
+                            <span class="caret"></span>
+                        </div>
+                        <div class="collapse" id="pdf-size-panel">
+                            <div class="panel-body add-padding-3x generate-pdf-panel">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="panel-heading text-truncate dropdown dropdown-select-label">
+                                                <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
                                         </div>
                                         <div class="dropdown pagetype-selection-dropdown">
                                             <div class="btn btn-secondary btn-bordered dropdown-toggle dropdown-menu-button-size" data-toggle="dropdown">

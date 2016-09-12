@@ -649,7 +649,7 @@ $(function () {
         //Share dashboard among tenants
         $('#share-dashboard').on('click', function () {
             var isSharable = true;
-            if ( $(this).is(":checked")){
+            if ($(this).is(":checked")) {
                 var dashboardPagesLength = dashboard.pages.length;
                 for (var index = 0; index < dashboardPagesLength; index++) {
                     var currentPage = dashboard.pages[index];
@@ -670,9 +670,9 @@ $(function () {
 
             if (isSharable) {
                 dashboard.shareDashboard = $(this).is(":checked");
-            } else  {
+            } else {
                 generateMessage("Cannot share dashboard that has multiple views or single view without internal everyone " +
-                    "role",  null, null, "error", "topCenter", 2000);
+                    "role", null, null, "error", "topCenter", 2000);
                 $(this).prop('checked', false);
             }
             if (dashboard.shareDashboard) {

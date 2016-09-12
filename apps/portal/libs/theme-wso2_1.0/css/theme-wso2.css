@@ -1105,11 +1105,11 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 	left: 0;
 	margin-left: 0;
 	min-height: calc(100% - 130px);
-	-webkit-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
-	-moz-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
-	-ms-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
-	-o-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
-	transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+    -webkit-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+    -moz-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+    -ms-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+    -o-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+    transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
 }
 
 .page-content-wrapper.fixed,
@@ -1167,11 +1167,11 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 	overflow-y: auto;
 	background: #222;
 	color: #ffffff;
-	-webkit-transition: left 0.5s ease, right 0.5s ease;
-	-moz-transition: left 0.5s ease, right 0.5s ease;
-	-ms-transition: left 0.5s ease, right 0.5s ease;
-	-o-transition: left 0.5s ease, right 0.5s ease;
-	transition: left 0.5s ease, right 0.5s ease;
+    -webkit-transition: left 0.5s ease, right 0.5s ease;
+    -moz-transition: left 0.5s ease, right 0.5s ease;
+    -ms-transition: left 0.5s ease, right 0.5s ease;
+    -o-transition: left 0.5s ease, right 0.5s ease;
+    transition: left 0.5s ease, right 0.5s ease;
 }
 
 .sidebar-wrapper.affix {
@@ -1845,9 +1845,9 @@ footer a, footer a:hover {
 a.btn,
 .btn {
 	text-decoration: none;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
