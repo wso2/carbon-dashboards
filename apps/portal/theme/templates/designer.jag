@@ -1051,10 +1051,10 @@
     </script>
 
     <script id="ds-error-hbs" type="text/x-handlebars-template">
-      <div class="alert alert-danger" id = "delete-error" role="alert">
-        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
-        <h3>{{error}}</h3>
-      </div>
+        <div class="alert alert-danger" role="alert">
+            <i class="icon fw fw-error"></i><strong><span class="error-message"><%= i18n.localize("error")%></span>!</strong>
+            {{error}}
+        </div>
     </script>
 
     <!-- Jquery/Jquery UI JS -->
