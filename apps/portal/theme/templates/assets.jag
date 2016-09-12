@@ -123,10 +123,18 @@
                 <h1 class="page-sub-title"><%= i18n.localize(assetType+"s") %></h1>
             </div>
         </div>
-        <div class="form-inline">
-            <div class="form-group" id="storeSelector">
-                <label>Loaded <%= i18n.localize(assetType+"s") %> from</label>
-                <select id="selectStore" name="store"></select>
+        <div class="row">
+            <div class="col-md-6">
+                <table id="storeSelector">
+                    <tr>
+                        <td>
+                            <h5>Loaded <%= i18n.localize(assetType+"s") %> from </h5>
+                        </td>
+                        <td>
+                            <select id="selectStore" name="store"></select>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div class="row thumbnails ds-assets"></div>
@@ -158,36 +166,36 @@
 
     <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
         <h5 class="title">{{title}}</h5>
-        
+        {{#has gadgetGeneration}}
+            <a href="#" class="input-group-addon  ds-asset-edit-handle">
+                <i class="glyphicon glyphicon-pencil" data-placement="centre" ></i>
+            </a>
+        {{/has}}
         <% var isDeleteAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
         <% var isDownloadAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DOWNLOAD) : permission.isAllowed(constants.LAYOUT_DOWNLOAD); %>
-        
-        <div class="ds-asset-handles">
-            <% if (isDownloadAllowed) { %>
-                {{#if isDownloadable}}
-                    <a href="#" class="ds-asset-handle ds-asset-download-handle">
-                        <i class="fw fw-download ladda-label" data-toggle="tooltip" data-placement="left" title="
-                        <%= i18n.localize("download."+assetType)%>"></i>
-                    </a>
-                {{/if}}
-            <% } %>
-            <% if (isDeleteAllowed) { %>
-                {{#if isDeletable}}
-                    <a href="#" class="ds-asset-handle ds-asset-trash-handle">
-                        <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
-                        <%= i18n.localize("delete."+assetType)%>"></i>
-                    </a>
-                {{/if}}
-            <% } %>
-        </div>
-        
-        <img src="{{resolveURI thumbnail}}" class="ds-asset-img img-responsive" />
+        <% if (isDownloadAllowed) { %>
+            {{#if isDownloadable}}
+                <a href="#" class="ds-asset-download-handle">
+                    <i class="fw fw-download ladda-label" data-toggle="tooltip" data-placement="left" title="
+                    <%= i18n.localize("download."+assetType)%>"></i>
+                </a>
+            {{/if}}
+        <% } %>
+        <% if (isDeleteAllowed) { %>
+            {{#if isDeletable}}
+                <a href="#" class="ds-asset-trash-handle">
+                    <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
+                    <%= i18n.localize("delete."+assetType)%>"></i>
+                </a>
+            {{/if}}
+        <% } %>
+        <img src="{{resolveURI thumbnail}}" style="height : 150px;"/>
     </script>
 
     <script id="ds-asset-confirm-hbs" type="text/x-handlebars-template">
-        <h2 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
-            <i class="icon fw fw-warning"></i><strong>Warning! </strong> <%= i18n.localize(assetType+".delete.warning")%>
+            <i class="icon fw fw-error"></i><strong>Warning! </strong> <%= i18n.localize(assetType+".delete.warning")%>
         </div>
         <div class="ds-trash-actions" >
             <a href="#" class="btn btn-danger ladda-button ds-asset-trash-confirm" role="button"
@@ -200,7 +208,7 @@
 
     <!-- confirmation message when trying to delete a used gadget-->
      <script id="ds-gadget-usage-confirm-hbs" type="text/x-handlebars-template">
-        <h2 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
             <i class="icon fw fw-error"></i><strong>Warning! </strong>{{message}}
         </div>

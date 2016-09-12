@@ -40,6 +40,7 @@ $(function () {
     var assetsEmptyHbs = Handlebars.compile($("#ds-assets-empty-hbs").html());
     var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
+    var editGadgetUrl = ues.utils.tenantPrefix() + '/create-gadget';
     Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
     /**
      * Load the list of assets available.
@@ -105,6 +106,18 @@ $(function () {
      * */
     var addStoreToList = function (store) {
         $('#selectStore').append('<option value="' + store + '">' + store.toUpperCase() + '</option>');
+    };
+
+    /**
+     * Edit gadget
+     * @param type {String}
+     * @param id {String}
+     * @param store {String}
+     * */
+    var editAsset =  function (type,id, store) {
+        var addParam = '?id=' + id +'&type='+ type+ '&store='+ store + '&editable=true';
+        url =editGadgetUrl+ addParam;
+        window.open(url);
     };
 
     /**
@@ -308,6 +321,13 @@ $(function () {
             var id = assetElement.data('id');
             var store = $('#selectStore').selectpicker('val');
             downloadAsset(assetType, id, store);
+        });
+
+        portal.on('click', '.ds-assets .ds-asset-edit-handle', function (e) {
+            var assetElement = $(this).closest('.ds-asset');
+            var id = assetElement.data('id');
+            var store = $('#selectStore').selectpicker('val');
+            editAsset(assetType, id, store);
         });
 
         $(window).scroll(function () {
