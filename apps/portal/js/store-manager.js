@@ -20,6 +20,7 @@ var deleteAsset;
 var getDashboardsFromRegistry;
 var getListOfStore;
 var downloadAsset;
+var getConfig;
 
 (function () {
     var log = new Log();
@@ -263,6 +264,48 @@ var downloadAsset;
         return asset;
     };
 
+    /*
+     * Get the conf.json file for a given asset
+     * @param type {String} asset type
+     * @param id {String} asset ID
+     * @param storeType {String} store type which asset belongs to
+     * @return config{}
+     * */
+    getConfig = function (type, id, storeType) {
+        var assetConfig;
+        var ctx = utils.currentContext();
+        var server = new carbon.server.Server();
+        var storeTypes = config.store.types;
+        var um;
+        var userRoles;
+
+
+        if (!isShared || !user || user.domain === String(carbon.server.superTenant.domain)) {
+            if (user) {
+                um = new carbon.user.UserManager(server, ctx.tenantId);
+                userRoles = um.getRoleListOfUser(ctx.username);
+            } else {
+                userRoles = [constants.ANONYMOUS_ROLE];
+            }
+        }
+        for (var i = 0; i < storeTypes.length; i++) {
+            var specificStore = require(storeExtension(storeTypes[i]));
+            assetConfig = specificStore.getConfig(type, id, storeType);
+            if (assetConfig) {
+                var allowedRoles = assetConfig.allowedRoles;
+                if (userRoles && allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                    return {};
+                }
+                break;
+            }
+        }
+        return assetConfig;
+    };
+
+
+
+
+
     /**
      * Fetch assets from all the plugged in stores and aggregate
      * @param type
@@ -379,5 +422,6 @@ var downloadAsset;
             }
         }
         return null;
-    }
+    };
+
 }());

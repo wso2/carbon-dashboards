@@ -51,6 +51,22 @@
         });
     };
 
+    store.assetConfig = function (type, id, cb) {
+        $.ajax({
+            url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + domain + '&' : '') + 'type=' + type,
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (data) {
+                cb(false, data);
+            },
+            error: function (data) {
+                cb(true, data);
+            }
+        });
+    };
+
+
     store.sharedAsset = function (type, id, cb) {
         $.ajax({
             url: assetsUrl + '/publicAssets/' + id + '?' + (domain ? 'domain=' + SUPERTENANT_DOMAIN + '&' : '') + 'type=' + type + '&shared=true',

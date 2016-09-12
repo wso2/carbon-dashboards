@@ -31,6 +31,19 @@
     font-size: 12px;
     text-align: right;
 }
+.input-group-addon{
+    position: absolute;
+    top: 8px;
+    right: 65px;
+    text-align: right;
+    font-size: 12px;
+    width: 15px;
+    border: transparent;
+}
+.glyphicon-pencil{
+    top: 0px;
+    right: 0px;
+}
 
 #ds-assets-portal .ds-asset {
     height: 200px;
