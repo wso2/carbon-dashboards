@@ -23,11 +23,31 @@
     var RPC_SERVICE_GET_STATE = 'RPC_SERVICE_GET_STATE';
 
     /**
+     * RPC service name to get global state.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_GLOBAL_STATE = 'RPC_SERVICE_GET_GLOBAL_STATE';
+
+    /**
      * RPC service name to set gadget state.
      * @const
      * @private
      */
     var RPC_SERVICE_SET_STATE = 'RPC_SERVICE_SET_STATE';
+
+    /**
+     * Global state preserving variable name
+     * @type {string}
+     */
+    var GLOBAL_STATE_KEY = 'GLOBAL-STATE';
+
+    /**
+     * RPC service name to set global state.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_SET_GLOBAL_STATE = 'RPC_SERVICE_SET_GLOBAL_STATE';
 
     /**
      * RPC service name to get current username.
@@ -127,6 +147,20 @@
      */
     var RPC_SERVICE_GET_SERVER_PORT = 'RPC_SERVICE_GET_SERVER_PORT';
 
+    /**
+     * RPC service name of getting current page
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETCURRENTPAGE_CALL = 'RPC_SERVICE_GETCURRENTPAGE_CALL';
+
+    /**
+     * RPC service name of getting current view
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETCURRENTVIEW_CALL = 'RPC_SERVICE_GETCURRENTVIEW_CALL';
+
     var username;
     var hostname;
     var port;
@@ -152,7 +186,7 @@
             }
         }
         return result.substr(1);
-    }
+    };
 
     /**
      * Deserialize the page state into an object.
@@ -175,7 +209,7 @@
             }
         }
         return result;
-    }
+    };
 
     /**
      * Get page state from the URL hash.
@@ -188,7 +222,7 @@
             return deserialize(hash.substr(1));
         }
         return {};
-    }
+    };
 
     /**
      * Send response to gadgets for dashboard API invocations.
@@ -201,7 +235,7 @@
      */
     var sendGadgetResponse = function (target, service, response) {
         gadgets.rpc.call(target, RPC_SERVICE_GADGET_CALLBACK, null, service, response);
-    }
+    };
 
     /**
      * Get gadget ID from the gadget container ID.
@@ -211,7 +245,7 @@
      */
     var getGadgetId = function (containerId) {
         return containerId.replace('sandbox-gadget-', '');
-    }
+    };
 
     // Register RPC services
     // Get gadget state
@@ -220,10 +254,29 @@
         sendGadgetResponse(this.f, RPC_SERVICE_GET_STATE, gadgetState);
     });
 
+    // Register RPC services
+    // Get global state
+    gadgets.rpc.register(RPC_SERVICE_GET_GLOBAL_STATE, function () {
+        var globalState = getPageState()[GLOBAL_STATE_KEY];
+        sendGadgetResponse(this.f,RPC_SERVICE_GET_GLOBAL_STATE , globalState);
+    });
+
+
     // Set gadget state
     gadgets.rpc.register(RPC_SERVICE_SET_STATE, function (gadgetState) {
         var pageState = getPageState();
         pageState[getGadgetId(this.f)] = gadgetState;
+        window.location.hash = serialize(pageState);
+        sendGadgetResponse(this.f, RPC_SERVICE_SET_STATE);
+    });
+
+    // Set global state
+    gadgets.rpc.register(RPC_SERVICE_SET_GLOBAL_STATE, function (keyValue) {
+        var pageState = getPageState();
+        if(!pageState[GLOBAL_STATE_KEY]){
+            pageState[GLOBAL_STATE_KEY] = {};
+        }
+        pageState[GLOBAL_STATE_KEY][keyValue.key] = keyValue.value;
         window.location.hash = serialize(pageState);
         sendGadgetResponse(this.f, RPC_SERVICE_SET_STATE);
     });
@@ -374,6 +427,16 @@
     //get name of the dashboard
     gadgets.rpc.register(RPC_SERVICE_GETDASHBOARDNAME_CALL, function () {
         sendGadgetResponse(this.f, RPC_SERVICE_GETDASHBOARDNAME_CALL, ues.dashboards.getDashboardName());
+    });
+
+    //get current page of the dashboard
+    gadgets.rpc.register(RPC_SERVICE_GETCURRENTPAGE_CALL, function () {
+        sendGadgetResponse(this.f, RPC_SERVICE_GETCURRENTPAGE_CALL, ues.dashboards.getCurrentPage());
+    });
+
+    //get current view of the dashboard
+    gadgets.rpc.register(RPC_SERVICE_GETCURRENTVIEW_CALL, function () {
+        sendGadgetResponse(this.f, RPC_SERVICE_GETCURRENTVIEW_CALL, ues.dashboards.getCurrentView());
     });
 
     // Notify each gadgets when the user clicks on the dashboard.

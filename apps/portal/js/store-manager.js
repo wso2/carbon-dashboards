@@ -168,25 +168,25 @@ var getConfig;
                 var isEditor = utils.allowed(userRoles, permissions.editors);
                 var isOwner = utils.allowed(userRoles, permissions.owners);
                 var data = {
-                        id: dashboard.id,
-                        title: dashboard.title,
-                        description: dashboard.description,
-                        pagesAvailable: dashboard.hideAllMenuItems ? false : utils.getUserAllowedViews(dashboard, userRoles),
-                        editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
-                        shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
-                        defective : databaseUtils.checkDefectiveDashboard(dashboard.id, isViewer && !isEditor && isOwner),
-                        owner: true
-                    };
-                if (isOwner) {
+                    id: dashboard.id,
+                    title: dashboard.title,
+                    description: dashboard.description,
+                    pagesAvailable: dashboard.hideAllMenuItems ? false : utils.getUserAllowedViews(dashboard, userRoles),
+                    editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                    shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                    defective: databaseUtils.checkDefectiveDashboard(dashboard.id, (!isEditor && !isOwner && isViewer)),
+                    owner: true
+                };
+                if (isOwner && !data.shared) {
                     userDashboards.push(data);
                     return;
                 }
-                if (isEditor) {
+                if (isEditor && !data.shared) {
                     data.owner = false;
                     userDashboards.push(data);
                     return;
                 }
-                if (isViewer) {
+                if (isViewer || data.shared) {
                     data.editable = false;
                     data.owner = false;
                     userDashboards.push(data);
@@ -326,40 +326,44 @@ var getConfig;
         var storeTypes = config.store.types;
         for (var i = 0; i < storeTypes.length; i++) {
             if ((storeType && storeTypes[i] === storeType) || !storeType) {
-                var specificStore = require(storeExtension(storeTypes[i]));
-                var assets = specificStore.getAssets(type, query);
-                var isDownloadable = specificStore.isDownloadable();
-                var isDeletable = specificStore.isDeletable();
-                if (assets) {
-                    for (var j = 0; j < assets.length; j++) {
-                        var allowedRoles = assets[j].allowedRoles;
-                        if (allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
-                            assets.splice(j, 1);
-                        } else {
-                            if (assets[j].thumbnail) {
-                                assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
+                try {
+                    var specificStore = require(storeExtension(storeTypes[i]));
+                    var assets = specificStore.getAssets(type, query);
+                    var isDownloadable = specificStore.isDownloadable();
+                    var isDeletable = specificStore.isDeletable();
+                    if (assets) {
+                        for (var j = 0; j < assets.length; j++) {
+                            var allowedRoles = assets[j].allowedRoles;
+                            if (allowedRoles && !utils.allowed(userRoles, allowedRoles)) {
+                                assets.splice(j, 1);
                             } else {
-                                log.warn('Thumbnail url is missing in ' + assets[j].title);
-                                assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                                if (assets[j].thumbnail) {
+                                    assets[j].thumbnail = fixLegacyURL(assets[j].thumbnail, storeTypes[i]);
+                                } else {
+                                    log.warn('Thumbnail url is missing in ' + assets[j].title);
+                                    assets[j].thumbnail = DEFAULT_THUMBNAIL;
+                                }
+                                if (type === constants.GADGET_TYPE && assets[j].data && assets[j].data.url) {
+                                    assets[j].data.url = fixLegacyURL(assets[j].data.url, storeTypes[i]);
+                                } else if (type === constants.LAYOUT_TYPE && assets[j].url) {
+                                    assets[j].url = fixLegacyURL(assets[j].url, storeTypes[i]);
+                                } else {
+                                    log.warn('Url is not defined for ' + assets[j].title);
+                                }
+                                assets[j].isDownloadable = isDownloadable;
+                                assets[j].isDeletable = isDeletable;
+                                assets[j].storeType = storeTypes[i];
                             }
-                            if (type === 'gadget' && assets[j].data && assets[j].data.url) {
-                                assets[j].data.url = fixLegacyURL(assets[j].data.url, storeTypes[i]);
-                            } else if (type === 'layout' && assets[j].url) {
-                                assets[j].url = fixLegacyURL(assets[j].url, storeTypes[i]);
-                            } else {
-                                log.warn('Url is not defined for ' + assets[j].title);
-                            }
-                            assets[j].isDownloadable = isDownloadable;
-                            assets[j].isDeletable = isDeletable;
-                            assets[j].storeType = storeTypes[i];
                         }
+                        allAssets = assets.concat(allAssets);
                     }
-                    allAssets = assets.concat(allAssets);
+                } catch (error) {
+                    log.error("Error in loading the store type " + storeTypes[i]);
                 }
             }
         }
         var end = start + count;
-        end = end > allAssets.length ? allAssets.length : end;
+        end = end > allAssets.length || end < 0 ? allAssets.length : end;
         allAssets = allAssets.slice(start, end);
         return allAssets;
     };
@@ -381,7 +385,7 @@ var getConfig;
             if (storeType === storeTypes[i]) {
                 var specificStore = require(storeExtension(storeTypes[i]));
                 if (type === 'gadget') {
-                    databaseUtils.updateGadgetState(id, {newState : 'ACTIVE'});
+                    databaseUtils.updateGadgetState(id, {newState: 'ACTIVE'});
                 }
                 return specificStore.addAsset(type, id, assertFile);
             }

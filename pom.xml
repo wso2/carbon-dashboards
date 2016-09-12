@@ -46,7 +46,7 @@
         <shindig.version>2.5.2</shindig.version>
         <carbon.dashboards.version>2.1.2-SNAPSHOT</carbon.dashboards.version>
         <carbon.kernel.version>4.4.7</carbon.kernel.version>
-        <carbon.commons.version>4.4.8</carbon.commons.version>
+        <carbon.commons.version>4.5.4</carbon.commons.version>
         <json.simple.version>1.1.wso2v1</json.simple.version>
         <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
         <apache.google.guice.version>3.0</apache.google.guice.version>

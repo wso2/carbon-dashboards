@@ -16,10 +16,19 @@
 var authorizationUtil = Packages.org.wso2.carbon.dashboard.authorization.util.AuthorizationUtil;
 
 /**
- * To check whether the given user has the required permission access a specific section
+ * To check whether the logged user has the required permission access a specific section
  * @param permission
  * @returns {boolean} true if the user has the required permission otherwise false
  */
 var isAllowed = function (permission) {
     return authorizationUtil.isUserAuthorized(user.tenantId, user.username, permission);
+};
+
+/**
+ * To check whether the given user has the required permission access a specific section
+ * @param permission
+ * @returns {boolean} true if the user has the required permission otherwise false
+ */
+var isAllowedUser = function (userObj, permission) {
+    return authorizationUtil.isUserAuthorized(userObj.tenantId, userObj.username, permission);
 };

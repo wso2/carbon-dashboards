@@ -1099,16 +1099,17 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 /* ========================================================================
  * sidebar styles
  * ======================================================================== */
-.page-content-wrapper, .page-content-wrapper[data-container-behaviour=static] {
+.page-content-wrapper,
+.page-content-wrapper[data-container-behaviour=static] {
 	position: relative;
 	left: 0;
 	margin-left: 0;
 	min-height: calc(100% - 130px);
-	-webkit-transition: all 0.5s ease;
-	-moz-transition: all 0.5s ease;
-	-ms-transition: all 0.5s ease;
-	-o-transition: all 0.5s ease;
-	transition: all 0.5s ease;
+	-webkit-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+	-moz-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+	-ms-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+	-o-transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
+	transition: left 0.5s ease, right 0.5s ease, padding-left 0.5s ease, padding-right 0.5s ease, margin-left 0.5s ease, margin-right 0.5s ease;
 }
 
 .page-content-wrapper.fixed,
@@ -1166,11 +1167,11 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
 	overflow-y: auto;
 	background: #222;
 	color: #ffffff;
-	-webkit-transition: all 0.5s ease;
-	-moz-transition: all 0.5s ease;
-	-ms-transition: all 0.5s ease;
-	-o-transition: all 0.5s ease;
-	transition: all 0.5s ease;
+	-webkit-transition: left 0.5s ease, right 0.5s ease;
+	-moz-transition: left 0.5s ease, right 0.5s ease;
+	-ms-transition: left 0.5s ease, right 0.5s ease;
+	-o-transition: left 0.5s ease, right 0.5s ease;
+	transition: left 0.5s ease, right 0.5s ease;
 }
 
 .sidebar-wrapper.affix {
@@ -1832,7 +1833,7 @@ footer a, footer a:hover {
 	border-color: #ccc;
 }
 
-.form-control, .btn {
+.form-control {
 	-webkit-border-radius: 0;
 	-moz-border-radius: 0;
 	border-radius: 0;
@@ -1841,51 +1842,15 @@ footer a, footer a:hover {
 	box-shadow: none;
 }
 
-a.btn, .btn {
+a.btn,
+.btn {
 	text-decoration: none;
-}
-
-a.btn .icon-caret, .btn .icon-caret {
-	padding: 0 0 0 8px;
-	margin-left: 5px;
-	border-left: 1px solid #e4e4e4;
-}
-
-a.btn.active, a.btn:active, .btn.active, .btn:active {
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
-}
-
-a.btn:hover, .btn:hover {
-	text-decoration: none;
-	background: #eee;
-}
-
-.btn-default, .btn-default:focus {
-	color: #222;
-	background-color: #ffffff;
-	border-color: #ffffff;
-}
-
-.btn-default:hover {
-	background-color: #e6e6e6;
-	border-color: #ffffff;
-}
-
-.btn-primary, .btn-primary:focus {
-	color: #ffffff;
-	background-color: #4f6a80;
-	border-color: #4f6a80;
-}
-
-.btn-primary:hover {
-	background-color: #63849f;
-	border-color: #4f6a80;
-}
-
-.btn-bordered, .btn-bordered:focus, .btn-bordered:hover {
-	border: 1px solid #ccc;
 }
 
 .btn-group > .btn-label {

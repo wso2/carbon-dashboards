@@ -27,7 +27,21 @@ wso2.gadgets.dashboardInfo = (function () {
     var RPC_SERVICE_GETDASHBOARDID_CALL = 'RPC_SERVICE_GETDASHBOARDID_CALL';
 
     /**
-     * RPC service name of getting dashboard ID
+     * RPC service name of getting current page
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETCURRENTPAGE_CALL = 'RPC_SERVICE_GETCURRENTPAGE_CALL';
+
+    /**
+     * RPC service name of getting current view
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GETCURRENTVIEW_CALL = 'RPC_SERVICE_GETCURRENTVIEW_CALL';
+
+    /**
+     * RPC service name of getting dashboard Name
      * @const
      * @private
      */
@@ -57,8 +71,34 @@ wso2.gadgets.dashboardInfo = (function () {
         });
     };
 
+    /**
+     * return  current page of the dashboard
+     * @return {dashboardID}
+     */
+    var getCurrentPage = function (callback) {
+        return wso2.gadgets.core.callContainerService(RPC_SERVICE_GETCURRENTPAGE_CALL, null, function (currentPage) {
+            if (callback) {
+                callback(currentPage);
+            }
+        });
+    };
+
+    /**
+     * return  current view of the dashboard
+     * @return {dashboardID}
+     */
+    var getCurrentView = function (callback) {
+        return wso2.gadgets.core.callContainerService(RPC_SERVICE_GETCURRENTVIEW_CALL, null, function (currentView) {
+            if (callback) {
+                callback(currentView);
+            }
+        });
+    };
+
     return {
         getDashboardID: getDashboardID,
-        getDashboardName: getDashboardName
+        getDashboardName: getDashboardName,
+        getCurrentView: getCurrentView,
+        getCurrentPage: getCurrentPage
     };
 })();

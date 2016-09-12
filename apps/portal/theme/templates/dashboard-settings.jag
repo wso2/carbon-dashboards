@@ -182,7 +182,7 @@
                                 </p>
                             </div>
                              <div class = "col-sm-7">
-                                 <p id="share-info" class = <%= dashboard.shareDashboard ? "show" : "hide" %>><%= i18n.localize("share.information.message")%></p>
+                                 <p id="share-info" class = "alert alert-info <%= dashboard.shareDashboard ? 'show' : 'hide' %>"><%= i18n.localize("share.information.message")%></p>
                              </div>
                         </div>
                     </div>
@@ -214,7 +214,7 @@
                                 </p>
                             </div>
                          <div class = "col-sm-7">
-                             <p id="personalize-info" class = <%= dashboard.personalizeDashboard ? "show" : "hide" %>><%= i18n.localize("personalize.information.message")%></p>
+                             <p id="personalize-info" class = "alert alert-info <%= dashboard.personalizeDashboard ? 'show' : 'hide' %>"><%= i18n.localize("personalize.information.message")%></p>
                          </div>
                     </div>
                 </div>
@@ -258,7 +258,7 @@
                 <label for="ues-share-view" class="col-sm-3 control-label"></label>
                     <div class = "col-sm-3">
                         <button type="button" id="ues-dashboard-saveBtn" class="btn btn-default btn-bordered btn-primary"><%= i18n.localize("settings.savebutton")%></button>
-                        <button type="button" id="ues-dashboard-cancelBtn" class="btn btn-default btn-bordered"><%= i18n.localize("settings.cancelbutton")%></button>
+                        <button type="button" id="ues-dashboard-resetBtn" class="btn btn-default btn-bordered"><%= i18n.localize("settings.resetbutton")%></button>
                     </div>
                 </div>
             </form>

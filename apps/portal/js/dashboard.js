@@ -99,9 +99,6 @@ $(function () {
      */
     var initComponentToolbar = function () {
         var viewer = $('.ues-components-grid');
-        if (isPersonalizeEnabled) {
-            $(".gadget-heading").css("cursor", "move");
-        }
         // gadget title bar custom button function handler
         viewer.on('click', '.ues-custom-action', function (e) {
             var fid = $(this).closest('.ues-component-box').find('iframe').attr('id');
@@ -111,6 +108,7 @@ $(function () {
 
         // gadget maximization handler
         viewer.on('click', '.ues-component-full-handle', function (e) {
+            e.preventDefault();
             var id = $(this).closest('.ues-component').attr('id');
             var component = ues.dashboards.findComponent(id, page);
             var componentBox = $(this).closest('.ues-component-box');
@@ -181,10 +179,13 @@ $(function () {
                 var that = $(this);
                 var confirmDeleteBlockHbs = Handlebars.compile($('#ds-modal-confirm-delete-block-hbs').html());
                 var hasComponent = false;
+                var hasHidden = hasHiddenGadget(that.closest('.ues-component-box'));
                 if (that.closest('.ues-component-box').find('.ues-component').attr('id')) {
                     hasComponent = true;
                 }
-
+                if (!hasComponent) {
+                    hasComponent = hasHidden;
+                }
                 showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                     var designerModal = $('#dashboardViewModal');
                     designerModal.find('#btn-delete').on('click', function () {
@@ -196,23 +197,33 @@ $(function () {
                         if (id) {
                             removeComponent(findComponent(id), function (err) {
                                 if (err) {
+                                    generateMessage(err, null, null, "error", 'topCenter', 2000, null);
                                     throw err;
+                                } else {
+                                    updateLayout();
+                                    updateRefreshBtn(ues.global.page);
                                 }
-                                saveDashboard();
                                 $("#" + ues.global.page).show();
                             });
                         } else {
-                            var hasHidden = hasHiddenGadget(componentBox);
                             if (hasHidden) {
-                                for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
-                                    if (ues.global.dashboard.pages[i].id === page.id) {
-                                        ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                                var pageLength = ues.global.dashboard.pages.length;
+                                if (ds.database.updateUsageData(ues.global.dashboard, hasHidden[0].content.id, page.id, pageType, false)) {
+                                    for (var i = 0; i < pageLength; i++) {
+                                        if (ues.global.dashboard.pages[i].id === page.id) {
+                                            ues.global.dashboard.pages[i].content[pageType][componentBoxId] = [];
+                                            break;
+                                        }
                                     }
+                                    updateLayout();
+                                    updateRefreshBtn(ues.global.page);
+                                    componentBox.html("");
+                                } else {
+                                    generateMessage('Error updating database', null, null, "error", 'topCenter', 2000, null);
                                 }
-                                ds.database.updateUsageData(ues.global.dashboard, hasHidden[0].content.id);
-                                saveDashboard();
                             }
                         }
+
                         designerModal.modal('hide');
                     });
                 });
@@ -221,11 +232,71 @@ $(function () {
     };
 
     /**
+     * Generate Noty Messages as to the content given parameters.
+     * @param {String} text     The message
+     * @param {function} ok     The OK function
+     * @param {function} cancel The Cancel function
+     * @param {String} type     Type of the message
+     * @param {String} layout   The layout
+     * @param {Number} timeout  Timeout
+     * @return {Object}
+     * @private
+     * */
+    var generateMessage = function (text, ok, cancel, type, layout, timeout, close) {
+        var properties = {};
+        properties.text = text;
+        if (ok || cancel) {
+            properties.buttons = [
+                {
+                    addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
+                    $noty.close();
+                    if (ok) {
+                        ok();
+                    }
+                }
+                },
+                {
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
+                    $noty.close();
+                    if (cancel) {
+                        cancel();
+                    }
+                }
+                }
+            ];
+        }
+
+        if (timeout) {
+            properties.timeout = timeout;
+        }
+
+        if (close) {
+            properties.closeWith = close;
+        }
+
+        properties.layout = layout;
+        properties.theme = 'wso2';
+        properties.type = type;
+        properties.dismissQueue = true;
+        properties.killer = true;
+        properties.maxVisible = 1;
+        properties.animation = {
+            open: {height: 'toggle'},
+            close: {height: 'toggle'},
+            easing: 'swing',
+            speed: 500
+        };
+
+        return noty(properties);
+    };
+
+    /**
      * To check whether a box has a hidden gadget that is not visible due to authorization or missing file problem
      * @param componentBox
      * @returns {*|boolean}
      */
     var hasHiddenGadget = function (componentBox) {
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
         for (var i = 0; i < ues.global.dashboard.pages.length; i++) {
             if (ues.global.dashboard.pages[i].id === page.id) {
                 var component = ues.global.dashboard.pages[i].content[pageType][componentBox.attr('id')];
@@ -345,7 +416,7 @@ $(function () {
         var views = Object.keys(page.views.content);
         for (var i = 0; i < views.length; i++) {
             var viewRoles = page.views.content[views[i]].roles;
-            if (isAllowedView(viewRoles)) {
+            if ((ues.global.dashboard.shareDashboard && !isUserFromSuperDomain) || isAllowedView(viewRoles)) {
                 allowedViews.push(views[i]);
                 var tempViewName = page.views.content[views[i]].name;
                 var viewOption = {
@@ -372,7 +443,7 @@ $(function () {
                 throw err;
             }
             isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
-            initComponentToolbar();
+            changeMousePointerToMove();
         });
     });
 
@@ -487,7 +558,7 @@ $(function () {
         }
         return false;
     };
-    
+
     //compile handlebar for the menu list
     var updateMenuList = function () {
         //menulist for big res
@@ -699,6 +770,13 @@ $(function () {
         ues.global.dbType = renderingView;
         isPersonalizeEnabled ? renderViewContentInEditMode(renderingView) : renderViewContentInViewMode(renderingView);
         $('.nano').nanoScroller();
+        $('#download-pdf-panel').on('click', function () {
+            if ($("#pdf-size-panel").hasClass("in")) {
+                $(this).find("span.caret").addClass("open-caret");
+            } else {
+                $(this).find("span.caret").removeClass("open-caret");
+            }
+        });
     };
 
     /**
@@ -882,42 +960,29 @@ $(function () {
      * @private
      */
     var removeComponent = function (component, done) {
-        destroyComponent(component, function (err) {
-            if (err) {
-                return done(err);
-            }
-            var container = $('#' + component.id);
-            var area = container.closest('.ues-component-box').attr('id');
-            pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
-            var content = page.content[pageType];
-            area = content[area];
-            var index = area.indexOf(component);
-            area.splice(index, 1);
-            container.remove();
-            ds.database.updateUsageData(ues.global.dashboard, component.content.id);
-            var compId = $('.ues-component-properties').data('component');
-            if (compId !== component.id) {
-                return done();
-            }
-            $('.ues-component-properties .ues-component-properties-container').empty();
-            done();
-        });
-    };
-
-    /**
-     * Destroys the given component.
-     * @param {Object} component    Component to be destroyed
-     * @param {function} done       Callback function
-     * @return {null}
-     * @private
-     */
-    var destroyComponent = function (component, done) {
-        ues.components.destroy(component, function (err) {
-            if (err) {
-                return err;
-            }
-            done(err);
-        });
+        pageType = pageType ? pageType : DEFAULT_DASHBOARD_VIEW;
+        if (ds.database.updateUsageData(ues.global.dashboard, component.content.id, page, pageType)) {
+            destroyComponent(component, function (err) {
+                if (err) {
+                    return done(err);
+                }
+                var container = $('#' + component.id);
+                var area = container.closest('.ues-component-box').attr('id');
+                var content = page.content[pageType];
+                area = content[area];
+                var index = area.indexOf(component);
+                area.splice(index, 1);
+                container.remove();
+                var compId = $('.ues-component-properties').data('component');
+                if (compId !== component.id) {
+                    return done();
+                }
+                $('.ues-component-properties .ues-component-properties-container').empty();
+                done();
+            });
+        } else {
+            done('Error updating the database.');
+        }
     };
 
     /**
@@ -964,8 +1029,17 @@ $(function () {
                 throw err;
             }
             isPersonalizeEnabled ? renderViewContentInEditMode(selectedViewId) : renderViewContentInViewMode(selectedViewId);
-            initComponentToolbar();
+            changeMousePointerToMove();
         });
+    };
+
+    /**
+     * To change the mouse pointer on gadget-heading to move pointer when the editing mode is enabled
+     */
+    var changeMousePointerToMove = function () {
+        if (isPersonalizeEnabled) {
+            $(".gadget-heading").css("cursor", "move");
+        }
     };
 
     /**

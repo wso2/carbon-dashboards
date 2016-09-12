@@ -37,10 +37,12 @@
         var viewId = request.getParameter('currentView');
         var constants = require('/modules/constants.js');
         var shared = request.getParameter('shared');
+        var isUserFromSuperDomain = false;
 
         if (!user) {
             userRoles.push(constants.ANONYMOUS_ROLE);
         } else {
+            isUserFromSuperDomain = (user.domain === superDomain);
             var tempRoles = usr.getUserRoles();
             if (isPreview) {
                 userRoles.push(constants.ANONYMOUS_ROLE);
@@ -130,7 +132,7 @@
         </div>
     </div>
     <!-- .left-sidebar -->
-    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
+    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-container=".page-content-wrapper" data-container-divide="true" data-width="260" data-offset-bottom="40" style="width:260px">
         <div class="nano">
             <div class="nano-content">
 
@@ -149,10 +151,12 @@
                     <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
                         data-toggle="collapse" aria-expanded="true">
                         <h4 class="panel-title">
-                        <span class="icon fw-stack">
-                        <i class="fw fw-pdf fw-stack-2x"></i>
-                        </span>
-                            <%=i18n.localize("dashboard.pdf.generatePDF")%></h4><span class="caret"></span>
+                            <span class="icon fw-stack">
+                                <i class="fw fw-pdf fw-stack-2x"></i>
+                            </span>
+                            <%=i18n.localize("dashboard.pdf.generatePDF")%>
+                        </h4>
+                        <span class="caret"></span>
                     </div>
                     <div class="collapse" id="pdf-size-panel">
                         <div class="panel-body add-padding-3x generate-pdf-panel">
@@ -171,7 +175,6 @@
                                                 <li class="dropdown-li"><a href="#">A4</a></li>
                                                 <li class="dropdown-li"><a href="#">A3</a></li>
                                                 <li class="dropdown-li"><a href="#">A2</a></li>
-                                                <li class="dropdown-li"><a href="#">A1</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -211,7 +214,7 @@
             <div class="container-fluid">
 
                 <div class="navbar-header">
-                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="true" rel="sub-nav">
+                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="true" rel="sub-nav">
                         <span class="icon fw-stack">
                             <i class="fw fw-menu fw-stack-1x toggle-icon-left"></i>
                         </span>
@@ -316,7 +319,7 @@
                         <div class="clearfix add-margin-top-5x add-margin-right-5x">
                             <div id="list-user-views" class="hide">
                                 <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
-                                    data-style="btn-default" data-width="100px" style="width: 200px">
+                                    data-style="btn-default" data-width="100px">
                                 </select>
                             </div>
                         </div>
@@ -630,6 +633,7 @@
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;
         var isEditor = <%= isEditor%>;
+        var isUserFromSuperDomain = <%= isUserFromSuperDomain%>
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
         <% } %>

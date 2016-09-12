@@ -23,7 +23,7 @@
 }
 
 .fw-alert {
-    color : #d9534f;
+    color: #d9534f;
     padding-bottom: 3px;
 }
 
@@ -143,10 +143,6 @@
 
 .ues-component-title-right .gadget-title {
     text-align: right;
-}
-
-.page-content .nano-content {
-    bottom: 32px;
 }
 
 .form-inline .form-control.number-input {
