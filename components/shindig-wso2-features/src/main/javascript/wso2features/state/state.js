@@ -94,7 +94,7 @@ wso2.gadgets.state = (function () {
      * @return {null}
      */
     var setGlobalState = function (key, state, callback) {
-        wso2.gadgets.core.callContainerService(RPC_SERVICE_SET_GLOBAL_STATE, {key:key,value:state}, function () {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_SET_GLOBAL_STATE, {key: key, value: state}, function () {
             if (callback) {
                 callback();
             }

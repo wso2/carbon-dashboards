@@ -258,7 +258,7 @@
     // Get global state
     gadgets.rpc.register(RPC_SERVICE_GET_GLOBAL_STATE, function () {
         var globalState = getPageState()[GLOBAL_STATE_KEY];
-        sendGadgetResponse(this.f,RPC_SERVICE_GET_GLOBAL_STATE , globalState);
+        sendGadgetResponse(this.f, RPC_SERVICE_GET_GLOBAL_STATE, globalState);
     });
 
 
@@ -273,7 +273,7 @@
     // Set global state
     gadgets.rpc.register(RPC_SERVICE_SET_GLOBAL_STATE, function (keyValue) {
         var pageState = getPageState();
-        if(!pageState[GLOBAL_STATE_KEY]){
+        if (!pageState[GLOBAL_STATE_KEY]) {
             pageState[GLOBAL_STATE_KEY] = {};
         }
         pageState[GLOBAL_STATE_KEY][keyValue.key] = keyValue.value;

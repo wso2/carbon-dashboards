@@ -652,7 +652,7 @@ public class DSDataSourceManager {
      * @param resultSet         ResultSet to be closed
      */
     private static void closeDatabaseResources(Connection connection, Statement preparedStatement,
-            ResultSet resultSet) {
+                                               ResultSet resultSet) {
         // Close the resultSet
         if (resultSet != null) {
             try {

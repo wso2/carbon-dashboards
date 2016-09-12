@@ -530,8 +530,8 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
     background: transparent;
 }
 
-.nav-tabs>li>a {
-    border-radius: 0; 
+.nav-tabs > li > a {
+    border-radius: 0;
 }
 
 /*
@@ -670,7 +670,7 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
     color: #f5f5f5;
     background-color: #686d71;
     border: none;
-/*    border: 6px solid #7f8386;*/
+    /*    border: 6px solid #7f8386;*/
     margin: 6px;
     margin-left: -2px;
 }

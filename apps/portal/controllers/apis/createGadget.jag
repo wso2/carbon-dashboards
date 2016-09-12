@@ -414,7 +414,7 @@
         var dataSet;
         try {
             dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
-        } catch(e) {
+        } catch (e) {
             print({
                 error: true,
                 message: e.message

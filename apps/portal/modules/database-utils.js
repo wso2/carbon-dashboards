@@ -91,7 +91,7 @@ var getGadgetUsageInfoOfADashboard;
     
     checkDefectivePages = function (dashboardId) {
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
-        var usageData = dsDataSourceManager. getDefectiveUsageData(tenantId, dashboardId);
+        var usageData = dsDataSourceManager.getDefectiveUsageData(tenantId, dashboardId);
         var usage = {data: []};
         var usageDataSize = usageData.size();
         for (var index = 0; index < usageDataSize; index++) {
