@@ -343,7 +343,7 @@ var reset = function (id) {
     }
     deleteBanner(id, user.username);
     var databaseUtils = require('/modules/database-utils.js');
-    databaseUtils.updateDeleteDashboard(id + '$');
+    databaseUtils.updateAfterDeletingDashboard(id + '$');
 
 };
 
@@ -597,6 +597,7 @@ var getConvertedDashboardContent = function (registry, dashboard) {
                     })
 
                 });
+                dashboardContent.hideAllMenuItems = false;
             }
             var path = registryPath(dashboardContent.id);
             registry.put(path, {

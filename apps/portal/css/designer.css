@@ -23,7 +23,7 @@
 }
 
 .fw-alert {
-    color : #d9534f;
+    color: #d9534f;
     padding-bottom: 3px;
 }
 
@@ -145,10 +145,6 @@
     text-align: right;
 }
 
-.page-content .nano-content {
-    bottom: 32px;
-}
-
 .form-inline .form-control.number-input {
     width: 48px;
 }
@@ -195,6 +191,10 @@
 .grid-stack > .grid-stack-item > .grid-stack-item-content {
     left: 15px;
     right: 15px;
+}
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden;
 }
 
 .grid-stack .gadget-wrapper {

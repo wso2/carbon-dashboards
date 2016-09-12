@@ -1,34 +1,42 @@
-<%
-/*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-%>
-    <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
-    <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
-    <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
-    <link href="<%=urlPrefix%>libs/font-wso2_1.0.0/css/font-wso2.min.css" rel="stylesheet" type="text/css" />
-    <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <% var permission = require('/modules/permission.js'); %>
-    <% var utils = require('/modules/utils.js'); %>
-    <% var constants = require('/modules/constants.js'); %>
+<!DOCTYPE html>
+
+<!--
+~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+
+<html lang="en">
+<head>
+    
+    <% 
+        include(utils.resolvePath('templates/includes/portal-header.jag'));
+        include('/controllers/includes/theme-portal-styles.jag'); 
+    
+        var permission = require('/modules/permission.js');
+        var constants = require('/modules/constants.js');
+        var config = require('/modules/config.js').getConfigFile();
+    %>
+    
     <title><%= i18n.localize("dashboards.label")%></title>
-    <% var config = require('/modules/config.js').getConfigFile(); %>
+    
+    <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/portal.css">
+    <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
+    
 </head>
 <body>
-    <% include(utils.resolvePath('templates/global-navigation.jag')); %>
+    <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
 
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
@@ -39,8 +47,8 @@
 
 	<% var showNavigation = (!isMobileDevice && permission.isAllowed(constants.CREATE)) || config.isCreateGadgetEnable; %>
     <% if (showNavigation) { %>
-    <!-- navbar -->
-    <div class="navbar-wrapper">
+        <!-- navbar -->
+        <div class="navbar-wrapper">
             <nav class="navbar navbar-default affix-top" data-spy="affix" data-offset-top="80" data-offset-bottom="40">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -110,7 +118,7 @@
                 </div>
             <% } %>
         </div>
-        <div class="row thumbnails ues-dashboards"></div>
+        <div class="row thumbnails ues-dashboards" id="ds-assets-portal"></div>
     </div>
 
     <!-- Footer -->
@@ -119,11 +127,11 @@
     <!-- Handlebar templates -->
     <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
-            <div class="thumbnail ues-dashboard" id="{{id}}" data-id="{{id}}">
-                {{>ues-dashboard-thumbnail-hbs}}
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
+                <div class="thumbnail ues-dashboard ds-asset {{#if shared}} shared {{/if}}"  id="{{id}}" data-id="{{id}}">
+                    {{>ues-dashboard-thumbnail-hbs}}
+                </div>
             </div>
-        </div>
         {{/each}}
     </script>
 
@@ -139,57 +147,69 @@
     </script>
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
-         <h2 id="ues-dashboard-title" class="truncate">{{title}}  {{#if defective}}<i class="fw fw-alert"></i>{{/if}}</h2>
-        <p id="ues-dashboard-url" class="ues-dashboard-url truncate">
-            <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
-        </p>
-        <p id="ues-dashboard-description" class="ues-dashboard-description truncate">{{description}}</p>
+        <div class="add-padding-2x add-padding-top-5x">
+            {{#if defective}}<span class="defective-dashboard text-warning" title="<%= i18n.localize("missing.gadget") %>"><i class="icon fw fw-warning"></i> <%= i18n.localize("defective.dashboard") %></span>{{/if}}
+            <div class="media">
+                <div class="media-left add-padding-right-4x add-padding-left-2x">
+                    <i class="ds-asset-icon fw fw-dashboard media-object"></i>
+                </div>
+                <div class="media-body">
+                    <h4 id="ues-dashboard-title" class="media-heading add-margin-top-1x">{{title}}</h4>
+                    <span id="ues-dashboard-url" class="ues-dashboard-url truncate text-muted">
+                        <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
+                    </span>
+                    <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
+                </div>
+            </div>
             {{#if shared}}
-                <span class="fw-stack ues-dashboard-share">
-                    <i class="fw fw-share fw-stack-1x"></i>
-                </span>
-                <p id = "shared-description"><%= i18n.localize("shared.by.supertenant") %></p>
+            <div class="ds-asset-shared">
+                <i class="fw fw-share"></i>
+                <span id="shared-description"><%= i18n.localize("shared.by.supertenant") %></span>
+            </div>
             {{/if}}
-        <div class="ues-actions">
-            <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
-                data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
-                href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-view fw-stack-1x"></i>
-                </span>
-                 <%= i18n.localize("view") %>
-            </a>
-            <% if (! isMobileDevice) { %>
-            {{#if editable}}
-            <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
-                <span class="fw-stack">
-                    <i class="fw fw-circle-outline fw-stack-2x"></i>
-                    <i class="fw fw-edit fw-stack-1x"></i>
-                </span>
-                <%= i18n.localize("design") %>
-            </a>
-                {{#if owner}}
-                    <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+            <div class="ues-actions">
+                <a id="ues-view" {{#if pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable" 
+                    data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}} 
+                    href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">
+                    <span class="fw-stack">
+                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                        <i class="fw fw-view fw-stack-1x"></i>
+                    </span>
+                    <%= i18n.localize("view") %>
+                </a>
+                <% if (! isMobileDevice) { %>
+                {{#if editable}}
+                    <a id="ues-edit" class="ues-edit" href="<%=tenantedUrlPrefix%>dashboards/{{id}}?editor=true">
                         <span class="fw-stack">
                             <i class="fw fw-circle-outline fw-stack-2x"></i>
-                            <i class="fw fw-settings fw-stack-1x"></i>
+                            <i class="fw fw-edit fw-stack-1x"></i>
                         </span>
-                        <%= i18n.localize("settings") %>
+                        <%= i18n.localize("design") %>
                     </a>
+                    {{#if owner}}
+                        <a id="ues-settings" class="ues-settings" href="<%=tenantedUrlPrefix%>dashboard-settings/{{id}}">
+                            <span class="fw-stack">
+                                <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                <i class="fw fw-settings fw-stack-1x"></i>
+                            </span>
+                            <%= i18n.localize("settings") %>
+                        </a>
+                    {{/if}}
                 {{/if}}
-            {{/if}}
-            <% } %>
+                <% } %>
+            </div>
         </div>
         {{#if owner}}
-        <a href="#" class="ues-dashboard-trash-handle">
-            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.dashboard")%>"></i>
-        </a>
+         <div class="ds-asset-handles">
+            <a href="#" class="ds-asset-handle ues-dashboard-trash-handle">
+                <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="<%= i18n.localize("delete.dashboard")%>"></i>
+            </a>
+        </div>
         {{/if}}
     </script>
 
     <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
-        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <h5 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h5>
         <div class="ues-trash-actions">
             <a href="#" class="btn btn-danger ladda-button ues-dashboard-trash-confirm" role="button" data-style="expand-left" data-size="l">
                 <span class="ladda-label"><%= i18n.localize("delete")%></span>

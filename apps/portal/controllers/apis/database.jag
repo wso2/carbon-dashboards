@@ -19,7 +19,6 @@
         response.sendError(401, 'unauthorized to access assets');
         return;
     }
-
     var log = new Log();
     var dataBaseUtils = require('/modules/database-utils.js');
     var dashboards = require('/modules/dashboards.js');
@@ -47,22 +46,16 @@
             if (task === INSERT_TASK) {
                 var state = request.getParameter('state');
                 dataBaseUtils.insertOrUpdateGadgetUsage(dashboardId, gadgetId, content, state);
-            } else if (task === DELETE_TASK) {
-                dataBaseUtils.deleteGadgetUsage(dashboardId, gadgetId);
-            }
-        } else if (matcher.match('/database/{gid}') || matcher.match('/database/{gid}$')) {
-            gadgetId = matcher.elements().gid;
-            if (task === USAGE_TASK) {
-                var assetInfo = dataBaseUtils.getGadgetUsage(gadgetId);
-                print(assetInfo);
-            } else if (task === STATUS_UPDATE_TASK) {
-                dataBaseUtils.updateGadgetState(gadgetId, content);
-            } else if (task === DEFECTIVE_USAGE_TASK) {
-                if (matcher.match('/database/{gid}$')) {
-                    gadgetId = gadgetId + '$';
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Cannot understand the request " + request.getRequestURI());
                 }
-                var usageInfo = dataBaseUtils.checkDefectivePages(gadgetId);
-                print(usageInfo);
+                response.sendError(400, i18n.localize("bad.request"));
+            }
+        } else if (matcher.match('/database/{gid}')) {
+            gadgetId = matcher.elements().gid;
+            if (task === STATUS_UPDATE_TASK) {
+                dataBaseUtils.updateGadgetState(gadgetId, content);
             }
         } else {
             if (log.isDebugEnabled()) {
@@ -70,10 +63,41 @@
             }
             response.sendError(400, i18n.localize("bad.request"));
         }
-    } else if (request.getMethod() === 'DELETE') {
-        if (matcher.match('/database/{did}')) {
+    } else if (request.getMethod() === 'GET') {
+        if (matcher.match('/database/{did}/{gid}') || matcher.match('/database/{did}$/{gid}')) {
             dashboardId = matcher.elements().did;
-            dataBaseUtils.updateDeleteDashboard(dashboardId);
+            gadgetId = matcher.elements().gid;
+            if (matcher.match('/database/{did}$/{gid}')) {
+                dashboardId = dashboardId + '$';
+            }
+            var gadgetUsageInfo = dataBaseUtils.getGadgetUsageInfoOfADashboard(dashboardId, gadgetId);
+            print(gadgetUsageInfo);
+        } else if (matcher.match('/database/{gid}') || matcher.match('/database/{gid}$')) {
+            gadgetId = matcher.elements().gid;
+            if (task === USAGE_TASK) {
+                var gadgetUsageInfo = dataBaseUtils.getGadgetUsage(gadgetId);
+                print(gadgetUsageInfo);
+            } else if (task === DEFECTIVE_USAGE_TASK) {
+                if (matcher.match('/database/{gid}$')) {
+                    gadgetId = gadgetId + '$';
+                }
+                var usageInfo = dataBaseUtils.checkDefectivePages(gadgetId);
+                print(usageInfo);
+            }
+        }
+    } else if (request.getMethod() === 'DELETE') {
+        if (matcher.match('/database/{did}/{gid}') || matcher.match('/database/{did}$/{gid}')) {
+            gadgetId = matcher.elements().gid;
+            dashboardId = matcher.elements().did;
+            if (matcher.match('/database/{did}$/{gid}')) {
+                dashboardId = dashboardId + '$';
+            }
+            if (task === DELETE_TASK) {
+                dataBaseUtils.deleteGadgetUsage(dashboardId, gadgetId);
+            }
+        } else if (matcher.match('/database/{did}')) {
+            dashboardId = matcher.elements().did;
+            dataBaseUtils.updateAfterDeletingDashboard(dashboardId);
         }
     } else if (request.getMethod() === 'PUT') {
         if (matcher.match('/database/{did}')) {
@@ -86,12 +110,11 @@
                 return;
             }
             dashboardId = dashboardId + (dashboard.isUserCustom ? '$' : '');
-            dataBaseUtils.updateDeleteDashboard(dashboardId);
+            dataBaseUtils.updateAfterDeletingDashboard(dashboardId);
             dashboards.updateGadgetUsageInDashboard(dashboard, dashboardId);
         }
     } else {
-        response.sendError(403, i18n.localize("forbidden"));
+        response.sendError(405, i18n.localize("cannot.understand.method"));
     }
 }());
-
 %>

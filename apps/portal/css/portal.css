@@ -14,43 +14,41 @@
  * limitations under the License.
  */
 
-#ues-portal .ues-dashboard {
-    padding: 10px 15px;
-    position: relative;
-    height: 125px;
-    background: #11375b;
-    color: #fff;
-}
-
-.fw-alert {
-    color : #d9534f;
-    padding-bottom: 3px;
-}
-
 /*
 TODO : This is temporary. We will later change this color
 */
 #ues-portal .shared {
-    background: #678ea9;
+    background: #438cad;
+}
+
+#ues-portal .ues-dashboard .ues-dashboard-description {
+    height: 40px;
+    display: block;
+    overflow: hidden;
 }
 
 #ues-portal .ues-dashboard .ues-actions {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+    padding: 8px 2px;
+    text-align: right;
+    white-space: nowrap;
 }
 
 #ues-portal .ues-dashboard .ues-actions a {
     padding: 0 10px;
+    display: inline-block;
 }
 
-#ues-portal .ues-dashboard h2 {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: 16px;
-    font-weight: 400;
-    height: 20px;
-    width: calc(100% - 20px);
+#ues-portal .ues-dashboard .defective-dashboard {
+    position: absolute;
+    top: 10px;
+}
+
+#ues-portal .ues-dashboard .text-warning {
+    color: #d29a31;
+}
+
+#ues-portal .ues-dashboard .defective-dashboard > .icon {
+    padding-bottom: 2px;
 }
 
 #ues-portal .ues-dashboard .ues-url-link {
@@ -73,23 +71,12 @@ TODO : This is temporary. We will later change this color
 
 
 #ues-portal .ues-dashboard #shared-description {
-    padding-left: 15px;
-    padding-top : 2px;
+    padding-left: 5px;
 }
 
 .filter-dropdown {
     padding-top  :20px;
     font-weight: bold;
-}
-
-#ues-portal .ues-dashboard .ues-dashboard-trash-handle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 20px;
-    font-size: 12px;
-    color: #fff;
-    text-align: right;
 }
 
 .thumbnail {
@@ -117,8 +104,8 @@ TODO : This is temporary. We will later change this color
 }
 
 .ues-trash-actions {
-    right: 8px;
-    bottom: 7px;
+    right: 15px;
+    bottom: 15px;
     position: absolute;
 }
 

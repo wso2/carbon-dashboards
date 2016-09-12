@@ -1,35 +1,44 @@
-<%
-/*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * This is the template file for assets (gadget/layout) home page
- */
-%>
+<!DOCTYPE html>
+
+<!--
+~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+
+<html lang="en">
+<head>
+    
     <% include(utils.resolvePath('templates/includes/portal-header.jag')); %>
+    
+    <title><%= i18n.localize(assetType+"s")%></title>
+    
     <link rel="stylesheet" href="<%=urlPrefix%>css/ladda-themeless.min.css">
     <link rel="stylesheet" href="<%=urlPrefix%>libs/bootstrap-select-1.10.0/css/bootstrap-select.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
-    <% include('/controllers/includes/theme-portal-styles.jag'); %>
-    <% var permission = require('/modules/permission.js'); %>
-    <% var constants = require('/modules/constants.js'); %>
-    <title><%= i18n.localize(assetType+"s")%></title>
-    <% var config = require('/modules/config.js').getConfigFile(); %>
+    
+    <% 
+        include('/controllers/includes/theme-portal-styles.jag'); 
+    
+        var permission = require('/modules/permission.js');
+        var config = require('/modules/config.js').getConfigFile();
+        var constants = require('/modules/constants.js');
+    %>
+    
 </head>
 <body>
-    <% include(utils.resolvePath('templates/global-navigation.jag')); %>
+    <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
 
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
@@ -114,18 +123,10 @@
                 <h1 class="page-sub-title"><%= i18n.localize(assetType+"s") %></h1>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <table id="storeSelector">
-                    <tr>
-                        <td>
-                            <h5>Loaded <%= i18n.localize(assetType+"s") %> from </h5>
-                        </td>
-                        <td>
-                            <select id="selectStore" name="store"></select>
-                        </td>
-                    </tr>
-                </table>
+        <div class="form-inline">
+            <div class="form-group" id="storeSelector">
+                <label>Loaded <%= i18n.localize(assetType+"s") %> from</label>
+                <select id="selectStore" name="store"></select>
             </div>
         </div>
         <div class="row thumbnails ds-assets"></div>
@@ -157,31 +158,36 @@
 
     <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
         <h5 class="title">{{title}}</h5>
+        
         <% var isDeleteAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
         <% var isDownloadAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DOWNLOAD) : permission.isAllowed(constants.LAYOUT_DOWNLOAD); %>
-        <% if (isDownloadAllowed) { %>
-            {{#if isDownloadable}}
-                <a href="#" class="ds-asset-download-handle">
-                    <i class="fw fw-download ladda-label" data-toggle="tooltip" data-placement="left" title="
-                    <%= i18n.localize("download."+assetType)%>"></i>
-                </a>
-            {{/if}}
-        <% } %>
-        <% if (isDeleteAllowed) { %>
-            {{#if isDeletable}}
-                <a href="#" class="ds-asset-trash-handle">
-                    <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
-                    <%= i18n.localize("delete."+assetType)%>"></i>
-                </a>
-            {{/if}}
-        <% } %>
-        <img src="{{resolveURI thumbnail}}" style="height : 150px;"/>
+        
+        <div class="ds-asset-handles">
+            <% if (isDownloadAllowed) { %>
+                {{#if isDownloadable}}
+                    <a href="#" class="ds-asset-handle ds-asset-download-handle">
+                        <i class="fw fw-download ladda-label" data-toggle="tooltip" data-placement="left" title="
+                        <%= i18n.localize("download."+assetType)%>"></i>
+                    </a>
+                {{/if}}
+            <% } %>
+            <% if (isDeleteAllowed) { %>
+                {{#if isDeletable}}
+                    <a href="#" class="ds-asset-handle ds-asset-trash-handle">
+                        <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left" title="
+                        <%= i18n.localize("delete."+assetType)%>"></i>
+                    </a>
+                {{/if}}
+            <% } %>
+        </div>
+        
+        <img src="{{resolveURI thumbnail}}" class="ds-asset-img img-responsive" />
     </script>
 
     <script id="ds-asset-confirm-hbs" type="text/x-handlebars-template">
-        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <h2 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
-            <i class="icon fw fw-error"></i><strong>Warning! </strong> <%= i18n.localize(assetType+".delete.warning")%>
+            <i class="icon fw fw-warning"></i><strong>Warning! </strong> <%= i18n.localize(assetType+".delete.warning")%>
         </div>
         <div class="ds-trash-actions" >
             <a href="#" class="btn btn-danger ladda-button ds-asset-trash-confirm" role="button"
@@ -194,7 +200,7 @@
 
     <!-- confirmation message when trying to delete a used gadget-->
      <script id="ds-gadget-usage-confirm-hbs" type="text/x-handlebars-template">
-        <h2><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
+        <h2 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
         <div class="alert alert-warning" role="alert">
             <i class="icon fw fw-error"></i><strong>Warning! </strong>{{message}}
         </div>

@@ -64,20 +64,126 @@
     };
 
     /**
-     * To update the usage data
-     * @param dashboard which the component belongs to
-     * @param id Id of the component id
+     * To re-create the new usage data for the particular gadget based on the user activity
+     * @param usageData Usage Data of the gadget that need to be updated
+     * @param pageId Id of the page which the gadget belongs to
+     * @param viewId Id of the view which the gadget belongs to
+     * @param isAdd true if it is a addition activity , unless false
+     * @returns the new usage data for the particular gadget
      */
-    var updateUsageData = function(dashboard, id) {
-        var usageData = createUsageData(dashboard, id);
+    var manipulateUsageData = function (usageData, pageId, viewId, isAdd) {
+        var currentUsageValue = 0;
+        usageData = JSON.parse(usageData);
+        var usageDataLength = usageData.length;
+        if (usageDataLength > 0) {
+            for (var index = 0; index < usageDataLength; index++) {
+                if (Object.keys(usageData[index]).indexOf(pageId) > -1) {
+                    if (Object.keys(usageData[index][pageId]).indexOf(viewId) > -1) {
+                        currentUsageValue = usageData[index][pageId][viewId];
+                        if (isAdd) {
+                            currentUsageValue = currentUsageValue + 1;
+                            usageData[index][pageId][viewId] = currentUsageValue;
+                        } else {
+                            currentUsageValue = currentUsageValue - 1;
+                            usageData[index][pageId][viewId] = currentUsageValue;
 
-        if (usageData.length > 0) {
-            sendUsageData(dashboard, usageData, id);
+                            if (currentUsageValue === 0) {
+                                delete usageData[index][pageId][viewId];
+
+                                if (Object.keys(usageData[index][pageId]).length === 0) {
+                                    usageData.splice(index, 1);
+                                }
+                            }
+                        }
+                        return usageData;
+                    }
+                    if (isAdd) {
+                        usageData[index][pageId][viewId] = 1;
+                        return usageData;
+                    }
+                }
+            }
+            if (isAdd) {
+                var pageUsageData = {};
+                pageUsageData[pageId] = {};
+                pageUsageData[pageId][viewId] = 1;
+                usageData.push(pageUsageData);
+                return usageData;
+            }
         } else {
-            deleteUsageData(dashboard, id);
+            if (isAdd) {
+                var pageUsageData = {};
+                pageUsageData[pageId] = {};
+                pageUsageData[pageId][viewId] = 1;
+                usageData.push(pageUsageData);
+                return usageData;
+            }
         }
     };
 
+    /**
+     * To update the usage data
+     * @param dashboard which the component belongs to
+     * @param id Id of the component id
+     * @param pageId Id of the page to change the usage
+     * @param viewId Id of the view with the change usage
+     * @param isAdd is it a addiion of gadget usage or delete of gadget usage
+     */
+    var updateUsageData = function (dashboard, id, pageId, viewId, isAdd) {
+        var usageData = getGadgetUsageInfo(dashboard, id);
+        if (usageData) {
+            var updatedUsageInfo = manipulateUsageData(usageData, pageId, viewId, isAdd);
+            if (updatedUsageInfo && updatedUsageInfo.length > 0) {
+                return sendUsageData(dashboard, updatedUsageInfo, id);
+            } else if (updatedUsageInfo) {
+                return deleteUsageData(dashboard, id);
+            } else {
+                return true;
+            }
+        }
+    };
+
+    /**
+     * When we do not know count of the gadget id. This is mainly used for creating views by copying views
+     * @param dashboard Dashboard which the specific data should be updated
+     * @param gadgetId Id of the gadget for which the usage data to be updated
+     */
+    var updateUsageDataInMultipleViews = function (dashboard, gadgetId) {
+        var usageData = createUsageData(dashboard, gadgetId);
+        if (usageData.length > 0) {
+            return sendUsageData(dashboard, usageData, gadgetId);
+        } else {
+            return deleteUsageData(dashboard, gadgetId);
+        }
+    };
+
+    /**
+     * To get the gadget usage information of the particular gadget in a dashboard
+     * @param dashboard Dashboard which the gadget belongs to
+     * @param gadgetId Id of the gadget
+     * @returns {*} gadget usage info for the particular dashboard
+     */
+    var getGadgetUsageInfo = function (dashboard, gadgetId) {
+        var gadgetUsageInfo = null;
+        var dashboardID = dashboard.id;
+        if (dashboard.isUserCustom) {
+            dashboardID = dashboardID + '$'
+        }
+        $.ajax({
+            url: DATABASE_API + '/' + dashboardID + '/' + gadgetId,
+            method: "GET",
+            contentType: "application/json",
+            async: false,
+            success: function (usageData) {
+                gadgetUsageInfo = usageData;
+            },
+            error: function () {
+                gadgetUsageInfo = null;
+            }
+        });
+
+        return gadgetUsageInfo;
+    };
     /**
      * To send the usage data to back end
      * @param dashboard
@@ -86,23 +192,25 @@
      */
     var sendUsageData = function (dashboard, usageData, id) {
         var dashboardID = dashboard.id;
-        if (dashboard.isUserCustom){
+        var isSuccess = false;
+        if (dashboard.isUserCustom) {
             dashboardID = dashboardID + '$'
         }
         var state = isGadgetExist(id);
         $.ajax({
-            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=insert&state='+state,
+            url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=insert&state=' + state,
             method: "POST",
             data: JSON.stringify(usageData),
             contentType: "application/json",
             async: false,
             success: function () {
-                console.log("successfully updated the usage data to database");
+                isSuccess = true
             },
-            error: function (xhr, message) {
-                console.log("something went wrong. Could not update the database data due to " + message);
+            error: function () {
+                isSuccess = false;
             }
         });
+        return isSuccess;
     };
 
     /**
@@ -112,37 +220,38 @@
      */
     var deleteUsageData = function (dashboard, id) {
         var dashboardID = dashboard.id;
-        if (dashboard.isUserCustom){
+        var isSuccess = false;
+        if (dashboard.isUserCustom) {
             dashboardID = dashboardID + '$'
         }
         $.ajax({
             url: DATABASE_API + '/' + dashboardID + '/' + id + '?task=delete',
-            method: "POST",
+            method: "DELETE",
             contentType: "application/json",
             async: false,
             success: function () {
-                console.log("successfully updated the usage data to database");
+                isSuccess = true;
             },
-            error: function (xhr, message) {
-                console.log("something went wrong. Could not update the database data due to " + message);
+            error: function () {
+                isSuccess = false;
             }
         });
+        return isSuccess;
     };
-
 
     /**
      * To check whether gadget exist in the store
      * @param id
      * @returns {string}
      */
-    var isGadgetExist = function(id) {
+    var isGadgetExist = function (id) {
         var status = 'ACTIVE';
         $.ajax({
             url: ASSET_API + id + '?type=gadget',
             method: 'GET',
             async: false,
             contentType: 'application/json'
-        }).error(function (xhr, err) {
+        }).error(function (xhr) {
             if (xhr.status === 404) {
                 status = 'DELETED';
             }
@@ -160,9 +269,8 @@
         return JSON.parse(JSON.stringify(o));
     };
 
-
     ds.database = {
-        updateUsageData : updateUsageData
+        updateUsageData: updateUsageData,
+        updateUsageDataInMultipleViews: updateUsageDataInMultipleViews
     };
 }());
-
