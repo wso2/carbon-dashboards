@@ -4126,14 +4126,19 @@ $(function () {
                     renderComponentToolbar(findComponent(id));
                     if (!id) {
                         $(this).addClass('gadget-error');
+                        $(this).find('.ues-component-title').html('Error!');
                         
                         if (err === UNAUTHORIZED_ERROR_CODE) {
-                            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+                            $(this).find('.ues-component-body').html(dsErrorHbs({
+                                errorTitle: (err + " " + i18n_data['unauthorized']),
+                                error: i18n_data['no.permission.to.view.gadget']
+                            }));
                             err = null;
                         } else if (err === NOT_FOUND_ERROR_CODE) {
-                            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+                            $(this).find('.ues-component-body').html(dsErrorHbs({
+                                errorTitle: (err + " " + i18n_data['gadget.not.found']),
+                                error: i18n_data['gadget.missing']
+                            }));
                             err = null;
                         }
                     }
