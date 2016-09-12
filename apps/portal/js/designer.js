@@ -4125,6 +4125,8 @@ $(function () {
                     var id = $(this).attr('id');
                     renderComponentToolbar(findComponent(id));
                     if (!id) {
+                        $(this).addClass('gadget-error');
+                        
                         if (err === UNAUTHORIZED_ERROR_CODE) {
                             $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
                             $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));

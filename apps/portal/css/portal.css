@@ -28,13 +28,12 @@ TODO : This is temporary. We will later change this color
 }
 
 #ues-portal .ues-dashboard .ues-actions {
-    padding: 8px 2px;
     text-align: right;
     white-space: nowrap;
 }
 
 #ues-portal .ues-dashboard .ues-actions a {
-    padding: 0 10px;
+    padding: 0 5px;
     display: inline-block;
 }
 
