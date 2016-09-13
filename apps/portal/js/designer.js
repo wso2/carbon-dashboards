@@ -1597,21 +1597,20 @@ $(function () {
                         viewId: views[i]
                     };
                     $('#view-list').append(viewListingHbs(ctx));
+                    $('#view-list li').on('click', function (e) {
+                        e.stopPropagation();
+                        var viewId = getViewId(this.textContent.trim());
+                        var currentViewId = getViewId(getSelectedView());
+                        //if visible views length is 6, remove the last view before adding the selected view
+                        if (visibleViews.length === NO_OF_VISIBLE_VIEWS) {
+                            visibleViews.splice(visibleViews.length - 1, 1);
+                        }
+                        visibleViews.push(viewId);
+                        switchPage(getPageId(), currentViewId);
+                        $("#" + viewId).click();
+                    });
                 }
             }
-        });
-
-        //event handler for selecting a non visible view from the dropdown list
-        $(document).on('click', '#view-list li', function () {
-            var viewId = getViewId(this.textContent.trim());
-            var currentViewId = getViewId(getSelectedView());
-
-            //if visible views length is 6, remove the last view before adding the selected view
-            if (visibleViews.length === NO_OF_VISIBLE_VIEWS) {
-                visibleViews.splice(visibleViews.length - 1, 1);
-            }
-            visibleViews.push(viewId);
-            switchPage(getPageId(), currentViewId);
         });
 
         //event handler for selecting an option form copying an existing view or creating a new view
