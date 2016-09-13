@@ -36,7 +36,9 @@ $(function () {
     var assetsListHbs = Handlebars.compile($("#ds-assets-list-hbs").html());
     var assetThumbnailHbs = Handlebars.compile($("#ds-asset-thumbnail-hbs").html());
     var assetConfirmHbs = Handlebars.compile($("#ds-asset-confirm-hbs").html());
+    var editAssetConfirmHbs = Handlebars.compile($("#ds-edit-assets-confirm-hbs").html());
     var gadgetUsageConfimrHbs = Handlebars.compile($("#ds-gadget-usage-confirm-hbs").html());
+    var editGadgetUsageConfirmHbs = Handlebars.compile($("#ds-gadget-usage-edit-confirm-hbs").html());
     var assetsEmptyHbs = Handlebars.compile($("#ds-assets-empty-hbs").html());
     var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
@@ -232,7 +234,7 @@ $(function () {
      */
     var manipulateGadgetUsageInfo = function (usage) {
         var message = 'This gadget is used in ';
-        var endMessage = " dashboard(s). Deleting this gadget will affect the functionality of those dashboard(s)";
+        var endMessage = " dashboard(s). This action on this gadget will affect the functionality of those dashboard(s)";
         var count = 0;
         for (var index = 0; index < usage.length && count < 2; index++) {
             if (usage[index].indexOf("$") > -1) {
@@ -331,10 +333,38 @@ $(function () {
         });
 
         portal.on('click', '.ds-assets .ds-asset-edit-handle', function (e) {
+            var gadgetUsageInfo;
+            e.preventDefault();
+            var assetElement = $(this).closest('.ds-asset');
+            var id = assetElement.data('id');
+            var asset = findAsset(id);
+            if (assetType === 'gadget') {
+                gadgetUsageInfo = getGadgetUsageInfo(id);
+            }
+            if (!gadgetUsageInfo || gadgetUsageInfo.dashboards.length === 0) {
+                assetElement.html(editAssetConfirmHbs(asset));
+            } else {
+                gadgetUsageInfo = manipulateGadgetUsageInfo(gadgetUsageInfo.dashboards);
+                var data = {title: asset.title};
+                data.message = gadgetUsageInfo;
+                assetElement.html(editGadgetUsageConfirmHbs(data));
+            }
+        });
+
+        portal.on('click', '.ds-assets .ds-asset-edit-confirm', function (e) {
+            e.preventDefault();
             var assetElement = $(this).closest('.ds-asset');
             var id = assetElement.data('id');
             var store = $('#selectStore').selectpicker('val');
             editAsset(assetType, id, store);
+        });
+
+        portal.on('click', '.ds-assets .ds-asset-edit-cancel', function (e) {
+            e.preventDefault();
+            var assetElement = $(this).closest('.ds-asset');
+            var id = assetElement.data('id');
+            var asset = findAsset(id);
+            assetElement.html(assetThumbnailHbs(asset));
         });
 
         $(window).scroll(function () {

@@ -62,15 +62,6 @@ body {
     text-align: right;
     white-space: nowrap;
 }
-.input-group-addon{
-    position: absolute;
-    top: 8px;
-    right: 65px;
-    text-align: right;
-    font-size: 12px;
-    width: 15px;
-    border: transparent;
-}
 .glyphicon-pencil{
     top: 0px;
     right: 0px;
@@ -97,6 +88,12 @@ body {
 }
 
 .ds-trash-actions {
+    right: 15px;
+    bottom: 15px;
+    position: absolute;
+}
+
+.ds-edit-actions {
     right: 15px;
     bottom: 15px;
     position: absolute;

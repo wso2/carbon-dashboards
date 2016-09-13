@@ -86,8 +86,17 @@ var gadgetEditable = request.getParameter('editable');%>
 <div class="container-fluid">
     <div class="row thumbnails ues-dashboard">
         <div class="col-md-8 col-md-offset-2" id="top-rootwizard">
-            <h1 class="page-sub-title"><%= i18n.localize("generate.a.gadget")%></h1>
-
+            <% if (gadgetEditable == 'true') { %>
+                <h1 class="page-sub-title"><%=
+    i18n.localize("edit.a.gadget")
+    %></h1>
+                <%
+} else {%>
+                <h1 class="page-sub-title"><%=
+    i18n.localize("generate.a.gadget")
+    %></h1>
+                <%
+}%>
             <div class="wizard" id="rootwizard">
                 <div class="wizard-inner nav-bar">
                     <div class="navbar-inner">
@@ -219,11 +228,13 @@ var gadgetEditable = request.getParameter('editable');%>
 <script id="gadget-name-hbs" type="text/x-handlebars-template">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
          <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
-         {{#if gadget-name}}
+          <% if (gadgetEditable == 'true') {%>
                <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" value="{{gadget-name}}"/>
-         {{else}}
+         <%
+} else {%>
                 <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" />
-         {{/if}}
+         <%
+}%>
          <label id="gadget-name-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
   </div>
 </script>
@@ -244,18 +255,20 @@ var gadgetEditable = request.getParameter('editable');%>
 
 <script id="datasource-providers-hbs" type="text/x-handlebars-template">
      <section>
-     {{#if provider-conf}}{{#provider-conf}}
+     <% if (gadgetEditable == 'true') {%>{{#provider-conf}}
         <select id="providers" class="form-control ues-title-position">
              <option value="{{provider-name}}">{{provider-name}}</option>
         </select>{{/provider-conf}}
 
-     {{else}}
+     <%
+} else {%>
         <select id="providers" class="form-control ues-title-position">
            {{#each .}}
              <option value="{{id}}">{{name}}</option>
            {{/each}}
         </select>
-     {{/if}}
+     <%
+}%>
      </section>
 </script>
 
