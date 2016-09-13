@@ -629,7 +629,7 @@ $(function () {
     var showGadgetError = function (element, err) {
         element.addClass('gadget-error');
         element.find('.ues-trash-handle').remove();
-        element.find('.ues-component-title').html('Error!');
+        element.find('.ues-component-title').html(i18n_data['error'] + '!');
         
         if (err === UNAUTHORIZED_ERROR_CODE) {
             element.find('.ues-component-body').html(dsErrorHbs({
