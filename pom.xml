@@ -30,6 +30,7 @@
     <url>http://wso2.org</url>
 
     <modules>
+        <module>apps</module>
         <module>components/shindig-wso2-features</module>
         <module>components/shindig-server</module>
         <module>components/dashboard-deployment</module>
