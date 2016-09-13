@@ -627,12 +627,20 @@ $(function () {
      * @param element UI element to show error
      */
     var showGadgetError = function (element, err) {
+        element.addClass('gadget-error');
+        element.find('.ues-trash-handle').remove();
+        element.find('.ues-component-title').html('Error!');
+        
         if (err === UNAUTHORIZED_ERROR_CODE) {
-            element.find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+            element.find('.ues-component-body').html(dsErrorHbs({
+                errorTitle: (err + " " + i18n_data['unauthorized']),
+                error: i18n_data['no.permission.to.view.gadget']
+            }));
         } else if (err === NOT_FOUND_ERROR_CODE) {
-            element.find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-            element.find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+            element.find('.ues-component-body').html(dsErrorHbs({
+                errorTitle: (err + " " + i18n_data['gadget.not.found']),
+                error: i18n_data['gadget.missing']
+            }));
         }
     };
 
