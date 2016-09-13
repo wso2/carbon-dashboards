@@ -622,7 +622,8 @@ var isUserFromSuperDomain = false;
                             ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
                             ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
                             ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
-                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>"' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
+                            ' "error" : "<%= i18n.localize("error")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
 

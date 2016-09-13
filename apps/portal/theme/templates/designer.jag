@@ -426,7 +426,8 @@
                             ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
                             ' "cannot.create.view.for.share.dashboard" : "<%= i18n.localize("cannot.create.view.for.share.dashboard")%>",' +
                             ' "cannot.delete.internal.everyone.role.for.share.dashboard" : "<%= i18n.localize("cannot.delete.internal.everyone.role.for.share.dashboard")%>",' +
-                            ' "cannot.remove.hidden.page" : "<%= i18n.localize("cannot.remove.hidden.page")%>"' +
+                            ' "cannot.remove.hidden.page" : "<%= i18n.localize("cannot.remove.hidden.page")%>",' +
+                            ' "error" : "<%= i18n.localize("error")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
         var isViewer = <%= isViewer%>;
