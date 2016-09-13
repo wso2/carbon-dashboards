@@ -125,8 +125,8 @@
         </div>
         <div class="form-inline">
             <div class="form-group" id="storeSelector">
-                <label>Loaded <%= i18n.localize(assetType+"s") %> from</label>
-                <select id="selectStore" name="store"></select>
+                <label class="add-margin-right-1x">Loaded <%= i18n.localize(assetType+"s") %> from: </label>
+                <select id="selectStore" name="store" style="display: none;"></select>
             </div>
         </div>
         <div class="row thumbnails ds-assets"></div>
