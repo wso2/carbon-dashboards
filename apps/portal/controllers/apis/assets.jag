@@ -48,11 +48,7 @@
      * @const
      */
     var PUT = 'PUT';
-    /**
-     * Request Method EDIT.
-     * @const
-     */
-    var EDIT = 'EDIT';
+
     /**
      * Download file location.
      * @const
@@ -91,25 +87,6 @@
         if (method === GET) {
             utils.sandbox(utils.context(user, urlDomain), function () {
                 assets = store.getAsset(assetType, id, isShared);
-            });
-            if (!assets) {
-                response.sendError(404, JSON.stringify({
-                    error: true
-                }));
-                return;
-            }
-            if (!assets.id) {
-                response.sendError(401, JSON.stringify({
-                    error: true
-                }));
-                return;
-            }
-            print(assets);
-            return;
-        }
-        if (method === POST) {
-            utils.sandbox(utils.context(user, urlDomain), function () {
-                assets = store.getConfig(assetType, id, isShared);
             });
             if (!assets) {
                 response.sendError(404, JSON.stringify({
