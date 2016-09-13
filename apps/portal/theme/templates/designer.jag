@@ -611,7 +611,7 @@
                         <i class="fw fw-home fw-stack-1x"></i>
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                     </span>
-                    {{/equals}} {{title}} {{#if isDefective}}<i class="fw fw-alert"></i>{{/if}}</h4><span class="caret"></span>
+                    {{/equals}} {{title}} {{#if isDefective}}<i class="fw fw-alert text-danger defective-page-icon"></i>{{/if}}</h4><span class="caret"></span>
             </div>
             <div id="pages{{id}}" class="panel-collapse collapse ues-page-properties" role="tabpanel">
             </div>
