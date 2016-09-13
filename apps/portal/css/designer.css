@@ -22,11 +22,6 @@
     opacity: 0.1;
 }
 
-.fw-alert {
-    color: #d9534f;
-    padding-bottom: 3px;
-}
-
 .add-asset {
     text-align: center;
     height: 200px;
@@ -252,4 +247,9 @@
     background-color: #464f58;
     text-align: center;
     box-shadow: 10px 10px 5px #34393e;
+}
+
+.defective-page-icon {
+    margin-left: 8px;
+    margin-bottom: 2px;
 }
