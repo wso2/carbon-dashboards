@@ -249,3 +249,7 @@ ul.dropdown-menu.more-actions-button > li > button {
     height: 100%;
     margin-bottom: 0;
 }
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden !important;
+}
