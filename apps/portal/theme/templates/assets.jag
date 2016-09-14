@@ -166,7 +166,7 @@
         {{/has}}
         <% var isDeleteAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
         <% var isDownloadAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DOWNLOAD) : permission.isAllowed(constants.LAYOUT_DOWNLOAD); %>
-
+        
         <div class="ds-asset-handles">
             <% if (isDownloadAllowed) { %>
                 {{#if isDownloadable}}
