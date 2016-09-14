@@ -173,6 +173,7 @@ var downloadAsset;
                     pagesAvailable: dashboard.hideAllMenuItems ? false : utils.getUserAllowedViews(dashboard, userRoles),
                     editable: !(dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
                     shared: (dashboard.shareDashboard && ctx.tenantId !== carbon.server.superTenant.tenantId),
+                    sharedAcrossTenants: (dashboard.shareDashboard && ctx.tenantId === carbon.server.superTenant.tenantId),
                     defective: databaseUtils.checkDefectiveDashboard(dashboard.id, (!isEditor && !isOwner && isViewer)),
                     owner: true
                 };
