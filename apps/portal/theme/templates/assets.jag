@@ -28,14 +28,14 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/common.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
     
-    <% 
-        include('/controllers/includes/theme-portal-styles.jag'); 
-    
+    <%
+include('/controllers/includes/theme-portal-styles.jag');
+
         var permission = require('/modules/permission.js');
         var config = require('/modules/config.js').getConfigFile();
         var constants = require('/modules/constants.js');
     %>
-    
+
 </head>
 <body>
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
@@ -158,11 +158,16 @@
 
     <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
         <h5 class="title">{{title}}</h5>
-        
+
         <% var isDeleteAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
         <% var isDownloadAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DOWNLOAD) : permission.isAllowed(constants.LAYOUT_DOWNLOAD); %>
-        
+
         <div class="ds-asset-handles">
+         {{#has gadgetGeneration}}
+            <a href="#" class="ds-asset-handle  ds-asset-edit-handle">
+                <i class="glyphicon glyphicon-pencil" data-placement="centre" ></i>
+            </a>
+         {{/has}}
             <% if (isDownloadAllowed) { %>
                 {{#if isDownloadable}}
                     <a href="#" class="ds-asset-handle ds-asset-download-handle">
@@ -180,7 +185,7 @@
                 {{/if}}
             <% } %>
         </div>
-        
+
         <img src="{{resolveURI thumbnail}}" class="ds-asset-img img-responsive" />
     </script>
 
@@ -198,6 +203,21 @@
         </div>
     </script>
 
+    <script id="ds-edit-assets-confirm-hbs" type="text/x-handlers-template">
+    <h2 class="title"><%= i18n.localize("edit.gadget.confirm")%> {{title}}?</h2>
+        <div class="alert alert-warning" role="alert">
+            <i class="icon fw fw-warning"></i><strong>Warning! </strong> <%= i18n.localize(assetType + ".edit.warning")%>
+        </div>
+        <div class="ds-edit-actions" >
+            <a href="#" class="btn btn-danger ladda-button ds-asset-edit-confirm" role="button"
+            data-style="expand-left" data-size="l">
+                <span class="ladda-label"><%= i18n.localize("edit.button")%></span>
+            </a>
+            <a href="#" class="btn btn-default ds-asset-edit-cancel" role="button" ><%= i18n.localize("cancel")%></a>
+        </div>
+    </script>
+
+
     <!-- confirmation message when trying to delete a used gadget-->
      <script id="ds-gadget-usage-confirm-hbs" type="text/x-handlebars-template">
         <h2 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h2>
@@ -213,6 +233,19 @@
         </div>
     </script>
 
+    <script id="ds-gadget-usage-edit-confirm-hbs" type="text/x-handlebars-template">
+            <h2 class="title"><%= i18n.localize("edit.gadget.confirm")%> {{title}}?</h2>
+        <div class="alert alert-warning" role="alert">
+            <i class="icon fw fw-error"></i><strong>Warning! </strong>{{message}}
+        </div>
+        <div class="ds-edit-actions" >
+            <a href="#" class="btn btn-danger ladda-button ds-asset-edit-confirm" role="button"
+            data-style="expand-left" data-size="l">
+                <span class="ladda-label"><%= i18n.localize("edit.button")%></span>
+            </a>
+            <a href="#" class="btn btn-default ds-asset-edit-cancel" role="button" ><%= i18n.localize("cancel")%></a>
+        </div>
+    </script>
      <script id="ds-asset-delete-error-hbs" type="text/x-handlebars-template">
           <div class="alert alert-danger" id = "delete-error" role="alert">
             <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
