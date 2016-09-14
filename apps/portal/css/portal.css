@@ -23,28 +23,28 @@ TODO : This is temporary. We will later change this color
 
 #ues-portal .ues-dashboard .ues-dashboard-description {
     height: 40px;
-    display: block;
+    display: block; /* Fallback for non-webkit */
+    display: -webkit-box;
+    max-width: 400px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #ues-portal .ues-dashboard .ues-actions {
-    padding: 8px 2px;
     text-align: right;
     white-space: nowrap;
 }
 
 #ues-portal .ues-dashboard .ues-actions a {
-    padding: 0 10px;
+    padding: 0 5px;
     display: inline-block;
 }
 
 #ues-portal .ues-dashboard .defective-dashboard {
     position: absolute;
     top: 10px;
-}
-
-#ues-portal .ues-dashboard .text-warning {
-    color: #d29a31;
 }
 
 #ues-portal .ues-dashboard .defective-dashboard > .icon {
@@ -57,6 +57,10 @@ TODO : This is temporary. We will later change this color
 
 #ues-portal .ues-dashboard .ues-dashboard-url {
     font-size: 13px;
+    width: 200px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 

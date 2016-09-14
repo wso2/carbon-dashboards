@@ -148,8 +148,8 @@
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <div class="add-padding-2x add-padding-top-5x">
-            {{#if defective}}<span class="defective-dashboard text-warning" title="<%= i18n.localize("missing.gadget") %>"><i class="icon fw fw-warning"></i> <%= i18n.localize("defective.dashboard") %></span>{{/if}}
-            <div class="media">
+            {{#if defective}}<span class="defective-dashboard text-danger" title="<%= i18n.localize("missing.gadget") %>"><i class="icon fw fw-alert"></i> <%= i18n.localize("defective.dashboard") %></span>{{/if}}
+            <div class="media add-margin-top-3x">
                 <div class="media-left add-padding-right-4x add-padding-left-2x">
                     <i class="ds-asset-icon fw fw-dashboard media-object"></i>
                 </div>

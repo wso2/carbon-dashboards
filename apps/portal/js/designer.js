@@ -834,7 +834,7 @@ $(function () {
                 componentBody.hide();
             } else {
                 // rendering full view
-                var pageEl = $('.page-content').has('.nav-tabs');
+                var pageEl = $('.page-content');
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
                 getGridstack().disable();
@@ -1599,19 +1599,18 @@ $(function () {
                     $('#view-list').append(viewListingHbs(ctx));
                 }
             }
-        });
-
-        //event handler for selecting a non visible view from the dropdown list
-        $(document).on('click', '#view-list li', function () {
-            var viewId = getViewId(this.textContent.trim());
-            var currentViewId = getViewId(getSelectedView());
-
-            //if visible views length is 6, remove the last view before adding the selected view
-            if (visibleViews.length === NO_OF_VISIBLE_VIEWS) {
-                visibleViews.splice(visibleViews.length - 1, 1);
-            }
-            visibleViews.push(viewId);
-            switchPage(getPageId(), currentViewId);
+            $('#view-list li').on('click', function (e) {
+                e.stopPropagation();
+                var viewId = getViewId(this.textContent.trim());
+                var currentViewId = getViewId(getSelectedView());
+                //if visible views length is 12, remove the last view before adding the selected view
+                if (visibleViews.length === NO_OF_VISIBLE_VIEWS) {
+                    visibleViews.splice(visibleViews.length - 1, 1);
+                }
+                visibleViews.push(viewId);
+                switchPage(getPageId(), currentViewId);
+                $("#" + viewId).click();
+            });
         });
 
         //event handler for selecting an option form copying an existing view or creating a new view
@@ -4126,12 +4125,20 @@ $(function () {
                     renderComponentToolbar(findComponent(id));
                     if (!id) {
                         if (err === UNAUTHORIZED_ERROR_CODE) {
-                            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+                            $(this).addClass('gadget-error');
+                            $(this).find('.ues-component-title').html(i18n_data['error'] + '!');
+                            $(this).find('.ues-component-body').html(dsErrorHbs({
+                                errorTitle: (err + " " + i18n_data['unauthorized']),
+                                error: i18n_data['no.permission.to.view.gadget']
+                            }));
                             err = null;
                         } else if (err === NOT_FOUND_ERROR_CODE) {
-                            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+                            $(this).addClass('gadget-error');
+                            $(this).find('.ues-component-title').html(i18n_data['error'] + '!');
+                            $(this).find('.ues-component-body').html(dsErrorHbs({
+                                errorTitle: (err + " " + i18n_data['gadget.not.found']),
+                                error: i18n_data['gadget.missing']
+                            }));
                             err = null;
                         }
                     }

@@ -90,8 +90,15 @@ $(function () {
         ues.store.getStoreList(function (error, data) {
             if (!error && data) {
                 var length = data.length;
-                for (var i = 0; i < length; i++) {
-                    addStoreToList(data[i]);
+                
+                if(length > 1){
+                    for (var i = 0; i < length; i++) {
+                        addStoreToList(data[i]);
+                    }
+                    $('#selectStore').show();
+                }
+                else {
+                    $('#selectStore').replaceWith('<label class="control-label">' + data[0] + '</label>');
                 }
                 $('#storeSelector').show();
             } else {

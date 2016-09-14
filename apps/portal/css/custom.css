@@ -818,3 +818,11 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
 .view-role {
     background-color: #595959;
 }
+
+.text-warning {
+    color: #d29a31;
+}
+
+.text-danger {
+    color: #D9534F;
+}

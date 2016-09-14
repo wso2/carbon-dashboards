@@ -236,3 +236,20 @@ ul.dropdown-menu.more-actions-button > li > button {
 .hide-menu-item:hover {
     background: #63849f;
 }
+
+.ues-component.gadget-error {
+    height: 100%;
+}
+
+.ues-component.gadget-error > .ues-component-body {
+    height: calc(100% - 42px);
+}
+
+.ues-component.gadget-error .alert {
+    height: 100%;
+    margin-bottom: 0;
+}
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden !important;
+}
