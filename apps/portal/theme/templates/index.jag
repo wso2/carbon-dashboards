@@ -128,7 +128,7 @@
     <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
-                <div class="thumbnail ues-dashboard ds-asset {{#if shared}} shared {{/if}}"  id="{{id}}" data-id="{{id}}">
+                <div class="thumbnail ues-dashboard ds-asset {{#if shared}} shared {{/if}} {{#if sharedAcrossTenants}} shared {{/if}}" id="{{id}}" data-id="{{id}}">
                     {{>ues-dashboard-thumbnail-hbs}}
                 </div>
             </div>
@@ -156,11 +156,17 @@
                 <div class="media-body">
                     <h4 id="ues-dashboard-title" class="media-heading add-margin-top-1x">{{title}}</h4>
                     <span id="ues-dashboard-url" class="ues-dashboard-url truncate text-muted">
-                        <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
+                        <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" title="<%=request.getRequestURL()%>/{{id}}/{{#if shared}}?shared=true{{/if}}" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank"><%=request.getRequestURL()%>/{{id}}/{{#if shared}}?shared=true{{/if}}</a>
                     </span>
                     <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
                 </div>
             </div>
+            {{#if sharedAcrossTenants}}
+            <div class="ds-asset-shared ds-asset-sharedAcrossTenants">
+                <i class="fw fw-share"></i>
+                <span id="shared-description"><%= i18n.localize("shared.across.tenants") %></span>
+            </div>
+            {{/if}}
             {{#if shared}}
             <div class="ds-asset-shared">
                 <i class="fw fw-share"></i>
