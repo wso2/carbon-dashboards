@@ -654,6 +654,16 @@ $(function () {
                 $('#ds-allowed-view-list').val(viewId);
             }
         });
+        var currentPage = ues.dashboards.findPage(ues.global.dashboard, ues.global.page);
+        var layout = $(currentPage.views.content[viewId]);
+        $('.gadgets-grid').html(ues.dashboards.getGridstackLayout(layout[0]));
+        $('.grid-stack').gridstack({
+            width: 12,
+            cellHeight: 50,
+            verticalMargin: 30,
+            disableResize: true,
+            disableDrag: true
+        });
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, viewId, function (err) {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
@@ -663,13 +673,6 @@ $(function () {
                     showGadgetError($(this), err);
                     err = null;
                 }
-            });
-            $('.grid-stack').gridstack({
-                width: 12,
-                cellHeight: 50,
-                verticalMargin: 30,
-                disableResize: true,
-                disableDrag: true
             });
         });
         if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {
@@ -688,6 +691,41 @@ $(function () {
                 $('#ds-allowed-view-list').val(viewId);
             }
         });
+        var currentPage = ues.dashboards.findPage(ues.global.dashboard, ues.global.page);
+        var layout = $(currentPage.views.content[viewId]);
+        $('.gadgets-grid').html(ues.dashboards.getGridstackLayout(layout[0]));
+        $('.grid-stack').gridstack({
+            width: 12,
+            cellHeight: 50,
+            verticalMargin: 30,
+            disableResize: false,
+            disableDrag: false
+        }).on('dragstop', function (e, ui) {
+            updateLayout();
+            updateRefreshBtn(ues.global.page);
+        }).on('resizestart', function (e, ui) {
+            // hide the component content on start resizing the component
+            var container = $(ui.element).find('.ues-component');
+            if (container) {
+                container.find('.ues-component-body').hide();
+            }
+        }).on('resizestop', function (e, ui) {
+            // re-render component on stop resizing the component
+            var container = $(ui.element).find('.ues-component');
+            if (container) {
+                var gsItem = container.closest('.grid-stack-item');
+                var node = gsItem.data('_gridstack_node');
+                var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+                var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                container.closest('.ues-component-box').attr('data-height', height);
+                container.find('.ues-component-body').show();
+                if (container.attr('id')) {
+                    updateComponent(container.attr('id'));
+                }
+            }
+            updateLayout();
+            updateRefreshBtn(ues.global.page);
+        });
         ues.dashboards.render($('.gadgets-grid'), ues.global.dashboard, ues.global.page, ues.global.dbType, function (err) {
             // render component toolbar for each components
             $('.ues-component-box .ues-component').each(function () {
@@ -697,38 +735,6 @@ $(function () {
                     showGadgetError($(this), err);
                     err = null;
                 }
-            });
-            $('.grid-stack').gridstack({
-                width: 12,
-                cellHeight: 50,
-                verticalMargin: 30,
-                disableResize: false,
-                disableDrag: false
-            }).on('dragstop', function (e, ui) {
-                updateLayout();
-                updateRefreshBtn(ues.global.page);
-            }).on('resizestart', function (e, ui) {
-                // hide the component content on start resizing the component
-                var container = $(ui.element).find('.ues-component');
-                if (container) {
-                    container.find('.ues-component-body').hide();
-                }
-            }).on('resizestop', function (e, ui) {
-                // re-render component on stop resizing the component
-                var container = $(ui.element).find('.ues-component');
-                if (container) {
-                    var gsItem = container.closest('.grid-stack-item');
-                    var node = gsItem.data('_gridstack_node');
-                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
-                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-                    container.closest('.ues-component-box').attr('data-height', height);
-                    container.find('.ues-component-body').show();
-                    if (container.attr('id')) {
-                        updateComponent(container.attr('id'));
-                    }
-                }
-                updateLayout();
-                updateRefreshBtn(ues.global.page);
             });
         });
         if (ues.global.dashboard.banner.globalBannerExists || ues.global.dashboard.banner.customBannerExists) {

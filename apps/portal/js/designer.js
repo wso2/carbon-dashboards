@@ -4119,6 +4119,38 @@ $(function () {
             }
         }));
         if (views.length > 0) {
+            var layout = $(page.views.content[pageType]);
+            $('.gadgets-grid').html(ues.dashboards.getGridstackLayout(layout[0]));
+            $('.grid-stack').gridstack({
+                width: 12,
+                animate: true,
+                cellHeight: 50,
+                verticalMargin: 30,
+                handle: '.ues-component-heading, .ues-component-heading .ues-component-title'
+            }).on('dragstop', function (e, ui) {
+                updateLayout();
+            }).on('resizestart', function (e, ui) {
+                // hide the component content on start resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    container.find('.ues-component-body').hide();
+                }
+            }).on('resizestop', function (e, ui) {
+                // re-render component on stop resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    var gsItem = container.closest('.grid-stack-item');
+                    var node = gsItem.data('_gridstack_node');
+                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                    container.closest('.ues-component-box').attr('data-height', height);
+                    container.find('.ues-component-body').show();
+                    if (container.attr('id')) {
+                        updateComponent(container.attr('id'));
+                    }
+                }
+                updateLayout();
+            });
             ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
                 $('.gadgets-grid').find('.ues-component').each(function () {
                     var id = $(this).attr('id');
@@ -4144,36 +4176,6 @@ $(function () {
                     }
                 });
                 listenLayout();
-                $('.grid-stack').gridstack({
-                    width: 12,
-                    animate: true,
-                    cellHeight: 50,
-                    verticalMargin: 30,
-                    handle: '.ues-component-heading, .ues-component-heading .ues-component-title'
-                }).on('dragstop', function (e, ui) {
-                    updateLayout();
-                }).on('resizestart', function (e, ui) {
-                    // hide the component content on start resizing the component
-                    var container = $(ui.element).find('.ues-component');
-                    if (container) {
-                        container.find('.ues-component-body').hide();
-                    }
-                }).on('resizestop', function (e, ui) {
-                    // re-render component on stop resizing the component
-                    var container = $(ui.element).find('.ues-component');
-                    if (container) {
-                        var gsItem = container.closest('.grid-stack-item');
-                        var node = gsItem.data('_gridstack_node');
-                        var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
-                        var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-                        container.closest('.ues-component-box').attr('data-height', height);
-                        container.find('.ues-component-body').show();
-                        if (container.attr('id')) {
-                            updateComponent(container.attr('id'));
-                        }
-                    }
-                    updateLayout();
-                });
 
                 $('.gadgets-grid [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
                 if (!done) {
