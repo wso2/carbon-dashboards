@@ -41,8 +41,6 @@ $(function () {
     var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
     Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
-
-
     /**
      * Load the list of assets available.
      * @private
@@ -219,7 +217,6 @@ $(function () {
             if (usage[index].indexOf("$") > -1) {
                 usage[index] = usage[index].substr(0, usage[index].indexOf("$"));
                 usage[index] = "personalized version of " + usage[index];
-
                 if (message.indexOf("personalized version of " + usage[index]) > -1) {
                     usage[index] = "";
                 }

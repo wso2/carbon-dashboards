@@ -40,8 +40,6 @@
     var anonRole = carbon.user.anonRole;
     var method = request.getMethod();
     var matcher = new URIMatcher(request.getRequestURI());
-
-
     if (matcher.match('/dashboards/restore/{id}/{pageID}')) {
         if (method === 'PUT') {
             var dashboard = request.getContent();

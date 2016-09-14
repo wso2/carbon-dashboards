@@ -70,7 +70,6 @@
      */
     var updateUsageData = function(dashboard, id) {
         var usageData = createUsageData(dashboard, id);
-
         if (usageData.length > 0) {
             sendUsageData(dashboard, usageData, id);
         } else {
@@ -129,7 +128,6 @@
         });
     };
 
-
     /**
      * To check whether gadget exist in the store
      * @param id
@@ -160,9 +158,7 @@
         return JSON.parse(JSON.stringify(o));
     };
 
-
     ds.database = {
         updateUsageData : updateUsageData
     };
 }());
-
