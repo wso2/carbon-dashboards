@@ -2167,7 +2167,6 @@ $(function () {
      * @private
      */
     var updatePageProperties = function (e) {
-
         var titleError = $("#title-error");
         var idError = $("#id-error");
         var hasError = false;
@@ -2255,7 +2254,6 @@ $(function () {
 
         if (typeof fn[e.context.name] === 'function') {
             fn[e.context.name]();
-            updatePagesList();
             saveDashboard();
         }
         return true;
@@ -3339,7 +3337,8 @@ $(function () {
                 landing: (dashboard.landing == page.id),
                 isUserCustom: dashboard.isUserCustom,
                 fluidLayout: page.views.fluidLayout || false
-            })).on('change', 'input', function () {
+            })).on('change', 'input', function (e) {
+                e.stopImmediatePropagation();
                 if (updatePageProperties($(this).closest('.ues-page-properties'))) {
                     switchPage(page.id, pageType);
                 }
