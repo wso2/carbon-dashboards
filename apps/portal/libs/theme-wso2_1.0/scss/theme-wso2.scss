@@ -49,7 +49,7 @@
     transform: $val;
 }
 
-@mixin transition($val) {
+@mixin transition($val...) {
     -webkit-transition: $val;
     -moz-transition: $val;
     -ms-transition: $val;
@@ -163,11 +163,11 @@ $base-info-color: #009DA7;
 $base-warning-color: #f0ad4e;
 $base-danger-color: #d9534f;
 
-$primary-color: #2a80b9;
+$primary-color: #4f6a80;
 $secondary-color: #e4e4e4;
 $optional-color: #007D85;
 
-$header-background-color: #024675;
+$header-background-color: #29313E;
 $header-height: 50px;
 $header-link-hover-background-color: darken($header-background-color, 10%);
 
@@ -205,10 +205,10 @@ $loading-inverse-background-color: $base-light-color;
 $loading-inverse-color: $base-dark-color;
 $loading-image-icon-max-width: 50px;
 
-$dropdown-menu-dark-background-color: $base-dark-color;
+$dropdown-menu-dark-background-color: #373E44;
 $dropdown-menu-dark-color: $base-light-color;
-$dropdown-menu-dark-tiles-background-color: #444;
-$dropdown-menu-dark-tiles-hover-background-color: #555;
+$dropdown-menu-dark-tiles-background-color: #49525A;
+$dropdown-menu-dark-tiles-hover-background-color: #4F6A80;
 $dropdown-menu-dark-tiles-color: $base-light-color;
 
 $button-default-background-color: $base-light-color;
@@ -302,7 +302,7 @@ $sidebar-width-default: 350px;
 
 html {
     position: relative;
-    min-height: 100%;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
@@ -310,11 +310,17 @@ html {
 
 body {
     color: $base-dark-color;
-    margin-bottom: $footer-height;
+    padding-bottom: $footer-height;
     font-family: $font-default;
     font-weight: $font-default-weight;
     width: 100%;
     overflow-x: hidden;
+    min-height: 100%;
+    position: relative;
+}
+
+body.fixed {
+    height: 100%;
 }
 
 body > .page-content-wrapper > .container,
@@ -733,15 +739,15 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
     padding: 0 8px;
     line-height: $navbar-height;
     font-size: 18px;
-    background: $optional-color;
+    background: $dropdown-menu-dark-background-color;
     color: $base-light-color;
 
     &:hover, &:focus, &:active {
         color: $base-light-color;
-        background: darken($optional-color, 10%);
+        background: lighten($dropdown-menu-dark-background-color, 10%);
     }
     &[aria-expanded=true] {
-        background: darken($optional-color, 8%);
+        background: $dropdown-menu-dark-background-color;
     }
 }
 
@@ -921,12 +927,20 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
  * sidebar styles
  * ======================================================================== */
 
-.page-content-wrapper, .page-content-wrapper[data-container-behaviour=static] {
+.page-content-wrapper,
+.page-content-wrapper[data-container-behaviour=static] {
     position: relative;
     left: 0;
     margin-left: 0;
     min-height: $page-content-wrapper-height;
-    @include transition(all 0.5s ease);
+  @include transition(
+                  left 0.5s ease,
+                  right 0.5s ease,
+                  padding-left 0.5s ease,
+                  padding-right 0.5s ease,
+                  margin-left 0.5s ease,
+                  margin-right 0.5s ease
+  );
 }
 
 .page-content-wrapper.fixed,
@@ -982,7 +996,7 @@ header .dropdown[aria-expanded=true], header .dropdown:hover {
     overflow-y: auto;
     background: $base-dark-color;
     color: $base-light-color;
-    @include transition(all 0.5s ease);
+  @include transition(left 0.5s ease, right 0.5s ease);
 }
 
 .sidebar-wrapper.affix {
@@ -1588,59 +1602,67 @@ footer a {
     }
 }
 
-.form-control, .btn {
+.form-control {
     @include border-radius;
     @include box-shadow;
 }
 
-a.btn, .btn {
+a.btn,
+.btn {
     text-decoration: none;
 
-    & .icon-caret {
-        padding: 0 0 0 8px;
-        margin-left: 5px;
-        border-left: 1px solid #e4e4e4;
-    }
-    &.active, &:active {
-        @include box-shadow;
-    }
-    &:hover {
-        text-decoration: none;
-        background: #eee;
-    }
+  @include border-radius;
+  @include box-shadow;
 }
 
-.btn-default {
-    &, &:focus{
-        color: $button-default-color;
-        background-color: $button-default-background-color;
-        border-color: $button-default-border-color;
-    }
-
-    &:hover {
-        background-color: $button-default-hover-background-color;
-        border-color: $button-default-hover-border-color;
-    }
-}
-
-.btn-primary {
-    &, &:focus {
-        color: $button-primary-color;
-        background-color: $button-primary-background-color;
-        border-color: $button-primary-border-color;
-    }
-
-    &:hover {
-        background-color: $button-primary-hover-background-color;
-        border-color: $button-primary-hover-border-color;
-    }
-}
-
-.btn-bordered {
-    &, &:focus, &:hover {
-        border: 1px solid #ccc;
-    }
-}
+//a.btn, .btn {
+//    text-decoration: none;
+//
+//    & .icon-caret {
+//        padding: 0 0 0 8px;
+//        margin-left: 5px;
+//        border-left: 1px solid #e4e4e4;
+//    }
+//    &.active, &:active {
+//        @include box-shadow;
+//    }
+//    &:hover {
+//        text-decoration: none;
+//        background: #eee;
+//    }
+//}
+//
+//.btn-default {
+//    &, &:focus{
+//        color: $button-default-color;
+//        background-color: $button-default-background-color;
+//        border-color: $button-default-border-color;
+//    }
+//
+//    &:hover {
+//        background-color: $button-default-hover-background-color;
+//        border-color: $button-default-hover-border-color;
+//    }
+//}
+//
+//.btn-primary {
+//    &, &:focus {
+//        color: $button-primary-color;
+//        background-color: $button-primary-background-color;
+//        border-color: $button-primary-border-color;
+//    }
+//
+//    &:hover {
+//        background-color: $button-primary-hover-background-color;
+//        border-color: $button-primary-hover-border-color;
+//    }
+//}
+//
+//.btn-bordered {
+//    &, &:focus, &:hover {
+//        border: 1px solid #ccc;
+//    }
+//}
 
 .btn-group > .btn-label {
     position: relative;

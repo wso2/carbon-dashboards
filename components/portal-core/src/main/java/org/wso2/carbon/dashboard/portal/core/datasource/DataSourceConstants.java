@@ -46,4 +46,17 @@ class DataSourceConstants {
             " AND DASHBOARD_ID = ?";
     static final String SQL_CHECK_DEFECTIVE_DASHBOARD = "SELECT USAGE_DATA FROM GADGET_USAGE WHERE TENANT_ID = ? "
             + "AND DASHBOARD_ID = ? AND GADGET_STATE = ?";
+    static final String MSSQL_PRODUCT_NAME = "Microsoft SQL Server";
+    static final String MSSQL_SCRIPT_NAME = "mssql";
+    static final String ORACLE_SCRIPT_NAME = "oracle";
+    static final String SQL_EXTENSION = ".sql";
+    static final String ORACLE_RAC_SCRIPT_NAME = "oracle_rac";
+    static final String H2_SCRIPT_NAME = "h2";
+    static final String DB2_SCRIPT_NAME = "db2";
+    static final String GADGET_USAGE_TABLE_NAME = "GADGET_USAGE";
+    static final String DB_CHECK_SQL = "SELECT * FROM GADGET_USAGE";
+
+    static enum GADGET_STATES {ACTIVE, DELETED}
+
+    ;
 }

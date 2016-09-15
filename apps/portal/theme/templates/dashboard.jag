@@ -1,101 +1,104 @@
-<%
-/*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+<!DOCTYPE html>
 
-    // i18n
-    var i18n = require("i18n");
-    var utils = require('/modules/utils.js');
-    i18n.init(request, utils.getLocaleResourcePath());
-    var isEditor = false;
+<!--
+~   Copyright (c) WSO2 Inc. (http://wso2.com) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
 
-    // If the pageId is null, render the landing page
-    pageId = pageId || dashboard.landing;
-
-    var usr = require('/modules/user.js');
-    var user = usr.current();
-    var isAnonView = request.getParameter('isAnonView');
-    var isPreview = request.getParameter('preview');
-    var queryString;
-    var isPersonalizeEnabled = request.getParameter('dashboardeditor');
-    var userRoles = [];
-    var viewId = request.getParameter('currentView');
-    var constants = require('/modules/constants.js');
-    var shared = request.getParameter('shared');
-
-    if (!user) {
-        userRoles.push(constants.ANONYMOUS_ROLE);
-    } else {
-        var tempRoles = usr.getUserRoles();
-        if (isPreview) {
-            userRoles.push(constants.ANONYMOUS_ROLE);
-            isEditor = utils.allowed(user.roles, dashboard.permissions.owners) ||
-                    utils.allowed(user.roles, dashboard.permissions.editors);
-        }
-        for (var i = 0; i < tempRoles.length; i++) {
-            userRoles.push(tempRoles[i]);
-        }
-    }
-
-    queryString = shared ? "shared=" + shared : queryString;
-    queryString = isPersonalizeEnabled ? (queryString ? queryString + "&" : "") + "dashboardeditor=" + isPersonalizeEnabled : queryString;
-    queryString = isPreview ? (queryString ? queryString + "&" : "") + "preview=" + isPreview : queryString;
-
-    // Get the anon view
-    if (!user) {
-        if (isAnonView) {
-            response.sendRedirect(request.getRequestURL());
-        }
-        isAnonView = true;
-    } else {
-        isAnonView = JSON.parse(isAnonView);
-
-        if ((user.domain != urlDomain && urlDomain) ||
-                (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
-            isAnonView = true;
-            userRoles = [];
-            userRoles.push(constants.ANONYMOUS_ROLE);
-        }
-    }
-
-    // Get the current page
-    var pages = dashboard.pages,
-            page;
-    pages.forEach(function(p) {
-        if (p.id == pageId) {
-            page = p;
-        }
-    });
-
-    // Build the URL for the home page
-    var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
-    if (request.getParameter('isAnonView') == 'true') {
-        dashboardUrl += '?isAnonView=true';
-    }
-
-    // Getting dashboard color theme
-    var gadgetTheme;
-    if(request.getCookie('dashboardTheme') != null) {
-        gadgetTheme = request.getCookie('dashboardTheme').value;
-    } else {
-        gadgetTheme = 'dark';
-    }
-%>
 <html lang="en">
 <head>
-    <% include(utils.getThemeTemplatePath('templates/includes/portal-header.jag')); %>
+
+    <%
+        include(utils.getThemeTemplatePath('templates/includes/portal-header.jag'));
+
+        var isEditor = false;
+
+        // If the pageId is null, render the landing page
+        pageId = pageId || dashboard.landing;
+
+        var usr = require('/modules/user.js');
+        var user = usr.current();
+        var isAnonView = request.getParameter('isAnonView');
+        var isPreview = request.getParameter('preview');
+        var queryString;
+        var isPersonalizeEnabled = request.getParameter('dashboardeditor');
+        var userRoles = [];
+        var viewId = request.getParameter('currentView');
+        var constants = require('/modules/constants.js');
+        var shared = request.getParameter('shared');
+var isUserFromSuperDomain = false;
+
+        if (!user) {
+            userRoles.push(constants.ANONYMOUS_ROLE);
+        } else {
+            isUserFromSuperDomain = (user.domain === superDomain);
+            var tempRoles = usr.getUserRoles();
+            if (isPreview) {
+                userRoles.push(constants.ANONYMOUS_ROLE);
+                isEditor = utils.allowed(user.roles, dashboard.permissions.owners) ||
+                        utils.allowed(user.roles, dashboard.permissions.editors);
+            }
+            for (var i = 0; i < tempRoles.length; i++) {
+                userRoles.push(tempRoles[i]);
+            }
+        }
+
+        queryString = shared ? "shared=" + shared : queryString;
+        queryString = isPersonalizeEnabled ? (queryString ? queryString + "&" : "") + "dashboardeditor=" + isPersonalizeEnabled : queryString;
+        queryString = isPreview ? (queryString ? queryString + "&" : "") + "preview=" + isPreview : queryString;
+
+        // Get the anon view
+        if (!user) {
+            if (isAnonView) {
+                response.sendRedirect(request.getRequestURL());
+            }
+            isAnonView = true;
+        } else {
+            isAnonView = JSON.parse(isAnonView);
+
+            if ((user.domain != urlDomain && urlDomain) ||
+                    (dashboard.isanon && !utils.allowed(user.roles, dashboard.permissions.editors) && !utils.allowed(user.roles, dashboard.permissions.viewers))) {
+                isAnonView = true;
+            userRoles = [];
+            userRoles.push(constants.ANONYMOUS_ROLE);
+            }
+        }
+
+        // Get the current page
+        var pages = dashboard.pages,
+                page;
+        pages.forEach(function(p) {
+            if (p.id == pageId) {
+                page = p;
+            }
+        });
+
+        // Build the URL for the home page
+        var dashboardUrl = tenantedUrlPrefix + 'dashboards/' + dashboard.id;
+        if (request.getParameter('isAnonView') == 'true') {
+            dashboardUrl += '?isAnonView=true';
+        }
+
+        // Getting dashboard color theme
+        var gadgetTheme;
+        if(request.getCookie('dashboardTheme') != null) {
+            gadgetTheme = request.getCookie('dashboardTheme').value;
+        } else {
+            gadgetTheme = 'dark';
+        }
+    %>
+
     <title><%= i18n.localize("dashboard.server.label")%></title>
 
     <!-- JQuery UI -->
@@ -107,21 +110,20 @@
 
     <!-- Custom theme overrides -->
     <%
-    var path = utils.getThemeStylesPath();
-    var folder = new File('/' + path);
-    var filePath = "";
-    var fileList = folder.listFiles();
-    fileList.forEach(function(file){
-        filePath = '/' + path +'/' + file.getName();
+        var path = utils.getThemeStylesPath();
+        var folder = new File('/' + path);
+        var filePath = "";
+        var fileList = folder.listFiles();
+        fileList.forEach(function(file){
+            filePath = '/' + path +'/' + file.getName();
     %>
         <link rel="stylesheet" href="<%=urlPrefix%><%=filePath%>">
     <%
-    });
-%>
-
+        });
+    %>
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
-<body class="dashboard lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
+<body class="dashboard fixed lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
     <!-- Modal -->
     <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -130,7 +132,7 @@
         </div>
     </div>
     <!-- .left-sidebar -->
-    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-width="260" style="width:260px">
+    <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left" data-container=".page-content-wrapper" data-container-divide="true" data-width="260" data-offset-bottom="40" style="width:260px">
         <div class="nano">
             <div class="nano-content">
 
@@ -149,29 +151,31 @@
                     <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
                         data-toggle="collapse" aria-expanded="true">
                         <h4 class="panel-title">
-                        <span class="icon fw-stack">
-                        <i class="fw fw-pdf fw-stack-2x"></i>
-                        </span>
-                            <%=i18n.localize("dashboard.pdf.generatePDF")%></h4><span class="caret"></span>
-                    </div>
-                    <div class="collapse" id="pdf-size-panel">
-                        <div class="panel-body add-padding-3x generate-pdf-panel">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <div class="panel-heading text-truncate dropdown dropdown-select-label">
-                                            <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
+                            <span class="icon fw-stack">
+                                <i class="fw fw-pdf fw-stack-2x"></i>
+                            </span>
+                            <%=i18n.localize("dashboard.pdf.generatePDF")
+    %>
+                            </h4>
+                            <span class="caret"></span>
+                        </div>
+                        <div class="collapse" id="pdf-size-panel">
+                            <div class="panel-body add-padding-3x generate-pdf-panel">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <div class="panel-heading text-truncate dropdown dropdown-select-label">
+                                                <label class="control-label"><%=i18n.localize("dashboard.pdf.selectSize")%></label>
                                         </div>
                                         <div class="dropdown pagetype-selection-dropdown">
-                                            <div class="btn btn-primary dropdown-toggle dropdown-menu-button-size" data-toggle="dropdown">
-                                                <div id = "pdf-size" class="pagetype-div"></div><span class="caret"></span>
+                                            <div class="btn btn-secondary btn-bordered dropdown-toggle dropdown-menu-button-size" data-toggle="dropdown">
+                                                <div id = "pdf-size" class="pagetype-div"></div> <span class="caret"></span>
                                             </div>
                                             <ul class="dropdown-menu dropdown-ul">
                                                 <li class="dropdown-li"><a href="#">Default Size</a></li>
                                                 <li class="dropdown-li"><a href="#">A4</a></li>
                                                 <li class="dropdown-li"><a href="#">A3</a></li>
                                                 <li class="dropdown-li"><a href="#">A2</a></li>
-                                                <li class="dropdown-li"><a href="#">A1</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -191,9 +195,11 @@
                                     </div>
                                 </div>
                                 <ul class="nav nav-pills nav-stacked pages">
-                                    <div id="generate-pdf">
-                                        <li><%=i18n.localize("dashboard.pdf.downloadPDF")%></li>
-                                    </div>
+                                    <li>
+                                        <button class="btn btn-primary" id="generate-pdf">
+                                            <%=i18n.localize("dashboard.pdf.downloadPDF")%>
+                                        </button>
+                                    </li>
                                 </ul>
                             </form>
                         </div>
@@ -209,7 +215,7 @@
             <div class="container-fluid">
 
                 <div class="navbar-header">
-                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" data-container=".page-content-wrapper" data-container-divide="true" aria-expanded="true" rel="sub-nav">
+                    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="true" rel="sub-nav">
                         <span class="icon fw-stack">
                             <i class="fw fw-menu fw-stack-1x toggle-icon-left"></i>
                         </span>
@@ -297,41 +303,42 @@
             </div>
         </div>
          <% } else { %>
-            <body class="dashboard lang_<%=request.getLocale()%>" style="padding-bottom: 0">
-            <body class="dashboard lang_<%=request.getLocale()%> dark" style="padding-bottom: 0">
+            <body class="dashboard fixed lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>" style="padding-bottom: 0;">
                 <div class="page-content-wrapper remove-padding-xs">
          <% } %>
 
             <!-- page content -->
             <% if(typeof  bgColor === 'undefined'){ %>
-                <div class="form-group hide" id="list-user-views">
-                    <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
-                    data-style="btn-default" data-width="100px" style="width: 200px">
-                    </select>
-                </div>
                 <div class="container-fluid body-wrapper" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" >
             <% } else { %>
                 <div class="container-fluid body-wrapper" style="height: 100%;" data-toggle="loading" data-loading-style="overlay">
                 <div class="nano" style="position: absolute;">
             <% } %>
-                    <div class="nano-content" >
-                        <div class="page-content">
-                            <div class="progress hidden">
-                                    <div class="indeterminate"></div>
+                <div class="nano-content" >
+                    <div class="page-content">
+                        <div class="clearfix add-margin-top-5x add-margin-right-5x">
+                            <div id="list-user-views" class="hide">
+                                <select name="select-theme" class="form-control selectpicker dropdown pull-right" id="ds-allowed-view-list"
+                                    data-style="btn-default" data-width="100px">
+                                </select>
                             </div>
-                            <!-- Components grid -->
-                                <div class="ues-components-grid gadgets-grid" id = "gadgets-grid"></div>
                         </div>
+                        <div class="progress hidden">
+                            <div class="indeterminate"></div>
+                        </div>
+                        <!-- Components grid -->
+                        <div class="ues-components-grid gadgets-grid" id = "gadgets-grid"></div>
                     </div>
                 </div>
             </div>
+        </div>
     </div><!-- /#page-content-wrapper -->
 
 
- <% if(typeof  bgColor === 'undefined'){ %>
-    <!--Footer -->
-    <% include(utils.getThemeTemplatePath('templates/includes/portal-footer.jag')); %>
+    <% if(typeof  bgColor === 'undefined'){ %>
+        <!--Footer -->
+        <% include(utils.getThemeTemplatePath('templates/includes/portal-footer.jag')); %>
     <% } %>
 
     <!-- Handlebar templates -->
@@ -481,7 +488,7 @@
 
     <!-- Handlebar templates -->
     <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
-        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString null allowedViews}}{{/traverseMenu}}
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString currentView allowedViews}}{{/traverseMenu}}
     </script>
 
     <script id="ds-modal-confirm-delete-block-hbs" type="text/x-handlebars-template">
@@ -511,8 +518,9 @@
         </div>
         {{/if}}
     </script>
+                    
     <!--Handlebar templates for revert button confirmation of reverting into original dashboard page -->
-     <script id="ds-modal-confirm-revert-block-hbs" type="text/x-handlebars-template">
+    <script id="ds-modal-confirm-revert-block-hbs" type="text/x-handlebars-template">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fw fw-cancel"></i></button>
             <h3 class="modal-title" id="deleteModalLabel">
@@ -529,10 +537,11 @@
 
     <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
     <script id="ds-error-hbs" type="text/x-handlebars-template">
-      <div class="alert alert-danger" id = "delete-error" role="alert">
-        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
-        <h3>{{error}}</h3>
-      </div>
+        <div class="alert alert-danger missing-gadget" role="alert">
+            <i class="icon fw fw-error"></i><strong>{{errorTitle}}!</strong>
+            <br>
+            {{error}}
+        </div>
     </script>
 
    <!-- View options for a particular page -->
@@ -613,7 +622,8 @@
                             ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
                             ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
                             ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
-                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>"' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
+                            ' "error" : "<%= i18n.localize("error")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
 
@@ -626,6 +636,7 @@
         var currentView = <%= stringify(viewId) %>;
         var embeddableView = null;
         var isEditor = <%= isEditor%>;
+        var isUserFromSuperDomain = <%= isUserFromSuperDomain%>
         <% if (typeof bgColor !== 'undefined') { %>
                 embeddableView = <%= stringify(vId) %>;
         <% } %>

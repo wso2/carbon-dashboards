@@ -14,27 +14,77 @@
  * limitations under the License.
  */
 
-#ds-assets-portal .ds-asset .ds-asset-trash-handle {
-    position: absolute;
-    top: 10px;
-    right: 25px;
-    width: 20px;
-    font-size: 12px;
-    text-align: right;
-}
-
-.ds-asset-download-handle {
-    position: absolute;
-    top: 10px;
-    right: 45px;
-    width: 20px;
-    font-size: 12px;
-    text-align: right;
+body {
+    background: #eee;
 }
 
 #ds-assets-portal .ds-asset {
-    height: 200px;
-    background-color: #edeeef;
+    height: 230px;
+    background-color: #272C30;
+    padding: 0;
+    color: #fff;
+    position: relative;
+}
+
+#ds-assets-portal .ds-asset.shared {
+    border-top: 5px solid #4aa624;
+}
+
+#ds-assets-portal .ds-asset.ues-dashboard {
+    height: 180px;
+}
+
+#ds-assets-portal .ds-asset .ds-asset-icon {
+    font-size: 80px;
+}
+
+#ds-assets-portal .ds-asset .ds-asset-shared {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+}
+
+#ds-assets-portal .ds-asset .ds-asset-sharedAcrossTenants {
+    margin-right: 30px !important;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-img {
+    height: 150px;
+    margin: 20px auto;
+}
+
+#ds-assets-portal .ds-asset > .title {
+    padding: 10px;
+    margin: 0;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-handles {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 12px;
+    text-align: right;
+    white-space: nowrap;
+}
+.glyphicon-pencil{
+    top: 0px;
+    right: 0px;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-handles > .ds-asset-handle {
+    display: inline-block;
+    background: #3d464f;
+    color: #d6dde5;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+#ds-assets-portal .ds-asset > .ds-asset-handles > .ds-asset-handle:hover {
+    background: #e6e6e6;
+    color: #333;
 }
 
 .ds-asset-trash-cancel {
@@ -42,11 +92,15 @@
 }
 
 .ds-trash-actions {
-    right: 8px;
-    bottom: 7px;
+    right: 15px;
+    bottom: 15px;
     position: absolute;
-    padding-bottom: 20px;
-    padding-right: 20px;
+}
+
+.ds-edit-actions {
+    right: 15px;
+    bottom: 15px;
+    position: absolute;
 }
 
 #ds-assets-portal .ds-asset h1 {
