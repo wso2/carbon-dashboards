@@ -170,7 +170,7 @@
             {{#if shared}}
             <div class="ds-asset-shared">
                 <i class="fw fw-share"></i>
-                <span id="shared-description"><%= i18n.localize("shared.by.supertenant") %></span>
+                <span id="shared-description"><%= i18n.localize("shared.by.supertenant") %><%= superDomain %>'</span>
             </div>
             {{/if}}
             <div class="ues-actions">
