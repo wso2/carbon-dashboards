@@ -364,7 +364,6 @@ $(function () {
         var i;
         var item;
         var items = storeCache[type];
-        console.log(type);
         var length = items.length;
         for (i = 0; i < length; i++) {
             item = items[i];
