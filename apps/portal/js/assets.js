@@ -97,7 +97,7 @@ $(function () {
                     $('#selectStore').show();
                 }
                 else {
-                    $('#selectStore').replaceWith('<label id="store" class="control-label">' + data[0] + '</label>');
+                    $('#selectStore').replaceWith('<label id="storeLabel" class="control-label">' + data[0] + '</label>');
                 }
                 $('#storeSelector').show();
             } else {
@@ -357,7 +357,10 @@ $(function () {
             e.preventDefault();
             var assetElement = $(this).closest('.ds-asset');
             var id = assetElement.data('id');
-            var store = document.getElementById('store').innerHTML;
+            var store = $('#selectStore').selectpicker('val');
+            if (typeof(store) !== "string") {
+                store = $("#storeLabel").text();
+            }
             editAsset(assetType, id, store);
         });
 

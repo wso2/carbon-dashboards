@@ -30,10 +30,11 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/theme.css">
 
     <% include('/controllers/includes/theme-portal-styles.jag');
-var editGadgetId = request.getParameter('id');
-var editType = request.getParameter('type');
-var editGadgetStore = request.getParameter('store');
-var gadgetEditable = request.getParameter('editable');%>
+
+    var editGadgetId = request.getParameter('id');
+    var editType = request.getParameter('type');
+    var editGadgetStore = request.getParameter('store');
+    var gadgetEditable = request.getParameter('editable');%>
 
 </head>
 <body>

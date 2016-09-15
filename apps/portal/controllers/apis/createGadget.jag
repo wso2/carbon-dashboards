@@ -111,12 +111,11 @@
         print(customProviderPartial);
         return;
     }
-    else if (action==='getEditConfig'){
-        providerApiLocation = GADGET_LOCATION + store +'/'+type +'/'+ id+ EDIT_CONFIG_FILE;
+    else if (action === 'getEditConfig') {
+        providerApiLocation = GADGET_LOCATION + store + '/' + type + '/' + id + EDIT_CONFIG_FILE;
         providerApi = require(providerApiLocation);
         print(providerApi);
         return;
-
     } else if (action === 'getData') {
         providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
         providerApi = require(providerApiLocation);
@@ -236,7 +235,7 @@
             gadgetID = chartConf[GADGET_NAME].replace(/ /g,"_");
 
             var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
-            if(gadgetStoreFile.isExists() && editable!=='true' ){
+            if (gadgetStoreFile.isExists() && editable !== 'true') {
                 print({
                     error: true,
                     message: "Gadget with the same name already exists"
@@ -376,16 +375,13 @@
             isPushMode = true;
         }
         var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
-
-        if(gadgetStoreFile.isExists() && editable!=='true' ){
+        if (gadgetStoreFile.isExists() && editable !== 'true') {
             print({
                 error: true,
                 message: "Gadget with the same name already exists "
             });
-            return ;
-
+            return;
         }
-
         fileUtils.replaceText(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID +'/js/core/gadget-util.js', CONTEXT + TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID,
                 CONTEXT + GADGETS_LOCATION + gadgetID);
 

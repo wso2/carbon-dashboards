@@ -326,7 +326,6 @@ function getProviders() {
                     location.reload();
                 }
                 var source = $("#wizard-error-hbs").html();
-                ;
                 var template = Handlebars.compile(source);
                 $("#rootwizard").empty();
                 $("#rootwizard").append(template({error: xhr.responseText}));
@@ -563,7 +562,6 @@ function getChartConfig(providerConfig) {
                         var gadgetCong = getGadgetConf();
                         var group = addValueWithoutGrouping(configGroup, gadgetCong['chart-conf']);
                         registerAdvancedProviderUI(configGroup);
-                        console.log(group);
                         $("#chart-config").html(chartHbs(group));
                         $("#preview").removeAttr("style");
                     }
