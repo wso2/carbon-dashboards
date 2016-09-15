@@ -20,21 +20,21 @@
 <head>
     
     <%
-        /**
-         * Sanitize the input value.
-         * @param destination {String}
-         * @return string
-         * @private
-         */
-        var sanitizeDestination = function (destination) {
-            if (!destination) {
-                return "/portal/";
-            }
-            return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
-        };
+/**
+ * Sanitize the input value.
+ * @param destination {String}
+ * @return string
+ * @private
+ */
+var sanitizeDestination = function (destination) {
+    if (!destination) {
+        return "/portal/";
+    }
+    return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
+};
 
-        dest = sanitizeDestination(request.getParameter('destination'));
-        include(utils.resolvePath('templates/includes/portal-header.jag'));
+dest = sanitizeDestination(request.getParameter('destination'));
+include(utils.resolvePath('templates/includes/portal-header.jag'));
         include('/controllers/includes/theme-portal-styles.jag');
     %>
 

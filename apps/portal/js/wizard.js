@@ -17,6 +17,7 @@
  */
 var provider;
 var chartType;
+var configGroup;
 var wizardData = {};
 var columns = [];
 var step0Done = false;
@@ -24,6 +25,7 @@ var step1Done = false;
 var step2Done = false;
 var selectedTableCoulumns = [];
 var defaultTableColumns = [];
+var groups = "grouping";
 
 var PROVIDER_LOCATION = 'extensions/providers/';
 var CHART_LOCATION = 'extensions/chart-templates/';
@@ -221,7 +223,7 @@ $("#preview").click(function () {
     }
     else {
         $.ajax({
-            url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=preview',
+            url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=preview' + '&editable=' + editable,
             method: "POST",
             data: JSON.stringify(wizardData),
             contentType: "application/json",
@@ -259,13 +261,21 @@ $("#preview").click(function () {
 $(document).on('click', '.complete', function () {
     $("#preview").click();
     $.ajax({
-        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=addGadgetToStore',
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=addGadgetToStore' + '&editable=' + editable,
         method: "POST",
         data: JSON.stringify(wizardData),
         contentType: "application/json",
         async: false,
         success: function (data) {
-            $('#top-rootwizard').html($('#success-hbs').html());
+            if (!data.error) {
+                $('#top-rootwizard').html($('#success-hbs').html());
+            } else {
+                $('#tab3-validation-errors > .text').html(data.message);
+                $('#tab3-validation-errors').show();
+                $('#preview-pane').html('');
+                $('#rootwizard').find('.pager .finish').hide();
+            }
+
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
@@ -288,40 +298,69 @@ $(document).on('click', '.complete', function () {
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
 
 function getProviders() {
-    $.ajax({
-        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getProviders',
-        method: "GET",
-        async: false,
-        contentType: "application/json",
-        success: function (data) {
-            if (data.length == 0) {
-                var source = $("#wizard-zerods-hbs").html();
+    if (editable) {
+        var data = getGadgetConf();
+        var providerHbs = Handlebars.compile($('#datasource-providers-hbs').html());
+        $("#provider-list").html(providerHbs(data));
+    } else {
+        $.ajax({
+            url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getProviders',
+            method: "GET",
+            async: false,
+            contentType: "application/json",
+            success: function (data) {
+                if (data.length == 0) {
+                    var source = $("#wizard-zerods-hbs").html();
+                    var template = Handlebars.compile(source);
+                    $("#rootwizard").empty();
+                    $("#rootwizard").append(template());
+                    return;
+                }
+                var providerHbs = Handlebars.compile($('#datasource-providers-hbs').html());
+                $("#provider-list").html(providerHbs(data));
+            },
+            error: function (xhr, message, errorObj) {
+                //When 401 Unauthorized occurs user session has been log out
+                if (xhr.status == 401) {
+                    //reload() will redirect request to login page with set current page to redirect back page
+                    location.reload();
+                }
+                var source = $("#wizard-error-hbs").html();
+                ;
                 var template = Handlebars.compile(source);
                 $("#rootwizard").empty();
-                $("#rootwizard").append(template());
-                return;
-            }
-            var providerHbs = Handlebars.compile($('#datasource-providers-hbs').html());
-            $("#provider-list").html(providerHbs(data));
-
-        },
-        error: function (xhr, message, errorObj) {
-
-            //When 401 Unauthorized occurs user session has been log out
-            if (xhr.status == 401) {
-                //reload() will redirect request to login page with set current page to redirect back page
-                location.reload();
+                $("#rootwizard").append(template({error: xhr.responseText}));
             }
 
-            var source = $("#wizard-error-hbs").html();
-            ;
-            var template = Handlebars.compile(source);
-            $("#rootwizard").empty();
-            $("#rootwizard").append(template({
-                error: xhr.responseText
-            }));
+        });
+    }
+};
+/*
+* add value of the each elements of the generated gadgets
+* which have grouping in the provider's config.json
+* */
+
+var addValueWithGrouping = function (group, values) {
+    var groupArray = [];
+    groupArray = Object.keys(group);
+    for (var i = 0; i < groupArray.length; i++) {
+        for (var j = 0; j < (group[i]['elements']).length; j++) {
+            group[i]['elements'][j]['value'] = values[group[i]['elements'][j]['fieldName']];
         }
-    });
+    }
+    return group;
+};
+/*
+ * add value of the each elements of the generated gadgets
+ * which have no grouping in the provider's config.json
+ * */
+var addValueWithoutGrouping = function (group, values) {
+    var groupArray = [];
+    groupArray = Object.keys(group['grouping']['elements']);
+    for (var i = 0; i < groupArray.length; i++) {
+        group['grouping']['elements'][i]['value'] = values[group['grouping']['elements'][i]['fieldName']];
+    }
+    return group;
 };
 
 function getProviderConfig() {
@@ -338,10 +377,46 @@ function getProviderConfig() {
         contentType: "application/json",
         async: false,
         success: function (data) {
-            registerAdvancedProviderUI(data);
             var providerHbs = Handlebars.compile($('#ui-config-hbs').html());
-            $("#provider-config").html(providerHbs(data));
+            if (Object.keys(data[0]).indexOf(groups) > -1) {
+                configGroup = (data[0].grouping);
+                for (var i = 0; i < configGroup.length; i++) {
+                    registerAdvancedProviderUI(configGroup[i]);
+                }
+                if (editable) {
+                    var gadgetConf = getGadgetConf();
+                    var group = addValueWithGrouping(configGroup, gadgetConf['provider-conf']);
+                    $("#provider-config").append(providerHbs(group));
+
+                } else {
+                    $("#provider-config").append(providerHbs(configGroup));
+                }
+            } else {
+                if (editable) {
+                    var gadgetConf = getGadgetConf();
+                    configGroup = {
+                        "grouping": {
+                            "elements": data
+                        }
+                    };
+                    var group = addValueWithoutGrouping(configGroup, gadgetConf['provider-conf']);
+                    console.log(group);
+                    registerAdvancedProviderUI(configGroup);
+                    $("#provider-config").html(providerHbs(group));
+                }
+                else {
+
+                    configGroup = {
+                        "grouping": {
+                            "elements": data
+                        }
+                    };
+                    registerAdvancedProviderUI(configGroup);
+                    $("#provider-config").html(providerHbs(configGroup));
+                }
+            }
         },
+
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
             if (xhr.status == 401) {
@@ -410,6 +485,22 @@ function getProviderConfigData() {
     return providerConf;
 }
 
+function getGadgetConf() {
+    var editableConf = {};
+    var editConfData;
+    $.ajax({
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getEditConfig' + '&id=' + id + '&type=' + type + '&store=' + store,
+        method: "POST",
+        data: JSON.stringify(editableConf),
+        contentType: "application/json",
+        async: false,
+        success: function (data) {
+            editConfData = data;
+        }
+    });
+    return editConfData;
+}
+
 function getChartList() {
     $.ajax({
         url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getChartList',
@@ -418,7 +509,20 @@ function getChartList() {
         async: false,
         success: function (chartList) {
             var chartListHbs = Handlebars.compile($('#chart-list-hbs').html());
-            $("#chart-list").html(chartListHbs(chartList));
+            var gadgetNameHbs = Handlebars.compile($('#gadget-name-hbs').html());
+            if (editable) {
+                var gadgetConf = getGadgetConf();
+                for (var i = 0; i < chartList.length; i++) {
+                    if (chartList[i]['id'] === gadgetConf['chart-conf']['chart-name']) {
+                        chartList[i]["selected"] = true;
+                    }
+                }
+                $("#chart-list").html(chartListHbs(chartList));
+                $("#gadgetName").html(gadgetNameHbs(gadgetConf['chart-conf']));
+            } else {
+                $("#chart-list").html(chartListHbs(chartList));
+                $("#gadgetName").html(gadgetNameHbs(null));
+            }
         }
     });
 }
@@ -432,10 +536,43 @@ function getChartConfig(providerConfig) {
         async: false,
         success: function (chartConfig) {
             if (!chartConfig.error) {
-                registerAdvancedChartUI(chartConfig);
                 var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
-                $("#chart-config").html(chartHbs(chartConfig));
-                $("#preview").removeAttr("style");
+
+                if (Object.keys(chartConfig[0]).indexOf(groups) > -1) {
+                    configGroup = (chartConfig[0].grouping);
+                    for (var i = 0; i < configGroup.length; i++) {
+                        registerAdvancedProviderUI(configGroup[i]);
+                    }
+                    if (editable) {
+                        var gadgetCong = getGadgetConf();
+                        var group = addValueWithGrouping(configGroup, gadgetCong['chart-conf']);
+                        $("#chart-config").append(chartHbs(group));
+                        $("#preview").removeAttr("style");
+                    }
+                    else {
+                        $("#chart-config").append(chartHbs(configGroup));
+                        $("#preview").removeAttr("style");
+                    }
+                } else {
+                    configGroup = {
+                        "grouping": {
+                            "elements": chartConfig
+                        }
+                    };
+                    if (editable) {
+                        var gadgetCong = getGadgetConf();
+                        var group = addValueWithoutGrouping(configGroup, gadgetCong['chart-conf']);
+                        registerAdvancedProviderUI(configGroup);
+                        console.log(group);
+                        $("#chart-config").html(chartHbs(group));
+                        $("#preview").removeAttr("style");
+                    }
+                    else {
+                        registerAdvancedChartUI(configGroup);
+                        $("#chart-config").html(chartHbs(configGroup));
+                        $("#preview").removeAttr("style");
+                    }
+                }
             } else {
                 $('#tab3-validation-errors > .text').html(chartConfig.message);
                 $('#tab3-validation-errors').show();

@@ -101,7 +101,7 @@ ul.dropdown-menu.more-actions-button > li > button {
 .btn-group.open .dropdown-toggle {
     -webkit-box-shadow: none;
     box-shadow: none;
-/*    border: 0px;*/
+    /*    border: 0px;*/
 }
 
 .btn-default:hover,

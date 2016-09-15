@@ -91,14 +91,14 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
 
     if (designer) {
         divTree += "<ul class='nav nav-pills nav-stacked menu-customize'>" +
-                        "<li class='hide-all add-margin-bottom-3x'>" +
-                            "<label class='checkbox'>" +
-                                "<input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'>" +
-                                "<span class='helper'> Hide All</span>" +
-                            "</label>" +
-                        "</li>" + 
-                    "</ul>" +
-                    "<ul id='sortable' class='nav nav-pills nav-stacked connect dd dd-list'>";
+            "<li class='hide-all add-margin-bottom-3x'>" +
+            "<label class='checkbox'>" +
+            "<input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'>" +
+            "<span class='helper'> Hide All</span>" +
+            "</label>" +
+            "</li>" +
+            "</ul>" +
+            "<ul id='sortable' class='nav nav-pills nav-stacked connect dd dd-list'>";
     } else {
         divTree += "<ul id='sortable' class='nav nav-pills nav-stacked menu-customize pages'>";
     }

@@ -55,5 +55,8 @@ class DataSourceConstants {
     static final String DB2_SCRIPT_NAME = "db2";
     static final String GADGET_USAGE_TABLE_NAME = "GADGET_USAGE";
     static final String DB_CHECK_SQL = "SELECT * FROM GADGET_USAGE";
-    static enum GADGET_STATES{ACTIVE, DELETED};
+
+    static enum GADGET_STATES {ACTIVE, DELETED}
+
+    ;
 }

@@ -30,6 +30,7 @@
 
     var CONTEXT = '/portal';
     var PROVIDERS_LOCATION = '/extensions/providers/';
+    var GADGET_LOCATION = '/store/carbon.super/';
     var PARTIAL_LOCATION = '/partials/';
     var CHART_LOCATION = '/extensions/chart-templates/';
     var GADGETS_LOCATION = '/store/' + session.get('user').domain + '/fs/gadget/';
@@ -40,6 +41,7 @@
     var CHART_API_FILE = '/api.js';
     var PROVIDER_CONFIG_FILE = '/config.json';
     var CHART_CONFIG_FILE = '/config.json';
+    var EDIT_CONFIG_FILE = '/conf.json';
     var GADGET_XML_FILE = '/gadget.xml';
 
     var VALUE_SET = 'valueSet';
@@ -55,6 +57,10 @@
     response.contentType = 'application/json';
 
     var action = request.getParameter("action");
+    var id = request.getParameter("id");
+    var type = request.getParameter("type");
+    var store = request.getParameter("store");
+    var editable = request.getParameter("editable");
     var data = request.getContent();
 
     var providerApiLocation;
@@ -104,6 +110,13 @@
         }
         print(customProviderPartial);
         return;
+    }
+    else if (action==='getEditConfig'){
+        providerApiLocation = GADGET_LOCATION + store +'/'+type +'/'+ id+ EDIT_CONFIG_FILE;
+        providerApi = require(providerApiLocation);
+        print(providerApi);
+        return;
+
     } else if (action === 'getData') {
         providerApiLocation = PROVIDERS_LOCATION + data[PROVIDER_CONF][PROVIDER_NAME] + PROVIDER_API_FILE;
         providerApi = require(providerApiLocation);
@@ -138,10 +151,10 @@
             } else {
                 log.error('No data found');
                 print(
-                      {
-                          "error": true,
-                          "message": "No data found"
-                      }
+                        {
+                            "error": true,
+                            "message": "No data found"
+                        }
                 );
                 return;
             }
@@ -223,7 +236,7 @@
             gadgetID = chartConf[GADGET_NAME].replace(/ /g,"_");
 
             var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
-            if(gadgetStoreFile.isExists()){
+            if(gadgetStoreFile.isExists() && editable!=='true' ){
                 print({
                     error: true,
                     message: "Gadget with the same name already exists"
@@ -362,6 +375,16 @@
         if(providerApi.getMode().toLowerCase() === 'push'){
             isPushMode = true;
         }
+        var gadgetStoreFile = new File(GADGETS_LOCATION + gadgetID);
+
+        if(gadgetStoreFile.isExists() && editable!=='true' ){
+            print({
+                error: true,
+                message: "Gadget with the same name already exists "
+            });
+            return ;
+
+        }
 
         fileUtils.replaceText(TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID +'/js/core/gadget-util.js', CONTEXT + TEMP_GADGET_LOCATION + userDomain + '/' + gadgetID,
                 CONTEXT + GADGETS_LOCATION + gadgetID);
@@ -391,7 +414,7 @@
         var dataSet;
         try {
             dataSet = providerApi.getData(data[PROVIDER_CONF], 10);
-        } catch(e) {
+        } catch (e) {
             print({
                 error: true,
                 message: e.message
