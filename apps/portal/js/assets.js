@@ -98,7 +98,7 @@ $(function () {
                     $('#selectStore').show();
                 }
                 else {
-                    $('#selectStore').replaceWith('<label class="control-label">' + data[0] + '</label>');
+                    $('#selectStore').append('<option value="' + data[0] + '">' + data[0].toUpperCase() + '</option>');
                 }
                 $('#storeSelector').show();
             } else {

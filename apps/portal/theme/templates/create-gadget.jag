@@ -87,13 +87,12 @@ var gadgetEditable = request.getParameter('editable');%>
     <div class="row thumbnails ues-dashboard">
         <div class="col-md-8 col-md-offset-2" id="top-rootwizard">
             <% if (gadgetEditable == 'true') { %>
-                <h1 class="page-sub-title"><%=
-    i18n.localize("edit.a.gadget")
+                <h1 class="page-sub-title"><%=i18n.localize("edit.a.gadget")
     %></h1>
                 <%
-} else {%>
-                <h1 class="page-sub-title"><%=
-    i18n.localize("generate.a.gadget")
+} else {
+    %>
+                    <h1 class="page-sub-title"><%=i18n.localize("generate.a.gadget")
     %></h1>
                 <%
 }%>

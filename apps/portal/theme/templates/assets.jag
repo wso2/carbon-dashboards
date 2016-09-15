@@ -158,16 +158,15 @@
 
     <script id="ds-asset-thumbnail-hbs" type="text/x-handlebars-template">
         <h5 class="title">{{title}}</h5>
-
-        {{#has gadgetGeneration}}
-            <a href="#" class="input-group-addon  ds-asset-edit-handle">
-                <i class="glyphicon glyphicon-pencil" data-placement="centre" ></i>
-            </a>
-        {{/has}}
         <% var isDeleteAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DELETE) : permission.isAllowed(constants.LAYOUT_DELETE); %>
         <% var isDownloadAllowed = (assetType === constants.GADGET_TYPE) ? permission.isAllowed(constants.GADGET_DOWNLOAD) : permission.isAllowed(constants.LAYOUT_DOWNLOAD); %>
         
         <div class="ds-asset-handles">
+         {{#has gadgetGeneration}}
+            <a href="#" class="ds-asset-handle  ds-asset-edit-handle">
+                <i class="glyphicon glyphicon-pencil" data-placement="centre" ></i>
+            </a>
+         {{/has}}
             <% if (isDownloadAllowed) { %>
                 {{#if isDownloadable}}
                     <a href="#" class="ds-asset-handle ds-asset-download-handle">
