@@ -4681,3 +4681,25 @@ $('input[type=number]').on('change', function () {
     }
 });
 
+
+/**
+ * To sanitzie the user input for security timeout
+ * @param value Value, user entered
+ * @param min Minimum allowed value
+ * @param max Maximum allowed value
+ * @param recommended Recommended value
+ * @returns sanitized value
+ */
+function sanitizeSecurityTimeOut(value, min, max, recommended)
+{
+    console.log(value);
+    if(parseInt(value) < min || isNaN(value)) {
+        return recommended;
+    } else if(parseInt(value) > max) {
+        return max;
+    } else {
+        console.log("xxxx" + value);
+        return value;
+    }
+}
+
