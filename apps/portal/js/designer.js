@@ -1660,6 +1660,9 @@ $(function () {
             showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
+                    if (componentBox.find('.ues-component').hasClass('active')) {
+                        $('.fw-right-arrow').click();
+                    }
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
