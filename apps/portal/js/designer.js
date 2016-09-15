@@ -1659,6 +1659,9 @@ $(function () {
             showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
+                    if (componentBox.find('.ues-component').hasClass('active')) {
+                        $('.fw-right-arrow').click();
+                    }
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
@@ -3715,7 +3718,7 @@ $(function () {
             drop: function (event, ui) {
                 var id = ui.helper.data('id');
                 var type = ui.helper.data('type');
-                if (!hasHiddenGadget($(this)) && !hasComponents($(this))) {
+                if (type && !hasHiddenGadget($(this)) && !hasComponents($(this))) {
                     createComponent($(this), findStoreCache(type, id));
                 }
             }
