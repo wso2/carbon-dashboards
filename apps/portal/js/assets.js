@@ -90,8 +90,7 @@ $(function () {
         ues.store.getStoreList(function (error, data) {
             if (!error && data) {
                 var length = data.length;
-
-                if(length > 1){
+                if (length > 1) {
                     for (var i = 0; i < length; i++) {
                         addStoreToList(data[i]);
                     }
@@ -172,7 +171,7 @@ $(function () {
      * To get the gadget usage information for a particular gadget id
      * @param gadgetId Id of the gadget
      */
-    var getGadgetUsageInfo = function(gadgetId) {
+    var getGadgetUsageInfo = function (gadgetId) {
         var gadgetUsageData;
         $.ajax({
             url: DATABASE_API + '/' + gadgetId + '?task=usage',
@@ -190,13 +189,13 @@ $(function () {
      * To update the gadget state information in database
      * @param gadgetId Id of the gadget
      */
-    var updateGadgetStateInfo = function(gadgetId) {
+    var updateGadgetStateInfo = function (gadgetId) {
         var isSuccess = false;
         $.ajax({
             url: DATABASE_API + '/' + gadgetId + '?task=stateupdate',
             method: "POST",
             async: false,
-            data: JSON.stringify({newState : "DELETED"}),
+            data: JSON.stringify({newState: "DELETED"}),
             contentType: 'application/json',
             success: function () {
                 isSuccess = true;
@@ -298,7 +297,7 @@ $(function () {
                 assetElement.html(assetConfirmHbs(asset));
             } else {
                 gadgetUsageInfo = manipulateGadgetUsageInfo(gadgetUsageInfo.dashboards);
-                var data = {title : asset.title};
+                var data = {title: asset.title};
                 data.message = gadgetUsageInfo;
                 assetElement.html(gadgetUsageConfimrHbs(data));
             }
@@ -328,7 +327,10 @@ $(function () {
         portal.on('click', '.ds-assets .ds-asset-download-handle', function (e) {
             var assetElement = $(this).closest('.ds-asset');
             var id = assetElement.data('id');
-            var store = document.getElementById('store').innerHTML;
+            var store = $('#selectStore').selectpicker('val');
+            if (typeof(store) !== "string") {
+                store = $("#storeLabel").text();
+            }
             downloadAsset(assetType, id, store);
         });
 

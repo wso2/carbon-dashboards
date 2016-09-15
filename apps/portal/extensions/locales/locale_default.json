@@ -294,5 +294,6 @@
   "cannot.delete.internal.everyone.role.for.share.dashboard" : "Cannot remove internal/everyone role from the view when the dashboard is shared",
   "minimize": "Minimize",
   "missing.gadget": "Missing Gadget",
-  "defective.dashboard": "Defective Dashboard"
+  "defective.dashboard": "Defective Dashboard",
+  "add.view" : "Add a new view"
 }

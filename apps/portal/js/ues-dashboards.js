@@ -512,7 +512,6 @@
         getTenantDomain: getTenantDomain,
         setDashboardLoadingState: setDashboardLoadingState,
         getGridstackLayout : getGridstackLayout
-
     };
 
     ues.assets = {};
