@@ -253,3 +253,29 @@
     margin-left: 8px;
     margin-bottom: 2px;
 }
+
+.flex-container {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.flex-container > .flex-item {
+    height: 42px;
+}
+
+.flex-container > .flex-item-middle {
+    overflow: hidden;
+}
+
+.flex-container > .flex-item-left {
+    width: 44px;
+    flex: 0 0 44px;
+}
+
+.flex-container > .flex-item-right {
+    width: 150px;
+    flex: 0 0 150px;
+}

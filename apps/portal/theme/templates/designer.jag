@@ -327,17 +327,17 @@
                 </div>
             </div>
             
-            <div class="page-views-container">
-                <ul class="nav nav-tabs">
+            <div class="page-views-container flex-container">
+                <ul class="nav nav-tabs flex-item flex-item-left">
                     <li id="slide-left"><a href="javascript:void(0)"><i class="fw fw-left"></i></a></li>
                 </ul>
-                <ul class="nav nav-tabs" id="designer-view-mode"><!-- Dynamic Content --></ul>
-                <ul class="nav nav-tabs">
+                <ul class="nav nav-tabs flex-item flex-item-middle" id="designer-view-mode"><!-- Dynamic Content --></ul>
+                <ul class="nav nav-tabs flex-item flex-item-right">
                     <li id="add-view" hidden><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
                     <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
                     <li id="more-views" hidden>
                         <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-down"></i></a>
-                        <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu"></ul>
+                        <ul id="view-list" class="dropdown-menu dropdown-menu-right" role="menu"></ul>
                     </li>
                 </ul>                    
             </div>
@@ -1103,5 +1103,44 @@
 	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>
     <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
+    
+    <script>
+        
+        var collapsedViews = '#view-list';
+        
+        function updateCollapsedViewsDropdown(){
+            
+            var containerTop = $('.page-views-container.flex-container > .flex-item-middle').position().top,
+                hiddenElements = [],
+                listElements = [];
+
+            $('.page-views-container.flex-container > .flex-item-middle > li').each(function(){
+                if ($(this).position().top > containerTop) {
+                    hiddenElements.push($(this));
+                }
+            });
+                    
+            $.each(hiddenElements, function(key, val){
+                listElements.push('<li class="overflowed-item">' +
+                    '<a href="#">' +
+                        '<span id="' + $(val).data('view-mode') + '">' + $(val).find('a').html() + '</span>' +
+                    '</a>' +
+                '</li>');
+            });
+            
+            $(collapsedViews + ' .overflowed-item').remove();
+            $(collapsedViews).append(listElements);
+            
+        }
+ 
+        $('#view-list').closest('li').on('show.bs.dropdown', function(){
+            updateCollapsedViewsDropdown();
+        });
+        
+        $(window).resize(function(){
+            updateCollapsedViewsDropdown();
+        });
+        
+    </script>
 </body>
 </html>

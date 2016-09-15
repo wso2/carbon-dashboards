@@ -655,10 +655,26 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
     background: #272c30;
 }
 
-.page-views-container .nav-tabs > li#more-views:hover > a {
-    background: #7f8386;
-    border-color: #7f8386;
+.page-views-container .nav-tabs > li#more-views:hover > a,
+.page-views-container .nav-tabs > li#more-views:focus > a,
+.page-views-container .nav-tabs > li.open > a:focus,
+.page-views-container .nav-tabs > li.open > a:hover {
+    background: #262a2d;
+    border-color: #262a2d;
     color: #f5f5f5;
+}
+
+.page-views-container .nav-tabs > li#more-views ul.dropdown-menu {
+    background: #262a2d;
+    color: #f5f5f5;
+}
+
+.page-views-container .nav-tabs > li#more-views ul.dropdown-menu > li > a {
+    color: #f5f5f5;
+}
+
+.page-views-container .nav-tabs > li#more-views ul.dropdown-menu > li:hover > a {
+    color: #262a2d;
 }
 
 .page-views-container .nav-tabs > li > button {
