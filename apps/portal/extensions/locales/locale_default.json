@@ -186,6 +186,7 @@
   "shared.dashboards": "Shared Dashboards",
   "tenant.dashboards": "Tenant Specific Dashboards",
   "shared.by.supertenant": "Shared By Super-Tenant",
+  "shared.across.tenants": "Shared Across Tenants",
   "share.information.message": "This dashboard is now visible to all the tenants",
   "upload.gadget.label": "Upload Gadget",
   "create.layout.label": "Create Layout",
@@ -290,5 +291,6 @@
   "cannot.delete.internal.everyone.role.for.share.dashboard" : "Cannot remove internal/everyone role from the view when the dashboard is shared",
   "minimize": "Minimize",
   "missing.gadget": "Missing Gadget",
-  "defective.dashboard": "Defective Dashboard"
+  "defective.dashboard": "Defective Dashboard",
+  "add.view" : "Add a new view"
 }
