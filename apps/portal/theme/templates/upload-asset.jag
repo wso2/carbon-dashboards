@@ -79,7 +79,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-6">
                 <form action="<%=tenantedUrlPrefix%>apis/assets" method="post" id="asset-upload-form" enctype="multipart/form-data" >
                     <h1 class="page-sub-title"><%= i18n.localize("upload."+assetType+".label")%></h1><br>
                     <div class="alert alert-success upload-success hide" role="alert">
@@ -163,6 +163,7 @@
                  showInlineError($("#selected-file"), $("#upload-error"), "<%= i18n.localize("error.in.upload")%>");
             <% } else if (errorMessage === "success") { %>
                  $('.upload-success').addClass("show").removeClass("hide");
+                 window.location = "<%=tenantedUrlPrefix%><%=assetType%>";
             <% } %>
        });
     </script>

@@ -4032,8 +4032,8 @@ $(function () {
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
-                    showCreatePage();
-                });
+                showCreatePage();
+            });
 
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
@@ -4496,8 +4496,27 @@ $(function () {
 
                 if (menu[i].subordinates.length > 0 && !menu[i].ishidden) {
                     manipulateSubordinates(menu[i].subordinates, landing);
-                } else if (menu[i].ishidden) {
+                } else if (menu[i].ishidden && checkParentMenuHidden(menu[i], pageId)) {
                     showInformation(i18n_data['cannot.hide.page'], i18n_data['parents.hidden']);
+                }
+            }
+        }
+    };
+
+    /**
+     * Check parent menu of given view, is hidden or not
+     * @param menu
+     * @param currentView Selected current view
+     * @returns {boolean} true if parent of selected view is hidden
+     */
+    var checkParentMenuHidden = function (menu, currentView) {
+        if (menu.id === currentView) {
+            return true;
+        }
+        if (menu.subordinates.length > 0) {
+            for (var i = 0; i < menu.subordinates.length; i++) {
+                if (checkParentMenuHidden(menu.subordinates[i], currentView)) {
+                    return true;
                 }
             }
         }

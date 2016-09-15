@@ -85,7 +85,7 @@
     <div class="container-fluid">
         <div class="row ues-dashboard">
 
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-6">
                 <form action="" method="post" id="ues-dashboard-form" data-action="<%=tenantedUrlPrefix%>dashboards" 
                       data-api-url="<%=tenantedUrlPrefix%>apis/dashboards">
 
