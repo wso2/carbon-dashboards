@@ -111,7 +111,7 @@
                             <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x" id="filter-dashboards">
                                 <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
                                 <li><a href="#" data-filter="Shared"><%= i18n.localize("shared.dashboards") %></a></li>
-                                <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %></a></li>
+                                <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %><%=userDomain%></a></li>
                             </ul>
                         </li>
                     </ul>

@@ -812,7 +812,7 @@
                 <button type="button" class="btn btn-default btn-bordered ues-refresh-page" data-page-id="{{id}}" title="<%=i18n.localize("refresh")%>">
                     <i class="icon fw fw-refresh"></i>
                 </button>
-                <button type="button" class="btn btn-default btn-bordered ues-delete-page" data-page-id="{{id}}" title="<%=i18n.localize("delete")%>">
+                <button type="button" class="btn btn-default btn-bordered ues-delete-page btn-danger" data-page-id="{{id}}" title="<%=i18n.localize("delete")%>">
                     <i class="icon fw fw-delete"></i>
                 </button>
             </div>

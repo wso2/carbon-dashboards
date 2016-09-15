@@ -156,7 +156,7 @@
   "all.dashboards": "All Dashboards",
   "shared.dashboards": "Shared Dashboards",
   "tenant.dashboards": "Tenant Specific Dashboards",
-  "shared.by.supertenant": "Shared By Super-Tenant",
+  "shared.by.supertenant": "Shared By Carbon-Super",
   "shared.across.tenants": "Shared Across Tenants",
   "owners": "අයිතිකරුවන්",
   "share.information.message": "This dashboard is now visible to all the tenants",
