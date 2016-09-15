@@ -4680,8 +4680,6 @@ $('input[type=number]').on('change', function () {
         input.val(input.attr('min'));
     }
 });
-
-
 /**
  * To sanitzie the user input for security timeout
  * @param value Value, user entered
@@ -4690,16 +4688,12 @@ $('input[type=number]').on('change', function () {
  * @param recommended Recommended value
  * @returns sanitized value
  */
-function sanitizeSecurityTimeOut(value, min, max, recommended)
-{
-    console.log(value);
-    if(parseInt(value) < min || isNaN(value)) {
+function sanitizeSecurityTimeOut(value, min, max, recommended) {
+    if (parseInt(value) < min || isNaN(value)) {
         return recommended;
-    } else if(parseInt(value) > max) {
+    } else if (parseInt(value) > max) {
         return max;
     } else {
-        console.log("xxxx" + value);
         return value;
     }
 }
-
