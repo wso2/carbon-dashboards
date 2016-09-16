@@ -24,7 +24,7 @@ body > .page-content-wrapper > .container-fluid {
 }
 
 .page-content-wrapper {
-    padding-left: 55px;
+    padding-left: 52px;
 }
 
 .dashboard .page-content-wrapper {
@@ -167,7 +167,7 @@ body.fixed:not(.dashboard) .page-content-wrapper .body-wrapper {
 
 .sub-nav .nav > li > a {
     padding: 10px 13px;
-    width: 55px;
+    width: 52px;
     color: #e6e6e6;
 }
 
