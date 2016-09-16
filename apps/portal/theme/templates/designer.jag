@@ -153,7 +153,7 @@
     </div>
 
     <!-- navbar -->
-    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="58" data-offset-bottom="40">
+    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="52" data-offset-bottom="40">
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
@@ -198,7 +198,7 @@
     <div class="page-content-wrapper">
 
         <!-- .left-sidebar -->
-        <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true">
+        <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="52" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true">
 
             <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
                 data-target="#left-sidebar" aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
@@ -302,7 +302,7 @@
         </div>
 
         <!-- .left-sidebar-sub -->
-        <div class="sidebar-wrapper sidebar-nav sidebar-nav-sub" id="left-sidebar-sub" data-side="left" data-width="250" data-offset-left="55" data-offset-bottom="40" data-container=".page-content-wrapper">
+        <div class="sidebar-wrapper sidebar-nav sidebar-nav-sub" id="left-sidebar-sub" data-side="left" data-width="250" data-offset-left="52" data-offset-bottom="40" data-container=".page-content-wrapper">
             <div class="nano">
                 <div class="nano-content">
 
