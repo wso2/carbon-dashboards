@@ -254,6 +254,10 @@
     margin-bottom: 2px;
 }
 
+.hierarchical-menu-container {
+    overflow-y: scroll;
+}
+
 .page-views-container.flex-container {
     display: flex;
     flex-wrap: nowrap;
