@@ -104,7 +104,6 @@
             }
             print(dashboard);
             return;
-
         }
         response.sendError(405, JSON.stringify({
             error: true
