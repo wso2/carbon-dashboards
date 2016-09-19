@@ -26,6 +26,9 @@ var step2Done = false;
 var selectedTableCoulumns = [];
 var defaultTableColumns = [];
 var groups = "grouping";
+var elements = "elements";
+var fieldName = "fieldName";
+var value = "value";
 
 var PROVIDER_LOCATION = 'extensions/providers/';
 var CHART_LOCATION = 'extensions/chart-templates/';
@@ -58,7 +61,11 @@ $('#rootwizard').bootstrapWizard({
 
         if (index == 2) {
             if (isRequiredFieldsFilled) {
-                $('.btn-next a').text('Add to store').removeClass('disabled');
+                if (editable) {
+                    $('.btn-next a').text('Save Changes').removeClass('disabled');
+                } else {
+                    $('.btn-next a').text('Add to store').removeClass('disabled');
+                }
                 $('#lastTab').removeClass("tab-link-disabled");
             }
         }
@@ -164,7 +171,7 @@ $('#show-data').click(function () {
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
-            if (xhr.status == 401) {
+            if (xhr.status === 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
             }
@@ -174,7 +181,6 @@ $('#show-data').click(function () {
             $("#rootwizard").append(template({
                 error: xhr.responseText
             }));
-
         }
     });
 });
@@ -189,7 +195,6 @@ $('#gadget-name').on('keyup', function () {
     if ($(this).val()) {
         hideInlineError($(this), $("#gadget-name-error"));
     }
-
 });
 
 $('#tab2').on('keypress', function () {
@@ -223,7 +228,7 @@ $("#preview").click(function () {
     }
     else {
         $.ajax({
-            url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=preview' + '&editable=' + editable,
+            url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=preview' + '&editable=' + editable + '&id=' + id,
             method: "POST",
             data: JSON.stringify(wizardData),
             contentType: "application/json",
@@ -243,7 +248,7 @@ $("#preview").click(function () {
             },
             error: function (xhr, message, errorObj) {
                 //When 401 Unauthorized occurs user session has been log out
-                if (xhr.status == 401) {
+                if (xhr.status === 401) {
                     //reload() will redirect request to login page with set current page to redirect back page
                     location.reload();
                 }
@@ -261,30 +266,35 @@ $("#preview").click(function () {
 $(document).on('click', '.complete', function () {
     $("#preview").click();
     $.ajax({
-        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=addGadgetToStore' + '&editable=' + editable,
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=addGadgetToStore' + '&editable=' + editable + '&id=' + id,
         method: "POST",
         data: JSON.stringify(wizardData),
         contentType: "application/json",
         async: false,
         success: function (data) {
             if (!data.error) {
-                $('#top-rootwizard').html($('#success-hbs').html());
+                if (editable) {
+                    var data = {};
+                    data.message = manipulateEditGadgetInfo();
+                    var editSuccessHbs = Handlebars.compile($('#edit-success-hbs').html());
+                    $('#top-rootwizard').html(editSuccessHbs(data));
+                } else {
+                    $('#top-rootwizard').html($('#success-hbs').html());
+                }
             } else {
                 $('#tab3-validation-errors > .text').html(data.message);
                 $('#tab3-validation-errors').show();
                 $('#preview-pane').html('');
                 $('#rootwizard').find('.pager .finish').hide();
             }
-
         },
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
-            if (xhr.status == 401) {
+            if (xhr.status === 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
             }
             var source = $("#wizard-error-hbs").html();
-            ;
             var template = Handlebars.compile(source);
             $("#rootwizard").empty();
             $("#rootwizard").append(template({
@@ -296,6 +306,17 @@ $(document).on('click', '.complete', function () {
 
 
 ////////////////////////////////////////////////////// end of event handlers ///////////////////////////////////////////////////////////
+
+function manipulateEditGadgetInfo() {
+    var gadgetConf = getGadgetConf();
+    var message;
+    if ($('#gadget-name').val() === gadgetConf['chart-conf']['gadget-name']) {
+        message = "The  gadget " + $('#gadget-name').val() + " is successfully updated";
+    } else {
+        message = "A gadget with the name " + $('#gadget-name').val() + " is newly created ";
+    }
+    return message;
+}
 
 function getProviders() {
     if (editable) {
@@ -309,7 +330,7 @@ function getProviders() {
             async: false,
             contentType: "application/json",
             success: function (data) {
-                if (data.length == 0) {
+                if (data.length === 0) {
                     var source = $("#wizard-zerods-hbs").html();
                     var template = Handlebars.compile(source);
                     $("#rootwizard").empty();
@@ -321,7 +342,7 @@ function getProviders() {
             },
             error: function (xhr, message, errorObj) {
                 //When 401 Unauthorized occurs user session has been log out
-                if (xhr.status == 401) {
+                if (xhr.status === 401) {
                     //reload() will redirect request to login page with set current page to redirect back page
                     location.reload();
                 }
@@ -330,7 +351,6 @@ function getProviders() {
                 $("#rootwizard").empty();
                 $("#rootwizard").append(template({error: xhr.responseText}));
             }
-
         });
     }
 };
@@ -339,12 +359,12 @@ function getProviders() {
  * which have grouping in the provider's config.json
  * */
 
-var addValueWithGrouping = function (group, values) {
+var populateValuesWithGrouping = function (group, values) {
     var groupArray = [];
     groupArray = Object.keys(group);
     for (var i = 0; i < groupArray.length; i++) {
-        for (var j = 0; j < (group[i]['elements']).length; j++) {
-            group[i]['elements'][j]['value'] = values[group[i]['elements'][j]['fieldName']];
+        for (var j = 0; j < (group[i][elements]).length; j++) {
+            group[i][elements][j][value] = values[group[i][elements][j][fieldName]];
         }
     }
     return group;
@@ -353,11 +373,11 @@ var addValueWithGrouping = function (group, values) {
  * add value of the each elements of the generated gadgets
  * which have no grouping in the provider's config.json
  * */
-var addValueWithoutGrouping = function (group, values) {
+var populateValuesWithoutGrouping = function (group, values) {
     var groupArray = [];
-    groupArray = Object.keys(group['grouping']['elements']);
+    groupArray = Object.keys(group[groups][elements]);
     for (var i = 0; i < groupArray.length; i++) {
-        group['grouping']['elements'][i]['value'] = values[group['grouping']['elements'][i]['fieldName']];
+        group[groups][elements][i][value] = values[group[groups][elements][i][fieldName]];
     }
     return group;
 };
@@ -384,41 +404,33 @@ function getProviderConfig() {
                 }
                 if (editable) {
                     var gadgetConf = getGadgetConf();
-                    var group = addValueWithGrouping(configGroup, gadgetConf['provider-conf']);
+                    var group = populateValuesWithGrouping(configGroup, gadgetConf['provider-conf']);
                     $("#provider-config").append(providerHbs(group));
 
                 } else {
                     $("#provider-config").append(providerHbs(configGroup));
                 }
             } else {
+                configGroup = {
+                    "grouping": {
+                        "elements": data
+                    }
+                };
                 if (editable) {
                     var gadgetConf = getGadgetConf();
-                    configGroup = {
-                        "grouping": {
-                            "elements": data
-                        }
-                    };
-                    var group = addValueWithoutGrouping(configGroup, gadgetConf['provider-conf']);
-                    console.log(group);
+                    var group = populateValuesWithoutGrouping(configGroup, gadgetConf['provider-conf']);
                     registerAdvancedProviderUI(configGroup);
                     $("#provider-config").html(providerHbs(group));
                 }
                 else {
-
-                    configGroup = {
-                        "grouping": {
-                            "elements": data
-                        }
-                    };
                     registerAdvancedProviderUI(configGroup);
                     $("#provider-config").html(providerHbs(configGroup));
                 }
             }
         },
-
         error: function (xhr, message, errorObj) {
             //When 401 Unauthorized occurs user session has been log out
-            if (xhr.status == 401) {
+            if (xhr.status === 401) {
                 //reload() will redirect request to login page with set current page to redirect back page
                 location.reload();
             }
@@ -488,7 +500,7 @@ function getGadgetConf() {
     var editableConf = {};
     var editConfData;
     $.ajax({
-        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getEditConfig' + '&id=' + id + '&type=' + type + '&store=' + store,
+        url: ues.utils.relativePrefix() + CREATE_GADGET_API + '?action=getEditConfig' + '&id=' + id,
         method: "POST",
         data: JSON.stringify(editableConf),
         contentType: "application/json",
@@ -536,15 +548,14 @@ function getChartConfig(providerConfig) {
         success: function (chartConfig) {
             if (!chartConfig.error) {
                 var chartHbs = Handlebars.compile($('#ui-config-hbs').html());
-
                 if (Object.keys(chartConfig[0]).indexOf(groups) > -1) {
                     configGroup = (chartConfig[0].grouping);
                     for (var i = 0; i < configGroup.length; i++) {
                         registerAdvancedProviderUI(configGroup[i]);
                     }
                     if (editable) {
-                        var gadgetCong = getGadgetConf();
-                        var group = addValueWithGrouping(configGroup, gadgetCong['chart-conf']);
+                        var gadgetConf = getGadgetConf();
+                        var group = populateValuesWithGrouping(configGroup, gadgetConf['chart-conf']);
                         $("#chart-config").append(chartHbs(group));
                         $("#preview").removeAttr("style");
                     }
@@ -559,8 +570,8 @@ function getChartConfig(providerConfig) {
                         }
                     };
                     if (editable) {
-                        var gadgetCong = getGadgetConf();
-                        var group = addValueWithoutGrouping(configGroup, gadgetCong['chart-conf']);
+                        var gadgetConf = getGadgetConf();
+                        var group = populateValuesWithoutGrouping(configGroup, gadgetConf['chart-conf']);
                         registerAdvancedProviderUI(configGroup);
                         $("#chart-config").html(chartHbs(group));
                         $("#preview").removeAttr("style");

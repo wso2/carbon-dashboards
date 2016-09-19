@@ -42,7 +42,7 @@ $(function () {
     var assetsEmptyHbs = Handlebars.compile($("#ds-assets-empty-hbs").html());
     var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
-    var editGadgetUrl = ues.utils.tenantPrefix() + '/create-gadget';
+    var editGadgetUrl = ues.utils.tenantPrefix() + 'create-gadget';
     Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
     /**
      * Load the list of assets available.
@@ -122,9 +122,9 @@ $(function () {
      * @param id {String}
      * @param store {String}
      * */
-    var editAsset =  function (type,id, store) {
-        var addParam = '?id=' + id +'&type='+ type+ '&store='+ store + '&editable=true';
-        url =editGadgetUrl+ addParam;
+    var editAsset = function (id) {
+        var addParam = '?id=' + id + '&editable=true';
+        url = editGadgetUrl + addParam;
         window.open(url);
     };
 
@@ -357,11 +357,7 @@ $(function () {
             e.preventDefault();
             var assetElement = $(this).closest('.ds-asset');
             var id = assetElement.data('id');
-            var store = $('#selectStore').selectpicker('val');
-            if (typeof(store) !== "string") {
-                store = $("#storeLabel").text();
-            }
-            editAsset(assetType, id, store);
+            editAsset(id);
         });
 
         portal.on('click', '.ds-assets .ds-asset-edit-cancel', function (e) {

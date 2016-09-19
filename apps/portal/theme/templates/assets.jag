@@ -29,16 +29,16 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/asset.css">
     
     <%
-include('/controllers/includes/theme-portal-styles.jag');
+        include('/controllers/includes/theme-portal-styles.jag');
 
-var permission = require('/modules/permission.js');
-var config = require('/modules/config.js').getConfigFile();
-var constants = require('/modules/constants.js');
-%>
+        var permission = require('/modules/permission.js');
+        var config = require('/modules/config.js').getConfigFile();
+        var constants = require('/modules/constants.js');
+    %>
 
 </head>
 <body>
-<% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+    <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
 
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
