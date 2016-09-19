@@ -28,14 +28,17 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/wizard.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/d3.geomap.css">
     <link rel="stylesheet" href="<%=urlPrefix%>css/theme.css">
-    
-    <% include('/controllers/includes/theme-portal-styles.jag'); %>  
-    
+
+    <% include('/controllers/includes/theme-portal-styles.jag');
+
+var editGadgetId = request.getParameter('id');
+var gadgetEditable = request.getParameter('editable');%>
+
 </head>
 <body>
-    
+
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
-    
+
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
@@ -82,8 +85,11 @@
 <div class="container-fluid">
     <div class="row thumbnails ues-dashboard">
         <div class="col-md-8 col-md-offset-2" id="top-rootwizard">
-            <h1 class="page-sub-title"><%= i18n.localize("generate.a.gadget")%></h1>
-
+            <% if (gadgetEditable === 'true') { %>
+                <h1 class="page-sub-title"><%=i18n.localize("edit.gadget")%></h1>
+            <%} else {%>
+                <h1 class="page-sub-title"><%=i18n.localize("generate.a.gadget")%></h1>
+            <%}%>
             <div class="wizard" id="rootwizard">
                 <div class="wizard-inner nav-bar">
                     <div class="navbar-inner">
@@ -107,17 +113,17 @@
                                 </span>
                             </button>
                         </div>
-                        
+
                         <form id="provider-list-form" class="form-horizontal">
                             <div class="form-group">
-                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">  
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <label for="datasource"><%= i18n.localize("select.provider")%> <span class="required">*</span></label>
                                     <div id="provider-list"></div>
                                 </div>
                             </div>
-                        </form>    
+                        </form>
                     </div>
-                    
+
                     <div class="tab-pane" id="tab2">
                         <div class="alert alert-danger" role="alert" id="tab2-validation-errors" style="display: none;">
                             <i class="icon fw fw-error"></i>
@@ -128,12 +134,12 @@
                                 </span>
                             </button>
                         </div>
-                        
+
                         <form id="provider-config-form" class="form-horizontal">
                             <div id="provider-config"></div>
                         </form>
-                        
-                        <div>
+
+                        <div class="add-padding-top-3x">
                             <button type="button" id="show-data" class="btn btn-default btn-bordered">
                                 <span class="icon fw-stack">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
@@ -144,16 +150,16 @@
                             <button type="button" id="test-connection" class="btn btn-default btn-bordered check_url_valid">
                                 <%= i18n.localize("test.connection")%>
                             </button>
-                                
-                            <span class="label label-success label-test-connection url_validate_label" id="test-verification-label">
+
+                            <span class="label label-success label-test-connection url_validate_label " id="test-verification-label">
                                 <span class="icon fw-stack">
                                     <i class="fw fw-check fw-stack-1x"></i>
-                                    <i class="fw fw-circle-outline fw-stack-2x"></i> 
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
                                 </span> <%= i18n.localize("valid.label")%>
                             </span>
                         </div>
-                        
-                        <div class="alert alert-info alert-sample-message" role="alert" id="sample-data-message">
+
+                        <div class="alert alert-info alert-sample-message " role="alert" id="sample-data-message">
                             <i class="icon fw fw-warning"></i><strong>Info!</strong>
                             <%= i18n.localize("only.sample.data")%>
                             <button type="button" class="close hidden" aria-label="close" data-dismiss="alert">
@@ -162,10 +168,10 @@
                                 </span>
                             </button>
                         </div>
-                            
-                        <div id="data-preview"></div>   
+
+                        <div id="data-preview"></div>
                     </div>
-                    
+
                     <div class="tab-pane" id="tab3">
                         <div class="alert alert-danger" role="alert" id="tab3-validation-errors" style="display: none;">
                             <i class="icon fw fw-error"></i>
@@ -176,25 +182,21 @@
                                 </span>
                             </button>
                         </div>
-                        
+
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <label><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
-                                    <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" />
-                                    <label id="gadget-name-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
-                                </div>
+                                    <div id="gadgetName"></div>
                             </div>
 
                             <div class="form-group">
                                 <div id="chart-list"></div>
                             </div>
                         </form>
-                        
+
                         <form id="chart-config-form" class="form-horizontal">
                             <div id="chart-config"></div>
                         </form>
-                        
+
                         <div class="form-group">
                             <button type="button" id="preview" class="btn btn-default btn-bordered pull-left">
                                 <span class="icon fw-stack">
@@ -204,10 +206,10 @@
                             </button>
                             <br>
                         </div>
-                        
+
                         <input type="button" id="add.to.gadget.store" style="display:none;"
                             value="<%= i18n.localize("add.to.gadget.store")%>"/>
-                            
+
                         <div id="preview-pane" style="max-width: 500px;"></div>
                     </div>
                 </div>
@@ -216,6 +218,17 @@
     </div>
 </div>
 
+<script id="gadget-name-hbs" type="text/x-handlebars-template">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+         <label ><%= i18n.localize("gadget.name")%> <span class="required">*</span></label>
+          <% if (gadgetEditable == 'true') {%>
+               <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" value="{{gadget-name}}"/>
+         <% } else {%>
+                <input type="text" id="gadget-name" class="form-control" name="gadget-name" required="true" />
+         <% }%>
+         <label id="gadget-name-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
+  </div>
+</script>
 <script id="wizard-error-hbs" type="text/x-handlebars-template">
     <br><br><br>
     <div class="alert alert-danger" role="alert">
@@ -224,31 +237,49 @@
         </strong></br><br/> {{error}}
     </div>
 </script>
-    
+
 <script id="wizard-zerods-hbs" type="text/x-handlebars-template">
     <div class="alert alert-danger" role="alert">
        No datasources available to create a gadget. Please create a datasource to proceed.
     </div>
 </script>
-    
+
 <script id="datasource-providers-hbs" type="text/x-handlebars-template">
      <section>
+     <% if (gadgetEditable === 'true') {%>{{#provider-conf}}
+        <select id="providers" class="form-control ues-title-position">
+             <option value="{{provider-name}}">{{provider-name}}</option>
+        </select>{{/provider-conf}}
+
+     <%} else {%>
         <select id="providers" class="form-control ues-title-position">
            {{#each .}}
              <option value="{{id}}">{{name}}</option>
            {{/each}}
         </select>
+     <%}%>
      </section>
 </script>
-    
+
 <script id="ui-config-hbs" type="text/x-handlebars-template">
-    {{#each .}}
-        <div class="form-group">
+{{#each .}}
+   {{#has title}}
+       <div  class="config-group"  data-toggle="collapse" href="#{{title}}" aria-controls={{title}}  >
+            {{title}}
+       </div>
+   {{/has}}
+    <div  class="form-group add-padding-top-3x {{#if collapsed}} collapse {{/if}}" id={{title}} >
+        {{#each elements}}
            {{#equalsIgnoreCase fieldType "string"}}
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                   <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label>
-                  <input type="text" class="form-control" name="{{fieldName}}" value="{{defaultValue}}"
-                        placeholder="{{placeholderText}}" {{#if isRequired}}required="true"{{/if}}/>
+                  {{#if value}}
+                      <input type="text" class="form-control" name="{{fieldName}}"   value="{{value}}"
+                            placeholder="{{placeholderText}}" {{#if isRequired}}required="true"{{/if}}/>
+                  {{else}}
+                     <input type="text" class="form-control" name="{{fieldName}}"   value="{{dafaultValue}}"
+                            placeholder="{{placeholderText}}" {{#if isRequired}}required="true"{{/if}}/>
+                  {{/if}}
               </div>
               {{#if isRequired}}
                   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -264,8 +295,13 @@
            {{#equalsIgnoreCase fieldType "password"}}
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                   <label>{{fieldLabel}} {{#if isRequired}}<span class="required">*</span>{{/if}}</label>
+                  {{#if value}}
+                  <input type="password" autocomplete="off" class="form-control" name="{{fieldName}}" value="{{value}}"
+                        {{#if isRequired}}required="true"{{/if}}/>
+                  {{else}}
                   <input type="password" autocomplete="off" class="form-control" name="{{fieldName}}"
                         {{#if isRequired}}required="true"{{/if}}/>
+                  {{/if}}
               </div>
               {{#if isRequired}}
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -279,14 +315,18 @@
                     <select name="{{fieldName}}" class="form-control">
                         {{#each valueSet}}
                             <option value="{{this}}">{{this}}</option>
-                        {{/each}}
+                         {{/each}}
+                         {{#if value}}
+                            <option value="{{value}}" selected>{{value}}</option>
+                        {{/if}}
                     </select>
                </div>
            {{/equalsIgnoreCase}}
            {{#equalsIgnoreCase fieldType "advanced"}}
                 {{> (lookup . 'childPartial')}}
            {{/equalsIgnoreCase}}
-        </div>
+        {{/each}}
+    </div>
     {{/each}}
 </script>
 
@@ -314,11 +354,11 @@
 </script>
 
 <script id="chart-list-hbs" type="text/x-handlebars-template">
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">  
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <label><%= i18n.localize("select.chart")%></label>
-        <select id="chart-type" class="form-control">
-            {{#each .}}
-                <option value="{{this.id}}">{{this.name}}</option>
+        <select id="chart-type" class="form-control" name="chart-type">
+             {{#each .}}
+                <option value="{{this.id}}" {{#if selected}} selected {{/if}}>{{this.name}}</option>
             {{/each}}
         </select>
     </div>
@@ -326,6 +366,22 @@
 
 <script id="preview-hbs" type="text/x-handlebars-template">
      <iframe src="{{location}}" width="100%" height="500" scrolling="no"></iframe>
+</script>
+
+<script id="edit-success-hbs" type="text/x-handlebars-template">
+    <div>
+        <div class="alert alert-success add-margin-top-5x" role="alert">
+        <i class="icon fw fw-success"></i>
+        <strong><%= i18n.localize("success.label")%>!!</strong>
+        {{message}}
+    </div>
+    </div>
+    <a href="/portal" class="btn btn-deafult btn-bordered">
+        <span class="fw-stack">
+            <i class="fw fw-left-arrow fw-stack-1x"></i>
+            <i class="fw fw-circle-outline fw-stack-2x"></i>
+        </span> Go to Portal
+    </a>
 </script>
 
 <script id="success-hbs" type="text/x-handlebars-template">
@@ -340,6 +396,11 @@
             <i class="fw fw-circle-outline fw-stack-2x"></i>
         </span> Go to Portal
     </a>
+</script>
+
+<script>
+    var id = <%= stringify(editGadgetId) %>;
+    var editable = <%= gadgetEditable %>;
 </script>
 
 <!-- Jquery JS -->
