@@ -12,7 +12,7 @@
             "defaultValue" : "",
             "isRequired" : true,
             "hint": "This is a sample hint",
-            "placeholderText" : "jdbc:mysql://localhost:3306/dbname"
+            "placeholderText" : "jdbc:h2:repository/database/dbname"
         },
         {
             "fieldLabel" : "Table Name",
@@ -41,7 +41,7 @@
             "fieldType" : "string",
             "defaultValue" : "",
             "isRequired" : true,
-            "placeholderText" : "com.mysql.jdbc.Driver"
+            "placeholderText" : "org.h2.Driver"
         },
         {
             "fieldLabel" : " SQL Query",
