@@ -467,7 +467,7 @@ body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
 
 .nav > li > a {
     border-radius: 0;
-    color: #e3e5e6;
+    color: #b5b5b5;
     background: transparent;
 }
 
@@ -503,6 +503,10 @@ body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
     background: #1a2332;
 }
 
+.nav li.active:hover > a {
+    background: transparent;
+}
+
 .dashboard.dark .nav > li:hover > a,
 .dashboard.dark .nav > li.open > a,
 .dashboard.dark .nav > li.open > a:focus,
@@ -521,9 +525,13 @@ body.dashboard .body-wrapper > .nano.has-scrollbar > .nano-content {
     background: transparent;
 }
 
-.nav.pages li.active > a {
+.nav.pages > li.active > a {
     background: #121822;
     border-left: 5px solid #438cad;
+}
+
+.nav.pages > li.active li.active > a {
+    color: #fff;
 }
 
 .navbar-collapse {
