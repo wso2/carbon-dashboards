@@ -40,6 +40,10 @@ $(function () {
     var roleAddAction = 'add';
     var roleRemoveAction = 'remove';
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
+    var HEIGHT = 'height';
+    var OVERFLOW_Y = 'overflow-y';
+    var SCROLL = 'scroll';
+    var HIDDEN = 'hidden';
 
     /**
      * Role for all logged in users
@@ -1597,6 +1601,15 @@ $(function () {
                     $('#view-list').append(viewListingHbs(ctx));
                 }
             }
+
+            var input = $("#view-list");
+            var pageContentHeight = parseInt($(".page-content").css(HEIGHT)) * .9;
+            var dropDownheight = parseInt(input.css(HEIGHT));
+            if (dropDownheight > pageContentHeight) {
+                input.css(HEIGHT, pageContentHeight)
+            }
+            dropDownheight > pageContentHeight ? input.css(OVERFLOW_Y, SCROLL) : input.css(OVERFLOW_Y, HIDDEN)
+
             $('#view-list li').on('click', function (e) {
                 e.stopPropagation();
                 var viewId = getViewId(this.textContent.trim());
