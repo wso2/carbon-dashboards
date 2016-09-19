@@ -18,6 +18,7 @@ $(function () {
     var dashboard;
     var page;
     var pageType;
+    var visibleViewCount = 12;
     var activeComponent;
     var breadcrumbs = [];
     var storeCache = {
@@ -70,9 +71,6 @@ $(function () {
      * @const
      */
     var UNAUTHORIZED_ERROR_CODE = 401;
-
-    //Keep the number of visible views of a page
-    var NO_OF_VISIBLE_VIEWS = 12;
 
     //Variable to distinguish between creating a new view using a new layout and changing the layout of a current view
     var isNewView = false;
@@ -1604,7 +1602,7 @@ $(function () {
                 var viewId = getViewId(this.textContent.trim());
                 var currentViewId = getViewId(getSelectedView());
                 //if visible views length is 12, remove the last view before adding the selected view
-                if (visibleViews.length === NO_OF_VISIBLE_VIEWS) {
+                if (visibleViews.length === visibleViewCount) {
                     visibleViews.splice(visibleViews.length - 1, 1);
                 }
                 visibleViews.push(viewId);
@@ -3686,6 +3684,24 @@ $(function () {
      * @private
      */
     var initUI = function () {
+        $('#view-list').closest('li').on('show.bs.dropdown', function () {
+            updateCollapsedViewsDropdown();
+        });
+
+        /**
+         * Window resize event handler.
+         **/
+        $(window).resize(function () {
+            updateCollapsedViewsDropdown();
+        });
+
+        /**
+         * Window load event handler.
+         **/
+        $(window).load(function () {
+            updateCollapsedViewsDropdown();
+        });
+
         registerRpc();
         initDesignerMenu();
         initLayoutWorkspace();
@@ -3693,14 +3709,7 @@ $(function () {
         initComponentToolbar();
         initComponents();
         initAddBlock();
-        $('#slide-right').on('click', function () {
-            var leftPos = $('.view-container1 .nav').scrollLeft();
-            $(".view-container1 .nav").animate({scrollLeft: leftPos + 200}, 800);
-        });
-        $('#slide-left').on('click', function () {
-            var leftPos = $('.view-container1 .nav').scrollLeft();
-            $(".view-container1 .nav").animate({scrollLeft: leftPos - 200}, 800);
-        });
+
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
             showInformation("Received Edit Permission", "You have given edit permission for this dashboard. Please " +
                 "reset the dashboard to receive the permission.");
@@ -4000,7 +4009,7 @@ $(function () {
         if (isInViewCreationView) {
             var views = getUserAllowedViews(Object.keys(page.content));
             pageType = newView;
-            if (views.length > 0 && views.length > NO_OF_VISIBLE_VIEWS) {
+            if (views.length > 0 && views.length > visibleViewCount) {
                 pageType = views[0];
             }
             renderPage(getPageId());
@@ -4035,8 +4044,8 @@ $(function () {
             $('.gadgets-grid')
                 .html(noPagesHbs())
                 .find('#btn-add-page-empty').on('click', function () {
-                showCreatePage();
-            });
+                    showCreatePage();
+                });
 
             $('.page-header .page-actions').hide();
             $('#btn-sidebar-layouts, #btn-sidebar-gadgets').hide();
@@ -4061,8 +4070,8 @@ $(function () {
         }
         var views = getUserAllowedViews(Object.keys(page.views.content));
         $('#more-views').addClass('hidden');
-        if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
-            visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
+        if ((views.length > visibleViewCount) && (visibleViews.length === 0)) {
+            visibleViews = views.slice(0, visibleViewCount);
         } else if (visibleViews.length === 0) {
             visibleViews = views;
         }
@@ -4189,6 +4198,45 @@ $(function () {
         updatePagesList();
         updateMenuList();
         initBanner();
+    };
+
+    /**
+     * Update the collapsed view drop down with views.
+     *
+     * @return null
+     * @private
+     * */
+    var updateCollapsedViewsDropdown = function () {
+        var collapsedViews = 'ul#view-list';
+        var containerTop = $('.page-views-container.flex-container > .flex-item-middle').position().top;
+        var hiddenElements = [];
+        var listElements = [];
+        $('.page-views-container.flex-container > .flex-item-middle > li').each(function () {
+            if ($(this).position().top > containerTop) {
+                hiddenElements.push($(this));
+            }
+        });
+
+        $.each(hiddenElements, function (key, val) {
+            listElements.push('<li class="overflowed-item">' +
+                '<a href="#">' +
+                '<span id="' + $(val).data('view-mode') + '">' + $(val).find('a').html() + '</span>' +
+                '</a>' +
+                '</li>');
+        });
+        $(collapsedViews + ' .overflowed-item').remove();
+        $(collapsedViews).append(listElements);
+        var views = getUserAllowedViews(Object.keys(page.views.content));
+        if (hiddenElements.length > 0) {
+            visibleViewCount = $("#designer-view-mode").children('li').length - hiddenElements.length;
+        }
+
+        if ($(collapsedViews).children('li').length > 0 || views.length !== visibleViews.length) {
+            $('#more-views').removeClass('hidden');
+        }
+        else {
+            $('#more-views').addClass('hidden');
+        }
     };
 
     /**
