@@ -3183,14 +3183,14 @@ $(function () {
                     }
                     $(dropLocation.prev).children('ul').append(dragItem);
                     dropLocation.prev = null;
+                }
+                if ($("#sortable").find("li").length === ues.global.dashboard.pages.length) {
                     ues.global.dashboard.menu = [];
                     serializeList($("#sortable"), ues.global.dashboard.menu);
+                    saveDashboard();
                     updateMenuList();
-                    saveDashboard();
                 } else {
-                    ues.global.dashboard.menu = [];
-                    serializeList($("#sortable"), ues.global.dashboard.menu);
-                    saveDashboard();
+                    $(".connect").sortable("refresh");
                 }
             }
         });
