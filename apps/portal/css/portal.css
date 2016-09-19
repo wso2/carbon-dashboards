@@ -32,6 +32,11 @@ TODO : This is temporary. We will later change this color
     text-overflow: ellipsis;
 }
 
+/* Title that is displayed in the delete confirmation of a dashboard */
+.title {
+    word-wrap: break-word;
+}
+
 #ues-portal .ues-dashboard .ues-actions {
     text-align: right;
     white-space: nowrap;

@@ -19,25 +19,25 @@
 <html lang="en">
 <head>
     
-    <% include(utils.resolvePath('templates/includes/portal-header.jag'));   
+    <% include(utils.resolvePath('templates/includes/portal-header.jag'));
 
-        var usr = require('/modules/user.js');
-        var user = usr.current();
-        var userRoles = [];
-        var tempRoles = usr.getUserRoles();
-        var constants = require('/modules/constants.js');
-        var isViewer = utils.allowed(user.roles, dashboard.permissions.viewers) && !utils.allowed(user.roles,
-                    dashboard.permissions.owners) && !utils.allowed(user.roles, dashboard.permissions.editors);
-        userRoles.push(constants.ANONYMOUS_ROLE);
-        for (var i = 0; i < tempRoles.length; i++) {
-            userRoles.push(tempRoles[i]);
-        }
-    
-        var permission = require('/modules/permission.js');
-    
-    %>
-    
-    <title><%= i18n.localize("dashboard.designer")%></title>
+var usr = require('/modules/user.js');
+var user = usr.current();
+var userRoles = [];
+var tempRoles = usr.getUserRoles();
+var constants = require('/modules/constants.js');
+var isViewer = utils.allowed(user.roles, dashboard.permissions.viewers) && !utils.allowed(user.roles,
+                dashboard.permissions.owners) && !utils.allowed(user.roles, dashboard.permissions.editors);
+userRoles.push(constants.ANONYMOUS_ROLE);
+for (var i = 0; i < tempRoles.length; i++) {
+    userRoles.push(tempRoles[i]);
+}
+
+var permission = require('/modules/permission.js');
+
+%>
+
+<title><%= i18n.localize("dashboard.designer")%></title>
     
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/cropper_v1.0.0-rc.1/cropper.css" />
     <link rel="stylesheet" type="text/css" href="<%=urlPrefix%>libs/jquery-ui-1.11.4/jquery-ui.min.css" />
@@ -87,41 +87,53 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <% if(! dashboard.isUserCustom) { %>
-                            <% if (utils.allowed(user.roles,dashboard.permissions.owners)) { %>
-                            <li>
-                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                        <% if (!dashboard.isUserCustom) { %>
+                            <%
+    if (utils.allowed(user.roles, dashboard.permissions.owners)) {
+        %>
+                                   <li>
+                                       <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
                                     <span class="icon fw-stack">
                                         <i class="fw fw-settings fw-stack-1x"></i>
                                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     </span>
-                                    <%=i18n.localize("settings")%>
-                                </a>
-                            </li>
-                            <% } else { %>
-			                <script id="ues-navigation-bar-hbs" type="text/x-handlebars-template">
-                            <li id ="settingsButton">
-                                <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
+                                    <%=i18n.localize("settings")
+        %>
+                                        </a>
+                                    </li>
+                                    <%
+    } else {
+        %>
+                                   <script id="ues-navigation-bar-hbs" type="text/x-handlebars-template">
+                                   <li id ="settingsButton">
+                                       <a href="<%=tenantedUrlPrefix%>dashboard-settings/<%=dashboard.id%>" id="dashboard-settings">
                                     <span class="icon fw-stack">
                                         <i class="fw fw-settings fw-stack-1x"></i>
                                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     </span>
-                                    <%=i18n.localize("settings")%>
-                                </a>
-                            </li>
-			                </script>
-			                <% } %>
-                        <% } else { %>
-                        <li>
-                            <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard.id%>?reset=true" class="ues-copy">
+                                    <%=i18n.localize("settings")
+        %>
+                                        </a>
+                                    </li>
+                                    </script>
+                                    <%
+    }
+    %>
+                           <%
+} else {
+    %>
+                           <li>
+                               <a href="<%=tenantedUrlPrefix%>dashboards/<%=dashboard.id%>?reset=true" class="ues-copy">
                                 <span class="fw-stack">
                                     <i class="fw-refresh fw-stack-1x"></i>
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                 </span>
-                                <%=i18n.localize("reset")%>
-                            </a>
-                        </li>
-                        <% } %>
+                                <%=i18n.localize("reset")
+    %>
+                                </a>
+                            </li>
+                            <%
+} %>
                         <li id="ues-dashboard-preview-link">
                             <a href="#" class="ues-dashboard-preview">
                                 <span class="icon fw-stack">
@@ -153,7 +165,7 @@
     </div>
 
     <!-- navbar -->
-    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="58" data-offset-bottom="40">
+    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="52" data-offset-bottom="40">
         <ul class="nav navbar-nav nav-stacked">
 
             <li>
@@ -198,7 +210,7 @@
     <div class="page-content-wrapper">
 
         <!-- .left-sidebar -->
-        <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="55" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true">
+        <div class="sidebar-wrapper sidebar-nav" id="left-sidebar" data-side="left" data-width="250" data-offset-left="52" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true">
 
             <button class="btn btn-default close-handle close-sidebar" data-handle="close" data-toggle="sidebar" 
                 data-target="#left-sidebar" aria-expanded="true" rel="sub-nav"><i class="fw fw-left-arrow"></i></button>
@@ -302,7 +314,7 @@
         </div>
 
         <!-- .left-sidebar-sub -->
-        <div class="sidebar-wrapper sidebar-nav sidebar-nav-sub" id="left-sidebar-sub" data-side="left" data-width="250" data-offset-left="55" data-offset-bottom="40" data-container=".page-content-wrapper">
+        <div class="sidebar-wrapper sidebar-nav sidebar-nav-sub" id="left-sidebar-sub" data-side="left" data-width="250" data-offset-left="52" data-offset-bottom="40" data-container=".page-content-wrapper">
             <div class="nano">
                 <div class="nano-content">
 
@@ -347,19 +359,23 @@
                 </div>
             </div>
             
-            <div class="page-views-container">
-                <ul class="nav nav-tabs">
+            <div class="page-views-container flex-container">
+                <ul class="nav nav-tabs flex-item flex-item-side hidden">
                     <li id="slide-left"><a href="javascript:void(0)"><i class="fw fw-left"></i></a></li>
                 </ul>
-                <ul class="nav nav-tabs" id="designer-view-mode"><!-- Dynamic Content --></ul>
-                <ul class="nav nav-tabs">
-                    <li id="add-view" hidden title="<%=i18n.localize("add.view")%>"><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
+                <ul class="nav nav-tabs flex-item flex-item-middle" id="designer-view-mode"><!-- Dynamic Content --></ul>
+                <ul class="nav nav-tabs flex-item flex-item-side">
+                    <li id="add-view" hidden><a href="javascript:void(0)"><i class="fw fw-add"></i></a></li>
+                </ul>
+                <ul class="nav nav-tabs flex-item flex-item-side hidden">
                     <li id="slide-right"><a href="javascript:void(0)"><i class="fw fw-right"></i></a></li>
+                </ul>
+                <ul class="nav nav-tabs flex-item flex-item-side">
                     <li id="more-views" hidden>
                         <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false"><i class="fw fw-down"></i></a>
-                        <ul id="view-list" class="dropdown-menu tiles arrow dark add-margin-1x" role="menu"></ul>
+                        <ul id="view-list" class="dropdown-menu dropdown-menu-right" role="menu"></ul>
                     </li>
-                </ul>                    
+                </ul> 
             </div>
 
             <div class="page-content">
@@ -587,7 +603,8 @@
     <script id="ues-components-list-hbs" type="text/x-handlebars-template">
         <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
             {{>ds-add-gadget-hbs}}
-        <% } %>
+        <%
+} %>
         
         {{#each assets}}
             <div class="store-category">
@@ -675,16 +692,19 @@
     </script>
 
     <script id="ues-layouts-list-hbs" type="text/x-handlebars-template">
-        <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) { %>
-              <a href="<%=tenantedUrlPrefix%>upload-layout">
+        <% if (permission.isAllowed(constants.LAYOUT_UPLOAD)) {
+    %>
+                 <a href="<%=tenantedUrlPrefix%>upload-layout">
                 <button type="button" class="btn btn-primary btn-stack btn-block">
                     <span class="icon fw-stack fw-lg">
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-add fw-stack-1x"></i>
-                    </span> <%=i18n.localize("add.layout")%>
-                </button>
-              </a>
-        <% } %>
+                    </span> <%=i18n.localize("add.layout")
+    %>
+                    </button>
+                  </a>
+            <%
+} %>
         <br />
         {{#if length}}
             {{#each .}}
@@ -912,8 +932,8 @@
  			     <div class="form-group">
                                  <div class="col-sm-12">
 			 	     <label for="input-name" class="control-label"><%= i18n.localize("designer.componentProperties.priority") %></label>
-				     <input id="priorityPicker" name = "priority" type="range" min="0" max="<%= configs.maxGadgetPriority?configs.maxGadgetPriority:10 %>" value={{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5 %>{{/if}} />
-				     <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority?configs.defaultGadgetPriority:5 %>{{/if}}</span>
+				     <input id="priorityPicker" name = "priority" type="range" min="0" max="<%= configs.maxGadgetPriority ? configs.maxGadgetPriority : 10 %>" value={{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority ? configs.defaultGadgetPriority : 5 %>{{/if}} />
+				     <span id="priorityValue">{{#if settings.priority}}{{settings.priority}}{{else}}<%= configs.defaultGadgetPriority ? configs.defaultGadgetPriority : 5 %>{{/if}}</span>
 				 </div>
 		             </div>
                             <div class="form-group">
@@ -1065,7 +1085,8 @@
         <%= i18n.localize("no.items.found") %>
         <% if (permission.isAllowed(constants.GADGET_GENERATE) || permission.isAllowed(constants.GADGET_UPLOAD)) { %>
                 {{>ds-add-gadget-hbs}}
-        <% } %>
+        <%
+} %>
     </script>
 
     <script id="ds-error-hbs" type="text/x-handlebars-template">
