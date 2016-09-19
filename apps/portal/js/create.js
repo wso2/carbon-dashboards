@@ -55,7 +55,7 @@ $(function () {
      * @private
      * */
     var generateUrl = function (title) {
-        title = title.substring(0,100);
+        title = title.substring(0, 100);
         return title.replace(/[^\w]/g, '-').toLowerCase();
     };
 
@@ -101,7 +101,7 @@ $(function () {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
         }
     };
-    
+
     // Bind event handlers for dashboard title field
     $('#ues-dashboard-title').on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
@@ -148,7 +148,7 @@ $(function () {
         var id = $("#ues-dashboard-id");
         var form = $('#ues-dashboard-form');
         var url = form.data('action') + "/" + id.val();
-        var apiUrl = form.data('api-url') + "/" + id.val();
+        var apiUrl = form.data('api-url') + "/isExists/" + id.val();
         var titleError = $("#title-error");
         var idError = $("#id-error");
 

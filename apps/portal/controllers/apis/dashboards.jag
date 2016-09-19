@@ -90,6 +90,27 @@
         }));
         return;
     }
+    if (matcher.match('/dashboards/isExists/{id}')) {
+        if (method === 'GET') {
+            vars = matcher.elements();
+            utils.sandbox(context, function () {
+                dashboard = dashboards.getAsset(vars.id);
+            });
+            if (!dashboard) {
+                response.sendError(404, JSON.stringify({
+                    error: true
+                }));
+                return;
+            }
+            print(dashboard);
+            return;
+
+        }
+        response.sendError(405, JSON.stringify({
+            error: true
+        }));
+        return;
+    }
     if (matcher.match('/dashboards/{id}')) {
         vars = matcher.elements();
         utils.sandbox(context, function () {
