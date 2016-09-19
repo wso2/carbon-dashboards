@@ -320,7 +320,7 @@
         </div>
 
         <!-- page content -->
-        <div class="container-fluid body-wrapper menu" data-view="menu" style="display: none;">
+        <div class="container-fluid body-wrapper menu hierarchical-menu-container" data-view="menu" style="display: none;">
             <div class="add-padding-5x">
                 <div id="ues-pages"></div>
             </div>
@@ -813,7 +813,7 @@
                 <button type="button" class="btn btn-default btn-bordered ues-refresh-page" data-page-id="{{id}}" title="<%=i18n.localize("refresh")%>">
                     <i class="icon fw fw-refresh"></i>
                 </button>
-                <button type="button" class="btn btn-default btn-bordered ues-delete-page" data-page-id="{{id}}" title="<%=i18n.localize("delete")%>">
+                <button type="button" class="btn btn-default btn-bordered ues-delete-page btn-danger" data-page-id="{{id}}" title="<%=i18n.localize("delete")%>">
                     <i class="icon fw fw-delete"></i>
                 </button>
             </div>
@@ -919,8 +919,9 @@
                             <div class="form-group">
                                  <div class="col-sm-12">
                                     <label for="input-name" class="control-label"><%= i18n.localize("timeout") %></label>
-                                    <input id="timeoutInterval" class="form-control input-timeout" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                                    name = "timeoutInterval" type="text"  value={{#if settings.timeoutInterval}}{{settings.timeoutInterval}}{{else}}60000{{/if}} />
+                                    <input id="timeoutInterval" class="form-control input-timeout" onkeypress =
+                                    "if (event.charCode === 13) { this.value = sanitizeSecurityTimeOut(this.value, 1, 2147483647, 60000)}"
+                                    name = "timeoutInterval" type="text" value={{#if settings.timeoutInterval}}{{settings.timeoutInterval}}{{else}}60000{{/if}} />
                                     <label><%= i18n.localize("milli.seconds") %></label>
                                 </div>
                             </div>
