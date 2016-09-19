@@ -2820,7 +2820,7 @@ $(function () {
                 return;
             }
             var assets = $('.ues-store-assets').find('.ues-thumbnails');
-            if (data.length > 0) {
+            if (data.length > 0 && paging.start >= 0) {
                 storeCache[type] = storeCache[type].concat(data);
             }
             paging.start += COMPONENTS_PAGE_SIZE;
