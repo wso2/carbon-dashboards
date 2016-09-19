@@ -36,6 +36,14 @@
             "isRequired" : true
         },
         {
+            "fieldLabel" : "Driver Class Name",
+            "fieldName" :"driver_class_name",
+            "fieldType" : "string",
+            "defaultValue" : "",
+            "isRequired" : true,
+            "placeholderText" : "com.mysql.jdbc.Driver"
+        },
+        {
             "fieldLabel" : " SQL Query",
             "fieldName" :"query",
             "fieldType" : "string",
