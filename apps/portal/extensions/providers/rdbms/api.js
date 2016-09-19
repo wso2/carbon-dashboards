@@ -61,7 +61,6 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     validate = function (providerConfig) {
         var db = null;
         try {
-            new Log().info(providerConfig['driver_class_name']);
             db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password'],
                 {driverClassName : providerConfig['driver_class_name']});
         } catch (e) {
