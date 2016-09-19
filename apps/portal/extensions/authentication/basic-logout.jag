@@ -1,5 +1,6 @@
-/*
- *  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+<%
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -16,13 +17,18 @@
  *  under the License.
  *
  */
-package org.wso2.carbon.dashboard.portal.core;
+(function () {
 
-/**
- * This class represents the portal data source service interface,
- * at the moment, used as a dummy service for other services to acquire this
- * to make sure this component is initialized.
- */
-public interface PortalDataSourceService {
+    var sanitizeDestination = function (destination) {
+        if (!destination) {
+            return "/portal/";
+        }
+        return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
+    };
 
-}
+    var usr = require('/modules/user.js');
+    usr.logout();
+    var destination = sanitizeDestination(request.getParameter("destination"));
+    response.sendRedirect(destination);
+}());
+%>

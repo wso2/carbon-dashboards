@@ -12,7 +12,7 @@
             "defaultValue" : "",
             "isRequired" : true,
             "hint": "This is a sample hint",
-            "placeholderText" : "jdbc:mysql://localhost:3306/dbname"
+            "placeholderText" : "jdbc:h2:repository/database/dbname"
         },
         {
             "fieldLabel" : "Table Name",
@@ -34,6 +34,14 @@
             "fieldType" : "password",
             "defaultValue" : "",
             "isRequired" : true
+        },
+        {
+            "fieldLabel" : "Driver Class Name",
+            "fieldName" :"driver_class_name",
+            "fieldType" : "string",
+            "defaultValue" : "",
+            "isRequired" : true,
+            "placeholderText" : "org.h2.Driver"
         },
         {
             "fieldLabel" : " SQL Query",

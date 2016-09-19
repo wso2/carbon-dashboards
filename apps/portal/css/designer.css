@@ -22,11 +22,6 @@
     opacity: 0.1;
 }
 
-.fw-alert {
-    color : #d9534f;
-    padding-bottom: 3px;
-}
-
 .add-asset {
     text-align: center;
     height: 200px;
@@ -145,10 +140,6 @@
     text-align: right;
 }
 
-.page-content .nano-content {
-    bottom: 32px;
-}
-
 .form-inline .form-control.number-input {
     width: 48px;
 }
@@ -195,6 +186,10 @@
 .grid-stack > .grid-stack-item > .grid-stack-item-content {
     left: 15px;
     right: 15px;
+}
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden;
 }
 
 .grid-stack .gadget-wrapper {
@@ -252,4 +247,34 @@
     background-color: #464f58;
     text-align: center;
     box-shadow: 10px 10px 5px #34393e;
+}
+
+.defective-page-icon {
+    margin-left: 8px;
+    margin-bottom: 2px;
+}
+
+.hierarchical-menu-container {
+    overflow-y: scroll;
+}
+
+.page-views-container.flex-container {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.page-views-container.flex-container > .flex-item {
+    height: 42px;
+}
+
+.page-views-container.flex-container > .flex-item-middle {
+    overflow: hidden;
+}
+
+.page-views-container.flex-container > .flex-item-side {
+    width: 44px;
+    flex: 0 0 44px;
 }

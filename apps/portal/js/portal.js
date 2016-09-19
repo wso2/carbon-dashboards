@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 $(function () {
-
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
     var databaseApi = ues.utils.tenantPrefix() + 'apis/database';
+    var bannerApi = ues.utils.tenantPrefix() + 'apis/banners';
     var dashboards = [];
     var isStillLoading = false;
     var nextStart = 0;
@@ -63,9 +63,15 @@ $(function () {
         button.start();
         var id = el.closest('.ues-dashboard').data('id');
         $.ajax({
+            url: bannerApi + '/' + id,
+            type: 'DELETE',
+            async: false,
+            dataType: 'json'
+        });
+        $.ajax({
             url: dashboardsApi + '/' + id,
             method: 'DELETE',
-            async : false,
+            async: false,
             success: function () {
                 button.stop();
                 updateDatabase(id);
@@ -81,11 +87,11 @@ $(function () {
      * To update the database after deleting a dashboard
      * @param id Id of the dashboard
      */
-    var updateDatabase = function(id) {
+    var updateDatabase = function (id) {
         $.ajax({
             url: databaseApi + '/' + id,
             method: 'DELETE',
-            async : false,
+            async: false,
             success: function () {
                 console.log("Successfully updated the gadget usage table after deleting the dashboard");
             },
@@ -169,8 +175,8 @@ $(function () {
             var dashboard = findDashboard(id);
             dashboardEl.html(dashboardThumbnailHbs(dashboard));
         });
-        
-        portal.on('click', '.ues-view:not(.disable)', function(e) {
+
+        portal.on('click', '.ues-view:not(.disable)', function (e) {
             e.preventDefault();
             window.open($(this).attr('href'), '_blank');
         });
@@ -183,7 +189,7 @@ $(function () {
                 if (filter === "All") {
                     $(this).show();
                 } else {
-                    if ($(this).find('.ues-dashboard-share').length) {
+                    if ($(this).find('.shared').length) {
                         filter === "Shared" ? $(this).show() : $(this).hide();
                     } else {
                         filter === "Shared" ? $(this).hide() : $(this).show();

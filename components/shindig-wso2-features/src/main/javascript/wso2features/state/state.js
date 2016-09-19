@@ -27,11 +27,25 @@ wso2.gadgets.state = (function () {
     var RPC_SERVICE_GET_STATE = 'RPC_SERVICE_GET_STATE';
 
     /**
+     * Service name to get global state.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_GET_GLOBAL_STATE = 'RPC_SERVICE_GET_GLOBAL_STATE';
+
+    /**
      * Service name to set gadget state.
      * @const
      * @private
      */
     var RPC_SERVICE_SET_STATE = 'RPC_SERVICE_SET_STATE';
+
+    /**
+     * Service name to set global state.
+     * @const
+     * @private
+     */
+    var RPC_SERVICE_SET_GLOBAL_STATE = 'RPC_SERVICE_SET_GLOBAL_STATE';
 
     /**
      * Get gadget state from the containers URL hash.
@@ -40,6 +54,19 @@ wso2.gadgets.state = (function () {
      */
     var getGadgetState = function (callback) {
         wso2.gadgets.core.callContainerService(RPC_SERVICE_GET_STATE, null, function (gadgetState) {
+            if (callback) {
+                callback(gadgetState);
+            }
+        });
+    };
+
+    /**
+     * Get global state from the containers URL hash.
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var getGlobalState = function (callback) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_GET_GLOBAL_STATE, null, function (gadgetState) {
             if (callback) {
                 callback(gadgetState);
             }
@@ -60,8 +87,24 @@ wso2.gadgets.state = (function () {
         });
     };
 
+    /**
+     * Set global state in the containers URL hash.
+     * @param {Object} state Gadget state
+     * @param {function} callback Callback function
+     * @return {null}
+     */
+    var setGlobalState = function (key, state, callback) {
+        wso2.gadgets.core.callContainerService(RPC_SERVICE_SET_GLOBAL_STATE, {key:key,value:state}, function () {
+            if (callback) {
+                callback();
+            }
+        });
+    };
+
     return {
         getGadgetState: getGadgetState,
         setGadgetState: setGadgetState,
+        getGlobalState: getGlobalState,
+        setGlobalState: setGlobalState
     };
 })();
