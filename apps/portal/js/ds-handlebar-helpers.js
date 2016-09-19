@@ -84,18 +84,27 @@ Handlebars.registerHelper('resolveURI', function (path) {
 });
 
 //handlebar helper which returns menu hierachy
-Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentPageId, allowedViews) {
-    var divTree = "<ul class='nav nav-pills nav-stacked menu-customize pages'>";
+Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, user, isHidden, queryString, currentView, allowedViews) {
+    var divTree = "";
     var checked = isHidden ? "checked=''" : "";
     var requestParam = (queryString !== null) ? "?" + queryString : "";
 
     if (designer) {
-        divTree += "<li class='ds-menu-root' style='margin: 0 0 10px 0;' id='ds-menu-root'>" +
-            "<i class='fw fw-up'></i> Make Root</li>" +
-            "<li class='hide-all' style='margin: 0 0 10px 0;'><input type='checkbox' " + checked +
-            " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'> <i class='fw fw-view'></i> Hide All</li>";
+        divTree += "<ul class='nav nav-pills nav-stacked menu-customize'>" +
+                        "<li class='hide-all add-margin-bottom-3x'>" +
+                            "<label class='checkbox'>" +
+                                "<input type='checkbox' " + checked + " name='ds-menu-hide-all' value='hide' id='ds-menu-hide-all'>" +
+                                "<span class='helper'> Hide All</span>" +
+                            "</label>" +
+                        "</li>" +
+                    "</ul>" +
+                    "<ul id='sortable' class='nav nav-pills nav-stacked connect dd dd-list'>";
+    } else {
+        divTree += "<ul id='sortable' class='nav nav-pills nav-stacked menu-customize pages'>";
     }
 
+    var parentsOfSelectedView = [];
+    collectParentsofSelectedView(menu, currentView, parentsOfSelectedView);
     updateSubordinates(menu, null, allowedViews);
     divTree += "</ul>";
 
@@ -105,12 +114,12 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                 //todo use fw-hide class once latest wso2 icon project released
                 var iClass = menu[i].ishidden ? "<i class='fw fw-block'></i>" : "<i class='fw fw-view'></i>";
                 divTree += "<li id='" + menu[i].id + "' data-parent='" + parent +
-                    "' data-id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "' class='menu-hierarchy'>" +
-                    "<span>" + menu[i].title + "<span class='controls hide-menu-item hide-" + menu[i].ishidden + "' id='" + menu[i].id +
-                    "'>" + iClass + "</span></span>";
+                    "' data-id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "' class='dd-item'>" +
+                    "<div class='dd-handle'>" + menu[i].title + "<span class='controls hide-menu-item hide-" +
+                    menu[i].ishidden + "' id='" + menu[i].id + "' title='Hide page in Dashboard View Page'>" + iClass + "</span></div>";
             } else {
-                var cls = menu[i].id === currentPageId ? 'active' : '';
-                var divLi = "<li class='" + cls + "'><a style = 'width:75%; display:inline-block' href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>" +
+                var cls = checkParentsOfSelectedView(menu[i].id, parentsOfSelectedView) ? 'active' : '';
+                var divLi = "<li class='" + cls + "'><a href='" + menu[i].id + requestParam + "'>" + menu[i].title + "</a>" +
                     "<span id='" + menu[i].id + "' class='refreshBtn' style='background-color:#1e2531; display:none;'><i class='icon fw fw-undo'></i></span>";
                 if (!menu[i].ishidden) {
                     if (allowedViews) {
@@ -128,17 +137,52 @@ Handlebars.registerHelper('traverseMenu', function (menu, designer, isAnonView, 
                     }
                 }
             }
-
             if (menu[i].subordinates.length > 0 && (designer || (allowedViews && allowedViews.indexOf(menu[i].id) > -1))) {
-                divTree += "<ul class='' id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
+                divTree += "<ul class='dd-list connect' id='" + menu[i].id + "' data-anon='" + menu[i].isanon + "'>";
                 updateSubordinates(menu[i].subordinates, menu[i].id, allowedViews);
                 divTree += "</ul>";
             } else {
                 divTree += "</li>";
             }
-
         }
     }
 
     return divTree;
 });
+
+/**
+ * Go through the menu hierarchy and get the parents of selected view
+ * @param menu
+ * @param currentView selected view
+ * @param parentsOfSelectedView parents of selected view
+ * @returns {boolean}
+ */
+var collectParentsofSelectedView = function (menu, currentView, parentsOfSelectedView) {
+    for (var i = 0; i < menu.length; i++) {
+        if (menu[i].id === currentView) {
+            parentsOfSelectedView.push("" + currentView);
+            return true;
+        }
+        if (menu[i].subordinates.length > 0) {
+            if (collectParentsofSelectedView(menu[i].subordinates, currentView, parentsOfSelectedView)) {
+                parentsOfSelectedView.push(menu[i].id);
+                return true;
+            }
+        }
+    }
+};
+
+/**
+ * Check the given view is a parent of selected view or not
+ * @param id given view
+ * @param parentsOfSelectedView parents of selected view
+ * @returns {boolean} true if the given view is a parent of selected view
+ */
+var checkParentsOfSelectedView = function (id, parentsOfSelectedView) {
+    for (var i = 0; i < parentsOfSelectedView.length; i++) {
+        if (id === parentsOfSelectedView[i]) {
+            return true;
+        }
+    }
+    return false;
+}

@@ -80,7 +80,6 @@ $(function () {
     var sanitizeInput = function (input) {
         return input.replace(/[^a-z0-9-\s]/gim, "");
     };
-
     /**
      * Sanitize the given event's key code.
      * @param event
@@ -125,10 +124,17 @@ $(function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#id-error"));
         }
-
         // If the key released is not a generic key other than space (E.g - arrow keys, backspace, delete), update the URL field
-        if ((e.which == "number" && e.which > 0) || e.keyCode == 0 || e.keyCode == 32)
+        if ((e.which === "number" && e.which > 0) || e.keyCode === 0 || e.keyCode === 32) {
             $(this).val(generateUrl($(this).val()));
+        }
+    }).on('change', function () {
+        overridden = overridden || true;
+        var sanitizedInput = generateUrl(sanitizeInput($(this).val()));
+        $(this).val(sanitizedInput);
+        if ($(this).val()) {
+            hideInlineError($(this), $("#id-error"));
+        }
     });
 
     // Bind event handlers for dashboard description field

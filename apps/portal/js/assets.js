@@ -41,8 +41,6 @@ $(function () {
     var assetsDeleteErrorHbs = Handlebars.compile($("#ds-asset-delete-error-hbs").html());
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
     Handlebars.registerPartial('ds-asset-thumbnail-hbs', assetThumbnailHbs);
-
-
     /**
      * Load the list of assets available.
      * @private
@@ -89,8 +87,14 @@ $(function () {
         ues.store.getStoreList(function (error, data) {
             if (!error && data) {
                 var length = data.length;
-                for (var i = 0; i < length; i++) {
-                    addStoreToList(data[i]);
+                if (length > 1) {
+                    for (var i = 0; i < length; i++) {
+                        addStoreToList(data[i]);
+                    }
+                    $('#selectStore').show();
+                }
+                else {
+                    $('#selectStore').replaceWith('<label id="storeLabel" class="control-label">' + data[0] + '</label>');
                 }
                 $('#storeSelector').show();
             } else {
@@ -152,19 +156,15 @@ $(function () {
      * To get the gadget usage information for a particular gadget id
      * @param gadgetId Id of the gadget
      */
-    var getGadgetUsageInfo = function(gadgetId) {
+    var getGadgetUsageInfo = function (gadgetId) {
         var gadgetUsageData;
         $.ajax({
             url: DATABASE_API + '/' + gadgetId + '?task=usage',
-            method: "POST",
+            method: "GET",
             async: false,
             contentType: 'application/json',
             success: function (data) {
-                console.log("Successfully retrieved gadget usage information");
                 gadgetUsageData = JSON.parse(data);
-            },
-            error: function (xhr, message) {
-                console.log("something went wrong while retrieving the usage data. " + message);
             }
         });
         return gadgetUsageData;
@@ -174,20 +174,22 @@ $(function () {
      * To update the gadget state information in database
      * @param gadgetId Id of the gadget
      */
-    var updateGadgetStateInfo = function(gadgetId) {
+    var updateGadgetStateInfo = function (gadgetId) {
+        var isSuccess = false;
         $.ajax({
             url: DATABASE_API + '/' + gadgetId + '?task=stateupdate',
             method: "POST",
             async: false,
-            data: JSON.stringify({newState : "DELETED"}),
+            data: JSON.stringify({newState: "DELETED"}),
             contentType: 'application/json',
             success: function () {
-                console.log("Successfully updated gadget state information");
+                isSuccess = true;
             },
-            error: function (xhr, message) {
-                console.log("something went wrong while retrieving the usage data. " + message);
+            error: function () {
+                isSuccess = false;
             }
         });
+        return isSuccess;
     };
 
     /**
@@ -196,16 +198,17 @@ $(function () {
      * @private
      */
     var deleteAsset = function (id) {
-        ues.store.deleteAsset(assetType, id, DEFAULT_STORE_TYPE, function (err, data) {
-            if (err) {
-                $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
-            } else {
-                if (assetType === 'gadget'){
-                    updateGadgetStateInfo(id);
+        if (assetType !== 'gadget' || updateGadgetStateInfo(id)) {
+            ues.store.deleteAsset(assetType, id, DEFAULT_STORE_TYPE, function (err, data) {
+                if (err) {
+                    $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
+                } else {
+                    location.reload();
                 }
-                location.reload();
-            }
-        });
+            });
+        } else {
+            $('#' + id).html(assetsDeleteErrorHbs(findAsset(id)));
+        }
     };
 
     /**
@@ -215,20 +218,26 @@ $(function () {
      */
     var manipulateGadgetUsageInfo = function (usage) {
         var message = 'This gadget is used in ';
-        for (var index = 0; index < usage.length; index++) {
+        var endMessage = " dashboard(s). Deleting this gadget will affect the functionality of those dashboard(s)";
+        var count = 0;
+        for (var index = 0; index < usage.length && count < 2; index++) {
             if (usage[index].indexOf("$") > -1) {
                 usage[index] = usage[index].substr(0, usage[index].indexOf("$"));
                 usage[index] = "personalized version of " + usage[index];
-
-                if (message.indexOf("personalized version of " + usage[index]) > -1) {
+                if (message.indexOf(usage[index]) > -1) {
                     usage[index] = "";
+                    count--;
                 }
             }
             if (index !== usage.length - 1) {
-                message += usage[index] + ','
+                count++;
+                if (count === 2) {
+                    message += usage[index] + "..." + endMessage;
+                } else {
+                    message += usage[index] + ','
+                }
             } else {
-                message += usage[index] + " database(s). Deleting this gadget will " +
-                    "affect the functionality of those databases";
+                message += usage[index] + endMessage;
             }
         }
         return message;
@@ -273,7 +282,7 @@ $(function () {
                 assetElement.html(assetConfirmHbs(asset));
             } else {
                 gadgetUsageInfo = manipulateGadgetUsageInfo(gadgetUsageInfo.dashboards);
-                var data = {title : asset.title};
+                var data = {title: asset.title};
                 data.message = gadgetUsageInfo;
                 assetElement.html(gadgetUsageConfimrHbs(data));
             }
@@ -304,6 +313,9 @@ $(function () {
             var assetElement = $(this).closest('.ds-asset');
             var id = assetElement.data('id');
             var store = $('#selectStore').selectpicker('val');
+            if (typeof(store) !== "string") {
+                store = $("#storeLabel").text();
+            }
             downloadAsset(assetType, id, store);
         });
 

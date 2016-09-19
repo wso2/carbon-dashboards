@@ -119,10 +119,16 @@ $('#test-connection').click(function () {
         data: JSON.stringify(providerConfig),
         contentType: "application/json",
         async: false,
-        success: function () {
-            $('#tab2-validation-errors > .text').empty();
-            $('#tab2-validation-errors').hide();
-            $('#test-verification-label').show();
+        success: function (data) {
+            if (!data.error) {
+                $('#tab2-validation-errors > .text').empty();
+                $('#tab2-validation-errors').hide();
+                $('#test-verification-label').show();
+            } else {
+                $('#tab2-validation-errors > .text').html(data.message);
+                $('#tab2-validation-errors').show();
+                $('#test-verification-label').hide();
+            }
         },
         error: function (xhr, message, errorObj) {
             $('#tab2-validation-errors > .text').html('<strong>Error!</strong> in database configuration');

@@ -19,18 +19,17 @@ package org.wso2.carbon.dashboard.portal.core.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.dashboard.portal.core.HouseKeepingTask;
 import org.wso2.carbon.dashboard.portal.core.DashboardPortalException;
 import org.wso2.carbon.dashboard.portal.core.PortalConstants;
-import org.wso2.carbon.dashboard.portal.core.PortalDataSourceService;
-import org.wso2.carbon.dashboard.portal.core.datasource.DataBaseInitializer;
+import org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.ntask.common.TaskException;
 import org.wso2.carbon.ntask.core.TaskInfo;
 import org.wso2.carbon.ntask.core.TaskManager;
 import org.wso2.carbon.ntask.core.service.TaskService;
+import org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
 
 /**
  * @scr.component name="dashboard.portal.core" immediate="true"
@@ -56,18 +55,16 @@ public class PortalDSComponent {
             TaskInfo.TriggerInfo triggerInfo = new TaskInfo.TriggerInfo(null, null,
                     houseKeepingConfiguration.getInterval(), -1);
             triggerInfo.setDisallowConcurrentExecution(true);
-            TaskInfo taskInfo = new TaskInfo(PortalConstants.PORTAL_HOUSE_KEEPING_TASK, HouseKeepingTask.class.getCanonicalName(),
-                    null, triggerInfo);
+            TaskInfo taskInfo = new TaskInfo(PortalConstants.PORTAL_HOUSE_KEEPING_TASK,
+                    HouseKeepingTask.class.getCanonicalName(), null, triggerInfo);
             taskManager.registerTask(taskInfo);
-            BundleContext bundleContext = ctx.getBundleContext();
-            bundleContext.registerService(PortalDataSourceService.class, new PortalDataSourceService() {
-            }, null);
-            DataBaseInitializer.init();
+            DSDataSourceManager.getInstance();
         } catch (TaskException exception) {
             log.error("Error while registering the task type : " + PortalConstants.TASK_TYPE, exception);
         } catch (DashboardPortalException exception) {
-            log.error("Error while loading the house keeping task configurations from  " + PortalConstants.PORTAL_CONFIG_NAME, exception);
-        } catch (Throwable throwable){
+            log.error("Error while loading the house keeping task configurations from  "
+                    + PortalConstants.PORTAL_CONFIG_NAME, exception);
+        } catch (Throwable throwable) {
             log.error("Error while loading the portal core component. ", throwable);
         }
     }
@@ -82,7 +79,6 @@ public class PortalDSComponent {
     protected void unsetTaskService(TaskService taskService) {
         ServiceHolder.setTaskService(null);
     }
-
 
     protected void setDataSourceService(DataSourceService service) {
         ServiceHolder.setDataSourceService(service);
