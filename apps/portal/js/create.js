@@ -55,7 +55,7 @@ $(function () {
      * @private
      * */
     var generateUrl = function (title) {
-        title = title.substring(0,100);
+        title = title.substring(0, 100);
         return title.replace(/[^\w]/g, '-').toLowerCase();
     };
 
@@ -80,7 +80,6 @@ $(function () {
     var sanitizeInput = function (input) {
         return input.replace(/[^a-z0-9-\s]/gim, "");
     };
-
     /**
      * Sanitize the given event's key code.
      * @param event
@@ -102,7 +101,7 @@ $(function () {
             return !($.trim($(element).val()) == '' && character.match(/[\s]/gim));
         }
     };
-    
+
     // Bind event handlers for dashboard title field
     $('#ues-dashboard-title').on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
@@ -125,10 +124,17 @@ $(function () {
         if ($(this).val()) {
             hideInlineError($(this), $("#id-error"));
         }
-
         // If the key released is not a generic key other than space (E.g - arrow keys, backspace, delete), update the URL field
-        if ((e.which == "number" && e.which > 0) || e.keyCode == 0 || e.keyCode == 32)
+        if ((e.which === "number" && e.which > 0) || e.keyCode === 0 || e.keyCode === 32) {
             $(this).val(generateUrl($(this).val()));
+        }
+    }).on('change', function () {
+        overridden = overridden || true;
+        var sanitizedInput = generateUrl(sanitizeInput($(this).val()));
+        $(this).val(sanitizedInput);
+        if ($(this).val()) {
+            hideInlineError($(this), $("#id-error"));
+        }
     });
 
     // Bind event handlers for dashboard description field
@@ -142,7 +148,7 @@ $(function () {
         var id = $("#ues-dashboard-id");
         var form = $('#ues-dashboard-form');
         var url = form.data('action') + "/" + id.val();
-        var apiUrl = form.data('api-url') + "/" + id.val();
+        var apiUrl = form.data('api-url') + "/isExists/" + id.val();
         var titleError = $("#title-error");
         var idError = $("#id-error");
 

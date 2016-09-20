@@ -61,7 +61,8 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
     validate = function (providerConfig) {
         var db = null;
         try {
-            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password'],
+                {driverClassName : providerConfig['driver_class_name']});
         } catch (e) {
             return {
                 "error" : true,
@@ -105,7 +106,8 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                 db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
                     databaseName + "' and table_name='" + tableName + "';";
             }
-            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password'],
+                {driverClassName : providerConfig['driver_class_name']});
             var schema = db.query(db_query);
             var selectQuerySchema = getSelectQueryFields(providerConfig);
             if (schema.length != 0) {
@@ -166,7 +168,8 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         var data;
         var db = null;
         try {
-            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password']);
+            db = new Database(providerConfig['db_url'], providerConfig['username'], providerConfig['password'],
+                {driverClassName : providerConfig['driver_class_name']});
             var query = providerConfig['query'];
             if (limit) {
                 query = query.replace(/^\s\s*/, '').replace(/\s\s*$/, '') + ' limit ' + limit;

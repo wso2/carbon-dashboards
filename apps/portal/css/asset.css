@@ -44,6 +44,10 @@ body {
     top: 8px;
 }
 
+#ds-assets-portal .ds-asset .ds-asset-sharedAcrossTenants {
+    margin-right: 30px !important;
+}
+
 #ds-assets-portal .ds-asset > .ds-asset-img {
     height: 150px;
     margin: 20px auto;
@@ -61,6 +65,10 @@ body {
     font-size: 12px;
     text-align: right;
     white-space: nowrap;
+}
+.glyphicon-pencil{
+    top: 0px;
+    right: 0px;
 }
 
 #ds-assets-portal .ds-asset > .ds-asset-handles > .ds-asset-handle {
@@ -84,6 +92,12 @@ body {
 }
 
 .ds-trash-actions {
+    right: 15px;
+    bottom: 15px;
+    position: absolute;
+}
+
+.ds-edit-actions {
     right: 15px;
     bottom: 15px;
     position: absolute;

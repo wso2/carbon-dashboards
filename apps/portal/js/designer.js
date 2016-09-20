@@ -18,6 +18,7 @@ $(function () {
     var dashboard;
     var page;
     var pageType;
+    var visibleViewCount = 12;
     var activeComponent;
     var breadcrumbs = [];
     var storeCache = {
@@ -39,6 +40,10 @@ $(function () {
     var roleAddAction = 'add';
     var roleRemoveAction = 'remove';
     var DATABASE_API = ues.utils.tenantPrefix() + 'apis/database';
+    var HEIGHT = 'height';
+    var OVERFLOW_Y = 'overflow-y';
+    var SCROLL = 'scroll';
+    var HIDDEN = 'hidden';
 
     /**
      * Role for all logged in users
@@ -70,9 +75,6 @@ $(function () {
      * @const
      */
     var UNAUTHORIZED_ERROR_CODE = 401;
-
-    //Keep the number of visible views of a page
-    var NO_OF_VISIBLE_VIEWS = 12;
 
     //Variable to distinguish between creating a new view using a new layout and changing the layout of a current view
     var isNewView = false;
@@ -834,7 +836,7 @@ $(function () {
                 componentBody.hide();
             } else {
                 // rendering full view
-                var pageEl = $('.page-content').has('.nav-tabs');
+                var pageEl = $('.page-content');
                 // backup the scroll position
                 designerScrollTop = designer.scrollTop();
                 getGridstack().disable();
@@ -1599,19 +1601,27 @@ $(function () {
                     $('#view-list').append(viewListingHbs(ctx));
                 }
             }
-        });
 
-        //event handler for selecting a non visible view from the dropdown list
-        $(document).on('click', '#view-list li', function () {
-            var viewId = getViewId(this.textContent.trim());
-            var currentViewId = getViewId(getSelectedView());
-
-            //if visible views length is 6, remove the last view before adding the selected view
-            if (visibleViews.length === NO_OF_VISIBLE_VIEWS) {
-                visibleViews.splice(visibleViews.length - 1, 1);
+            var input = $("#view-list");
+            var pageContentHeight = parseInt($(".page-content").css(HEIGHT)) * .9;
+            var dropDownheight = parseInt(input.css(HEIGHT));
+            if (dropDownheight > pageContentHeight) {
+                input.css(HEIGHT, pageContentHeight)
             }
-            visibleViews.push(viewId);
-            switchPage(getPageId(), currentViewId);
+            dropDownheight > pageContentHeight ? input.css(OVERFLOW_Y, SCROLL) : input.css(OVERFLOW_Y, HIDDEN)
+
+            $('#view-list li').on('click', function (e) {
+                e.stopPropagation();
+                var viewId = getViewId(this.textContent.trim());
+                var currentViewId = getViewId(getSelectedView());
+                //if visible views length is 12, remove the last view before adding the selected view
+                if (visibleViews.length === visibleViewCount) {
+                    visibleViews.splice(visibleViews.length - 1, 1);
+                }
+                visibleViews.push(viewId);
+                switchPage(getPageId(), currentViewId);
+                $("#" + viewId).click();
+            });
         });
 
         //event handler for selecting an option form copying an existing view or creating a new view
@@ -1660,6 +1670,9 @@ $(function () {
             showHtmlModal(confirmDeleteBlockHbs({hasComponent: hasComponent}), function () {
                 var designerModal = $('#designerModal');
                 designerModal.find('#btn-delete').on('click', function () {
+                    if (componentBox.find('.ues-component').hasClass('active')) {
+                        $('.fw-right-arrow').click();
+                    }
                     var action = designerModal.find('.modal-body input[name="delete-option"]:checked').val();
                     var id = componentBox.find('.ues-component').attr('id');
                     var removeBlock = (action == 'block');
@@ -2168,7 +2181,6 @@ $(function () {
      * @private
      */
     var updatePageProperties = function (e) {
-
         var titleError = $("#title-error");
         var idError = $("#id-error");
         var hasError = false;
@@ -2256,7 +2268,6 @@ $(function () {
 
         if (typeof fn[e.context.name] === 'function') {
             fn[e.context.name]();
-            updatePagesList();
             saveDashboard();
         }
         return true;
@@ -2809,7 +2820,7 @@ $(function () {
                 return;
             }
             var assets = $('.ues-store-assets').find('.ues-thumbnails');
-            if (data.length > 0) {
+            if (data.length > 0 && paging.start >= 0) {
                 storeCache[type] = storeCache[type].concat(data);
             }
             paging.start += COMPONENTS_PAGE_SIZE;
@@ -3172,14 +3183,14 @@ $(function () {
                     }
                     $(dropLocation.prev).children('ul').append(dragItem);
                     dropLocation.prev = null;
+                }
+                if ($("#sortable").find("li").length === ues.global.dashboard.pages.length) {
                     ues.global.dashboard.menu = [];
                     serializeList($("#sortable"), ues.global.dashboard.menu);
+                    saveDashboard();
                     updateMenuList();
-                    saveDashboard();
                 } else {
-                    ues.global.dashboard.menu = [];
-                    serializeList($("#sortable"), ues.global.dashboard.menu);
-                    saveDashboard();
+                    $(".connect").sortable("refresh");
                 }
             }
         });
@@ -3340,7 +3351,8 @@ $(function () {
                 landing: (dashboard.landing == page.id),
                 isUserCustom: dashboard.isUserCustom,
                 fluidLayout: page.views.fluidLayout || false
-            })).on('change', 'input', function () {
+            })).on('change', 'input', function (e) {
+                e.stopImmediatePropagation();
                 if (updatePageProperties($(this).closest('.ues-page-properties'))) {
                     switchPage(page.id, pageType);
                 }
@@ -3685,6 +3697,24 @@ $(function () {
      * @private
      */
     var initUI = function () {
+        $('#view-list').closest('li').on('show.bs.dropdown', function () {
+            updateCollapsedViewsDropdown();
+        });
+
+        /**
+         * Window resize event handler.
+         **/
+        $(window).resize(function () {
+            updateCollapsedViewsDropdown();
+        });
+
+        /**
+         * Window load event handler.
+         **/
+        $(window).load(function () {
+            updateCollapsedViewsDropdown();
+        });
+
         registerRpc();
         initDesignerMenu();
         initLayoutWorkspace();
@@ -3692,14 +3722,7 @@ $(function () {
         initComponentToolbar();
         initComponents();
         initAddBlock();
-        $('#slide-right').on('click', function () {
-            var leftPos = $('.view-container1 .nav').scrollLeft();
-            $(".view-container1 .nav").animate({scrollLeft: leftPos + 200}, 800);
-        });
-        $('#slide-left').on('click', function () {
-            var leftPos = $('.view-container1 .nav').scrollLeft();
-            $(".view-container1 .nav").animate({scrollLeft: leftPos - 200}, 800);
-        });
+
         if (ues.global.dashboard.isEditorEnable && ues.global.dashboard.isUserCustom) {
             showInformation("Received Edit Permission", "You have given edit permission for this dashboard. Please " +
                 "reset the dashboard to receive the permission.");
@@ -3717,7 +3740,7 @@ $(function () {
             drop: function (event, ui) {
                 var id = ui.helper.data('id');
                 var type = ui.helper.data('type');
-                if (!hasHiddenGadget($(this)) && !hasComponents($(this))) {
+                if (type && !hasHiddenGadget($(this)) && !hasComponents($(this))) {
                     createComponent($(this), findStoreCache(type, id));
                 }
             }
@@ -3999,7 +4022,7 @@ $(function () {
         if (isInViewCreationView) {
             var views = getUserAllowedViews(Object.keys(page.content));
             pageType = newView;
-            if (views.length > 0 && views.length > NO_OF_VISIBLE_VIEWS) {
+            if (views.length > 0 && views.length > visibleViewCount) {
                 pageType = views[0];
             }
             renderPage(getPageId());
@@ -4060,8 +4083,8 @@ $(function () {
         }
         var views = getUserAllowedViews(Object.keys(page.views.content));
         $('#more-views').addClass('hidden');
-        if ((views.length > NO_OF_VISIBLE_VIEWS) && (visibleViews.length === 0)) {
-            visibleViews = views.slice(0, NO_OF_VISIBLE_VIEWS);
+        if ((views.length > visibleViewCount) && (visibleViews.length === 0)) {
+            visibleViews = views.slice(0, visibleViewCount);
         } else if (visibleViews.length === 0) {
             visibleViews = views;
         }
@@ -4120,53 +4143,63 @@ $(function () {
             }
         }));
         if (views.length > 0) {
+            var layout = $(page.views.content[pageType]);
+            $('.gadgets-grid').html(ues.dashboards.getGridstackLayout(layout[0]));
+            $('.grid-stack').gridstack({
+                width: 12,
+                animate: true,
+                cellHeight: 50,
+                verticalMargin: 30,
+                handle: '.ues-component-heading, .ues-component-heading .ues-component-title'
+            }).on('dragstop', function (e, ui) {
+                updateLayout();
+            }).on('resizestart', function (e, ui) {
+                // hide the component content on start resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    container.find('.ues-component-body').hide();
+                }
+            }).on('resizestop', function (e, ui) {
+                // re-render component on stop resizing the component
+                var container = $(ui.element).find('.ues-component');
+                if (container) {
+                    var gsItem = container.closest('.grid-stack-item');
+                    var node = gsItem.data('_gridstack_node');
+                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                    container.closest('.ues-component-box').attr('data-height', height);
+                    container.find('.ues-component-body').show();
+                    if (container.attr('id')) {
+                        updateComponent(container.attr('id'));
+                    }
+                }
+                updateLayout();
+            });
             ues.dashboards.render($('.gadgets-grid'), dashboard, pid, pageType, function (err) {
                 $('.gadgets-grid').find('.ues-component').each(function () {
                     var id = $(this).attr('id');
                     renderComponentToolbar(findComponent(id));
                     if (!id) {
                         if (err === UNAUTHORIZED_ERROR_CODE) {
-                            $(this).find('.ues-component-title').html(err + " " + i18n_data['unauthorized']);
-                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['no.permission.to.view.gadget']}));
+                            $(this).addClass('gadget-error');
+                            $(this).find('.ues-component-title').html(i18n_data['error'] + '!');
+                            $(this).find('.ues-component-body').html(dsErrorHbs({
+                                errorTitle: (err + " " + i18n_data['unauthorized']),
+                                error: i18n_data['no.permission.to.view.gadget']
+                            }));
                             err = null;
                         } else if (err === NOT_FOUND_ERROR_CODE) {
-                            $(this).find('.ues-component-title').html(err + " " + i18n_data['gadget.not.found']);
-                            $(this).find('.ues-component-body').html(dsErrorHbs({error: i18n_data['gadget.missing']}));
+                            $(this).addClass('gadget-error');
+                            $(this).find('.ues-component-title').html(i18n_data['error'] + '!');
+                            $(this).find('.ues-component-body').html(dsErrorHbs({
+                                errorTitle: (err + " " + i18n_data['gadget.not.found']),
+                                error: i18n_data['gadget.missing']
+                            }));
                             err = null;
                         }
                     }
                 });
                 listenLayout();
-                $('.grid-stack').gridstack({
-                    width: 12,
-                    animate: true,
-                    cellHeight: 50,
-                    verticalMargin: 30,
-                    handle: '.ues-component-heading, .ues-component-heading .ues-component-title'
-                }).on('dragstop', function (e, ui) {
-                    updateLayout();
-                }).on('resizestart', function (e, ui) {
-                    // hide the component content on start resizing the component
-                    var container = $(ui.element).find('.ues-component');
-                    if (container) {
-                        container.find('.ues-component-body').hide();
-                    }
-                }).on('resizestop', function (e, ui) {
-                    // re-render component on stop resizing the component
-                    var container = $(ui.element).find('.ues-component');
-                    if (container) {
-                        var gsItem = container.closest('.grid-stack-item');
-                        var node = gsItem.data('_gridstack_node');
-                        var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
-                        var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-                        container.closest('.ues-component-box').attr('data-height', height);
-                        container.find('.ues-component-body').show();
-                        if (container.attr('id')) {
-                            updateComponent(container.attr('id'));
-                        }
-                    }
-                    updateLayout();
-                });
 
                 $('.gadgets-grid [data-banner=true] .ues-component-body').addClass('ues-banner-placeholder');
                 if (!done) {
@@ -4178,6 +4211,45 @@ $(function () {
         updatePagesList();
         updateMenuList();
         initBanner();
+    };
+
+    /**
+     * Update the collapsed view drop down with views.
+     *
+     * @return null
+     * @private
+     * */
+    var updateCollapsedViewsDropdown = function () {
+        var collapsedViews = 'ul#view-list';
+        var containerTop = $('.page-views-container.flex-container > .flex-item-middle').position().top;
+        var hiddenElements = [];
+        var listElements = [];
+        $('.page-views-container.flex-container > .flex-item-middle > li').each(function () {
+            if ($(this).position().top > containerTop) {
+                hiddenElements.push($(this));
+            }
+        });
+
+        $.each(hiddenElements, function (key, val) {
+            listElements.push('<li class="overflowed-item">' +
+                '<a href="#">' +
+                '<span id="' + $(val).data('view-mode') + '">' + $(val).find('a').html() + '</span>' +
+                '</a>' +
+                '</li>');
+        });
+        $(collapsedViews + ' .overflowed-item').remove();
+        $(collapsedViews).append(listElements);
+        var views = getUserAllowedViews(Object.keys(page.views.content));
+        if (hiddenElements.length > 0) {
+            visibleViewCount = $("#designer-view-mode").children('li').length - hiddenElements.length;
+        }
+
+        if ($(collapsedViews).children('li').length > 0 || views.length !== visibleViews.length) {
+            $('#more-views').removeClass('hidden');
+        }
+        else {
+            $('#more-views').addClass('hidden');
+        }
     };
 
     /**
@@ -4488,8 +4560,27 @@ $(function () {
 
                 if (menu[i].subordinates.length > 0 && !menu[i].ishidden) {
                     manipulateSubordinates(menu[i].subordinates, landing);
-                } else if (menu[i].ishidden) {
+                } else if (menu[i].ishidden && checkParentMenuHidden(menu[i], pageId)) {
                     showInformation(i18n_data['cannot.hide.page'], i18n_data['parents.hidden']);
+                }
+            }
+        }
+    };
+
+    /**
+     * Check parent menu of given view, is hidden or not
+     * @param menu
+     * @param currentView Selected current view
+     * @returns {boolean} true if parent of selected view is hidden
+     */
+    var checkParentMenuHidden = function (menu, currentView) {
+        if (menu.id === currentView) {
+            return true;
+        }
+        if (menu.subordinates.length > 0) {
+            for (var i = 0; i < menu.subordinates.length; i++) {
+                if (checkParentMenuHidden(menu.subordinates[i], currentView)) {
+                    return true;
                 }
             }
         }
@@ -4672,4 +4763,20 @@ $('input[type=number]').on('change', function () {
         input.val(input.attr('min'));
     }
 });
-
+/**
+ * To sanitzie the user input for security timeout
+ * @param value Value, user entered
+ * @param min Minimum allowed value
+ * @param max Maximum allowed value
+ * @param recommended Recommended value
+ * @returns sanitized value
+ */
+function sanitizeSecurityTimeOut(value, min, max, recommended) {
+    if (parseInt(value) < min || isNaN(value)) {
+        return recommended;
+    } else if (parseInt(value) > max) {
+        return max;
+    } else {
+        return value;
+    }
+}

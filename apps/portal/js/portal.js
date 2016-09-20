@@ -16,6 +16,7 @@
 $(function () {
     var dashboardsApi = ues.utils.tenantPrefix() + 'apis/dashboards';
     var databaseApi = ues.utils.tenantPrefix() + 'apis/database';
+    var bannerApi = ues.utils.tenantPrefix() + 'apis/banners';
     var dashboards = [];
     var isStillLoading = false;
     var nextStart = 0;
@@ -61,6 +62,12 @@ $(function () {
         var button = Ladda.create(el[0]);
         button.start();
         var id = el.closest('.ues-dashboard').data('id');
+        $.ajax({
+            url: bannerApi + '/' + id,
+            type: 'DELETE',
+            async: false,
+            dataType: 'json'
+        });
         $.ajax({
             url: dashboardsApi + '/' + id,
             method: 'DELETE',

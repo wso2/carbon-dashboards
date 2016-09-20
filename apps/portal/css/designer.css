@@ -22,11 +22,6 @@
     opacity: 0.1;
 }
 
-.fw-alert {
-    color: #d9534f;
-    padding-bottom: 3px;
-}
-
 .add-asset {
     text-align: center;
     height: 200px;
@@ -252,4 +247,34 @@
     background-color: #464f58;
     text-align: center;
     box-shadow: 10px 10px 5px #34393e;
+}
+
+.defective-page-icon {
+    margin-left: 8px;
+    margin-bottom: 2px;
+}
+
+.hierarchical-menu-container {
+    overflow-y: scroll;
+}
+
+.page-views-container.flex-container {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.page-views-container.flex-container > .flex-item {
+    height: 42px;
+}
+
+.page-views-container.flex-container > .flex-item-middle {
+    overflow: hidden;
+}
+
+.page-views-container.flex-container > .flex-item-side {
+    width: 44px;
+    flex: 0 0 44px;
 }

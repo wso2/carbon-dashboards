@@ -111,7 +111,7 @@
                             <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x" id="filter-dashboards">
                                 <li><a href="#" data-filter="All"><%= i18n.localize("all.dashboards") %></a></li>
                                 <li><a href="#" data-filter="Shared"><%= i18n.localize("shared.dashboards") %></a></li>
-                                <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %></a></li>
+                                <li><a href="#" data-filter="Tenant"><%= i18n.localize("tenant.dashboards") %><%=userDomain%></a></li>
                             </ul>
                         </li>
                     </ul>
@@ -128,7 +128,7 @@
     <script id="ues-dashboards-list-hbs" type="text/x-handlebars-template">
         {{#each .}}
             <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
-                <div class="thumbnail ues-dashboard ds-asset {{#if shared}} shared {{/if}}"  id="{{id}}" data-id="{{id}}">
+                <div class="thumbnail ues-dashboard ds-asset {{#if shared}} shared {{/if}} {{#if sharedAcrossTenants}} shared {{/if}}" id="{{id}}" data-id="{{id}}">
                     {{>ues-dashboard-thumbnail-hbs}}
                 </div>
             </div>
@@ -148,23 +148,29 @@
 
     <script id="ues-dashboard-thumbnail-hbs" type="text/x-handlebars-template">
         <div class="add-padding-2x add-padding-top-5x">
-            {{#if defective}}<span class="defective-dashboard text-warning" title="<%= i18n.localize("missing.gadget") %>"><i class="icon fw fw-warning"></i> <%= i18n.localize("defective.dashboard") %></span>{{/if}}
-            <div class="media">
+            {{#if defective}}<span class="defective-dashboard text-danger" title="<%= i18n.localize("missing.gadget") %>"><i class="icon fw fw-alert"></i> <%= i18n.localize("defective.dashboard") %></span>{{/if}}
+            <div class="media add-margin-top-3x">
                 <div class="media-left add-padding-right-4x add-padding-left-2x">
                     <i class="ds-asset-icon fw fw-dashboard media-object"></i>
                 </div>
                 <div class="media-body">
                     <h4 id="ues-dashboard-title" class="media-heading add-margin-top-1x">{{title}}</h4>
                     <span id="ues-dashboard-url" class="ues-dashboard-url truncate text-muted">
-                        <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank">{{id}}</a>
+                        <%=i18n.localize("url.label") %>: <a class="ues-view ues-url-link" title="<%=request.getRequestURL()%>/{{id}}/{{#if shared}}?shared=true{{/if}}" href="<%=tenantedUrlPrefix%>dashboards/{{id}}/{{#if shared}}?shared=true{{/if}}" target="_blank"><%=request.getRequestURL()%>/{{id}}/{{#if shared}}?shared=true{{/if}}</a>
                     </span>
                     <p id="ues-dashboard-description" class="ues-dashboard-description">{{description}}</p>
                 </div>
             </div>
+            {{#if sharedAcrossTenants}}
+            <div class="ds-asset-shared ds-asset-sharedAcrossTenants">
+                <i class="fw fw-share"></i>
+                <span id="shared-description"><%= i18n.localize("shared.across.tenants") %></span>
+            </div>
+            {{/if}}
             {{#if shared}}
             <div class="ds-asset-shared">
                 <i class="fw fw-share"></i>
-                <span id="shared-description"><%= i18n.localize("shared.by.supertenant") %></span>
+                <span id="shared-description"><%= i18n.localize("shared.by.supertenant") %><%= superDomain %>'</span>
             </div>
             {{/if}}
             <div class="ues-actions">

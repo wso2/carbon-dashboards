@@ -38,6 +38,7 @@
         var constants = require('/modules/constants.js');
         var shared = request.getParameter('shared');
         var isUserFromSuperDomain = false;
+        var userAgent = request.getHeader("user-agent");
 
         if (!user) {
             userRoles.push(constants.ANONYMOUS_ROLE);
@@ -146,7 +147,7 @@
                 <div id="ues-pages"><!-- dynamic content --></div>
 
                 <hr>
-
+                <% if(userAgent.indexOf("Trident") === -1) { %>
                 <div class="panel panel-default active">
                     <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel" id="download-pdf-panel" role="tab"
                         data-toggle="collapse" aria-expanded="true">
@@ -204,7 +205,7 @@
                         </div>
                     </div>
                 </div>
-
+                <% } %>
             </div>
         </div>
     </div>
@@ -536,10 +537,11 @@
 
     <!-- Handle bar template to hide the gadgets that are not available or viewable by particular user-->
     <script id="ds-error-hbs" type="text/x-handlebars-template">
-      <div class="alert alert-danger" id = "delete-error" role="alert">
-        <h1><i class="icon fw fw-error"></i><strong><%= i18n.localize("error")%>!</strong></h1>
-        <h3>{{error}}</h3>
-      </div>
+        <div class="alert alert-danger missing-gadget" role="alert">
+            <i class="icon fw fw-error"></i><strong>{{errorTitle}}!</strong>
+            <br>
+            {{error}}
+        </div>
     </script>
 
    <!-- View options for a particular page -->
@@ -620,7 +622,8 @@
                             ' "unauthorized" : "<%= i18n.localize("unauthorized")%>",' +
                             ' "gadget.not.found" : "<%= i18n.localize("gadget.not.found")%>",' +
                             ' "no.permission.to.view.gadget" : "<%= i18n.localize("no.permission.to.view.gadget")%>",' +
-                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>"' +
+                            ' "gadget.missing" : "<%= i18n.localize("gadget.missing")%>",' +
+                            ' "error" : "<%= i18n.localize("error")%>"' +
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
 
