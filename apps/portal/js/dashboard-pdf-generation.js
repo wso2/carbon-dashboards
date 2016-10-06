@@ -184,19 +184,23 @@
     };
 
     /**
-     * download the pdf into disk
+     * generate and download the pdf into disk
      */
     var downloadPDF = function () {
         var height = getPDFHeight();
         var width = getPDFWidth();
         var fontSize = height * .0075;
-        $('div.body-wrapper > div.nano > div.nano-content').animate({SCROLL_TOP: 0}, SCROLL_FAST, function () {
+        var orientation;
+        orientation = parseInt(height) > parseInt(width) ? 'p' : 'l';
+        $('.grid-stack > .grid-stack-item > .grid-stack-item-content').attr('style', 'overflow-y: visible !important;');
+        $('div.body-wrapper > div.nano > div.nano-content').animate({"scrollTop": 0}, "FAST", function () {
             html2canvas($("#gadgets-grid"), {
                 onrendered: function (canvas) {
+                    $('.grid-stack > .grid-stack-item > .grid-stack-item-content').attr('style', 'overflow-y: hidden !important;');
                     restoreGadgetsGrid();
                     restoreBanner();
                     var doc = new jsPDF({
-                        orientation: PORTRAIT,
+                        orientation: orientation,
                         unit: PIXELS,
                         format: [width, (height * 1.1).toString()]
                     });
