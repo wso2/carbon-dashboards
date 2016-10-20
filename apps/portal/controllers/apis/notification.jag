@@ -1,0 +1,94 @@
+<%
+/**
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+
+( function(){
+
+
+    var dataBaseUtils = require('/modules/database-utils.js');
+    var data = request.getContent();
+
+
+
+    var i18n = require('i18n');
+    i18n.init(request, utils.getLocaleResourcePath());
+
+    var ADD_NOTIFICATION = 'addNotification';
+    var UPDATE_USER_NOTIFICATION = 'updateUserNotification';
+    var NOTIFICATION_FOR_USERNAME = 'notificationsForUserName';
+    var NOTIFICATION_DETAILS = 'getNotificationDetails';
+    var NUMBER_OF_NOTIFICATIONS = 'getNotificationCount';
+    var ROLES_FOR_USER = 'getRolesOfUser';
+    var task = request.getParameter('action');
+
+    var log = new Log();
+    var matcher = new URIMatcher(request.getRequestURI());
+
+    if (request.getMethod()==="POST"){
+        if (matcher.match('/notification')) {
+            if (task === ADD_NOTIFICATION) {
+                var notificationId= data["notificationId"];
+                var title = data["title"];
+                var message = data["message"];
+                var directUrl = data["directUrl"];
+                var roleList = data["toWhom"]["roles"]["roleName"];
+                var userList = data["toWhom"]["users"]["userName"];
+                dataBaseUtils.insertNotification(notificationId, title, message, directUrl,userList, roleList);
+            }
+        }
+    }
+    else if (request.getMethod()==="GET"){
+        if (matcher.match('/notification/role')){
+            var roles;
+            if (task === ROLES_FOR_USER){
+                roles = dataBaseUtils.getRolesOfUser();
+                print(roles);
+                return;
+            }
+
+        } if (matcher.match('/notification/user')){
+
+            if (task === NOTIFICATION_FOR_USERNAME){
+                var notifications = dataBaseUtils.getNotificationsForUsername();
+                print(notifications.data);
+                return;
+            }
+            if(task === NUMBER_OF_NOTIFICATIONS){
+                var count = dataBaseUtils.getNotificationCount();
+                print(count);
+                return;
+            }
+        } if (matcher.match('/notification/{notificationId}')) {
+            if (task === NOTIFICATION_DETAILS) {
+                var notificationId = matcher.elements().notificationId;
+                var notifications = dataBaseUtils.getNotificationDetails(notificationId);
+                print(notifications);
+                return;
+            }
+        }
+    } else if (request.getMethod()==="UPDATE"){
+        if(matcher.match('/notification/user/{users}')){
+            if(task === UPDATE_USER_NOTIFICATION){
+                var tenantID = request.getParameter("tenantID");
+                dataBaseUtils.updateSeenAfterUserSeeingTheNotification(notificationId,userId,tenantID);
+            }
+        }
+    }
+}());
+%>

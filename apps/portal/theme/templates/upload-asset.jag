@@ -32,6 +32,7 @@
 <body>
     
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+    <link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
     
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
@@ -72,7 +73,9 @@
                             </a>
                         </li>
                     </ul>
+                    <% include(utils.resolvePath('templates/includes/notification-button.jag')); %>
                 </div><!--/.nav-collapse -->
+                <% include(utils.resolvePath('templates/includes/notification-details.jag')); %>
             </div>
         </nav>
     </div>
@@ -172,6 +175,7 @@
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
     <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
     <script src="<%=urlPrefix%>js/upload-asset.js"></script>
+    <script src="<%=urlPrefix%>js/notification.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 
 </body>

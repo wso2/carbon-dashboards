@@ -609,6 +609,264 @@ public class DSDataSourceManager {
         return false;
     }
 
+    /*
+    * Update the user_notification table
+    *
+    * @param user_id Id of the user for whom the notification belongs to
+    * @param notification_id Id of the notification
+    * @throws DashboardPortalException
+    * */
+    public void updateSeenAfterUserSeeingTheNotification(int notificationId, int tenantId, String userId) throws DashboardPortalException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_UPDATE_USERS_NOTIFICATION);
+            preparedStatement.setBoolean(1,true);
+            preparedStatement.setString(2, userId);
+            preparedStatement.setInt(3, notificationId);
+            preparedStatement.setInt(4,tenantId);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException se) {
+            log.error("Cannot update the seen info ", se);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /*
+    * insert the notification details to the database
+    *
+    * @param notificationId Id of the notification
+    * @param title The title of the received notification
+    * @param message The message of the notification
+    * @param directUrl The directurl of the notification that should be directed
+    * @throws DashboardPortalException
+    * */
+
+    public void insertIntoNotification ( String notificationId, String title, String message, String directUrl) throws DashboardPortalException{
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_INSERT_INTO_NOTIFICATION);
+            preparedStatement.setString(1,notificationId);
+            preparedStatement.setString(2, title);
+            preparedStatement.setString(3, message);
+            preparedStatement.setString(4,directUrl);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+
+        } catch (SQLException se) {
+            log.error("Cannot insert notification datails info ", se);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /*
+    * insert  User_notification datails
+    *
+    * @param notificationId
+    * @param userId
+    * @throws DashboardPortalException
+    * */
+
+    public void insertIntoUserNotification(String notificationId, String userList )throws DashboardPortalException{
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        String[] usersList = userList.split(",");
+        try {
+            for (String user : usersList){
+                connection = dataSource.getConnection();
+                preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_INSERT_INTO_USER_NOTIFICATION);
+                preparedStatement.setString(1, notificationId);
+                preparedStatement.setString(2,user);
+                preparedStatement.setBoolean(3, false);
+                preparedStatement.executeUpdate();
+                if (!connection.getAutoCommit()) {
+                    connection.commit();
+                }
+            }
+
+        } catch (SQLException se){
+            log.error("Cannot insert user- notification details" + se);
+        }finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /*
+    * insert  Role_notification datails
+    *
+    * @param notificationId
+    * @param Role
+    * @throws DashboardPortalException
+    * */
+
+    public void insertIntoRoleNotification(String notificationId, String roleList )throws DashboardPortalException{
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        String[] rolesList = roleList.split(",");
+        try {
+            for (String role : rolesList){
+                connection = dataSource.getConnection();
+                preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_INSERT_INTO_ROLE_NOTIFICATION);
+                preparedStatement.setString(1, notificationId);
+                preparedStatement.setString(2, role);
+                preparedStatement.executeUpdate();
+                if (!connection.getAutoCommit()) {
+                    connection.commit();
+                }
+            }
+
+        } catch (SQLException se){
+            log.error("Cannot insert role- notification details" + se);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /*
+    * get notificationIds for a particular user
+    * @param userId
+    * @return notificationIds
+    * throws DashboardPortalException
+    * **/
+    public List<String> getNotificationsForUsername(String userName) throws DashboardPortalException {
+        List<String> notificationsList = new ArrayList<String>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet=null;
+        try{
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_GET_NOTIFICATIONS_FOR_USER_NAME);
+            preparedStatement.setString(1, userName);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            while (resultSet.next()) {
+                notificationsList.add(resultSet.getString("NOTIFICATION_ID"));
+            }
+
+        } catch (SQLException se){
+            log.error("Cannot get the notifications for the particular user name" + userName + se);
+        } finally {
+            closeDatabaseResources(connection,preparedStatement, resultSet);
+        }
+        return  notificationsList;
+    }
+
+    /*
+    * get notificationIds for a particular role
+    * @param role
+    * @return notificationIds
+    * throws DashboardPortalException
+    * **/
+    public List<String> getNotificationsForRole(String roleName) throws DashboardPortalException {
+        List<String> notificationsList = new ArrayList<String>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try{
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_GET_NOTIFICATIONS_FOR_ROLE);
+            preparedStatement.setString(1, roleName);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+
+            while (resultSet.next()) {
+                notificationsList.add(resultSet.getString("NOTIFICATION_ID"));
+            }
+
+        } catch (SQLException se){
+            log.error("Cannot get the notifications for the particular role" + roleName + se);
+        } finally {
+            closeDatabaseResources(connection,preparedStatement, resultSet);
+        }
+
+        return notificationsList;
+    }
+
+
+
+    /*
+    * get the notification detail for a particular notificationId, and tenantId
+    *
+    * @param notificationId
+    * @return title, message, directUrl
+    * throws DashboardPortalException
+    */
+
+    public String[] getNotificationDetails(String notificationId) throws DashboardPortalException {
+        String[] notificationDetail = new String[3];
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet=null;
+        try{
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_GET_NOTIFICATION_DETAILS);
+            preparedStatement.setString(1, notificationId);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+
+            resultSet.next();
+            notificationDetail[0]=(resultSet.getString("TITLE"));
+            notificationDetail[1]=(resultSet.getString("MESSAGE"));
+            notificationDetail[2]=(resultSet.getString("DIRECT_URL"));
+
+        } catch (SQLException se){
+            log.error("Cannot get the notifications details for the particular notificationId"  + se);
+        } finally {
+            closeDatabaseResources(connection,preparedStatement, resultSet);
+        }
+        return  notificationDetail;
+    }
+
+    /*
+    * get unread notification count of a particular user
+    *
+    * @param username
+    * @return count  of the notification
+    * throws dashboardPortalException
+    * */
+
+    public int getNotificationCount(String userName) throws DashboardPortalException{
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        int count =0;
+        try{
+            connection= dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(DataSourceConstants.SQL_GET_NOTIFICATION_COUNT);
+            preparedStatement.setString(1,userName);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            resultSet.next();
+            count= resultSet.getInt(1);
+
+
+        } catch (SQLException se){
+            log.error("Cannot get notification count for the user " + userName+ se);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, resultSet);
+        }
+
+        return count;
+    }
+
     /**
      * To get the details of the defective usage data
      *

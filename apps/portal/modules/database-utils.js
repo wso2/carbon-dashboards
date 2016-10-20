@@ -23,14 +23,34 @@ var isDashboardExistInDatabase;
 var checkDefectiveDashboard;
 var checkDefectivePages;
 var getGadgetUsageInfoOfADashboard;
+var insertNotification;
+var updateSeenAfterUserSeeingTheNotification;
+var getNotificationsForRole;
+var getNotificationsForUsername;
+var getNotificationDetails;
+var getNotificationCount;
+var getRolesOfUser;
+
 (function () {
     var DSDataSourceManager = Packages.org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
     var dsDataSourceManager = DSDataSourceManager.getInstance();
     var log = new Log("database-utils.js");
     var usr = require('/modules/user.js');
+    var utils = require('/modules/utils.js');
     var carbon = require('carbon');
     var tenantId = carbon.server.tenantId();
     var user = usr.current();
+
+    var ctx = utils.currentContext();
+    if (!ctx.username) {
+        return [];
+    }
+    var server = new carbon.server.Server();
+    var um = new carbon.user.UserManager(server, ctx.tenantId);
+    var userRoles = um.getUserListOfRole(ctx.username);
+    //var userIdName = tenantId+user.username;
+    var userIdName = "admin";
+    log.info(typeof (userIdName));
 
     insertOrUpdateGadgetUsage = function (dashboardId, gadgetID, usageData, state) {
         if (log.isDebugEnabled()) {
@@ -88,7 +108,7 @@ var getGadgetUsageInfoOfADashboard;
         }
         return dsDataSourceManager.isDashboardDefective(tenantId, dashboardId);
     };
-    
+
     checkDefectivePages = function (dashboardId) {
         dashboardId = updateDashboardIdForPersonalizedDashboards(dashboardId);
         var usageData = dsDataSourceManager. getDefectiveUsageData(tenantId, dashboardId);
@@ -98,6 +118,48 @@ var getGadgetUsageInfoOfADashboard;
             usage.data.push(usageData.get(index));
         }
         return usage;
+    };
+
+    updateSeenAfterUserSeeingTheNotification = function (notificationId, userId,tenantID){
+        dsDataSourceManager.updateUserNotificationAfterSeeingTheNotification(notificationId,userId,tenantID);
+    };
+
+    insertNotification = function( notificationId, title,  message,  directUrl, userList, roleList){
+        dsDataSourceManager.insertIntoNotification( notificationId, title,  message,  directUrl);
+        for (var i = 0; i < roleList.length; i++) {
+            var usersOFRole = um.getUserListOfRole(roleList[i]);
+            if (usersOFRole !== null) {
+                for (var j = 0; j < usersOFRole.length; j++) {
+                    //noinspection JSAnnotator
+                    if (userList.hasOwnProperty(usersOFRole[j])!=1) {
+                        userList.push(usersOFRole[j]);
+                    }
+                }
+            }
+        }
+        dsDataSourceManager.insertIntoUserNotification( notificationId, userList);
+        dsDataSourceManager.insertIntoRoleNotification(notificationId, roleList);
+    };
+
+
+    getNotificationsForUsername = function (){
+        var notifications = dsDataSourceManager.getNotificationsForUsername(userIdName);
+        var ntfns = {data: []};
+        var ntfnsDataSize = notifications.size();
+        for (var index = 0; index < ntfnsDataSize; index++) {
+            ntfns.data.push(notifications.get(index));
+        }
+        return ntfns;
+
+    };
+    getNotificationDetails = function (notificationId){
+        var notificationDetails = dsDataSourceManager.getNotificationDetails(notificationId);
+        return notificationDetails;
+    };
+
+    getNotificationCount = function(){
+        var count = dsDataSourceManager.getNotificationCount(userIdName);
+        return count;
     };
 
     /**

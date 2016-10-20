@@ -30,7 +30,9 @@
     <link rel="stylesheet" href="<%=urlPrefix%>css/theme.css">
 
     <% include('/controllers/includes/theme-portal-styles.jag');
-
+var permission = require('/modules/permission.js');
+var constants = require('/modules/constants.js');
+var config = require('/modules/config.js').getConfigFile();
 var editGadgetId = request.getParameter('id');
 var gadgetEditable = request.getParameter('editable');%>
 
@@ -38,6 +40,7 @@ var gadgetEditable = request.getParameter('editable');%>
 <body>
 
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+    <link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
 
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
@@ -55,7 +58,7 @@ var gadgetEditable = request.getParameter('editable');%>
 
     <!-- navbar -->
     <div class="navbar-wrapper">
-        <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
+        <nav class="navbar navbar-default " data-spy="affix" data-offset-top="80" data-offset-bottom="40">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -77,8 +80,11 @@ var gadgetEditable = request.getParameter('editable');%>
                                 <%= i18n.localize("cancel")%>
                             </a>
                         </li>
+
                     </ul>
+                    <% include(utils.resolvePath('templates/includes/notification-button.jag')); %>
                 </div><!--/.nav-collapse -->
+                <% include(utils.resolvePath('templates/includes/notification-details.jag')); %>
             </div>
         </nav>
     </div>
@@ -426,6 +432,7 @@ var gadgetEditable = request.getParameter('editable');%>
 <script src="<%=urlPrefix%>js/show-hide-error.js"></script>
 <script src="<%=urlPrefix%>js/wizard.js"></script>
 <script src="<%=urlPrefix%>js/outputAdapterUiLibrary.js"></script>
+<script src="<%=urlPrefix%>js/notification.js"></script>
 <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 </body>
 </html>

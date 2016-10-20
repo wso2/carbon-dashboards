@@ -1,0 +1,35 @@
+ <%
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+%>
+
+<div class="sidebar-wrapper  " hidden id="right-sidebar"  data-side="right" data-width="320" data-sidebar-fixed="true" data-fixed-offset="50" data-spy="affix" data-offset-top="80" style="height: 599px; width: 320px; right: 0px;">
+        <ul class="sidebar-messages">
+            <h4 class="text-center" id="notification_count"></h4>
+            <li id="allNotifications">
+            </li>
+        </ul>
+        <div class="text-center">
+            <a href="/devicemgt/notification-listing" class="btn btn-primary">Show All Notifications</a>
+        </div>
+</div>
+
+<script id="all-notification-hbs" type="text/x-handlebars-template">
+    <ul class="sidebar-messages">{{#each .}}
+                    <li class="message " >
+                    {{title}}   : {{message}} <a href="{{directUrl}}"><br>{{directUrl}}</a></li>{{/each}}
+    </ul>
+</script>

@@ -109,6 +109,8 @@
 
     <link rel="stylesheet" href="<%=urlPrefix%>css/dashboard.css" />
 
+    <link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
+
     <!-- Custom theme overrides -->
     <%
         var path = utils.getThemeStylesPath();
@@ -125,6 +127,8 @@
 </head>
 <% if (typeof  bgColor === 'undefined') { %>
 <body class="dashboard fixed lang_<%=request.getLocale()%> <%=gadgetTheme%>" data-gadget-theme="<%=gadgetTheme%>">
+
+<link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
     <!-- Modal -->
     <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
         <div class="modal-dialog" role="document">
@@ -245,36 +249,7 @@
                             </ul>
                         </li>
                     </ul>
-                    <ul class="nav collapse-nav-sub pull-right hidden">
-                        <li class="visible-inline-block">
-                            <a data-toggle="dropdown">
-                                <span class="icon fw-stack">
-                                    <i class="fw fw-notification fw-stack-1x"></i>
-                                </span>
-                                <span class="badge">4</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right arrow alerts arrow-top-right dark add-margin-top-2x" role="menu">
-                                <ul class="sidebar-messages">
-                                    <li class="message message-success">
-                                        <h4><i class="icon fw fw-success"></i>Minor Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                    <li class="message message-info">
-                                        <h4><i class="icon fw fw-info"></i>Minor Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                    <li class="message message-warning">
-                                        <h4><i class="icon fw fw-warning"></i>Major Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                    <li class="message message-danger">
-                                        <h4><i class="icon fw fw-error"></i>Critical Information Message</h4>
-                                        <p>Alerts don't have default classes, only base and modifier classes.</p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
+
                 </div>
 
                 <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
@@ -298,7 +273,9 @@
                     <ul class="nav nav-pills nav-stacked">
                         <% include(utils.getThemeTemplatePath('templates/includes/control-panel.jag')); %>
                     </ul>
+                    <% include(utils.resolvePath('templates/includes/notification-button.jag')); %>
                 </div><!--/.nav-collapse -->
+                <% include(utils.resolvePath('templates/includes/notification-details.jag')); %>
 
             </div>
         </div>
@@ -601,6 +578,7 @@
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('dashboard-theme')%>"></script>
     <script src="<%=urlPrefix%><%=utils.getThemeScriptPath('ds-ajax-api')%>"></script>
     <% include('/controllers/includes/theme-dashboard-scripts.jag'); %>
+    <script src="<%=urlPrefix%>js/notification.js"></script>
 
     <script>
         $(document).ready(function() {

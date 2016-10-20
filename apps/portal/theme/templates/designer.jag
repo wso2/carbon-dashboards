@@ -56,6 +56,7 @@ var permission = require('/modules/permission.js');
 
     <!-- header -->
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+    <link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
     
     <% var configs = require('/modules/config.js').getConfigFile(); %>
     
@@ -144,7 +145,9 @@ var permission = require('/modules/permission.js');
                             </a>
                         </li>
                     </ul>
+                    <% include(utils.resolvePath('templates/includes/notification-button.jag')); %>
                 </div><!--/.nav-collapse -->
+                <% include(utils.resolvePath('templates/includes/notification-details.jag')); %>
                 <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true"><!-- nav-collapse -->
                     <ul class="nav navbar-nav collapse-nav-sub">
                         <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
@@ -1144,6 +1147,7 @@ var permission = require('/modules/permission.js');
     <script src="<%=urlPrefix%>js/ds-handlebar-helpers.js"></script>
 	<script src="<%=urlPrefix%>js/ds-ajax-api.js"></script>
     <script src="<%=urlPrefix%>js/wso2-noty-theme.js"></script>
+    <script src="<%=urlPrefix%>js/notification.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
 </body>
 </html>
