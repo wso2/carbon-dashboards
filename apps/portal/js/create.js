@@ -117,9 +117,9 @@ $(function () {
     });
 
     // Bind event handlers for dashboard ID field
-    $('#ues-dashboard-id').on("keypress", function (e) {
+    $("#ues-dashboard-id").on("keypress", function (e) {
         return sanitizeOnKeyPress(this, e, /[^a-z0-9-\s]/gim);
-    }).on('keyup', function (e) {
+    }).on("keyup", function (e) {
         overridden = overridden || true;
         if ($(this).val()) {
             hideInlineError($(this), $("#id-error"));
@@ -128,7 +128,7 @@ $(function () {
         if ((e.which === "number" && e.which > 0) || e.keyCode === 0 || e.keyCode === 32) {
             $(this).val(generateUrl($(this).val()));
         }
-    }).on('change', function () {
+    }).on("change", function () {
         overridden = overridden || true;
         var sanitizedInput = generateUrl(sanitizeInput($(this).val()));
         $(this).val(sanitizedInput);
