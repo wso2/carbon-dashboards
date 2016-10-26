@@ -72,10 +72,10 @@ var isMobileDevice = false;
 
     // Check whether a request for login and whether it is from secured channel
     if (controller.localeCompare("/controllers/login-controller.jag") == 0 && !request.isSecure()) {
-        var proc = require('process');
-
+        var proc = require("process");
         // If it is not secure redirect it to a secure channel
-        var newURL = request.getRequestURL().replace(request.getLocalPort(), proc.getProperty('mgt.transport.https.port'));
+        var newURL = request.getRequestURL().replace(request.getLocalPort(), proc.getProperty("mgt.transport.https" +
+                ".port"));
         newURL = newURL.replace("http", "https");
         response.sendRedirect(newURL);
         if (log.isDebugEnabled()) {
