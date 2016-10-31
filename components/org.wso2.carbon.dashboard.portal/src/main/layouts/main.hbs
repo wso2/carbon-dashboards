@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{placeholder "css"}}
+    {{defineZone "header"}}
+    {{#placeholder "favicon"}}
+        <link rel="shortcut icon" href="{{public "images/default-favicon.png"}}" type="image/png"/>
+    {{/placeholder}}
+    <title>{{#placeholder "title"}}{{/placeholder}}</title>
+
+</head>
+<body>
+{{defineZone "globalNavigation"}}
+{{defineZone "breadCrumb"}}
+{{defineZone "taskBar"}}
+{{defineZone "content"}}
+<footer>
+    {{placeholder "js"}}
+</footer>
+</body>
+</html>
