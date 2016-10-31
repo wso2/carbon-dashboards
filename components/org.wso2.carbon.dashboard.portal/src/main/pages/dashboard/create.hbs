@@ -1,0 +1,68 @@
+{{layout "org.wso2.carbon.dashboards.uuf.portal.main"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "Home | " @config.appName}}
+{{css "css/portal.css"}}
+{{css "css/asset.css"}}
+{{#fillZone "content"}}
+    <div class="container-fluid">
+        <div class="row ues-dashboard">
+
+            <div class="col-md-6">
+                <form action="" method="post" id="ues-dashboard-form" data-action="<%=tenantedUrlPrefix%>dashboards"
+                      data-api-url="<%=tenantedUrlPrefix%>apis/dashboards">
+
+                    <h1 class="page-sub-title"><%= i18n.localize("create.a.dashboard")%></h1>
+
+                    <div class="form-group">
+                        <label for="dashboard-title">
+                            <%= i18n.localize("name.of.your.dashboard")%> <span class="required">*</span>
+                        </label>
+                        <input type="text" name="title" class="form-control" maxlength="250" id="ues-dashboard-title"
+                               placeholder="<%=i18n.localize("e.g.sales.statistics")%>">
+                        <label id="title-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dashboard-id">
+                            <%=i18n.localize("url")%> <span class="required">*</span>
+                        </label>
+                        <input type="text" name="id" class="form-control" maxlength="100" id="ues-dashboard-id"
+                               placeholder="<%=i18n.localize("e.g.sales-stats")%>">
+                        <label id="id-error" class="required-error hide" for="title"><%=i18n.localize("required")%></label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dashboard-description"><%=i18n.localize("description")%></label>
+                        <textarea name="description" maxlength="500" class="form-control" id="ues-dashboard-description"
+                                  placeholder="<%=i18n.localize("e.g.monthly.sales.statistics")%>" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ues-theme-list"><%=i18n.localize("theme.label")%></label>
+                        <select name="select-theme" class="form-control selectpicker dropdown" id="ues-theme-list"
+                                data-style="btn-default" data-width="100px">
+                            <option selected="selected"><%=i18n.localize("theme.default")%></option>
+                            <%
+                            var utils = require('/modules/utils.js');
+                            var path = utils.getCustomThemePath();
+                            var folder = new File('/' + path);
+                            var themeName = "";
+                            var fileList = folder.listFiles();
+                            fileList.forEach(function(file) {
+                            themeName =  file.getName();
+                            %>
+                            <option><%=themeName%></option>
+                            <%
+                            });
+                            %>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-bordered" id="ues-dashboard-create"><%=i18n.localize("next")%></button>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+{{/fillZone}}

@@ -4,5 +4,47 @@
 {{css "css/portal.css"}}
 {{css "css/asset.css"}}
 {{#fillZone "content"}}
-    <h1>WelCome Home Homie!</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="page-sub-title">{{t "dashboards.label"}}</h1>
+        </div>
+        {{#if isSuperDomain}}
+            <div class="col-md-4">
+                <ul class="nav nav-pills navbar-right remove-margin filter-dropdown" role="tablist">
+                    <li>Filtered By <span id="filter">{{t "all.dashboards"}}</span> :
+                        <button class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i
+                                class="fw fw-filter"></i></button>
+                        <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x"
+                            id="filter-dashboards">
+                            <li><a href="#" data-filter="All">{{t "all.dashboards"}}</a></li>
+                            <li><a href="#" data-filter="Shared">{{t "shared.dashboards"}}</a></li>
+                            <li><a href="#" data-filter="Tenant">{{t "tenant.dashboards"}}{{userDomain}}</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        {{/if}}
+    </div>
+    <div class="row thumbnails ues-dashboards" id="ds-assets-portal">
+        <div id="ues-portal" class="container-fluid">
+            {{#each dashboards}}
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 ues-dashboard-container">
+                    <div class="thumbnail ues-dashboard ds-asset {{#if shared}} shared {{/if}} {{#if sharedAcrossTenants}} shared {{/if}}"
+                         id="{{id}}" data-id="{{id}}">
+                        {{fragment "dashboardListThumbnail"
+                        id=id defective=defective
+                        description=description
+                        editable=editable
+                        owner=owner
+                        pagesAvailable=pagesAvailable
+                        shared=shared
+                        sharedAcrossTenants=sharedAcrossTenants
+                        title=title userDomain=../userDomain
+                        superDomain=../superDomain
+                        isNoMobileDevice=../isNoMobileDevice}}
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
 {{/fillZone}}

@@ -1,0 +1,76 @@
+<div class="add-padding-2x add-padding-top-5x">
+    {{#if @params.defective}}
+        <span class="defective-dashboard text-danger" title="{{t " missing.gadget"}}">
+        <i class="icon fw fw-alert"></i>
+            {{t "defective.dashboard"}}
+        </span>
+    {{/if}}
+    <div class="media add-margin-top-3x">
+        <div class="media-left add-padding-right-4x add-padding-left-2x">
+            <i class="ds-asset-icon fw fw-dashboard media-object"></i>
+        </div>
+        <div class="media-body">
+            <h4 id="ues-dashboard-title" class="media-heading add-margin-top-1x">{{@params.title}}</h4>
+                    <span id="ues-dashboard-url" class="ues-dashboard-url truncate text-muted">
+                        {{t "url.label"}}: <a class="ues-view ues-url-link"
+                                              title="{{@contextPath}}/{{id}}/{{#if @params.shared}}?shared=true{{/if}}"
+                                              href="{{@contextPath}}/dashboards/{{id}}/{{#if @params.shared}}?shared=true{{/if}}"
+                                              target="_blank">{{@contextPath}}/{{id}}
+                        /{{#if @params.shared}}?shared=true{{/if}}</a>
+                    </span>
+
+            <p id="ues-dashboard-description" class="ues-dashboard-description">{{@params.description}}</p>
+        </div>
+    </div>
+    {{#if @params.sharedAcrossTenants}}
+        <div class="ds-asset-shared ds-asset-sharedAcrossTenants">
+            <i class="fw fw-share"></i>
+            <span id="shared-description">{{t "shared.across.tenants"}}</span>
+        </div>
+    {{/if}}
+    {{#if @params.shared}}
+        <div class="ds-asset-shared">
+            <i class="fw fw-share"></i>
+            <span id="shared-description">{{t "shared.by.supertenant"}}{{@params.superDomain}}'</span>
+        </div>
+    {{/if}}
+    <div class="ues-actions">
+        <a id="ues-view" {{#if @params.pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable"
+           data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}}
+           href="{{@contextPath}}/dashboards/{{id}}/{{#if @params.shared}}?shared=true{{/if}}" target="_blank">
+                    <span class="fw-stack">
+                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                        <i class="fw fw-view fw-stack-1x"></i>
+                    </span>
+            {{t "view"}}
+        </a>
+        {{#if @params.isNoMobileDevice}}
+            {{#if @params.editable}}
+                <a id="ues-edit" class="ues-edit" href="{{@contextPath}}/dashboards/{{@params.id}}?editor=true">
+                        <span class="fw-stack">
+                            <i class="fw fw-circle-outline fw-stack-2x"></i>
+                            <i class="fw fw-edit fw-stack-1x"></i>
+                        </span>
+                    {{t "design"}}
+                </a>
+                {{#if @params.owner}}
+                    <a id="ues-settings" class="ues-settings" href="{{@contextPath}}/dashboard-settings/{{id}}">
+                            <span class="fw-stack">
+                                <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                <i class="fw fw-settings fw-stack-1x"></i>
+                            </span>
+                        {{t "settings"}}
+                    </a>
+                {{/if}}
+            {{/if}}
+        {{/if}}
+    </div>
+</div>
+{{#if @params.owner}}
+    <div class="ds-asset-handles">
+        <a href="#" class="ds-asset-handle ues-dashboard-trash-handle">
+            <i class="fw fw-delete ladda-label" data-toggle="tooltip" data-placement="left"
+               title="{{t "delete.dashboard"}}"></i>
+        </a>
+    </div>
+{{/if}}
