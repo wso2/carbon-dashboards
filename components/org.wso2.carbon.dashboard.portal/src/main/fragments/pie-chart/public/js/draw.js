@@ -1,16 +1,5 @@
 (function(){
 
-//pubsub test
-var topic = 'PIE_CHART';
-var mySubscriber = function( msg, data ){
-    console.log( msg, data );
-};
-
-var token = PubSub.subscribe( 'MY TOPIC', mySubscriber );
-
-// publish a topic asyncronously
-PubSub.publish( topic, 'hello world!' );
-
 //dataset used to plot charts
 var dataTable = {
   "metadata":{
