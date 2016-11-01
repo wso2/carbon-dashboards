@@ -1,0 +1,7 @@
+portal.dashboards.gadgets.SUBSCRIBER={
+	"name" : "subscriber",
+	"pubsub": {
+		"isPublisher" : false,
+		"isSubscriber" : true
+	}
+}

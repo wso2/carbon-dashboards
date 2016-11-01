@@ -1,0 +1,9 @@
+portal.dashboards.gadgets.PUBLISHER = {
+	"name" : "publisher",
+	"id": "publisher",
+	"pubsub": {
+		"isPublisher" : true,
+		"isSubscriber" : false,
+		"topic" : "publisher"
+	}
+}
