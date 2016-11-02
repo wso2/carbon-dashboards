@@ -4764,7 +4764,7 @@ $('input[type=number]').on('change', function () {
     }
 });
 /**
- * To sanitzie the user input for security timeout
+ * To sanitize the user input for security timeout
  * @param value Value, user entered
  * @param min Minimum allowed value
  * @param max Maximum allowed value

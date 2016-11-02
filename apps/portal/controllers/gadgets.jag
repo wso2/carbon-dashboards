@@ -38,7 +38,7 @@ var renderEngine = {};
     var dashboards;
     var anonymous;
     var permissions;
-    var carbon = require('carbon');
+    var carbon = require("carbon");
     var anonRole = String(carbon.user.anonRole);
     i18n.init(request, utils.getLocaleResourcePath());
     // To set the bgcolor according to client`s website template
@@ -48,23 +48,23 @@ var renderEngine = {};
         bgColor = "#" + bgColor;
         // Sanitizing the background colour parameter
         if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(bgColor))) {
-            bgColor = 'transparent';
+            bgColor = "transparent";
         }
     }
 
     // If background colour is not set, set it to transparent
     if (bgColor === null)
-        bgColor = 'transparent';
+        bgColor = "transparent";
     if (log.isDebugEnabled()) {
         log.debug("Session id provided from the client is " + session.getId() + "Client has successfully connected.")
     }
-    if (matcher.match('/gadgets/{id}/{pid}/{vid}')) {
+    if (matcher.match("/gadgets/{id}/{pid}/{vid}")) {
         uriElements = matcher.elements();
         dashboardId = uriElements.id;
         pageId = uriElements.pid;
         vId = uriElements.vid;
-        isStandAlone = false
-    } else if (matcher.match('/gadgets/{id}/{pid}/{vid}/{gid}')) {
+        isStandAlone = false;
+    } else if (matcher.match("/gadgets/{id}/{pid}/{vid}/{gid}")) {
         // Get the dashboard id, page id and gadget id from url
         uriElements = matcher.elements();
         dashboardId = uriElements.id;
@@ -75,7 +75,7 @@ var renderEngine = {};
         response.sendError(400, i18n.localize("bad.request"));
         return;
     }
-    dashboards = require('/modules/dashboards.js');
+    dashboards = require("/modules/dashboards.js");
 
     if (!request.getParameter("shared")) {
         utils.sandbox(context, function () {
@@ -167,10 +167,9 @@ var renderEngine = {};
             return;
         }
     } else {
-        dbRoot = tenantedUrlPrefix + 'dashboards/' + dashboard.id + '/';
+        dbRoot = tenantedUrlPrefix + "dashboards/" + dashboard.id + "/";
     }
     // Based on the request (Whether it is stand alone or embedded) for the gadget,
     // decide the template to render
-    isStandAlone ? include(utils.resolvePath('templates/gadget.jag')) :
-            include(utils.resolvePath('templates/dashboard.jag'));
+    isStandAlone ? include(utils.resolvePath("templates/gadget.jag")) : include(utils.resolvePath("templates/dashboard.jag"));
 }()); %>
