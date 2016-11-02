@@ -1,0 +1,132 @@
+<div class="navbar-header">
+    <a class="sidebar-toggle-button hidden-xs" data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="true"
+       rel="sub-nav">
+                        <span class="icon fw-stack">
+                            <i class="fw fw-menu fw-stack-1x toggle-icon-left"></i>
+                        </span>
+    </a>
+    <a class="sidebar-toggle-button visible-xs" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+       aria-controls="navbar">
+                        <span class="icon fw-stack">
+                            <i class="fw fw-menu fw-stack-1x toggle-icon-up"></i>
+                        </span>
+    </a>
+
+    <div class="page-title pull-left text-center-xs display-inline-block-xs" id="product-logo" style="display:none;">
+        <h1 class="text-center-xs">
+            <i class="icon fw fw-wso2-logo"></i>
+            {{dashboardName}}
+        </h1>
+    </div>
+    <ul class="nav navbar-right float-remove-xs hidden-xs">
+        <li class="visible-inline-block">
+            <a class="dropdown" data-toggle="dropdown">
+                                <span class="icon fw-stack fw-lg">
+                                   <i class="fw fw-circle fw-stack-2x"></i>
+                                   <i class="fw fw-user fw-stack-1x fw-inverse"></i>
+                                </span>
+                <span>{{userName}} <span class="caret"></span></span>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-right float-remove-xs position-static-xs text-center-xs remove-margin-xs slideInDown"
+                role="menu">
+                {{#if isUserAvailable}}
+                    <li><label class="light-dark-switcher-title">Change color:</label>
+
+                        <div class="light-dark-switcher">
+                            <label class="light-dark-switcher-label">Light</label>
+                            <label class="switch">
+                                <input type="checkbox" data-toggle="theme" {{#if isThemeDark}}
+                                       checked="checked" {{/if}}>
+                                <span class="helper"></span>
+                            </label>
+                            <label class="light-dark-switcher-label">Dark</label>
+                        </div>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    {{#if isSuperUser}}
+                        {{#if sharedDashboard}}
+                            <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy"
+                                                             title="{{t "view.button"}}"></i>
+                                {{t "dashboard.portal"}}</a>
+                            </li>
+                        {{else}}
+                            {{#if ownerOrEditor}}
+                                <li><a href="<%=dbRoot%>?editor=true"><i class="icon fw fw-settings ues-copy"
+                                                                         title="{{t "edit.button"}}"></i>
+                                    {{t "design.dashboard"}}</a></li>
+                            {{else}}
+                                {{#if env.dashboard.personalizeDashboard}}
+                                    <li>
+                                        <div class="light-dark-switcher">
+                                            <label class="light-dark-switcher-label">{{t "view.enable.edit"}}</label>
+                                            <label class="switch">
+                                                {{#if isPersonalizeEnabled}}
+                                                    <input type="checkbox" id="edit-view-toggler" checked="checked">
+                                                {{else}}
+                                                    <input type="checkbox" id="edit-view-toggler">
+                                                {{/if}}
+                                                <span class="helper"></span>
+                                            </label>
+                                        </div>
+                                    </li>
+
+                                    <li><a href="<%=dbRoot%>?custom=true"><i class="icon fw fw-settings ues-copy"
+                                                                             title="{{t "personalize"}}">
+
+                                    </i>{{t "customize.dashboard"}}</a>
+                                    </li>
+                                {{else}}
+                                    <li><a href="<%=portalRoot%>"><i class="icon fw fw-view ues-copy"
+                                                                     title="{{t "view.button"}}"></i>
+                                        {{t "dashboard.portal"}}<</a></li>
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    {{/if}}
+                    <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><i
+                            class="icon fw fw-sign-out"></i>{{t "logout.label"}}</a></li>
+                {{else}}
+                    <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><i
+                            class="icon fw fw-sign-in"></i>{{t "login.label"}}</a></li>
+                {{/if}}
+            </ul>
+        </li>
+    </ul>
+    <ul class="nav collapse-nav-sub pull-right hidden">
+        <li class="visible-inline-block">
+            <a data-toggle="dropdown">
+                                <span class="icon fw-stack">
+                                    <i class="fw fw-notification fw-stack-1x"></i>
+                                </span>
+                <span class="badge">4</span>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-right arrow alerts arrow-top-right dark add-margin-top-2x"
+                 role="menu">
+                <ul class="sidebar-messages">
+                    <li class="message message-success">
+                        <h4><i class="icon fw fw-success"></i>Minor Information Message</h4>
+
+                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                    </li>
+                    <li class="message message-info">
+                        <h4><i class="icon fw fw-info"></i>Minor Information Message</h4>
+
+                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                    </li>
+                    <li class="message message-warning">
+                        <h4><i class="icon fw fw-warning"></i>Major Information Message</h4>
+
+                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                    </li>
+                    <li class="message message-danger">
+                        <h4><i class="icon fw fw-error"></i>Critical Information Message</h4>
+
+                        <p>Alerts don't have default classes, only base and modifier classes.</p>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
