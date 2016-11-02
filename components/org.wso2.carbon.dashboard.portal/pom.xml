@@ -21,76 +21,41 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.wso2.carbon.dashboards</groupId>
-    <artifactId>org.wso2.carbon.dashboards.portal</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <artifactId>org.wso2.carbon.dashboards.portal.feature</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>carbon-feature</packaging>
 
-    <name>WSO2 Dashboard- Portal UUF app</name>
+    <name>WSO2 UUF Portal Store App</name>
     <url>http://wso2.org</url>
 
+
+    <parent>
+        <groupId>org.wso2</groupId>
+        <artifactId>wso2</artifactId>
+        <version>2</version>
+    </parent>
+
     <build>
-       <plugins>
-           <plugin>
-               <groupId>org.wso2.carbon.uuf.maven</groupId>
-               <artifactId>carbon-uuf-maven-plugin</artifactId>
-               <version>1.0.0-m5</version>
-               <extensions>true</extensions>
-               <executions>
-                   <execution>
-                       <phase>package</phase>
-                       <goals>
-                           <goal>create-component</goal>
-                       </goals>
-                       <configuration>
-                           <instructions>
-    <!--                            <Import-Package> … </Import-Package>
-     -->                       </instructions>
-                       </configuration>
-                   </execution>
-               </executions>
-           </plugin>
-       </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.wso2.carbon.uuf.maven</groupId>
+                <artifactId>carbon-uuf-maven-plugin</artifactId>
+                <version>1.0.0-m5</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>create</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>create-app</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+        </plugins>
     </build>
-
-    <properties>
-        <carbon-uuf-maven-plugin.version>1.0.0-SNAPSHOT</carbon-uuf-maven-plugin.version>
-    </properties>
-
-        <repositories>
-        <repository>
-            <id>wso2-nexus</id>
-            <name>WSO2 Public Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
-        <repository>
-            <id>wso2-releases</id>
-            <name>WSO2 Releases Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
-        <repository>
-            <id>wso2-snapshots</id>
-            <name>WSO2 Snapshot Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
+<pluginRepositories>
         <pluginRepository>
             <id>wso2-nexus</id>
             <name>WSO2 Public Repository</name>
@@ -124,4 +89,38 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+            <repositories>
+        <repository>
+            <id>wso2-nexus</id>
+            <name>WSO2 Public Repository</name>
+            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>wso2-releases</id>
+            <name>WSO2 Releases Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>wso2-snapshots</id>
+            <name>WSO2 Snapshot Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
 </project>
