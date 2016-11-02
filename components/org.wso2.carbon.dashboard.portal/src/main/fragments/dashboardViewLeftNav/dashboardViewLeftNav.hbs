@@ -1,0 +1,83 @@
+<div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left"
+     data-container=".page-content-wrapper" data-container-divide="true" data-width="260" data-offset-bottom="40"
+     style="width:260px">
+    <div class="nano">
+        <div class="nano-content">
+
+            <div class="product-logo">
+                <i class="icon fw fw-wso2-logo"></i>
+            </div>
+            <div class="product-name">
+                {{dashboardName}}
+            </div>
+
+            <div id="ues-pages"><!-- dynamic content --></div>
+
+            <hr>
+            {{#if isNoTrident}}
+                <div class="panel panel-default active">
+                    <div class="panel-heading text-truncate ues-page-list-heading collapsed dropdown generate-pdf-panel"
+                         id="download-pdf-panel" role="tab"
+                         data-toggle="collapse" aria-expanded="true">
+                        <h4 class="panel-title">
+                            <span class="icon fw-stack">
+                                <i class="fw fw-pdf fw-stack-2x"></i>
+                            </span>
+                            {{t "dashboard.pdf.generatePDF"}}
+                        </h4>
+                        <span class="caret"></span>
+                    </div>
+                    <div class="collapse" id="pdf-size-panel">
+                        <div class="panel-body add-padding-3x generate-pdf-panel">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="panel-heading text-truncate dropdown dropdown-select-label">
+                                            <label class="control-label">{{t "dashboard.pdf.selectSize"}}</label>
+                                        </div>
+                                        <div class="dropdown pagetype-selection-dropdown">
+                                            <div class="btn btn-secondary btn-bordered dropdown-toggle dropdown-menu-button-size"
+                                                 data-toggle="dropdown">
+                                                <div id="pdf-size" class="pagetype-div"></div>
+                                                <span class="caret"></span>
+                                            </div>
+                                            <ul class="dropdown-menu dropdown-ul">
+                                                <li class="dropdown-li"><a href="#">Default Size</a></li>
+                                                <li class="dropdown-li"><a href="#">A4</a></li>
+                                                <li class="dropdown-li"><a href="#">A3</a></li>
+                                                <li class="dropdown-li"><a href="#">A2</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Width</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-width"
+                                               placeholder="PDF Width">
+                                        <label>px</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <label class="control-label">Height</label>
+                                        <input type="text" class="form-control input-pdf-width-height" id="pdf-height"
+                                               placeholder="PDF Height">
+                                        <label>px</label>
+                                    </div>
+                                </div>
+                                <ul class="nav nav-pills nav-stacked pages">
+                                    <li>
+                                        <button class="btn btn-primary" id="generate-pdf">
+                                            {{t "dashboard.pdf.downloadPDF"}}
+                                        </button>
+                                    </li>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+{{layout "org.wso2.carbon.dashboards.uuf.portal.dashboardView"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "View | " @config.appName}}
+{{css "lib/jquery-ui-1.11.4/jquery-ui.min.css"}}
+{{css "lib/bootstrap_3.3.5/css/bootstrap.css"}}
+{{css "lib/font-wso2_1.0.0/css/font-wso2.min.css"}}
+{{css "lib/theme-wso2_1.0/css/theme-wso2.css"}}
+{{css "lib/gridstack.js-0.2.5/gridstack.min.css"}}
+{{css "css/common.css"}}
+{{css "css/custom.css"}}
+{{css "css/dashboard.css"}}
+
+{{js "lib/jquery_1.11.0/jquery-1.11.3.min.js"}}
+{{js "lib/jquery-ui-1.11.4/jquery-ui.min.js"}}
+{{js "lib/bootstrap_3.3.5/js/bootstrap.min.js"}}
+{{js "lib/handlebars-v4.0.2/handlebars.min.js"}}
+{{js "lib/theme-wso2_1.0/js/theme-wso2.js"}}
+{{js "lib/respond_1.4.2/respond.min.js"}}
+{{js "lib/nanoscroller_0.8.7/jquery.nanoscroller.min.js"}}
+{{js "lib/underscore-1.8.3/underscore-min.js"}}
+{{js "lib/jspdf_1.2.61/jspdf.min.js"}}
+{{js "lib/canvg_v1.4/rgbcolor.js"}}
+{{js "lib/canvg_v1.4/StackBlur.js"}}
+{{js "lib/canvg_v1.4/canvg.js"}}
+{{js "lib/html2canvas_0.5.0/html2canvas.js"}}
+{{js "js/dashboard.js"}}
+
+{{#fillZone "content"}}
+    <!-- Modal -->
+    <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
+    {{fragment "dashboardViewLeftNav" dashboard=dashboard}}
+    <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
+        <div class="page-header">
+            <div class="container-fluid">
+                {{fragment "dashboard-view-top-nav" dashboard=dashboard}}
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+    <script id="ues-menu-list-hbs" type="text/x-handlebars-template">
+        {{#traverseMenu menu false isAnonView user isHiddenMenu queryString currentView allowedViews}}{{/traverseMenu}}
+    </script>
+{{/fillZone}}
