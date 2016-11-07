@@ -23,7 +23,6 @@
 {{js "lib/canvg_v1.4/StackBlur.js"}}
 {{js "lib/canvg_v1.4/canvg.js"}}
 {{js "lib/html2canvas_0.5.0/html2canvas.js"}}
-{{js "js/dashboard.js"}}
 
 {{#fillZone "content"}}
     <!-- Modal -->
@@ -33,14 +32,14 @@
             </div>
         </div>
     </div>
-    {{fragment "dashboardViewLeftNav" dashboard=dashboard}}
+    {{fragment "dashboard-view-left-nav" dashboard=dashboard}}
     <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
         <div class="page-header">
             <div class="container-fluid">
                 {{fragment "dashboard-view-top-nav" dashboard=dashboard}}
-                {{fragment "org.wso2.carbon.dashboard.view.dashboardView" id=dashboard}}
                 <!--/.nav-collapse -->
             </div>
         </div>
+        {{fragment "org.wso2.carbon.dashboard.view.dashboard-view" id=dashboard}}
     </div>
 {{/fillZone}}
