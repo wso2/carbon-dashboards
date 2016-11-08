@@ -14,5 +14,40 @@
  * limitations under the License.
  */
 function onRequest(env) {
+    var dashboard = {
+        "name": "Nipuna Dashboard",
+        "id": "nipuna-dashboard",
+        "version": "1.0.2",
+        "description": "",
+        "blocks": [{
+            "height": 3,
+            "id": "a",
+            "width": 12,
+            "x": 0,
+            "y": 0
+        }, {
+            "height": 3,
+            "id": "b",
+            "width": 12,
+            "x": 0,
+            "y": 3
+        }, {
+            "height": 3,
+            "id": "c",
+            "width": 12,
+            "x": 0,
+            "y": 6
+        }],
+        "permission": {
+            "editor": [],
+            "viewer": [],
+            "owner": []
+        }
+    };
 
+    sendToClient("dashboard", dashboard);
+
+    return {
+        dashboard: dashboard
+    };
 }
