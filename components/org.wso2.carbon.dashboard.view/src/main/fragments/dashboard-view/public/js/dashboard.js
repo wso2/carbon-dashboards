@@ -31,7 +31,6 @@
             disableResize: false,
             disableDrag: false
         });
-        //$('.nano').nanoScroller();
     };
 
     /**
@@ -44,11 +43,10 @@
         for (i in dashboard.blocks) {
             gridBoxes += '<div class="grid-stack-item" data-id="' + dashboard.blocks[i].id + '" data-gs-x="'
                 + dashboard.blocks[i].x + '" data-gs-y="' + dashboard.blocks[i].y + '"'
-                + 'data-gs-width="' + dashboard.blocks[i].width + '" data-gs-height="' + dashboard.blocks[i].height + '">'
-                + '<div class="grid-stack-item-content ues-component-box gadget-wrapper" id="' + dashboard.blocks[i].id + '">'
-                + '<div style="width:100%;height:100%;background-color: white;"></div>'
-                + '</div>'
-                + '</div>';
+                + 'data-gs-width="' + dashboard.blocks[i].width + '" data-gs-height="' + dashboard.blocks[i].height
+                + '"><div class="grid-stack-item-content ues-component-box gadget-wrapper" id="'
+                + dashboard.blocks[i].id + '"><div style="width:100%;height:100%;background-color: white;"></div>'
+                + '</div></div>';
         }
 
         gridLayer.html(gridBoxes);
