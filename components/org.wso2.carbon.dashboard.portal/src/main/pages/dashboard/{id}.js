@@ -87,8 +87,6 @@ function onRequest(env) {
         }
     };
 
-    sendToClient("dashboard", dashboard);
-
     return {
         dashboard: dashboard
     };

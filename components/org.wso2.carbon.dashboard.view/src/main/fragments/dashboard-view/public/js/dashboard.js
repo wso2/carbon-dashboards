@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 (function () {
+    "use strict";
+    var gridLayer = $(".grid-stack");
+
     /**
+     * Initialize the dashboard viewer.
      * */
     var init = function () {
+        renderBlocks(dashboard);
+        renderWidgets(dashboard);
+
         $('.grid-stack').gridstack({
             width: 12,
             cellHeight: 50,
@@ -28,11 +35,40 @@
     };
 
     /**
-     * Render Gadget
+     * Render gadget blocks by reading the dashboard json.
+     * @param dashboard {Object} dashboard json object
      * */
-    var renderGadget = function () {
-        var gridBox = "";
+    var renderBlocks = function (dashboard) {
+        var gridBoxes = "",
+            i = "";
+        for (i in dashboard.blocks) {
+            gridBoxes += '<div class="grid-stack-item" data-id="' + dashboard.blocks[i].id + '" data-gs-x="'
+                + dashboard.blocks[i].x + '" data-gs-y="' + dashboard.blocks[i].y + '"'
+                + 'data-gs-width="' + dashboard.blocks[i].width + '" data-gs-height="' + dashboard.blocks[i].height + '">'
+                + '<div class="grid-stack-item-content ues-component-box gadget-wrapper" id="' + dashboard.blocks[i].id + '">'
+                + '<div style="width:100%;height:100%;background-color: white;"></div>'
+                + '</div>'
+                + '</div>';
+        }
 
+        gridLayer.html(gridBoxes);
+    };
+
+    /**
+     * Render Widgets in to blocks by reading the dashboard json.
+     * */
+    var renderWidgets = function (dashboard) {
+        var i = "";
+        for (i in dashboard.blocks) {
+            $.ajax({
+                url: dashboard.widgets[dashboard.blocks[i].id].url,
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    $("#" + dashboard.blocks[i].id).html(data);
+                }
+            });
+        }
     };
 
     init();
