@@ -38,6 +38,23 @@ function onRequest(env) {
             "x": 0,
             "y": 6
         }],
+        "widgets": {
+            "a": {
+                "id": "org.wso2.carbon.dashboards.portal.feature.bar-chart",
+                "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.bar-chart",
+                "permission": []
+            },
+            "b": {
+                "id": "org.wso2.carbon.dashboards.portal.feature.pie-chart",
+                "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.pie-chart",
+                "permission": []
+            },
+            "c": {
+                "id": "org.wso2.carbon.dashboards.portal.feature.publisher",
+                "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.publisher",
+                "permission": []
+            }
+        },
         "permission": {
             "editor": [],
             "viewer": [],

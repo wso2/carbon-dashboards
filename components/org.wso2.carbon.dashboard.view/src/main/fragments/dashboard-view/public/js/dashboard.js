@@ -22,6 +22,7 @@
      * */
     var init = function () {
         renderBlocks(dashboard);
+        renderWidgets(dashboard);
 
         $('.grid-stack').gridstack({
             width: 12,
@@ -51,6 +52,23 @@
         }
 
         gridLayer.html(gridBoxes);
+    };
+
+    /**
+     * Render Widgets in to blocks by reading the dashboard json.
+     * */
+    var renderWidgets = function (dashboard) {
+        var i = "";
+        for (i in dashboard.blocks) {
+            $.ajax({
+                url: dashboard.widgets[dashboard.blocks[i].id].url,
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    $("#" + dashboard.blocks[i].id).html(data);
+                }
+            });
+        }
     };
 
     init();

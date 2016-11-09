@@ -38,6 +38,23 @@ Dashboard related data is stored in a json format for easy readability and confi
             "x": 0,
             "y": 0
         }],
+        "widgets": {
+          "a": {
+            "id": "",
+            "url": "",
+            "permission": []
+          },
+          "b": {
+            "id": "",
+            "url": "",
+            "permission": []
+          },
+          "c": {
+            "id": "",
+            "url": "",
+            "permission": []
+          }
+        },
         "permission": {
             "editor": [],
             "viewer": [],
@@ -45,3 +62,4 @@ Dashboard related data is stored in a json format for easy readability and confi
         }
 }
 ```
+This json can be extended as to the changes in requirements that will come in future.
