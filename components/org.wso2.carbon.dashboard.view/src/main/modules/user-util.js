@@ -13,14 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module("dashboard-util");
-function onRequest(env) {
+var userUtil = {};
+(function () {
     'use strict';
-    // Get dashboard by ID.
-    var dashboard = dashboardUtil.getDashboard(env.params.id);
-    // Send the dashboard to client
-    sendToClient("dashboard", dashboard);
-    return {
-        dashboard: dashboard
+
+    /**
+     * Get the user available in the session
+     * @return {object} user object
+     * */
+    function getUser() {
+        //TODO: implement session->user retrieval.
+        return {};
+    }
+
+    /**
+     * Get User Roles and Permissions.
+     * @return {object} collection of user roles
+     * */
+    function getUserRoles(user) {
+        //TODO: implement user->roles retrieval.
+        return user;
+    }
+
+    userUtil = {
+        getUser: getUser(),
+        getUserRoles: getUserRoles
     };
-}
+}());

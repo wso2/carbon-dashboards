@@ -1,6 +1,7 @@
 portal.dashboards.widgets.SUBSCRIBER = {
 	"name" : "subscriber",
     "id" : "subscriber",
+    "permission" : ["Internal/Everyone", "Admin"],
 	"pubsub": {
 		"isPublisher" : false,
 		"isSubscriber" : true
