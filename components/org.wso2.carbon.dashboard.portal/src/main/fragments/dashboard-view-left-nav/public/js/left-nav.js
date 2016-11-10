@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function onRequest(env) {
-    return {
-        dashboardName: env.params.dashboard.name,
-        userAgent: "Trident",
-        isNoTrident: true
-    };
-}
+(function () {
+    'use strict';
+    $(".menu-customize").find('li').each(function (i, e) {
+        if ($(".product-name").data("id").toUpperCase() === $(e).find("a").text().toUpperCase()) {
+            $(".menu-customize").find('li').removeClass('active');
+            $(e).addClass("active");
+        }
+    });
+
+    $(".menu-customize").on('click', "li", function (e) {
+        $(".menu-customize").find('li').removeClass('active');
+        $(this).addClass("active");
+    });
+}());

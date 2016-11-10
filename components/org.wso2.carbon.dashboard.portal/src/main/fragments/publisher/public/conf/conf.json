@@ -1,4 +1,4 @@
-portal.dashboards.gadgets.PUBLISHER = {
+portal.dashboards.widgets.PUBLISHER = {
 	"name" : "publisher",
 	"id": "publisher",
 	"pubsub": {

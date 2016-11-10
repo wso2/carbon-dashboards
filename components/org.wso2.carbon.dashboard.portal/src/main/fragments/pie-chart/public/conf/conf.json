@@ -1,0 +1,4 @@
+portal.dashboards.widgets.PIECHART = {
+"name" : "Pie Chart",
+"id": "pie-chart"
+}

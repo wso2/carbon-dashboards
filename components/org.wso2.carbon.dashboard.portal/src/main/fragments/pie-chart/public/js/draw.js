@@ -43,7 +43,7 @@
             "minColor": "#ff00ff"
 
         };
-
+    widget.renderer.setWidgetName(portal.dashboards.widgets.PIECHART.id, portal.dashboards.widgets.PIECHART.name);
     //draw a scatter chart on div #scatter
     igviz.plot("#pie", scatterChartConfig, dataTable);
 }());

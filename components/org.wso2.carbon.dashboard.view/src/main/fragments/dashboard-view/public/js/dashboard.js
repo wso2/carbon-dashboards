@@ -58,14 +58,12 @@
     var renderWidgets = function (dashboard) {
         var i = "";
         for (i in dashboard.blocks) {
-            $.ajax({
-                url: dashboard.widgets[dashboard.blocks[i].id].url,
-                type: "GET",
-                async: false,
-                success: function (data) {
-                    $("#" + dashboard.blocks[i].id).html(data);
-                }
-            });
+            if (dashboard.widgets[dashboard.blocks[i].id]) {
+                widget.renderer.render(dashboard.widgets[dashboard.blocks[i].id].id,
+                    "grid-stack", dashboard.blocks[i].id,
+                    dashboard.widgets[dashboard.blocks[i].id].url,
+                    false);
+            }
         }
     };
 

@@ -1,0 +1,4 @@
+portal.dashboards.widgets.BARCHART = {
+  "name" : "Bar Chart",
+  "id": "bar-chart"
+}
