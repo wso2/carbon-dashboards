@@ -1,5 +1,6 @@
-portal.dashboards.gadgets.SUBSCRIBER={
+portal.dashboards.widgets.SUBSCRIBER = {
 	"name" : "subscriber",
+    "id" : "subscriber",
 	"pubsub": {
 		"isPublisher" : false,
 		"isSubscriber" : true

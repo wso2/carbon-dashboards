@@ -54,6 +54,8 @@
                 "dx": 0
             }
         };
+    widget.renderer.setWidgetName(portal.dashboards.widgets.BARCHART.id, portal.dashboards.widgets.BARCHART.name);
+
     //draw a bar chart on div #bar
     igviz.plot("#bar", config, dataTable);
 }());

@@ -86,7 +86,6 @@ function onRequest(env) {
             "owner": []
         }
     };
-
     return {
         dashboard: dashboard
     };

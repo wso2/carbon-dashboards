@@ -33,7 +33,8 @@
     <modules>
         <!--<module>components</module>-->
         <!--<module>features</module>-->
-        <!--<module>components/org.wso2.carbon.dashboard.designer</module>-->
+        <module>components/org.wso2.carbon.dashboard.view</module>
+        <module>components/org.wso2.carbon.dashboard.portal</module>
     </modules>
 
     <properties>

@@ -1,4 +1,4 @@
 var portal = portal || {};
 portal.dashboards = {};
-portal.dashboards.gadgets = {};
+portal.dashboards.widgets = {};
 portal.dashboards.publishers = [];

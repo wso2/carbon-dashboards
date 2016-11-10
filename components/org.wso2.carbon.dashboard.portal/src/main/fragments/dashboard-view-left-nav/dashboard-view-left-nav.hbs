@@ -1,3 +1,4 @@
+{{js "js/left-nav.js"}}
 <div class="sidebar-wrapper sidebar-nav toggled hidden-xs" id="left-sidebar" data-side="left"
      data-container=".page-content-wrapper" data-container-divide="true" data-width="260" data-offset-bottom="40"
      style="width:260px">
@@ -7,11 +8,26 @@
             <div class="product-logo">
                 <i class="icon fw fw-wso2-logo"></i>
             </div>
-            <div class="product-name">
+            <div class="product-name" data-id="{{@pathParams.id}}">
                 {{dashboardName}}
             </div>
 
-            <div id="ues-pages"><!-- dynamic content --></div>
+            <div id="ues-pages">
+                <ul class="nav nav-pills nav-stacked menu-customize pages">
+                    <li>
+                        <a href="/portal/dashboard/test">Test</a>
+                        <span id="test" class="refreshBtn" style="background-color:#1e2531; display:none;">
+                            <i class="icon fw fw-undo"></i>
+                        </span>
+                    </li>
+                    <li>
+                        <a href="/portal/dashboard/sample">Sample</a>
+                        <span id="test" class="refreshBtn" style="background-color:#1e2531; display:none;">
+                            <i class="icon fw fw-undo"></i>
+                        </span>
+                    </li>
+                </ul>
+            </div>
 
             <hr>
             {{#if isNoTrident}}

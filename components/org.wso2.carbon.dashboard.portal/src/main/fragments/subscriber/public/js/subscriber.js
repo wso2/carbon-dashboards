@@ -1,8 +1,10 @@
 (function () {
     'use strict';
 
-    if (portal.dashboards.gadgets.SUBSCRIBER.pubsub.isSubscriber) {
-        pubsub.subscribe(portal.dashboards.gadgets.PUBLISHER.id, function (topic, data) {
+    widget.renderer.setWidgetName(portal.dashboards.widgets.SUBSCRIBER.id, portal.dashboards.widgets.SUBSCRIBER.name);
+
+    if (portal.dashboards.widgets.SUBSCRIBER.pubsub.isSubscriber) {
+        pubsub.subscribe(portal.dashboards.widgets.PUBLISHER.id, function (topic, data) {
             console.log(topic, data);
             $('.messages').append(data + "<br/>");
         });

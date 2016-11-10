@@ -13,54 +13,151 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function onRequest(env) {
-    var dashboard = {
-        "name": "Nipuna Dashboard",
-        "id": "nipuna-dashboard",
-        "version": "1.0.2",
-        "description": "",
-        "blocks": [{
-            "height": 3,
-            "id": "a",
-            "width": 12,
-            "x": 0,
-            "y": 0
-        }, {
-            "height": 3,
-            "id": "b",
-            "width": 12,
-            "x": 0,
-            "y": 3
-        }, {
-            "height": 3,
-            "id": "c",
-            "width": 12,
-            "x": 0,
-            "y": 6
-        }],
-        "widgets": {
-            "a": {
-                "id": "org.wso2.carbon.dashboards.portal.feature.bar-chart",
-                "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.bar-chart",
-                "permission": []
+
+var getDashboard = function (id) {
+    if (id === "test") {
+        return {
+            "name": "Test Dashboard",
+            "id": id,
+            "version": "1.0.2",
+            "description": "",
+            "blocks": [{
+                "height": 3,
+                "id": "a",
+                "width": 12,
+                "x": 0,
+                "y": 0
+            }, {
+                "height": 3,
+                "id": "b",
+                "width": 12,
+                "x": 0,
+                "y": 3
+            }, {
+                "height": 3,
+                "id": "c",
+                "width": 12,
+                "x": 0,
+                "y": 6
+            }],
+            "widgets": {
+                "a": {
+                    "id": "bar-chart",
+                    "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.bar-chart",
+                    "permission": []
+                },
+                "b": {
+                    "id": "pie-chart",
+                    "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.pie-chart",
+                    "permission": []
+                }
             },
-            "b": {
-                "id": "org.wso2.carbon.dashboards.portal.feature.pie-chart",
-                "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.pie-chart",
-                "permission": []
-            },
-            "c": {
-                "id": "org.wso2.carbon.dashboards.portal.feature.publisher",
-                "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.publisher",
-                "permission": []
+            "permission": {
+                "editor": [],
+                "viewer": [],
+                "owner": []
             }
-        },
-        "permission": {
-            "editor": [],
-            "viewer": [],
-            "owner": []
-        }
-    };
+        };
+    } else {
+        return {
+            "name": "Sample Dashboard",
+            "id": id,
+            "version": "1.0.2",
+            "description": "",
+            "blocks": [{
+                "height": 3,
+                "id": "a",
+                "width": 12,
+                "x": 0,
+                "y": 0
+            }, {
+                "height": 3,
+                "id": "b",
+                "width": 12,
+                "x": 0,
+                "y": 3
+            }, {
+                "height": 3,
+                "id": "c",
+                "width": 12,
+                "x": 0,
+                "y": 6
+            }],
+            "widgets": {
+                "a": {
+                    "id": "bar-chart",
+                    "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.bar-chart",
+                    "permission": []
+                },
+                "b": {
+                    "id": "pie-chart",
+                    "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.pie-chart",
+                    "permission": []
+                },
+                "c": {
+                    "id": "publisher",
+                    "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.publisher",
+                    "permission": []
+                }
+            },
+            "permission": {
+                "editor": [],
+                "viewer": [],
+                "owner": []
+            }
+        };
+    }
+};
+
+function onRequest(env) {
+    var dashboard = getDashboard(env.params.id);
+    // {
+    //    "name": "Nipuna Dashboard",
+    //    "id": env.params.id,
+    //    "version": "1.0.2",
+    //    "description": "",
+    //    "blocks": [{
+    //        "height": 3,
+    //        "id": "a",
+    //        "width": 12,
+    //        "x": 0,
+    //        "y": 0
+    //    }, {
+    //        "height": 3,
+    //        "id": "b",
+    //        "width": 12,
+    //        "x": 0,
+    //        "y": 3
+    //    }, {
+    //        "height": 3,
+    //        "id": "c",
+    //        "width": 12,
+    //        "x": 0,
+    //        "y": 6
+    //    }],
+    //    "widgets": {
+    //        "a": {
+    //            "id": "bar-chart",
+    //            "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.bar-chart",
+    //            "permission": []
+    //        },
+    //        "b": {
+    //            "id": "pie-chart",
+    //            "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.pie-chart",
+    //            "permission": []
+    //        },
+    //        "c": {
+    //            "id": "publisher",
+    //            "url": "/portal/fragments/org.wso2.carbon.dashboards.portal.feature.publisher",
+    //            "permission": []
+    //        }
+    //    },
+    //    "permission": {
+    //        "editor": [],
+    //        "viewer": [],
+    //        "owner": []
+    //    }
+    //};
 
     sendToClient("dashboard", dashboard);
 
