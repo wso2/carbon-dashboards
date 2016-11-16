@@ -68,7 +68,8 @@ This json can be extended as to the changes in requirements that will come in fu
 
 To Install Portal app which contains the dashboard viewer component follow the guidelines provided below.
 
-1. build carbon-dashboard:uuf-portal branch using `mvn clean install`
-2. build product which has portal app(org.wso2.carbon.dashboards.portal.feature) installed as a feature.
-3. get the product pack, extract it and run using shell file inside bin folder.
+1. Build carbon-dashboard:uuf-portal branch using `mvn clean install`
+2. Build product which has portal app(org.wso2.carbon.dashboards.portal.feature) installed as a feature.
+3. Create dashboard definition (dashboard.json) inside <CARBON_HOME>/deployment/dashboards/ directory.
+4. Get the product pack, extract it and run using shell file inside bin folder.
    (`./carbon.sh` or `./wso2server.sh`)
