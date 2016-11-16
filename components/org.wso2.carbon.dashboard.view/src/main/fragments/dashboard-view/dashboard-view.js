@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module("dashboard-util");
 function onRequest(env) {
     'use strict';
     // Get dashboard by ID.
-    var dashboard = dashboardUtil.getDashboard(env.params.id);
+    var system = Java.type('java.lang.System');
+    //construct dashboard.json path
+    var path = system.getProperty('carbon.home') + '/deployment/dashboards/' + env.params.id + '.json';
+    var string = Java.type('java.lang.String');
+    var files = Java.type('java.nio.file.Files');
+    var paths = Java.type('java.nio.file.Paths');
+
+    try{
+        var content = JSON.parse(new string(files.readAllBytes(paths.get(path))));
+    } catch(Exception) {
+        Log.error(Exception);
+        sendError(500, "Something went wrong!");
+    }
     // Send the dashboard to client
-    sendToClient("dashboard", dashboard);
+    sendToClient("dashboard", content);
     return {
-        dashboard: dashboard
+        dashboard: content
     };
 }
