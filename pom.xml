@@ -31,15 +31,15 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <!--<module>components</module>-->
-        <!--<module>features</module>-->
         <module>components/org.wso2.carbon.dashboard.view</module>
-        <module>components/org.wso2.carbon.dashboard.portal</module>
+        <!-- <module>components/org.wso2.carbon.dashboard.designer</module>
+        <module>components/org.wso2.carbon.dashboard.portal</module> -->
     </modules>
 
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <carbon.dashboards.version>3.0.0-SNAPSHOT</carbon.dashboards.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-m5</carbon-uuf-maven-plugin.version>
     </properties>
 
     <scm>
@@ -48,11 +48,6 @@
         <connection>scm:git:https://github.com/wso2/carbon-dashboards.git</connection>
         <tag>HEAD</tag>
     </scm>
-
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <extensions>
