@@ -31,9 +31,9 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>components/org.wso2.carbon.dashboard.view</module>
-        <!-- <module>components/org.wso2.carbon.dashboard.designer</module>
-        <module>components/org.wso2.carbon.dashboard.portal</module> -->
+        <module>components/org.wso2.carbon.dashboards.view</module>
+        <!-- <module>components/org.wso2.carbon.dashboards.designer</module>
+        <module>components/org.wso2.carbon.dashboards.portal</module> -->
     </modules>
 
     <properties>

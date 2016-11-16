@@ -36,14 +36,14 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
-            <artifactId>org.wso2.carbon.dashboard.view</artifactId>
+            <artifactId>org.wso2.carbon.dashboards.view</artifactId>
             <version>${carbon.dashboards.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
-            <artifactId>org.wso2.carbon.dashboard.designer</artifactId>
+            <artifactId>org.wso2.carbon.dashboards.designer</artifactId>
             <version>${carbon.dashboards.version}</version>
             <type>zip</type>
             <classifier>uuf-component</classifier>
