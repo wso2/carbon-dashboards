@@ -14,5 +14,7 @@
  * limitations under the License.
  */
 function onRequest(env) {
-    return env;
+    return {
+        "id": env.pathParams['id']
+    };
 }

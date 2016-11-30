@@ -1,0 +1,118 @@
+{{layout "org.wso2.carbon.dashboards.designer.layout"}}
+{{fragment "org.wso2.carbon.dashboards.designer.common"}}
+{{#fillZone "content"}}
+    <!-- breadcrumb -->
+    <div class="breadcrumb-wrapper">
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="icon fw fw-home"></i>{{t "dashboards.label"}}</a></li>
+            <li class="active dashboard-name truncate">{{id}}</li>
+        </ol>
+    </div>
+    <div class="navbar-wrapper">
+        <nav class="navbar navbar-default" data-spy="affix" data-offset-top="85" data-offset-bottom="40">
+            <div class="container-fluid ues-context-menu">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">{{t "toggle.navigation"}}</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-menu-toggle" data-toggle="collapse" data-target="#navbar2" aria-expanded="true" aria-controls="navbar2">
+                        <span class="icon fw-stack">
+                                <i class="fw fw-down fw-stack-1x"></i>
+                        </span>
+                    </a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="#" id="dashboard-settings">
+                                    <span class="icon fw-stack">
+                                        <i class="fw fw-settings fw-stack-1x"></i>
+                                        <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    </span>
+                                {{t "settings"}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="ues-copy">
+                                <span class="fw-stack">
+                                    <i class="fw-refresh fw-stack-1x"></i>
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                </span>
+                                {{t "reset"}}
+                            </a>
+                        </li>
+                        <li id="ues-dashboard-preview-link">
+                            <a href="#" class="ues-dashboard-preview">
+                                <span class="icon fw-stack">
+                                    <i class="fw fw-view fw-stack-1x"></i>
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                </span>
+                                {{t "view"}}
+                            </a>
+                        </li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+                <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true"><!-- nav-collapse -->
+                    <ul class="nav navbar-nav collapse-nav-sub">
+                        <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="#"><i class="fw fw-dashboard"></i>{{t "dashboards.label"}}</a>
+                        </li>
+                        <li data-absolute-position="145" style="left: 145px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="#">
+                                <i class="fw fw-gadget"></i>{{t "gadgets"}}
+                            </a>
+                        </li>
+                        <li data-absolute-position="275" style="left: 275px; position: absolute; display: block;" aria-expanded="false">
+                            <a href="#"><i class="fw fw-layout"></i>{{t "layouts"}}</a>
+                        </li>
+                    </ul>
+                </div><!--/ .nav-collapse -->
+            </div>
+        </nav>
+    </div>
+    <!-- navbar -->
+    <nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="52" data-offset-bottom="40">
+        <ul class="nav navbar-nav nav-stacked">
+
+            <li>
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
+                   onclick="updateSidebarNav('#sidebarNavPages', this)" title="{{t "pages.label"}}"
+                id="btn-pages-sidebar">
+                <i class="icon fw fw-pages"></i>
+                </a>
+            </li>
+            <li>
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
+                   onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="{{t "add.block"}}"
+                id="btn-sidebar-layouts">
+                <i class="icon fw fw-layout"></i>
+                </a>
+            </li>
+            <li>
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
+                   onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="{{t "gadgets"}}"
+                id="btn-sidebar-gadgets">
+                <i class="icon fw fw-gadget"></i>
+                </a>
+            </li>
+            <li>
+                <a data-container-divide="true" aria-expanded="true" data-target="#left-sidebar" data-toggle="sidebar" data-handle="close" rel="sub-nav"
+                   onclick="loadMenuCreator(this)" title="{{t "pages.menu.label"}}"
+                id="btn-sidebar-menu">
+                <i class="icon fw fw-menu"></i>
+                </a>
+            </li>
+            <li>
+                <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
+                   onclick="updateSidebarNav('#sidebarNavDashboardLayouts', this)" title="{{t "layouts"}}"
+                id="btn-sidebar-dashboard-layout">
+                <i class="icon fw fw-grid"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{{/fillZone}}
