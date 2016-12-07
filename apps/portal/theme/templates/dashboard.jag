@@ -26,9 +26,20 @@
     var usr = require('/modules/user.js');
     var user = usr.current();
     var isAnonView = request.getParameter('isAnonView');
-    var queryString;
-    if(request.getParameter('shared')){
-        queryString = 'shared=' + request.getParameter('shared');
+    var queryString = "";
+    var queryParametersToBePassed = require("/configs/designer.json").queryParameters.passBetweenPages;
+    var queryParamsAppended = 0;
+
+    for (var index = 0; index < queryParametersToBePassed.length; index++) {
+        var queryParam = queryParametersToBePassed[index];
+        if (request.getParameter(queryParam)) {
+            if (queryParamsAppended === 0) {
+                queryString += queryParam + "=" + request.getParameter(queryParam);
+                queryParamsAppended++;
+            } else {
+                queryString += "&" + queryParam + "=" + request.getParameter(queryParam);
+            }
+        }
     }
 
     // Get the anon view
@@ -61,7 +72,7 @@
     if (request.getParameter('isAnonView') == 'true') {
         dashboardUrl += '?isAnonView=true';
     }
-   
+
     // Show navigation menu (There should be more than one page to show the navigation menu)
     var showNavigation = false;
     if (isAnonView || !user) {
