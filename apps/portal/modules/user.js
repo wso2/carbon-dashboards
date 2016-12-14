@@ -60,6 +60,12 @@ var getUserRoles;
             log.error(e);
             return;
         }
+        var ApiUrl = 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/logout'+'?username=' + user.username+ '&tenantId='+user.tenantId;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", ApiUrl);
+        xhr.send();
+
         session.remove('user');
     };
 

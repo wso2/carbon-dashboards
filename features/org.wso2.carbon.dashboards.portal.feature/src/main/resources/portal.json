@@ -79,6 +79,11 @@
         "interval" : "60",
         "maxTempFileLifeTime" : "120"
     },
+    "notificationApi": {
+        "interval" : "1800000",
+        "maxTime" : "1800000",
+        "percentageOfReadCount": "100"
+    },
     "dataSource" : {
         "name" : "WSO2_DS_USAGE_STORE_DB"
     }

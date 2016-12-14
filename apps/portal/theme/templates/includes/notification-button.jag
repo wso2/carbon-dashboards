@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 %>
-
+<%
+var usr = require('/modules/user.js');
+var user = usr.current();
+%>
  <div>
     <ul class="nav navbar-nav navbar-right">
         <li id="notification" class="visible-inline-block" aria-expanded="true">
@@ -29,3 +32,9 @@
          </li>
      </ul>
 </div>
+
+<script>
+var userName = <%= stringify(user.username) %>;
+</script>
+
+<script src="<%=urlPrefix%>js/notification.js"></script>

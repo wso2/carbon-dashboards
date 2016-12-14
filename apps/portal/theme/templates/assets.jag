@@ -39,6 +39,7 @@
 </head>
 <body>
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+    <link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
 
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
@@ -95,7 +96,9 @@
                                 </li>
                             <% } %>
                         </ul>
+                        <% include(utils.resolvePath('templates/includes/notification-button.jag')); %>
                     </div><!--/.nav-collapse -->
+                    <% include(utils.resolvePath('templates/includes/notification-details.jag')); %>
                 </div>
                 <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true">
                      <ul class="nav navbar-nav collapse-nav-sub">
@@ -281,6 +284,7 @@
     <script src="/shindig/gadgets/js/container:open-views:opensearch:rpc:xmlutil:pubsub-2.js?c=1&debug=1&container=default"></script>
     <script src="<%=urlPrefix%>js/ues-gadgets.js"></script>
     <script src="<%=urlPrefix%>js/ues-dashboards.js"></script>
+    <script src="<%=urlPrefix%>js/notification.js"></script>
     <% include('/controllers/includes/pluggable-store-scripts.jag'); %>
      <script type="text/javascript">
         $('#navbar2').on('shown.bs.collapse', function (e) {

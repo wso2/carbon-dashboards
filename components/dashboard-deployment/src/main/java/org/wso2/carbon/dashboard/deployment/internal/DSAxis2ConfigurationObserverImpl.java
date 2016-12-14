@@ -20,6 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.dashboard.deployment.DashboardConstants;
+import org.wso2.carbon.dashboard.portal.core.DashboardPortalException;
+import org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
 import org.wso2.carbon.utils.AbstractAxis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.FileManipulator;
@@ -36,6 +38,8 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
         String layoutDir = tenantDir + DashboardConstants.LAYOUT_DEPLOYMENT_DIR;
         String gadgetDir = tenantDir + DashboardConstants.GADGET_DEPLOYMENT_DIR;
         createTenantDirectory(tenantDir);
+        createUserNotificationTenantDomain();
+        createNotificationtenantDomain();
         if (!isDSTenantIArtifactInitialized(layoutDir)) {
             copyResources(DashboardConstants.LAYOUT_TYPE, layoutDir);
         }
@@ -48,6 +52,36 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
         File file = new File(tenantDirectory);
         if (!file.exists()) {
             file.mkdirs();
+        }
+    }
+
+    private void createUserNotificationTenantDomain() {
+        String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        try {
+            try {
+                DSDataSourceManager dsDataSourceManager = DSDataSourceManager.getInstance();
+                dsDataSourceManager.createUserNotificationTenantDomain(tenantDomain);
+                log.info("Created table for user notification  tenantdomain");
+            } catch (DashboardPortalException e) {
+                log.error(e);
+            }
+        } catch (Exception e) {
+            log.error(e);
+        }
+    }
+
+    private void createNotificationtenantDomain() {
+        String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        try {
+            try {
+                DSDataSourceManager dsDataSourceManager = DSDataSourceManager.getInstance();
+                dsDataSourceManager.createNotificationTenantDomain(tenantDomain);
+                log.info("Created table for notification tenantdomain");
+            } catch (DashboardPortalException e) {
+                log.error(e);
+            }
+        } catch (Exception e) {
+            log.error(e);
         }
     }
 

@@ -19,10 +19,14 @@
 package org.wso2.carbon.dashboard.notification;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.map.HashedMap;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.wso2.carbon.dashboard.authorization.util.AuthorizationUtil;
 import org.wso2.carbon.dashboard.notification.utils.UserStoreUtil;
 import org.wso2.carbon.dashboard.portal.core.DashboardPortalException;
+import org.wso2.carbon.dashboard.portal.core.PortalUtils;
 import org.wso2.carbon.dashboard.portal.core.datasource.DSDataSourceManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,43 +34,31 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
+import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
-import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static com.sun.corba.se.impl.util.RepositoryId.cache;
 import static java.lang.Integer.parseInt;
 
+/**
+ * REST api for the notification feature
+ */
 @Path("/notificationApi")
 public class NotificationManagementServiceImpl implements NotificationManagementService {
-    private long loggedInTimestamp;
-    private long updatedTimesstamp;
-    private long presentAccessTimstamp;
-
-    private Map<String, HashMap> hashmap = new HashMap<String, HashMap>();
+    private long maxTime = 60 * 30 * 1000;
+    private ConcurrentHashMap<String, UserCache> userHash = new ConcurrentHashMap<String, UserCache>();
     private static Log log = LogFactory.getLog(NotificationManagementServiceImpl.class);
-    private UserStoreManager userStoreManager;
     private DSDataSourceManager dsDataSourceManager = DSDataSourceManager.getInstance();
+    private NotificationBackup notificationBackup = new NotificationBackup();
+    private final Object lock = new Object();
 
     public NotificationManagementServiceImpl() throws DashboardPortalException, UserStoreException {
 
-    }
-
-    private void setLoggedInTimestamp(long timestamp) {
-        this.loggedInTimestamp = timestamp;
-    }
-
-    private void setUpdatedTimesstamp(long timesstamp) {
-        this.updatedTimesstamp = timesstamp;
-    }
-
-    private void setPresentAccessTimstamp(long timstamp) {
-        this.presentAccessTimstamp = timstamp;
     }
 
 
@@ -74,243 +66,373 @@ public class NotificationManagementServiceImpl implements NotificationManagement
      * This is used to authenticate user and provide a uuid for each user
      *
      * @param encoded  username and password
-     * @param tenantId
-     * @return UUID
-     * @throws NotificationManagementException
+     * @param tenantId tenant id of the user
+     * @return uuid random string to each user to identify validation
+     * @throws NotificationManagementException exception handling
      */
-    @POST
-    @Path("/notifications/login/")
-    @HeaderParam("encoded")
-    public String login(@HeaderParam("encoded") String encoded,
-                        @QueryParam("tenantId") String tenantId
+    @Override
+    public Response login(String encoded, String tenantId
     ) throws NotificationManagementException {
-        String permission = "/permission/admin/manage/portal/login";
-        String UUIDa = null;
+        String permission = NotificationConstants.PERMISSION;
+        String uuid;
         String decodedCredentials = new String(new Base64().decode(encoded.getBytes()));
-        String userName = decodedCredentials.split(":")[0];
-        String password = decodedCredentials.split(":")[1];
-        Map<String, String> cache = new HashMap<String, String>();
+        String userName = decodedCredentials.split(NotificationConstants.COLON)[0];
+        String password = decodedCredentials.split(NotificationConstants.COLON)[1];
         String username;
+        String tenantDomain;
+        log.info(tenantId);
         if (userName != null && password != null) {
             try {
                 if (AuthorizationUtil.isUserAuthenticated(userName, password, tenantId)) {
                     if (AuthorizationUtil.isUserAuthorized(parseInt(tenantId), userName, permission)) {
-                        if (hashmap.get(userName) == null) {
-                            UUIDa = UUID.randomUUID().toString();
-                            setLoggedInTimestamp(System.currentTimeMillis());
-                            setUpdatedTimesstamp(System.currentTimeMillis());
-                            PrivilegedCarbonContext.startTenantFlow();
-                            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(parseInt(tenantId), true);
-                            PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(userName);
-                            userStoreManager = UserStoreUtil.getUserStoreManager();
-                            username = UserStoreUtil.getAuthenticatedUser();
-
-                            cache.put("UUID", UUIDa);
-                            cache.put("loggedTime", String.valueOf(loggedInTimestamp));
-                            cache.put("updatedTime", String.valueOf(updatedTimesstamp));
-                            hashmap.put(username, (HashMap) cache);
-
+                        if (userHash.get(userName) == null) {
+                            synchronized (lock) {
+                                if (userHash.get(userName) == null) {
+                                    UserCache usercache = new UserCache();
+                                    uuid = UUID.randomUUID().toString();
+                                    usercache.setLoggedInTimestamp(System.currentTimeMillis());
+                                    usercache.setUpdatedTimesstamp(System.currentTimeMillis());
+                                    PrivilegedCarbonContext.startTenantFlow();
+                                    PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(parseInt(tenantId), true);
+                                    PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(userName);
+                                    username = UserStoreUtil.getAuthenticatedUser();
+                                    PrivilegedCarbonContext.endTenantFlow();
+                                    tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
+                                    usercache.setUuid(uuid);
+                                    userHash.put(username + NotificationConstants.AT + tenantDomain, usercache);
+                                    return Response.status(Response.Status.OK).entity(uuid).build();
+                                } else {
+                                    return Response.status(Response.Status.CONFLICT).build();
+                                }
+                            }
                         } else {
-                            UUIDa = (String) (hashmap.get(userName)).get("UUID");
+                            return Response.status(Response.Status.CONFLICT).build();
                         }
                     } else {
                         log.info("the user can not be authorized");
+                        return Response.status(Response.Status.UNAUTHORIZED).build();
                     }
                 } else {
                     log.info("Problem in Authenticating the user");
+                    return Response.status(Response.Status.PROXY_AUTHENTICATION_REQUIRED).build();
                 }
             } catch (UserStoreException e) {
                 log.error(e);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+
             } catch (RegistryException e) {
                 log.info(e);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         } else {
             log.error("Authentication required for this resource. " +
                     "Username or password not provided.");
+            return Response.status(Response.Status.PROXY_AUTHENTICATION_REQUIRED).build();
         }
-        return UUIDa;
+    }
+
+    /**
+     * user logout, user details removes
+     *
+     * @param uuid     uuid of particular user
+     * @param username username without domain name
+     * @param tenantId tenantId of the user
+     * @return response
+     * @throws NotificationManagementException exception handling
+     */
+    @Override
+    public Response logout(String uuid, String username, String tenantId) throws NotificationManagementException {
+        if (validateUser(uuid, username, tenantId)) {
+            String tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
+            String userName = username + NotificationConstants.AT + tenantDomain;
+            userHash.remove(userName);
+            return Response.status(Response.Status.OK).build();
+        } else {
+            log.info("User cannot be validated");
+            return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
+        }
     }
 
     /**
      * This is to validate user when accessing each methods
      *
-     * @param uuid uuid for a particular user to validate the user
+     * @param uuid     uuid for a particular user to validate the user
      * @param username username user name of the user to validate user
      * @return true or false whether the user is validated before accessing every method
      */
-    private boolean validateUser(String uuid, String username) {
-        System.out.println(((hashmap.get(username)).get("UUID")));
-        System.out.println(uuid);
+
+    private synchronized boolean validateUser(String uuid, String username, String tenantId) {
+        log.info(uuid + username);
+        String tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
+        UserCache usrname = userHash.get(username + NotificationConstants.AT + tenantDomain);
         try {
-            if (uuid.equals((hashmap.get(username)).get("UUID"))) {
-                long updatesTime = Long.parseLong(String.valueOf((hashmap.get(username)).get("updatedTime")));
-                long timePassed = presentAccessTimstamp - updatesTime;
-                System.out.println(timePassed);
-                System.out.println(((hashmap.get(username)).get("UUID")));
-                if (timePassed < 180000) {
-                    setUpdatedTimesstamp(System.currentTimeMillis());
-                    hashmap.get(username).put("updatedTime", String.valueOf(updatedTimesstamp));
-                    System.out.println(cache + "  cache");
+            JSONObject notificationApiConfig = PortalUtils.getConfiguration(NotificationConstants.NOTIFICATION_API_CONFIG);
+            this.maxTime = Integer.parseInt(String.valueOf(notificationApiConfig.get(NotificationConstants.MAX_TIME)));
+            if (uuid.equals(usrname.getUuid())) {
+                long updatesTime = Long.parseLong(String.valueOf((userHash.get(username + NotificationConstants.AT + tenantDomain)).getUpdatedTimesstamp()));
+                long presentAccessTimestamp = System.currentTimeMillis();
+                long timePassed = presentAccessTimestamp - updatesTime;
+                if (timePassed < maxTime) {
+                    usrname.setUpdatedTimesstamp(System.currentTimeMillis());
                     return true;
                 } else {
+                    userHash.remove(username + NotificationConstants.AT + tenantDomain);
                     log.info("Time out. please login");
-                    return false;
                 }
             } else {
                 log.info("UUID is different");
-                return false;
             }
+        } catch (IOException e) {
+            log.error(e);
+        } catch (ParseException e) {
+            log.error(e);
+        } catch (NullPointerException e) {
+            log.error(e);
         } catch (Exception e) {
             log.error(e);
-            return false;
         }
+        return false;
     }
 
     /**
-     * This is used to call dssourcemanager to add notifications to the database
+     * This is used to  add notifications to the database
      *
-     * @param notif uuid for a particular user sent from front end
-     * @param UUID username user name of the user sent from front end
-     * @param username
+     * @param notification uuid for a particular user sent from front end
+     * @param uuid         uuid  of the user sent from front end
+     * @param username     username  of the user sent from front end
      * @return response status
-     * @throws NotificationManagementException
+     * @throws NotificationManagementException exception handling
      */
-    public Response addNotification(Notification notif, String UUID, String username) throws NotificationManagementException {
-        setPresentAccessTimstamp(System.currentTimeMillis());
-
-        if (validateUser(UUID, username)) {
-            String notificationId = notif.getNotificationId();
-            String title = notif.getTitle();
-            String message = notif.getMessage();
-            String directUrl = notif.getDirectUrl();
-            List<String> usersList = notif.getUsers();
-            List<String> rolesList = notif.getRoles();
+    @Override
+    public Response addNotification(Notification notification, String tenantId, String uuid, String username) throws NotificationManagementException {
+        synchronized (lock) {
             try {
-                dsDataSourceManager.insertIntoNotification(notificationId, title, message, directUrl);
-                for (String role : rolesList) {
-                    String[] usersOFRole = userStoreManager.getUserListOfRole(role);
-                    if (usersOFRole != null) {
-                        for (String user : usersOFRole) {
-                            //noinspection JSAnnotator
-                            if (usersList.indexOf(user) == -1) {
-                                usersList.add(user);
-                            }
+                if (AuthorizationUtil.isUserAuthorized(parseInt(tenantId), username, NotificationConstants.ADD_NOTIFICATION_PERMISSION)) {
+                    if (validateUser(uuid, username, tenantId)) {
+                        String notificationId = notification.getNotificationId();
+                        String title = notification.getTitle();
+                        String message = notification.getMessage();
+                        String directUrl = notification.getDirectUrl();
+                        List<String> usersList = notification.getUsers();
+                        if (usersList == null) {
+                            usersList = new ArrayList<String>();
                         }
+                        List<String> rolesList = notification.getRoles();
+                        UserStoreManager userStoreManager = UserStoreUtil.getUserStoreManager(tenantId);
+                        String tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
+                        try {
+                            if (rolesList != null) {
+                                for (String role : rolesList) {
+                                    String[] usersOFRole = userStoreManager.getUserListOfRole(role);
+                                    if (usersOFRole != null) {
+                                        for (String user : usersOFRole) {
+                                            //noinspection JSAnnotator
+                                            if (usersList.indexOf(user) == -1) {
+                                                usersList.add(user + NotificationConstants.AT + tenantDomain);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            int userCount = usersList.size();
+                            int readCount = 0;
+                            log.info(tenantDomain);
+                            dsDataSourceManager.insertIntoNotification(tenantDomain, notificationId, title, message, directUrl, userCount, readCount);
+                            for (String user : usersList) {
+                                if (tenantDomain.equals(MultitenantUtils.getTenantDomain(user))) {
+                                    String notificationListOfUser = createNotificationListOfUser(user, notificationId, false);
+                                    dsDataSourceManager.insertIntoUserNotificationTenantDomain(user, notificationListOfUser);
+                                }
+                            }
+                            return Response.status(Response.Status.OK).build();
+                        } catch (DashboardPortalException e) {
+                            log.error(e);
+                        } catch (UserStoreException e) {
+                            log.error(e);
+                        } catch (SQLException e) {
+                            log.error(e);
+                        } catch (NullPointerException e) {
+                            log.error(e);
+                        }
+                    } else {
+                        log.info("User cannot be validated");
+                        return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
                     }
+                } else {
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
                 }
-                dsDataSourceManager.insertIntoUserNotification(notificationId, usersList);
-                dsDataSourceManager.insertIntoRoleNotification(notificationId, rolesList);
-            } catch (DashboardPortalException e) {
+            } catch (UserStoreException e) {
                 log.error(e);
-            } catch (UserStoreException use) {
-                log.error(use);
+            } catch (RegistryException e) {
+                log.error(e);
             }
-            return Response.status(Response.Status.OK).build();
-        } else {
-            log.info("User cannot be validated");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     /**
      * This is used to get all the notifications of the particular logged in user
      *
-     * @param UUID uuid for a particular user sent from front end
+     * @param uuid     uuid for a particular user sent from front end
      * @param username user name of the user sent from front end
      * @return response status
-     * @throws NotificationManagementException
+     * @throws NotificationManagementException exception handling
      */
-    public Response getNotificationDetails(String UUID, String username) throws NotificationManagementException {
-        setPresentAccessTimstamp(System.currentTimeMillis());
-        if (validateUser(UUID, username)) {
+    public Response getNotificationDetails(String uuid, String username, String tenantId) throws NotificationManagementException {
+        if (validateUser(uuid, username, tenantId)) {
             try {
-                List<String> notificationList = dsDataSourceManager.getNotificationsForUsername(username);
-                List<Notification> notifcnList = new ArrayList<Notification>();
-                for (String notification : notificationList) {
-                    String[] details;
-                    details = dsDataSourceManager.getNotificationDetails(notification);
-                    Notification notifcn = new Notification();
-                    notifcn.setNotificationId(notification);
-                    notifcn.setTitle(details[0]);
-                    notifcn.setMessage(details[1]);
-                    notifcn.setDirectUrl(details[2]);
-                    notifcnList.add(notifcn);
+                String tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
+
+                String userName = username + NotificationConstants.AT + tenantDomain;
+                JSONArray notificationList = getNotificationListOfUser(userName);
+
+                JSONObject notificationIdBackup = notificationBackup.getNotificationBackup();
+                JSONArray notifcnsDetail = new JSONArray();
+                if (userHash.get(userName).getUserNotificationIdBackup() != null) {
+                    List<String> notificationsFromBackup = userHash.get(userName).getUserNotificationIdBackup();
+                    for (String notificationID : notificationsFromBackup) {
+                        log.info(notificationID);
+                        String[] details;
+                        if (notificationIdBackup != null) {
+                            if (notificationIdBackup.containsKey(notificationID)) {
+                                details = (String[]) notificationIdBackup.get(notificationID);
+                            } else {
+                                details = dsDataSourceManager.getNotificationDetails(notificationID, tenantDomain);
+                            }
+                        } else {
+                            details = dsDataSourceManager.getNotificationDetails(notificationID, tenantDomain);
+                        }
+                        Notification notifcn = new Notification();
+                        notifcn.setNotificationId(notificationID);
+                        notifcn.setTitle(details[0]);
+                        notifcn.setMessage(details[1]);
+                        notifcn.setDirectUrl(details[2]);
+                        notifcnsDetail.add(notifcn);
+                    }
                 }
-                NotificationDetail notifcnDetail = new NotificationDetail();
-                notifcnDetail.setNotificationDetail(notifcnList);
-                return Response.status(Response.Status.OK).entity(notifcnDetail).build();
+                if (notificationList != null) {
+                    for (Object aNotificationListAsJson : notificationList) {
+                        String[] details;
+                        JSONObject notification = (JSONObject) aNotificationListAsJson;
+                        String notificationId = (String) notification.get(NotificationConstants.NOTIFICATION_ID);
+                        details = dsDataSourceManager.getNotificationDetails(notificationId, tenantDomain);
+                        Notification notifcn = new Notification();
+                        notifcn.setNotificationId(notificationId);
+                        notifcn.setTitle(details[0]);
+                        notifcn.setMessage(details[1]);
+                        notifcn.setDirectUrl(details[2]);
+                        notifcnsDetail.add(notifcn);
+                    }
+                }
+                log.info(notifcnsDetail);
+                return Response.status(Response.Status.OK).entity(notifcnsDetail).build();
             } catch (DashboardPortalException e) {
                 log.error(e);
-                return Response.serverError().entity(e).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            } catch (SQLException e) {
+                log.error(e);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
             }
+
         } else {
             log.info("User cannot be validated");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
         }
     }
 
     /**
-     * This is used to update the status of notification
+     * update the list of notification ids in database
      *
-     * @param UUID uuid for a particular user sent from front end
-     * @param notificatonId
-     * @param username
-     * @return
-     * @throws NotificationManagementException
+     * @param notificationId id of the notification that user saw
+     * @param username       username without tenantDomain
+     * @param uuid           uuid of the particular user
+     * @return response status after updating notificationlist of the user
+     * @throws NotificationManagementException exception handling
      */
-    public Response updateStatusOfNotification(String UUID,String notificatonId, String username) throws NotificationManagementException {
-        setPresentAccessTimstamp(System.currentTimeMillis());
-        if(validateUser(UUID,username)){
-            try{
-                dsDataSourceManager.updateReadNotification(notificatonId,username);
-                return Response.status(Response.Status.OK).build();
-            } catch (DashboardPortalException e) {
-                log.info(e);
-                return Response.serverError().entity(e).build();
-            }
-        } else {
-            log.info("User cannot be validated");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    /**
-     * This is to get the count the unread notification of the particular logged in user.
-     *
-     * @param UUID uuid for a particular user sent from front end
-     * @param username username user name of the user sent from front end
-     * @return response status
-     * @throws NotificationManagementException
-     */
-    public Response getUnreadNotificationCount(String UUID, String username) throws NotificationManagementException {
-        int count = 0;
-        setPresentAccessTimstamp(System.currentTimeMillis());
-        if (validateUser(UUID, username)) {
+    @Override
+    public Response updateNotificationsListOfUser(String notificationId, String username, String uuid, String tenantId) throws NotificationManagementException {
+        if (validateUser(uuid, username, tenantId)) {
+            String tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
+            String userName = username + NotificationConstants.AT + tenantDomain;
+            JSONArray notificationsList = getNotificationListOfUser(userName);
             try {
-                count = dsDataSourceManager.getUnreadNotificationCount(username);
-            } catch (DashboardPortalException e) {
+                for (Object aNotificationListAsJson : notificationsList) {
+                    JSONObject notification = (JSONObject) aNotificationListAsJson;
+                    if (notification.get(NotificationConstants.NOTIFICATION_ID).equals(notificationId)) {
+                        if (userHash.get(userName).getUserNotificationIdBackup() == null) {
+                            ArrayList<String> notificationIds = new ArrayList<String>();
+                            notificationIds.add(notificationId);
+                            userHash.get(userName).setUserNotificationIdBackup(notificationIds);
+
+                        } else {
+                            ArrayList<String> notificationIds = userHash.get(userName).getUserNotificationIdBackup();
+                            notificationIds.add(notificationId);
+                            userHash.get(userName).setUserNotificationIdBackup(notificationIds);
+                        }
+                        notificationsList.remove(notification);
+                        dsDataSourceManager.updateNotificationListOfUser(notificationsList.toString(), userName);
+                        dsDataSourceManager.updateNotificationTenantDomain(notificationId, tenantDomain);
+                        return Response.status(Response.Status.OK).build();
+                    }
+                }
+                return Response.status(Response.Status.OK).build();
+            } catch (SQLException e) {
                 log.error(e);
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
             }
-            return Response.status(Response.Status.OK).entity(count).build();
+            // return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
         } else {
             log.info("User cannot be validated");
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
         }
+        //return Response.status(Response.Status.OK).build();
     }
 
-    /*@GET
-    @Path("/notifications/notificationList/")
-    public Response getNotificationListOfUser() throws NotificationManagementException {
-        try {
-            List<String> notificationList = dsDataSourceManager.getNotificationsForUsername(username);
-            NotificationList notifcnList = new NotificationList();
-            notifcnList.setNotifications(notificationList);
-            notifcnList.setCount(getNotificationCount(username));
-            return Response.status(Response.Status.OK).entity(notifcnList).build();
-        } catch (DashboardPortalException dpe) {
-            log.error(dpe);
-            return Response.serverError().entity(dpe).build();
+    /**
+     * add notification id to the list
+     *
+     * @param username       username with tenantDomain
+     * @param notificationId notification id tobe added to the list
+     * @param read           status
+     * @return notification list with status
+     */
+    private String createNotificationListOfUser(String username, String notificationId, boolean read) {
+        JSONArray notificationList = getNotificationListOfUser(username);
+        if (notificationList == null) {
+            notificationList = new JSONArray();
+        } else {
+            for (Object notification : notificationList) {
+                JSONObject notifcn = (JSONObject) notification;
+                if (notifcn.get(NotificationConstants.NOTIFICATION_ID).equals(notificationId)) {
+                    return notificationList.toString();
+                }
+            }
         }
-    }*/
+        JSONObject notification = new JSONObject();
+        notification.put(NotificationConstants.NOTIFICATION_ID, notificationId);
+        notification.put(NotificationConstants.READ, read);
+        notificationList.add(notification);
+        return notificationList.toString();
+
+    }
+
+    /**
+     * @param username username with tenantDomain
+     * @return thr list of notifications saved in database with status
+     */
+    private JSONArray getNotificationListOfUser(String username) {
+        JSONArray notifications = null;
+        try {
+            JSONParser parser = new JSONParser();
+            notifications = (JSONArray) parser.parse(dsDataSourceManager.getNotificationListOfUser(username));
+        } catch (SQLException e) {
+            log.error(e);
+        } catch (ParseException e) {
+            log.error(e);
+        } catch (NullPointerException e) {
+            log.error(e);
+        }
+        return notifications;
+    }
 
 }

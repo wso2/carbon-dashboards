@@ -31,6 +31,7 @@
 </head>
 <body>
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+    <link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
 
     <!-- Modal -->
     <div class="modal fade" id="designerModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
@@ -84,7 +85,9 @@
                             </a>
                         </li>
                     </ul>
+                    <% include(utils.resolvePath('templates/includes/notification-button.jag')); %>
                 </div>
+                <% include(utils.resolvePath('templates/includes/notification-details.jag')); %>
             </div>
         </nav>
     </div>
@@ -343,6 +346,7 @@
                             ' }';
         var i18n_data = JSON.parse(i18n_object);
 </script>
+<script src="<%=urlPrefix%>js/notification.js"></script>
 
 </body>
 </html>

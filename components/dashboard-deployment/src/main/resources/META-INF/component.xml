@@ -70,5 +70,13 @@
             <DisplayName>Download</DisplayName>
             <ResourceId>/permission/admin/manage/portal/layout/download</ResourceId>
         </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Notification</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/notification</ResourceId>
+        </ManagementPermission>
+        <ManagementPermission>
+            <DisplayName>Add</DisplayName>
+            <ResourceId>/permission/admin/manage/portal/notification/add</ResourceId>
+        </ManagementPermission>
     </ManagementPermissions>
 </component>

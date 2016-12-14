@@ -19,7 +19,7 @@
 package org.wso2.carbon.dashboard.notification;
 
 public class NotificationManagementException extends Exception {
-    public NotificationManagementException(String message, Exception e){
+    public NotificationManagementException(String message, Exception e) {
         super(message, e);
     }
 }

@@ -23,23 +23,26 @@ import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
+import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
+
+import static java.lang.Integer.parseInt;
 
 public class UserStoreUtil {
     private static Log log = LogFactory.getLog(UserStoreUtil.class);
 
-    public static UserStoreManager getUserStoreManager() throws UserStoreException {
+    public static UserStoreManager getUserStoreManager(String tenantId) throws UserStoreException {
         RealmService realmService;
         UserStoreManager userStoreManager;
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(parseInt(tenantId), true);
         PrivilegedCarbonContext ctx = PrivilegedCarbonContext.getThreadLocalCarbonContext();
         realmService = (RealmService) ctx.getOSGiService(RealmService.class, null);
         if (realmService == null) {
             String msg = "Realm service has not initialized.";
-
             log.error(msg);
             throw new IllegalStateException(msg);
         }
-        int tenantId = ctx.getTenantId();
-        userStoreManager = realmService.getTenantUserRealm(tenantId).getUserStoreManager();
+        userStoreManager = realmService.getTenantUserRealm(Integer.parseInt(tenantId)).getUserStoreManager();
         return userStoreManager;
     }
 
@@ -48,8 +51,17 @@ public class UserStoreUtil {
         String username = threadLocalCarbonContext.getUsername();
         String tenantDomain = threadLocalCarbonContext.getTenantDomain();
         if (username.endsWith(tenantDomain)) {
-            return username.substring(0, username.lastIndexOf("@"));
+            return MultitenantUtils.getTenantAwareUsername(username);
         }
         return username;
+    }
+
+    public static String getUserTenantDomain(String tenantId) {
+        PrivilegedCarbonContext.startTenantFlow();
+        PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(parseInt(tenantId), true);
+        PrivilegedCarbonContext threadLocalCarbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
+        String tenantDomain = threadLocalCarbonContext.getTenantDomain();
+        PrivilegedCarbonContext.endTenantFlow();
+        return tenantDomain;
     }
 }

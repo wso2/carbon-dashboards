@@ -30,7 +30,6 @@
         </jaxrs:serviceBeans>
     </jaxrs:server>
 
-
     <bean id="serviceBean" class="org.wso2.carbon.dashboard.notification.NotificationManagementServiceImpl"></bean>
 
 

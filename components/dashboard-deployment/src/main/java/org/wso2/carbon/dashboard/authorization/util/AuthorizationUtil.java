@@ -22,15 +22,18 @@ import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.dashboard.deployment.internal.ServiceHolder;
 import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
-import org.wso2.carbon.user.api.UserRealm;
 import org.wso2.carbon.user.api.UserStoreException;
+import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * This class validates the user based on the permission of the respective user
  */
 public class AuthorizationUtil {
     private static final Log LOG = LogFactory.getLog(AuthorizationUtils.class);
+    private static RealmService realm = ServiceHolder.getRealmService();
 
     /**
      * @param tenantId   Tenant ID of the user
@@ -44,8 +47,7 @@ public class AuthorizationUtil {
         try {
             PrivilegedCarbonContext.startTenantFlow();
             PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
-            org.wso2.carbon.user.core.service.RealmService realm = ServiceHolder.getRealmService();
-            boolean isAuthorized =  realm.getTenantUserRealm(tenantId).getAuthorizationManager()
+            boolean isAuthorized = realm.getTenantUserRealm(tenantId).getAuthorizationManager()
                     .isUserAuthorized(MultitenantUtils.getTenantAwareUsername(username), permission,
                             CarbonConstants.UI_PERMISSION_ACTION);
             PrivilegedCarbonContext.endTenantFlow();
@@ -55,6 +57,21 @@ public class AuthorizationUtil {
             throw new UserStoreException(
                     "Unable to get user permission information for user [ " + username + " ] due to " +
                             e.getMessage(), e);
+        }
+    }
+
+    public static boolean isUserAuthenticated(String userName, String password, String tenantId) throws UserStoreException {
+        //boolean isAuthenticated = false;
+        try {
+            PrivilegedCarbonContext.startTenantFlow();
+            PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(parseInt(tenantId), true);
+            String username = MultitenantUtils.getTenantAwareUsername(userName);
+            boolean isAuthenticated = realm.getTenantUserRealm(parseInt(tenantId)).getUserStoreManager().authenticate(username, password);
+            PrivilegedCarbonContext.endTenantFlow();
+            return isAuthenticated;
+        } catch (UserStoreException e) {
+            LOG.error(e);
+            throw new UserStoreException("Unable to authenticate user due to " + e.getMessage(), e);
         }
     }
 }

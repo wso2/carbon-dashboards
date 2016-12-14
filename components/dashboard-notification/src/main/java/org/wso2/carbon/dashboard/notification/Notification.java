@@ -83,18 +83,4 @@ public class Notification {
     public String getDirectUrl() {
         return directUrl;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        sb.append("  notificationId: ").append(getNotificationId()).append(",");
-        sb.append("  title : ").append(getTitle()).append(",");
-        sb.append("  message  :").append(getMessage()).append(",");
-        sb.append("  directUrl  :").append(getDirectUrl()).append("");
-        sb.append("}");
-        return sb.toString();
-    }
-
-
 }

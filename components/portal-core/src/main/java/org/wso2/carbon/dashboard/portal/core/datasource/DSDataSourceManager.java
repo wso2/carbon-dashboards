@@ -20,6 +20,7 @@ package org.wso2.carbon.dashboard.portal.core.datasource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -31,6 +32,7 @@ import org.wso2.carbon.ndatasource.common.DataSourceException;
 import org.wso2.carbon.ndatasource.core.DataSourceService;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
+import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -311,7 +313,7 @@ public class DSDataSourceManager {
      * @throws DashboardPortalException
      */
     public void insertGadgetUsageInfo(int tenantID, String dashboardID, String gadgetId, String gadgetState,
-            String usageData) throws DashboardPortalException {
+                                      String usageData) throws DashboardPortalException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -333,6 +335,7 @@ public class DSDataSourceManager {
         }
     }
 
+
     /**
      * To update or insert the gadget usage info
      *
@@ -343,7 +346,7 @@ public class DSDataSourceManager {
      * @param usageData   Usage information of the gadget
      */
     public void updateOrInsertGadgetUsageInfo(int tenantID, String dashboardID, String gadgetId, String gadgetState,
-            String usageData) throws DashboardPortalException {
+                                              String usageData) throws DashboardPortalException {
         if (getGadgetUsageInfo(tenantID, dashboardID, gadgetId) != null) {
             updateGadgetUsageInfo(tenantID, dashboardID, gadgetId, gadgetState, usageData);
         } else {
@@ -362,7 +365,7 @@ public class DSDataSourceManager {
      * @throws DashboardPortalException
      */
     public void updateGadgetUsageInfo(int tenantID, String dashboardID, String gadgetId, String gadgetState,
-            String usageData) throws DashboardPortalException {
+                                      String usageData) throws DashboardPortalException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -609,6 +612,310 @@ public class DSDataSourceManager {
         return false;
     }
 
+    ///////Notification tables related operations
+    public void createUserNotificationTenantDomain(String tenantDomain) throws SQLException {
+        Connection connection = null;
+        Statement statement = null;
+        String tenantdomain = tenantDomain.replace(".", "_");
+        tenantdomain.toUpperCase();
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS USER_NOTIFICATION_" + tenantdomain + " ( USERNAME VARCHAR (255) NOT NULL, NOTIFICATIONS TEXT, PRIMARY KEY(USERNAME))");
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (Exception se) {
+            log.error("Cannot create user Notifivation table for the " + tenantDomain + " ", se);
+        } finally {
+            closeDatabaseResources(connection, statement, null);
+        }
+    }
+
+    public void createNotificationTenantDomain(String tenantDomain) throws SQLException {
+        Connection connection = null;
+        Statement statement = null;
+        String tenantdomain = tenantDomain.replace(".", "_");
+        tenantdomain.toUpperCase();
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS NOTIFICATION_" + tenantdomain + " (\n" +
+                    "  NOTIFICATION_ID VARCHAR (255 ) NOT NULL ,\n" +
+                    "  TITLE VARCHAR (255 ),\n" +
+                    "  MESSAGE VARCHAR (255),\n" +
+                    "  REDIRECT_URL VARCHAR (255),\n" +
+                    "  USERS_COUNT INT NOT NULL,\n" +
+                    "  READ_COUNT INT NOT NULL,\n" +
+                    "  PRIMARY KEY (NOTIFICATION_ID)\n" +
+                    ");");
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+
+        } catch (Exception se) {
+            log.error("Cannot create user Notifivation table for the " + tenantDomain + " ", se);
+        } finally {
+            closeDatabaseResources(connection, statement, null);
+        }
+    }
+
+
+    /**
+     * get the notifications list of the user
+     *
+     * @param username username of the user
+     * @return String of notificationList with notificationIds, and READ status
+     */
+    public String getNotificationListOfUser(String username) throws SQLException {
+        String tenantdomain = MultitenantUtils.getTenantDomain(username).replace(".", "_");
+        tenantdomain.toUpperCase();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String notificationsList = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT NOTIFICATIONS FROM USER_NOTIFICATION_" + tenantdomain.toUpperCase() + " WHERE USERNAME=?");
+            preparedStatement.setString(1, username);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            if (resultSet.next()) {
+                notificationsList = resultSet.getString(1);
+            }
+        } catch (Exception e) {
+            log.error(e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, resultSet);
+        }
+        return notificationsList;
+    }
+
+    /*
+    * insert the notification details to the database
+    *
+    * @param notificationId Id of the notification
+    * @param title The title of the received notification
+    * @param message The message of the notification
+    * @param directUrl The directurl of the notification that should be directed
+    * @throws DashboardPortalException
+    * */
+
+    public void insertIntoNotification(String tenantDomain, String notificationId, String title, String message, String redirectUrl, int userCount, int readCount) throws DashboardPortalException, SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
+        log.info(tenantdomain);
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("INSERT INTO NOTIFICATION_" + tenantdomain + " (NOTIFICATION_ID,TITLE, MESSAGE,REDIRECT_URL, USERS_COUNT, READ_COUNT) VALUES (?,?,?,?,?,?)");
+            preparedStatement.setString(1, notificationId);
+            preparedStatement.setString(2, title);
+            preparedStatement.setString(3, message);
+            preparedStatement.setString(4, redirectUrl);
+            preparedStatement.setInt(5, userCount);
+            preparedStatement.setInt(6, readCount);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (Exception e) {
+            log.error(e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /*
+    * insert  User_notification datails
+    *
+    * @param notificationId
+    * @param userId
+    * @throws DashboardPortalException
+    * */
+
+    public void insertIntoUserNotificationTenantDomain(String username, String notificationLists) throws DashboardPortalException, SQLException {
+        String tenantDomain = MultitenantUtils.getTenantDomain(username);
+        String tenantdomain = tenantDomain.replace(".", "_");
+        tenantdomain.toUpperCase();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            if (!checkUserExistInUserNotificationTenantDomain(username)) {
+                preparedStatement = connection.prepareStatement("INSERT INTO USER_NOTIFICATION_" + tenantdomain + " (NOTIFICATIONS, USERNAME) VALUES (?,?)");
+            } else {
+                updateNotificationListOfUser(notificationLists, username);
+                return;
+            }
+            preparedStatement.setString(1, notificationLists);
+            preparedStatement.setString(2, username);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (Exception e) {
+            log.error(e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    public boolean checkUserExistInUserNotificationTenantDomain(String username) throws SQLException {
+        String tenantDomain = MultitenantUtils.getTenantDomain(username);
+        String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("Running a query to test the database tables existence");
+            }
+            // check whether the user is already added in table
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            try {
+                preparedStatement = connection.prepareStatement("SELECT * FROM USER_NOTIFICATION_" + tenantdomain + " WHERE USERNAME=?");
+                preparedStatement.setString(1, username);
+                resultSet = preparedStatement.executeQuery();
+                if (!connection.getAutoCommit()) {
+                    connection.commit();
+                }
+                if (resultSet.next()) {
+                    return true;
+                }
+            } finally {
+                closeDatabaseResources(connection, preparedStatement, resultSet);
+            }
+        } catch (Exception e) {
+            log.error(e);
+        }
+        return false;
+    }
+
+    /*
+    * get the notification detail for a particular notificationId, and tenantId
+    *
+    * @param notificationId
+    * @return title, message, directUrl
+    * throws DashboardPortalException
+    */
+    public String[] getNotificationDetails(String notificationId, String tenantDomain) throws DashboardPortalException, SQLException {
+        String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
+        String[] notificationDetail = new String[3];
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT TITLE, MESSAGE, REDIRECT_URL FROM NOTIFICATION_" + tenantdomain + " WHERE NOTIFICATION_ID=?");
+            preparedStatement.setString(1, notificationId);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            if (resultSet.next()) {
+                notificationDetail[0] = (resultSet.getString(DataSourceConstants.TITLE));
+                notificationDetail[1] = (resultSet.getString(DataSourceConstants.MESSAGE));
+                notificationDetail[2] = (resultSet.getString(DataSourceConstants.REDIRECT_URL));
+            }
+        } catch (Exception se) {
+            log.error("Cannot get the notifications details for the particular notificationId" + se);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, resultSet);
+        }
+        return notificationDetail;
+    }
+
+    public void updateNotificationListOfUser(String notificationsList, String username) throws SQLException {
+        String tenantDomain = MultitenantUtils.getTenantDomain(username);
+        String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("UPDATE  USER_NOTIFICATION_" + tenantdomain + " SET NOTIFICATIONS =? WHERE USERNAME=?");
+            preparedStatement.setString(1, notificationsList);
+            preparedStatement.setString(2, username);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (Exception se) {
+            log.error("Cannot update user- notification details" + se);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
+    /**
+     * @param notificationId
+     * @param tenantDomain
+     */
+    public void updateNotificationTenantDomain(String notificationId, String tenantDomain) throws SQLException {
+        String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("UPDATE NOTIFICATION_" + tenantdomain + " SET READ_COUNT = READ_COUNT + 1 WHERE NOTIFICATION_ID=?");
+            preparedStatement.setString(1, notificationId);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (Exception e) {
+            log.error(e);
+        }
+    }
+
+    public JSONArray getUsersCountInformationFromNotificationTenantDomain(String tenantDomain) throws SQLException {
+        String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
+        JSONArray notifications = new JSONArray();
+        JSONObject count = new JSONObject();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT NOTIFICATION_ID, USERS_COUNT, READ_COUNT FROM NOTIFICATION_" + tenantdomain);
+            resultSet = preparedStatement.executeQuery();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+            while (resultSet.next()) {
+                count.put(DataSourceConstants.NOTIFICATION_ID, resultSet.getString(DataSourceConstants.NOTIFICATION_ID));
+                count.put(DataSourceConstants.USERS_COUNT, resultSet.getInt(DataSourceConstants.USERS_COUNT));
+                count.put(DataSourceConstants.READ_COUNT, resultSet.getInt(DataSourceConstants.READ_COUNT));
+                notifications.add(count);
+            }
+        } catch (Exception se) {
+            log.error("Cannot get the notifications details for the particular notificationId" + se);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, resultSet);
+        }
+        return notifications;
+    }
+
+    public void removeNotifcnFromNotificationTenantDomain(String notificationId, String tenantDomain) throws SQLException {
+        String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("DELETE FROM NOTIFICATION_" + tenantdomain + "  WHERE NOTIFICATION_ID=?");
+            preparedStatement.setString(1, notificationId);
+            preparedStatement.executeUpdate();
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (Exception e) {
+            log.error(e);
+        } finally {
+            closeDatabaseResources(connection, preparedStatement, null);
+        }
+    }
+
     /**
      * To get the details of the defective usage data
      *
@@ -652,7 +959,7 @@ public class DSDataSourceManager {
      * @param resultSet         ResultSet to be closed
      */
     private static void closeDatabaseResources(Connection connection, Statement preparedStatement,
-            ResultSet resultSet) {
+                                               ResultSet resultSet) {
         // Close the resultSet
         if (resultSet != null) {
             try {

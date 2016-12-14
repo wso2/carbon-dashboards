@@ -26,6 +26,7 @@
         var permission = require('/modules/permission.js');
         var constants = require('/modules/constants.js');
         var config = require('/modules/config.js').getConfigFile();
+
     %>
     
     <title><%= i18n.localize("dashboards.label")%></title>
@@ -37,6 +38,9 @@
 </head>
 <body>
     <% include(utils.resolvePath('templates/includes/global-navigation.jag')); %>
+
+    <link href="libs/theme-wso2_1.0.0/css/theme-wso2.css" rel="stylesheet" type="text/css" />
+
 
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
@@ -64,7 +68,7 @@
                             </span>
                         </a>
                     </div>
-                    <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0px;">
+                    <div id="navbar" class="collapse navbar-collapse " >
                         <ul class="nav navbar-nav collapse-nav-sub">
                             <% if (! isMobileDevice && permission.isAllowed(constants.CREATE)) { %>
                         <li>
@@ -77,8 +81,16 @@
                         </li>
                         <% } %>
                         </ul>
+                                 <% include(utils.resolvePath('templates/includes/notification-button.jag')); %>
+
+                            </div>
+
                     </div><!--/.nav-collapse -->
                 </div>
+               <% include(utils.resolvePath('templates/includes/notification-details.jag')); %>
+
+
+
                 <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true"><!-- nav-collapse -->
                     <ul class="nav navbar-nav collapse-nav-sub">
                         <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
@@ -98,7 +110,7 @@
         </div>
     <% } %>
 
-    <div id="ues-portal" class="container-fluid">
+    <div class="container-fluid" id="ues-portal" >
         <div class="row">
             <div class="col-md-8">
                 <h1 class="page-sub-title"><%= i18n.localize("dashboards.label") %></h1>
@@ -119,6 +131,8 @@
             <% } %>
         </div>
         <div class="row thumbnails ues-dashboards" id="ds-assets-portal"></div>
+
+
     </div>
 
     <!-- Footer -->
@@ -214,6 +228,7 @@
         {{/if}}
     </script>
 
+
     <script id="ues-dashboard-confirm-hbs" type="text/x-handlebars-template">
         <h5 class="title"><%= i18n.localize("delete.dashboard.confirm")%> {{title}}?</h5>
         <div class="ues-trash-actions">
@@ -239,6 +254,7 @@
     <% include('/controllers/includes/common-scripts.jag'); %>
     <script src="<%=urlPrefix%>js/ues-store.js"></script>
     <script src="<%=urlPrefix%>js/portal.js"></script>
+    <script src="<%=urlPrefix%>js/notification.js"></script>
     <% include('/controllers/includes/theme-portal-scripts.jag'); %>
     <script type="text/javascript">
         $('#navbar2').on('shown.bs.collapse', function (e) {

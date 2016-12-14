@@ -15,21 +15,30 @@
  * limitations under the License.
  */
 %>
+<%
+var usr = require('/modules/user.js');
+var user = usr.current();
+%>
 
 <div class="sidebar-wrapper  " hidden id="right-sidebar"  data-side="right" data-width="320" data-sidebar-fixed="true" data-fixed-offset="50" data-spy="affix" data-offset-top="80" style="height: 599px; width: 320px; right: 0px;">
         <ul class="sidebar-messages">
-            <h4 class="text-center" id="notification_count"></h4>
+            <h4 class="text-center" id="notification"></h4>
             <li id="allNotifications">
             </li>
         </ul>
-        <div class="text-center">
+       <!-- <div class="text-center">
             <a href="/devicemgt/notification-listing" class="btn btn-primary">Show All Notifications</a>
-        </div>
+        </div>-->
 </div>
 
 <script id="all-notification-hbs" type="text/x-handlebars-template">
     <ul class="sidebar-messages">{{#each .}}
-                    <li class="message " >
+                    <li class="message "  id="notification" value="{{notificationId}}" >
                     {{title}}   : {{message}} <a href="{{directUrl}}"><br>{{directUrl}}</a></li>{{/each}}
     </ul>
 </script>
+
+<script>
+var userName = <%= stringify(user.username) %>;
+</script>
+<script src="<%=urlPrefix%>js/notification.js"></script>

@@ -18,53 +18,52 @@
 
 package org.wso2.carbon.dashboard.notification;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.annotation.HttpMethodConstraint;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/notificationApi")
-@Produces(MediaType.APPLICATION_JSON)
 public interface NotificationManagementService {
-
-
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/notifications/")
-    Response addNotification(
-            Notification notif, @QueryParam("UUID") String UUID,@QueryParam("username") String username
-    ) throws NotificationManagementException;
-
-    /*@GET
-    @Path("/notifications/notificationList/{username}")
-    Response getNotificationListOfUser(@PathParam("username")String username
-    ) throws NotificationManagementException;*/
-
-
-    @GET
-    @Consumes("text/plain")
-    @Path("/notifications/detail/")
-    Response getNotificationDetails(@QueryParam("UUID") String UUID, @QueryParam("username") String username
-    ) throws NotificationManagementException;
-
-
-    @PUT
-    @Path("/notifications/upadate/")
-    @Consumes("text/plain")
-    Response updateStatusOfNotification(@QueryParam("UUID") String UUID,@QueryParam("notificationId") String notificationId, @QueryParam("username") String username
-    ) throws NotificationManagementException;
-
-    @GET
-    @Path("/notifications/newnotification/count/")
-    @Consumes("text/plain")
-    Response getUnreadNotificationCount( @QueryParam("UUID") String UUID, @QueryParam("username") String username
-    ) throws NotificationManagementException;
 
     @POST
     @Produces("text/plain")
     @Path("/notifications/login/")
     @HeaderParam("encoded")
-    String login(@HeaderParam("encoded") String encoded, @QueryParam("tenantId") String tenantId) throws NotificationManagementException;
+    public Response login(@HeaderParam("encoded") String encoded,
+                          @QueryParam("tenantId") String tenantId) throws NotificationManagementException;
+
+    @POST
+    @Produces("text/plain")
+    @Path("/notifications/logout/")
+    @HeaderParam("encoded")
+    public Response logout(@QueryParam("uuid") String uuid,
+                           @QueryParam("username") String username,
+                           @QueryParam("tenantId") String tenantId) throws NotificationManagementException;
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/notifications/")
+    public Response addNotification(Notification notification,
+                                    @QueryParam("tenantId") String tenantId,
+                                    @QueryParam("uuid") String uuid,
+                                    @QueryParam("username") String username) throws NotificationManagementException;
+
+
+    @GET
+    @Consumes("text/plain")
+    @Produces("application/json")
+    @Path("/notifications/detail/")
+    public Response getNotificationDetails(@QueryParam("uuid") String uuid,
+                                           @QueryParam("username") String username,
+                                           @QueryParam("tenantId") String tenantId) throws NotificationManagementException;
+
+    @PUT
+    @Consumes("text/plain")
+    @Path("notifications/update")
+    public Response updateNotificationsListOfUser(@QueryParam("notificationId") String notificationId,
+                                                  @QueryParam("username") String username,
+                                                  @QueryParam("uuid") String uuid,
+                                                  @QueryParam("tenantId") String tenantId) throws NotificationManagementException;
 
 }
