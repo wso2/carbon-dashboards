@@ -21,14 +21,14 @@
  * This RESTClientInvoker is the where actual backed call is made. It may be a pure HTTP request or XMLHTTP request.
  */
 var RESTClientInvoker = function () {
-    var log = new Log("/controllers/api/RESTClientInvoker.jag");
+    var log = new Log("/controllers/api/restclientinvoker.jag");
     var publicXMLHTTPInvokers = {};
     var publicHTTPInvokers = {};
     var privateMethods = {};
     var TOKEN_EXPIRED = "Access token expired";
     var TOKEN_INVALID = "Invalid input. Access token validation failed";
     var constants = require("/modules/constants.js");
-    var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
+    var tokenUtil = require("/modules/oauth/token-handler-utils.js")["utils"];
 
     /**
      * This method add OAuth authentication header to outgoing XML HTTP Requests if OAuth authentication is enabled.

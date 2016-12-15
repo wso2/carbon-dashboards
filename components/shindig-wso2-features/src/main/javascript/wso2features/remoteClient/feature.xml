@@ -18,7 +18,7 @@
 <feature>
     <name>wso2-gadgets-remoteClient</name>
     <gadget>
-        <script src="XMLHttpRequest.js"></script>
-        <script src="HttpRequest.js"></script>
+        <script src="xmlhttprequest.js"></script>
+        <script src="httprequest.js"></script>
     </gadget>
 </feature>
