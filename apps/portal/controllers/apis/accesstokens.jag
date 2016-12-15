@@ -17,11 +17,10 @@
  *  under the License.
  *
  */
-function getSamlAccessToken() {
+function getAccessToken(callBack) {
     var dashboards = require('/modules/dashboards.js');
     var usr = require('/modules/user.js');
-    var oauth = require("oauth");
-
+    var tokenUtil = require("/modules/oauth/token-handler-utils.js")["utils"];
     // check whether the user is logged in
     var user = usr.current();
     if (!user) {
@@ -31,57 +30,28 @@ function getSamlAccessToken() {
     // match url for patterns
     var matcher = new URIMatcher(request.getRequestURI());
     if (matcher.match('/accesstokens/{id}')) {
-        var vars = matcher.elements();
-        var dashboardId = vars.id;
-        var dashboard = dashboards.getAsset(dashboardId);
-
-        if (dashboard == null) {
-            return "unable to find the dashboard";
-        }
-        var oauthEnabled = dashboard.enableOauth ? true : false;
-
-        if (oauthEnabled) {
-            var provider = {
-                "oauth_version": "2",
-                "authorization_url": "",
-                "access_token_url": dashboard.accessTokenUrl,
-                "request_token_url": "",
-                "callback_url": "",
-                "api_key": dashboard.apiKey,
-                "api_secret": dashboard.apiSecret
-            };
-
-            var wso2is = new oauth.OAuthProvider(provider);
-            var samlResp = session.get("samlResponse");
-            var accessTokenArr = session.get("accessTokenArr");
-            if (accessTokenArr == null) {
-                accessTokenArr = [];
-            }
-            var accessToken;
-            for (var i = 0; i < accessTokenArr.length; i++) {
-                if (accessTokenArr[i].did == dashboardId) {
-                    accessToken = accessTokenArr[i].accessToken;
-                    break;
+        if (tokenUtil.checkOAuthEnabled()) {
+            tokenUtil.getAccessToken(function (accessToken) {
+                if (accessToken == null || accessToken == "") {
+                    log.error("/controllers/apis/accesstokens.jag: Access token has not been set yet");
+                    callBack({"accessToken": ""});
+                } else {
+                    log.warn(accessToken);
+                    callBack({"accessToken": accessToken});
                 }
-            }
-
-            if (accessToken == null || accessToken == "") {
-                try {
-                    var accessTokenResponse = wso2is.getTokenResponse(samlResp);
-                    accessToken = accessTokenResponse.getAccessToken();
-                    accessTokenArr.push({"did": dashboardId, "accessToken": accessToken});
-                    session.put("accessTokenArr", accessTokenArr);
-                    return {"accessToken": accessToken};
-                } catch (err) {
-                    return {"accessToken": "Access token not available. " + err.message};
-                }
-            } else {
-                return {"accessToken": accessToken};
-            }
+            });
         } else {
-            return {"accessToken": ""};
+            log.warn("/controllers/apis/accesstokens.jag: Please enable oauth as authorization mechanism in" +
+                    " designer.json");
+            return callBack({"accessToken": ""});
         }
     }
 }
-print(getSamlAccessToken());
+
+var accessTokenInfo = {"accessToken": ""};
+getAccessToken(function(tokenInfo){
+    accessTokenInfo = tokenInfo;
+});
+
+print(accessTokenInfo);
 %>
