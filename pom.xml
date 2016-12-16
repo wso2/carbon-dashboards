@@ -83,11 +83,11 @@
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <carbon.dashboards.version>3.0.0-SNAPSHOT</carbon.dashboards.version>
-        <carbon-uuf-maven-plugin.version>1.0.0-m6</carbon-uuf-maven-plugin.version>
+        <carbon-uuf-maven-plugin.version>1.0.0-m8</carbon-uuf-maven-plugin.version>
         <carbon.uuf.core.version>1.0.0-SNAPSHOT</carbon.uuf.core.version>
         <carbon.datasource.core.version>1.0.0</carbon.datasource.core.version>
         <carbon.messaging.version>1.0.6</carbon.messaging.version>
-        <msf4j-core.version>2.1.0-SNAPSHOT</msf4j-core.version>
+        <msf4j-core.version>2.1.1-SNAPSHOT</msf4j-core.version>
         <testng.version>6.9.4</testng.version>
         <mockito-core.version>2.0.44-beta</mockito-core.version>
         <slf4j-api.version>1.7.5</slf4j-api.version>
