@@ -28,7 +28,7 @@
     var relayState = decodeURIComponent(request.getParameter('RelayState'));
     var attr = configs.authentication.methods.sso.attributes;
     var sso = require('sso');
-    var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
+    var tokenUtil = require("/modules/oauth/token-handler-utils.js")["utils"];
     var constants = require("/modules/constants.js");
     var samlRespObj;
     var CarbonUtils = Packages.org.wso2.carbon.utils.CarbonUtils;
@@ -36,6 +36,7 @@
     var keyStoreName = CarbonUtils.getServerConfiguration().getFirstProperty("Security.TrustStore.Location");
     var identityAlias = attr.identityAlias;
     var permission = require("/modules/permission.js");
+    var apiWrapperUtil = require("/modules/oauth/token-handlers.js")["handlers"];
     var DEFAULT_TO_FALSE = false;
     var keyStoreProps = {
         KEY_STORE_NAME: keyStoreName,
@@ -103,15 +104,9 @@
                 }
                 session.put('user', user);
                 session.put("samlResponse", samlResponse);
-                var idPServer = tokenUtil.getIdPServerURL();
-                if (tokenUtil.checkOAuthEnabled() && idPServer) {
+                if (tokenUtil.checkOAuthEnabled()) {
                     var properties = {samlToken: sessionObj.samlToken, user: username};
-                    tokenUtil.setupAccessTokenPair(constants.GRANT_TYPE_SAML, properties, idPServer,
-                            function (status) {
-                                if (!status) {
-                                    log.error("Error while setting up access token and refresh token");
-                                }
-                            });
+                    apiWrapperUtil.setupTokenPairBySamlGrantType(username, sessionObj.samlToken);
                     response.sendRedirect(relayState);
                     return;
                 } else {

@@ -21,23 +21,23 @@
  */
 (function () {
 
-    var log = new Log("/controllers/apis/XMLHTTPClient.jag");
+    var log = new Log("/controllers/apis/xmlhttpclient.jag");
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
     var constants = require("/modules/constants.js");
-    var RESTClientInvoker = require("/controllers/apis/RESTClientInvoker.jag").RESTClientInvoker;
+    var RESTClientInvoker = require("/controllers/apis/restclientinvoker.jag").RESTClientInvoker;
     var utils = require('/modules/utils.js');
     var uri = request.getRequestURI();
     var uriMatcher = new URIMatcher(String(uri));
     var method = request.getMethod();
-    var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
+    var tokenUtil = require("/modules/oauth/token-handler-utils.js")["utils"];
 
     tokenUtil.isUserAuthorized(function(status){
         if(!status){
             response.status = constants.HTTP_USER_NOT_AUTHENTICATED;
             response.content = sendErrorMessage("You have not login to the wso2 dashboard server yet")
         }else{
-            if (uriMatcher.match("/XMLHTTPClient") && method === constants.HTTP_POST) {
+            if (uriMatcher.match("/xmlhttpclient") && method === constants.HTTP_POST) {
                 method = request.getContent().actionMethod;
                 var targetURL = request.getContent().actionUrl;
                 var payload = request.getContent().actionPayload;

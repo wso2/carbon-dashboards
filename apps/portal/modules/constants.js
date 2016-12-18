@@ -31,7 +31,6 @@ var JS_PATH = "js/";
 var CSS_PATH = "/css";
 var THEME_PATH = "theme/";
 
-var ACCESS_TOKEN_PAIR_IDENTIFIER = "accessTokenPair";
 var ENCODED_CLIENT_KEYS_IDENTIFIER = "encodedClientKey";
 var AUTHORIZATION_HEADER = "Authorization";
 var SCOPE_PRODUCTION = "PRODUCTION"
@@ -91,3 +90,10 @@ var LAYOUT_TYPE = 'layout';
 var ES_STORE_DELIMITER = '_';
 
 var DASHBOARD_REGISTRY_PATH = '/_system/config/ues/dashboards';
+
+var ACCESS_TOKEN_PAIR_IDENTIFIER_FOR_PORTAL = "accessTokenPairForPotal";
+var ACCESS_TOKEN_PAIR_IDENTIFIER_FOR_PORTAL = "tokenPairForPortal";
+var ENCODED_TENANT_BASED_CLIENT_APP_CREDENTIALS_PORTAL_APP = "encodedTenantBasedClientAppCredentialsPortal";
+var CONTENT_TYPE_IDENTIFIER = "Content-Type";
+var CACHED_CREDENTIALS_PORTAL_APP = "tenantBasedCredentials";
+var ALLOWED_SCOPES = "scopeList";

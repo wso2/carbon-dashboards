@@ -22,13 +22,13 @@
  */
 (function () {
 
-    var log = new Log("/controllers/apis/HTTPClient.jag");
+    var log = new Log("/controllers/apis/httpclient.jag");
     var carbon = require('carbon');
     var configs = require('/configs/designer.json');
     var constants = require("/modules/constants.js");
-    var RESTClientInvoker = require("/controllers/apis/RESTClientInvoker.jag").RESTClientInvoker;
+    var restClientInvoker = require("/controllers/apis/restclientinvoker.jag").RESTClientInvoker;
     var utils = require('/modules/utils.js');
-    var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
+    var tokenUtil = require("/modules/oauth/token-handler-utils.js")["utils"];
     var uri = request.getRequestURI();
     var uriMatcher = new URIMatcher(String(uri));
     var method = request.getMethod();
@@ -41,7 +41,7 @@
         }
     });
 
-    if (uriMatcher.match("/HTTPClient") && method === constants.HTTP_POST) {
+    if (uriMatcher.match("/httpclient") && method === constants.HTTP_POST) {
         method = request.getContent().actionMethod;
         var targetURL = request.getContent().actionUrl;
         var payload = request.getContent().actionPayload;
@@ -66,7 +66,7 @@
             try {
                 switch (method) {
                     case constants.HTTP_GET:
-                        RESTClientInvoker.HTTPClient.GET(
+                        restClientInvoker.HTTPClient.GET(
                                 targetURL, function (responsePayload) {
                                     response.status = responsePayload.status;
                                     response.content = responsePayload.responseText;
@@ -79,7 +79,7 @@
                                 acceptType);
                         break;
                     case constants.HTTP_POST:
-                        RESTClientInvoker.HTTPClient.POST(
+                        restClientInvoker.HTTPClient.POST(
                                 targetURL, payload, function (responsePayload) {
                                     response.status = responsePayload.status;
                                     response.content = responsePayload.responseText;
@@ -92,7 +92,7 @@
                                 acceptType);
                         break;
                     case constants.HTTP_PUT:
-                        RESTClientInvoker.HTTPClient.PUT(
+                        restClientInvoker.HTTPClient.PUT(
                                 targetURL, payload, function (responsePayload) {
                                     response.status = responsePayload.status;
                                     response.content = responsePayload.responseText;
@@ -105,7 +105,7 @@
                                 acceptType);
                         break;
                     case constants.HTTP_DELETE:
-                        RESTClientInvoker.HTTPClient.DELETE(
+                        restClientInvoker.HTTPClient.DELETE(
                                 targetURL, function (responsePayload) {
                                     response.status = responsePayload.status;
                                     response.content = responsePayload.responseText;

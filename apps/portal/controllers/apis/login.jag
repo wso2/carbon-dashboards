@@ -18,11 +18,12 @@ var user;
 (function () {
     var log = new Log();
     var configs = require('/configs/portal.js').config();
-    var tokenUtil = require("/modules/tokenUtil.js").tokenUtil;
+    var tokenUtil = require("/modules/oauth/token-handler-utils.js")["utils"];
     var constants = require("/modules/constants.js");
     var dashboards = require('/modules/dashboards.js');
     var permission = require("/modules/permission.js");
     var conf = require('/configs/designer.json');
+    var apiWrapperUtil = require("/modules/oauth/token-handlers.js")["handlers"];
     var i18n = require("i18n");
     i18n.init(request, utils.getLocaleResourcePath());
 
@@ -75,13 +76,8 @@ var user;
                 session.put("Loged", "true");
                 var authToken = api.authenticate(username, password);
                 var properties = {username: username, password: password};
-                var idPServer = tokenUtil.getIdPServerURL();
-                if (tokenUtil.checkOAuthEnabled() && idPServer) {
-                    tokenUtil.setupAccessTokenPair(constants.GRANT_TYPE_PASSWORD, properties, idPServer, function (status) {
-                        if (!status) {
-                            log.error("Error while setting up access token and refresh token");
-                        }
-                    });
+                if (tokenUtil.checkOAuthEnabled()) {
+                    apiWrapperUtil.setupTokenPairByPasswordGrantType(username, password);
                 }
                 session.put('authToken', authToken);
                 if (log.isDebugEnabled()) {

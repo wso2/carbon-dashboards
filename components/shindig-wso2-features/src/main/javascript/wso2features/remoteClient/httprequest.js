@@ -16,9 +16,9 @@
  * under the License.
  */
 
-wso2.gadgets.XMLHttpRequest  = (function () {
+wso2.gadgets.HttpRequest  = (function () {
     var module = this;
-    var END_POINT = "/portal/apis/XMLHTTPClient";
+    var END_POINT = "/portal/apis/httpclient";
     var HTTP_GET = "GET";
     var HTTP_POST = "POST";
     var HTTP_PUT = "PUT";
