@@ -36,7 +36,6 @@ function getAccessToken(callBack) {
                     log.error("/controllers/apis/accesstokens.jag: Access token has not been set yet");
                     callBack({"accessToken": ""});
                 } else {
-                    log.warn(accessToken);
                     callBack({"accessToken": accessToken});
                 }
             });
