@@ -28,6 +28,11 @@
                         <goals>
                             <goal>create-component</goal>
                         </goals>
+                        <configuration>
+                            <instructions>
+                                <Import-Package>org.wso2.carbon.dashboards.metadata.api</Import-Package>
+                            </instructions>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
