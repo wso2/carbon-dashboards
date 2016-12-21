@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.wso2.carbon.dashboards</groupId>
+        <artifactId>carbon-dashboards</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.wso2.carbon.dashboards.api.feature</artifactId>
+    <packaging>pom</packaging>
+    <name>WSO2 Carbon - Dashboard Api Feature</name>
+    <url>http://wso2.org</url>
+
+
+    <description>
+        This feature contains the bundles which contains metadata backend and the interface for carbon dashboards
+    </description>
+    <dependencies>
+        <dependency>
+            <groupId>com.h2database.wso2</groupId>
+            <artifactId>h2-database-engine</artifactId>
+            <version>1.2.140.wso2v3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>org.wso2.carbon.dashboards.metadata</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>org.wso2.carbon.dashboards.metadata.api</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>clean-Dashboard-h2-database</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete file="src/main/resources/repository/database/DASHBOARD_DB.h2.db"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-dashboard-database</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <path id="h2.classpath">
+                                    <path refid="maven.compile.classpath"/>
+                                </path>
+                                <echo message="########### Creating Dashboard Database ##############"/>
+                                <sql driver="org.h2.Driver"
+                                     url="jdbc:h2:${basedir}/src/main/resources/repository/database/DASHBOARD_DB;create=true"
+                                     userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
+                                    <classpath>
+                                        <path refid="h2.classpath"/>
+                                    </classpath>
+                                    <fileset file="${basedir}/src/main/resources/sql/h2.sql"/>
+                                </sql>
+                                <echo message="##################### END ########################"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.wso2.maven</groupId>
+                <artifactId>carbon-p2-plugin</artifactId>
+                <!--<version>${carbon.p2.plugin.version}</version>-->
+                <executions>
+                    <execution>
+                        <id>4-p2-feature-generation</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>p2-feature-gen</goal>
+                        </goals>
+                        <configuration>
+                            <id>org.wso2.carbon.dashboards.api</id>
+                            <propertiesFile>../../etc/feature.properties</propertiesFile>
+                            <adviceFile>
+                                <properties>
+                                    <propertyDef>org.wso2.carbon.p2.category.type:server
+                                    </propertyDef>
+                                    <propertyDef>org.eclipse.equinox.p2.type.group:false
+                                    </propertyDef>
+                                </properties>
+                            </adviceFile>
+                            <bundles>
+                                <bundleDef>
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.metadata:${carbon.dashboards.version}
+                                </bundleDef>
+                                <bundleDef>
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.metadata.api:${carbon.dashboards.version}
+                                </bundleDef>
+                            </bundles>
+                            <importFeatures>
+                                <importFeatureDef>org.wso2.carbon.datasource.core:${carbon.datasource.core.version}</importFeatureDef>
+                                <importFeatureDef>org.wso2.msf4j:${msf4j-core.version}</importFeatureDef>
+                            </importFeatures>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
