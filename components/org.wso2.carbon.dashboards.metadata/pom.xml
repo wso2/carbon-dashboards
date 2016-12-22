@@ -73,7 +73,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Private-Package>org.wso2.carbon.dashboards.metadata.internal.*</Private-Package>
                         <Import-Package>
                             org.wso2.carbon.uuf.*;version="${carbon.uuf.core.version}",
                             org.osgi.framework.*;version="[1.8.0, 2.0.0)",

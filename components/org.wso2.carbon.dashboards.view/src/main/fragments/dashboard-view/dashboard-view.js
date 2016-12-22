@@ -23,15 +23,50 @@ function onRequest(env) {
     var files = Java.type('java.nio.file.Files');
     var paths = Java.type('java.nio.file.Paths');
 
-    try{
-        var content = JSON.parse(new string(files.readAllBytes(paths.get(path))));
-    } catch(Exception) {
-        Log.error(Exception);
-        sendError(500, "Something went wrong!");
+    var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.metadata.internal.provider.impl.MetadataProviderImpl");
+    var Query = Java.type("org.wso2.carbon.dashboards.metadata.bean.Query");
+
+    var dashboardContent;
+    var dashboardMetaData;
+    var dashboardExistance;
+
+    var metadataProviderImpl = new MetadataProviderImpl();
+    var query = new Query();
+    query.setUrl(env.params.id);
+    //TODO: Need to update the hardcoded values with logged in user
+    query.setOwner("admin");
+
+    try {
+        dashboardExistance = metadataProviderImpl.isExists(query);
+    } catch (e) {
+        Log.error(e);
+        sendError(500, "Error in accessing dashboard DB !");
     }
-    // Send the dashboard to client
-    sendToClient("dashboard", content);
+
+    if (!dashboardExistance) {
+        try {
+            dashboardMetaData = null;
+            dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
+            if (Log.isDebugEnabled) {
+                Log.debug("Dashboard is retrieved from File system");
+            }
+        } catch (e) {
+            //TODO: change this to log.error(message,e) when the UUF provides the support
+            Log.error(e);
+            sendError(500, "Error in reading dashboard JSON file !");
+        }
+    } else {
+        dashboardMetaData = metadataProviderImpl.get(query);
+        dashboardContent = JSON.parse(dashboardMetaData.getContent());
+        if (Log.isDebugEnabled) {
+            Log.debug("Dashboard is retrieved from DB");
+        }
+    }
+
+    // Send the dashboard and metadata to client
+    sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData});
     return {
-        dashboard: content
+        dashboard: dashboardContent,
+        metadata: dashboardMetaData
     };
 }

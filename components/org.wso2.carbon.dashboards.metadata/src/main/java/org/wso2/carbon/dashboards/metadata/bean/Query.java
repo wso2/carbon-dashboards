@@ -23,7 +23,7 @@ package org.wso2.carbon.dashboards.metadata.bean;
  */
 public class Query {
 
-    private String uuid;
+    private String url;
 
     private String owner;
 
@@ -31,34 +31,74 @@ public class Query {
 
     private String version;
 
-    public String getUuid() {
-        return uuid;
+    /**
+     * This method is used to get the url of dashboard
+     *
+     * @return String returns the url of metadata/dashboard
+     */
+    public String getUrl() {
+        return url;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    /**
+     * This method is used to set the url of dashboard
+     *
+     * @param url url of the metadata/dashboard
+     */
+    public void setUrl(String url) {
+        this.url = url;
     }
 
+    /**
+     * This methods is used to get the name of metadata/dashboard
+     *
+     * @return String returns the name of metadata/dashboard
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * This method is used to set the name of metadata/dashboard
+     *
+     * @param name name of the metadata/dashboard
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * This method is used to get the owner of metadata/dashboard
+     *
+     * @return String returns the owner of metadata/dashboard
+     */
     public String getOwner() {
         return owner;
     }
 
+    /**
+     * This method is used to set the owner of metadata/dashboard
+     *
+     * @param owner owner of the metadata/dashboard
+     */
     public void setOwner(String owner) {
         this.owner = owner;
     }
 
+    /**
+     * This method is used to get the version of metadata/dashboard
+     *
+     * @return String returns the version of metadata/dashboard
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * This method is used to set the version of dashboard
+     *
+     * @param version version of metadata/dashboard
+     */
     public void setVersion(String version) {
         this.version = version;
     }
