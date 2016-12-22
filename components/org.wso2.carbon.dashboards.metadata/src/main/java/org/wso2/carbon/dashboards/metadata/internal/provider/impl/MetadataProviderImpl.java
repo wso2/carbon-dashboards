@@ -69,10 +69,6 @@ public class MetadataProviderImpl implements MetadataProvider {
     @Activate
     protected void activate(BundleContext bundleContext) {
         log.info("ServiceComponent activated.");
-        try {
-            test();
-        } catch (Exception e) {
-        }
     }
 
     /**
@@ -81,25 +77,6 @@ public class MetadataProviderImpl implements MetadataProvider {
     @Deactivate
     protected void deactivate() {
         log.info("ServiceComponent deactivated.");
-    }
-
-    private void test() throws MetadataException {
-        log.info("test()");
-        DAOUtils.getInstance().initialize("WSO2_DASHBOARD_DB");
-        Metadata metadata = new Metadata();
-        metadata.setName("Test");
-        metadata.setContent("sdda fadsf dsf dsf dsaadsf1234353543b543 5");
-        metadata.setDescription("fdsfsdfsdfsdfds");
-        metadata.setOwner("Chandana");
-        metadata.setLastUpdatedBy("Chandana");
-        metadata.setLastUpdatedTime((new Date().getTime()));
-        metadata.setCreatedTime((new Date().getTime()));
-        metadata.setVersion("1.2.3");
-
-        this.add(metadata);
-
-
-        log.info("end test()");
     }
 
     @Override

@@ -14,7 +14,7 @@
                     <span id="ues-dashboard-url" class="ues-dashboard-url truncate text-muted">
                         {{t "url.label"}}: <a class="ues-view ues-url-link"
                                               title="{{@contextPath}}/{{id}}/{{#if @params.shared}}?shared=true{{/if}}"
-                                              href="{{@contextPath}}/dashboards/{{id}}/{{#if @params.shared}}?shared=true{{/if}}"
+                                              href="{{@contextPath}}/dashboard/{{id}}/{{#if @params.shared}}?shared=true{{/if}}"
                                               target="_blank">{{@contextPath}}/{{id}}
                         /{{#if @params.shared}}?shared=true{{/if}}</a>
                     </span>
@@ -37,7 +37,7 @@
     <div class="ues-actions">
         <a id="ues-view" {{#if @params.pagesAvailable}}class="ues-view"{{else}}class="ues-view no-hover disable"
            data-toggle="tooltip" title="Pages not available" disabled="disabled"{{/if}}
-           href="{{@contextPath}}/dashboards/{{id}}/{{#if @params.shared}}?shared=true{{/if}}" target="_blank">
+           href="{{@contextPath}}/dashboard/{{id}}/{{#if @params.shared}}?shared=true{{/if}}" target="_blank">
                     <span class="fw-stack">
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-view fw-stack-1x"></i>
@@ -46,7 +46,7 @@
         </a>
         {{#if @params.isNoMobileDevice}}
             {{#if @params.editable}}
-                <a id="ues-edit" class="ues-edit" href="{{@contextPath}}/dashboards/{{@params.id}}?editor=true">
+                <a id="ues-edit" class="ues-edit" href="{{@contextPath}}/dashboard/{{@params.id}}?editor=true">
                         <span class="fw-stack">
                             <i class="fw fw-circle-outline fw-stack-2x"></i>
                             <i class="fw fw-edit fw-stack-1x"></i>

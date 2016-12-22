@@ -39,7 +39,6 @@
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboards.metadata</artifactId>
-            <version>${carbon.dashboards.version}</version>
         </dependency>
     </dependencies>
 

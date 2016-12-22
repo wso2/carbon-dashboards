@@ -33,6 +33,7 @@
         <module>components/org.wso2.carbon.dashboards.view</module>
         <module>components/org.wso2.carbon.dashboards.metadata</module>
         <module>components/org.wso2.carbon.dashboards.metadata.api</module>
+        <module>features/org.wso2.carbon.dashboards.api.feature</module>
         <!-- <module>components/org.wso2.carbon.dashboards.designer</module>
         <module>components/org.wso2.carbon.dashboards.portal</module> -->
     </modules>
@@ -78,6 +79,16 @@
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j-log4j12.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboards.metadata</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboards.metadata.api</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -88,13 +99,14 @@
         <carbon.uuf.core.version>1.0.0-SNAPSHOT</carbon.uuf.core.version>
         <carbon.datasource.core.version>1.0.0</carbon.datasource.core.version>
         <carbon.messaging.version>1.0.6</carbon.messaging.version>
-        <msf4j-core.version>2.1.1-SNAPSHOT</msf4j-core.version>
+        <msf4j-core.version>2.1.0</msf4j-core.version>
         <testng.version>6.9.4</testng.version>
         <mockito-core.version>2.0.44-beta</mockito-core.version>
         <slf4j-api.version>1.7.5</slf4j-api.version>
         <slf4j-log4j12.version>1.6.0</slf4j-log4j12.version>
         <slf4j.version.range>[1.7,2)</slf4j.version.range>
         <org.wso2.carbon.datasource.version.range>[1.0.0, 1.1.0)</org.wso2.carbon.datasource.version.range>
+        <carbon.p2.plugin.version>1.5.3</carbon.p2.plugin.version>
     </properties>
 
     <scm>
@@ -157,6 +169,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>${maven.antrunplugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.wso2.maven</groupId>
+                    <artifactId>carbon-p2-plugin</artifactId>
+                    <version>${carbon.p2.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
