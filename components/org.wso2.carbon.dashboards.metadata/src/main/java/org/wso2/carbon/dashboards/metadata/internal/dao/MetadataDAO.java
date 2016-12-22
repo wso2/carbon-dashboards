@@ -30,44 +30,44 @@ import java.util.List;
 public interface MetadataDAO {
 
     /**
-     * Check whether a Metadata exists with given uuid
+     * Check whether a Metadata exists with given url
      *
-     * @param uuid UUID of the Metadata instance
+     * @param url URL of the Metadata instance
      * @return true if a Metadata exists  with given information, false otherwise.
      * @throws MetadataException if an error occurs
      */
-    boolean isExists(String uuid) throws MetadataException;
+    boolean isExists(String url) throws MetadataException;
 
     /**
      * Check whether a Metadata exists with given Name and Version
      *
-     * @param name    Name of the Metadata instance
+     * @param url    Name of the Metadata instance
      * @param version Version of the Metadata instance
      * @return true if a Metadata exists  with given information, false otherwise.
      * @throws MetadataException if an error occurs
      */
-    boolean isExistsByVersion(String name, String version) throws MetadataException;
+    boolean isExistsByVersion(String url, String version) throws MetadataException;
 
     /**
      * Check whether a Metadata exists with given Owner and Name
      *
      * @param owner Owner of the Metadata instance
-     * @param name  Name of the Metadata instance
+     * @param url  Name of the Metadata instance
      * @return true if a Metadata exists  with given information, false otherwise.
      * @throws MetadataException if an error occurs
      */
-    boolean isExistsOwner(String owner, String name) throws MetadataException;
+    boolean isExistsOwner(String owner, String url) throws MetadataException;
 
     /**
      * Check whether a Metadata exists with given Owner, Name and Version
      *
      * @param owner   Owner of the Metadata instance
-     * @param name    Name of the Metadata instance
+     * @param url    Name of the Metadata instance
      * @param version Version of the Metadata instance
      * @return true if a Metadata exists  with given information, false otherwise.
      * @throws MetadataException if an error occurs
      */
-    boolean isExists(String owner, String name, String version) throws MetadataException;
+    boolean isExists(String owner, String url, String version) throws MetadataException;
 
     /**
      * Metadata add operation
@@ -86,85 +86,84 @@ public interface MetadataDAO {
     void update(Metadata metadata) throws MetadataException;
 
     /**
-     * Metadata delete operation using uuid.
+     * Metadata delete operation using url.
      *
-     * @param uuid UUID of the Metadata instance
+     * @param url URL of the Metadata instance
      * @throws MetadataException if an error occurs
      */
-    void delete(String uuid) throws MetadataException;
+    void delete(String url) throws MetadataException;
 
     /**
      * Metadata delete operation using Owner and Name.
      *
      * @param owner Owner of the Metadata instance
-     * @param name  Name of the Metadata instance
+     * @param url  Name of the Metadata instance
      * @throws MetadataException if an error occurs
      */
-    void delete(String owner, String name) throws MetadataException;
+    void delete(String owner, String url) throws MetadataException;
 
     /**
      * Metadata delete operation using Owner, Name and Version.
      *
      * @param owner   Owner of the Metadata instance
-     * @param name    Name of the Metadata instance
+     * @param url    Name of the Metadata instance
      * @param version Version of the Metadata instance
      * @throws MetadataException if an error occurs
      */
-    void delete(String owner, String name, String version) throws MetadataException;
+    void delete(String owner, String url, String version) throws MetadataException;
 
     /**
-     * Metadata get using UUID.
-     *
-     * @param uuid query parameters
+     * Metadata get using URL
+     * @param url query parameters
      * @return Metadata instance
      * @throws MetadataException if an error occurs
      */
-    Metadata get(String uuid) throws MetadataException;
+    Metadata get(String url) throws MetadataException;
 
     /**
      * Metadata listing using Name and Version .
      *
-     * @param name              Name of the Metadata instance
+     * @param url              Name of the Metadata instance
      * @param version           Version of the Metadata instance
      * @param paginationContext to paginate results based on the start and end index
      * @return list of Metadata found for given query
      * @throws MetadataException if an error occurs
      */
-    List<Metadata> list(String name, String version, PaginationContext paginationContext) throws MetadataException;
+    List<Metadata> list(String url, String version, PaginationContext paginationContext) throws MetadataException;
 
     /**
      * Metadata listing using Owner and Name .
      *
      * @param owner             Owner of the Metadata instance
-     * @param name              Name of the Metadata instance
+     * @param url              Name of the Metadata instance
      * @param paginationContext to paginate results based on the start and end index
      * @return list of Metadata found for given query
      * @throws MetadataException if an error occurs
      */
-    List<Metadata> listByOwner(String owner, String name, PaginationContext paginationContext)
+    List<Metadata> listByOwner(String owner, String url, PaginationContext paginationContext)
             throws MetadataException;
 
     /**
      * Metadata listing using Owner, Name and Version .
      *
      * @param owner             Owner of the Metadata instance
-     * @param name              Name of the Metadata instance
+     * @param url              Name of the Metadata instance
      * @param version           Version of the Metadata instance
      * @param paginationContext to paginate results based on the start and end index
      * @return list of Metadata found for given query
      * @throws MetadataException if an error occurs
      */
-    List<Metadata> list(String owner, String name, String version, PaginationContext paginationContext)
+    List<Metadata> list(String owner, String url, String version, PaginationContext paginationContext)
             throws MetadataException;
 
     /**
      * Metadata listing using Name.
      *
-     * @param name              Name of the Metadata instance
+     * @param url              Name of the Metadata instance
      * @param paginationContext to paginate results based on the start and end index
      * @return list of Metadata found for given query
      * @throws MetadataException if an error occurs
      */
-    List<Metadata> listByName(String name, PaginationContext paginationContext) throws MetadataException;
+    List<Metadata> listByURL(String url, PaginationContext paginationContext) throws MetadataException;
 
 }

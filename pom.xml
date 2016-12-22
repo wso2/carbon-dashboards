@@ -34,8 +34,8 @@
         <module>components/org.wso2.carbon.dashboards.metadata</module>
         <module>components/org.wso2.carbon.dashboards.metadata.api</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
-        <!-- <module>components/org.wso2.carbon.dashboards.designer</module>
-        <module>components/org.wso2.carbon.dashboards.portal</module> -->
+        <!--<module>components/org.wso2.carbon.dashboards.designer</module>-->
+        <!--<module>components/org.wso2.carbon.dashboards.portal</module>-->
     </modules>
     <dependencyManagement>
         <dependencies>

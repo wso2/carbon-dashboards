@@ -37,23 +37,23 @@ public class SolrBackedMetadataDAOImpl implements MetadataDAO {
     }
 
     @Override
-    public boolean isExists(String uuid) throws MetadataException {
-        return metadataDAO.isExists(uuid);
+    public boolean isExists(String url) throws MetadataException {
+        return metadataDAO.isExists(url);
     }
 
     @Override
-    public boolean isExistsByVersion(String name, String version) throws MetadataException {
-        return metadataDAO.isExistsByVersion(name, version);
+    public boolean isExistsByVersion(String url, String version) throws MetadataException {
+        return metadataDAO.isExistsByVersion(url, version);
     }
 
     @Override
-    public boolean isExistsOwner(String owner, String name) throws MetadataException {
-        return metadataDAO.isExistsOwner(owner, name);
+    public boolean isExistsOwner(String owner, String url) throws MetadataException {
+        return metadataDAO.isExistsOwner(owner, url);
     }
 
     @Override
-    public boolean isExists(String owner, String name, String version) throws MetadataException {
-        return metadataDAO.isExists(owner, name, version);
+    public boolean isExists(String owner, String url, String version) throws MetadataException {
+        return metadataDAO.isExists(owner, url, version);
     }
 
     @Override
@@ -67,45 +67,45 @@ public class SolrBackedMetadataDAOImpl implements MetadataDAO {
     }
 
     @Override
-    public void delete(String uuid) throws MetadataException {
-        metadataDAO.delete(uuid);
+    public void delete(String url) throws MetadataException {
+        metadataDAO.delete(url);
     }
 
     @Override
-    public void delete(String owner, String name) throws MetadataException {
-        metadataDAO.delete(owner, name);
+    public void delete(String owner, String url) throws MetadataException {
+        metadataDAO.delete(owner, url);
     }
 
     @Override
-    public void delete(String owner, String name, String version) throws MetadataException {
-        metadataDAO.delete(owner, name, version);
+    public void delete(String owner, String url, String version) throws MetadataException {
+        metadataDAO.delete(owner, url, version);
     }
 
     @Override
-    public Metadata get(String uuid) throws MetadataException {
-        return metadataDAO.get(uuid);
+    public Metadata get(String url) throws MetadataException {
+        return metadataDAO.get(url);
     }
 
     @Override
-    public List<Metadata> list(String name, String version, PaginationContext paginationContext)
+    public List<Metadata> list(String url, String version, PaginationContext paginationContext)
             throws MetadataException {
-        return metadataDAO.list(name, version, paginationContext);
+        return metadataDAO.list(url, version, paginationContext);
     }
 
     @Override
-    public List<Metadata> listByOwner(String owner, String name, PaginationContext paginationContext)
+    public List<Metadata> listByOwner(String owner, String url, PaginationContext paginationContext)
             throws MetadataException {
-        return metadataDAO.listByOwner(owner, name, paginationContext);
+        return metadataDAO.listByOwner(owner, url, paginationContext);
     }
 
     @Override
-    public List<Metadata> list(String owner, String name, String version, PaginationContext paginationContext)
+    public List<Metadata> list(String owner, String url, String version, PaginationContext paginationContext)
             throws MetadataException {
-        return metadataDAO.list(owner, name, version, paginationContext);
+        return metadataDAO.list(owner, url, version, paginationContext);
     }
 
     @Override
-    public List<Metadata> listByName(String name, PaginationContext paginationContext) throws MetadataException {
-        return metadataDAO.listByName(name, paginationContext);
+    public List<Metadata> listByURL(String url, PaginationContext paginationContext) throws MetadataException {
+        return metadataDAO.listByURL(url, paginationContext);
     }
 }
