@@ -1,6 +1,0 @@
-# zone name : fragment name
-org.wso2.carbon.dashboards.portal.feature.header: org.wso2.carbon.dashboards.portal.feature.header
-org.wso2.carbon.dashboards.portal.feature.dashboard-label: org.wso2.carbon.dashboards.portal.feature.label
-org.wso2.carbon.dashboards.portal.feature.global-navigation: org.wso2.carbon.dashboards.portal.feature.global-navigation
-org.wso2.carbon.dashboards.portal.feature.bread-crumb: org.wso2.carbon.dashboards.portal.feature.bread-crumb
-org.wso2.carbon.dashboards.portal.feature.task-bar: org.wso2.carbon.dashboards.portal.feature.task-bar
