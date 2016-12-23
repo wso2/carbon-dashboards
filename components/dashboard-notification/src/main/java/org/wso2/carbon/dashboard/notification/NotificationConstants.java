@@ -17,7 +17,6 @@
 */
 package org.wso2.carbon.dashboard.notification;
 
-
 public class NotificationConstants {
     private NotificationConstants() {
     }

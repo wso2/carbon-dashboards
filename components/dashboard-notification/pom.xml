@@ -33,7 +33,6 @@
         <cxf.version>2.2.3</cxf.version>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
@@ -53,7 +52,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.3.1</version>
         </dependency>
     </dependencies>
 

@@ -61,7 +61,6 @@ var getUserRoles;
             return;
         }
         var ApiUrl = 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/logout'+'?username=' + user.username+ '&tenantId=-1234'+'&uuid='+session.get("uuid");
-
         var xhr = new XMLHttpRequest();
         xhr.open("POST", ApiUrl);
         xhr.send();

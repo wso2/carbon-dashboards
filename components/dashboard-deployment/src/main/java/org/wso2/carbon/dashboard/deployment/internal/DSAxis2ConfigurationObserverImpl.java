@@ -55,6 +55,9 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
         }
     }
 
+    /**
+     * create table for the user-notification
+     */
     private void createUserNotificationTenantDomain() {
         String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         try {
@@ -70,6 +73,9 @@ public class DSAxis2ConfigurationObserverImpl extends AbstractAxis2Configuration
         }
     }
 
+    /**
+     * create a table for the notifications
+     */
     private void createNotificationtenantDomain() {
         String tenantDomain = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         try {

@@ -24,7 +24,7 @@ var user;
     var permission = require("/modules/permission.js");
     var conf = require("/modules/config.js").getConfigFile();
     var i18n = require("i18n");
-    var UUID = "";
+    var uuid = "";
     i18n.init(request, utils.getLocaleResourcePath());
 
     /**
@@ -86,8 +86,8 @@ var user;
                 xhr.setRequestHeader("encoded", encoded);
                 xhr.send();
 
-                UUID = xhr.responseText;
-                session.put("uuid", UUID);
+                uuid = xhr.responseText;
+                session.put("uuid", uuid);
 
                 var authToken = api.authenticate(username, password);
                 var properties = {username: username, password: password};
@@ -129,7 +129,7 @@ var user;
             }
         }
     } else if ( request.getMethod() === "GET" ){
-        log.info(UUID);
+        log.info(uuid);
         print(session.get("uuid"));
     } else {
         response.sendError(403, i18n.localize("forbidden"));

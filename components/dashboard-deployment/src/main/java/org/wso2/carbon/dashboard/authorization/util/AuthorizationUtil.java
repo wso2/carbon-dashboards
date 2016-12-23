@@ -25,9 +25,7 @@ import org.wso2.carbon.registry.core.utils.AuthorizationUtils;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
-
 import static java.lang.Integer.parseInt;
-
 /**
  * This class validates the user based on the permission of the respective user
  */
@@ -60,6 +58,13 @@ public class AuthorizationUtil {
         }
     }
 
+    /**
+     * @param userName
+     * @param password User name of the user
+     * @param tenantId Tenant ID of the user
+     * @return true if the user has authentication, unless false
+     * @throws UserStoreException
+     */
     public static boolean isUserAuthenticated(String userName, String password, String tenantId) throws UserStoreException {
         //boolean isAuthenticated = false;
         try {

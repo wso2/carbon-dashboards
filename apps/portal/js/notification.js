@@ -18,7 +18,7 @@
  */
 var ApiUrl = "https://localhost:9443/notification/services/notifications/notificationApi";
 var CREATE_PROXY = 'apis/login';
-var UUID = "";
+var uuid = "";
 var notification = {
     "notification": {
         "notificationId": "33",
@@ -29,7 +29,6 @@ var notification = {
         "roles": ["admin"]
     }
 };
-
 login();
 function login() {
     $.ajax({
@@ -38,8 +37,8 @@ function login() {
         contentType: "text/plain",
         async: false,
         success: function (data) {
-            UUID = data;
-            console.log(UUID);
+            uuid = data;
+            console.log(uuid);
         },
         error: function (error) {
             console.log(error);
@@ -47,13 +46,12 @@ function login() {
     });
 }
 
-
 $('#notification').click(function () {
     $('#right-sidebar').slideToggle();
     //updateNotificationList();
     displayNotifications();
     /* $.ajax({
-     url: 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/' + '?uuid=' + UUID + '&username=' + userName + '&tenantId=-1234',
+     url: 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/' + '?uuid=' + uuid + '&username=' + userName + '&tenantId=-1234',
      method: 'POST',
      data: JSON.stringify(notification),
      async: false,
@@ -78,32 +76,27 @@ function displayNotifications() {
 
 }
 
-
 /////get notification details for particular notification Id
 function getNotificationDetail() {
     var detail;
     $.ajax({
-        url: ApiUrl + '/notifications/detail/' + '?uuid=' + UUID + '&username=' + userName + '&tenantId=-1234',
+        url: ApiUrl + '/notifications/detail/' + '?uuid=' + uuid + '&username=' + userName + '&tenantId=-1234',
         method: 'GET',
         async: false,
         contentType: "application/xml",
         success: function (response) {
-            console.log("xxxxx");
-            console.log(response.type);
             detail = (response);
         },
         error: function (error) {
-            console.log("errorrrr");
             console.log(error);
         }
     });
     return detail;
 }
 
-
 function updateNotificationList() {
     $.ajax({
-        url: ApiUrl + '/notifications/update/?notificationId=' + '1' + '&uuid=' + UUID + '&username=' + userName + '&tenantId=-1234',
+        url: ApiUrl + '/notifications/update/?notificationId=' + '1' + '&uuid=' + uuid + '&username=' + userName + '&tenantId=-1234',
         method: 'PUT',
         async: false,
         contentType: "text/plain",
@@ -118,6 +111,3 @@ function updateNotificationList() {
         }
     });
 }
-
-
-

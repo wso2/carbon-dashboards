@@ -17,7 +17,6 @@
 */
 package org.wso2.carbon.dashboard.notification.internal;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
@@ -40,7 +39,6 @@ import javax.servlet.ServletContextListener;
  */
 
 public class PortalNotificationComponent  {
-
     private static final Log log = LogFactory.getLog(org.wso2.carbon.dashboard.notification.internal.PortalNotificationComponent.class);
 
     protected void activate(ComponentContext ctx) {
@@ -77,8 +75,5 @@ public class PortalNotificationComponent  {
     protected void unsetTaskService(TaskService taskService) {
         org.wso2.carbon.dashboard.notification.internal.ServiceHolder.setTaskService(null);
     }
-
-
-
 }
 
