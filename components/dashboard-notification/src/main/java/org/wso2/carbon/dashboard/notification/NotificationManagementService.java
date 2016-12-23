@@ -49,7 +49,6 @@ public interface NotificationManagementService {
                                     @QueryParam("uuid") String uuid,
                                     @QueryParam("username") String username) throws NotificationManagementException;
 
-
     @GET
     @Consumes("text/plain")
     @Produces("application/json")

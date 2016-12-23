@@ -87,7 +87,7 @@ var user;
                 xhr.send();
 
                 UUID = xhr.responseText;
-                session.put("UUID", UUID);
+                session.put("uuid", UUID);
 
                 var authToken = api.authenticate(username, password);
                 var properties = {username: username, password: password};
@@ -130,7 +130,7 @@ var user;
         }
     } else if ( request.getMethod() === "GET" ){
         log.info(UUID);
-        print(session.get("UUID"));
+        print(session.get("uuid"));
     } else {
         response.sendError(403, i18n.localize("forbidden"));
     }

@@ -612,6 +612,11 @@ public class DSDataSourceManager {
         return false;
     }
 
+    /**
+     * user_notification table for each tenant domain
+     * @param tenantDomain
+     * @throws SQLException exception handling
+     */
     ///////Notification tables related operations
     public void createUserNotificationTenantDomain(String tenantDomain) throws SQLException {
         Connection connection = null;
@@ -626,12 +631,17 @@ public class DSDataSourceManager {
                 connection.commit();
             }
         } catch (Exception se) {
-            log.error("Cannot create user Notifivation table for the " + tenantDomain + " ", se);
+            log.error("Cannot create  Notification table for the " + tenantDomain + " ", se);
         } finally {
             closeDatabaseResources(connection, statement, null);
         }
     }
 
+    /**
+     * notification table for each tenant domain
+     * @param tenantDomain
+     * @throws SQLException exception handling
+     */
     public void createNotificationTenantDomain(String tenantDomain) throws SQLException {
         Connection connection = null;
         Statement statement = null;
@@ -652,14 +662,12 @@ public class DSDataSourceManager {
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
-
         } catch (Exception se) {
-            log.error("Cannot create user Notifivation table for the " + tenantDomain + " ", se);
+            log.error("Cannot create user Notification table for the " + tenantDomain + " ", se);
         } finally {
             closeDatabaseResources(connection, statement, null);
         }
     }
-
 
     /**
      * get the notifications list of the user
@@ -695,14 +703,12 @@ public class DSDataSourceManager {
 
     /*
     * insert the notification details to the database
-    *
     * @param notificationId Id of the notification
     * @param title The title of the received notification
     * @param message The message of the notification
     * @param directUrl The directurl of the notification that should be directed
     * @throws DashboardPortalException
     * */
-
     public void insertIntoNotification(String tenantDomain, String notificationId, String title, String message, String redirectUrl, int userCount, int readCount) throws DashboardPortalException, SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -730,12 +736,10 @@ public class DSDataSourceManager {
 
     /*
     * insert  User_notification datails
-    *
     * @param notificationId
     * @param userId
     * @throws DashboardPortalException
     * */
-
     public void insertIntoUserNotificationTenantDomain(String username, String notificationLists) throws DashboardPortalException, SQLException {
         String tenantDomain = MultitenantUtils.getTenantDomain(username);
         String tenantdomain = tenantDomain.replace(".", "_");
@@ -763,6 +767,12 @@ public class DSDataSourceManager {
         }
     }
 
+    /**
+     * check whether the user is already added in table
+     * @param username
+     * @return
+     * @throws SQLException
+     */
     public boolean checkUserExistInUserNotificationTenantDomain(String username) throws SQLException {
         String tenantDomain = MultitenantUtils.getTenantDomain(username);
         String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
@@ -770,7 +780,6 @@ public class DSDataSourceManager {
             if (log.isDebugEnabled()) {
                 log.debug("Running a query to test the database tables existence");
             }
-            // check whether the user is already added in table
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
@@ -795,7 +804,6 @@ public class DSDataSourceManager {
 
     /*
     * get the notification detail for a particular notificationId, and tenantId
-    *
     * @param notificationId
     * @return title, message, directUrl
     * throws DashboardPortalException
@@ -827,6 +835,12 @@ public class DSDataSourceManager {
         return notificationDetail;
     }
 
+    /**
+     * update the list of notifications in the table
+     * @param notificationsList
+     * @param username
+     * @throws SQLException
+     */
     public void updateNotificationListOfUser(String notificationsList, String username) throws SQLException {
         String tenantDomain = MultitenantUtils.getTenantDomain(username);
         String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
@@ -849,6 +863,7 @@ public class DSDataSourceManager {
     }
 
     /**
+     * update the read count after a user reads the notification
      * @param notificationId
      * @param tenantDomain
      */
@@ -869,6 +884,12 @@ public class DSDataSourceManager {
         }
     }
 
+    /**
+     * get the  information of read_count and users_count, for the task of removing the notifications from the table
+     * @param tenantDomain
+     * @return
+     * @throws SQLException
+     */
     public JSONArray getUsersCountInformationFromNotificationTenantDomain(String tenantDomain) throws SQLException {
         String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
         JSONArray notifications = new JSONArray();
@@ -897,6 +918,12 @@ public class DSDataSourceManager {
         return notifications;
     }
 
+    /**
+     * Remove a notification after a particular number of users read the notification
+     * @param notificationId
+     * @param tenantDomain
+     * @throws SQLException
+     */
     public void removeNotifcnFromNotificationTenantDomain(String notificationId, String tenantDomain) throws SQLException {
         String tenantdomain = tenantDomain.replace(".", "_").toUpperCase();
         Connection connection = null;

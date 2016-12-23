@@ -45,5 +45,11 @@
         <session-timeout>60</session-timeout>
     </session-config>
 
+    <!--<listener>
+        <listener-class>
+            org.wso2.carbon.dashboard.notification.internal.PortalNotificationComponent
+        </listener-class>
+    </listener>-->
+
 </web-app>
 

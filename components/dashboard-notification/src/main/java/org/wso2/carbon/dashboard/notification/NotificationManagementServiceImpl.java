@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.dashboard.notification;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -51,16 +53,13 @@ import static java.lang.Integer.parseInt;
 @Path("/notificationApi")
 public class NotificationManagementServiceImpl implements NotificationManagementService {
     private long maxTime = 60 * 30 * 1000;
-    private ConcurrentHashMap<String, UserCache> userHash = new ConcurrentHashMap<String, UserCache>();
+    private static ConcurrentHashMap<String, UserCache> userHash = new ConcurrentHashMap<String, UserCache>();
     private static Log log = LogFactory.getLog(NotificationManagementServiceImpl.class);
-    private DSDataSourceManager dsDataSourceManager = DSDataSourceManager.getInstance();
-    private NotificationBackup notificationBackup = new NotificationBackup();
+    private DSDataSourceManager dsDataSourceManager;
     private final Object lock = new Object();
 
     public NotificationManagementServiceImpl() throws DashboardPortalException, UserStoreException {
-
     }
-
 
     /**
      * This is used to authenticate user and provide a uuid for each user
@@ -73,6 +72,11 @@ public class NotificationManagementServiceImpl implements NotificationManagement
     @Override
     public Response login(String encoded, String tenantId
     ) throws NotificationManagementException {
+        try {
+            dsDataSourceManager = DSDataSourceManager.getInstance();
+        } catch (DashboardPortalException e) {
+            log.error(e);
+        }
         String permission = NotificationConstants.PERMISSION;
         String uuid;
         String decodedCredentials = new String(new Base64().decode(encoded.getBytes()));
@@ -109,11 +113,11 @@ public class NotificationManagementServiceImpl implements NotificationManagement
                             return Response.status(Response.Status.CONFLICT).build();
                         }
                     } else {
-                        log.info("the user can not be authorized");
+                        log.error("the user can not be authorized");
                         return Response.status(Response.Status.UNAUTHORIZED).build();
                     }
                 } else {
-                    log.info("Problem in Authenticating the user");
+                    log.error("Problem in Authenticating the user");
                     return Response.status(Response.Status.PROXY_AUTHENTICATION_REQUIRED).build();
                 }
             } catch (UserStoreException e) {
@@ -121,7 +125,7 @@ public class NotificationManagementServiceImpl implements NotificationManagement
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 
             } catch (RegistryException e) {
-                log.info(e);
+                log.error(e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         } else {
@@ -148,7 +152,7 @@ public class NotificationManagementServiceImpl implements NotificationManagement
             userHash.remove(userName);
             return Response.status(Response.Status.OK).build();
         } else {
-            log.info("User cannot be validated");
+            log.error("User cannot be validated");
             return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
         }
     }
@@ -160,9 +164,7 @@ public class NotificationManagementServiceImpl implements NotificationManagement
      * @param username username user name of the user to validate user
      * @return true or false whether the user is validated before accessing every method
      */
-
     private synchronized boolean validateUser(String uuid, String username, String tenantId) {
-        log.info(uuid + username);
         String tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
         UserCache usrname = userHash.get(username + NotificationConstants.AT + tenantDomain);
         try {
@@ -227,8 +229,9 @@ public class NotificationManagementServiceImpl implements NotificationManagement
                                     if (usersOFRole != null) {
                                         for (String user : usersOFRole) {
                                             //noinspection JSAnnotator
-                                            if (usersList.indexOf(user) == -1) {
-                                                usersList.add(user + NotificationConstants.AT + tenantDomain);
+                                            String userOfRole = user + NotificationConstants.AT + tenantDomain;
+                                            if (usersList.indexOf(userOfRole) == -1) {
+                                                usersList.add(userOfRole);
                                             }
                                         }
                                     }
@@ -236,11 +239,10 @@ public class NotificationManagementServiceImpl implements NotificationManagement
                             }
                             int userCount = usersList.size();
                             int readCount = 0;
-                            log.info(tenantDomain);
                             dsDataSourceManager.insertIntoNotification(tenantDomain, notificationId, title, message, directUrl, userCount, readCount);
                             for (String user : usersList) {
                                 if (tenantDomain.equals(MultitenantUtils.getTenantDomain(user))) {
-                                    String notificationListOfUser = createNotificationListOfUser(user, notificationId, false);
+                                    String notificationListOfUser = createNotificationListOfUser(user, notificationId);
                                     dsDataSourceManager.insertIntoUserNotificationTenantDomain(user, notificationListOfUser);
                                 }
                             }
@@ -282,26 +284,14 @@ public class NotificationManagementServiceImpl implements NotificationManagement
         if (validateUser(uuid, username, tenantId)) {
             try {
                 String tenantDomain = UserStoreUtil.getUserTenantDomain(tenantId);
-
                 String userName = username + NotificationConstants.AT + tenantDomain;
                 JSONArray notificationList = getNotificationListOfUser(userName);
-
-                JSONObject notificationIdBackup = notificationBackup.getNotificationBackup();
                 JSONArray notifcnsDetail = new JSONArray();
                 if (userHash.get(userName).getUserNotificationIdBackup() != null) {
                     List<String> notificationsFromBackup = userHash.get(userName).getUserNotificationIdBackup();
                     for (String notificationID : notificationsFromBackup) {
-                        log.info(notificationID);
                         String[] details;
-                        if (notificationIdBackup != null) {
-                            if (notificationIdBackup.containsKey(notificationID)) {
-                                details = (String[]) notificationIdBackup.get(notificationID);
-                            } else {
-                                details = dsDataSourceManager.getNotificationDetails(notificationID, tenantDomain);
-                            }
-                        } else {
-                            details = dsDataSourceManager.getNotificationDetails(notificationID, tenantDomain);
-                        }
+                        details = dsDataSourceManager.getNotificationDetails(notificationID, tenantDomain);
                         Notification notifcn = new Notification();
                         notifcn.setNotificationId(notificationID);
                         notifcn.setTitle(details[0]);
@@ -311,29 +301,29 @@ public class NotificationManagementServiceImpl implements NotificationManagement
                     }
                 }
                 if (notificationList != null) {
-                    for (Object aNotificationListAsJson : notificationList) {
+                    for (Object notificationId : notificationList) {
                         String[] details;
-                        JSONObject notification = (JSONObject) aNotificationListAsJson;
-                        String notificationId = (String) notification.get(NotificationConstants.NOTIFICATION_ID);
-                        details = dsDataSourceManager.getNotificationDetails(notificationId, tenantDomain);
+                        details = dsDataSourceManager.getNotificationDetails(notificationId.toString(), tenantDomain);
                         Notification notifcn = new Notification();
-                        notifcn.setNotificationId(notificationId);
+                        notifcn.setNotificationId(notificationId.toString());
                         notifcn.setTitle(details[0]);
                         notifcn.setMessage(details[1]);
                         notifcn.setDirectUrl(details[2]);
                         notifcnsDetail.add(notifcn);
                     }
                 }
-                log.info(notifcnsDetail);
-                return Response.status(Response.Status.OK).entity(notifcnsDetail).build();
+                Gson gson = new GsonBuilder().setExclusionStrategies().create(); //.serializeNulls()
+                String json = gson.toJson(notifcnsDetail);
+                return Response.status(Response.Status.OK).entity(json).build();
             } catch (DashboardPortalException e) {
                 log.error(e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
             } catch (SQLException e) {
                 log.error(e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            } catch (NullPointerException e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
             }
-
         } else {
             log.info("User cannot be validated");
             return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
@@ -356,14 +346,12 @@ public class NotificationManagementServiceImpl implements NotificationManagement
             String userName = username + NotificationConstants.AT + tenantDomain;
             JSONArray notificationsList = getNotificationListOfUser(userName);
             try {
-                for (Object aNotificationListAsJson : notificationsList) {
-                    JSONObject notification = (JSONObject) aNotificationListAsJson;
-                    if (notification.get(NotificationConstants.NOTIFICATION_ID).equals(notificationId)) {
+                for (Object notification : notificationsList) {
+                    if (notification.equals(notificationId)) {
                         if (userHash.get(userName).getUserNotificationIdBackup() == null) {
                             ArrayList<String> notificationIds = new ArrayList<String>();
                             notificationIds.add(notificationId);
                             userHash.get(userName).setUserNotificationIdBackup(notificationIds);
-
                         } else {
                             ArrayList<String> notificationIds = userHash.get(userName).getUserNotificationIdBackup();
                             notificationIds.add(notificationId);
@@ -372,20 +360,17 @@ public class NotificationManagementServiceImpl implements NotificationManagement
                         notificationsList.remove(notification);
                         dsDataSourceManager.updateNotificationListOfUser(notificationsList.toString(), userName);
                         dsDataSourceManager.updateNotificationTenantDomain(notificationId, tenantDomain);
-                        return Response.status(Response.Status.OK).build();
                     }
                 }
-                return Response.status(Response.Status.OK).build();
             } catch (SQLException e) {
                 log.error(e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
             }
-            // return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
         } else {
             log.info("User cannot be validated");
             return Response.status(Response.Status.REQUEST_TIMEOUT).entity(NotificationConstants.VALIDATION_ERROR).build();
         }
-        //return Response.status(Response.Status.OK).build();
+        return Response.status(Response.Status.OK).build();
     }
 
     /**
@@ -393,27 +378,23 @@ public class NotificationManagementServiceImpl implements NotificationManagement
      *
      * @param username       username with tenantDomain
      * @param notificationId notification id tobe added to the list
-     * @param read           status
      * @return notification list with status
      */
-    private String createNotificationListOfUser(String username, String notificationId, boolean read) {
+    private String createNotificationListOfUser(String username, String notificationId) {
         JSONArray notificationList = getNotificationListOfUser(username);
         if (notificationList == null) {
             notificationList = new JSONArray();
+            notificationList.add(notificationId);
+            return notificationList.toString();
         } else {
             for (Object notification : notificationList) {
-                JSONObject notifcn = (JSONObject) notification;
-                if (notifcn.get(NotificationConstants.NOTIFICATION_ID).equals(notificationId)) {
+                if (notification.equals(notificationId)) {
                     return notificationList.toString();
                 }
             }
+            notificationList.add(notificationId);
         }
-        JSONObject notification = new JSONObject();
-        notification.put(NotificationConstants.NOTIFICATION_ID, notificationId);
-        notification.put(NotificationConstants.READ, read);
-        notificationList.add(notification);
         return notificationList.toString();
-
     }
 
     /**
@@ -433,6 +414,10 @@ public class NotificationManagementServiceImpl implements NotificationManagement
             log.error(e);
         }
         return notifications;
+    }
+
+    public static ConcurrentHashMap<String, UserCache> getUserHash() {
+        return userHash;
     }
 
 }

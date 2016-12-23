@@ -21,12 +21,12 @@ var CREATE_PROXY = 'apis/login';
 var UUID = "";
 var notification = {
     "notification": {
-        "notificationId": "5",
+        "notificationId": "33",
         "title": "invitation",
         "message": "its an invitation to update the vresion",
         "directUrl": "https://localhost:9443/portal",
-        "users": ["admin@foo.com", "suba@foo.com"],
-        "roles": ["head"]
+        "users": ["admin@carbon.super"],
+        "roles": ["admin"]
     }
 };
 
@@ -50,31 +50,26 @@ function login() {
 
 $('#notification').click(function () {
     $('#right-sidebar').slideToggle();
-    updateNotificationList();
+    //updateNotificationList();
     displayNotifications();
-    $.ajax({
-        url: 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/' + '?uuid=' + UUID + '&username=' + userName + '&tenantId=1',
-        method: 'POST',
-        data: JSON.stringify(notification),
-        async: false,
-        contentType: "application/json",
-        success: function (data) {
-            console.log("notification added successfully" + data);
+    /* $.ajax({
+     url: 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/' + '?uuid=' + UUID + '&username=' + userName + '&tenantId=-1234',
+     method: 'POST',
+     data: JSON.stringify(notification),
+     async: false,
+     contentType: "application/json",
+     success: function (data) {
+     console.log("notification added successfully" + data);
 
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    });
+     },
+     error: function (error) {
+     console.log(error);
+     }
+     });*/
 });
 
 //display notifications in tha slide bar
 function displayNotifications() {
-    if (getUnreadNotificationCount() == 0) {
-        $('#notification_count').html("There is no new Notifications ");
-    } else {
-        $('#notification_count').html((getUnreadNotificationCount() + " new Notifications are there"));
-    }
     var notificationDetailsHbs = Handlebars.compile($('#all-notification-hbs').html());
     var details = getNotificationDetail();
     if (details) {
@@ -88,14 +83,14 @@ function displayNotifications() {
 function getNotificationDetail() {
     var detail;
     $.ajax({
-        url: ApiUrl + '/notifications/detail/' + '?uuid=' + UUID + '&username=' + userName + '&tenantId=1',
+        url: ApiUrl + '/notifications/detail/' + '?uuid=' + UUID + '&username=' + userName + '&tenantId=-1234',
         method: 'GET',
         async: false,
         contentType: "application/xml",
         success: function (response) {
             console.log("xxxxx");
             console.log(response.type);
-            detail = (data.status);
+            detail = (response);
         },
         error: function (error) {
             console.log("errorrrr");
@@ -108,7 +103,7 @@ function getNotificationDetail() {
 
 function updateNotificationList() {
     $.ajax({
-        url: ApiUrl + '/notifications/update/?notificationId=' + '4' + '&uuid=' + UUID + '&username=' + userName + '&tenantId=1',
+        url: ApiUrl + '/notifications/update/?notificationId=' + '1' + '&uuid=' + UUID + '&username=' + userName + '&tenantId=-1234',
         method: 'PUT',
         async: false,
         contentType: "text/plain",

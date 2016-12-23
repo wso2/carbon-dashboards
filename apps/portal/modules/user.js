@@ -60,7 +60,7 @@ var getUserRoles;
             log.error(e);
             return;
         }
-        var ApiUrl = 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/logout'+'?username=' + user.username+ '&tenantId='+user.tenantId;
+        var ApiUrl = 'https://localhost:9443/notification/services/notifications/notificationApi/notifications/logout'+'?username=' + user.username+ '&tenantId=-1234'+'&uuid='+session.get("uuid");
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", ApiUrl);

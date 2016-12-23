@@ -24,12 +24,17 @@ import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.service.RealmService;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
-
 import static java.lang.Integer.parseInt;
 
 public class UserStoreUtil {
     private static Log log = LogFactory.getLog(UserStoreUtil.class);
 
+    /**
+     * Get the userStore manager of the particular domain
+     * @param tenantId id of the domain
+     * @return
+     * @throws UserStoreException exception handling
+     */
     public static UserStoreManager getUserStoreManager(String tenantId) throws UserStoreException {
         RealmService realmService;
         UserStoreManager userStoreManager;
@@ -46,6 +51,10 @@ public class UserStoreUtil {
         return userStoreManager;
     }
 
+    /**
+     * get the authenticated username of the
+     * @return
+     */
     public static String getAuthenticatedUser() {
         PrivilegedCarbonContext threadLocalCarbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
         String username = threadLocalCarbonContext.getUsername();
@@ -56,6 +65,11 @@ public class UserStoreUtil {
         return username;
     }
 
+    /**
+     * Get the domain name of the tenantId
+     * @param tenantId id of domain
+     * @return
+     */
     public static String getUserTenantDomain(String tenantId) {
         PrivilegedCarbonContext.startTenantFlow();
         PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(parseInt(tenantId), true);

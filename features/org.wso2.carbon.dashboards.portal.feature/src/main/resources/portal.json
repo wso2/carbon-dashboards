@@ -80,7 +80,7 @@
         "maxTempFileLifeTime" : "120"
     },
     "notificationApi": {
-        "interval" : "1800000",
+        "interval" : "18000",
         "maxTime" : "1800000",
         "percentageOfReadCount": "100"
     },

@@ -23,7 +23,6 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
          http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
-
     <jaxrs:server id="notificationApi" address="/notifications">
         <jaxrs:serviceBeans>
             <ref bean="serviceBean"/>
@@ -31,7 +30,6 @@
     </jaxrs:server>
 
     <bean id="serviceBean" class="org.wso2.carbon.dashboard.notification.NotificationManagementServiceImpl"></bean>
-
 
 </beans>
 

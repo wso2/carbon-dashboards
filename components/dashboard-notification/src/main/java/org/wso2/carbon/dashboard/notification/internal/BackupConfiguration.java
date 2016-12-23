@@ -16,12 +16,14 @@
 *
 */
 
-package org.wso2.carbon.dashboard.notification;
+package org.wso2.carbon.dashboard.notification.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.wso2.carbon.dashboard.notification.NotificationConstants;
+import org.wso2.carbon.dashboard.notification.NotificationManagementException;
 import org.wso2.carbon.dashboard.portal.core.PortalUtils;
 
 import java.io.IOException;
@@ -35,7 +37,7 @@ public class BackupConfiguration {
     private static int DEFAULT_INTERVAL = 1800000;
     private static int DEFAULT_PERCENTAGE = 100;
 
-    public static BackupConfiguration getInstance() {
+    public static BackupConfiguration getInstance() throws NotificationManagementException{
         if (instance == null) {
             synchronized (BackupConfiguration.class) {
                 if (instance == null) {
@@ -46,7 +48,7 @@ public class BackupConfiguration {
         return instance;
     }
 
-    private BackupConfiguration() {
+    private BackupConfiguration() throws NotificationManagementException {
         this.interval = DEFAULT_INTERVAL;
         this.percentageOfReadCount = DEFAULT_PERCENTAGE;
         try {

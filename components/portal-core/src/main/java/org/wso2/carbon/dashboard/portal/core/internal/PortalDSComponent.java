@@ -58,14 +58,6 @@ public class PortalDSComponent {
             TaskInfo taskInfo = new TaskInfo(PortalConstants.PORTAL_HOUSE_KEEPING_TASK,
                     HouseKeepingTask.class.getCanonicalName(), null, triggerInfo);
             taskManager.registerTask(taskInfo);
-
-            /*BackupConfiguration backupConfiguration = BackupConfiguration.getInstance();
-            taskManager.deleteTask(PortalConstants.PORTAL_NOTIFICATION_BACKUP_TASK);
-            TaskInfo.TriggerInfo triggerInfo2 = new TaskInfo.TriggerInfo(null, null,backupConfiguration.getInterval(), -1);
-            triggerInfo.setDisallowConcurrentExecution(true);
-            TaskInfo taskInfo2 = new TaskInfo(PortalConstants.PORTAL_NOTIFICATION_BACKUP_TASK,
-                    BackUpTask.class.getCanonicalName(), null, triggerInfo2);
-            taskManager.registerTask(taskInfo2);*/
             DSDataSourceManager.getInstance();
         } catch (TaskException exception) {
             log.error("Error while registering the task type : " + PortalConstants.TASK_TYPE, exception);

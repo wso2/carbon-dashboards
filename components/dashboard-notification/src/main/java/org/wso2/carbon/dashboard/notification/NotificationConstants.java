@@ -28,11 +28,13 @@ public class NotificationConstants {
     static final String COLON = ":";
     static final String AT = "@";
     static final String NOTIFICATION_ID = "NOTIFICATION_ID";
-    static final String READ = "READ";
-    static final String NOTIFICATION_API_CONFIG = "notificationApi";
     static final String MAX_TIME = "maxTime";
     static final String USERS_COUNT = "USERS_COUNT";
     static final String READ_COUNT = "READ_COUNT";
-    static final String INTERVAL = "interval";
-    static final String PERCENTAGE_OF_READ_COUNT = "percentageOfReadCount";
+    public static final String INTERVAL = "interval";
+    public static final String NOTIFICATION_API_CONFIG = "notificationApi";
+    public static final String PERCENTAGE_OF_READ_COUNT = "percentageOfReadCount";
+    public static final String PORTAL_NOTIFICATION_BACKUP_TASK = "PORTAL_NOTIFICATION_BACKUP_TASK";
+    public static final String PORTAL_NOTIFICATION_TASK= "PORTAL_NOTIFICATION_TASK";
+    public static final String PORTAL_CONFIG_NAME = "portal.json";
 }
