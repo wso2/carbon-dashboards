@@ -263,7 +263,7 @@ var utils = function () {
                     var jwtToken = publicMethods.getJwtToken(adminUsername, claims);
                     // register a tenant based client app at API Manager
                     var applicationName = configs["authorization"]["methods"]["oauth"]["attributes"]["oauthProvider"]
-                            ["appRegistration"]["clientName"]+"_" + tenantDomain;
+                            ["appRegistration"]["clientName"] + "_" + tenantDomain;
                     var requestURL = configs["authorization"]["methods"]["oauth"]["attributes"]["oauthProvider"]
                             ["appRegistration"]["apiManagerClientAppRegistrationServiceURL"] +
                         "?tenantDomain=" + tenantDomain + "&applicationName=" + applicationName;
