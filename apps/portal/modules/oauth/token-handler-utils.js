@@ -262,7 +262,8 @@ var utils = function () {
                         "http://wso2.org/claims/enduser": adminUsername};
                     var jwtToken = publicMethods.getJwtToken(adminUsername, claims);
                     // register a tenant based client app at API Manager
-                    var applicationName = "portal_app_" + tenantDomain;
+                    var applicationName = configs["authorization"]["methods"]["oauth"]["attributes"]["oauthProvider"]
+                            ["appRegistration"]["clientName"] + "_" + tenantDomain;
                     var requestURL = configs["authorization"]["methods"]["oauth"]["attributes"]["oauthProvider"]
                             ["appRegistration"]["apiManagerClientAppRegistrationServiceURL"] +
                         "?tenantDomain=" + tenantDomain + "&applicationName=" + applicationName;
