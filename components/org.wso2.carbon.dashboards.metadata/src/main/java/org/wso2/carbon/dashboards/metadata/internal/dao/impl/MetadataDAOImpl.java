@@ -59,7 +59,7 @@ public class MetadataDAOImpl implements MetadataDAO {
                 return true;
             }
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -84,7 +84,7 @@ public class MetadataDAOImpl implements MetadataDAO {
                 return true;
             }
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -109,7 +109,7 @@ public class MetadataDAOImpl implements MetadataDAO {
                 return true;
             }
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -135,7 +135,7 @@ public class MetadataDAOImpl implements MetadataDAO {
                 return true;
             }
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -328,7 +328,7 @@ public class MetadataDAOImpl implements MetadataDAO {
                 return getMetadata(result);
             }
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -353,7 +353,7 @@ public class MetadataDAOImpl implements MetadataDAO {
             metadataParser(list, result);
 
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -378,7 +378,7 @@ public class MetadataDAOImpl implements MetadataDAO {
             metadataParser(list, result);
 
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -404,7 +404,7 @@ public class MetadataDAOImpl implements MetadataDAO {
             metadataParser(list, result);
 
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {
@@ -427,7 +427,7 @@ public class MetadataDAOImpl implements MetadataDAO {
             metadataParser(list, result);
 
         } catch (SQLException e) {
-            String msg = "Error in deleting dashboard metadata : " + e.getMessage();
+            String msg = "Error in accessing dashboard metadata : " + e.getMessage();
             log.error(msg, e);
             throw new MetadataException(msg, e);
         } finally {

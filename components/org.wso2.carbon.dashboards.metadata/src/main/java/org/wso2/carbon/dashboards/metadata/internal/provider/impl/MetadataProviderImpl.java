@@ -54,7 +54,6 @@ public class MetadataProviderImpl implements MetadataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataProviderImpl.class);
 
-    private static final String WSO2_DASHBOARD_DB = "WSO2_DASHBOARD_DB";
     private MetadataDAO dao;
 
     public MetadataProviderImpl(MetadataDAO dao) {
@@ -73,19 +72,7 @@ public class MetadataProviderImpl implements MetadataProvider {
     @Activate
     protected void activate(BundleContext bundleContext) {
         //TODO: Since this affects to server startup, We will move this db initialization at the first request in future
-        init();
         log.info("ServiceComponent activated.");
-    }
-
-    /**
-     * Initialize the datasource
-     */
-    public void init() {
-        try {
-            DAOUtils.getInstance().initialize(WSO2_DASHBOARD_DB);
-        } catch (MetadataException e) {
-            log.error("Error in initializing datasource ", e);
-        }
     }
 
     /**
@@ -182,7 +169,7 @@ public class MetadataProviderImpl implements MetadataProvider {
             return;
         }
 
-        DAOUtils.getInstance().setDataSourceService(service);
+        DAOUtils.setDataSourceService(service);
 
         if (log.isInfoEnabled()) {
             log.info("Data source service registered successfully.");
@@ -194,6 +181,6 @@ public class MetadataProviderImpl implements MetadataProvider {
         if (log.isInfoEnabled()) {
             log.info("Data source service unregistered.");
         }
-        DAOUtils.getInstance().setDataSourceService(null);
+        DAOUtils.setDataSourceService(null);
     }
 }
