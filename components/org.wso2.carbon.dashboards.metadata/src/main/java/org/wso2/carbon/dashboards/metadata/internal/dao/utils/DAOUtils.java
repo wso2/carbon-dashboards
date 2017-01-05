@@ -39,6 +39,8 @@ public class DAOUtils {
 
     private static final Logger log = LoggerFactory.getLogger(DAOUtils.class);
 
+    private static final String WSO2_DASHBOARD_DB = "WSO2_DASHBOARD_DB";
+
     private DataSourceService dataSourceService;
     private DataSource dataSource;
 
@@ -51,8 +53,8 @@ public class DAOUtils {
         return (DataSource) dataSourceService.getDataSource(dataSourceName);
     }
 
-    public void setDataSourceService(DataSourceService dataSourceService) {
-        this.dataSourceService = dataSourceService;
+    public static void setDataSourceService(DataSourceService dataSourceService) {
+        instance.dataSourceService = dataSourceService;
     }
 
 
@@ -60,7 +62,8 @@ public class DAOUtils {
         super();
     }
 
-    public static DAOUtils getInstance() {
+    public static DAOUtils getInstance() throws MetadataException {
+        instance.initialize(WSO2_DASHBOARD_DB);
         return instance;
     }
 
@@ -72,7 +75,7 @@ public class DAOUtils {
         try {
             dataSource = instance.getDataSource(dataSourceName);
         } catch (DataSourceException e) {
-            e.printStackTrace();
+            throw new MetadataException("Error in initializing database !", e);
         }
 
     }

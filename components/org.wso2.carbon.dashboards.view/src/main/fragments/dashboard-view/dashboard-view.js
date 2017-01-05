@@ -39,8 +39,10 @@ function onRequest(env) {
     try {
         dashboardExistance = metadataProviderImpl.isExists(query);
     } catch (e) {
-        Log.error(e);
-        sendError(500, "Error in accessing dashboard DB !");
+        if (Log.isDebugEnabled) {
+            Log.debug("Error in accessing dashboard DB. Dashboard is retrieved from File system");
+        }
+        dashboardExistance = false;
     }
 
     if (!dashboardExistance) {
