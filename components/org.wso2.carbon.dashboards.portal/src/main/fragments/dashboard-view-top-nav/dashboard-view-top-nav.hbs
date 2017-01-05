@@ -84,8 +84,7 @@
                             {{/if}}
                         {{/if}}
                     {{/if}}
-                    <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>"><i
-                            class="icon fw fw-sign-out"></i>{{t "logout.label"}}</a></li>
+                    <li><a href="{{@contextPath}}/simple-auth/logout">Logout</a></li>
                 {{else}}
                     <li><a href="<%=urlPrefix%>login-controller?destination=<%=dest%>"><i
                             class="icon fw fw-sign-in"></i>{{t "login.label"}}</a></li>

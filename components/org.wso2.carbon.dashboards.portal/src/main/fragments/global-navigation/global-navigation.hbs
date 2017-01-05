@@ -15,7 +15,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
                     <li class="dropdown-header visible-xs">{{user.username}} <span class="caret"></span></li>
-                    <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
+                    <li><a href="{{@contextPath}}/simple-auth/logout">Logout</a></li>
                 </ul>
             </span>
                 <div class="visible-xs auth-xs">
@@ -28,7 +28,7 @@
                     <div id="auth-menu-items" class="collapse">
                         <ul >
                             <li>{{user.username}}</li>
-                            <li><a href="<%=urlPrefix%>logout?destination=<%=dest%>">Logout</a></li>
+                            <li><a href="{{@contextPath}}/simple-auth/logout">Logout</a></li>
                         </ul>
                     </div>
                 </div>

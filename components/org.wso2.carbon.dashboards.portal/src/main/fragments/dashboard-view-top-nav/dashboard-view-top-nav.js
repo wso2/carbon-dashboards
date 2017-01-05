@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 function onRequest(env) {
+    var session = getSession();
     var user = {
-        userName: "marcus",
+        userName: session.getUser().getUsername(),
         domain: "carbon.super",
         isEditor: true,
         isOwner: true
