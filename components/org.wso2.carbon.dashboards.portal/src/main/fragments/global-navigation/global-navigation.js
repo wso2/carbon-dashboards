@@ -15,8 +15,9 @@
  */
 
 function onRequest() {
+    var session = getSession();
     var user = {
-        username: "marcus"
+        username: session.getUser().getUsername()
     };
     return {user: user};
 }
