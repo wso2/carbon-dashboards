@@ -79,24 +79,29 @@ var originalURI;
 
     //Need to append GLOBAL-STATE query parameter as a hash.
     var anchorText = request.getParameter('GLOBAL-STATE');
-    var queryString = request.getRequestURI();
-    queryString.replace("GLOBAL-STATE","foo");  //In order to prevent recursive redirection
-    if(anchorText) {
-      var redirectPath = queryString + "#GLOBAL-STATE/" + anchorText;
-      response.sendRedirect(redirectPath);
+    if (user && anchorText) {
+        var requestURI = request.getRequestURI();
+        var urlComponent = requestURI.split('?')[0];
+        var queryParams = '?';
+        var allParameters = request.getAllParameters();
+        for (var key in allParameters) {
+            if (key != 'GLOBAL-STATE') {
+                queryParams += key + '=' + allParameters[key] + '&';
+            }
+        }
+        queryParams = queryParams.substring(0, queryParams.length - 1);
+        var redirectPath = urlComponent + queryParams + "#GLOBAL-STATE/" + anchorText;
+        response.sendRedirect(redirectPath);
     } else {
-      var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
-
-      if (user && PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() !== user.tenantId) {
-          utils.startTenantFlow(user.tenantId);
-      }
-      request.getRequestURI = function () {
-          // return relativeURI;
-          return relativeURI;
-      };
-
-
-      isAPI ? include('/routers/apis.jag') : include('/routers/pages.jag');
+        var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
+        request.getRequestURI = function () {
+            // return relativeURI;
+            return relativeURI;
+        };
+        if (user && PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() !== user.tenantId) {
+            utils.startTenantFlow(user.tenantId);
+        }
+        isAPI ? include('/routers/apis.jag') : include('/routers/pages.jag');
     }
 }());
 %>
