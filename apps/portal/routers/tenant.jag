@@ -77,15 +77,26 @@ var originalURI;
     var isAPI = relativeURI.match(/^\/apis\/.*/ig);
     relativeURI = isAPI ? relativeURI.replace(/^\/apis/ig, '') : relativeURI;
 
-    var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
+    //Need to append GLOBAL-STATE query parameter as a hash.
+    var anchorText = request.getParameter('GLOBAL-STATE');
+    var queryString = request.getRequestURI();
+    queryString.replace("GLOBAL-STATE","foo");  //In order to prevent recursive redirection
+    if(anchorText) {
+      var redirectPath = queryString + "#GLOBAL-STATE/" + anchorText;
+      response.sendRedirect(redirectPath);
+    } else {
+      var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
 
-    if (user && PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() !== user.tenantId) {
-        utils.startTenantFlow(user.tenantId);
+      if (user && PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() !== user.tenantId) {
+          utils.startTenantFlow(user.tenantId);
+      }
+      request.getRequestURI = function () {
+          // return relativeURI;
+          return relativeURI;
+      };
+
+
+      isAPI ? include('/routers/apis.jag') : include('/routers/pages.jag');
     }
-    request.getRequestURI = function () {
-        return relativeURI;
-    };
-
-    isAPI ? include('/routers/apis.jag') : include('/routers/pages.jag');
 }());
 %>
