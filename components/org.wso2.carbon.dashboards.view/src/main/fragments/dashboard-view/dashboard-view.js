@@ -28,27 +28,29 @@ function onRequest(env) {
 
     var dashboardContent;
     var dashboardMetaData;
-    var dashboardExistance;
+    var isDashboardExistsInDB;
 
     var metadataProviderImpl = new MetadataProviderImpl();
     var query = new Query();
+    var user = getSession().getUser();
     query.setUrl(env.params.id);
-    //TODO: Need to update the hardcoded values with logged in user
-    query.setOwner("admin");
+    query.setOwner(user.getUsername());
 
     try {
-        dashboardExistance = metadataProviderImpl.isExists(query);
+        isDashboardExistsInDB = metadataProviderImpl.isExists(query);
     } catch (e) {
-        if (Log.isDebugEnabled) {
-            Log.debug("Error in accessing dashboard DB. Dashboard is retrieved from File system");
-        }
-        dashboardExistance = false;
+        Log.warn("Error in accessing dashboard DB. Only the dashboards in the file system will be retrieved.");
+        isDashboardExistsInDB = false;
     }
 
-    if (!dashboardExistance) {
+    if (!isDashboardExistsInDB) {
         try {
-            dashboardMetaData = null;
-            dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
+            //if (user.hasPermission(env.params.id, "view")) {
+                dashboardMetaData = null;
+                dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
+            // } else {
+            //     sendError(401, "Access to dashboard " + env.params.id + " denied !");
+            // }
             if (Log.isDebugEnabled) {
                 Log.debug("Dashboard is retrieved from File system");
             }
@@ -60,6 +62,7 @@ function onRequest(env) {
     } else {
         dashboardMetaData = metadataProviderImpl.get(query);
         dashboardContent = JSON.parse(dashboardMetaData.getContent());
+
         if (Log.isDebugEnabled) {
             Log.debug("Dashboard is retrieved from DB");
         }
