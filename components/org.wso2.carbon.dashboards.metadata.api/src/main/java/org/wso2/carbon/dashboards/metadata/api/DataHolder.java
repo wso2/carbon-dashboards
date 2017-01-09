@@ -19,35 +19,42 @@ package org.wso2.carbon.dashboards.metadata.api;
  *
  */
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.dashboards.metadata.provider.MetadataProvider;
 
 /**
  * This is the data holder for dashboards meta data API.
  */
-@Component(name = "org.wso2.carbon.dashboards.metadata.api",
-        immediate = true)
-public class DataHolder {
-    private static MetadataProvider metadataProvider;
 
-    public static MetadataProvider getMetadataProvider() {
+public class DataHolder {
+    private static DataHolder instance = new DataHolder();
+    private MetadataProvider metadataProvider;
+
+    /**
+     * This method is used to get the metadata provider of dashboard.
+     *
+     * @return MetadataProvider metadataprovide for dashboard
+     */
+    public MetadataProvider getMetadataProvider() {
         return metadataProvider;
     }
 
-    @Reference(name = "metadataProvider",
-            service = MetadataProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetMetadataProvider")
-    public void setMetadataProvider(MetadataProvider metadataProvider1) {
-        metadataProvider = metadataProvider1;
+    /**
+     * This method is used to return the Dataholder instance
+     *
+     * @return DataHolder dataholder for dashboard
+     */
+    public static DataHolder getInstance() {
+        return instance;
     }
 
-    public void unsetMetadataProvider(MetadataProvider metadataProvider1) {
-        metadataProvider = null;
+    /**
+     * This method is used to set the metadata provider of dashboards
+     *
+     * @param metadataProvider MetadataProvider of dashboard
+     */
+    public void setMetadataProvider(MetadataProvider metadataProvider) {
+        this.metadataProvider = metadataProvider;
     }
+
 }
 

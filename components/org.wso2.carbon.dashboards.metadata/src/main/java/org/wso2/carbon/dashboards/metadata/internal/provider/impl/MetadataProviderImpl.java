@@ -37,10 +37,6 @@ import org.wso2.carbon.dashboards.metadata.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.metadata.provider.MetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

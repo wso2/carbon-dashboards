@@ -42,7 +42,7 @@ public class MetadataProviderAPI implements Microservice {
     @Consumes("application/json")
     @Produces("application/json")
     public void add(Metadata metadata) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
         if (metadataProvider != null) {
             metadataProvider.add(metadata);
         }
@@ -53,7 +53,7 @@ public class MetadataProviderAPI implements Microservice {
     @Consumes("application/json")
     @Produces("application/json")
     public void update(Metadata metadata) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
         if (metadataProvider != null) {
             metadataProvider.update(metadata);
         }
@@ -64,7 +64,7 @@ public class MetadataProviderAPI implements Microservice {
     @Consumes("application/json")
     @Produces("application/json")
     public void delete(Query query) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
         if (metadataProvider != null) {
             metadataProvider.delete(query);
         }
@@ -75,7 +75,7 @@ public class MetadataProviderAPI implements Microservice {
     @Produces("application/json")
     @Path("/get")
     public Metadata get(Query query) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getMetadataProvider();
+        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
         if (metadataProvider != null) {
             return metadataProvider.get(query);
         }

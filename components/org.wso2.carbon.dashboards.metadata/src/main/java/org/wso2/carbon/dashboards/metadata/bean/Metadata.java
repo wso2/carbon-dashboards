@@ -258,7 +258,7 @@ public class Metadata {
         StringBuilder sb = new StringBuilder();
         String line;
         try {
-            br = new BufferedReader(new InputStreamReader((InputStream) content));
+            br = new BufferedReader(new InputStreamReader((InputStream) content, Charset.defaultCharset()));
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
