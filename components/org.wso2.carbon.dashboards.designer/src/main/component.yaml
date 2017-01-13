@@ -1,0 +1,12 @@
+bindings:
+    - zoneName: "org.wso2.carbon.dashboards.designer.footer"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.designer.footer"
+    - zoneName: "org.wso2.carbon.dashboards.designer.header"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.designer.header"
+
+config:
+    appName: "Dashboard Designer"

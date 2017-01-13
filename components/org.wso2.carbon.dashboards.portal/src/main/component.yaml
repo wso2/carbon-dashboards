@@ -19,3 +19,8 @@ bindings:
       mode: "append"
       fragments:
         - "org.wso2.carbon.dashboards.portal.feature.task-bar"
+
+config:
+    appName: "Portal"
+    loginRedirectUri: "/"
+    logoutRedirectUri: "/simple-auth/login"
