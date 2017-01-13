@@ -78,8 +78,8 @@ var originalURI;
     relativeURI = isAPI ? relativeURI.replace(/^\/apis/ig, '') : relativeURI;
 
     //Need to append GLOBAL-STATE query parameter as a hash.
-    var anchorText = request.getParameter('GLOBAL-STATE');
-    if (user && anchorText) {
+    var deviceInfo = request.getParameter('GLOBAL-STATE');
+    if (user && deviceInfo) {
         var requestURI = request.getRequestURI();
         var urlComponent = requestURI.split('?')[0];
         var queryParams = '?';
@@ -89,8 +89,9 @@ var originalURI;
                 queryParams += key + '=' + allParameters[key] + '&';
             }
         }
+        var anchor = {"device":{"id":deviceInfo.split(",")[0],"type":deviceInfo.split(",")[1]}};
         queryParams = queryParams.substring(0, queryParams.length - 1);
-        var redirectPath = urlComponent + queryParams + "#GLOBAL-STATE/" + anchorText;
+        var redirectPath = urlComponent + queryParams + "#GLOBAL-STATE/" + JSON.stringify(anchor);
         response.sendRedirect(redirectPath);
     } else {
         var PrivilegedCarbonContext = Packages.org.wso2.carbon.context.PrivilegedCarbonContext;
