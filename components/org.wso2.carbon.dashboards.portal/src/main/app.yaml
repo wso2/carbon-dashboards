@@ -1,0 +1,5 @@
+theme : org.wso2.carbon.uuf.sample.theme.default
+loginPageUri: "/simple-auth/login"
+errorPages:
+    "404": /foundation/error/404
+    default: /foundation/error/default
