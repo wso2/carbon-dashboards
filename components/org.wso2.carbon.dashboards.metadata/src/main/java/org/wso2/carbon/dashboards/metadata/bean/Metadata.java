@@ -294,7 +294,7 @@ public class Metadata {
     public InputStream getContentStream() throws MetadataException {
 
         if (content == null) {
-            throw new MetadataException("Resource content is empty.");
+            return new ByteArrayInputStream("".getBytes());
         }
         if (content instanceof byte[]) {
             return new ByteArrayInputStream((byte[]) content);
