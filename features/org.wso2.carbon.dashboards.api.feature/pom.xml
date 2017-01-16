@@ -43,11 +43,11 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
-            <artifactId>org.wso2.carbon.dashboards.metadata</artifactId>
+            <artifactId>org.wso2.carbon.dashboards.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
-            <artifactId>org.wso2.carbon.dashboards.metadata.api</artifactId>
+            <artifactId>org.wso2.carbon.dashboards.api</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -119,10 +119,10 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>
-                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.metadata:${carbon.dashboards.version}
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.core:${carbon.dashboards.version}
                                 </bundleDef>
                                 <bundleDef>
-                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.metadata.api:${carbon.dashboards.version}
+                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.api:${carbon.dashboards.version}
                                 </bundleDef>
                             </bundles>
                             <importFeatures>

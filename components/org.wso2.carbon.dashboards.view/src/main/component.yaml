@@ -1,6 +1,6 @@
 apis:
-    - className: "org.wso2.carbon.dashboards.metadata.api.MetadataProviderAPI"
-      uri: "/metadata/"
+    - className: "org.wso2.carbon.dashboards.api.MetadataProviderAPI"
+      uri: "/core/"
 
 config:
     appName: "DashboardView"

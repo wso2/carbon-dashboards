@@ -31,11 +31,11 @@
 
     <modules>
         <module>components/org.wso2.carbon.dashboards.view</module>
-        <module>components/org.wso2.carbon.dashboards.metadata</module>
-        <module>components/org.wso2.carbon.dashboards.metadata.api</module>
+        <module>components/org.wso2.carbon.dashboards.core</module>
+        <module>components/org.wso2.carbon.dashboards.api</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
-        <!-- <module>components/org.wso2.carbon.dashboards.designer</module>
-        <module>components/org.wso2.carbon.dashboards.portal</module> -->
+        <module>components/org.wso2.carbon.dashboards.designer</module>
+        <module>components/org.wso2.carbon.dashboards.portal</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -81,12 +81,12 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
-                <artifactId>org.wso2.carbon.dashboards.metadata</artifactId>
+                <artifactId>org.wso2.carbon.dashboards.core</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
-                <artifactId>org.wso2.carbon.dashboards.metadata.api</artifactId>
+                <artifactId>org.wso2.carbon.dashboards.api</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
         </dependencies>

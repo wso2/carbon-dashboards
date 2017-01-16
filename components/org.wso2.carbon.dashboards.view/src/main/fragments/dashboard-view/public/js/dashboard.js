@@ -148,7 +148,7 @@
     };
 
     /**
-     * generate the metadata payload to invoke rest apis
+     * generate the core payload to invoke rest apis
      * @returns metadata payload
      */
     var metaDataPayloadGeneration = function () {
