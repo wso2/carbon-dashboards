@@ -107,7 +107,33 @@
                 if (tokenUtil.checkOAuthEnabled()) {
                     var properties = {samlToken: sessionObj.samlToken, user: username};
                     apiWrapperUtil.setupTokenPairBySamlGrantType(username, sessionObj.samlToken);
-                    response.sendRedirect(relayState);
+                    if (user) {
+                        var urlComponents = relayState.split('?');
+                        if (urlComponents.length > 1) {
+                            var urlComponent = urlComponents[0];
+                            var queryParams = '?';
+                            var allParameters = urlComponents[1].split('&');
+                            var anchorText = '';
+                            for (var key in allParameters) {
+                                if (allParameters[key].split('=')[0] != 'GLOBAL-STATE') {
+                                    queryParams += allParameters[key] + '&';
+                                } else {
+                                    anchorText = allParameters[key].split('=')[1];
+                                }
+                            }
+                            if (anchorText) {
+                                queryParams = queryParams.substring(0, queryParams.length - 1);
+                                var redirectPath = urlComponent + queryParams + "#GLOBAL-STATE/" + anchorText;
+                                response.sendRedirect(redirectPath);
+                            } else {
+                                response.sendRedirect(relayState);
+                            }
+                        } else {
+                            response.sendRedirect(relayState);
+                        }
+                    } else {
+                        response.sendRedirect(relayState);
+                    }
                     return;
                 } else {
                     var saml2Cookie = require('/modules/saml-to-cookie.js');

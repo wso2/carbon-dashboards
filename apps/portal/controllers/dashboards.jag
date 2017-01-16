@@ -77,10 +77,11 @@ var fresh;
                     }
 
                     dashboard = decorateDashboard(dashboard);
-                    utils.sandbox(context, function () {
-                        dashboards.update(dashboard);
-                    });
-
+                    if (user) {
+                        utils.sandbox(context, function () {
+                            dashboards.update(dashboard);
+                        });
+                    }
                     if (log.isDebugEnabled()) {
                         log.debug("Updated dashboard.json for: " + dashboardId);
                     }
