@@ -37,6 +37,7 @@ import org.wso2.carbon.dashboards.metadata.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.metadata.provider.MetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -97,11 +98,22 @@ public class MetadataProviderImpl implements MetadataProvider {
 
     @Override
     public void update(Metadata metadata) throws MetadataException {
+        metadata.setLastUpdatedTime((new Date()).getTime());
         dao.update(metadata);
     }
 
     @Override
     public void add(Metadata metadata) throws MetadataException {
+        if (metadata.getOwner() != null) {
+            metadata.setLastUpdatedBy(metadata.getOwner());
+        }
+        long currentTime = (new Date()).getTime();
+        if (metadata.getLastUpdatedTime() == 0l) {
+            metadata.setLastUpdatedTime(currentTime);
+        }
+        if (metadata.getCreatedTime() == 0l) {
+            metadata.setCreatedTime(currentTime);
+        }
         dao.add(metadata);
     }
 
