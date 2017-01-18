@@ -28,7 +28,7 @@
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>org.wso2.carbon.dashboards.core</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Dashboards metadata store</name>
+    <name>WSO2 Carbon - Dashboards Metadata store</name>
 
     <dependencies>
         <dependency>
@@ -90,7 +90,9 @@
                             javax.sql.*
                         </Import-Package>
                         <Export-Package>
-                            org.wso2.carbon.dashboards.core.*;version="${carbon.dashboards.version}"
+                            org.wso2.carbon.dashboards.core.*;version="${carbon.dashboards.version}",
+                            org.wso2.carbon.dashboards.core.provider.*;version="${carbon.dashboards.version}",
+                            org.wso2.carbon.dashboards.core.exception.*;version="${carbon.dashboards.version}"
                         </Export-Package>
                         <Carbon-Component>
                             osgi.service;objectClass="org.wso2.carbon.dashboards.core.provider.MetadataProvider"

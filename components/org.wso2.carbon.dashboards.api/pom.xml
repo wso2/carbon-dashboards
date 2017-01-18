@@ -29,7 +29,7 @@
     <artifactId>org.wso2.carbon.dashboards.api</artifactId>
     <version>3.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Dashboards metadata store API</name>
+    <name>WSO2 Carbon - Dashboards Metadata store API</name>
 
     <dependencies>
         <dependency>
@@ -55,6 +55,8 @@
                         </Export-Package>
                         <Import-Package>
                             org.wso2.carbon.dashboards.core.*;version=${carbon.dashboards.version},
+                            org.wso2.carbon.dashboards.core.provider.*;version=${carbon.dashboards.version},
+                            org.wso2.carbon.dashboards.core.exception.*;version=${carbon.dashboards.version},
                             org.wso2.msf4j.*;version="${msf4j-core.version}",
                             javax.ws.rs.*
                         </Import-Package>

@@ -1,5 +1,5 @@
 apis:
-    - className: "org.wso2.carbon.dashboards.api.MetadataProviderAPI"
+    - className: "org.wso2.carbon.dashboards.api.DashboardMetadataAPI"
       uri: "/dashboard/"
 
 config:

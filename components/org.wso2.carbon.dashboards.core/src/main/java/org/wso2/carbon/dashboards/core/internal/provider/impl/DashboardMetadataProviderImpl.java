@@ -18,6 +18,7 @@
  */
 package org.wso2.carbon.dashboards.core.internal.provider.impl;
 
+
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -27,14 +28,14 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.bean.Metadata;
+import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.bean.Query;
-import org.wso2.carbon.dashboards.core.exception.MetadataException;
-import org.wso2.carbon.dashboards.core.internal.dao.MetadataDAO;
-import org.wso2.carbon.dashboards.core.internal.dao.impl.MetadataDAOImpl;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
+import org.wso2.carbon.dashboards.core.internal.dao.impl.DashboardMetadataDAOImpl;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
-import org.wso2.carbon.dashboards.core.provider.MetadataProvider;
+import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
 import java.util.Date;
@@ -42,23 +43,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is a core class of the Metadata business logic implementation.
+ * This is a core class of the DashboardMetadata business logic implementation.
  */
-@Component(name = "org.wso2.carbon.dashboards.core.internal.provider.impl.MetadataProviderImpl",
-           service = MetadataProvider.class,
+@Component(name = "org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl",
+           service = DashboardMetadataProvider.class,
            immediate = true)
-public class MetadataProviderImpl implements MetadataProvider {
+public class DashboardMetadataProviderImpl implements DashboardMetadataProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(MetadataProviderImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
 
-    private MetadataDAO dao;
+    private DashboardMetadataDAO dao;
 
-    public MetadataProviderImpl(MetadataDAO dao) {
+    public DashboardMetadataProviderImpl(DashboardMetadataDAO dao) {
         this.dao = dao;
     }
 
-    public MetadataProviderImpl() {
-        this(new MetadataDAOImpl());
+    public DashboardMetadataProviderImpl() {
+        this(new DashboardMetadataDAOImpl());
     }
 
     /**
@@ -81,7 +82,7 @@ public class MetadataProviderImpl implements MetadataProvider {
     }
 
     @Override
-    public boolean isExists(Query query) throws MetadataException {
+    public boolean isExists(Query query) throws DashboardException {
         validateQuery(query);
         if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
             return dao.isExists(query.getOwner(), query.getUrl(), query.getVersion());
@@ -92,33 +93,33 @@ public class MetadataProviderImpl implements MetadataProvider {
         } else if (query.getUrl() != null) {
             return dao.isExists(query.getUrl());
         } else {
-            throw new MetadataException("Insufficient parameters supplied to the command");
+            throw new DashboardException("Insufficient parameters supplied to the command");
         }
     }
 
     @Override
-    public void update(Metadata metadata) throws MetadataException {
-        metadata.setLastUpdatedTime((new Date()).getTime());
-        dao.update(metadata);
+    public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
+        dashboardMetadata.setLastUpdatedTime((new Date()).getTime());
+        dao.update(dashboardMetadata);
     }
 
     @Override
-    public void add(Metadata metadata) throws MetadataException {
-        if (metadata.getOwner() != null) {
-            metadata.setLastUpdatedBy(metadata.getOwner());
+    public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
+        if (dashboardMetadata.getOwner() != null) {
+            dashboardMetadata.setLastUpdatedBy(dashboardMetadata.getOwner());
         }
         long currentTime = (new Date()).getTime();
-        if (metadata.getLastUpdatedTime() == 0l) {
-            metadata.setLastUpdatedTime(currentTime);
+        if (dashboardMetadata.getLastUpdatedTime() == 0l) {
+            dashboardMetadata.setLastUpdatedTime(currentTime);
         }
-        if (metadata.getCreatedTime() == 0l) {
-            metadata.setCreatedTime(currentTime);
+        if (dashboardMetadata.getCreatedTime() == 0l) {
+            dashboardMetadata.setCreatedTime(currentTime);
         }
-        dao.add(metadata);
+        dao.add(dashboardMetadata);
     }
 
     @Override
-    public void delete(Query query) throws MetadataException {
+    public void delete(Query query) throws DashboardException {
         validateQuery(query);
         if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
             dao.delete(query.getOwner(), query.getUrl(), query.getVersion());
@@ -127,22 +128,22 @@ public class MetadataProviderImpl implements MetadataProvider {
         } else if (query.getUrl() != null) {
             dao.delete(query.getUrl());
         } else {
-            throw new MetadataException("Insufficient parameters supplied to the command");
+            throw new DashboardException("Insufficient parameters supplied to the command");
         }
     }
 
     @Override
-    public Metadata get(Query query) throws MetadataException {
+    public DashboardMetadata get(Query query) throws DashboardException {
         validateQuery(query);
         if (query.getUrl() != null) {
             return dao.get(query.getUrl());
         } else {
-            throw new MetadataException("Insufficient parameters supplied to the command");
+            throw new DashboardException("Insufficient parameters supplied to the command");
         }
     }
 
     @Override
-    public List<Metadata> get(Query query, PaginationContext paginationContext) throws MetadataException {
+    public List<DashboardMetadata> get(Query query, PaginationContext paginationContext) throws DashboardException {
         validateQuery(query);
         if (query.getOwner() != null && query.getName() != null && query.getVersion() != null) {
             return dao.list(query.getOwner(), query.getName(), query.getVersion(), paginationContext);
@@ -153,13 +154,13 @@ public class MetadataProviderImpl implements MetadataProvider {
         } else if (query.getName() != null) {
             return dao.listByURL(query.getName(), paginationContext);
         } else {
-            throw new MetadataException("Insufficient parameters supplied to the command");
+            throw new DashboardException("Insufficient parameters supplied to the command");
         }
     }
 
-    private void validateQuery(Query query) throws MetadataException {
+    private void validateQuery(Query query) throws DashboardException {
         if (query == null) {
-            throw new MetadataException("Unable to find Metadata. The query is empty");
+            throw new DashboardException("Unable to find DashboardMetadata. The query is empty");
         }
     }
 

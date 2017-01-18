@@ -20,7 +20,7 @@ package org.wso2.carbon.dashboards.core.internal.dao.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.exception.MetadataException;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
@@ -62,12 +62,12 @@ public class DAOUtils {
         super();
     }
 
-    public static DAOUtils getInstance() throws MetadataException {
+    public static DAOUtils getInstance() throws DashboardException {
         instance.initialize(WSO2_DASHBOARD_DB);
         return instance;
     }
 
-    public void initialize(String dataSourceName) throws MetadataException {
+    public void initialize(String dataSourceName) throws DashboardException {
         if (dataSource != null) {
             return;
         }
@@ -75,7 +75,7 @@ public class DAOUtils {
         try {
             dataSource = instance.getDataSource(dataSourceName);
         } catch (DataSourceException e) {
-            throw new MetadataException("Error in initializing database !", e);
+            throw new DashboardException("Error in initializing database !", e);
         }
 
     }

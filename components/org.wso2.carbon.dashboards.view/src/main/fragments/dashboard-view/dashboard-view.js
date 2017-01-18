@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 function onRequest(env) {
     'use strict';
     // Get dashboard by ID.
@@ -23,8 +24,8 @@ function onRequest(env) {
     var files = Java.type('java.nio.file.Files');
     var paths = Java.type('java.nio.file.Paths');
 
-    var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.metadata.internal.provider.impl.MetadataProviderImpl");
-    var Query = Java.type("org.wso2.carbon.dashboards.metadata.bean.Query");
+    var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl");
+    var Query = Java.type("org.wso2.carbon.dashboards.core.bean.Query");
 
     var dashboardContent;
     var dashboardMetaData;

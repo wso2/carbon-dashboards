@@ -19,7 +19,7 @@
 package org.wso2.carbon.dashboards.core.bean;
 
 /**
- * Representation of a Metadata Query.
+ * Representation of a DashboardMetadata Query.
  */
 public class Query {
 

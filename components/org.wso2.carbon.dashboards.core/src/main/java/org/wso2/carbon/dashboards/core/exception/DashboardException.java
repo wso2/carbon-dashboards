@@ -21,7 +21,7 @@ package org.wso2.carbon.dashboards.core.exception;
 /**
  * Base Class for capturing any type of exception that occurs when using the Registry APIs.
  */
-public class MetadataException extends Exception {
+public class DashboardException extends Exception {
 
 
     /**
@@ -32,7 +32,7 @@ public class MetadataException extends Exception {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public MetadataException(String message) {
+    public DashboardException(String message) {
         super(message);
     }
 
@@ -50,7 +50,7 @@ public class MetadataException extends Exception {
      *                unknown.)
      * @since 1.4
      */
-    public MetadataException(String message, Throwable cause) {
+    public DashboardException(String message, Throwable cause) {
         super(message, cause);
     }
 }
