@@ -32,9 +32,9 @@
                         <configuration>
                             <instructions>
                                 <Import-Package>
-                                    org.wso2.carbon.dashboards.metadata.api,
-                                    org.wso2.carbon.dashboards.metadata.internal.provider.impl,
-                                    org.wso2.carbon.dashboards.metadata.*,org.wso2.carbon.dashboards.metadata.bean
+                                    org.wso2.carbon.dashboards.api,
+                                    org.wso2.carbon.dashboards.core.internal.provider.impl,
+                                    org.wso2.carbon.dashboards.core.*,org.wso2.carbon.dashboards.core.bean
                                 </Import-Package>
                             </instructions>
                         </configuration>
