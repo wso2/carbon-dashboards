@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
-
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
@@ -160,7 +159,8 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             ps.setString(5, dashboardMetadata.getLastUpdatedBy());
             ps.setBoolean(6, dashboardMetadata.isShared());
             ps.setTimestamp(7, new Timestamp(new Date().getTime()));
-            ps.setBinaryStream(8, dashboardMetadata.getContentStream(), dashboardMetadata.getContentStream().available());
+            ps.setBinaryStream(8, dashboardMetadata.getContentStream(),
+                               dashboardMetadata.getContentStream().available());
             ps.setString(9, dashboardMetadata.getUrl());
             ps.setTimestamp(10,  new Timestamp(dashboardMetadata.getCreatedTime()));
             ps.setString(11, dashboardMetadata.getParentId());
@@ -199,7 +199,8 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             ps.setString(6, dashboardMetadata.getDescription());
             ps.setBoolean(7, dashboardMetadata.isShared());
             ps.setString(8, dashboardMetadata.getParentId());
-            ps.setBinaryStream(9, dashboardMetadata.getContentStream(), dashboardMetadata.getContentStream().available());
+            ps.setBinaryStream(9, dashboardMetadata.getContentStream(),
+                               dashboardMetadata.getContentStream().available());
             ps.setTimestamp(10, new Timestamp(new Date().getTime()));
             ps.setTimestamp(11, new Timestamp(new Date().getTime()));
             ps.execute();

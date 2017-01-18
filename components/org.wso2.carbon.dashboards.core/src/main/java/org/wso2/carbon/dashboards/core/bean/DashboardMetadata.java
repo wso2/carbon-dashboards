@@ -254,7 +254,7 @@ public class DashboardMetadata {
      * @return Object returns the content of dashboard
      */
     public Object getContent() throws DashboardException {
-        if (content == null){
+        if (content == null) {
             return null;
         }
         BufferedReader br = null;
@@ -297,7 +297,7 @@ public class DashboardMetadata {
     public InputStream getContentStream() throws DashboardException {
 
         if (content == null) {
-            return new ByteArrayInputStream("".getBytes());
+            return new ByteArrayInputStream("".getBytes(Charset.forName("UTF-8")));
         }
         if (content instanceof byte[]) {
             return new ByteArrayInputStream((byte[]) content);

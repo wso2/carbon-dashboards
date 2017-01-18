@@ -109,10 +109,10 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             dashboardMetadata.setLastUpdatedBy(dashboardMetadata.getOwner());
         }
         long currentTime = (new Date()).getTime();
-        if (dashboardMetadata.getLastUpdatedTime() == 0l) {
+        if (dashboardMetadata.getLastUpdatedTime() == 0L) {
             dashboardMetadata.setLastUpdatedTime(currentTime);
         }
-        if (dashboardMetadata.getCreatedTime() == 0l) {
+        if (dashboardMetadata.getCreatedTime() == 0L) {
             dashboardMetadata.setCreatedTime(currentTime);
         }
         dao.add(dashboardMetadata);
