@@ -33,7 +33,7 @@
 
 
     <description>
-        This feature contains the bundles which contains metadata backend and the interface for carbon dashboards
+        This feature contains the bundles which contains Dashboard Metadata backend and the interface for carbon dashboards
     </description>
     <dependencies>
         <dependency>

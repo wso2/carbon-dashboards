@@ -19,7 +19,7 @@ package org.wso2.carbon.dashboards.api;
  *
  */
 
-import org.wso2.carbon.dashboards.core.provider.MetadataProvider;
+import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
 
 /**
  * This is the data holder for dashboards meta data API.
@@ -27,15 +27,15 @@ import org.wso2.carbon.dashboards.core.provider.MetadataProvider;
 
 public class DataHolder {
     private static DataHolder instance = new DataHolder();
-    private MetadataProvider metadataProvider;
+    private DashboardMetadataProvider dashboardMetadataProvider;
 
     /**
      * This method is used to get the core provider of dashboard.
      *
-     * @return MetadataProvider metadataprovide for dashboard
+     * @return DashboardMetadataProvider dashboardMetadataProvider for dashboard
      */
-    public MetadataProvider getMetadataProvider() {
-        return metadataProvider;
+    public DashboardMetadataProvider getDashboardMetadataProvider() {
+        return dashboardMetadataProvider;
     }
 
     /**
@@ -50,10 +50,10 @@ public class DataHolder {
     /**
      * This method is used to set the core provider of dashboards
      *
-     * @param metadataProvider MetadataProvider of dashboard
+     * @param dashboardMetadataProvider DashboardMetadataProvider of dashboard
      */
-    public void setMetadataProvider(MetadataProvider metadataProvider) {
-        this.metadataProvider = metadataProvider;
+    public void setDashboardMetadataProvider(DashboardMetadataProvider dashboardMetadataProvider) {
+        this.dashboardMetadataProvider = dashboardMetadataProvider;
     }
 
 }

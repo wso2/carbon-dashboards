@@ -4,7 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.wso2.carbon.dashboards.core.provider.MetadataProvider;
+import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
 
 /**
  * This is the MetaDataProviderComponent for dashboards
@@ -13,16 +13,16 @@ import org.wso2.carbon.dashboards.core.provider.MetadataProvider;
         immediate = true)
 public class MetaDataProviderComponent {
 
-    @Reference(name = "metadataProvider",
-            service = MetadataProvider.class,
+    @Reference(name = "dashboardMetadata",
+            service = DashboardMetadataProvider.class,
             cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unsetMetadataProvider")
-    public void setMetadataProvider(MetadataProvider metadataProvider) {
-        DataHolder.getInstance().setMetadataProvider(metadataProvider);
+    public void setMetadataProvider(DashboardMetadataProvider dashboardMetadataProvider) {
+        DataHolder.getInstance().setDashboardMetadataProvider(dashboardMetadataProvider);
     }
 
-    public void unsetMetadataProvider(MetadataProvider metadataProvider) {
-        DataHolder.getInstance().setMetadataProvider(null);
+    public void unsetMetadataProvider(DashboardMetadataProvider dashboardMetadataProvider) {
+        DataHolder.getInstance().setDashboardMetadataProvider(null);
     }
 }

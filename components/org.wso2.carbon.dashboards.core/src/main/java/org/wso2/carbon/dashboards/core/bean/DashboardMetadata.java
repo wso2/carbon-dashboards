@@ -20,7 +20,7 @@ package org.wso2.carbon.dashboards.core.bean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.exception.MetadataException;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -30,11 +30,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 /**
- * Class to represent a Metadata(Dashboard JSON).
+ * Class to represent a DashboardMetadata(Dashboard JSON).
  */
-public class Metadata {
+public class DashboardMetadata {
 
-    private static final Logger log = LoggerFactory.getLogger(Metadata.class);
+    private static final Logger log = LoggerFactory.getLogger(DashboardMetadata.class);
 
     protected String id;
     protected String url;
@@ -253,7 +253,10 @@ public class Metadata {
      *
      * @return Object returns the content of dashboard
      */
-    public Object getContent() throws MetadataException {
+    public Object getContent() throws DashboardException {
+        if (content == null) {
+            return null;
+        }
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
         String line;
@@ -263,7 +266,7 @@ public class Metadata {
                 sb.append(line);
             }
         } catch (IOException e) {
-            throw new MetadataException("Error in retrieving dashboard content", e);
+            throw new DashboardException("Error in retrieving dashboard content", e);
         } finally {
             if (br != null) {
                 try {
@@ -289,12 +292,12 @@ public class Metadata {
      * This method is used to get the dashboard json as a inputstream
      *
      * @return InputStream returns the content as a inputstream
-     * @throws MetadataException
+     * @throws DashboardException
      */
-    public InputStream getContentStream() throws MetadataException {
+    public InputStream getContentStream() throws DashboardException {
 
         if (content == null) {
-            return new ByteArrayInputStream("".getBytes());
+            return new ByteArrayInputStream("".getBytes(Charset.forName("UTF-8")));
         }
         if (content instanceof byte[]) {
             return new ByteArrayInputStream((byte[]) content);
@@ -304,7 +307,7 @@ public class Metadata {
         } else if (content instanceof InputStream) {
             return (InputStream) content;
         } else {
-            throw new MetadataException("Resource content is empty.");
+            throw new DashboardException("Resource content is empty.");
         }
     }
 }

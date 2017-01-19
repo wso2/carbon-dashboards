@@ -18,10 +18,10 @@ package org.wso2.carbon.dashboards.api;
  *
  */
 
-import org.wso2.carbon.dashboards.core.bean.Metadata;
+import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.Query;
-import org.wso2.carbon.dashboards.core.exception.MetadataException;
-import org.wso2.carbon.dashboards.core.provider.MetadataProvider;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.Consumes;
@@ -35,16 +35,16 @@ import javax.ws.rs.Produces;
 /**
  * This is the API implementation for the meta data backend service.
  */
-public class MetadataProviderAPI implements Microservice {
+public class DashboardMetadataAPI implements Microservice {
 
     @POST
     @Path("/add")
     @Consumes("application/json")
     @Produces("application/json")
-    public void add(Metadata metadata) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
+    public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
+        DashboardMetadataProvider metadataProvider = DataHolder.getInstance().getDashboardMetadataProvider();
         if (metadataProvider != null) {
-            metadataProvider.add(metadata);
+            metadataProvider.add(dashboardMetadata);
         }
     }
 
@@ -52,10 +52,10 @@ public class MetadataProviderAPI implements Microservice {
     @Path("/update")
     @Consumes("application/json")
     @Produces("application/json")
-    public void update(Metadata metadata) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
+    public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
+        DashboardMetadataProvider metadataProvider = DataHolder.getInstance().getDashboardMetadataProvider();
         if (metadataProvider != null) {
-            metadataProvider.update(metadata);
+            metadataProvider.update(dashboardMetadata);
         }
     }
 
@@ -63,8 +63,8 @@ public class MetadataProviderAPI implements Microservice {
     @Path("/delete")
     @Consumes("application/json")
     @Produces("application/json")
-    public void delete(Query query) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
+    public void delete(Query query) throws DashboardException {
+        DashboardMetadataProvider metadataProvider = DataHolder.getInstance().getDashboardMetadataProvider();
         if (metadataProvider != null) {
             metadataProvider.delete(query);
         }
@@ -74,12 +74,21 @@ public class MetadataProviderAPI implements Microservice {
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/get")
-    public Metadata get(Query query) throws MetadataException {
-        MetadataProvider metadataProvider = DataHolder.getInstance().getMetadataProvider();
+    public DashboardMetadata get(Query query) throws DashboardException {
+        DashboardMetadataProvider metadataProvider = DataHolder.getInstance().getDashboardMetadataProvider();
         if (metadataProvider != null) {
             return metadataProvider.get(query);
         }
         return null;
+    }
+
+    @POST
+    @Path("/exists")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public boolean exists(Query query) throws DashboardException {
+        DashboardMetadataProvider metadataProvider = DataHolder.getInstance().getDashboardMetadataProvider();
+        return metadataProvider.isExists(query);
     }
 
 

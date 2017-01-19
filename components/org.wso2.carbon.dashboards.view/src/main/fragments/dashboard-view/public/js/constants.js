@@ -16,4 +16,4 @@
  * under the License.
  */
 
-var DASHBOARD_METADATA_UPDATE_URL = "/portal/view/apis/core/update";
+var DASHBOARD_METADATA_UPDATE_URL = "../view/apis/dashboard/update";
