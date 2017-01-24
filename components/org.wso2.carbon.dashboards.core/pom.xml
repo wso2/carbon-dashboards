@@ -63,6 +63,10 @@
             <groupId>org.wso2.carbon.datasources</groupId>
             <artifactId>org.wso2.carbon.datasource.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -87,10 +91,12 @@
                             org.yaml.snakeyaml,
                             com.google.common.*;version="${guava.version.range}",
                             org.slf4j.*;version="${slf4j.version.range}",
+                            com.google.gson.*;version="${gson.version.range}",
                             javax.sql.*
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.dashboards.core.*;version="${carbon.dashboards.version}",
+                            org.wso2.carbon.dashboards.core.widget.info.*;version="${carbon.dashboards.version}",
                             org.wso2.carbon.dashboards.core.provider.*;version="${carbon.dashboards.version}",
                             org.wso2.carbon.dashboards.core.exception.*;version="${carbon.dashboards.version}"
                         </Export-Package>
