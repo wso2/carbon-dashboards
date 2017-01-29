@@ -411,7 +411,7 @@ var utils = function () {
                 var requestURL = configs["authorization"]["methods"]["oauth"]["attributes"]["oauthProvider"]
                     ["tokenServiceURL"];
                 var requestPayload = "grant_type=" + configs["authentication"]["methods"]["sso"]["attributes"]
-                        ["grantType"] + "&" + "assertion=" + encodeURIComponent(encodedAssertion) + "&scope=" + scopes;
+                        ["grantType"] + "&assertion=" + encodeURIComponent(encodedAssertion) + "&scope=" + scopes;
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", requestURL, false);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
