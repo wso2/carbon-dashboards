@@ -17,7 +17,6 @@ package org.wso2.carbon.dashboard.deployment;
 
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.application.deployer.CarbonApplication;
@@ -32,6 +31,9 @@ import org.wso2.carbon.utils.CarbonUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -162,9 +164,9 @@ public class DashboardDeployer implements AppDeploymentHandler {
                         if (file.isDirectory()) {
                             String themeName = file.getName();
                             String storePath = getArtifactPath(DashboardConstants.THEME_TYPE);
-                            File themeFolder = new File(storePath);
-                            if (!themeFolder.exists()) {
-                                themeFolder.mkdir();
+                            Path filePath = Paths.get(storePath);
+                            if (Files.notExists(filePath)) {
+                                Files.createDirectories(filePath);
                             }
                             File destination = new File(storePath + themeName);
                             if (destination.exists() || themeName.equalsIgnoreCase(DashboardConstants.DEFAULT_THEME)) {
