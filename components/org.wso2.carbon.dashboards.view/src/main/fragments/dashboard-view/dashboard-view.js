@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-function onRequest(env) {
+function onGet(env) {
     'use strict';
     // Get dashboard by ID.
     var system = Java.type('java.lang.System');

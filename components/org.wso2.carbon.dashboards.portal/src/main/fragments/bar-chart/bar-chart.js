@@ -24,6 +24,6 @@
  *     org.wso2.carbon.uuf.api.Configuration}}} Enivornment
  * @returns {Object.<string, Object>} View Model for Handlebars
  */
-function onRequest(env) {
+function onGet(env) {
     return {};
 }

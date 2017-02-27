@@ -20,7 +20,7 @@ limitations under the License.
     <!-- breadcrumb -->
     <div class="breadcrumb-wrapper">
         <ol class="breadcrumb">
-            <li><a href="#"><i class="icon fw fw-home"></i>{{t "dashboards.label"}}</a></li>
+            <li><a href="#"><i class="icon fw fw-home"></i>{{i18n "dashboards.label"}}</a></li>
             <li class="active dashboard-name truncate">{{id}}</li>
         </ol>
     </div>
@@ -30,7 +30,7 @@ limitations under the License.
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                             aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">{{t "toggle.navigation"}}</span>
+                        <span class="sr-only">{{i18n "toggle.navigation"}}</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -49,7 +49,7 @@ limitations under the License.
                                         <i class="fw fw-settings fw-stack-1x"></i>
                                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     </span>
-                                {{t "settings"}}
+                                {{i18n "settings"}}
                             </a>
                         </li>
                         <li>
@@ -58,7 +58,7 @@ limitations under the License.
                                     <i class="fw-refresh fw-stack-1x"></i>
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                 </span>
-                                {{t "reset"}}
+                                {{i18n "reset"}}
                             </a>
                         </li>
                         <li id="ues-dashboard-preview-link">
@@ -67,7 +67,7 @@ limitations under the License.
                                     <i class="fw fw-view fw-stack-1x"></i>
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                 </span>
-                                {{t "view"}}
+                                {{i18n "view"}}
                             </a>
                         </li>
                     </ul>
@@ -75,15 +75,15 @@ limitations under the License.
                 <div id="navbar2" class="navbar-collapse dropdown tiles collapse" aria-expanded="true"><!-- nav-collapse -->
                     <ul class="nav navbar-nav collapse-nav-sub">
                         <li data-absolute-position="15" style="left: 15px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="../dashboards/"><i class="fw fw-dashboard"></i>{{t "dashboards.label"}}</a>
+                            <a href="../dashboards/"><i class="fw fw-dashboard"></i>{{i18n "dashboards.label"}}</a>
                         </li>
                         <li data-absolute-position="145" style="left: 145px; position: absolute; display: block;" aria-expanded="false">
                             <a href="../widgets/">
-                                <i class="fw fw-gadget"></i>{{t "gadgets"}}
+                                <i class="fw fw-gadget"></i>{{i18n "gadgets"}}
                             </a>
                         </li>
                         <li data-absolute-position="275" style="left: 275px; position: absolute; display: block;" aria-expanded="false">
-                            <a href="../layouts/"><i class="fw fw-layout"></i>{{t "layouts"}}</a>
+                            <a href="../layouts/"><i class="fw fw-layout"></i>{{i18n "layouts"}}</a>
                         </li>
                     </ul>
                 </div><!--/ .nav-collapse -->
@@ -96,35 +96,35 @@ limitations under the License.
 
             <li>
                 <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
-                   onclick="updateSidebarNav('#sidebarNavPages', this)" title="{{t "pages.label"}}"
+                   onclick="updateSidebarNav('#sidebarNavPages', this)" title="{{i18n "pages.label"}}"
                 id="btn-pages-sidebar">
                 <i class="icon fw fw-pages"></i>
                 </a>
             </li>
             <li>
                 <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
-                   onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="{{t "add.block"}}"
+                   onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="{{i18n "add.block"}}"
                 id="btn-sidebar-layouts">
                 <i class="icon fw fw-layout"></i>
                 </a>
             </li>
             <li>
                 <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
-                   onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="{{t "gadgets"}}"
+                   onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="{{i18n "gadgets"}}"
                 id="btn-sidebar-gadgets">
                 <i class="icon fw fw-gadget"></i>
                 </a>
             </li>
             <li>
                 <a data-container-divide="true" aria-expanded="true" data-target="#left-sidebar" data-toggle="sidebar" data-handle="close" rel="sub-nav"
-                   onclick="loadMenuCreator(this)" title="{{t "pages.menu.label"}}"
+                   onclick="loadMenuCreator(this)" title="{{i18n "pages.menu.label"}}"
                 id="btn-sidebar-menu">
                 <i class="icon fw fw-menu"></i>
                 </a>
             </li>
             <li>
                 <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
-                   onclick="updateSidebarNav('#sidebarNavDashboardLayouts', this)" title="{{t "layouts"}}"
+                   onclick="updateSidebarNav('#sidebarNavDashboardLayouts', this)" title="{{i18n "layouts"}}"
                 id="btn-sidebar-dashboard-layout">
                 <i class="icon fw fw-grid"></i>
                 </a>
@@ -146,7 +146,7 @@ limitations under the License.
 
                     <!-- Pages -->
                     <div id="sidebarNavPages">
-                        <div class="sidebar-brand">{{t "pages.label"}}</div>
+                        <div class="sidebar-brand">{{i18n "pages.label"}}</div>
 
                         <div class="add-padding-3x">
 
@@ -155,14 +155,14 @@ limitations under the License.
                                 <span class="icon fw-stack fw-lg">
                                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                                     <i class="fw fw-add fw-stack-1x"></i>
-                                </span> {{t "create.page.label"}}%>
+                                </span> {{i18n "create.page.label"}}%>
                             </button>
 
                             <div class="form-group has-form-control-btn remove-margin-bottom add-margin-top-3x ues-search-box">
                                 <button class="form-control-btn" type="button" title="Search">
                                     <i class="fw fw-search" aria-hidden="true"></i>
                                 </button>
-                                <input type="text" class="form-control" placeholder="{{t "search.label"}}...">
+                                <input type="text" class="form-control" placeholder="{{i18n "search.label"}}...">
                             </div>
                         </div>
                         <div class="panel-group" id="ues-dashboard-pages" role="tablist" aria-multiselectable="true"></div>
@@ -170,11 +170,11 @@ limitations under the License.
 
                     <!-- Layouts -->
                     <div id="sidebarNavLayouts">
-                        <div class="sidebar-brand">{{t "add.block.description"}}</div>
+                        <div class="sidebar-brand">{{i18n "add.block.description"}}</div>
                         <div class="add-padding-3x">
 
                             <div class="form-inline clearfix">
-                                <label class="control-label">{{t "show.grid.label"}}</label>
+                                <label class="control-label">{{i18n "show.grid.label"}}</label>
                                 <label class="switch pull-right">
                                     <input type="checkbox" id="gridGuideToggle">
                                     <span class="helper"></span>
@@ -184,16 +184,16 @@ limitations under the License.
 
                             <div class="form-group form-inline remove-margin-bottom">
                                 <div class="form-group">
-                                    <label class="control-label">{{t "width.label"}}</label>
+                                    <label class="control-label">{{i18n "width.label"}}</label>
                                     <input type="number" id="block-width" class="form-control number-input" min="1" max="12" />
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">{{t "height.label"}}</label>
+                                    <label class="control-label">{{i18n "height.label"}}</label>
                                     <input type="number" id="block-height" class="form-control number-input" min="1" max="12" />
                                 </div>
                             </div>
 
-                            <div class="text-muted add-margin-bottom-3x add-margin-top-1x">{{t "block.size.description"}}</div>
+                            <div class="text-muted add-margin-bottom-3x add-margin-top-1x">{{i18n "block.size.description"}}</div>
 
                             <div class="ues-add-block">
                                 <div class="ues-block-container">
@@ -201,16 +201,16 @@ limitations under the License.
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-primary btn-block" id="ues-add-block-btn">{{t "add.block.label"}}</button>
+                            <button type="button" class="btn btn-primary btn-block" id="ues-add-block-btn">{{i18n "add.block.label"}}</button>
                         </div>
                     </div>
 
                     <!-- Gadgets -->
                     <div id="sidebarNavGadgets" class="ues-store-assets" data-type="gadget">
-                        <div class="sidebar-brand">{{t "add.gadgets"}}</div>
+                        <div class="sidebar-brand">{{i18n "add.gadgets"}}</div>
 
                         <div class="alert alert-info">
-                            {{t "gadget.drop.label"}}
+                            {{i18n "gadget.drop.label"}}
                         </div>
 
                         <div class="add-padding-3x">
@@ -219,7 +219,7 @@ limitations under the License.
                                 <button class="form-control-btn" type="button" title="Search">
                                     <i class="fw fw-search" aria-hidden="true"></i>
                                 </button>
-                                <input type="text" class="form-control" placeholder="{{t "search.label"}}..." />
+                                <input type="text" class="form-control" placeholder="{{i18n "search.label"}}..." />
                             </div>
 
                             <div class="ues-thumbnails"></div>
@@ -229,7 +229,7 @@ limitations under the License.
 
                     <!-- View Layout -->
                     <div id="sidebarNavDashboardLayouts" class="ues-store-assets" data-type="gadget">
-                        <div class="sidebar-brand">{{t "select.layout"}}</div>
+                        <div class="sidebar-brand">{{i18n "select.layout"}}</div>
                         <div class="add-padding-3x">
                             <div id="ues-view-layouts"></div>
                         </div>
@@ -248,7 +248,7 @@ limitations under the License.
                             data-target="#left-sidebar-sub" aria-expanded="true" rel="createPage"><i class="fw fw-cancel"></i></button>
 
                     <div class="add-padding-3x">
-                        {{t "select.layout"}}
+                        {{i18n "select.layout"}}
                         <hr />
                         <div id="ues-page-layouts"></div>
                     </div>

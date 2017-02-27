@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function onRequest(env) {
+function onGet(env) {
     return {
         dashboardName: env.params.dashboard.name,
         userAgent: "Trident",
