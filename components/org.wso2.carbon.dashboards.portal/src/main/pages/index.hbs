@@ -21,19 +21,19 @@
 {{#fillZone "content"}}
     <div class="row">
         <div class="col-md-8">
-            <h1 class="page-sub-title">{{t "dashboards.label"}}</h1>
+            <h1 class="page-sub-title">{{i18n "dashboards.label"}}</h1>
         </div>
         {{#if isSuperDomain}}
             <div class="col-md-4">
                 <ul class="nav nav-pills navbar-right remove-margin filter-dropdown" role="tablist">
-                    <li>Filtered By <span id="filter">{{t "all.dashboards"}}</span> :
+                    <li>Filtered By <span id="filter">{{i18n "all.dashboards"}}</span> :
                         <button class="btn btn-default" data-toggle="dropdown" aria-expanded="false"><i
                                 class="fw fw-filter"></i></button>
                         <ul class="dropdown-menu arrow arrow-top-right dark sort-list add-margin-top-2x"
                             id="filter-dashboards">
-                            <li><a href="#" data-filter="All">{{t "all.dashboards"}}</a></li>
-                            <li><a href="#" data-filter="Shared">{{t "shared.dashboards"}}</a></li>
-                            <li><a href="#" data-filter="Tenant">{{t "tenant.dashboards"}}{{userDomain}}</a></li>
+                            <li><a href="#" data-filter="All">{{i18n "all.dashboards"}}</a></li>
+                            <li><a href="#" data-filter="Shared">{{i18n "shared.dashboards"}}</a></li>
+                            <li><a href="#" data-filter="Tenant">{{i18n "tenant.dashboards"}}{{userDomain}}</a></li>
                         </ul>
                     </li>
                 </ul>

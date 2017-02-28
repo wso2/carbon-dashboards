@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-function onRequest() {
+function onGet() {
     var session = getSession();
     var user = {
         username: session.getUser().getUsername()
