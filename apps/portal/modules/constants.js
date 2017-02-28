@@ -23,7 +23,7 @@ var APPLICATION_X_WWW_FOR_URLENCODED = "application/x-www-form-urlencoded";
 var APPLICATION_ZIP = "application/zip";
 
 //directory paths
-var EXTENSIONS_THEMES_PATH = "extensions/themes/";
+var EXTENSIONS_THEMES_PATH = "/extensions/themes/";
 var STORE_PATH = "/store/";
 var FS_THEME_PATH = "/fs/theme/";
 var EXTENSIONS_LOCALES_PATH = "/extensions/locales/";
