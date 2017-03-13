@@ -1,7 +1,7 @@
 {
   "info": {
-    "id": "bar-chart",
-    "displayName": "Bar Chart",
+    "id": "org.wso2.carbon.dashboards.designer.pie-chart",
+    "displayName": "Pie Chart",
     "thumbnail": "widget-thumbnail.jpg"
   },
   "providerConfig": {

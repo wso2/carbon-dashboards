@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public class WidgetInfoProviderImpl implements WidgetInfoProvider {
 
     public static final String APP_PATH = "deployment/uufapps/";
-    public static final String CONF_FILE = "widgetConf.json";
+    public static final String CONF_FILE = "conf/widgetConf.json";
     public static final String INFO = "info";
     public static final String THUMBNAIL = "thumbnail";
     public static final String COMPONENTS = "components";

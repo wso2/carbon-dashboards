@@ -49,13 +49,13 @@
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.foundation.ui</artifactId>
-            <version>${carbon.uuf.core.version}</version>
-            <type>zip</type>
-            <classifier>uuf-component</classifier>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.uuf.sample</groupId>-->
+            <!--<artifactId>org.wso2.carbon.uuf.sample.foundation.ui</artifactId>-->
+            <!--<version>${carbon.uuf.core.version}</version>-->
+            <!--<type>zip</type>-->
+            <!--<classifier>uuf-component</classifier>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.simple-auth.ui</artifactId>

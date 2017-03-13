@@ -1,0 +1,27 @@
+{{js "js/left-nav-bar.js"}}
+
+<nav class="navbar sidebar-wrapper toggled sub-nav" role="navigation" data-side="left" data-width="52"
+     data-offset-bottom="40" style="height: 473px;">
+    <ul class="nav navbar-nav nav-stacked">
+        <li aria-expanded="false" class="">
+            <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
+               onclick="updateSidebarNav('#sidebarNavLayouts', this)" title="Add Block" id="btn-sidebar-layouts"
+               class="">
+                <i class="icon fw fw-layout"></i>
+            </a>
+        </li>
+        <li aria-expanded="false" class="">
+            <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="false" rel="sub-nav"
+               onclick="updateSidebarNav('#sidebarNavGadgets', this)" title="Gadgets" id="btn-sidebar-gadgets" class="">
+                <i class="icon fw fw-gadget"></i>
+            </a>
+        </li>
+        <li aria-expanded="true" class="active">
+            <a data-toggle="sidebar" data-target="#left-sidebar" aria-expanded="true" rel="sub-nav"
+               onclick="updateSidebarNav('#sidebarNavDashboardLayouts', this)" title="Layouts"
+               id="btn-sidebar-dashboard-layout" class="active">
+                <i class="icon fw fw-grid"></i>
+            </a>
+        </li>
+    </ul>
+</nav>

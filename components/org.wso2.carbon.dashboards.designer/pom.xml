@@ -17,6 +17,16 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.wso2.carbon.uuf.common</groupId>
+            <artifactId>org.wso2.carbon.uuf.common.foundation.ui</artifactId>
+            <version>${carbon.uuf.common.version}</version>
+            <type>zip</type>
+            <classifier>uuf-component</classifier>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -30,6 +40,15 @@
                         <goals>
                             <goal>create-component</goal>
                         </goals>
+                        <configuration>
+                            <instructions>
+                                <Import-Package>
+                                    org.wso2.carbon.dashboards.api,
+                                    org.wso2.carbon.dashboards.core.internal.provider.impl,
+                                    org.wso2.carbon.dashboards.core.*,org.wso2.carbon.dashboards.core.bean
+                                </Import-Package>
+                            </instructions>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
