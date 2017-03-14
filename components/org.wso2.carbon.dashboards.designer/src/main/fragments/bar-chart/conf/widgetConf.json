@@ -1,0 +1,38 @@
+{
+  "info": {
+    "id": "org.wso2.carbon.dashboards.designer.bar-chart",
+    "displayName": "Bar Chart",
+    "thumbnail": "widget-thumbnail.jpg"
+  },
+  "providerConfig": {
+    "stream": "",
+    "version": "",
+    "interval": 500,
+    "type": "",
+    "metadata": {
+      "names": [
+      ],
+      "types": [
+      ]
+    }
+  },
+  "chartConfig": {
+    "type": "",
+    "x": "",
+    "charts": [
+      {
+        "y": ""
+      }
+    ],
+    "maxLength": 20,
+    "width": 800,
+    "height": 400
+  },
+  "pubsub": {
+    "isPublisher": true,
+    "isSubscriber": false,
+    "topic": ""
+  },
+  "permission": {
+  }
+}

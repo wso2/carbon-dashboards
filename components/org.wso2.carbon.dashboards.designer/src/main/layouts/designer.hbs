@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{placeholder "css"}}
+    {{defineZone "header"}}
+    {{#placeholder "favicon"}}
+        <link rel="shortcut icon" href="{{public "images/default-favicon.png"}}" type="image/png"/>
+    {{/placeholder}}
+    <title>{{#placeholder "title"}}{{/placeholder}}</title>
+
+</head>
+<body>
+{{defineZone "task-bar"}}
+{{defineZone "left-nav-bar"}}
+<div class="sidebar-wrapper sidebar-nav toggled" id="left-sidebar" data-side="left" data-width="250"
+     data-offset-left="52" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true"
+     style="height: 289px; width: 250px; left: -250px; top:inherit;">
+    {{defineZone "sidebar-nav-layouts"}}
+    {{defineZone "sidebar-nav-widgets"}}
+</div>
+{{defineZone "content"}}
+{{defineZone "footer"}}
+<footer>
+    {{placeholder "js"}}
+</footer>
+</body>
+</html>

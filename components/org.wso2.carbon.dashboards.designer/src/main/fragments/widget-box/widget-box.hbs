@@ -1,0 +1,16 @@
+<div id="{{@params.widgetID}}" class="ues-component gadget" data-grid-id="{{@params.gridID}}">
+    <div class="gadget-heading ues-component-heading">
+        <h1 class="gadget-title ues-component-title truncate">{{@params.widgetTitle}}</h1>
+        <div class="gadget-actions ues-component-actions">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"
+                        data-target="#modalDelete" title="remove">
+                    <i class="icon fw fw-delete"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="gadget-body ues-component-body">
+        {{{@params.widgetContent}}}
+    </div>
+</div>
