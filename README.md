@@ -1,75 +1,52 @@
-# UUF Portal
+# WSO2 Dashboard Component
 
-UUF Portal is UUF based carbon-dashboard component which runs on WSO2 Carbon 5. 
+WSO2 Dashboards , allows you to create any custom dashboard, with a preferred layout, and manage and visualize these gadgets, which renders the data that you are interested in, as shown in the below diagram. 
 
 ## Architecture
 
-There won't be single app which develop for dashboard related tasks. There will be components for each of major areas which listed below.
 
-1. Dashboard Viewer
-2. Dashboard Editor
-3. Widget Generation
+## Getting Started
 
-## Dashboard JSON
+This repository consists of set of UUF components which can be used to create,design and view dashboards. So users need to add these components into UUF app in order to tryout these dashboard components. Please follow instructions given here in order to get an understanding about creating UUF app. 
 
-Dashboard related data is stored in a json format for easy readability and configurability.
-```javascript
-{
-        "name": "",
-        "id": "",
-        "version": "",
-        "description": "",
-        "blocks": [{
-            "height": 0,
-            "id": "",
-            "width": 0,
-            "x": 0,
-            "y": 0
-        }, {
-            "height": 0,
-            "id": "",
-            "width": 0,
-            "x": 0,
-            "y": 0
-        }, {
-            "height": 0,
-            "id": "",
-            "width": 0,
-            "x": 0,
-            "y": 0
-        }],
-        "widgets": {
-          "a": {
-            "id": "",
-            "url": "",
-            "permission": []
-          },
-          "b": {
-            "id": "",
-            "url": "",
-            "permission": []
-          },
-          "c": {
-            "id": "",
-            "url": "",
-            "permission": []
-          }
-        },
-        "permission": {
-            "editor": [],
-            "viewer": [],
-            "owner": []
-        }
-}
+Please use following maven dependency within a UUF based application in order to tryout these dashboard components.
+
+```xml
+<dependency>
+    <groupId>org.wso2.carbon.dashboards</groupId>
+    <artifactId>org.wso2.carbon.dashboards.view</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <type>zip</type>
+    <classifier>uuf-component</classifier>
+</dependency>
+<dependency>
+    <groupId>org.wso2.carbon.dashboards</groupId>
+    <artifactId>org.wso2.carbon.dashboards.designer</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <type>zip</type>
+    <classifier>uuf-component</classifier>
+</dependency>
+<dependency>
+    <groupId>org.wso2.carbon.dashboards</groupId>
+    <artifactId>org.wso2.carbon.dashboards.api.feature</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <type>zip</type>
+</dependency>
 ```
-This json can be extended as to the changes in requirements that will come in future.
 
-## Installation
+## License
 
-To Install Portal app which contains the dashboard viewer component follow the guidelines provided below.
+Carbon dashboards is available under the Apache 2 License.
 
-1. Build carbon-dashboard:uuf-portal branch using `mvn clean install`
-2. Build product which has portal app(org.wso2.carbon.dashboards.portal.feature) installed as a feature.
-3. Create dashboard definition (dashboard.json) inside <CARBON_HOME>/deployment/dashboards/ directory.
-4. Get the product pack, extract it and run using shell file inside bin folder.
-   (`./carbon.sh` or `./wso2server.sh`)
+## How To Contribute
+
+* Please report issues at [WSO2 Carbon Dashboard Issues](https://github.com/wso2/carbon-dashboards/issues)
+* Send your pull requests.
+* You can find more instructions on howto contribute on community site (http://wso2.com/community).
+
+## Contact Us
+
+WSO2 developers can be contacted via the mailing lists:
+* WSO2 Developers List : dev@wso2.org
+* WSO2 Architecture List : architecture@wso2.org
+
