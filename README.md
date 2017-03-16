@@ -2,8 +2,14 @@
 
 WSO2 Dashboards , allows you to create any custom dashboard, with a preferred layout, and manage and visualize these gadgets, which renders the data that you are interested in, as shown in the below diagram. 
 
+
+![Intro Image](https://cloud.githubusercontent.com/assets/10518715/23993643/65926430-0a67-11e7-8af6-beb0e39437a3.png)
+
 ## Architecture
 
+The following diagram illustrates the high level architecture of WSO2 Dashboard component.
+
+![Archi Image](https://cloud.githubusercontent.com/assets/10518715/23993698/95c44ca4-0a67-11e7-8ac2-caaa8a911a3e.png)
 
 ## Getting Started
 
