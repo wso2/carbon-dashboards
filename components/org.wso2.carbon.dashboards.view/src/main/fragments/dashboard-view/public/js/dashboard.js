@@ -39,7 +39,7 @@
             // hide the component content on start resizing the component
             var container = $(ui.element).find('.ues-component');
             if (container) {
-                container.find('.ues-component-body').hide();
+                container.find('.dashboards-component-body').hide();
             }
         }).on('resizestop', function (e, ui) {
             // re-render component on stop resizing the component
@@ -49,7 +49,7 @@
                 var node = gsItem.data('_gridstack_node');
                 var blockId = gsItem.attr('data-id');
                 renderWidget(blockId);
-                container.find('.ues-component-body').show();
+                container.find('.dashboards-component-body').show();
             }
             updateLayout();
             saveDashboard();

@@ -24,11 +24,11 @@ widget.renderer = {};
             + '<h1 class="gadget-title ues-component-title truncate">:::</h1>'
             + '<div class="gadget-actions ues-component-actions">'
             + '<div class="btn-group">'
-            + '<button type="button" class="btn btn-default ues-trash-handle" data-toggle="modal"'
+            + '<button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal"'
             + 'data-target="#modalDelete" title="remove">'
             + '<i class="icon fw fw-delete"></i>'
             + '</button></div></div></div>'
-            + '<div class="gadget-body ues-component-body">'
+            + '<div class="gadget-body dashboards-component-body">'
             + widget
             + '</div></div>';
     };

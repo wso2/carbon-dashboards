@@ -716,39 +716,6 @@ body.fixed .page-content-wrapper .sidebar-wrapper.sidebar-options {
     color: #f5f5f5;
 }
 
-.page-views-container .nav-tabs > li > button.ues-view-component-properties-handle,
-.page-views-container .nav-tabs > li > button.ues-trash-handle {
-    display: none;
-}
-
-.page-views-container .nav-tabs > li > button.ues-trash-handle:hover {
-    background: #d9534f;
-    color: #fff;
-}
-
-.page-views-container .nav-tabs > li.active > button.ues-view-component-properties-handle,
-.page-views-container .nav-tabs > li.active > button.ues-trash-handle {
-    display: inline-block;
-}
-
-/*
-#slide-right{
-    margin-left: -11px;
-    margin-right: 12px;
-
-    display: inline-block;
-    border: none;
-    padding: 7px 6px 7px 6px;
-}
-
-#slide-left{
-    display: inline-block;
-    border: none;
-    padding: 7px 6px 7px 6px;
-    margin: 5px 3px -1px 3px;
-}
-*/
-
 .action-buttons{
     position: relative;
     z-index: 1;

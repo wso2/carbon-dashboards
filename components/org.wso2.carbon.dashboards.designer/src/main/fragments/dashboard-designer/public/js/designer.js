@@ -89,33 +89,33 @@
             saveDashboard();
         }).on('resizestart', function (e, ui) {
             // hide the component content on start resizing the component
-            var container = $(ui.element).find('.ues-component');
+            var container = $(ui.element).find('.dashboards-component');
             if (container) {
-                container.find('.ues-component-body').hide();
+                container.find('.dashboards-component-body').hide();
             }
         }).on('resizestop', function (e, ui) {
             // re-render component on stop resizing the component
-            var container = $(ui.element).find('.ues-component');
+            var container = $(ui.element).find('.dashboards-component');
             if (container) {
                 var gsItem = container.closest('.grid-stack-item');
                 var node = gsItem.data('_gridstack_node');
                 var blockId = gsItem.attr('data-id');
                 var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
                 var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
-                container.closest('.ues-component-box').attr('data-height', height);
-                container.find('.ues-component-body').show();
+                container.closest('.dashboard-component-box').attr('data-height', height);
+                container.find('.dashboards-component-body').show();
                 if (dashboard.widgets[blockId]) {
                     renderWidgetByBlock(blockId);
                 }
-                container.find('.ues-component-body').show();
+                container.find('.dashboards-component-body').show();
             }
             updateLayout();
             saveDashboard();
         });
 
-        $('.gadgets-grid').on('click', '.ues-component-box .ues-trash-handle', function () {
+        $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-trash-handle', function () {
             var that = $(this);
-            var componentBox = that.closest('.ues-component-box');
+            var componentBox = that.closest('.dashboard-component-box');
             $('.grid-stack').data('gridstack').remove_widget(componentBox.parent());
             removeWidgetFromDashboardJSON(componentBox.attr("id"));
             updateLayout();
@@ -168,7 +168,7 @@
     var initAddBlock = function () {
 
         var dummySizeChanged = function () {
-            var dummy = $('.ues-dummy-gadget');
+            var dummy = $('.dashboards-dummy-gadget');
             var unitSize = parseInt(dummy.data('unit-size'));
 
             dummy.css({
@@ -184,7 +184,7 @@
             .on('blur', dummySizeChanged);
 
         // add block handler
-        $('#ues-add-block-btn').on('click', function () {
+        $('#add-block-btn').on('click', function () {
 
             var width = $('#block-width').val() || 0;
             var height = $('#block-height').val() || 0;
@@ -211,12 +211,12 @@
             updateLayout();
             saveDashboard();
         });
-        var dummyGadget = $('.ues-dummy-gadget');
+        var dummyGadget = $('.dashboards-dummy-gadget');
         var blockWidth = $('#block-width');
         var blockHeight = $('#block-height');
         dummyGadget.resizable({
             grid: 18,
-            containment: '.ues-block-container',
+            containment: '.dashboards-block-container',
             resize: function () {
                 var height = $(this).height() / 18;
                 var width = $(this).width() / 18;
