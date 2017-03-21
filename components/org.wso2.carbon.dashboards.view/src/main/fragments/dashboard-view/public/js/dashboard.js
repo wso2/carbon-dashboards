@@ -15,17 +15,60 @@
  */
 (function () {
     "use strict";
-    var gridLayer = $(".grid-stack");
     var dashboard = dashboardMetadata.dashboard;
     var metadata = dashboardMetadata.metadata;
-    
+    var blockCount = 0;
+
     /**
      * Initialize the dashboard viewer.
      * */
     var init = function () {
         renderBlocks(dashboard);
-        renderWidgets(dashboard);
+    };
 
+    /**
+     * Render gadget blocks by reading the dashboard json.
+     * @param dashboard {Object} dashboard json object
+     * */
+    var renderBlocks = function (dashboard) {
+        var i = "";
+        for (i in dashboard.blocks) {
+            if (dashboard.widgets[dashboard.blocks[i].id]) {
+                var dashboardBlock = dashboard.blocks[i];
+                UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, dashboardBlock,
+                    "gridContent", Constants.APPEND_MODE, renderBlockCallback);
+            } else {
+                blockCount++;
+            }
+        }
+    };
+
+    /**
+     * This is the callback which is triggered after rendering blocks.
+     * @type {{onSuccess: renderBlockCallback.onSuccess, onFailure: renderBlockCallback.onFailure}}
+     */
+    var renderBlockCallback = {
+        onSuccess: function () {
+            blockCount++;
+            if (blockCount === dashboard.blocks.length) {
+                initGridstack();
+                renderWidgets(dashboard);
+            }
+        },
+        onFailure: function () {
+            blockCount++;
+            if (blockCount === dashboard.blocks.length) {
+                initGridstack();
+                renderWidgets(dashboard);
+            }
+        }
+    };
+
+
+    /**
+     * Initialize the dashboard viewer.
+     * */
+    var initGridstack = function () {
         $('.grid-stack').gridstack({
             width: 12,
             cellHeight: 50,
@@ -48,32 +91,12 @@
                 var gsItem = container.closest('.grid-stack-item');
                 var node = gsItem.data('_gridstack_node');
                 var blockId = gsItem.attr('data-id');
-                renderWidget(blockId);
+                renderWidgetByBlock(blockId);
                 container.find('.dashboards-component-body').show();
             }
             updateLayout();
             saveDashboard();
         });
-    };
-
-    /**
-     * Render gadget blocks by reading the dashboard json.
-     * @param dashboard {Object} dashboard json object
-     * */
-    var renderBlocks = function (dashboard) {
-        var gridBoxes = "",
-            i = "";
-        for (i in dashboard.blocks) {
-            if (dashboard.widgets[dashboard.blocks[i].id]) {
-                gridBoxes += '<div class="grid-stack-item" data-id="' + dashboard.blocks[i].id + '" data-gs-x="'
-                    + dashboard.blocks[i].x + '" data-gs-y="' + dashboard.blocks[i].y + '"'
-                    + 'data-gs-width="' + dashboard.blocks[i].width + '" data-gs-height="' + dashboard.blocks[i].height
-                    + '"><div class="grid-stack-item-content ues-component-box gadget-wrapper" id="'
-                    + dashboard.blocks[i].id + '"><div style="width:100%;height:100%;background-color: white;"></div>'
-                    + '</div></div>';
-            }
-        }
-        gridLayer.html(gridBoxes);
     };
 
     /**
@@ -83,7 +106,7 @@
         var i = "";
         for (i in dashboard.blocks) {
             if (dashboard.widgets[dashboard.blocks[i].id]) {
-                renderWidget(dashboard.blocks[i].id);
+                renderWidgetByBlock(dashboard.blocks[i].id);
             }
         }
     };
@@ -91,16 +114,13 @@
     /**
      * Render Widget into a given block by reading the dashboard json.
      * */
-    var renderWidget = function (blockId) {
-        widget.renderer.render(dashboard.widgets[blockId].id,
-            "grid-stack", blockId,
-            dashboard.widgets[blockId].url,
-            false);
+    var renderWidgetByBlock = function (blockId) {
+        widget.renderer.render(blockId, dashboard.widgets[blockId].url, false);
     };
 
     /**
      * Update the layout after modification.
-     * 
+     *
      */
     var updateLayout = function () {
         // extract the layout from the designer and save it
@@ -113,8 +133,7 @@
                     x: node.x,
                     y: node.y,
                     width: node.width,
-                    height: node.height,
-                    banner: el.attr('data-banner') == 'true'
+                    height: node.height
                 };
             }
         });
@@ -134,7 +153,7 @@
      */
     var saveDashboard = function () {
         var method = 'PUT';
-        var url = DASHBOARD_METADATA_UPDATE_URL;
+        var url = Constants.DASHBOARD_METADATA_UPDATE_URL;
         dashboard.url = dashboard.id;
         $.ajax({
             url: url,

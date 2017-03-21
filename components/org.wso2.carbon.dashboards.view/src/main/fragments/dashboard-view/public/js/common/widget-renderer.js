@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,6 @@ var widget = widget || {};
 widget.renderer = {};
 (function () {
     'use strict';
-
-    var getWidgetBlock = function (widgetID, widget) {
-        return '<div id="' + widgetID + '" class="ues-component gadget">'
-            + '<div class="gadget-heading ues-component-heading">'
-            + '<h1 class="gadget-title ues-component-title truncate">:::</h1>'
-            + '<div class="gadget-actions ues-component-actions">'
-            + '<div class="btn-group">'
-            + '<button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal"'
-            + 'data-target="#modalDelete" title="remove">'
-            + '<i class="icon fw fw-delete"></i>'
-            + '</button></div></div></div>'
-            + '<div class="gadget-body dashboards-component-body">'
-            + widget.html
-            + '</div></div>';
-    };
 
     /**
      * Register new operation to widget task bar.
@@ -51,19 +36,25 @@ widget.renderer = {};
 
     /**
      * Render widget into the layout.
-     * @param layoutContainerId {string} id of the parent layout
      * @param gridContainerId {string} id of the container that widget should be attached in to.
      * @param url {string} widget URL which to load the widget from
      * @param async {boolean} whether async false or true
      * @return {object} object with message and the error existence
      * */
-    function renderWidget(widgetID, layoutContainerId, gridContainerId, url, async) {
+    function renderWidget(gridContainerId, url, async) {
+        var widgetName = url.split(".")[url.split(".").length - 1];
         $.ajax({
             url: url,
-            type: "GET",
+            type: Constants.HTTP_GET,
             async: async,
             success: function (data) {
-                $("#" + layoutContainerId).find("#" + gridContainerId).html(getWidgetBlock(widgetID, data));
+                UUFClient.renderFragment(Constants.WIDGET_BOX_FRAGMENT_NAME, {
+                    widgetID: getGadgetUUID(url, widgetName),
+                    widgetContent: data.html,
+                    widgetTitle: widgetName,
+                    gridID: gridContainerId
+                }, renderWidgetcallback);
+
                 return {
                     error: false,
                     message: "Success"
@@ -77,6 +68,34 @@ widget.renderer = {};
             }
         });
     }
+
+    /**
+     * Generate GUID using widget name.
+     * @returns {String}
+     *
+     */
+    var getGadgetUUID = function (url, widgetName) {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+
+        return widgetName + s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
+    };
+
+    /**
+     * This is the callback which is triggered after rendering widget.
+     * @type {{onSuccess: renderWidgetcallback.onSuccess, onFailure: renderWidgetcallback.onFailure}}
+     */
+    var renderWidgetcallback = {
+        onSuccess: function (data) {
+            var gadgetContainer = $(data)[0];
+            $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).html(gadgetContainer);
+        },
+        onFailure: function (message, e) {
+        }
+    };
 
     widget.renderer = {
         render: renderWidget,
