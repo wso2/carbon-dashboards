@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,4 +16,14 @@
  * under the License.
  */
 
-var DASHBOARD_METADATA_UPDATE_URL = "../view/apis/dashboard/update";
+var Constants = {
+    DASHBOARD_METADATA_UPDATE_URL: "../view/apis/dashboard/update",
+    WIDGET_METAINFO_GET_URL: "../view/apis/widget/metainfo",
+    FRAGMENT_URL: "../fragments/",
+    WIDGET_CONTAINER_FRAGMENT_NAME: "org.wso2.carbon.dashboards.view.widget-container",
+    WIDGET_BOX_FRAGMENT_NAME: "org.wso2.carbon.dashboards.view.widget-box",
+    APPEND_MODE: "APPEND",
+    HTTP_PUT: "PUT",
+    HTTP_GET: "GET",
+    APPLICATION_JSON: "application/json"
+}
