@@ -106,3 +106,7 @@
     bottom: 0px;
     z-index: 100000000;
 }
+
+.hidden {
+    display: none;
+}
