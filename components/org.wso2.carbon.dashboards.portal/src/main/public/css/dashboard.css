@@ -819,6 +819,10 @@ ul.sidebar-messages > li:last-child {
     z-index: 100000000;
 }
 
+.hidden {
+    display: none;
+}
+
 .grid-stack > .grid-stack-item > .grid-stack-item-content {
     overflow-y: hidden !important;
 }

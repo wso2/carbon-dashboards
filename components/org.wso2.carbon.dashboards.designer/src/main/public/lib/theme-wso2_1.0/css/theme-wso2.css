@@ -193,7 +193,7 @@ pre {
 	height: 10000px;
 	width: 60px;
 }
-z
+
 body.inverse .fade-edge:after {
 	content: "";
 	background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(#4f6a80, 0%)), color-stop(100%, fade(#4f6a80, 100%)));
