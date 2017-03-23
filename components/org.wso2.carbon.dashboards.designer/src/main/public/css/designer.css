@@ -36,6 +36,7 @@
  */
 .dashboards-thumbnail {
     z-index: 1000;
+    background-color: transparent;
 }
 
 /*
@@ -93,4 +94,15 @@
 .grid-stack > .grid-stack-item > .ui-resizable-se {
     right: 18px;
     bottom: 2px;
+}
+
+.header-title {
+    display: inline !important;
+    font-size: large !important;
+}
+
+.footer-designer {
+    position: fixed;
+    bottom: 0px;
+    z-index: 100000000;
 }

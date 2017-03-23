@@ -127,3 +127,14 @@ TODO : This is temporary. We will later change this color
     box-shadow: none;
     color: #333;
 }
+
+.header-title {
+    display: inline !important;
+    font-size: large !important;
+}
+
+.footer-portal {
+    position: fixed;
+    bottom: 0px;
+    z-index: 100000000;
+}

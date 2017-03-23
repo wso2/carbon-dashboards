@@ -28,7 +28,7 @@ var updateSidebarNav = function (view, button) {
     $('.menu').hide();
     $('#btn-sidebar-menu').closest('li').removeClass('active');
 
-    if ($(view).find('button[data-target=#left-sidebar-sub]').length === 0) {
+    if ($(view).find("button[data-target='#left-sidebar-sub']").length === 0) {
         $('#left-sidebar-sub').hide();
     } else {
         $('#left-sidebar-sub').show();

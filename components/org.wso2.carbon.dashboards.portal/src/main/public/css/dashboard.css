@@ -732,14 +732,15 @@ ul.sidebar-messages > li:last-child {
     width: 110px;
 }
 
-.dropdown-ul{
+.dropdown-ul {
     min-width: 110px;
     width: 110px;
 }
 
-.dropdown-li{
+.dropdown-li {
     text-indent: 0 !important;
 }
+
 @-webkit-keyframes indeterminate {
     0% {
         left: -35%;
@@ -806,7 +807,18 @@ ul.sidebar-messages > li:last-child {
     display: none;
 }
 
-.open-caret{
+.open-caret {
     border-top: none;
     border-bottom: 4px solid #fff;
+}
+
+.footer-designer {
+    position: fixed;
+    bottom: 0px;
+    background-color: #1e2531;
+    z-index: 100000000;
+}
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden !important;
 }

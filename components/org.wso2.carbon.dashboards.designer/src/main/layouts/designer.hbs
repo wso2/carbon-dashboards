@@ -15,16 +15,15 @@
 <body>
 {{defineZone "task-bar"}}
 {{defineZone "left-nav-bar"}}
-<div class="sidebar-wrapper sidebar-nav toggled" id="left-sidebar" data-side="left" data-width="250"
-     data-offset-left="52" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true"
-     style="height: 289px; width: 250px; left: -250px; top:inherit;">
+<div class="sidebar-wrapper" id="left-sidebar" data-side="left" data-width="250"
+     data-offset-left="52" data-top="inherit" data-offset-bottom="40" data-container=".page-content-wrapper" data-container-divide="true">
     {{defineZone "sidebar-nav-layouts"}}
     {{defineZone "sidebar-nav-widgets"}}
 </div>
 {{defineZone "content"}}
 {{defineZone "footer"}}
-<footer>
+<footerJS>
     {{placeholder "js"}}
-</footer>
+</footerJS>
 </body>
 </html>
