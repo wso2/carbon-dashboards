@@ -45,7 +45,8 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
         "long" : NUMBER,
         "double" : NUMBER,
         "float" : NUMBER,
-        "timestamp" : NUMBER
+        "timestamp" : NUMBER,
+        "character varying": STRING
     };
 
 
@@ -97,10 +98,15 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
             var COLUMN_NAME = 'column_name';
             var COLUMN_TYPE = 'column_type';
             var isH2 = providerConfig['db_url'].toLowerCase().indexOf('h2') > 0 ;
+            var isPostgresql = providerConfig['db_url'].toLowerCase().indexOf('postgresql') > 0 ;
             if (isH2) {
                 db_query = "SELECT column_name, type_name from information_schema.columns where table_name='" + tableName + "';";
                 COLUMN_NAME = 'COLUMN_NAME';
                 COLUMN_TYPE = 'TYPE_NAME';
+            }
+            else if (isPostgresql) {
+                db_query = "SELECT column_name, data_type FROM INFORMATION_SCHEMA.columns where table_name='" + tableName + "';";
+                COLUMN_TYPE = "data_type";
             }
             else {
                 db_query = "SELECT column_name, column_type FROM INFORMATION_SCHEMA.columns where table_schema='" +
