@@ -49,13 +49,6 @@
             <type>zip</type>
             <classifier>uuf-component</classifier>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.wso2.carbon.uuf.sample</groupId>-->
-            <!--<artifactId>org.wso2.carbon.uuf.sample.foundation.ui</artifactId>-->
-            <!--<version>${carbon.uuf.core.version}</version>-->
-            <!--<type>zip</type>-->
-            <!--<classifier>uuf-component</classifier>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.wso2.carbon.uuf.sample</groupId>
             <artifactId>org.wso2.carbon.uuf.sample.simple-auth.ui</artifactId>
@@ -65,9 +58,9 @@
         </dependency>
         <!--UUF Themes-->
         <dependency>
-            <groupId>org.wso2.carbon.uuf.sample</groupId>
-            <artifactId>org.wso2.carbon.uuf.sample.default.theme</artifactId>
-            <version>${carbon.uuf.core.version}</version>
+            <groupId>org.wso2.carbon.uuf.common</groupId>
+            <artifactId>org.wso2.carbon.uuf.common.default.theme</artifactId>
+            <version>${carbon.uuf.common.version}</version>
             <type>zip</type>
             <classifier>uuf-theme</classifier>
         </dependency>

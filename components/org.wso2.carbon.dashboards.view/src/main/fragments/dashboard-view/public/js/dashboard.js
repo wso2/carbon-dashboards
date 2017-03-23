@@ -85,18 +85,25 @@
                 container.find('.dashboards-component-body').hide();
             }
         }).on('resizestop', function (e, ui) {
-            // re-render component on stop resizing the component
-            var container = $(ui.element).find('.ues-component');
-            if (container) {
-                var gsItem = container.closest('.grid-stack-item');
-                var node = gsItem.data('_gridstack_node');
-                var blockId = gsItem.attr('data-id');
-                renderWidgetByBlock(blockId);
-                container.find('.dashboards-component-body').show();
+                // re-render component on stop resizing the component
+                var container = $(ui.element).find('.dashboards-component');
+                if (container) {
+                    var gsItem = container.closest('.grid-stack-item');
+                    var node = gsItem.data('_gridstack_node');
+                    var blockId = gsItem.attr('data-id');
+                    var gsHeight = node ? node.height : parseInt(gsItem.attr('data-gs-height'));
+                    var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
+                    container.closest('.dashboard-component-box').attr('data-height', height);
+                    container.find('.dashboards-component-body').show();
+                    if (dashboard.widgets[blockId]) {
+                        renderWidgetByBlock(blockId);
+                    }
+                    container.find('.dashboards-component-body').show();
+                }
+                updateLayout();
+                saveDashboard();
             }
-            updateLayout();
-            saveDashboard();
-        });
+        );
     };
 
     /**
