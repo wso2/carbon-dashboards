@@ -1,10 +1,10 @@
 (function () {
     "use strict";
-    //dataset used to plot charts
-    var dataTable = {
+    var data = [
+        {
             "metadata": {
                 "names": ["Country", "Area", "GDP", "Inflation", "Life.expect", "Military", "Pop.growth", "Unemployment"],
-                "types": ['C', 'N', 'N', 'N', 'N', 'N', 'N', 'N']
+                "types": ['ordinal', 'linear', 'linear', 'linear', 'linear', 'linear', 'linear', 'linear']
             },
             "data": [
                 ["Austria", 83871, 41600, 3.5, 79.91, 0.8, 0.03, 4.2],
@@ -22,40 +22,23 @@
                 ["Ireland", 70273, 40800, 2.6, 80.32, 0.9, 1.11, 14.4],
                 ["Italy", 301340, 30500, 2.9, 81.86, 1.8, 0.38, 8.4],
                 ["Latvia", 64589, 16800, 4.4, 72.93, 1.1, -0.6, 12.8]
-
             ]
-        },
-        width = document.getElementById("bar").offsetWidth, //canvas width
-        height = 270,   //canvas height
-        config = {
-            "title": "Area By Country",
-            "yAxis": 1,
-            "xAxis": 0,
-            "pointLabel": 0,
-            "width": width,
-            "height": height,
-            "padding": 60,
-            "chartType": "bar",
-            "tickLabelConfig": {
-                "textAngle": -60,
-                "x": 0,
-                "y": 9,
-                "dy": ".15em",
-                "dx": "-.8em",
-                "tickHeight": 6,
-                "tickWidth": 0
-            },
-            "yAxisLabelConfig": {
-                "fontSize": "20px",
-                "rotate": -90,
-                "x": -10,
-                "y": 6,
-                "dy": ".71em",
-                "dx": 0
-            }
-        };
-    widget.renderer.setWidgetName(portal.dashboards.widgets.BARCHART.id, portal.dashboards.widgets.BARCHART.name);
+        }
+    ];
 
-    //draw a bar chart on div #bar
-    igviz.plot("#bar", config, dataTable);
+    var width = document.getElementById("bar").offsetWidth; //canvas width
+    var height = 270;   //canvas height
+    var config = {
+        x: "Country",
+        charts: [
+            {type: "bar", range: "true", y: "Area", color: "GDP"}
+        ],
+        maxLength: 50,
+        width: width,
+        height: height
+    };
+
+    widget.renderer.setWidgetName(portal.dashboards.widgets.BARCHART.id, portal.dashboards.widgets.BARCHART.name);
+    var lineChart = new vizg(data, config);
+    lineChart.draw("#bar");
 }());

@@ -2,14 +2,15 @@
 {{layout "org.wso2.carbon.dashboards.designer.designer"}}
 {{favicon "images/favicon.png" type="image/png"}}
 {{title "Designer | " @config.appName}}
-{{css "lib/jquery-ui-1.11.4/jquery-ui.min.css"}}
-{{css "lib/gridstack.js-0.2.5/gridstack.min.css"}}
+
+{{js "libs/analytics-wso2_5.0.12/d3.min.js"}}
+{{js "libs/analytics-wso2_5.0.12/vega.js"}}
+{{js "libs/analytics-wso2_5.0.12/VizGrammar.min.js"}}
+{{js "libs/analytics-wso2_5.0.12/wso2gadgets.js"}}
+{{js "libs/analytics-wso2_5.0.12/chart-utils.js"}}
+
 {{css "css/custom.css"}}
 {{css "css/designer.css"}}
-
-{{js "lib/jquery-ui-1.11.4/jquery-ui.min.js"}}
-{{js "lib/underscore-1.8.3/underscore-min.js"}}
-{{js "lib/gridstack.js-0.2.5/gridstack.min.js"}}
 
 {{#fillZone "content"}}
     {{fragment "org.wso2.carbon.dashboards.designer.dashboard-designer" id=@pathParams.id}}

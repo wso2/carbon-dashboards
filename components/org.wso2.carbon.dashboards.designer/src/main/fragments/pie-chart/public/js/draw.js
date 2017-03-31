@@ -1,10 +1,10 @@
 (function () {
     "use strict";
-    //dataset used to plot charts
-    var dataTable = {
+    var data = [
+        {
             "metadata": {
                 "names": ["Country", "Area", "GDP", "Inflation", "Life.expect", "Military", "Pop.growth", "Unemployment"],
-                "types": ['C', 'N', 'N', 'N', 'N', 'N', 'N', 'N']
+                "types": ['ordinal', 'linear', 'linear', 'linear', 'linear', 'linear', 'linear', 'linear']
             },
             "data": [
                 ["Austria", 83871, 41600, 3.5, 79.91, 0.8, 0.03, 4.2],
@@ -22,28 +22,24 @@
                 ["Ireland", 70273, 40800, 2.6, 80.32, 0.9, 1.11, 14.4],
                 ["Italy", 301340, 30500, 2.9, 81.86, 1.8, 0.38, 8.4],
                 ["Latvia", 64589, 16800, 4.4, 72.93, 1.1, -0.6, 12.8]
-
             ]
-        },
-        width = document.getElementById("pie").offsetWidth, //canvas width
-        height = 270,   //canvas height
-        scatterChartConfig = {
-            "title": "Area By Country",
-            "yAxis": 1,
-            "xAxis": 0,
-            "pointLabel": 0,
-            "width": width,
-            "height": height,
-            "padding": 60,
-            "pointColor": 3,
-            "pointSize": 2,
-            "chartType": "scatter",
-            "textAngle": -90,
-            "maxColor": "#ffff00",
-            "minColor": "#ff00ff"
+        }
+    ];
 
-        };
+    var width = document.getElementById("pie").offsetWidth; //canvas width
+    var height = 270;   //canvas height
+
+    var config = {
+        x: "Country",
+        charts: [
+            {type: "scatter", range: "true", y: "Area", color: "GDP"}
+        ],
+        maxLength: 50,
+        width: width,
+        height: height
+    };
+
     widget.renderer.setWidgetName(portal.dashboards.widgets.PIECHART.id, portal.dashboards.widgets.PIECHART.name);
-    //draw a scatter chart on div #scatter
-    igviz.plot("#pie", scatterChartConfig, dataTable);
+    var lineChart = new vizg(data, config);
+    lineChart.draw("#pie");
 }());
