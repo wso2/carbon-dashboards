@@ -102,7 +102,7 @@
         <carbon.dashboards.version>3.0.0-SNAPSHOT</carbon.dashboards.version>
         <carbon-uuf-maven-plugin.version>1.0.0-m11</carbon-uuf-maven-plugin.version>
         <carbon.uuf.core.version>1.0.0-m13</carbon.uuf.core.version>
-        <carbon.uuf.common.version>1.0.0-m5</carbon.uuf.common.version>
+        <carbon.uuf.common.version>1.0.0-m7</carbon.uuf.common.version>
         <carbon.datasource.core.version>1.0.0</carbon.datasource.core.version>
         <carbon.messaging.version>1.0.6</carbon.messaging.version>
         <msf4j-core.version>2.1.0</msf4j-core.version>
