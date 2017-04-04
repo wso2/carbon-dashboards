@@ -122,6 +122,11 @@
             saveDashboard();
         });
 
+        $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-config-handle', function (e) {
+            e.preventDefault();
+            $.sidebar_toggle("show", "#right-sidebar", ".page-content-wrapper");
+        });
+
         Sortable.create(document.getElementById("gadgetList"), {
             group: {
                 name: 'tile__list',
