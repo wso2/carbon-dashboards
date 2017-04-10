@@ -1,0 +1,10 @@
+portal.dashboards.widgets.PUBLISHER = {
+  "name" : "Publisher",
+  "id": "publisher",
+  "permission" : ["Internal/Everyone", "Admin"],
+  "pubsub": {
+    "isPublisher": true,
+    "isSubscriber": false,
+    "topic": "PUBLISHER"
+  }
+}
