@@ -51,7 +51,7 @@
         for (i in widgets) {
             if (widgets.hasOwnProperty(i)) {
                 var widget = widgets[i];
-                if ( widget && widget.pubsub && widget.pubsub.isPublisher ) {
+                if (widget && widget.pubsub && widget.pubsub.isPublisher) {
                     dashboardMetadata.publishers.push(widget.pubsub.topic);
                 }
             }
