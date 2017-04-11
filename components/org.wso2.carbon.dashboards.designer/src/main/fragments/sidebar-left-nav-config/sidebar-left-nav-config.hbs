@@ -4,8 +4,12 @@
     </button>
     <div class="config-lable"><label class="control-label">{{i18n "widgetConfiguration"}}</label></div>
     <hr>
-    <div class="widget-conf-content">
+    <span class="label label-default" id="subscribe-label" style="display: none;">{{i18n "subscribe.to.label"}}</span>
 
+    <div id="widget-conf-content"></div>
+
+    <div id="pusub-alert-no-publishers" class="alert alert-warning" style="display: none;">
+        <strong>{{i18n "no.publishers.found.label"}}</strong>
     </div>
 </div>
 

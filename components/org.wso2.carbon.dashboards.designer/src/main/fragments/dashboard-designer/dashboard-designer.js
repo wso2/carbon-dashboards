@@ -17,6 +17,7 @@ function onGet(env) {
     'use strict';
     var dashboardContent;
     var dashboardMetaData = null;
+    var publishers = [];
     var isDashboardExistsInDB;
 
     var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl");
@@ -51,7 +52,7 @@ function onGet(env) {
     dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
 
     // Send the dashboard and metadata to client
-    sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData});
+    sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData, publishers: publishers});
     return {
         dashboard: dashboardContent,
         metadata: dashboardMetaData
