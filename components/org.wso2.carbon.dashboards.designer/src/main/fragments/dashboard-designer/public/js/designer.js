@@ -26,6 +26,7 @@
     var init = function () {
         renderBlocks(dashboard);
         initGadgetList();
+        initPublishers(dashboard.widgets);
     };
 
     /**
@@ -39,7 +40,22 @@
             UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, dashboardBlock,
                 "gridContent", Constants.APPEND_MODE, renderBlockCallback);
         }
+    };
 
+    /**
+     * Populate dashboardMetadata.publishers by reading the widget configs.
+     * @param widgets
+     * */
+    var initPublishers = function (widgets) {
+        var i;
+        for (i in widgets) {
+            if (widgets.hasOwnProperty(i)) {
+                var widget = widgets[i];
+                if (widget && widget.pubsub && widget.pubsub.isPublisher) {
+                    dashboardMetadata.publishers.push(widget.pubsub.topic);
+                }
+            }
+        }
     };
 
     /**
@@ -124,6 +140,22 @@
 
         $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-config-handle', function (e) {
             e.preventDefault();
+            var id = $(this).attr('id');
+            var i;
+            var publishers = dashboardMetadata.publishers;
+            if (publishers.length > 0) {
+                $("#subscribe-label").show();
+                $('#widget-conf-content').html('<select id="' + id + '" class="pubsub-topics">' + 
+                    '<option disabled selected>Select Publisher:</option></select>');
+                for (i in publishers) {
+                    if (publishers.hasOwnProperty(i)) {
+                        $('.pubsub-topics').append('<option class="dropdown-item" value="' + publishers[i] + '">' +
+                            publishers[i] + '</option');
+                    }
+                }
+            } else {
+                $('#pusub-alert-no-publishers').show();
+            }
             $.sidebar_toggle("show", "#right-sidebar", ".page-content-wrapper");
         });
 
@@ -138,6 +170,20 @@
         });
 
         initializeBlockListeners();
+        initializeWidgetConfigSidebar();
+    };
+
+    /**
+     * Initialize the listeners for the widget configuration sidebar
+     */
+    var initializeWidgetConfigSidebar = function () {
+        $('#right-sidebar').on('change', '.pubsub-topics', function (e) {
+            var widgets = dashboardMetadata.dashboard.widgets;
+            widgets[$(this).attr('id')].pubsub.subscribesTo.push($(this).val());
+            saveDashboard();
+            var widgetID = widgets[$(this).attr('id')].id;
+            pubsub.subscribe( $(this).val(),portal.dashboards.subscribers[widgetID]._callback);
+        });
     };
 
     /**
@@ -279,7 +325,7 @@
                 generateWidgetInfoJSON(widgetList[0]);
                 var widgetJSONLength = widgetList[0].length;
                 for (var i = 0; i < widgetJSONLength; i++) {
-                    UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, widgetList[0][i],
+                    UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, widgetList[0][i].info,
                         "left-panel", Constants.APPEND_MODE, widgetListCallback);
                 }
             }
@@ -306,6 +352,21 @@
         for (i in dashboard.blocks) {
             if (dashboard.widgets[dashboard.blocks[i].id]) {
                 renderWidgetByBlock(dashboard.blocks[i].id);
+            }
+        }
+    };
+
+    /**
+     * Wire Widgets by going through the available widget configs..
+     * */
+    var wireWidgets = function (widgets) {
+        var i;
+        for (i in widgets) {
+            if (widgets[i].pubsub && widgets[i].pubsub.isSubscriber && widgets.hasOwnProperty(i)) {
+                //considering widget is going to subscribe to only one publisher
+                var widgetID = widgets[i].id;
+                pubsub.subscribe(widgets[i].pubsub.subscribesTo[0],
+                    portal.dashboards.subscribers[widgetID]._callback);
             }
         }
     };
@@ -401,4 +462,7 @@
 
     init();
     initAddBlock();
+    //TODO make this a callback
+    setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);
+
 }());

@@ -68,8 +68,7 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
         }
         List<JsonObject> metaInfoList = new ArrayList<>();
         widgetMap.forEach((widgetId, widgetPath) -> {
-            metaInfoList.add(jsonParser.parse(readWidgetConf(widgetPath)).getAsJsonObject()
-                    .getAsJsonObject(INFO));
+            metaInfoList.add(jsonParser.parse(readWidgetConf(widgetPath)).getAsJsonObject());
         });
         return metaInfoList;
     }
