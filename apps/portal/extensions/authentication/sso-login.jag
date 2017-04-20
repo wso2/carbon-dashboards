@@ -29,6 +29,21 @@
     var carbon = require('carbon');
     var superTenant = carbon.server.superTenant;
 
+    /**
+     * Sanitize the input value.
+     * @param destination {String}
+     * @return string
+     * @private
+     */
+    var sanitizeDestination = function (destination) {
+        if (!destination) {
+            return "";
+        }
+        return destination.replace(/[^a-zA-Z0-9-_/?&=. ]/g, "");
+    };
+
+    destination = sanitizeDestination(destination);
+
     if (destination) {
         referer = destination;
     } else if (referer) {

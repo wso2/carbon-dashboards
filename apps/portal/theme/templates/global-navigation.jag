@@ -22,7 +22,7 @@ var dest = encodeURIComponent(originalURI + (query ? '?' + query : ''));
 <header class="header header-default">
     <div class="container-fluid">
         <div class="pull-left brand float-remove-xs text-center-xs">
-            <a href="<%=tenantedUrlPrefix%>./dashboards">
+            <a href="<%=tenantedUrlPrefix%>./dashboards/">
                 <img src="<%=urlPrefix%>libs/theme-wso2_1.0/images/logo-inverse.svg" alt="WSO2" title="WSO2" class="logo">
                 <h1><%=i18n.localize("dashboard.server.label")%></h1>
             </a>
