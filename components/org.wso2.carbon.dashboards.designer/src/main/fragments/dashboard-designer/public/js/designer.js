@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 (function () {
     "use strict";
     var dashboard = dashboardMetadata.dashboard;
     var metadata = dashboardMetadata.metadata;
     var widgetInfo = {};
+    var layoutInfo = {};
     var blockCount = 0;
+    var sortables = ['widgetList'];
 
     /**
      * Initialize the dashboard viewer.
@@ -26,6 +29,7 @@
     var init = function () {
         renderBlocks(dashboard);
         initGadgetList();
+        initLayoutList();
         initPublishers(dashboard.widgets);
     };
 
@@ -159,15 +163,18 @@
             $.sidebar_toggle("show", "#right-sidebar", ".page-content-wrapper");
         });
 
-        Sortable.create(document.getElementById("gadgetList"), {
-            group: {
-                name: 'tile__list',
-                pull: 'clone',
-                put: false
-            },
-            animation: 150,
-            sort: true
-        });
+
+        for (var j = 0; j < sortables.length; j++) {
+            Sortable.create(document.getElementById(sortables[j]), {
+                group: {
+                    name: 'tile__list',
+                    pull: 'clone',
+                    put: false
+                },
+                animation: 150,
+                sort: true
+            });
+        }
 
         initializeBlockListeners();
         initializeWidgetConfigSidebar();
@@ -333,6 +340,27 @@
     };
 
     /**
+     * retrieve the layout list by invoking the available api.
+     */
+    var initLayoutList = function () {
+        var method = Constants.HTTP_GET;
+        var url = Constants.LAYOUT_METAINFO_GET_URL;
+        $.ajax({
+            url: url,
+            method: method,
+            async: true,
+            success: function (layoutList) {
+                generateLayoutInfoJSON(layoutList[0]);
+                var layoutJSONLength = layoutList[0].length;
+                for (var i = 0; i < layoutJSONLength; i++) {
+                    UUFClient.renderFragment(Constants.LAYOUT_LIST_CONTAINER_FRAGMENT_NAME, layoutList[0][i],
+                        "layout-list", Constants.APPEND_MODE, widgetListCallback);
+                }
+            }
+        });
+    };
+
+    /**
      * generate widgetInfo json object using retrieved data.
      * @param widgetList
      */
@@ -340,6 +368,14 @@
         var widgetListLength = widgetList.length;
         for (var i = 0; i < widgetListLength; i++) {
             widgetInfo[widgetList[i].id] = widgetList[i];
+        }
+    };
+
+    var generateLayoutInfoJSON = function (layoutList) {
+        var layoutListLength = layoutList.length;
+        for (var i = 0; i < layoutListLength; i++) {
+            portal.dashboards.layouts[layoutList[i].id] = layoutList[i];
+            layoutInfo[layoutList[i].id] = layoutList[i];
         }
     };
 
@@ -464,5 +500,9 @@
     initAddBlock();
     //TODO make this a callback
     setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);
+
+    portal.dashboards.functions = {
+        renderBlocks: renderBlocks
+    };
 
 }());

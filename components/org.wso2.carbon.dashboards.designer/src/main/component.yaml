@@ -23,6 +23,10 @@ bindings:
       mode: "append"
       fragments:
         - "org.wso2.carbon.dashboards.designer.sidebar-left-nav-config"
+    - zoneName: "org.wso2.carbon.dashboards.designer.sidebar-nav-dashboard-layouts"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.designer.sidebar-nav-dashboard-layouts"
 
 config:
     appName: "Dashboard Designer"

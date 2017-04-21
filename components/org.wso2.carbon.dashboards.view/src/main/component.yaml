@@ -3,6 +3,8 @@ apis:
       uri: "/dashboard/"
     - className: "org.wso2.carbon.dashboards.api.WidgetInfoProviderAPI"
       uri: "/widget/"
+    - className: "org.wso2.carbon.dashboards.api.LayoutInfoProviderAPI"
+      uri: "/layout/"
 
 config:
     appName: "DashboardView"
