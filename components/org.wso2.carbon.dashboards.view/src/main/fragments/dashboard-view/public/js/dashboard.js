@@ -199,5 +199,20 @@
         return metaDataPayload;
     };
 
+    /**
+     * Wire Widgets by going through the available widget configs.
+     * */
+    var wireWidgets = function (widgets) {
+        var i;
+        for (i in widgets) {
+            if (widgets[i].pubsub && widgets[i].pubsub.isSubscriber && widgets.hasOwnProperty(i)) {
+                //considering widget is going to subscribe to only one publisher
+                var widgetID = widgets[i].id;
+                pubsub.subscribe(widgets[i].pubsub.subscribesTo[0], portal.dashboards.subscribers[widgetID]._callback);
+            }
+        }
+    };
+
     init();
+    setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);
 }());
