@@ -1,4 +1,4 @@
-<div class="thumbnail dashboards-layout selectable" id="{{@params.id}}" data-id="{{@params.id}}" data-type="layout" draggable="true" ondragstart="portal.dashboards.functions.drag(event)">
+<div class="thumbnail dashboards-layout selectable" id="{{@params.id}}" data-id="{{@params.id}}" data-type="layout" onClick="portal.dashboards.functions.layout.insertLayout(event, this)">
     <h5 class="title" style="text-align: center">{{@params.name}}</h5>
 	<span style="text-align: center;display: block"><i class="fw fw-layout fw-5x"></i></span>
 </div>
