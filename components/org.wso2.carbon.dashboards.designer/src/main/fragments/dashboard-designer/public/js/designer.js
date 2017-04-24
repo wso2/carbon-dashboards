@@ -21,27 +21,49 @@
     var layoutInfo = {};
     var blockCount = 0;
     var sortables = ['widgetList'];
+    var content = "";
 
     /**
      * Initialize the dashboard viewer.
      * */
     var init = function () {
-        renderBlocks(dashboard);
+        renderBlocks(dashboard, renderBlockCallback);
         initGadgetList();
         initLayoutList();
         initPublishers(dashboard.widgets);
     };
 
     /**
+     * Remove existing layout and widgets from the dashboard configuation.
+     * */
+    var destroyDashboard = function () {
+        dashboard.blocks = [];
+        dashboard.widgets = {};
+        $('.grid-stack').data('gridstack').destroy(true);
+        var html = '<div class="grid-stack" id="grid-stack"></div>';
+        $('.gadgets-grid').html(html);
+    }
+
+    /**
+     * Apply provided layout to the dashboard
+     * */
+    var applyLayout = function (layout) {
+        dashboard.blocks = layout.blocks;
+        saveDashboard();
+        blockCount = 0;
+        renderBlocks(dashboard, renderDynamicBlockCallback);
+    }
+
+    /**
      * Render gadget blocks by reading the dashboard json.
      * @param dashboard {Object} dashboard json object
      * */
-    var renderBlocks = function (dashboard) {
+    var renderBlocks = function (dashboard, callback) {
         var i = "";
         for (i in dashboard.blocks) {
             var dashboardBlock = dashboard.blocks[i];
             UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, dashboardBlock,
-                "gridContent", Constants.APPEND_MODE, renderBlockCallback);
+                "gridContent", Constants.APPEND_MODE, callback);
         }
     };
 
@@ -89,6 +111,28 @@
             if (blockCount === dashboard.blocks.length) {
                 initGridstack();
                 renderWidgets(dashboard);
+            }
+        }
+    };
+
+    /**
+     * This is the callback which is triggered after dynamic rendering of blocks.
+     * This will concatanate provided html content and append to the grid-stack before initializing.
+     * @type {{onSuccess: renderDynamicBlockCallback.onSuccess, onFailure: renderDynamicBlockCallback.onFailure}}
+     */
+    var renderDynamicBlockCallback = {
+        onSuccess: function (data) {
+            content += data;
+            blockCount++;
+            if (blockCount === dashboard.blocks.length) {
+                $('.grid-stack').append(content);
+                initGridstack();
+            }
+        },
+        onFailure: function () {
+            blockCount++;
+            if (blockCount === dashboard.blocks.length) {
+                initGridstack();
             }
         }
     };
@@ -366,7 +410,7 @@
     var generateWidgetInfoJSON = function (widgetList) {
         var widgetListLength = widgetList.length;
         for (var i = 0; i < widgetListLength; i++) {
-            widgetInfo[widgetList[i].id] = widgetList[i];
+            widgetInfo[widgetList[i].info.id] = widgetList[i];
         }
     };
 
@@ -500,8 +544,10 @@
     //TODO make this a callback
     setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);
 
-    portal.dashboards.functions = {
-        renderBlocks: renderBlocks
+    portal.dashboards.functions.designer = {
+        renderBlocks: renderBlocks,
+        destroyDashboard: destroyDashboard,
+        applyLayout: applyLayout
     };
 
 }());

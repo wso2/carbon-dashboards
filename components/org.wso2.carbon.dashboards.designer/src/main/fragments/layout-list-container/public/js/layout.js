@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 (function () {
-	function allowDrop(e) {
+	function insertLayout(e, that) {
 	    e.preventDefault();
-	}
-
-	function drag(e) {
-	    e.dataTransfer.setData("layoutID", e.target.id);
-	}
-
-	function drop(e) {
-	    e.preventDefault();
-	    var layoutName = e.dataTransfer.getData("layoutID");
+	    var designer = portal.dashboards.functions.designer;
 	    //TODO Add noty lib and use confirm dialog
-	    //portal.dashboards.functions.renderBlocks(portal.dashboards.layouts[layoutName]);
+	    designer.destroyDashboard();
+	    designer.applyLayout(portal.dashboards.layouts[that.id]);
 	}
 	
-    portal.dashboards.functions = {
-        allowDrop: allowDrop,
-        drag: drag,
-        drop: drop
+    portal.dashboards.functions.layout = {
+        insertLayout: insertLayout
     };
 }());
