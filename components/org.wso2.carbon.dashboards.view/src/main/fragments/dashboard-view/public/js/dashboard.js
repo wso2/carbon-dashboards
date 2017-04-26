@@ -54,7 +54,7 @@
         var widgetList = dashboard.widgets;
         var widget;
         for (widget in widgetList) {
-            if(widgetList.hasOwnProperty(widget)) {
+            if (widgetList.hasOwnProperty(widget)) {
                 widgetInfo[widgetList[widget].info.id] = widgetList[widget];
             }
         }
@@ -121,6 +121,12 @@
                 saveDashboard();
             }
         );
+
+        $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-userpref-handle', function () {
+            var that = $(this);
+            var template = that.closest('.dashboards-component').find('#template-container');
+            $(template).find('.user-pref').slideToggle();
+        });
     };
 
     /**
@@ -139,7 +145,8 @@
      * Render Widget into a given block by reading the dashboard json.
      * */
     var renderWidgetByBlock = function (blockId) {
-        widget.renderer.render(blockId, dashboard.widgets[blockId].url, false);
+        var isUserprefEnabled = dashboard.widgets[blockId].userpref && dashboard.widgets[blockId].userpref.enable;
+        widget.renderer.render(blockId, dashboard.widgets[blockId].url, isUserprefEnabled, false);
     };
 
     /**
@@ -230,6 +237,18 @@
         }
     };
 
+    /**
+     * Update dashboard configuration and render widgets
+     * */
+    var updateDashboard = function () {
+        saveDashboard();
+        renderWidgets(dashboard);
+    }
+
     init();
     setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);
+
+    portal.dashboards.functions.view = {
+        update: updateDashboard
+    };
 }());
