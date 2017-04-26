@@ -4,7 +4,7 @@
     	$("#subscriber1").text(data);
     }
 
-    portal.dashboards.subscribers.subscriber1 = {
+    portal.dashboards.subscribers['org.wso2.carbon.dashboards.designer.subscriber1'] = {
     	_callback:_callbackPrint
     }
 }());

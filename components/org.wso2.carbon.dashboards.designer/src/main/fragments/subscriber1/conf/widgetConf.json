@@ -31,7 +31,7 @@
   "pubsub": {
     "isPublisher": false,
     "isSubscriber": true,
-    "subscribesTo": [],
+    "subscribesTo": ["PUBLISHER"],
     "callBack": "_callbackPrint(data)"
   },
   "permission": {

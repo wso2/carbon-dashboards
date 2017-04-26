@@ -39,7 +39,8 @@
         height: height
     };
 
-    widget.renderer.setWidgetName(portal.dashboards.widgets.PIECHART.id, portal.dashboards.widgets.PIECHART.name);
+    widget.renderer.setWidgetName(portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.pie-chart'].info.id, 
+        portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.pie-chart'].info.name);
     var lineChart = new vizg(data, config);
     lineChart.draw("#pie");
 }());

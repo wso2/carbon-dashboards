@@ -373,6 +373,7 @@
             async: true,
             success: function (widgetList) {
                 generateWidgetInfoJSON(widgetList[0]);
+                portal.dashboards.widgets = widgetInfo;
                 var widgetJSONLength = widgetList[0].length;
                 for (var i = 0; i < widgetJSONLength; i++) {
                     UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, widgetList[0][i].info,
@@ -443,7 +444,7 @@
         for (i in widgets) {
             if (widgets[i].pubsub && widgets[i].pubsub.isSubscriber && widgets.hasOwnProperty(i)) {
                 //considering widget is going to subscribe to only one publisher
-                var widgetID = widgets[i].id;
+                var widgetID = widgets[i].info.id;
                 pubsub.subscribe(widgets[i].pubsub.subscribesTo[0],
                     portal.dashboards.subscribers[widgetID]._callback);
             }
