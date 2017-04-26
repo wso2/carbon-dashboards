@@ -110,3 +110,7 @@
 .hidden {
     display: none;
 }
+
+.dashboard-icon {
+    padding:60px;
+}
