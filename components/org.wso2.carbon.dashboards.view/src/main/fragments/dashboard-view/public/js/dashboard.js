@@ -18,11 +18,14 @@
     var dashboard = dashboardMetadata.dashboard;
     var metadata = dashboardMetadata.metadata;
     var blockCount = 0;
+    var widgetInfo = {};
 
     /**
      * Initialize the dashboard viewer.
      * */
     var init = function () {
+        generateWidgetInfoJSON();
+        portal.dashboards.widgets = widgetInfo;
         renderBlocks(dashboard);
     };
 
@@ -39,6 +42,20 @@
                     "gridContent", Constants.APPEND_MODE, renderBlockCallback);
             } else {
                 blockCount++;
+            }
+        }
+    };
+
+    /**
+     * generate widgetInfo json object using retrieved data.
+     * @param widgetList
+     */
+    var generateWidgetInfoJSON = function () {
+        var widgetList = dashboard.widgets;
+        var widget;
+        for (widget in widgetList) {
+            if(widgetList.hasOwnProperty(widget)) {
+                widgetInfo[widgetList[widget].info.id] = widgetList[widget];
             }
         }
     };
@@ -207,7 +224,7 @@
         for (i in widgets) {
             if (widgets[i].pubsub && widgets[i].pubsub.isSubscriber && widgets.hasOwnProperty(i)) {
                 //considering widget is going to subscribe to only one publisher
-                var widgetID = widgets[i].id;
+                var widgetID = widgets[i].info.id;
                 pubsub.subscribe(widgets[i].pubsub.subscribesTo[0], portal.dashboards.subscribers[widgetID]._callback);
             }
         }

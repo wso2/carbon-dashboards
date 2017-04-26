@@ -38,7 +38,8 @@
         height: height
     };
 
-    widget.renderer.setWidgetName(portal.dashboards.widgets.BARCHART.id, portal.dashboards.widgets.BARCHART.name);
+    widget.renderer.setWidgetName(portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].info.id, 
+        portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].info.name);
     var lineChart = new vizg(data, config);
     lineChart.draw("#bar");
 }());
