@@ -8,41 +8,33 @@ Steps to create the widget
 
 * widgetConf.json should reflects that this is a user-pref enabled widget, this configuration will be used by the view component to apply user-pref features to this widget.
 
+```
 {
-
   "info": {
-
-	"id": "org.wso2.carbon.dashboards.designer.user-pref-sample",
-
-	"displayName": "User-pref Sample",
-
-	"thumbnail": "widget-thumbnail.jpg"
-
+    "id": "org.wso2.carbon.dashboards.designer.user-pref-sample",
+    "displayName": "User-pref Sample",
+    "thumbnail": "widget-thumbnail.jpg"
   },
-
-  "userpref" : {
-
-	"enable": true
-
+  "userpref": {
+    "enable": true
   },
-
- "permission": {
-
+  "permission": {
+    
   }
+}
 
-}  
+```  
 
 * Following is the template for the user-pref-sample.hbs.
 
+```
 <div id="template-container">
-
     <div id="content-template" class="user-pref content-template"></div>
-
     <div id="user-pref-template" class="user-pref user-pref-template" style="display: none"></div>
-
 </div>
 
 <script src="{{public "js/user-pref.js"}}" type="text/javascript"></script>
+```
 
 Widget author should follow the same template(div id’s, inline styles ) . These information will be used by the view component in order to do the rendering. 
 
@@ -54,22 +46,24 @@ portal.dashboard.widgets[<widget-id>].userpref.<name>
 
 Eg:-
 
+```
 portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.user-pref-sample'].userpref
+```
 
 * If widget author is setting an user-pref, that operation should follows with the following function invocation.
 
+```
 portal.dashboards.functions.view.update();
+```
 
 This will notify the view component to update and save the user-pref accordingly.
 
 Eg:- 
 
+```
 $( "#color-select" ).change(function(e) {
-
-var selectedColor = $("#color-select option:selected").attr('value');
-
-   	 portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.user-pref-sample'].userpref.bgcolor = selectedColor;
-
-portal.dashboards.functions.view.update();
-
-    });
+  var selectedColor = $("#color-select option:selected").attr('value');
+  portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.user-pref-sample'].userpref.bgcolor = selectedColor;
+  portal.dashboards.functions.view.update();
+});
+```
