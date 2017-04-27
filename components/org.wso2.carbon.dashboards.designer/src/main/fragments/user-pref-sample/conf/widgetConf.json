@@ -1,0 +1,29 @@
+{
+  "info": {
+    "id": "org.wso2.carbon.dashboards.designer.user-pref-sample",
+    "displayName": "User-pref Sample",
+    "thumbnail": "widget-thumbnail.jpg"
+  },
+  "userpref" : {
+    "enable": true,
+    "bgcolor" : "#0000FF"
+  },
+  "providerConfig": {
+    "stream": "",
+    "version": "",
+    "interval": 500,
+    "type": "",
+    "metadata": {
+      "names": [
+      ],
+      "types": [
+      ]
+    }
+  },
+  "pubsub": {
+    "isPublisher": false,
+    "isSubscriber": false
+  },
+  "permission": {
+  }
+}

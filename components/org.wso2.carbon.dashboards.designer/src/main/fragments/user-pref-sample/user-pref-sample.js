@@ -1,4 +1,5 @@
-/*
+/**
+ * @license
  * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
@@ -11,19 +12,18 @@
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
-var Constants = {
-    DASHBOARD_METADATA_UPDATE_URL: "../designer/apis/dashboard/update",
-    WIDGET_METAINFO_GET_URL: "../designer/apis/widget/metainfo",
-    FRAGMENT_URL: "../fragments/",
-    WIDGET_CONTAINER_FRAGMENT_NAME: "org.wso2.carbon.dashboards.view.widget-container",
-    WIDGET_BOX_FRAGMENT_NAME: "org.wso2.carbon.dashboards.view.widget-box",
-    APPEND_MODE: "APPEND",
-    HTTP_PUT: "PUT",
-    HTTP_GET: "GET",
-    APPLICATION_JSON: "application/json"
+ 
+/**
+ * This method will be called on page render.
+ * @param env {{request: org.wso2.carbon.uuf.spi.HttpRequest,response: org.wso2.carbon.uuf.spi.HttpResponse,
+ *     pathParams: Object.<string, string> , params: Object.<string, string>, contextPath: string, config:
+ *     org.wso2.carbon.uuf.api.Configuration}}} Enivornment
+ * @returns {Object.<string, Object>} View Model for Handlebars
+ */
+function onGet(env) {
+    return {};
 }
