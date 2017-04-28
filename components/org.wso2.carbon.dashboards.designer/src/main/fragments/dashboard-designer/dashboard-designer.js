@@ -29,27 +29,25 @@ function onGet(env) {
     query.setUrl(env.params.id);
     query.setOwner("admin");
 
-    // try {
-    //     isDashboardExistsInDB = metadataProviderImpl.isExists(query);
-    // } catch (e) {
-    //     sendError(401, "Error in accessing dashboard DB.");
-    // }
-    //
-    // if(isDashboardExistsInDB){
-    //     dashboardMetaData = metadataProviderImpl.get(query);
-    //     dashboardContent = JSON.parse(dashboardMetaData.getContent());
-    // } else {
-    //     sendError(401, "No dashboards found !");
-    // }
+    try {
+        isDashboardExistsInDB = metadataProviderImpl.isExists(query);
+    } catch (e) {
+        sendError(401, "Error in accessing dashboard DB.");
+    }
+    if(isDashboardExistsInDB){
+        dashboardMetaData = metadataProviderImpl.get(query);
+        dashboardContent = JSON.parse(dashboardMetaData.getContent());
+    } else {
+        sendError(401, "No dashboards found !");
+    }
 
-    var system = Java.type('java.lang.System');
+/*    var system = Java.type('java.lang.System');
     //construct dashboard.json path
     var path = system.getProperty('carbon.home') + '/deployment/dashboards/' + env.params.id + '.json';
     var string = Java.type('java.lang.String');
     var files = Java.type('java.nio.file.Files');
     var paths = Java.type('java.nio.file.Paths');
-
-    dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
+    dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));*/
 
     // Send the dashboard and metadata to client
     sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData, publishers: publishers});

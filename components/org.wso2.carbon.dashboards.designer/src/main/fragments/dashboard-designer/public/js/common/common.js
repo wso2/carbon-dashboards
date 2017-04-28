@@ -5,3 +5,4 @@ portal.dashboards.layouts = {};
 portal.dashboards.subscribers = {};
 portal.dashboards.publishers = [];
 portal.dashboards.functions = {};
+portal.dashboards.widgetList = {};
