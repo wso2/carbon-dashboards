@@ -17,6 +17,7 @@
     "use strict";
     var dashboard = dashboardMetadata.dashboard;
     var metadata = dashboardMetadata.metadata;
+    var dashboardWidgetList = portal.dashboards.widgetList;
     var widgetInfo = {};
     var layoutInfo = {};
     var blockCount = 0;
@@ -37,10 +38,12 @@
      * Remove existing layout and widgets from the dashboard configuation.
      * */
     var destroyDashboard = function () {
+        var html = '<div class="grid-stack" id="grid-stack"></div>';
         dashboard.blocks = [];
         dashboard.widgets = {};
+        dashboard.widgetList = {};
+
         $('.grid-stack').data('gridstack').destroy(true);
-        var html = '<div class="grid-stack" id="grid-stack"></div>';
         $('.gadgets-grid').html(html);
     }
 
@@ -49,8 +52,9 @@
      * */
     var applyLayout = function (layout) {
         dashboard.blocks = layout.blocks;
-        saveDashboard();
         blockCount = 0;
+        saveDashboard();
+        initGadgetList();
         renderBlocks(dashboard, renderDynamicBlockCallback);
     }
 
@@ -183,11 +187,12 @@
             removeWidgetFromDashboardJSON(componentBox.attr("id"));
             updateLayout();
             saveDashboard();
+            initGadgetList();
         });
 
         $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-config-handle', function (e) {
             e.preventDefault();
-            var id = $(this).attr('id');
+            var id = $(this).closest(".dashboard-component-box").attr('id');//$(this).attr('id');
             var i;
             var publishers = dashboardMetadata.publishers;
             if (publishers.length > 0) {
@@ -231,7 +236,7 @@
             var widgets = dashboardMetadata.dashboard.widgets;
             widgets[$(this).attr('id')].pubsub.subscribesTo.push($(this).val());
             saveDashboard();
-            var widgetID = widgets[$(this).attr('id')].id;
+            var widgetID = widgets[$(this).attr('id')].info.id;
             pubsub.subscribe( $(this).val(),portal.dashboards.subscribers[widgetID]._callback);
         });
     };
@@ -253,10 +258,12 @@
                     evt.item.remove();
                     var blockID = evt.to.getAttribute("data-id");
                     var widgetID = evt.item.getAttribute("data-id");
-                    renderWidgetByURL(blockID, Constants.FRAGMENT_URL + widgetID);
+                    renderWidgetByURL(blockID, Constants.FRAGMENT_URL + widgetID, widgetID);
                     addWidgetToDashboardJSON(blockID, widgetID);
+                    updateWidgetList(widgetID, portal.dashboards.widgets[widgetID], "add")
                     updateLayout();
                     saveDashboard();
+                    initGadgetList();
                 }
             });
         }
@@ -358,13 +365,18 @@
      * @param blockID
      */
     var removeWidgetFromDashboardJSON = function (blockID) {
-        delete dashboard.widgets[blockID];
+        var block = dashboard.widgets[blockID];
+        if (block && block.info && block.info.id) {
+            updateWidgetList(block.info.id, null, "remove")
+            delete dashboard.widgets[blockID];
+        }
     };
 
     /**
      * retrieve the gadget list by invoking the available api.
      */
     var initGadgetList = function () {
+        $('#widgetList').find('.dashboards-thumbnail').remove();
         var method = Constants.HTTP_GET;
         var url = Constants.WIDGET_METAINFO_GET_URL;
         $.ajax({
@@ -376,8 +388,10 @@
                 portal.dashboards.widgets = widgetInfo;
                 var widgetJSONLength = widgetList[0].length;
                 for (var i = 0; i < widgetJSONLength; i++) {
-                    UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, widgetList[0][i].info,
+                    if (!portal.dashboards.widgetList.hasOwnProperty(widgetList[0][i].info.id)) {
+                        UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, widgetList[0][i].info,
                         "left-panel", Constants.APPEND_MODE, widgetListCallback);
+                    }
                 }
             }
         });
@@ -415,6 +429,10 @@
         }
     };
 
+    /**
+     * generate layoutInfo json object using retrieved data.
+     * @param layoutList
+     */
     var generateLayoutInfoJSON = function (layoutList) {
         var layoutListLength = layoutList.length;
         for (var i = 0; i < layoutListLength; i++) {
@@ -423,7 +441,6 @@
         }
     };
 
-
     /**
      * Render Widgets in to blocks by reading the dashboard json.
      * */
@@ -431,6 +448,8 @@
         var i = "";
         for (i in dashboard.blocks) {
             if (dashboard.widgets[dashboard.blocks[i].id]) {
+                dashboardWidgetList[dashboard.widgets[dashboard.blocks[i].id].info.id] =
+                dashboard.widgets[dashboard.blocks[i].id];
                 renderWidgetByBlock(dashboard.blocks[i].id);
             }
         }
@@ -455,14 +474,19 @@
      * Render Widget into a given block by reading the dashboard json.
      * */
     var renderWidgetByBlock = function (blockId) {
-        widget.renderer.render(blockId, dashboard.widgets[blockId].url, false);
+        //pub/sub is the only configurale parameter at the moment, update this when introducing new parameters.
+        var isConfigurable = dashboard.widgets[blockId].pubsub && dashboard.widgets[blockId].pubsub.isSubscriber;
+        widget.renderer.render(blockId, dashboard.widgets[blockId].url, isConfigurable, false);
     };
 
     /**
      * Render Widget into a given block by reading the dashboard json.
      * */
-    var renderWidgetByURL = function (blockId, widgetURL) {
-        widget.renderer.render(blockId, widgetURL, false);
+    var renderWidgetByURL = function (blockId, widgetURL, widgetId) {
+        //pub/sub is the only configurale parameter at the moment, update this when introducing new parameters.
+        var isConfigurable = portal.dashboards.widgets[widgetId].pubsub &&
+        portal.dashboards.widgets[widgetId].pubsub.isSubscriber;
+        widget.renderer.render(blockId, widgetURL, isConfigurable, false);
     };
 
 
@@ -495,6 +519,21 @@
         }
         dashboard.blocks = serializedGrid;
     };
+
+    /**
+     * Updates the widgetList global object based on the action.
+     * @param id
+     * @param widget
+     * @param action
+     *
+     */
+    var updateWidgetList = function (id, widget, action) {
+        if (action === "add") {
+            portal.dashboards.widgetList[id] = widget;
+        } else {
+            delete portal.dashboards.widgetList[id];
+        }
+    }
 
     /**
      * Saves the dashboard content.
@@ -543,7 +582,7 @@
     init();
     initAddBlock();
     //TODO make this a callback
-    setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);
+    setTimeout(function(){ wireWidgets(portal.dashboards.widgetList); }, 5000);
 
     portal.dashboards.functions.designer = {
         renderBlocks: renderBlocks,
