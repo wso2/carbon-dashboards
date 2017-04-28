@@ -29,7 +29,7 @@
     "height": 400
   },
   "pubsub": {
-    "isPublisher": true,
+    "isPublisher": false,
     "isSubscriber": false,
     "topic": ""
   },
