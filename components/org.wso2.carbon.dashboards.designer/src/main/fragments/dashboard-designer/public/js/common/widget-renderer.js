@@ -92,7 +92,10 @@ widget.renderer = {};
     var renderWidgetcallback = {
         onSuccess: function (data) {
             var gadgetContainer = $(data)[0];
+            var id = "widget_" + gadgetContainer.getAttribute("data-grid-id");
             $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).html(gadgetContainer);
+            $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).find(".gadget-body").html("<div id='" + id + "'></div>");
+            portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].render.render(id);
         },
         onFailure: function (message, e) {
         }

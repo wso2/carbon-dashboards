@@ -388,10 +388,10 @@
                 portal.dashboards.widgets = widgetInfo;
                 var widgetJSONLength = widgetList[0].length;
                 for (var i = 0; i < widgetJSONLength; i++) {
-                    if (!portal.dashboards.widgetList.hasOwnProperty(widgetList[0][i].info.id)) {
+                   // if (!portal.dashboards.widgetList.hasOwnProperty(widgetList[0][i].info.id)) {
                         UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, widgetList[0][i].info,
                         "left-panel", Constants.APPEND_MODE, widgetListCallback);
-                    }
+                   // }
                 }
             }
         });
