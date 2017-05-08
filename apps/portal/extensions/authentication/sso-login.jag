@@ -31,18 +31,19 @@
 
     /**
      * Sanitize the input value.
-     * @param destination {String}
+     * @param parameter {String}
      * @return string
      * @private
      */
-    var sanitizeDestination = function (destination) {
-        if (!destination) {
+    var sanitizeRequestParameter = function (parameter) {
+        if (!parameter) {
             return "";
         }
-        return destination.replace(/[^a-zA-Z0-9-_/?&=. ]/g, "");
+        return parameter.replace(/[^a-zA-Z0-9-_/?&=. ]/g, "");
     };
 
-    destination = sanitizeDestination(destination);
+    destination = sanitizeRequestParameter(destination);
+    referer = sanitizeRequestParameter(referer);
 
     if (destination) {
         referer = destination;
