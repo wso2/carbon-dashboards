@@ -191,7 +191,7 @@ var getConfig, validate, getMode, getSchema, getData, registerCallBackforPush;
                 for (var i in databases) {
                     if (databaseUrl.toLowerCase().indexOf(databases[i].databaseType) > 0) {
                         var limitQuery = databases[i].queries.limit;
-                        query += limitQuery ? limitQuery : "";
+                        query += limitQuery || "";
                         var topQuery = databases[i].queries.top;
                         if (topQuery) {
                             var indexOfSelect = query.toLowerCase().indexOf("select");
