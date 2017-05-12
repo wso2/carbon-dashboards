@@ -48,13 +48,16 @@ widget.renderer = {};
             type: "GET",
             async: async,
             success: function (data) {
+                var callback = $.extend(true, {}, renderWidgetCallback);
+                var values = url.split("/");
+                callback.widgetId = values[values.length - 1];
                 UUFClient.renderFragment("org.wso2.carbon.dashboards.designer.widget-box", {
                     widgetID: getGadgetUUID(url, widgetName),
                     widgetContent: data.html,
                     widgetTitle: widgetName,
                     gridID: gridContainerId,
                     isConfigurable: isConfigurable
-                }, renderWidgetcallback);
+                }, callback);
 
                 return {
                     error: false,
@@ -87,13 +90,22 @@ widget.renderer = {};
 
     /**
      * This is the callback which is triggered after rendering widget.
-     * @type {{onSuccess: renderWidgetcallback.onSuccess, onFailure: renderWidgetcallback.onFailure}}
+     * @type {{onSuccess: renderWidgetCallback.onSuccess, onFailure: renderWidgetCallback.onFailure}}
      */
-    var renderWidgetcallback = {
+    var renderWidgetCallback = {
+        widgetId: '',
         onSuccess: function (data) {
             var gadgetContainer = $(data)[0];
-            $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).html(gadgetContainer);
+            var id = "widget_" + $(gadgetContainer).data('grid-id');
+
+            $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).html(gadgetContainer);
+
+            if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.render === 'function') {
+                $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).find(".gadget-body").html("<div id='" + id + "'></div>");
+                portal.dashboards.widgets[this.widgetId].actions.render(id);
+            }
         },
+
         onFailure: function (message, e) {
         }
     };
