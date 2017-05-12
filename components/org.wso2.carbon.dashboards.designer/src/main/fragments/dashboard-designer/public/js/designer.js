@@ -389,7 +389,7 @@
                 var widgetJSONLength = widgetList[0].length;
                 for (var i = 0; i < widgetJSONLength; i++) {
                     UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME,
-                        widgetList[0][i].info,left-panel", Constants.APPEND_MODE, widgetListCallback);
+                        widgetList[0][i].info, "left-panel", Constants.APPEND_MODE, widgetListCallback);
                 }
             }
         });
