@@ -48,13 +48,16 @@ widget.renderer = {};
             type: "GET",
             async: async,
             success: function (data) {
+                var callback = $.extend(true, {}, renderWidgetcallback);
+                var values = url.split("/");
+                callback.widgetId = values[values.length - 1];
                 UUFClient.renderFragment("org.wso2.carbon.dashboards.designer.widget-box", {
                     widgetID: getGadgetUUID(url, widgetName),
                     widgetContent: data.html,
                     widgetTitle: widgetName,
                     gridID: gridContainerId,
                     isConfigurable: isConfigurable
-                }, renderWidgetcallback);
+                }, callback);
 
                 return {
                     error: false,
@@ -90,13 +93,19 @@ widget.renderer = {};
      * @type {{onSuccess: renderWidgetcallback.onSuccess, onFailure: renderWidgetcallback.onFailure}}
      */
     var renderWidgetcallback = {
+        widgetId: '',
         onSuccess: function (data) {
             var gadgetContainer = $(data)[0];
             var id = "widget_" + gadgetContainer.getAttribute("data-grid-id");
+
             $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).html(gadgetContainer);
-            $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).find(".gadget-body").html("<div id='" + id + "'></div>");
-            portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].render.render(id);
+
+            if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.render === 'function') {
+                $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).find(".gadget-body").html("<div id='" + id + "'></div>");
+                portal.dashboards.widgets[this.widgetId].actions.render(id);
+            }
         },
+
         onFailure: function (message, e) {
         }
     };

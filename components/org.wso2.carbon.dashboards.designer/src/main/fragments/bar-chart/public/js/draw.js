@@ -2,7 +2,6 @@
     "use strict";
 
     var render = function (divId) {
-        console.log("DIV ID is: " + divId);
         var data = [
             {
                 "metadata": {
@@ -42,12 +41,11 @@
         widget.renderer.setWidgetName(portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].info.id, 
             portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].info.name);
         var lineChart = new vizg(data, config);
-        lineChart.draw("#" + divId);
 
-        //setTimeout(function(){ lineChart.insert(dataSet); }, 5000);
+        lineChart.draw("#" + divId);
     }
 
-    portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].render = {
+    portal.dashboards.widgets['org.wso2.carbon.dashboards.designer.bar-chart'].actions = {
         render:render
     }
 
