@@ -1,12 +1,15 @@
 <div class="grid-stack-item" data-id="{{@params.id}}" data-gs-x="{{@params.x}}" data-gs-y="{{@params.y}}"
 data-gs-width="{{@params.width}}" data-gs-height="{{@params.height}}" >
-    <div class="grid-stack-item-content dashboard-component-box gadget-wrapper" id="{{@params.id}}" >
+    <div class="grid-stack-item-content dashboard-component-box gadget-wrapper"id="{{@params.id}}"
+    ondrop="portal.dashboards.functions.designer.widgetDrop(event)"
+    ondragover="portal.dashboards.functions.designer.widgetAllowDrop(event)">
 		<div class="dashboards-component gadget">
             <div class="gadget-heading">
                 <h1 class="gadget-title truncate">:::</h1>
                 <div class="gadget-actions">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal" data-target="#modalDelete" title="Remove">
+                        <button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal"
+                        data-target="#modalDelete" title="Remove">
                             <i class="icon fw fw-delete"></i>
                         </button>
                     </div>

@@ -21,7 +21,6 @@
     var widgetInfo = {};
     var layoutInfo = {};
     var blockCount = 0;
-    var sortables = ['widgetList'];
     var content = "";
 
     /**
@@ -211,20 +210,6 @@
             $.sidebar_toggle("show", "#right-sidebar", ".page-content-wrapper");
         });
 
-
-        for (var j = 0; j < sortables.length; j++) {
-            Sortable.create(document.getElementById(sortables[j]), {
-                group: {
-                    name: 'tile__list',
-                    pull: 'clone',
-                    put: false
-                },
-                animation: 150,
-                sort: true
-            });
-        }
-
-        initializeBlockListeners();
         initializeWidgetConfigSidebar();
     };
 
@@ -239,34 +224,6 @@
             var widgetID = widgets[$(this).attr('id')].info.id;
             pubsub.subscribe( $(this).val(),portal.dashboards.subscribers[widgetID]._callback);
         });
-    };
-
-    /**
-     * Initialize the listeners for blocks available in the gridstack.
-     */
-    var initializeBlockListeners = function () {
-        var grid = $(".grid-stack-item");
-        var gridLength = grid.length;
-        for (var i = 0; i < gridLength; i++) {
-            Sortable.create(grid[i], {
-                group: {
-                    name: 'tile__list',
-                    pull: false
-                },
-                animation: 150,
-                onAdd: function (evt) {
-                    evt.item.remove();
-                    var blockID = evt.to.getAttribute("data-id");
-                    var widgetID = evt.item.getAttribute("data-id");
-                    renderWidgetByURL(blockID, Constants.FRAGMENT_URL + widgetID, widgetID);
-                    addWidgetToDashboardJSON(blockID, widgetID);
-                    updateWidgetList(widgetID, portal.dashboards.widgets[widgetID], "add")
-                    updateLayout();
-                    saveDashboard();
-                    initGadgetList();
-                }
-            });
-        }
     };
 
     /**
@@ -310,7 +267,6 @@
             UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, data, {
                 onSuccess: function (data) {
                     $('.grid-stack').data('gridstack').add_widget(data, 0, 0, width, height);
-                    initializeBlockListeners();
                 },
                 onFailure: function (message, e) {
                     //TODO : Add notification to inform the user
@@ -579,6 +535,37 @@
         return metaDataPayload;
     };
 
+    /**
+     * globally exposed function to enable widget drag
+     * Set the data.transfer widgetID
+     */
+    function widgetDrag(e) {
+        e.dataTransfer.setData("widgetID", e.target.id);
+    }
+
+    /**
+     * globally exposed function to enable widget drop
+     * Save and update the dashboard using the new widget
+     */
+    function widgetDrop(e) {
+        e.preventDefault();
+        var widgetID = e.dataTransfer.getData("widgetID");
+        var blockID = e.currentTarget.id;
+        renderWidgetByURL(blockID, Constants.FRAGMENT_URL + widgetID, widgetID);
+        addWidgetToDashboardJSON(blockID, widgetID);
+        updateWidgetList(widgetID, portal.dashboards.widgets[widgetID], "add")
+        updateLayout();
+        saveDashboard();
+        initGadgetList();
+    }
+
+    /**
+     * globally exposed function to enable widget drop
+     */
+    function widgetAllowDrop(e) {
+        e.preventDefault();
+    }
+
     init();
     initAddBlock();
     //TODO make this a callback
@@ -587,7 +574,10 @@
     portal.dashboards.functions.designer = {
         renderBlocks: renderBlocks,
         destroyDashboard: destroyDashboard,
-        applyLayout: applyLayout
+        applyLayout: applyLayout,
+        widgetDrag:widgetDrag,
+        widgetDrop:widgetDrop,
+        widgetAllowDrop:widgetAllowDrop
     };
 
 }());
