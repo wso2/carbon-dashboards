@@ -31,10 +31,10 @@ var init = function () {
     $.ajax({
         url: gadgetLocation + '/conf.json',
         method: "GET",
-        contentType: "application/json",
+        dataType: "json",
         async: false,
         success: function (data) {
-            conf = JSON.parse(data);
+            conf = data;
             $.ajax({
                 url: gadgetLocation + '/gadget-controller.jag?action=getSchema',
                 method: "POST",
