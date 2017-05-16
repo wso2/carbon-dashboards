@@ -18,28 +18,71 @@
     var dashboard = dashboardMetadata.dashboard;
     var metadata = dashboardMetadata.metadata;
     var blockCount = 0;
-    var widgetInfo = {};
+    var page;
 
     /**
      * Initialize the dashboard viewer.
      * */
     var init = function () {
-        generateWidgetInfoJSON();
-        portal.dashboards.widgets = widgetInfo;
-        renderBlocks(dashboard);
+        page = getPage();
+        renderBlocks();
     };
+
+    /**
+     * Get the page details from the dashboard.json file.
+     * @param dashboard dashboard object
+     * @returns {*}
+     */
+    var getPage = function () {
+        // TODO: Get 'pageName' from the URL. At the moment since multiple pages are not supported this stays undefined.
+        var pageName;
+        if (!pageName) {
+            for (var name in dashboard.pages) {
+                if (dashboard.pages.hasOwnProperty(name)) {
+                    pageName = name;
+                    break;
+                }
+            }
+        }
+
+        if (!pageName) {
+            // TODO: Send error - No pages found.
+            return;
+        }
+
+        // The pageName expects the value as /page0/page1/page2. Since  the multiple pages are not supported yet
+        // following logic returns the root level page i.e. page0.
+        var names = pageName.split('/');
+        var page;
+        for (var i = 0; i < names.length; i++) {
+            if (names[i].length > 0) {
+                page =  dashboard.pages[names[i]];
+                break;
+            }
+        }
+        if (!page) {
+            // TODO: Send error - 404 Page not found
+            return;
+        }
+        return page;
+    }
 
     /**
      * Render gadget blocks by reading the dashboard json.
      * @param dashboard {Object} dashboard json object
      * */
-    var renderBlocks = function (dashboard) {
-        var i = "";
-        for (i in dashboard.blocks) {
-            if (dashboard.widgets[dashboard.blocks[i].id]) {
-                var dashboardBlock = dashboard.blocks[i];
-                UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, dashboardBlock,
-                    "gridContent", Constants.APPEND_MODE, renderBlockCallback);
+    var renderBlocks = function () {
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].id) {
+                UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, page.layout[i],
+                    "gridContent", Constants.APPEND_MODE, {
+                        onSuccess: function () {
+                            onBlocksRendered();
+                        },
+                        onFailure: function () {
+                            onBlocksRendered();
+                        }
+                    });
             } else {
                 blockCount++;
             }
@@ -47,40 +90,15 @@
     };
 
     /**
-     * generate widgetInfo json object using retrieved data.
-     * @param widgetList
+     * Handles the block rendered event.
      */
-    var generateWidgetInfoJSON = function () {
-        var widgetList = dashboard.widgets;
-        var widget;
-        for (widget in widgetList) {
-            if (widgetList.hasOwnProperty(widget)) {
-                widgetInfo[widgetList[widget].info.id] = widgetList[widget];
-            }
+    var onBlocksRendered = function () {
+        blockCount++;
+        if (blockCount === page.layout.length) {
+            initGridstack();
+            renderWidgets();
         }
     };
-
-    /**
-     * This is the callback which is triggered after rendering blocks.
-     * @type {{onSuccess: renderBlockCallback.onSuccess, onFailure: renderBlockCallback.onFailure}}
-     */
-    var renderBlockCallback = {
-        onSuccess: function () {
-            blockCount++;
-            if (blockCount === dashboard.blocks.length) {
-                initGridstack();
-                renderWidgets(dashboard);
-            }
-        },
-        onFailure: function () {
-            blockCount++;
-            if (blockCount === dashboard.blocks.length) {
-                initGridstack();
-                renderWidgets(dashboard);
-            }
-        }
-    };
-
 
     /**
      * Initialize the dashboard viewer.
@@ -112,8 +130,13 @@
                     var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
                     container.closest('.dashboard-component-box').attr('data-height', height);
                     container.find('.dashboards-component-body').show();
-                    if (dashboard.widgets[blockId]) {
-                        renderWidgetByBlock(blockId);
+
+                    // get the block by blockId
+                    for (var i = 0; i < page.layout.length; i++) {
+                        if (page.layout[i].id === blockId) {
+                            renderWidgetByBlock(page.layout[i]);
+                            break;
+                        }
                     }
                     container.find('.dashboards-component-body').show();
                 }
@@ -132,11 +155,10 @@
     /**
      * Render Widgets in to blocks by reading the dashboard json.
      * */
-    var renderWidgets = function (dashboard) {
-        var i = "";
-        for (i in dashboard.blocks) {
-            if (dashboard.widgets[dashboard.blocks[i].id]) {
-                renderWidgetByBlock(dashboard.blocks[i].id);
+    var renderWidgets = function () {
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget) {
+                renderWidgetByBlock(page.layout[i]);
             }
         }
     };
@@ -144,9 +166,9 @@
     /**
      * Render Widget into a given block by reading the dashboard json.
      * */
-    var renderWidgetByBlock = function (blockId) {
-        var isUserprefEnabled = dashboard.widgets[blockId].userpref && dashboard.widgets[blockId].userpref.enable;
-        widget.renderer.render(blockId, dashboard.widgets[blockId].url, isUserprefEnabled, false);
+    var renderWidgetByBlock = function (block) {
+        var isUserPrefEnabled = block.widget.userpref && block.widget.userpref.enable;
+        widget.renderer.render(block.id, block.widget.url, isUserPrefEnabled, false);
     };
 
     /**
@@ -172,10 +194,16 @@
         var serializedGrid = [];
         for (var i = 0; i < res.length; i++) {
             if (res[i]) {
+                // Built layout information doesn't contain the widget data, hence copying from the page object.
+                for (var j = 0; j < page.layout.length; j++) {
+                    if (page.layout[j].id === res[i].id) {
+                        res[i].widget = page.layout[j].widget;
+                    }
+                }
                 serializedGrid.push(res[i]);
             }
         }
-        dashboard.blocks = serializedGrid;
+        page.layout = serializedGrid;
     };
 
     /**
@@ -183,12 +211,10 @@
      *
      */
     var saveDashboard = function () {
-        var method = 'PUT';
-        var url = Constants.DASHBOARD_METADATA_UPDATE_URL;
         dashboard.url = dashboard.id;
         $.ajax({
-            url: url,
-            method: method,
+            url: Constants.DASHBOARD_METADATA_UPDATE_URL,
+            method: Constants.HTTP_PUT,
             data: JSON.stringify(metaDataPayloadGeneration()),
             async: false,
             contentType: "application/json; charset=UTF-8"
@@ -242,8 +268,8 @@
      * */
     var updateDashboard = function () {
         saveDashboard();
-        renderWidgets(dashboard);
-    }
+        renderWidgets();
+    };
 
     init();
     setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);

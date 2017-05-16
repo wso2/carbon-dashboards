@@ -34,20 +34,28 @@ function onGet(env) {
     } catch (e) {
         sendError(401, "Error in accessing dashboard DB.");
     }
-    if(isDashboardExistsInDB){
+
+    if (isDashboardExistsInDB) {
+        // Dashboard exists in the database. Hence load from the database.
         dashboardMetaData = metadataProviderImpl.get(query);
         dashboardContent = JSON.parse(dashboardMetaData.getContent());
-    } else {
-        sendError(401, "No dashboards found !");
-    }
 
-/*    var system = Java.type('java.lang.System');
-    //construct dashboard.json path
-    var path = system.getProperty('carbon.home') + '/deployment/dashboards/' + env.params.id + '.json';
-    var string = Java.type('java.lang.String');
-    var files = Java.type('java.nio.file.Files');
-    var paths = Java.type('java.nio.file.Paths');
-    dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));*/
+    } else {
+        // Dashboard doesn't exist in the database. Load from the filesystem.
+        var system = Java.type('java.lang.System');
+        //construct dashboard.json path
+        var path = system.getProperty('carbon.home') + '/deployment/dashboards/' + env.params.id + '.json';
+        var string = Java.type('java.lang.String');
+        var files = Java.type('java.nio.file.Files');
+        var paths = Java.type('java.nio.file.Paths');
+        var File = Java.type('java.io.File');
+        var file = new File(path);
+        if (file.exists()) {
+            dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
+        } else {
+            sendError(404, "Dashboard not found !");
+        }
+    }
 
     // Send the dashboard and metadata to client
     sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData, publishers: publishers});
