@@ -448,13 +448,13 @@
     /**
      * Wire Widgets by going through the available widget configs..
      * */
-    var wireWidgets = function (widgets) {
+    var wireWidgets = function (layouts) {
         var i;
-        for (i in widgets) {
-            if (widgets[i].pubsub && widgets[i].pubsub.isSubscriber && widgets.hasOwnProperty(i)) {
+        for (i in layouts) {
+            if (layouts.hasOwnProperty(i) && layouts[i].widget.pubsub && layouts[i].widget.pubsub.isSubscriber) {
                 //considering widget is going to subscribe to only one publisher
-                var widgetID = widgets[i].info.id;
-                pubsub.subscribe(widgets[i].pubsub.subscribesTo[0],
+                var widgetID = layouts[i].widget.info.id;
+                pubsub.subscribe(layouts[i].widget.pubsub.subscribesTo[0],
                     portal.dashboards.subscribers[widgetID]._callback);
             }
         }
@@ -605,7 +605,7 @@
     init();
     initAddBlock();
     //TODO make this a callback
-    setTimeout(function(){ wireWidgets(portal.dashboards.widgetList); }, 5000);
+    setTimeout(function(){ wireWidgets(page.layout); }, 5000);
 
     portal.dashboards.functions.designer = {
         renderBlocks: renderBlocks,
