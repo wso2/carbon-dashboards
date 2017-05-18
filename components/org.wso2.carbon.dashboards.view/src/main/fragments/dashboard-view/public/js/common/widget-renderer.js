@@ -48,13 +48,16 @@ widget.renderer = {};
             type: Constants.HTTP_GET,
             async: async,
             success: function (data) {
+                var callback = $.extend(true, {}, renderWidgetCallback);
+                var values = url.split("/");
+                callback.widgetId = values[values.length - 1];
                 UUFClient.renderFragment(Constants.WIDGET_BOX_FRAGMENT_NAME, {
                     widgetID: getGadgetUUID(url, widgetName),
                     widgetContent: data.html,
                     widgetTitle: widgetName,
                     gridID: gridContainerId,
                     isUserprefEnabled: isUserprefEnabled
-                }, renderWidgetcallback);
+                }, callback);
 
                 return {
                     error: false,
@@ -87,12 +90,22 @@ widget.renderer = {};
 
     /**
      * This is the callback which is triggered after rendering widget.
-     * @type {{onSuccess: renderWidgetcallback.onSuccess, onFailure: renderWidgetcallback.onFailure}}
+     * @type {{onSuccess: renderWidgetCallback.onSuccess, onFailure: renderWidgetCallback.onFailure}}
      */
-    var renderWidgetcallback = {
+    var renderWidgetCallback = {
+        widgetId: '',
         onSuccess: function (data) {
             var gadgetContainer = $(data)[0];
-            $("#grid-stack").find("#" + gadgetContainer.getAttribute("data-grid-id")).html(gadgetContainer);
+            var id = "widget_" + $(gadgetContainer).data('grid-id');
+
+            $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).html(gadgetContainer);
+
+            if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.render === 'function') {
+                var bodyElement = $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).find(".gadget-body");
+                var body = bodyElement.html();
+                bodyElement.html($('<div>').attr('id', id).html(body));
+                portal.dashboards.widgets[this.widgetId].actions.render(id);
+            }
         },
         onFailure: function (message, e) {
         }

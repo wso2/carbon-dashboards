@@ -25,7 +25,20 @@
      * */
     var init = function () {
         page = getPage();
+        generateWidgetInfoJSON();
         renderBlocks();
+    };
+
+    /**
+     * generate widgetInfo json object using retrieved data.
+     * @param widgetList
+     */
+    var generateWidgetInfoJSON = function () {
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget) {
+                portal.dashboards.widgets[page.layout[i].widget.info.id] = page.layout[i].widget;
+            }
+        }
     };
 
     /**
@@ -252,13 +265,12 @@
     /**
      * Wire Widgets by going through the available widget configs.
      * */
-    var wireWidgets = function (widgets) {
-        var i;
-        for (i in widgets) {
-            if (widgets[i].pubsub && widgets[i].pubsub.isSubscriber && widgets.hasOwnProperty(i)) {
-                //considering widget is going to subscribe to only one publisher
-                var widgetID = widgets[i].info.id;
-                pubsub.subscribe(widgets[i].pubsub.subscribesTo[0], portal.dashboards.subscribers[widgetID]._callback);
+    var wireWidgets = function () {
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget && page.layout[i].widget.pubsub && page.layout[i].widget.pubsub.isSubscriber) {
+                // considering widget is going to subscribe to only one publisher
+                var widgetID = page.layout[i].widget.info.id;
+                pubsub.subscribe(page.layout[i].widget.pubsub.subscribesTo[0], portal.dashboards.subscribers[widgetID]._callback);
             }
         }
     };
@@ -272,7 +284,7 @@
     };
 
     init();
-    setTimeout(function(){ wireWidgets(dashboard.widgets); }, 5000);
+    setTimeout(function(){ wireWidgets(); }, 5000);
 
     portal.dashboards.functions.view = {
         update: updateDashboard
