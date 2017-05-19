@@ -28,10 +28,18 @@
      * */
     var init = function () {
         page = getPage();
-        renderBlocks(renderBlockCallback);
         initGadgetList();
         initLayoutList();
-        initPublishers();
+        if (page) {
+            if (page.layout && page.layout.length > 0) {
+                renderBlocks(renderBlockCallback);
+                initPublishers();
+            } else {
+                initGridstack();
+            }
+        } else {
+            // TODO: Show add page options in the UI
+        }
     };
 
     /**
