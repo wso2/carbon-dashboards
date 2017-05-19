@@ -4,13 +4,23 @@
     </button>
     <div class="config-lable"><label class="control-label">{{i18n "widgetConfiguration"}}</label></div>
     <hr>
-    <span class="label label-default" id="subscribe-label" style="display: none;">{{i18n "subscribe.to.label"}}</span>
 
-    <div id="widget-conf-content"></div>
+    <div id="widget-config-subscriber">
+        <span class="label label-default" id="subscribe-label">{{i18n "subscribe.to.label"}}</span>
 
-    <div id="pusub-alert-no-publishers" class="alert alert-warning" style="display: none;">
-        <strong>{{i18n "no.publishers.found.label"}}</strong>
+        <div id="widget-conf-content"></div>
+
+        <div id="pusub-alert-no-publishers" class="alert alert-warning" style="display: none;">
+            <strong>{{i18n "no.publishers.found.label"}}</strong>
+        </div>
     </div>
+
+    <div id="widget-config-publisher">
+        <span class="label label-default" id="publish-label">{{i18n "publishes.to.label"}}</span>
+        <input type="text" id="publish-topic">
+        <button type="button" class="btn widget-config-publisher-save">{{i18n "publishers.to.save"}}</button>
+    </div>
+
 </div>
 
 {{js "js/widget-conf.js"}}

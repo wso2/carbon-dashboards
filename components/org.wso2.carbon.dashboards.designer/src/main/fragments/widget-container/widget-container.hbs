@@ -1,8 +1,13 @@
 <div class="grid-stack-item" data-id="{{@params.id}}" data-gs-x="{{@params.x}}" data-gs-y="{{@params.y}}"
 data-gs-width="{{@params.width}}" data-gs-height="{{@params.height}}" >
-    <div class="grid-stack-item-content dashboard-component-box gadget-wrapper"id="{{@params.id}}"
+    <div class="grid-stack-item-content dashboard-component-box gadget-wrapper"
     ondrop="portal.dashboards.functions.designer.widgetDrop(event)"
-    ondragover="portal.dashboards.functions.designer.widgetAllowDrop(event)">
+    ondragover="portal.dashboards.functions.designer.widgetAllowDrop(event)"
+    {{#if @params.widget}}
+    data-publisher="{{@params.widget.pubsub.isPublisher}}"
+    data-subscriber="{{@params.widget.pubsub.isSubscriber}}"
+    {{/if}}
+    id="{{@params.id}}">
 		<div class="dashboards-component gadget">
             <div class="gadget-heading">
                 <h1 class="gadget-title truncate">:::</h1>

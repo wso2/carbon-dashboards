@@ -108,6 +108,7 @@
      * Populate dashboardMetadata.publishers by reading the widget configs.
      * */
     var initPublishers = function () {
+        dashboardMetadata.publishers = [];
         for (var i = 0; i < page.layout.length; i++) {
             if (page.layout[i].widget) {
                 var widget = page.layout[i].widget;
@@ -226,23 +227,50 @@
 
         $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-config-handle', function (e) {
             e.preventDefault();
-            var id = $(this).closest(".dashboard-component-box").attr('id');//$(this).attr('id');
-            var i;
-            var publishers = dashboardMetadata.publishers;
-            if (publishers.length > 0) {
-                $("#subscribe-label").show();
-                $('#widget-conf-content').html('<select id="' + id + '" class="pubsub-topics">' + 
-                    '<option disabled selected>Select Publisher:</option></select>');
-                for (i in publishers) {
-                    if (publishers.hasOwnProperty(i)) {
-                        $('.pubsub-topics').append('<option class="dropdown-item" value="' + publishers[i] + '">' +
-                            publishers[i] + '</option>');
-                    }
+            var id = $(this).closest(".dashboard-component-box").attr('id');
+            var pubsubConfig;
+
+            for (i = 0; i < page.layout.length; i++) {
+                if (page.layout[i].id === id) {
+                    pubsubConfig = page.layout[i].widget.pubsub;
                 }
-            } else {
-                $('#pusub-alert-no-publishers').show();
             }
+
+            if ($(this).closest(".dashboard-component-box").data('subscriber')) {
+                var i;
+                var publishers = dashboardMetadata.publishers;
+                var subscribedTopics = pubsubConfig.subscribesTo;
+
+                if (publishers.length > 0) {
+                    $("#widget-config-publisher").hide();
+                    $('#widget-config-subscriber').show();
+                    $('#widget-conf-content').empty();
+
+                    for (i in publishers) {
+                        if (publishers.hasOwnProperty(i)) {
+                            $('<input>').attr({
+                               'type': 'checkbox',
+                               'checked': subscribedTopics.indexOf(publishers[i]) != -1,
+                               'value': publishers[i],
+                               'data-id': id
+                           }).addClass("topic-checkbox").appendTo($('#widget-conf-content')).after(publishers[i] + '<br>');
+                        }
+                    }
+
+                } else {
+                    $('#pusub-alert-no-publishers').show();
+                }
+            }
+
+            if ($(this).closest(".dashboard-component-box").data('publisher')) {
+                $('#widget-config-subscriber').hide();
+                $("#widget-config-publisher").show();
+                $('#publish-topic').val(pubsubConfig.topic);
+                $('.widget-config-publisher-save').data('id', id);
+            }
+
             $.sidebar_toggle("show", "#right-sidebar", ".page-content-wrapper");
+
         });
 
         initializeWidgetConfigSidebar();
@@ -252,15 +280,50 @@
      * Initialize the listeners for the widget configuration sidebar
      */
     var initializeWidgetConfigSidebar = function () {
-        $('#right-sidebar').on('change', '.pubsub-topics', function (e) {
+        $('#right-sidebar').on('change', '.topic-checkbox', function (e) {
             for (var i = 0; i < page.layout.length; i++) {
-                if (page.layout[i].id === $(this).attr('id')) {
+                if (page.layout[i].id === $(this).data('id')) {
                     widget = page.layout[i].widget;
-                    widget.pubsub.subscribesTo.push($(this).val());
+                    if (this.checked) {
+                        widget.pubsub.subscribesTo.push($(this).val());
+                        pubsub.subscribe($(this).val(), portal.dashboards.subscribers[widget.info.id]._callback,
+                            page.layout[i].id);
+                    } else {
+                        var index = widget.pubsub.subscribesTo.indexOf($(this).val());
+                        if (index > -1) {
+                            widget.pubsub.subscribesTo.splice(index, 1);
+                            //TODO pubsub.unsubcribe
+                        }
+
+                    }
                     saveDashboard();
-                    pubsub.subscribe( $(this).val(),portal.dashboards.subscribers[widget.info.id]._callback);
                 }
             }
+        }).on('click', '.widget-config-publisher-save', function (e) {
+            //TODO Use i18n for the confirm text message, once available through UUFClient.
+            noty({
+                text : 'Changing topic might affect existing subscribers, Do you want to continue?',
+                buttons : [{
+                addClass : 'btn',
+                text : 'Cancel',
+                'layout' : 'center',
+                onClick : function($noty) {
+                    $noty.close();
+                }
+                }, {
+                addClass : 'btn btn-warning',
+                text : 'Yes',
+                onClick : function($noty) {
+                    for (var i = 0; i < page.layout.length; i++) {
+                        if (page.layout[i].id === $('.widget-config-publisher-save').data('id')) {
+                            widget = page.layout[i].widget;
+                            page.layout[i].widget.pubsub.topic = $('#publish-topic').val();
+                            saveDashboard();
+                            initPublishers();
+                        }
+                    }
+                }}]
+            });
         });
     };
 
@@ -292,6 +355,7 @@
             var width = $('#block-width').val() || 0;
             var height = $('#block-height').val() || 0;
             var id = generateBlockGUID();
+            var pubsub = { isPublisher: false, isSubscriber: false };
 
             if (width === 0 || height === 0) {
                 return;
@@ -302,16 +366,18 @@
             data.width = width;
             data.x = 0;
             data.y = 0;
+            data.widget = {};
+            data.widget.pubsub = pubsub;
             UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, data, {
                 onSuccess: function (data) {
                     $('.grid-stack').data('gridstack').add_widget(data, 0, 0, width, height);
+                    updateLayout();
+                    saveDashboard();
                 },
                 onFailure: function (message, e) {
                     //TODO : Add notification to inform the user
                 }
             });
-            updateLayout();
-            saveDashboard();
         });
         var dummyGadget = $('.dashboards-dummy-gadget');
         var blockWidth = $('#block-width');
@@ -365,7 +431,7 @@
     var removeWidgetFromDashboardJSON = function (blockID) {
         for (var i = 0; i < page.layout.length; i++) {
             if (page.layout[i].id === blockID && page.layout[i].widget && page.layout[i].widget.info.id) {
-                updateWidgetList(block.info.id, null, "remove")
+                updateWidgetList(page.layout[i].widget.info.id, null, "remove")
                 delete page.layout[i].widget;
             }
         }
@@ -451,11 +517,17 @@
     var wireWidgets = function (layouts) {
         var i;
         for (i in layouts) {
-            if (layouts.hasOwnProperty(i) && layouts[i].widget.pubsub && layouts[i].widget.pubsub.isSubscriber) {
-                //considering widget is going to subscribe to only one publisher
+            if (layouts.hasOwnProperty(i) && layouts[i].widget && layouts[i].widget.pubsub
+                && layouts[i].widget.pubsub.isSubscriber) {
                 var widgetID = layouts[i].widget.info.id;
-                pubsub.subscribe(layouts[i].widget.pubsub.subscribesTo[0],
-                    portal.dashboards.subscribers[widgetID]._callback);
+                var topics = layouts[i].widget.pubsub.subscribesTo;
+                var topic;
+                for (topic in topics) {
+                    if (topics.hasOwnProperty(topic)) {
+                        pubsub.subscribe(topics[topic], portal.dashboards.subscribers[widgetID]._callback,
+                            layouts[i].id);
+                    }
+                }
             }
         }
     };
@@ -465,8 +537,11 @@
      * */
     var renderWidgetByBlock = function (block) {
         //pub/sub is the only configurale parameter at the moment, update this when introducing new parameters.
-        var isConfigurable = block.widget.pubsub && block.widget.pubsub.isSubscriber;
-        widget.renderer.render(block.id, block.widget.url, isConfigurable, false);
+        if (block.widget) {
+            var isConfigurable = block.widget.pubsub && (block.widget.pubsub.isSubscriber ||
+                block.widget.pubsub.isPublisher) ;
+            widget.renderer.render(block.id, block.widget.url, isConfigurable, false);
+        }
     };
 
     /**
@@ -602,6 +677,15 @@
         e.preventDefault();
     }
 
+    function publishToTopics (msg, instanceID) {
+        var i;
+        for (i in page.layout) {
+            if (page.layout.hasOwnProperty(i) && page.layout[i].widget.pubsub && page.layout[i].widget.pubsub.isPublisher && (instanceID === page.layout[i].id)) {
+                pubsub.publish(msg, page.layout[i].widget.pubsub.topic);
+            }
+        }
+    }
+
     init();
     initAddBlock();
     //TODO make this a callback
@@ -613,7 +697,8 @@
         applyLayout: applyLayout,
         widgetDrag:widgetDrag,
         widgetDrop:widgetDrop,
-        widgetAllowDrop:widgetAllowDrop
+        widgetAllowDrop:widgetAllowDrop,
+        publishToTopics:publishToTopics
     };
 
 }());
