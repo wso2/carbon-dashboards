@@ -30,10 +30,15 @@
         page = getPage();
         initGadgetList();
         initLayoutList();
-
         if (page) {
-	        renderBlocks(renderBlockCallback);
-    	    initPublishers();
+            if (page.layout && page.layout.length > 0) {
+                renderBlocks(renderBlockCallback);
+                initPublishers();
+            } else {
+                initGridstack();
+            }
+        } else {
+            // TODO: Show add page options in the UI
         }
     };
 
@@ -308,13 +313,13 @@
             UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, data, {
                 onSuccess: function (data) {
                     $('.grid-stack').data('gridstack').add_widget(data, 0, 0, width, height);
+                    updateLayout();
+                    saveDashboard();
                 },
                 onFailure: function (message, e) {
                     //TODO : Add notification to inform the user
                 }
             });
-            updateLayout();
-            saveDashboard();
         });
         var dummyGadget = $('.dashboards-dummy-gadget');
         var blockWidth = $('#block-width');
