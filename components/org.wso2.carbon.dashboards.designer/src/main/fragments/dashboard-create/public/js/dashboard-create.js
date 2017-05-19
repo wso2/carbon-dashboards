@@ -14,39 +14,74 @@
  * limitations under the License.
  */
 
-var createDashboard = function () {
-    var payloadDashboard = {};
-    var dashboardContent = {};
-    payloadDashboard.url = $("#dashboard-id").val();
-    payloadDashboard.name = $("#dashboard-title").val();
-    payloadDashboard.version = $("#dashboard-version").val();
-    payloadDashboard.description = $("#dashboard-description").val();
-    payloadDashboard.isShared = "true";
-    payloadDashboard.parentId = "0";
-    payloadDashboard.owner = "admin";
-    payloadDashboard.lastUpdatedBy = "admin";
-    payloadDashboard.lastUpdatedTime = new Date().getTime();
-    dashboardContent.url = payloadDashboard.url;
-    dashboardContent.name = payloadDashboard.name;
-    dashboardContent.version = payloadDashboard.version;
-    dashboardContent.description = payloadDashboard.description;
-    dashboardContent.blocks = [{"height": 3, "id": "a", "width": 3, "x": 0, "y": 0}];
-    payloadDashboard.content = JSON.stringify(dashboardContent);
-    var method = "POST";
-    var url = "../view/apis/dashboard/add";
-    $.ajax({
-        url: url,
-        method: method,
-        data: JSON.stringify(payloadDashboard),
-        async: false,
-        contentType: "application/json",
-        //TODO Need to remove alerts and use proper notification mechanism
-        success: function () {
-            alert("Dashboard is created successfully !");
-            window.location.href = payloadDashboard.url;
-        },
-        error: function () {
-            alert("Error in creating dashboard !");
-        }
+(function () {
+    var HTTP_POST = 'POST';
+    var APPLICATION_JSON = 'application/json';
+
+    /**
+     * Build dashboard payload object to be saved.
+     * @returns {{}}
+     */
+    var buildDashboardPayload = function () {
+        var id = $("#dashboard-id").val();
+        var name = $("#dashboard-title").val();
+        var version = $("#dashboard-version").val();
+        var description = $("#dashboard-description").val();
+        return {
+            url: id,
+            name: name,
+            version: version,
+            description: description,
+            isShared: true,
+            parentId: 0,
+            owner: 'admin',
+            lastUpdatedBy: 'admin',
+            lastUpdatedTime: new Date().getTime(),
+            content: JSON.stringify({
+                url: id,
+                name: name,
+                version: version,
+                description: description,
+                pages: {
+                    'page0': {
+                        layout: [],
+                        pages: {}
+                    }
+                }
+            })
+        };
+    };
+
+    /**
+     * Handles the create dashboard button click event.
+     */
+    $('#btn-create-dashboard').on('click', function () {
+        var dashboard = buildDashboardPayload();
+        $.ajax({
+            url: "../designer/apis/dashboard/add",
+            method: HTTP_POST,
+            data: JSON.stringify(dashboard),
+            async: false,
+            contentType: APPLICATION_JSON,
+            //TODO Need to remove alerts and use proper notification mechanism. i18n should be used to get messages.
+            success: function () {
+                alert("Dashboard is created successfully !");
+                window.location.href = dashboard.url;
+            },
+            error: function () {
+                alert("Error in creating dashboard !");
+            }
+        });
     });
-};
+
+    /**
+     * Handles the lost focus event of the name of the dashboard text field. On this event the URL will be automatically
+     * generated using the dashboard name.
+     */
+    $('#dashboard-title').on('blur', function () {
+        $('#dashboard-id').val($('#dashboard-title').val()
+            .split(' ')
+            .join('-')
+            .toLowerCase());
+    });
+})();

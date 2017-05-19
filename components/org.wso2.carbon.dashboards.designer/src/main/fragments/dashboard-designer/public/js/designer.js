@@ -28,10 +28,13 @@
      * */
     var init = function () {
         page = getPage();
-        renderBlocks(renderBlockCallback);
         initGadgetList();
         initLayoutList();
-        initPublishers();
+
+        if (page) {
+	        renderBlocks(renderBlockCallback);
+    	    initPublishers();
+        }
     };
 
     /**
