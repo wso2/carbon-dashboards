@@ -111,6 +111,10 @@
     display: none;
 }
 
+.view-btn {
+    margin-left: 40px !important;
+}
+
 .dashboard-icon {
     padding:60px;
 }
