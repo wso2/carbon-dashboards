@@ -104,6 +104,10 @@ widget.renderer = {};
                 $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).find(".gadget-body").html("<div id='" + id + "'></div>");
                 portal.dashboards.widgets[this.widgetId].actions.render(id);
             }
+
+            if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.bind === 'function') {
+                portal.dashboards.widgets[this.widgetId].actions.bind($(gadgetContainer).data('grid-id'));
+            }
         },
 
         onFailure: function (message, e) {
