@@ -16,12 +16,19 @@
 {{defineZone "task-bar"}}
 {{defineZone "left-nav-bar"}}
 <div class="sidebar-wrapper" id="left-sidebar" data-side="left" data-width="250"
-     data-offset-left="52" data-top="inherit" data-offset-bottom="40" data-container=".page-content-wrapper"
-     data-container-divide="true">
+     data-offset-left="52" data-top="inherit" data-offset-bottom="40" 
+     data-container=".page-content-wrapper" data-container-divide="true">
     {{defineZone "sidebar-nav-layouts"}}
     {{defineZone "sidebar-nav-widgets"}}
+    {{defineZone "sidebar-nav-dashboard-layouts"}}
+</div>
+<div class="sidebar-wrapper" id="right-sidebar" data-side="right" data-width="250"
+     data-offset-left="52" data-top="inherit" data-offset-bottom="40" 
+     data-container=".page-content-wrapper" data-container-divide="true">
+    {{defineZone "sidebar-left-nav-config"}}
 </div>
 {{defineZone "content"}}
+
 {{defineZone "footer"}}
 <footer class="hidden">
     {{placeholder "js"}}

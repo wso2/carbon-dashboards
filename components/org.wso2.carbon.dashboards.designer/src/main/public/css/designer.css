@@ -34,7 +34,7 @@
 /**
  * Widgets related styles
  */
-.dashboards-thumbnail {
+.dashboards-thumbnail,.dashboards-layout {
     z-index: 1000;
     background-color: transparent;
 }
@@ -113,4 +113,8 @@
 
 .view-btn {
     margin-left: 40px !important;
+}
+
+.dashboard-icon {
+    padding:60px;
 }

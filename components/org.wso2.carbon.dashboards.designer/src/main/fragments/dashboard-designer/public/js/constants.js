@@ -17,11 +17,13 @@
  */
 
 var Constants = {
-    DASHBOARD_METADATA_UPDATE_URL: "../view/apis/dashboard/update",
-    WIDGET_METAINFO_GET_URL: "../view/apis/widget/metainfo",
+    DASHBOARD_METADATA_UPDATE_URL: "../designer/apis/dashboard/update",
+    WIDGET_METAINFO_GET_URL: "../designer/apis/widget/metainfo",
+    LAYOUT_METAINFO_GET_URL: "../designer/apis/layout/metainfo",
     FRAGMENT_URL: "../fragments/",
     WIDGET_CONTAINER_FRAGMENT_NAME: "org.wso2.carbon.dashboards.designer.widget-container",
     WIDGET_LIST_CONTAINER_FRAGMENT_NAME: "org.wso2.carbon.dashboards.designer.widget-list-container",
+    LAYOUT_LIST_CONTAINER_FRAGMENT_NAME: "org.wso2.carbon.dashboards.designer.layout-list-container",
     APPEND_MODE: "APPEND",
     HTTP_PUT: "PUT",
     HTTP_GET: "GET",

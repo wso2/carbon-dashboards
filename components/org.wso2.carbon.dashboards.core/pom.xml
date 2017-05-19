@@ -97,6 +97,7 @@
                         <Export-Package>
                             org.wso2.carbon.dashboards.core.*;version="${carbon.dashboards.version}",
                             org.wso2.carbon.dashboards.core.widget.info.*;version="${carbon.dashboards.version}",
+                            org.wso2.carbon.dashboards.core.layout.info.*;version="${carbon.dashboards.version}",
                             org.wso2.carbon.dashboards.core.provider.*;version="${carbon.dashboards.version}",
                             org.wso2.carbon.dashboards.core.exception.*;version="${carbon.dashboards.version}"
                         </Export-Package>

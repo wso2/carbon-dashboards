@@ -3,10 +3,11 @@
         <h1 class="gadget-title truncate">{{@params.widgetTitle}}</h1>
         <div class="gadget-actions">
             <div class="btn-group">
-                <button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal"
-                        data-target="#modalDelete" title="remove">
-                    <i class="icon fw fw-delete"></i>
+            {{#if @params.isUserprefEnabled}}
+                <button type="button" class="btn btn-default dashboards-userpref-handle">
+                    <i class="icon fw fw-configarations"></i>
                 </button>
+            {{/if}}
             </div>
         </div>
     </div>

@@ -1,0 +1,21 @@
+<div id="sidebarNavDashboardLayouts" data-type="layouts" style="display: none;">
+    <div class="sidebar-brand">{{i18n "add.layouts"}}</div>
+    <div class="alert alert-info">
+        {{i18n "add.layout.msg"}}
+    </div>
+    <div class="add-padding-3x">
+        <div class="form-group has-form-control-btn">
+            <button class="form-control-btn" type="button" title="{{i18n "layout.serach.label"}}">
+                <i class="fw fw-search" aria-hidden="true"></i>
+            </button>
+            <input type="text" class="form-control" placeholder="{{i18n "layouts.search"}}">
+        </div>
+        <div>
+            <hr>
+            <h4 style="margin-left:10px;">{{i18n "layouts"}}</h4>
+            <div id="layoutList">
+                {{defineZone "layout-list"}}
+            </div>
+        </div>
+    </div>
+</div>

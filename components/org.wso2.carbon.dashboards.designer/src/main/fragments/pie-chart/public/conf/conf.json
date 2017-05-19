@@ -1,5 +1,0 @@
-portal.dashboards.widgets.PIECHART = {
-     "name" : "Pie Chart",
-     "id": "pie-chart",
-     "permission" : ["Internal/Everyone", "Admin"]
-}

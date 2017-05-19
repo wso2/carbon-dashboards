@@ -18,28 +18,104 @@
     var dashboard = dashboardMetadata.dashboard;
     var metadata = dashboardMetadata.metadata;
     var widgetInfo = {};
+    var layoutInfo = {};
     var blockCount = 0;
+    var content = "";
+    var page;
 
     /**
      * Initialize the dashboard viewer.
      * */
     var init = function () {
-        renderBlocks(dashboard);
+        page = getPage();
+        renderBlocks(renderBlockCallback);
         initGadgetList();
+        initLayoutList();
+        initPublishers();
     };
+
+    /**
+     * Get the page details from the dashboard.json file.
+     * @returns {*}
+     */
+    var getPage = function () {
+        var pageName; // todo: try to get this from the url
+        if (!pageName) {
+            for (var name in dashboard.pages) {
+                if (dashboard.pages.hasOwnProperty(name)) {
+                    pageName = name;
+                    break;
+                }
+            }
+        }
+
+        if (!pageName) {
+            // todo: no pages in the dashboard
+            return;
+        }
+
+        var names = pageName.split('/');
+        var page;
+        for (var i = 0; i < names.length; i++) {
+            if (names[i].length > 0) {
+                if (!page) {
+                    page = dashboard.pages[names[i]];
+                } else {
+                    // todo: check the pages sub property as well
+                }
+            }
+        }
+        if (!page) {
+            // todo: send error 404 not found
+            return;
+        }
+        return page;
+    }
+
+    /**
+     * Remove existing layout and widgets from the dashboard configuation.
+     * */
+    var destroyDashboard = function () {
+        var html = '<div class="grid-stack" id="grid-stack"></div>';
+        page.layout = [];
+        $('.grid-stack').data('gridstack').destroy(true);
+        $('.gadgets-grid').html(html);
+    }
+
+    /**
+     * Apply provided layout to the dashboard
+     * */
+    var applyLayout = function (layout) {
+        page.layout = layout.blocks;
+        blockCount = 0;
+        saveDashboard();
+        initGadgetList();
+        renderBlocks(renderDynamicBlockCallback);
+    }
 
     /**
      * Render gadget blocks by reading the dashboard json.
      * @param dashboard {Object} dashboard json object
      * */
-    var renderBlocks = function (dashboard) {
-        var i = "";
-        for (i in dashboard.blocks) {
-            var dashboardBlock = dashboard.blocks[i];
-            UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, dashboardBlock,
-                "gridContent", Constants.APPEND_MODE, renderBlockCallback);
+    var renderBlocks = function (callback) {
+        for (var i = 0; i < page.layout.length; i++) {
+            UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, page.layout[i], "gridContent",
+                Constants.APPEND_MODE, callback);
         }
+    };
 
+    /**
+     * Populate dashboardMetadata.publishers by reading the widget configs.
+     * */
+    var initPublishers = function () {
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget) {
+                var widget = page.layout[i].widget;
+                if (widget.pubsub && widget.pubsub.isPublisher) {
+                    dashboardMetadata.publishers.push(widget.pubsub.topic);
+                }
+            }
+        }
     };
 
     /**
@@ -60,16 +136,38 @@
     var renderBlockCallback = {
         onSuccess: function () {
             blockCount++;
-            if (blockCount === dashboard.blocks.length) {
+            if (blockCount === page.layout.length) {
                 initGridstack();
                 renderWidgets(dashboard);
             }
         },
         onFailure: function () {
             blockCount++;
-            if (blockCount === dashboard.blocks.length) {
+            if (blockCount === page.layout.length) {
                 initGridstack();
                 renderWidgets(dashboard);
+            }
+        }
+    };
+
+    /**
+     * This is the callback which is triggered after dynamic rendering of blocks.
+     * This will concatanate provided html content and append to the grid-stack before initializing.
+     * @type {{onSuccess: renderDynamicBlockCallback.onSuccess, onFailure: renderDynamicBlockCallback.onFailure}}
+     */
+    var renderDynamicBlockCallback = {
+        onSuccess: function (data) {
+            content += data;
+            blockCount++;
+            if (blockCount === page.layout.length) {
+                $('.grid-stack').append(content);
+                initGridstack();
+            }
+        },
+        onFailure: function () {
+            blockCount++;
+            if (blockCount === page.layout.length) {
+                initGridstack();
             }
         }
     };
@@ -104,8 +202,11 @@
                 var height = (gsHeight * 150) + ((gsHeight - 1) * 30);
                 container.closest('.dashboard-component-box').attr('data-height', height);
                 container.find('.dashboards-component-body').show();
-                if (dashboard.widgets[blockId]) {
-                    renderWidgetByBlock(blockId);
+
+                for (var i = 0; i < page.layout.length; i++) {
+                    if (page.layout[i].id === blockId) {
+                        renderWidgetByBlock(page.layout[i]);
+                    }
                 }
                 container.find('.dashboards-component-body').show();
             }
@@ -120,45 +221,47 @@
             removeWidgetFromDashboardJSON(componentBox.attr("id"));
             updateLayout();
             saveDashboard();
+            initGadgetList();
         });
 
-        Sortable.create(document.getElementById("gadgetList"), {
-            group: {
-                name: 'tile__list',
-                pull: 'clone',
-                put: false
-            },
-            animation: 150,
-            sort: true
+        $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-config-handle', function (e) {
+            e.preventDefault();
+            var id = $(this).closest(".dashboard-component-box").attr('id');//$(this).attr('id');
+            var i;
+            var publishers = dashboardMetadata.publishers;
+            if (publishers.length > 0) {
+                $("#subscribe-label").show();
+                $('#widget-conf-content').html('<select id="' + id + '" class="pubsub-topics">' + 
+                    '<option disabled selected>Select Publisher:</option></select>');
+                for (i in publishers) {
+                    if (publishers.hasOwnProperty(i)) {
+                        $('.pubsub-topics').append('<option class="dropdown-item" value="' + publishers[i] + '">' +
+                            publishers[i] + '</option>');
+                    }
+                }
+            } else {
+                $('#pusub-alert-no-publishers').show();
+            }
+            $.sidebar_toggle("show", "#right-sidebar", ".page-content-wrapper");
         });
 
-        initializeBlockListeners();
+        initializeWidgetConfigSidebar();
     };
 
     /**
-     * Initialize the listeners for blocks available in the gridstack.
+     * Initialize the listeners for the widget configuration sidebar
      */
-    var initializeBlockListeners = function () {
-        var grid = $(".grid-stack-item");
-        var gridLength = grid.length;
-        for (var i = 0; i < gridLength; i++) {
-            Sortable.create(grid[i], {
-                group: {
-                    name: 'tile__list',
-                    pull: false
-                },
-                animation: 150,
-                onAdd: function (evt) {
-                    evt.item.remove();
-                    var blockID = evt.to.getAttribute("data-id");
-                    var widgetID = evt.item.getAttribute("data-id");
-                    renderWidgetByURL(blockID, Constants.FRAGMENT_URL + widgetID);
-                    addWidgetToDashboardJSON(blockID, widgetID);
-                    updateLayout();
+    var initializeWidgetConfigSidebar = function () {
+        $('#right-sidebar').on('change', '.pubsub-topics', function (e) {
+            for (var i = 0; i < page.layout.length; i++) {
+                if (page.layout[i].id === $(this).attr('id')) {
+                    widget = page.layout[i].widget;
+                    widget.pubsub.subscribesTo.push($(this).val());
                     saveDashboard();
+                    pubsub.subscribe( $(this).val(),portal.dashboards.subscribers[widget.info.id]._callback);
                 }
-            });
-        }
+            }
+        });
     };
 
     /**
@@ -202,7 +305,6 @@
             UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, data, {
                 onSuccess: function (data) {
                     $('.grid-stack').data('gridstack').add_widget(data, 0, 0, width, height);
-                    initializeBlockListeners();
                 },
                 onFailure: function (message, e) {
                     //TODO : Add notification to inform the user
@@ -248,11 +350,12 @@
      * @param widgetID
      */
     var addWidgetToDashboardJSON = function (blockID, widgetID) {
-        if (!dashboard.widgets) {
-            dashboard.widgets = {};
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].id === blockID) {
+                page.layout[i].widget = widgetInfo[widgetID];
+                page.layout[i].widget.url = Constants.FRAGMENT_URL + widgetID;
+            }
         }
-        dashboard.widgets[blockID] = widgetInfo[widgetID];
-        dashboard.widgets[blockID].url = Constants.FRAGMENT_URL + widgetID;
     };
 
     /**
@@ -260,25 +363,49 @@
      * @param blockID
      */
     var removeWidgetFromDashboardJSON = function (blockID) {
-        delete dashboard.widgets[blockID];
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].id === blockID && page.layout[i].widget && page.layout[i].widget.info.id) {
+                updateWidgetList(block.info.id, null, "remove")
+                delete page.layout[i].widget;
+            }
+        }
     };
 
     /**
      * retrieve the gadget list by invoking the available api.
      */
     var initGadgetList = function () {
-        var method = Constants.HTTP_GET;
-        var url = Constants.WIDGET_METAINFO_GET_URL;
+        $('#widgetList').find('.dashboards-thumbnail').remove();
         $.ajax({
-            url: url,
-            method: method,
+            url: Constants.WIDGET_METAINFO_GET_URL,
+            method: Constants.HTTP_GET,
             async: true,
             success: function (widgetList) {
                 generateWidgetInfoJSON(widgetList[0]);
+                portal.dashboards.widgets = widgetInfo;
                 var widgetJSONLength = widgetList[0].length;
                 for (var i = 0; i < widgetJSONLength; i++) {
-                    UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, widgetList[0][i],
-                        "left-panel", Constants.APPEND_MODE, widgetListCallback);
+                    UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME,
+                        widgetList[0][i].info, "left-panel", Constants.APPEND_MODE, widgetListCallback);
+                }
+            }
+        });
+    };
+
+    /**
+     * retrieve the layout list by invoking the available api.
+     */
+    var initLayoutList = function () {
+        $.ajax({
+            url: Constants.LAYOUT_METAINFO_GET_URL,
+            method: Constants.HTTP_GET,
+            async: true,
+            success: function (layoutList) {
+                generateLayoutInfoJSON(layoutList[0]);
+                var layoutJSONLength = layoutList[0].length;
+                for (var i = 0; i < layoutJSONLength; i++) {
+                    UUFClient.renderFragment(Constants.LAYOUT_LIST_CONTAINER_FRAGMENT_NAME, layoutList[0][i],
+                        "layout-list", Constants.APPEND_MODE, widgetListCallback);
                 }
             }
         });
@@ -291,19 +418,44 @@
     var generateWidgetInfoJSON = function (widgetList) {
         var widgetListLength = widgetList.length;
         for (var i = 0; i < widgetListLength; i++) {
-            widgetInfo[widgetList[i].id] = widgetList[i];
+            widgetInfo[widgetList[i].info.id] = widgetList[i];
         }
     };
 
+    /**
+     * generate layoutInfo json object using retrieved data.
+     * @param layoutList
+     */
+    var generateLayoutInfoJSON = function (layoutList) {
+        var layoutListLength = layoutList.length;
+        for (var i = 0; i < layoutListLength; i++) {
+            portal.dashboards.layouts[layoutList[i].id] = layoutList[i];
+            layoutInfo[layoutList[i].id] = layoutList[i];
+        }
+    };
 
     /**
      * Render Widgets in to blocks by reading the dashboard json.
      * */
     var renderWidgets = function (dashboard) {
-        var i = "";
-        for (i in dashboard.blocks) {
-            if (dashboard.widgets[dashboard.blocks[i].id]) {
-                renderWidgetByBlock(dashboard.blocks[i].id);
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget) {
+                renderWidgetByBlock(page.layout[i]);
+            }
+        }
+    };
+
+    /**
+     * Wire Widgets by going through the available widget configs..
+     * */
+    var wireWidgets = function (widgets) {
+        var i;
+        for (i in widgets) {
+            if (widgets[i].pubsub && widgets[i].pubsub.isSubscriber && widgets.hasOwnProperty(i)) {
+                //considering widget is going to subscribe to only one publisher
+                var widgetID = widgets[i].info.id;
+                pubsub.subscribe(widgets[i].pubsub.subscribesTo[0],
+                    portal.dashboards.subscribers[widgetID]._callback);
             }
         }
     };
@@ -311,17 +463,21 @@
     /**
      * Render Widget into a given block by reading the dashboard json.
      * */
-    var renderWidgetByBlock = function (blockId) {
-        widget.renderer.render(blockId, dashboard.widgets[blockId].url, false);
+    var renderWidgetByBlock = function (block) {
+        //pub/sub is the only configurale parameter at the moment, update this when introducing new parameters.
+        var isConfigurable = block.widget.pubsub && block.widget.pubsub.isSubscriber;
+        widget.renderer.render(block.id, block.widget.url, isConfigurable, false);
     };
 
     /**
      * Render Widget into a given block by reading the dashboard json.
      * */
-    var renderWidgetByURL = function (blockId, widgetURL) {
-        widget.renderer.render(blockId, widgetURL, false);
+    var renderWidgetByURL = function (blockId, widgetURL, widgetId) {
+        //pub/sub is the only configurable parameter at the moment, update this when introducing new parameters.
+        var isConfigurable = portal.dashboards.widgets[widgetId].pubsub &&
+            portal.dashboards.widgets[widgetId].pubsub.isSubscriber;
+        widget.renderer.render(blockId, widgetURL, isConfigurable, false);
     };
-
 
     /**
      * Update the layout after modification.
@@ -344,26 +500,44 @@
         });
 
         var serializedGrid = [];
-        var resLength = res.length;
-        for (var i = 0; i < resLength; i++) {
+        for (var i = 0; i < res.length; i++) {
             if (res[i]) {
+                // Built layout information doesn't contain the widget data, hence copying from the page object.
+                for (var j = 0; j < page.layout.length; j++) {
+                    if (page.layout[j].id === res[i].id) {
+                        res[i].widget = page.layout[j].widget;
+                    }
+                }
                 serializedGrid.push(res[i]);
             }
         }
-        dashboard.blocks = serializedGrid;
+        page.layout = serializedGrid;
     };
+
+    /**
+     * Updates the widgetList global object based on the action.
+     * @param id
+     * @param widget
+     * @param action
+     *
+     */
+    var updateWidgetList = function (id, widget, action) {
+        if (action === "add") {
+            portal.dashboards.widgetList[id] = widget;
+        } else {
+            delete portal.dashboards.widgetList[id];
+        }
+    }
 
     /**
      * Saves the dashboard content.
      *
      */
     var saveDashboard = function () {
-        var method = Constants.HTTP_PUT;
-        var url = Constants.DASHBOARD_METADATA_UPDATE_URL;
         dashboard.url = dashboard.id;
         $.ajax({
-            url: url,
-            method: method,
+            url: Constants.DASHBOARD_METADATA_UPDATE_URL,
+            method: Constants.HTTP_PUT,
             data: JSON.stringify(metaDataPayloadGeneration()),
             async: false,
             contentType: Constants.APPLICATION_JSON
@@ -397,6 +571,49 @@
         return metaDataPayload;
     };
 
+    /**
+     * globally exposed function to enable widget drag
+     * Set the data.transfer widgetID
+     */
+    function widgetDrag(e) {
+        e.dataTransfer.setData("widgetID", e.target.id);
+    }
+
+    /**
+     * globally exposed function to enable widget drop
+     * Save and update the dashboard using the new widget
+     */
+    function widgetDrop(e) {
+        e.preventDefault();
+        var widgetID = e.dataTransfer.getData("widgetID");
+        var blockID = e.currentTarget.id;
+        renderWidgetByURL(blockID, Constants.FRAGMENT_URL + widgetID, widgetID);
+        addWidgetToDashboardJSON(blockID, widgetID);
+        updateWidgetList(widgetID, portal.dashboards.widgets[widgetID], "add")
+        updateLayout();
+        saveDashboard();
+        initGadgetList();
+    }
+
+    /**
+     * globally exposed function to enable widget drop
+     */
+    function widgetAllowDrop(e) {
+        e.preventDefault();
+    }
+
     init();
     initAddBlock();
+    //TODO make this a callback
+    setTimeout(function(){ wireWidgets(portal.dashboards.widgetList); }, 5000);
+
+    portal.dashboards.functions.designer = {
+        renderBlocks: renderBlocks,
+        destroyDashboard: destroyDashboard,
+        applyLayout: applyLayout,
+        widgetDrag:widgetDrag,
+        widgetDrop:widgetDrop,
+        widgetAllowDrop:widgetAllowDrop
+    };
+
 }());

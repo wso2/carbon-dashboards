@@ -1,5 +1,0 @@
-portal.dashboards.widgets.BARCHART = {
-  "name" : "Bar Chart",
-  "id": "bar-chart",
-  "permission" : ["Internal/Everyone", "Admin"]
-}

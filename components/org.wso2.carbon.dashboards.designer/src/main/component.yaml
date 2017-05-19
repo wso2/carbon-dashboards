@@ -19,6 +19,22 @@ bindings:
       mode: "append"
       fragments:
         - "org.wso2.carbon.dashboards.designer.sidebar-nav-widgets"
+    - zoneName: "org.wso2.carbon.dashboards.designer.sidebar-left-nav-config"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.designer.sidebar-left-nav-config"
+    - zoneName: "org.wso2.carbon.dashboards.designer.sidebar-nav-dashboard-layouts"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.designer.sidebar-nav-dashboard-layouts"
 
 config:
     appName: "Dashboard Designer"
+
+apis:
+    - className: "org.wso2.carbon.dashboards.api.DashboardMetadataAPI"
+      uri: "/dashboard/"
+    - className: "org.wso2.carbon.dashboards.api.WidgetInfoProviderAPI"
+      uri: "/widget/"
+    - className: "org.wso2.carbon.dashboards.api.LayoutInfoProviderAPI"
+      uri: "/layout/"

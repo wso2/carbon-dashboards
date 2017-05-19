@@ -1,0 +1,39 @@
+{
+  "info": {
+    "id": "org.wso2.carbon.dashboards.designer.subscriber1",
+    "displayName": "Subscriber 1",
+    "thumbnail": "widget-thumbnail.jpg"
+  },
+  "providerConfig": {
+    "stream": "",
+    "version": "",
+    "interval": 500,
+    "type": "",
+    "metadata": {
+      "names": [
+      ],
+      "types": [
+      ]
+    }
+  },
+  "chartConfig": {
+    "type": "",
+    "x": "",
+    "charts": [
+      {
+        "y": ""
+      }
+    ],
+    "maxLength": 20,
+    "width": 800,
+    "height": 400
+  },
+  "pubsub": {
+    "isPublisher": false,
+    "isSubscriber": true,
+    "subscribesTo": ["PUBLISHER"],
+    "callBack": "_callbackPrint(data)"
+  },
+  "permission": {
+  }
+}
