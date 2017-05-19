@@ -101,8 +101,14 @@ widget.renderer = {};
             $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).html(gadgetContainer);
 
             if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.render === 'function') {
-                $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).find(".gadget-body").html("<div id='" + id + "'></div>");
+                var bodyElement = $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).find(".gadget-body");
+                var body = bodyElement.html();
+                bodyElement.html($('<div>').attr('id', id).html(body));
                 portal.dashboards.widgets[this.widgetId].actions.render(id);
+            }
+
+            if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.bind === 'function') {
+                portal.dashboards.widgets[this.widgetId].actions.bind($(gadgetContainer).data('grid-id'));
             }
         },
 

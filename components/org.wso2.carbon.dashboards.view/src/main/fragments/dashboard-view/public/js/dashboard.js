@@ -266,14 +266,34 @@
      * Wire Widgets by going through the available widget configs.
      * */
     var wireWidgets = function () {
-        for (var i = 0; i < page.layout.length; i++) {
-            if (page.layout[i].widget && page.layout[i].widget.pubsub && page.layout[i].widget.pubsub.isSubscriber) {
-                // considering widget is going to subscribe to only one publisher
-                var widgetID = page.layout[i].widget.info.id;
-                pubsub.subscribe(page.layout[i].widget.pubsub.subscribesTo[0], portal.dashboards.subscribers[widgetID]._callback);
+        var layouts = page.layout;
+        var i;
+        for (i in layouts) {
+            if (layouts.hasOwnProperty(i) && layouts[i].widget && layouts[i].widget.pubsub
+                && layouts[i].widget.pubsub.isSubscriber) {
+                var widgetID = layouts[i].widget.info.id;
+                var topics = layouts[i].widget.pubsub.subscribesTo;
+                var topic;
+                for (topic in topics) {
+                    if (topics.hasOwnProperty(topic)) {
+                        pubsub.subscribe(topics[topic], portal.dashboards.subscribers[widgetID]._callback,
+                            layouts[i].id);
+                    }
+                }
             }
         }
     };
+
+
+    function publishToTopics (msg, instanceID) {
+        var i;
+        for (i in page.layout) {
+            if (page.layout.hasOwnProperty(i) && page.layout[i].widget && page.layout[i].widget.pubsub &&
+                page.layout[i].widget.pubsub.isPublisher && (instanceID === page.layout[i].id)) {
+                pubsub.publish(msg, page.layout[i].widget.pubsub.topic);
+            }
+        }
+    }
 
     /**
      * Update dashboard configuration and render widgets
@@ -287,6 +307,7 @@
     setTimeout(function(){ wireWidgets(); }, 5000);
 
     portal.dashboards.functions.view = {
-        update: updateDashboard
+        update: updateDashboard,
+        publishToTopics:publishToTopics
     };
 }());
