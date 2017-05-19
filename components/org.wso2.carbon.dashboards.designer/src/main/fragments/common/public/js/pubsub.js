@@ -3,16 +3,16 @@ var pubsub;
 	'use strict';
 
 	var topics = {};
-	var id = 0;
+	var val = 0;
 
-	function subscribe(topic, callback){
+	function subscribe(topic, callback, id){
 		//validate the callback
 		if (typeof callback === 'function'){
 			// validate the topic and register, should not go through the prototype 
 			if ( !topics.hasOwnProperty( topic ) ){
 				topics[topic] = {};
 			}
-			topics[topic][id++] = callback;			
+			topics[topic][id || val++] = callback;
 		}
 	}
 
@@ -27,7 +27,7 @@ var pubsub;
 		for (subscriber in subscribers){
 			if (subscribers.hasOwnProperty(subscriber)){
 				call = subscribers[subscriber];
-				call(topic, data);
+				call(topic, data, subscriber);
 			}
 		}
 	}
