@@ -514,7 +514,8 @@
     /**
      * Wire Widgets by going through the available widget configs..
      * */
-    var wireWidgets = function (layouts) {
+    var wireWidgets = function () {
+        var layouts = page.layouts;
         var i;
         for (i in layouts) {
             if (layouts.hasOwnProperty(i) && layouts[i].widget && layouts[i].widget.pubsub
@@ -680,7 +681,8 @@
     function publishToTopics (msg, instanceID) {
         var i;
         for (i in page.layout) {
-            if (page.layout.hasOwnProperty(i) && page.layout[i].widget.pubsub && page.layout[i].widget.pubsub.isPublisher && (instanceID === page.layout[i].id)) {
+            if (page.layout.hasOwnProperty(i) && page.layout[i].widget && page.layout[i].widget.pubsub &&
+                page.layout[i].widget.pubsub.isPublisher && (instanceID === page.layout[i].id)) {
                 pubsub.publish(msg, page.layout[i].widget.pubsub.topic);
             }
         }
@@ -689,7 +691,7 @@
     init();
     initAddBlock();
     //TODO make this a callback
-    setTimeout(function(){ wireWidgets(page.layout); }, 5000);
+    setTimeout(function(){ wireWidgets(); }, 5000);
 
     portal.dashboards.functions.designer = {
         renderBlocks: renderBlocks,
