@@ -303,6 +303,24 @@
         renderWidgets();
     };
 
+    /*
+    * Create orderedWidgets object in the load order.
+    * obj { 0  [], 1: []}
+    */
+    var orderedWidgets;
+    var orderWidgets = function () {
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget) {
+                var weight = page.layout[i].widget.info.order || 0;
+                if (orderedWidgets.hasOwnProperty(weight)) {
+                    orderedWidgets.weight.push(page.layout[i].widget);
+                } else {
+                    orderedWidgets.weight = [page.layout[i].widget];
+                }
+            }
+        }
+    };
+
     init();
     setTimeout(function(){ wireWidgets(); }, 5000);
 
