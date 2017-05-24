@@ -15,6 +15,7 @@
  */
 var widget = widget || {};
 widget.renderer = {};
+//portal.dashboards.renderedBlockLength = 0;
 (function () {
     'use strict';
 
@@ -73,6 +74,36 @@ widget.renderer = {};
         });
     }
 
+    function renderOrderedWidgetSet(i) {
+        console.log("renderOrderedWidgetSet dimension: " + i);
+        portal.dashboards.dimension = i; // correct array index 0,1,2 etc.. [][][][] 
+        portal.dashboards.renderedBlockCount = 0; // haven't rendered anything yet
+
+        var blocks = portal.dashboards.blocks; // array []
+        console.log("blocks: " + blocks);
+
+        console.log("before isArray check typeof: " + typeof blocks[i]);
+        if (blocks[i] && Array.isArray(blocks[i])) { 
+            console.log("processing " + i + "th block");
+            portal.dashboards.blockLength = blocks[i].length;
+
+            for (var j = 0; j < blocks[i].length; j++) {
+                var block = blocks[i][j];
+                var isUserPrefEnabled = block.widget.userpref && block.widget.userpref.enable;
+                console.log("Rendering widget " + block.widget.info.id);
+                renderWidget(block.id, block.widget.url, isUserPrefEnabled, false);
+            }
+
+        } else {
+            console.log("empty dimension, moving to the next...");
+            if (portal.dashboards.blocks.length > i) {
+                renderOrderedWidgetSet(++i);
+            } else {
+                console.log("Renderig completed!!")
+            }
+        }
+    }
+
     /**
      * Generate GUID using widget name.
      * @returns {String}
@@ -95,10 +126,19 @@ widget.renderer = {};
     var renderWidgetCallback = {
         widgetId: '',
         onSuccess: function (data) {
+            ++ portal.dashboards.renderedBlockCount;
+            ++portal.dashboards.dimension;
             var gadgetContainer = $(data)[0];
             var id = "widget_" + $(gadgetContainer).data('grid-id');
 
             $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).html(gadgetContainer);
+
+            console.log(" ******** callback check: L " + portal.dashboards.renderedBlockCount + " R " + portal.dashboards.blockLength);
+
+            if ((portal.dashboards.renderedBlockCount === portal.dashboards.blockLength) && portal.dashboards.blocks.length >= portal.dashboards.dimension) {
+                console.log("******************************* Finished rendering the dimension " + portal.dashboards.dimension + " ..moving to next");
+                renderOrderedWidgetSet(portal.dashboards.dimension);
+            }
 
             if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.render === 'function') {
                 var bodyElement = $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).find(".gadget-body");
@@ -118,6 +158,7 @@ widget.renderer = {};
     widget.renderer = {
         render: renderWidget,
         registerOperation: registerTaskBarOperation,
-        setWidgetName: setWidgetName
+        setWidgetName: setWidgetName,
+        renderOrderedWidgetSet: renderOrderedWidgetSet
     };
 }());

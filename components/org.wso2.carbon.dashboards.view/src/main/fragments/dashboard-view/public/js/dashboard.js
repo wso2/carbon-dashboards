@@ -26,6 +26,7 @@
     var init = function () {
         page = getPage();
         generateWidgetInfoJSON();
+        orderWidgets();
         renderBlocks();
     };
 
@@ -169,11 +170,8 @@
      * Render Widgets in to blocks by reading the dashboard json.
      * */
     var renderWidgets = function () {
-        for (var i = 0; i < page.layout.length; i++) {
-            if (page.layout[i].widget) {
-                renderWidgetByBlock(page.layout[i]);
-            }
-        }
+        portal.dashboards.blocks = orderedWidgets;
+        widget.renderer.renderOrderedWidgetSet(0);
     };
 
     /**
@@ -304,21 +302,41 @@
     };
 
     /*
-    * Create orderedWidgets object in the load order.
-    * obj { 0  [], 1: []}
+    * Create orderedWidgets multi-dimension array
     */
-    var orderedWidgets;
+    var orderedWidgets = [];
+
     var orderWidgets = function () {
+/*        var unorderedWidgets = {};
+
         for (var i = 0; i < page.layout.length; i++) {
             if (page.layout[i].widget) {
-                var weight = page.layout[i].widget.info.order || 0;
-                if (orderedWidgets.hasOwnProperty(weight)) {
-                    orderedWidgets.weight.push(page.layout[i].widget);
+                var weight = page.layout[i].widget.info.order || Math.ceil(Math.random()*(5));
+
+                if (unorderedWidgets && unorderedWidgets.hasOwnProperty(weight)) {
+                    unorderedWidgets[weight].push(page.layout[i]);
                 } else {
-                    orderedWidgets.weight = [page.layout[i].widget];
+                    unorderedWidgets[weight] = [];
+                    unorderedWidgets[weight].push(page.layout[i]);
                 }
             }
         }
+
+        Object.keys(unorderedWidgets).sort().forEach(function(key) {
+            orderedWidgets[key] = unorderedWidgets[key];
+        });*/
+
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget) {
+                var weight = page.layout[i].widget.info.order || Math.ceil(Math.random()*(5));
+
+                if (!Array.isArray(orderedWidgets[weight - 1])) {
+                    orderedWidgets[weight - 1] = [];   
+                }
+                orderedWidgets[weight - 1].push(page.layout[i]);
+            }
+        }
+
     };
 
     init();
