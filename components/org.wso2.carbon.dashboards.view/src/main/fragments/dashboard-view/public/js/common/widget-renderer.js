@@ -74,6 +74,29 @@ widget.renderer = {};
     }
 
     /**
+     * Go through portal.dashboards.blocks multi-dimension array and call renderwidet. 
+     */
+    function renderOrderedWidgetSet(i) {
+        portal.dashboards.dimension = i;
+        portal.dashboards.renderedBlockCount = 0;
+        var blocks = portal.dashboards.blocks;
+
+        if (blocks[i] && Array.isArray(blocks[i])) {
+            portal.dashboards.blockLength = blocks[i].length;
+
+            for (var j = 0; j < blocks[i].length; j++) {
+                var block = blocks[i][j];
+                var isUserPrefEnabled = block.widget.userpref && block.widget.userpref.enable;
+                renderWidget(block.id, block.widget.url, isUserPrefEnabled, false);
+            }
+        } else {
+            if (portal.dashboards.blocks.length > i) {
+                renderOrderedWidgetSet(++i);
+            }
+        }
+    }
+
+    /**
      * Generate GUID using widget name.
      * @returns {String}
      *
@@ -95,10 +118,17 @@ widget.renderer = {};
     var renderWidgetCallback = {
         widgetId: '',
         onSuccess: function (data) {
+            ++ portal.dashboards.renderedBlockCount;
+            ++ portal.dashboards.dimension;
             var gadgetContainer = $(data)[0];
             var id = "widget_" + $(gadgetContainer).data('grid-id');
 
             $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).html(gadgetContainer);
+
+            if ((portal.dashboards.renderedBlockCount === portal.dashboards.blockLength) &&
+                portal.dashboards.blocks.length >= portal.dashboards.dimension) {
+                renderOrderedWidgetSet(portal.dashboards.dimension);
+            }
 
             if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.render === 'function') {
                 var bodyElement = $("#grid-stack").find("#" + $(gadgetContainer).data('grid-id')).find(".gadget-body");
@@ -118,6 +148,7 @@ widget.renderer = {};
     widget.renderer = {
         render: renderWidget,
         registerOperation: registerTaskBarOperation,
-        setWidgetName: setWidgetName
+        setWidgetName: setWidgetName,
+        renderOrderedWidgetSet: renderOrderedWidgetSet
     };
 }());

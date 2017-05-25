@@ -18,6 +18,7 @@
     var dashboard = dashboardMetadata.dashboard;
     var metadata = dashboardMetadata.metadata;
     var blockCount = 0;
+    var orderedWidgets = [];
     var page;
 
     /**
@@ -26,6 +27,7 @@
     var init = function () {
         page = getPage();
         generateWidgetInfoJSON();
+        orderWidgets();
         renderBlocks();
     };
 
@@ -169,19 +171,8 @@
      * Render Widgets in to blocks by reading the dashboard json.
      * */
     var renderWidgets = function () {
-        for (var i = 0; i < page.layout.length; i++) {
-            if (page.layout[i].widget) {
-                renderWidgetByBlock(page.layout[i]);
-            }
-        }
-    };
-
-    /**
-     * Render Widget into a given block by reading the dashboard json.
-     * */
-    var renderWidgetByBlock = function (block) {
-        var isUserPrefEnabled = block.widget.userpref && block.widget.userpref.enable;
-        widget.renderer.render(block.id, block.widget.url, isUserPrefEnabled, false);
+        portal.dashboards.blocks = orderedWidgets;
+        widget.renderer.renderOrderedWidgetSet(0);
     };
 
     /**
@@ -237,7 +228,7 @@
     };
 
     /**
-     * generate the core payload to invoke rest apis
+     * generate the core payload to invoke rest apis.
      * @returns metadata payload
      */
     var metaDataPayloadGeneration = function () {
@@ -284,7 +275,9 @@
         }
     };
 
-
+    /**
+     * Globally exposed function to wrap pubsub lib's publish function.
+     */
     function publishToTopics (msg, instanceID) {
         var i;
         for (i in page.layout) {
@@ -296,11 +289,27 @@
     }
 
     /**
-     * Update dashboard configuration and render widgets
+     * Update dashboard configuration and render widgets.
      * */
     var updateDashboard = function () {
         saveDashboard();
         renderWidgets();
+    };
+
+    /*
+    * Create orderedWidgets multi-dimension array.
+    */
+    var orderWidgets = function () {
+        for (var i = 0; i < page.layout.length; i++) {
+            if (page.layout[i].widget) {
+                var weight = page.layout[i].widget.info.order || 0;
+
+                if (!Array.isArray(orderedWidgets[weight])) {
+                    orderedWidgets[weight] = [];   
+                }
+                orderedWidgets[weight].push(page.layout[i]);
+            }
+        }
     };
 
     init();
