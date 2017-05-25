@@ -228,7 +228,7 @@
     };
 
     /**
-     * generate the core payload to invoke rest apis
+     * generate the core payload to invoke rest apis.
      * @returns metadata payload
      */
     var metaDataPayloadGeneration = function () {
@@ -276,7 +276,7 @@
     };
 
     /**
-     * .Globally exposed function to wrap pubsub pulish function
+     * Globally exposed function to wrap pubsub lib's publish function.
      */
     function publishToTopics (msg, instanceID) {
         var i;
@@ -289,7 +289,7 @@
     }
 
     /**
-     * Update dashboard configuration and render widgets
+     * Update dashboard configuration and render widgets.
      * */
     var updateDashboard = function () {
         saveDashboard();
@@ -297,7 +297,7 @@
     };
 
     /*
-    * Create orderedWidgets multi-dimension array
+    * Create orderedWidgets multi-dimension array.
     */
     var orderWidgets = function () {
         for (var i = 0; i < page.layout.length; i++) {

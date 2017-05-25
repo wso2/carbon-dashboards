@@ -73,6 +73,9 @@ widget.renderer = {};
         });
     }
 
+    /**
+     * Go through portal.dashboards.blocks multi-dimension array and call renderwidet. 
+     */
     function renderOrderedWidgetSet(i) {
         portal.dashboards.dimension = i;
         portal.dashboards.renderedBlockCount = 0;
@@ -80,7 +83,7 @@ widget.renderer = {};
 
         if (blocks[i] && Array.isArray(blocks[i])) {
             portal.dashboards.blockLength = blocks[i].length;
-            
+
             for (var j = 0; j < blocks[i].length; j++) {
                 var block = blocks[i][j];
                 var isUserPrefEnabled = block.widget.userpref && block.widget.userpref.enable;
