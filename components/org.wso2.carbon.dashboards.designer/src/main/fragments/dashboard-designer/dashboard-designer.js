@@ -39,7 +39,6 @@ function onGet(env) {
         // Dashboard exists in the database. Hence load from the database.
         dashboardMetaData = metadataProviderImpl.get(query);
         dashboardContent = JSON.parse(dashboardMetaData.getContent());
-
     } else {
         // Dashboard doesn't exist in the database. Load from the filesystem.
         var system = Java.type('java.lang.System');
