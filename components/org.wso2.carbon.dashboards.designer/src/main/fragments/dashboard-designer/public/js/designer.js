@@ -235,50 +235,56 @@
 
         $('.gadgets-grid').on('click', '.dashboard-component-box .dashboards-config-handle', function (e) {
             e.preventDefault();
+            $('#widget-config-subscriber').hide();
+            $("#widget-config-publisher").hide();
+            $("#widget-config-alert").hide();
             var id = $(this).closest(".dashboard-component-box").attr('id');
-            var pubsubConfig;
+            var isPublisher = $(this).closest(".dashboard-component-box").data('publisher');
+            var isSubscriber = $(this).closest(".dashboard-component-box").data('subscriber');
+            var isPubsub = isPublisher || isSubscriber;
+            var widgetConfig;
 
             for (i = 0; i < page.layout.length; i++) {
                 if (page.layout[i].id === id) {
-                    pubsubConfig = page.layout[i].widget.pubsub;
+                    widgetConfig = page.layout[i].widget;
                 }
             }
 
-            if ($(this).closest(".dashboard-component-box").data('subscriber')) {
-                var i;
-                var publishers = dashboardMetadata.publishers;
-                var subscribedTopics = pubsubConfig.subscribesTo;
+            $("#widget-order-val").val(widgetConfig.info.order || 0);
 
-                if (publishers.length > 0) {
-                    $("#widget-config-publisher").hide();
-                    $('#widget-config-subscriber').show();
-                    $('#widget-conf-content').empty();
+            if (isPubsub) {
+                if (isSubscriber) {
+                    var j;
+                    var publishers = dashboardMetadata.publishers;
+                    var subscribedTopics = widgetConfig.pubsub.subscribesTo;
 
-                    for (i in publishers) {
-                        if (publishers.hasOwnProperty(i)) {
-                            $('<input>').attr({
-                               'type': 'checkbox',
-                               'checked': subscribedTopics.indexOf(publishers[i]) != -1,
-                               'value': publishers[i],
-                               'data-id': id
-                           }).addClass("topic-checkbox").appendTo($('#widget-conf-content')).after(publishers[i] + '<br>');
+                    if (publishers.length > 0) {
+                        $('#widget-config-subscriber').show();
+                        $('#widget-conf-content').empty();
+
+                        for (j in publishers) {
+                            if (publishers.hasOwnProperty(j)) {
+                                $('<input>').attr({
+                                   'type': 'checkbox',
+                                   'checked': subscribedTopics.indexOf(publishers[j]) != -1,
+                                   'value': publishers[j],
+                                   'data-id': id
+                               }).addClass("topic-checkbox").appendTo($('#widget-conf-content')).after(publishers[j] + '<br>');
+                            }
                         }
-                    }
 
+                    } else {
+                        //TODO Use i18n for the msg once available through UUFClient
+                        $('#widget-config-alert').html("No topics to subscribe!").show();
+                    }
                 } else {
-                    $('#pusub-alert-no-publishers').show();
+                    $("#widget-config-publisher").show();
+                    $('#publish-topic').val(widgetConfig.pubsub.topic);
                 }
             }
 
-            if ($(this).closest(".dashboard-component-box").data('publisher')) {
-                $('#widget-config-subscriber').hide();
-                $("#widget-config-publisher").show();
-                $('#publish-topic').val(pubsubConfig.topic);
-                $('.widget-config-publisher-save').data('id', id);
-            }
-
+            $('#widget-config-save').data('id', id);
             $.sidebar_toggle("show", "#right-sidebar", ".page-content-wrapper");
-
         });
 
         initializeWidgetConfigSidebar();
@@ -307,31 +313,41 @@
                     saveDashboard();
                 }
             }
-        }).on('click', '.widget-config-publisher-save', function (e) {
-            //TODO Use i18n for the confirm text message, once available through UUFClient.
-            noty({
-                text : 'Changing topic might affect existing subscribers, Do you want to continue?',
-                buttons : [{
-                addClass : 'btn',
-                text : 'Cancel',
-                'layout' : 'center',
-                onClick : function($noty) {
-                    $noty.close();
+        }).on('click', '#widget-config-save', function (e) {
+            var order = $("#widget-order-val").val();
+            var widget;
+            for (var i = 0; i < page.layout.length; i++) {
+                if (page.layout[i].id === $('#widget-config-save').data('id')) {
+                    widget = page.layout[i].widget;
                 }
-                }, {
-                addClass : 'btn btn-warning',
-                text : 'Yes',
-                onClick : function($noty) {
-                    for (var i = 0; i < page.layout.length; i++) {
-                        if (page.layout[i].id === $('.widget-config-publisher-save').data('id')) {
-                            widget = page.layout[i].widget;
-                            page.layout[i].widget.pubsub.topic = $('#publish-topic').val();
+            }
+            if (widget) {
+                if ((!isNan(order)) && order >= 0 && (order % 1 === 0)) {
+                    widget.info.order = $("#widget-order-val").val();
+                }
+                if (widget.pubsub.isPublisher && (widget.pubsub.topic !== $('#publish-topic').val())) {
+                    //TODO Use i18n for the confirm text message, once available through UUFClient.
+                    noty({
+                        text : 'Changing topic might affect existing subscribers, Do you want to continue?',
+                        buttons : [{
+                        addClass : 'btn',
+                        text : 'Cancel',
+                        'layout' : 'center',
+                        onClick : function($noty) {
+                            $noty.close();
+                        }
+                        }, {
+                        addClass : 'btn btn-warning',
+                        text : 'Yes',
+                        onClick : function($noty) {
+                            widget.pubsub.topic = $('#publish-topic').val();
                             saveDashboard();
                             initPublishers();
-                        }
-                    }
-                }}]
-            });
+                        }}]
+                    });
+                }
+                saveDashboard();
+            }
         });
     };
 
@@ -547,9 +563,7 @@
     var renderWidgetByBlock = function (block) {
         //pub/sub is the only configurale parameter at the moment, update this when introducing new parameters.
         if (block.widget) {
-            var isConfigurable = block.widget.pubsub && (block.widget.pubsub.isSubscriber ||
-                block.widget.pubsub.isPublisher) ;
-            widget.renderer.render(block.id, block.widget.url, isConfigurable, false);
+            widget.renderer.render(block.id, block.widget.url, false);
         }
     };
 
@@ -558,9 +572,7 @@
      * */
     var renderWidgetByURL = function (blockId, widgetURL, widgetId) {
         //pub/sub is the only configurable parameter at the moment, update this when introducing new parameters.
-        var isConfigurable = portal.dashboards.widgets[widgetId].pubsub &&
-            portal.dashboards.widgets[widgetId].pubsub.isSubscriber;
-        widget.renderer.render(blockId, widgetURL, isConfigurable, false);
+        widget.renderer.render(blockId, widgetURL, false);
     };
 
     /**

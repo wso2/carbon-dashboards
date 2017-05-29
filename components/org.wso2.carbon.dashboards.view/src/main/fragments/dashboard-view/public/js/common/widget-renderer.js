@@ -119,7 +119,6 @@ widget.renderer = {};
         widgetId: '',
         onSuccess: function (data) {
             ++ portal.dashboards.renderedBlockCount;
-            ++ portal.dashboards.dimension;
             var gadgetContainer = $(data)[0];
             var id = "widget_" + $(gadgetContainer).data('grid-id');
 
@@ -127,7 +126,7 @@ widget.renderer = {};
 
             if ((portal.dashboards.renderedBlockCount === portal.dashboards.blockLength) &&
                 portal.dashboards.blocks.length >= portal.dashboards.dimension) {
-                renderOrderedWidgetSet(portal.dashboards.dimension);
+                renderOrderedWidgetSet(++ portal.dashboards.dimension);
             }
 
             if (this.widgetId && typeof portal.dashboards.widgets[this.widgetId].actions.render === 'function') {

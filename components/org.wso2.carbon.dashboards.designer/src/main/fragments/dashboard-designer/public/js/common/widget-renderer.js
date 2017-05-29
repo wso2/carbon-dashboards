@@ -41,7 +41,7 @@ widget.renderer = {};
      * @param async {boolean} whether async false or true
      * @return {object} object with message and the error existence
      * */
-    function renderWidget(gridContainerId, url, isConfigurable, async) {
+    function renderWidget(gridContainerId, url, async) {
         var widgetName = url.split(".")[url.split(".").length - 1];
         $.ajax({
             url: url,
@@ -55,8 +55,7 @@ widget.renderer = {};
                     widgetID: getGadgetUUID(url, widgetName),
                     widgetContent: data.html,
                     widgetTitle: widgetName,
-                    gridID: gridContainerId,
-                    isConfigurable: isConfigurable
+                    gridID: gridContainerId
                 }, callback);
 
                 return {
