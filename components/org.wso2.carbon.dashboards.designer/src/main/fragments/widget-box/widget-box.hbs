@@ -3,12 +3,10 @@
         <h1 class="gadget-title truncate">{{@params.widgetTitle}}</h1>
         <div class="gadget-actions">
             <div class="btn-group">
-                {{#if @params.isConfigurable}}
                     <button type="button" class="btn btn-default dashboards-config-handle" data-toggle="sidebar"
                     data-target="#right-sidebar" title="Settings">
                         <i class="fw fw-settings"></i>
                     </button>
-                {{/if}}
                 <button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal"
                         data-target="#modalDelete" title="remove">
                     <i class="icon fw fw-delete"></i>

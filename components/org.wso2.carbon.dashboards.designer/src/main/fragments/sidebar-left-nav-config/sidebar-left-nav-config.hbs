@@ -2,25 +2,35 @@
     <button type="button" class="btn btn-primary btn-xs pull-right">
         <i class="fw fw-uncheck widget-config-close" id="widget-config-close"></i>
     </button>
-    <div class="config-lable"><label class="control-label">{{i18n "widgetConfiguration"}}</label></div>
+
+    <div class="config-lable">
+        <label class="control-label">{{i18n "widgetConfiguration"}}</label>
+    </div>
     <hr>
 
-    <div id="widget-config-subscriber">
-        <span class="label label-default" id="subscribe-label">{{i18n "subscribe.to.label"}}</span>
+    <div id="widget-order">
+        <label class="control-label">{{i18n "widgetConfiguration.order"}}:</label>
+        <input type="text" id="widget-order-val">
+    </div>
 
-        <div id="widget-conf-content"></div>
+    <div id="widget-config-pubsub">
+        <div id="widget-config-subscriber">
+            </br>
+            <span class="control-label" id="subscribe-label">{{i18n "subscribe.to.label"}}</span>
+            <div id="widget-conf-content"></div>
+        </div>
 
-        <div id="pusub-alert-no-publishers" class="alert alert-warning" style="display: none;">
-            <strong>{{i18n "no.publishers.found.label"}}</strong>
+        <div id="widget-config-publisher">
+            </br>
+            <span class="control-label" id="publish-label">{{i18n "publishes.to.label"}}</span>
+            <input type="text" id="publish-topic">
         </div>
     </div>
+    </br>
 
-    <div id="widget-config-publisher">
-        <span class="label label-default" id="publish-label">{{i18n "publishes.to.label"}}</span>
-        <input type="text" id="publish-topic">
-        <button type="button" class="btn widget-config-publisher-save">{{i18n "publishers.to.save"}}</button>
-    </div>
+    <button type="button" class="btn btn-primary" id="widget-config-save">{{i18n "widgetConfiguration.save"}}</button>
 
+    <div id="widget-config-alert" class="alert alert-warning"></div>
 </div>
 
 {{js "js/widget-conf.js"}}
