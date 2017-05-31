@@ -45,7 +45,7 @@ import java.util.Map;
 public class LayoutInfoProviderImpl implements LayoutInfoProvider {
 
     public static final String LAYOUT_PATH = "deployment/layouts";
-    private static final Logger log = LoggerFactory.getLogger(WidgetInfoProviderImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(LayoutInfoProviderImpl.class);
     private static Map<String, Path> layoutMap = new HashMap<>();
     private JsonParser jsonParser = new JsonParser();
 

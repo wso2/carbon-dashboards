@@ -1,0 +1,27 @@
+{{secured}}
+{{layout "org.wso2.carbon.dashboards.sample.portal.feature.dashboardView"}}
+{{favicon "images/favicon.png" type="image/png"}}
+{{title "View | " @config.appName}}
+{{css "css/custom.css"}}
+{{css "css/dashboard.css"}}
+
+{{#fillZone "content"}}
+    <!-- Modal -->
+    <div class="modal fade" id="dashboardViewModal" tabindex="-1" role="dialog" aria-labelledby="modalDemo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content clearfix">
+            </div>
+        </div>
+    </div>
+    {{fragment "dashboard-view-left-nav" dashboard=dashboard}}
+    <div class="page-content-wrapper remove-padding-xs" style="padding-left:260px;">
+        <div class="page-header">
+            <div class="container-fluid">
+                {{fragment "dashboard-view-top-nav" dashboard=dashboard}}
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+        {{fragment "org.wso2.carbon.dashboards.view.dashboard-view" id=@pathParams.id}}
+    </div>
+    <footer class="footer-designer"></footer>
+{{/fillZone}}

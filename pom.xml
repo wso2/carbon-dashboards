@@ -32,10 +32,13 @@
     <modules>
         <module>components/org.wso2.carbon.dashboards.view</module>
         <module>components/org.wso2.carbon.dashboards.core</module>
+        <module>components/org.wso2.carbon.dashboards.sample.store.provider</module>
         <module>components/org.wso2.carbon.dashboards.api</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
-        <!--<module>components/org.wso2.carbon.dashboards.designer</module>
-        <module>components/org.wso2.carbon.dashboards.portal</module>-->
+        <module>features/org.wso2.carbon.dashboards.sample.store.provider.feature</module>
+        <module>components/org.wso2.carbon.dashboards.designer</module>
+        <module>components/org.wso2.carbon.dashboards.sample.store</module>
+        <module>components/org.wso2.carbon.dashboards.sample.portal.feature</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -92,6 +95,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>org.wso2.carbon.dashboards.api</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboards.sample.store.provider</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
         </dependencies>

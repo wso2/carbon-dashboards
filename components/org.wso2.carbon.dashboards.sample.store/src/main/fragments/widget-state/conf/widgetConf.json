@@ -1,0 +1,9 @@
+{
+  "info": {
+    "id": "org.wso2.carbon.dashboards.sample.store.widget-state",
+    "displayName": "Widget State",
+    "thumbnail": "widget-thumbnail.jpg"
+  },
+  "permission": {
+  }
+}

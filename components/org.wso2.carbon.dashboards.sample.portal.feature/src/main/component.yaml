@@ -1,0 +1,26 @@
+bindings:
+    - zoneName: "org.wso2.carbon.dashboards.sample.portal.feature.header"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.sample.portal.feature.header"
+    - zoneName: "org.wso2.carbon.dashboards.sample.portal.feature.dashboard-label"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.sample.portal.feature.label"
+    - zoneName: "org.wso2.carbon.dashboards.sample.portal.feature.global-navigation"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.sample.portal.feature.global-navigation"
+    - zoneName: "org.wso2.carbon.dashboards.sample.portal.feature.bread-crumb"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.sample.portal.feature.bread-crumb"
+    - zoneName: "org.wso2.carbon.dashboards.sample.portal.feature.task-bar"
+      mode: "append"
+      fragments:
+        - "org.wso2.carbon.dashboards.sample.portal.feature.task-bar"
+
+config:
+    appName: "Portal"
+    loginRedirectUri: "/"
+    logoutRedirectUri: "/simple-auth/login"
