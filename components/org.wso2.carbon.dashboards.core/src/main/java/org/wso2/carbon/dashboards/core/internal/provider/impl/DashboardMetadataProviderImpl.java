@@ -19,6 +19,8 @@
 package org.wso2.carbon.dashboards.core.internal.provider.impl;
 
 
+import com.google.gson.Gson;
+import org.omg.PortableInterceptor.AdapterStateHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -28,6 +30,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.dashboards.core.bean.DashboardContent;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.bean.Query;
@@ -38,9 +41,18 @@ import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * This is a core class of the DashboardMetadata business logic implementation.
@@ -82,28 +94,6 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public boolean isExists(Query query) throws DashboardException {
-        validateQuery(query);
-        if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
-            return dao.isExists(query.getOwner(), query.getUrl(), query.getVersion());
-        } else if (query.getOwner() != null && query.getUrl() != null) {
-            return dao.isExistsOwner(query.getOwner(), query.getUrl());
-        } else if (query.getUrl() != null && query.getVersion() != null) {
-            return dao.isExistsByVersion(query.getUrl(), query.getVersion());
-        } else if (query.getUrl() != null) {
-            return dao.isExists(query.getUrl());
-        } else {
-            throw new DashboardException("Insufficient parameters supplied to the command");
-        }
-    }
-
-    @Override
-    public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
-        dashboardMetadata.setLastUpdatedTime((new Date()).getTime());
-        dao.update(dashboardMetadata);
-    }
-
-    @Override
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
         if (dashboardMetadata.getOwner() != null) {
             dashboardMetadata.setLastUpdatedBy(dashboardMetadata.getOwner());
@@ -119,14 +109,16 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
+    public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
+        dashboardMetadata.setLastUpdatedTime((new Date()).getTime());
+        dao.update(dashboardMetadata);
+    }
+
+    @Override
     public void delete(Query query) throws DashboardException {
         validateQuery(query);
-        if (query.getOwner() != null && query.getUrl() != null && query.getVersion() != null) {
-            dao.delete(query.getOwner(), query.getUrl(), query.getVersion());
-        } else if (query.getOwner() != null && query.getUrl() != null) {
+        if (query.getOwner() != null && query.getUrl() != null) {
             dao.delete(query.getOwner(), query.getUrl());
-        } else if (query.getUrl() != null) {
-            dao.delete(query.getUrl());
         } else {
             throw new DashboardException("Insufficient parameters supplied to the command");
         }
@@ -136,23 +128,31 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     public DashboardMetadata get(Query query) throws DashboardException {
         validateQuery(query);
         if (query.getUrl() != null) {
-            return dao.get(query.getUrl());
+            DashboardMetadata dashboard = dao.get(query.getUrl());
+            if (dashboard == null) {
+                dashboard = getDashboardFromFilesystem(query);
+            }
+            return dashboard;
         } else {
             throw new DashboardException("Insufficient parameters supplied to the command");
         }
     }
 
     @Override
-    public List<DashboardMetadata> get(Query query, PaginationContext paginationContext) throws DashboardException {
+    public List<DashboardMetadata> list(Query query, PaginationContext paginationContext) throws DashboardException {
         validateQuery(query);
-        if (query.getOwner() != null && query.getName() != null && query.getVersion() != null) {
-            return dao.list(query.getOwner(), query.getName(), query.getVersion(), paginationContext);
-        } else if (query.getOwner() != null && query.getName() != null) {
-            return dao.listByOwner(query.getOwner(), query.getName(), paginationContext);
-        } else if (query.getName() != null && query.getVersion() != null) {
-            return dao.list(query.getName(), query.getVersion(), paginationContext);
-        } else if (query.getName() != null) {
-            return dao.listByURL(query.getName(), paginationContext);
+        if (query.getOwner() != null) {
+            Map<String, DashboardMetadata> dashboards = dao.list(query.getOwner(), paginationContext).stream()
+                    .collect(Collectors.toMap(DashboardMetadata::getUrl, Function.identity()));
+            getDashboardsFromFilesystem().stream()
+                    .filter(dashboard -> !dashboards.containsKey(dashboard.getId()))
+                    .forEach(dashboard -> {
+                        dashboards.put(dashboard.getId(), dashboard);
+                    });
+            return dashboards.entrySet()
+                    .stream()
+                    .map(e -> e.getValue())
+                    .collect(Collectors.toList());
         } else {
             throw new DashboardException("Insufficient parameters supplied to the command");
         }
@@ -191,5 +191,79 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             log.info("Data source service unregistered.");
         }
         DAOUtils.setDataSourceService(null);
+    }
+
+    /**
+     * Get dashboard from a file system.
+     *
+     * @param query
+     * @return
+     * @throws DashboardException
+     */
+    private DashboardMetadata getDashboardFromFilesystem(Query query) throws DashboardException {
+        DashboardMetadata dashboard = null;
+        String path = System.getProperty("carbon.home") + "/deployment/dashboards/" + query.getUrl() + ".json";
+        File dashboardJson = new File(path);
+        if (dashboardJson.exists()) {
+            try {
+                String content = new String(Files.readAllBytes(Paths.get(path)));
+                DashboardContent dashboardContent = new Gson().fromJson(content, DashboardContent.class);
+
+                dashboard = new DashboardMetadata();
+                dashboard.setId(dashboardContent.getId());
+                dashboard.setUrl((dashboardContent.getId()));
+                dashboard.setName(dashboardContent.getName());
+                dashboard.setDescription(dashboardContent.getDescription());
+                dashboard.setVersion(dashboardContent.getVersion());
+                dashboard.setOwner("admin");
+                dashboard.setLastUpdatedBy("admin");
+                dashboard.setShared(false);
+
+                dashboard.setContent(content);
+                byte[] contentBytes = content.getBytes(Charset.defaultCharset());
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(contentBytes);
+                dashboard.setContent(inputStream);
+            } catch (IOException e) {
+                throw new DashboardException("Unable to read the dashboard from the file system.");
+            }
+        }
+        return dashboard;
+    }
+
+    /**
+     * Get dashboards from the file system.
+     *
+     * @return Dashboard metadata
+     * @throws DashboardException
+     */
+    private List<DashboardMetadata> getDashboardsFromFilesystem() throws DashboardException {
+        List<DashboardMetadata> dashboards = new ArrayList<>();
+        String path = System.getProperty("carbon.home") + "/deployment/dashboards/";
+        File dashboardsDir = new File(path);
+        File[] files = dashboardsDir.listFiles((dir, name) -> {
+            return name.endsWith(".json");
+        });
+
+        for (File dashboardJson : files) {
+            try {
+                String content = new String(Files.readAllBytes(Paths.get(dashboardJson.getAbsolutePath())));
+                DashboardContent dashboardContent = new Gson().fromJson(content, DashboardContent.class);
+
+                DashboardMetadata metadata = new DashboardMetadata();
+                metadata.setId(dashboardContent.getId());
+                metadata.setUrl((dashboardContent.getId()));
+                metadata.setName(dashboardContent.getName());
+                metadata.setDescription(dashboardContent.getDescription());
+                metadata.setVersion(dashboardContent.getVersion());
+                metadata.setOwner("admin");
+                metadata.setLastUpdatedBy("admin");
+                metadata.setShared(false);
+                metadata.setContent(content);
+                dashboards.add(metadata);
+            } catch (IOException e) {
+                throw new DashboardException("Unable to read dashboards from the file system.");
+            }
+        }
+        return dashboards;
     }
 }

@@ -31,17 +31,8 @@ import java.util.List;
 public interface DashboardMetadataProvider {
 
     /**
-     * Check whether a DashboardMetadata exists with given information
-     *
-     * @param query query parameters
-     * @return true if a DashboardMetadata exists  with given information, false otherwise.
-     * @throws DashboardException if an error occurs
-     */
-    boolean isExists(Query query) throws DashboardException;
-
-
-    /**
      * DashboardMetadata add operation.
+     *
      * @param dashboardMetadata Instance of new DashboardMetadata
      * @throws DashboardException if an error occurs
      */
@@ -49,11 +40,11 @@ public interface DashboardMetadataProvider {
 
     /**
      * DashboardMetadata update operation.
+     *
      * @param dashboardMetadata Updated instance of existing DashboardMetadata
      * @throws DashboardException if an error occurs
      */
     void update(DashboardMetadata dashboardMetadata) throws DashboardException;
-
 
     /**
      * DashboardMetadata delete operation.
@@ -80,5 +71,5 @@ public interface DashboardMetadataProvider {
      * @return list of DashboardMetadata found for given query
      * @throws DashboardException if an error occurs
      */
-    List<DashboardMetadata> get(Query query, PaginationContext paginationContext) throws DashboardException;
+    List<DashboardMetadata> list(Query query, PaginationContext paginationContext) throws DashboardException;
 }

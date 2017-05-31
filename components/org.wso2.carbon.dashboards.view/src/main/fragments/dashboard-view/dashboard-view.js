@@ -16,61 +16,28 @@
 
 function onGet(env) {
     'use strict';
-    // Get dashboard by ID.
-    var system = Java.type('java.lang.System');
-    //construct dashboard.json path
-    var path = system.getProperty('carbon.home') + '/deployment/dashboards/' + env.params.id + '.json';
-    var string = Java.type('java.lang.String');
-    var files = Java.type('java.nio.file.Files');
-    var paths = Java.type('java.nio.file.Paths');
-
+    var dashboardContent;
+    var dashboardMetaData = null;
     var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl");
     var Query = Java.type("org.wso2.carbon.dashboards.core.bean.Query");
-
-    var dashboardContent;
-    var dashboardMetaData;
-    var isDashboardExistsInDB;
-
     var metadataProviderImpl = new MetadataProviderImpl();
     var query = new Query();
-    var user = getSession().getUser();
+    //var user = getSession().getUser();
     query.setUrl(env.params.id);
-    query.setOwner(user.getUsername());
+    query.setOwner("admin");
 
     try {
-        isDashboardExistsInDB = metadataProviderImpl.isExists(query);
-    } catch (e) {
-        Log.warn("Error in accessing dashboard DB. Only the dashboards in the file system will be retrieved.");
-        isDashboardExistsInDB = false;
-    }
-
-    if (!isDashboardExistsInDB) {
-        try {
-            //if (user.hasPermission(env.params.id, "view")) {
-                dashboardMetaData = null;
-                dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
-            // } else {
-            //     sendError(401, "Access to dashboard " + env.params.id + " denied !");
-            // }
-            if (Log.isDebugEnabled) {
-                Log.debug("Dashboard is retrieved from File system");
-            }
-        } catch (e) {
-            //TODO: change this to log.error(message,e) when the UUF provides the support
-            Log.error(e);
-            sendError(500, "Error in reading dashboard JSON file !");
+        var dashboardMetaData = metadataProviderImpl.get(query);
+        if (!dashboardMetaData) {
+            sendError(404, 'Dashboard not found');
         }
-    } else {
-        dashboardMetaData = metadataProviderImpl.get(query);
         dashboardContent = JSON.parse(dashboardMetaData.getContent());
-
-        if (Log.isDebugEnabled) {
-            Log.debug("Dashboard is retrieved from DB");
-        }
+        // Send the dashboard and metadata to the client
+        sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData});
+    } catch (e) {
+        sendError(500, 'Something went wrong');
     }
 
-    // Send the dashboard and metadata to client
-    sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData});
     return {
         dashboard: dashboardContent,
         metadata: dashboardMetaData
