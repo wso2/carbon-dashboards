@@ -217,7 +217,7 @@
     var saveDashboard = function () {
         dashboard.url = dashboard.id;
         $.ajax({
-            url: Constants.DASHBOARD_METADATA_UPDATE_URL,
+            url: Constants.DASHBOARD_METADATA_URL + '/' + dashboard.id,
             method: Constants.HTTP_PUT,
             data: JSON.stringify(metaDataPayloadGeneration()),
             async: false,

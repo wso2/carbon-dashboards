@@ -17,12 +17,8 @@ function onGet(env) {
     'use strict';
     var dashboardContent;
     var dashboardMetaData = null;
-    var publishers = [];
-    var isDashboardExistsInDB;
-
     var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl");
     var Query = Java.type("org.wso2.carbon.dashboards.core.bean.Query");
-
     var metadataProviderImpl = new MetadataProviderImpl();
     var query = new Query();
     //var user = getSession().getUser();
@@ -30,37 +26,19 @@ function onGet(env) {
     query.setOwner("admin");
 
     try {
-        isDashboardExistsInDB = metadataProviderImpl.isExists(query);
-    } catch (e) {
-        sendError(401, "Error in accessing dashboard DB.");
-    }
-
-    if (isDashboardExistsInDB) {
-        // Dashboard exists in the database. Hence load from the database.
-        dashboardMetaData = metadataProviderImpl.get(query);
-        dashboardContent = JSON.parse(dashboardMetaData.getContent());
-    } else {
-        // Dashboard doesn't exist in the database. Load from the filesystem.
-        var system = Java.type('java.lang.System');
-        //construct dashboard.json path
-        var path = system.getProperty('carbon.home') + '/deployment/dashboards/' + env.params.id + '.json';
-        var string = Java.type('java.lang.String');
-        var files = Java.type('java.nio.file.Files');
-        var paths = Java.type('java.nio.file.Paths');
-        var File = Java.type('java.io.File');
-        var file = new File(path);
-        if (file.exists()) {
-            dashboardContent = JSON.parse(new string(files.readAllBytes(paths.get(path))));
-        } else {
-            sendError(404, "Dashboard not found !");
+        var dashboardMetaData = metadataProviderImpl.get(query);
+        if (!dashboardMetaData) {
+            sendError(404, 'Dashboard not found');
         }
+        dashboardContent = JSON.parse(dashboardMetaData.getContent());
+        // Send the dashboard and metadata to the client
+        sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData, publishers: []});
+    } catch (e) {
+        sendError(500, 'Something went wrong');
     }
 
-    // Send the dashboard and metadata to client
-    sendToClient("dashboardMetadata", {dashboard: dashboardContent, metadata: dashboardMetaData, publishers: publishers});
     return {
         dashboard: dashboardContent,
         metadata: dashboardMetaData
     };
-
 }

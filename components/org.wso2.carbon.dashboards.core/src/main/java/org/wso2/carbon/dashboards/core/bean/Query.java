@@ -22,14 +22,36 @@ package org.wso2.carbon.dashboards.core.bean;
  * Representation of a DashboardMetadata Query.
  */
 public class Query {
-
+    
     private String url;
-
     private String owner;
-
     private String name;
 
-    private String version;
+    /**
+     * Default constructor.
+     */
+    public Query() {
+    }
+
+    /**
+     * Overloaded constructor with owner parameter.
+     *
+     * @param owner Dashboard owner
+     */
+    public Query(String owner) {
+        this.owner = owner;
+    }
+
+    /**
+     * Overloaded constructor with owner and url parameters.
+     *
+     * @param owner Dashboard owner
+     * @param url   Dashboard URL
+     */
+    public Query(String owner, String url) {
+        this.owner = owner;
+        this.url = url;
+    }
 
     /**
      * This method is used to get the url of dashboard
@@ -83,23 +105,5 @@ public class Query {
      */
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    /**
-     * This method is used to get the version of core/dashboard
-     *
-     * @return String returns the version of core/dashboard
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * This method is used to set the version of dashboard
-     *
-     * @param version version of core/dashboard
-     */
-    public void setVersion(String version) {
-        this.version = version;
     }
 }

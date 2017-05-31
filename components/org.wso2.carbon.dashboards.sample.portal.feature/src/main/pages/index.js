@@ -17,23 +17,34 @@ function onGet(){
     var userDomain = "admin";
     var superDomain = "admin";
 
-    var obj = {
+    // TODO Need to move following section to the client side.
+
+    var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl");
+    var Query = Java.type("org.wso2.carbon.dashboards.core.bean.Query");
+    var PaginationContext = Java.type('org.wso2.carbon.dashboards.core.bean.PaginationContext');
+    var metadataProviderImpl = new MetadataProviderImpl();
+    var dashboards = metadataProviderImpl.list(new Query('admin'), new PaginationContext());
+
+    var data = {
         userDomain: userDomain,
         superDomain: superDomain,
         isSuperDomain: userDomain !== superDomain,
         isNoMobileDevice: true,
-        dashboards: [{
+        dashboards: []
+    };
+
+    for (var i = 0; i < dashboards.length; i++) {
+        data.dashboards.push({
             defective: false,
-            description: "",
+            description: dashboards[i].description,
             editable: true,
-            id: "adads",
+            id: dashboards[i].url,
             owner: true,
             pagesAvailable: true,
             shared: false,
             sharedAcrossTenants: false,
-            title: "Adads"
-        }]
-    };
-
-    return obj;
+            title: dashboards[i].name
+        });
+    }
+    return data;
 }

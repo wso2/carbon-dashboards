@@ -25,6 +25,8 @@ import org.wso2.msf4j.Microservice;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,15 +37,16 @@ import java.util.stream.Collectors;
 public class LayoutInfoProviderAPI implements Microservice {
     /**
      * This method returns a list of meta information of layouts.
+     *
      * @return List of layout related meta information
      */
     @GET
-    @Path("/metainfo")
-    @Produces("application/json")
-    public List getLayoutsMetaInfo() {
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response list() {
         List<LayoutInfoProvider> layoutInfoProviderImplList = LayoutDataHolder.getInstance().getLayoutInfoProviders();
         List list = layoutInfoProviderImplList.stream().map(layout -> layout.getLayoutsMetaInfo())
                 .filter(Objects::nonNull).collect(Collectors.toList());
-        return list;
+        return Response.ok().entity(list).build();
     }
 }
