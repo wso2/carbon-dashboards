@@ -21,10 +21,8 @@ function onGet(env) {
     var MetadataProviderImpl = Java.type("org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl");
     var Query = Java.type("org.wso2.carbon.dashboards.core.bean.Query");
     var metadataProviderImpl = new MetadataProviderImpl();
-    var query = new Query();
-    //var user = getSession().getUser();
-    query.setUrl(env.params.id);
-    query.setOwner("admin");
+    var user = getSession().getUser();
+    var query = new Query(user.getUsername(), env.params.id);
 
     try {
         var dashboardMetaData = metadataProviderImpl.get(query);
