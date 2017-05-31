@@ -1,2 +1,6 @@
 config:
     appName: "DashboardView"
+
+apis:
+    - className: "org.wso2.carbon.dashboards.api.DashboardMetadataAPI"
+      uri: "/dashboard/"

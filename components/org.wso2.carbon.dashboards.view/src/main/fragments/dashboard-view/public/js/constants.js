@@ -17,8 +17,7 @@
  */
 
 var Constants = {
-    DASHBOARD_METADATA_UPDATE_URL: "../designer/apis/dashboard/update",
-    WIDGET_METAINFO_GET_URL: "../designer/apis/widget/metainfo",
+    DASHBOARD_METADATA_UPDATE_URL: "../view/apis/dashboard/update",
     FRAGMENT_URL: "../fragments/",
     WIDGET_CONTAINER_FRAGMENT_NAME: "org.wso2.carbon.dashboards.view.widget-container",
     WIDGET_BOX_FRAGMENT_NAME: "org.wso2.carbon.dashboards.view.widget-box",
