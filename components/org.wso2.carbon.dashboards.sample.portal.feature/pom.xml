@@ -96,7 +96,11 @@
                         <configuration>
                             <instructions>
                                 <Import-Package>
-                                    org.wso2.carbon.uuf.sample.simpleauth.bundle
+                                    org.wso2.carbon.uuf.sample.simpleauth.bundle,
+                                    org.wso2.carbon.dashboards.api,
+                                    org.wso2.carbon.dashboards.core.*,
+                                    org.wso2.carbon.dashboards.core.internal.provider.impl,
+                                    org.wso2.carbon.dashboards.core.bean
                                 </Import-Package>
                             </instructions>
                             <!--All backend dependencies should be specified here-->

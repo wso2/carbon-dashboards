@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.SQLConstants;
-import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -41,107 +41,7 @@ import java.util.List;
  * This is a core class of the DashboardMetadata JDBC Based implementation.
  */
 public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
-
     private static final Logger log = LoggerFactory.getLogger(DashboardMetadataDAOImpl.class);
-
-    @Override
-    public boolean isExists(String url) throws DashboardException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_URL);
-            ps.setString(1, url);
-            result = ps.executeQuery();
-            if (result.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            String msg = "Error in accessing dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, result);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isExistsByVersion(String url, String version) throws DashboardException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_URL_AND_VERSION);
-            ps.setString(1, url);
-            ps.setString(2, version);
-
-            result = ps.executeQuery();
-            if (result.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            String msg = "Error in accessing dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, result);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isExistsOwner(String owner, String url) throws DashboardException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_OWNER_AND_URL);
-            ps.setString(1, owner);
-            ps.setString(2, url);
-
-            result = ps.executeQuery();
-            if (result.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            String msg = "Error in accessing dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, result);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isExists(String owner, String url, String version) throws DashboardException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_QUERY);
-            ps.setString(1, owner);
-            ps.setString(2, url);
-            ps.setString(3, version);
-
-            result = ps.executeQuery();
-            if (result.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            String msg = "Error in accessing dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, result);
-        }
-        return false;
-    }
 
     @Override
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
@@ -160,7 +60,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             ps.setBoolean(6, dashboardMetadata.isShared());
             ps.setTimestamp(7, new Timestamp(new Date().getTime()));
             ps.setBinaryStream(8, dashboardMetadata.getContentStream(),
-                               dashboardMetadata.getContentStream().available());
+                    dashboardMetadata.getContentStream().available());
             ps.setString(9, dashboardMetadata.getUrl());
             ps.setTimestamp(10,  new Timestamp(dashboardMetadata.getCreatedTime()));
             ps.setString(11, dashboardMetadata.getParentId());
@@ -200,7 +100,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             ps.setBoolean(7, dashboardMetadata.isShared());
             ps.setString(8, dashboardMetadata.getParentId());
             ps.setBinaryStream(9, dashboardMetadata.getContentStream(),
-                               dashboardMetadata.getContentStream().available());
+                    dashboardMetadata.getContentStream().available());
             ps.setTimestamp(10, new Timestamp(new Date().getTime()));
             ps.setTimestamp(11, new Timestamp(new Date().getTime()));
             ps.execute();
@@ -214,35 +114,6 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
                 }
             }
             String msg = "Error in adding dashboard core: " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, null);
-        }
-    }
-
-    @Override
-    public void delete(String url) throws DashboardException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        String dbQuery = SQLConstants.DELETE_METADATA_URL;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement(dbQuery);
-            ps.setString(1, url);
-
-            ps.execute();
-            conn.commit();
-        } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException e1) {
-                    log.error("Failed to rollback the delete  ", e1);
-                }
-            }
-            String msg = "Error in deleting dashboard core : " + e.getMessage();
             log.error(msg, e);
             throw new DashboardException(msg, e);
         } finally {
@@ -282,39 +153,6 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
     }
 
     @Override
-    public void delete(String owner, String url, String version) throws DashboardException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        String dbQuery = SQLConstants.DELETE_METADATA_QUERY;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            conn.setAutoCommit(false);
-            ps = conn.prepareStatement(dbQuery);
-            ps.setString(1, owner);
-            ps.setString(2, url);
-            ps.setString(3, version);
-
-
-            ps.execute();
-            conn.commit();
-        } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException e1) {
-                    log.error("Failed to rollback the delete  ", e1);
-                }
-            }
-            String msg = "Error in deleting dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, null);
-        }
-    }
-
-
-    @Override
     public DashboardMetadata get(String url) throws DashboardException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -339,42 +177,15 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
     }
 
     @Override
-    public List<DashboardMetadata> list(String url, String version, PaginationContext paginationContext)
-            throws DashboardException {
+    public List<DashboardMetadata> list(String owner, PaginationContext paginationContext) throws DashboardException {
         List<DashboardMetadata> list = new ArrayList<>();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet result = null;
         try {
             conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_URL_AND_VERSION);
-            ps.setString(1, url);
-            ps.setString(2, version);
-            result = ps.executeQuery();
-            metadataParser(list, result);
-
-        } catch (SQLException e) {
-            String msg = "Error in accessing dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, result);
-        }
-        return list;
-    }
-
-    @Override
-    public List<DashboardMetadata> listByOwner(String owner, String url, PaginationContext paginationContext)
-            throws DashboardException {
-        List<DashboardMetadata> list = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_OWNER_AND_URL);
+            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_OWNER);
             ps.setString(1, owner);
-            ps.setString(2, url);
             result = ps.executeQuery();
             metadataParser(list, result);
 
@@ -387,57 +198,6 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
         }
         return list;
     }
-
-    @Override
-    public List<DashboardMetadata> list(String owner, String url, String version, PaginationContext paginationContext)
-            throws DashboardException {
-        List<DashboardMetadata> list = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_QUERY);
-            ps.setString(1, owner);
-            ps.setString(2, url);
-            ps.setString(3, version);
-            result = ps.executeQuery();
-            metadataParser(list, result);
-
-        } catch (SQLException e) {
-            String msg = "Error in accessing dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, result);
-        }
-        return list;
-    }
-
-    @Override
-    public List<DashboardMetadata> listByURL(String url, PaginationContext paginationContext) throws
-                                                                                              DashboardException {
-        List<DashboardMetadata> list = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet result = null;
-        try {
-            conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_URL);
-            ps.setString(1, url);
-            result = ps.executeQuery();
-            metadataParser(list, result);
-
-        } catch (SQLException e) {
-            String msg = "Error in accessing dashboard core : " + e.getMessage();
-            log.error(msg, e);
-            throw new DashboardException(msg, e);
-        } finally {
-            DAOUtils.closeAllConnections(ps, conn, result);
-        }
-        return list;
-    }
-
 
     private void metadataParser(List<DashboardMetadata> list, ResultSet result) throws SQLException {
         while (result.next()) {

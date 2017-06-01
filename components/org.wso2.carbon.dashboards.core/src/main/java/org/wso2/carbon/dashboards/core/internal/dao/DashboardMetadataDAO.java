@@ -30,46 +30,6 @@ import java.util.List;
 public interface DashboardMetadataDAO {
 
     /**
-     * Check whether a DashboardMetadata exists with given url
-     *
-     * @param url URL of the DashboardMetadata instance
-     * @return true if a DashboardMetadata exists  with given information, false otherwise.
-     * @throws DashboardException if an error occurs
-     */
-    boolean isExists(String url) throws DashboardException;
-
-    /**
-     * Check whether a DashboardMetadata exists with given Name and Version
-     *
-     * @param url    Name of the DashboardMetadata instance
-     * @param version Version of the DashboardMetadata instance
-     * @return true if a DashboardMetadata exists  with given information, false otherwise.
-     * @throws DashboardException if an error occurs
-     */
-    boolean isExistsByVersion(String url, String version) throws DashboardException;
-
-    /**
-     * Check whether a DashboardMetadata exists with given Owner and Name
-     *
-     * @param owner Owner of the DashboardMetadata instance
-     * @param url  Name of the DashboardMetadata instance
-     * @return true if a DashboardMetadata exists  with given information, false otherwise.
-     * @throws DashboardException if an error occurs
-     */
-    boolean isExistsOwner(String owner, String url) throws DashboardException;
-
-    /**
-     * Check whether a DashboardMetadata exists with given Owner, Name and Version
-     *
-     * @param owner   Owner of the DashboardMetadata instance
-     * @param url    Name of the DashboardMetadata instance
-     * @param version Version of the DashboardMetadata instance
-     * @return true if a DashboardMetadata exists  with given information, false otherwise.
-     * @throws DashboardException if an error occurs
-     */
-    boolean isExists(String owner, String url, String version) throws DashboardException;
-
-    /**
      * DashboardMetadata add operation
      *
      * @param dashboardMetadata Instance of new DashboardMetadata
@@ -86,14 +46,6 @@ public interface DashboardMetadataDAO {
     void update(DashboardMetadata dashboardMetadata) throws DashboardException;
 
     /**
-     * DashboardMetadata delete operation using url.
-     *
-     * @param url URL of the DashboardMetadata instance
-     * @throws DashboardException if an error occurs
-     */
-    void delete(String url) throws DashboardException;
-
-    /**
      * DashboardMetadata delete operation using Owner and Name.
      *
      * @param owner Owner of the DashboardMetadata instance
@@ -101,16 +53,6 @@ public interface DashboardMetadataDAO {
      * @throws DashboardException if an error occurs
      */
     void delete(String owner, String url) throws DashboardException;
-
-    /**
-     * DashboardMetadata delete operation using Owner, Name and Version.
-     *
-     * @param owner   Owner of the DashboardMetadata instance
-     * @param url    Name of the DashboardMetadata instance
-     * @param version Version of the DashboardMetadata instance
-     * @throws DashboardException if an error occurs
-     */
-    void delete(String owner, String url, String version) throws DashboardException;
 
     /**
      * DashboardMetadata get using URL
@@ -123,48 +65,10 @@ public interface DashboardMetadataDAO {
     /**
      * DashboardMetadata listing using Name and Version .
      *
-     * @param url              Name of the DashboardMetadata instance
-     * @param version           Version of the DashboardMetadata instance
-     * @param paginationContext to paginate results based on the start and end index
-     * @return list of DashboardMetadata found for given query
-     * @throws DashboardException if an error occurs
-     */
-    List<DashboardMetadata> list(String url, String version, PaginationContext paginationContext) throws
-                                                                                                  DashboardException;
-
-    /**
-     * DashboardMetadata listing using Owner and Name .
-     *
      * @param owner             Owner of the DashboardMetadata instance
-     * @param url              Name of the DashboardMetadata instance
      * @param paginationContext to paginate results based on the start and end index
      * @return list of DashboardMetadata found for given query
      * @throws DashboardException if an error occurs
      */
-    List<DashboardMetadata> listByOwner(String owner, String url, PaginationContext paginationContext)
-            throws DashboardException;
-
-    /**
-     * DashboardMetadata listing using Owner, Name and Version .
-     *
-     * @param owner             Owner of the DashboardMetadata instance
-     * @param url              Name of the DashboardMetadata instance
-     * @param version           Version of the DashboardMetadata instance
-     * @param paginationContext to paginate results based on the start and end index
-     * @return list of DashboardMetadata found for given query
-     * @throws DashboardException if an error occurs
-     */
-    List<DashboardMetadata> list(String owner, String url, String version, PaginationContext paginationContext)
-            throws DashboardException;
-
-    /**
-     * DashboardMetadata listing using Name.
-     *
-     * @param url              Name of the DashboardMetadata instance
-     * @param paginationContext to paginate results based on the start and end index
-     * @return list of DashboardMetadata found for given query
-     * @throws DashboardException if an error occurs
-     */
-    List<DashboardMetadata> listByURL(String url, PaginationContext paginationContext) throws DashboardException;
-
+    List<DashboardMetadata> list(String owner, PaginationContext paginationContext) throws DashboardException;
 }
