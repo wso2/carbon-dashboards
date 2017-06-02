@@ -31,6 +31,7 @@
         var description = $("#dashboard-description").val();
         return {
             id: id,
+            url: id,
             name: name,
             version: 1,
             description: description,
@@ -40,16 +41,11 @@
             lastUpdatedBy: 'admin',
             lastUpdatedTime: new Date().getTime(),
             content: JSON.stringify({
-                url: id,
+                id: id,
                 name: name,
                 version: 1,
                 description: description,
-                pages: {
-                    'page0': {
-                        layout: [],
-                        pages: {}
-                    }
-                }
+                pages: {}
             })
         };
     };
