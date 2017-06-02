@@ -465,7 +465,7 @@
             data.widget.pubsub = pubsub;
             UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, {
                 blocks: [data]
-            }, 'gridContent', 'APPEND', {
+            }, {
                 onSuccess: function (data) {
                     $('.grid-stack').data('gridstack').add_widget(data, 0, 0, width, height);
                     updateLayout();
