@@ -106,7 +106,7 @@
      * */
     var renderBlocks = function () {
         for (var i = 0; i < page.layout.length; i++) {
-            if (page.layout[i].id) {
+            if (page.layout[i].id && page.layout[i].widget) {
                 UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, page.layout[i],
                     "gridContent", Constants.APPEND_MODE, {
                         onSuccess: function () {
