@@ -542,16 +542,18 @@
             method: Constants.HTTP_GET,
             async: true,
             success: function (widgets) {
-                generateWidgetInfoJSON(widgets[0]);
-                portal.dashboards.widgets = widgetInfo;
-                for (var i = 0; i < widgets[0].length; i++) {
-                    UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, {widgets: widgets[0]},
-                        "left-panel", 'OVERWRITE', {
-                            onSuccess: function () {
-                            },
-                            onFailure: function (message, e) {
-                            }
-                        });
+                if (widgets[0]) {
+                    generateWidgetInfoJSON(widgets[0]);
+                    portal.dashboards.widgets = widgetInfo;
+                    for (var i = 0; i < widgets[0].length; i++) {
+                        UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, {widgets: widgets[0]},
+                            "left-panel", 'OVERWRITE', {
+                                onSuccess: function () {
+                                },
+                                onFailure: function (message, e) {
+                                }
+                            });
+                    }
                 }
             }
         });
