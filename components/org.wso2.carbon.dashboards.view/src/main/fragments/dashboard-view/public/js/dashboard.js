@@ -229,6 +229,15 @@
     };
 
     /**
+     * Render Widget into a given block by reading the dashboard json.
+     * */
+    var renderWidgetByBlock = function (block) {
+        var isUserPrefEnabled = block.widget.userpref && block.widget.userpref.enable;
+        widget.renderer.render(block.id, block.widget.url, isUserPrefEnabled, false);
+    };
+
+
+    /**
      * Saves the dashboard content.
      *
      */
