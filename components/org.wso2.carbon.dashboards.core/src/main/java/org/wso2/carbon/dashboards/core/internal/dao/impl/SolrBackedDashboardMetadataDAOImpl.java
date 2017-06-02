@@ -37,26 +37,6 @@ public class SolrBackedDashboardMetadataDAOImpl implements DashboardMetadataDAO 
     }
 
     @Override
-    public boolean isExists(String url) throws DashboardException {
-        return dashboardMetadataDAO.isExists(url);
-    }
-
-    @Override
-    public boolean isExistsByVersion(String url, String version) throws DashboardException {
-        return dashboardMetadataDAO.isExistsByVersion(url, version);
-    }
-
-    @Override
-    public boolean isExistsOwner(String owner, String url) throws DashboardException {
-        return dashboardMetadataDAO.isExistsOwner(owner, url);
-    }
-
-    @Override
-    public boolean isExists(String owner, String url, String version) throws DashboardException {
-        return dashboardMetadataDAO.isExists(owner, url, version);
-    }
-
-    @Override
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
         dashboardMetadataDAO.update(dashboardMetadata);
     }
@@ -67,18 +47,8 @@ public class SolrBackedDashboardMetadataDAOImpl implements DashboardMetadataDAO 
     }
 
     @Override
-    public void delete(String url) throws DashboardException {
-        dashboardMetadataDAO.delete(url);
-    }
-
-    @Override
     public void delete(String owner, String url) throws DashboardException {
         dashboardMetadataDAO.delete(owner, url);
-    }
-
-    @Override
-    public void delete(String owner, String url, String version) throws DashboardException {
-        dashboardMetadataDAO.delete(owner, url, version);
     }
 
     @Override
@@ -87,26 +57,7 @@ public class SolrBackedDashboardMetadataDAOImpl implements DashboardMetadataDAO 
     }
 
     @Override
-    public List<DashboardMetadata> list(String url, String version, PaginationContext paginationContext)
-            throws DashboardException {
-        return dashboardMetadataDAO.list(url, version, paginationContext);
-    }
-
-    @Override
-    public List<DashboardMetadata> listByOwner(String owner, String url, PaginationContext paginationContext)
-            throws DashboardException {
-        return dashboardMetadataDAO.listByOwner(owner, url, paginationContext);
-    }
-
-    @Override
-    public List<DashboardMetadata> list(String owner, String url, String version, PaginationContext paginationContext)
-            throws DashboardException {
-        return dashboardMetadataDAO.list(owner, url, version, paginationContext);
-    }
-
-    @Override
-    public List<DashboardMetadata> listByURL(String url, PaginationContext paginationContext) throws
-                                                                                              DashboardException {
-        return dashboardMetadataDAO.listByURL(url, paginationContext);
+    public List<DashboardMetadata> list(String owner, PaginationContext paginationContext) throws DashboardException {
+        return dashboardMetadataDAO.list(owner, paginationContext);
     }
 }

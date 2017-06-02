@@ -15,8 +15,11 @@
  */
 
 (function () {
-    var HTTP_POST = 'POST';
-    var APPLICATION_JSON = 'application/json';
+    var Constants = {
+        HTTP_POST: 'POST',
+        APPLICATION_JSON: 'application/json',
+        DASHBOARD_API_URL: '../designer/apis/dashboards'
+    };
 
     /**
      * Build dashboard payload object to be saved.
@@ -25,12 +28,11 @@
     var buildDashboardPayload = function () {
         var id = $("#dashboard-id").val();
         var name = $("#dashboard-title").val();
-        var version = $("#dashboard-version").val();
         var description = $("#dashboard-description").val();
         return {
             url: id,
             name: name,
-            version: version,
+            version: 1,
             description: description,
             isShared: true,
             parentId: 0,
@@ -40,7 +42,7 @@
             content: JSON.stringify({
                 url: id,
                 name: name,
-                version: version,
+                version: 1,
                 description: description,
                 pages: {
                     'page0': {
@@ -58,11 +60,11 @@
     $('#btn-create-dashboard').on('click', function () {
         var dashboard = buildDashboardPayload();
         $.ajax({
-            url: "../designer/apis/dashboard/add",
-            method: HTTP_POST,
+            url: Constants.DASHBOARD_API_URL,
+            method: Constants.HTTP_POST,
             data: JSON.stringify(dashboard),
             async: false,
-            contentType: APPLICATION_JSON,
+            contentType: Constants.APPLICATION_JSON,
             //TODO Need to remove alerts and use proper notification mechanism. i18n should be used to get messages.
             success: function () {
                 alert("Dashboard is created successfully !");

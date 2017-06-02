@@ -31,6 +31,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -40,46 +41,57 @@ public class WidgetInfoProviderAPI implements Microservice {
 
     /**
      * This method returns a list of meta information of widgets.
+     *
      * @return List of widget related meta information
      */
     @GET
-    @Path("/metainfo")
-    @Produces("application/json")
-    public List getWidgetsMetaInfo() {
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getWidgetsMetaInfo() {
         List<WidgetInfoProvider> widgetInfoProviderImplList = WidgetDataHolder.getInstance().getWidgetInfoProviders();
-        List list = widgetInfoProviderImplList.stream().map(widget -> widget.getWidgetsMetaInfo())
-                .filter(Objects::nonNull).collect(Collectors.toList());
-        return list;
+        List list = widgetInfoProviderImplList.stream()
+                .map(widget -> widget.getWidgetsMetaInfo())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return Response.ok().entity(list).build();
     }
 
     /**
      * This method return the configuration of given widget.
+     *
      * @param widgetId widget id
-     * @return  widget configuration
+     * @return widget configuration
      */
     @GET
-    @Path("/conf/{id}")
-    @Produces("application/json")
-    public String getWidgetConf(@PathParam("id") String widgetId) {
+    @Path("/{id}/conf")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getWidgetConf(@PathParam("id") String widgetId) {
         List<WidgetInfoProvider> widgetInfoProviderImplList = WidgetDataHolder.getInstance().getWidgetInfoProviders();
         String widgetConf = widgetInfoProviderImplList.stream()
-                .map(widget -> widget.getWidgetConf(widgetId).orElse(null)).filter(Objects::nonNull).findFirst()
+                .map(widget -> widget.getWidgetConf(widgetId).orElse(null))
+                .filter(Objects::nonNull)
+                .findFirst()
                 .orElse(null);
-        widgetConf = (widgetConf != null) ? widgetConf : "{\"error\":\"Error in retrieving widget configuration\"}";
-        return widgetConf;
+        if (widgetConf != null) {
+            return Response.ok().entity(widgetConf).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     /**
      * This method provides thumbnail of given widget.
+     *
      * @param widgetId widget id
      * @return thumbnail of given widget
      */
     @GET
-    @Path("/thumbnail/{id}")
+    @Path("/{id}/thumbnail")
     public Response getThumbnail(@PathParam("id") String widgetId) {
         List<WidgetInfoProvider> widgetInfoProviderImplList = WidgetDataHolder.getInstance().getWidgetInfoProviders();
         java.nio.file.Path path = widgetInfoProviderImplList.stream()
-                .map(widget -> widget.getThumbnail(widgetId).orElse(null)).filter(Objects::nonNull).findFirst()
+                .map(widget -> widget.getThumbnail(widgetId).orElse(null))
+                .filter(Objects::nonNull)
+                .findFirst()
                 .orElse(null);
         if (path != null && Files.exists(path)) {
             return Response.ok(path.toFile()).build();

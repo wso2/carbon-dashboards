@@ -244,7 +244,7 @@
             var isPubsub = isPublisher || isSubscriber;
             var widgetConfig;
 
-            for (i = 0; i < page.layout.length; i++) {
+            for (var i = 0; i < page.layout.length; i++) {
                 if (page.layout[i].id === id) {
                     widgetConfig = page.layout[i].widget;
                 }
@@ -467,7 +467,7 @@
     var initGadgetList = function () {
         $('#widgetList').find('.dashboards-thumbnail').remove();
         $.ajax({
-            url: Constants.WIDGET_METAINFO_GET_URL,
+            url: Constants.WIDGET_METAINFO_URL,
             method: Constants.HTTP_GET,
             async: true,
             success: function (widgetList) {
@@ -489,7 +489,7 @@
      */
     var initLayoutList = function () {
         $.ajax({
-            url: Constants.LAYOUT_METAINFO_GET_URL,
+            url: Constants.LAYOUT_METAINFO_URL,
             method: Constants.HTTP_GET,
             async: true,
             success: function (layoutList) {
@@ -634,7 +634,7 @@
     var saveDashboard = function () {
         dashboard.url = dashboard.id;
         $.ajax({
-            url: Constants.DASHBOARD_METADATA_UPDATE_URL,
+            url: Constants.DASHBOARD_METADATA_URL + '/' + dashboard.id,
             method: Constants.HTTP_PUT,
             data: JSON.stringify(metaDataPayloadGeneration()),
             async: false,
