@@ -30,15 +30,15 @@
     <url>http://wso2.org</url>
 
     <modules>
-        <module>components/org.wso2.carbon.dashboards.view</module>
         <module>components/org.wso2.carbon.dashboards.core</module>
-        <module>components/org.wso2.carbon.dashboards.sample.store.provider</module>
         <module>components/org.wso2.carbon.dashboards.api</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
-        <module>features/org.wso2.carbon.dashboards.sample.store.provider.feature</module>
+        <module>components/org.wso2.carbon.dashboards.view</module>
         <module>components/org.wso2.carbon.dashboards.designer</module>
         <module>components/org.wso2.carbon.dashboards.sample.store</module>
         <module>components/org.wso2.carbon.dashboards.sample.portal.feature</module>
+        <module>components/org.wso2.carbon.dashboards.sample.store.provider</module>
+        <module>features/org.wso2.carbon.dashboards.sample.store.provider.feature</module>
     </modules>
     <dependencyManagement>
         <dependencies>
