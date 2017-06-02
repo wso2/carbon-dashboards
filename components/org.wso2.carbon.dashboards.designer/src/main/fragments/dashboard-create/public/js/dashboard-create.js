@@ -63,11 +63,9 @@
             contentType: Constants.APPLICATION_JSON,
             //TODO Need to remove alerts and use proper notification mechanism. i18n should be used to get messages.
             success: function () {
-                alert("Dashboard is created successfully !");
                 window.location.href = dashboard.url;
             },
             error: function () {
-                alert("Error in creating dashboard !");
             }
         });
     });
