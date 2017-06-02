@@ -42,6 +42,7 @@
     var renderPage = function (id) {
         page = getPage(id);
         if (!page) {
+            initGridstack();
             // TODO: No pages in the dashboard. Show create page panel.
             return;
         }
@@ -446,7 +447,6 @@
 
         // add block handler
         $('#add-block-btn').on('click', function () {
-
             var width = $('#block-width').val() || 0;
             var height = $('#block-height').val() || 0;
             var id = generateUUID();
@@ -463,7 +463,9 @@
             data.y = 0;
             data.widget = {};
             data.widget.pubsub = pubsub;
-            UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, data, {
+            UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, {
+                blocks: [data]
+            }, 'gridContent', 'APPEND', {
                 onSuccess: function (data) {
                     $('.grid-stack').data('gridstack').add_widget(data, 0, 0, width, height);
                     updateLayout();
@@ -813,7 +815,6 @@
     }
 
     init();
-    initAddBlock();
     //TODO make this a callback
     setTimeout(function(){ wireWidgets(); }, 5000);
 
