@@ -30,24 +30,80 @@
         page = getPage();
         initGadgetList();
         initLayoutList();
-        if (page) {
-            if (page.layout && page.layout.length > 0) {
-                renderBlocks(renderBlockCallback);
-                initPublishers();
-            } else {
-                initGridstack();
-            }
-        } else {
-            // TODO: Show add page options in the UI
+        initAddBlock();
+        renderPage();
+        initPagesList();
+    };
+
+    /**
+     * Render page.
+     * @param id page Id
+     */
+    var renderPage = function (id) {
+        page = getPage(id);
+        if (!page) {
+            // TODO: No pages in the dashboard. Show create page panel.
+            return;
         }
+        renderBlocks(renderBlockCallback);
+        initPublishers();
+    };
+
+    /**
+     * Initialize list of pages in the sidebar.
+     */
+    var initPagesList = function () {
+        $('#ues-dashboard-pages').on('click', '.ues-page-list-heading', function (e) {
+            var pageId = $(this).attr('data-id');
+            renderPage(pageId);
+        });
+
+        $('#ues-dashboard-pages').on('blur', '.form-control[type=text]', function () {
+            var parent = $(this).closest('.ues-page-properties');
+            var id = parent.attr('data-id');
+
+            var pageInstance = dashboard.pages[id];
+            delete dashboard.pages[id];
+
+            pageInstance.name = parent.find('#page-title').val();
+            dashboard.pages[parent.find('#page-url').val()] = pageInstance;
+            saveDashboard();
+            refreshPagesList();
+        });
+        refreshPagesList();
+    };
+
+    /**
+     * Re-render the pages list in the sidebar.
+     */
+    var refreshPagesList = function () {
+        var pages = [];
+        for (var key in dashboard.pages) {
+            if (dashboard.pages.hasOwnProperty(key)) {
+                pages.push({
+                    id: key,
+                    title: dashboard.pages[key].name,
+                    isDefective: false,
+                    landing: true
+                });
+            }
+        }
+        UUFClient.renderFragment('org.wso2.carbon.dashboards.designer.sidebar-pages-list', {pages: pages},
+            'pages-list', 'OVERWRITE', {
+                onSuccess: function () {
+                    // TODO: Set the active page
+                },
+                onFailure: function () {
+                }
+            });
     };
 
     /**
      * Get the page details from the dashboard.json file.
+     * @param pageName page name
      * @returns {*}
      */
-    var getPage = function () {
-        var pageName; // todo: try to get this from the url
+    var getPage = function (pageName) {
         if (!pageName) {
             for (var name in dashboard.pages) {
                 if (dashboard.pages.hasOwnProperty(name)) {
@@ -78,7 +134,7 @@
             return;
         }
         return page;
-    }
+    };
 
     /**
      * Remove existing layout and widgets from the dashboard configuation.
@@ -106,10 +162,25 @@
      * @param dashboard {Object} dashboard json object
      * */
     var renderBlocks = function (callback) {
-        for (var i = 0; i < page.layout.length; i++) {
-            UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, page.layout[i], "gridContent",
-                Constants.APPEND_MODE, callback);
+        var data = {
+            blocks: page.layout
+        };
+
+        var grid = $('.grid-stack').data('gridstack');
+        if (grid) {
+            grid.destroy(false);
+            grid.container.removeData('gridstack');
         }
+
+        UUFClient.renderFragment(Constants.WIDGET_CONTAINER_FRAGMENT_NAME, data, "gridContent", 'OVERWRITE',
+            {
+                onSuccess: function () {
+                    initGridstack();
+                    renderWidgets(dashboard);
+                },
+                onFailure: function () {
+                }
+            });
     };
 
     /**
@@ -378,7 +449,7 @@
 
             var width = $('#block-width').val() || 0;
             var height = $('#block-height').val() || 0;
-            var id = generateBlockGUID();
+            var id = generateUUID();
             var pubsub = { isPublisher: false, isSubscriber: false };
 
             if (width === 0 || height === 0) {
@@ -421,10 +492,10 @@
     };
 
     /**
-     * Generate GUID.
+     * Generate UUID.
      * @returns {String}
      */
-    var generateBlockGUID = function () {
+    var generateUUID = function () {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -470,19 +541,24 @@
             url: Constants.WIDGET_METAINFO_URL,
             method: Constants.HTTP_GET,
             async: true,
-            success: function (widgetList) {
-                if (widgetList[0]) {
-                    generateWidgetInfoJSON(widgetList[0]);
+            success: function (widgets) {
+                if (widgets[0]) {
+                    generateWidgetInfoJSON(widgets[0]);
                     portal.dashboards.widgets = widgetInfo;
-                    var widgetJSONLength = widgetList[0].length;
-                    for (var i = 0; i < widgetJSONLength; i++) {
-                        UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME,
-                            widgetList[0][i].info, "left-panel", Constants.APPEND_MODE, widgetListCallback);
+                    for (var i = 0; i < widgets[0].length; i++) {
+                        UUFClient.renderFragment(Constants.WIDGET_LIST_CONTAINER_FRAGMENT_NAME, {widgets: widgets[0]},
+                            "left-panel", 'OVERWRITE', {
+                                onSuccess: function () {
+                                },
+                                onFailure: function (message, e) {
+                                }
+                            });
                     }
                 }
             }
         });
     };
+
 
     /**
      * retrieve the layout list by invoking the available api.
@@ -492,15 +568,43 @@
             url: Constants.LAYOUT_METAINFO_URL,
             method: Constants.HTTP_GET,
             async: true,
-            success: function (layoutList) {
-                generateLayoutInfoJSON(layoutList[0]);
-                var layoutJSONLength = layoutList[0].length;
-                for (var i = 0; i < layoutJSONLength; i++) {
-                    UUFClient.renderFragment(Constants.LAYOUT_LIST_CONTAINER_FRAGMENT_NAME, layoutList[0][i],
-                        "layout-list", Constants.APPEND_MODE, widgetListCallback);
+            success: function (layouts) {
+                generateLayoutInfoJSON(layouts[0]);
+                for (var i = 0; i < layouts[0].length; i++) {
+                    UUFClient.renderFragment(Constants.LAYOUT_LIST_CONTAINER_FRAGMENT_NAME, {layouts: layouts[0]},
+                        "layout-list", 'OVERWRITE', {
+                            onSuccess: function () {
+                            },
+                            onFailure: function () {
+                            }
+                        });
                 }
             }
         });
+
+        // Create a page
+        $('#ues-page-layouts').on('click', '.thumbnail', function () {
+            var layoutId = $(this).attr('id');
+            var pageId = addPage(layoutId);
+            refreshPagesList();
+            renderPage(pageId);
+        })
+    };
+
+    /**
+     * Add page
+     * @param layoutId layout Id
+     * @returns {String} page Id
+     */
+    var addPage = function (layoutId) {
+        var id = generateUUID();
+        dashboard.pages = dashboard.pages || {};
+        dashboard.pages[id] = {
+            name: 'New Page',
+            layout: portal.dashboards.layouts[layoutId].blocks
+        };
+        saveDashboard();
+        return id;
     };
 
     /**
@@ -508,8 +612,7 @@
      * @param widgetList
      */
     var generateWidgetInfoJSON = function (widgetList) {
-        var widgetListLength = widgetList.length;
-        for (var i = 0; i < widgetListLength; i++) {
+        for (var i = 0; i < widgetList.length; i++) {
             widgetInfo[widgetList[i].info.id] = widgetList[i];
         }
     };
@@ -519,8 +622,7 @@
      * @param layoutList
      */
     var generateLayoutInfoJSON = function (layoutList) {
-        var layoutListLength = layoutList.length;
-        for (var i = 0; i < layoutListLength; i++) {
+        for (var i = 0; i < layoutList.length; i++) {
             portal.dashboards.layouts[layoutList[i].id] = layoutList[i];
             layoutInfo[layoutList[i].id] = layoutList[i];
         }

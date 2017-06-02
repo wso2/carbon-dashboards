@@ -1,5 +1,7 @@
-<div class="thumbnail dashboards-thumbnail selectable" draggable="true" id="{{@params.id}}" data-id="{{@params.id}}"
-data-type="gadget" ondragstart="portal.dashboards.functions.designer.widgetDrag(event)">
-    <h5 class="title" style="text-align: center">{{@params.displayName}}</h5>
-    <div class="dashboard-icon"><i class="fw fw-statistics fw-5x"></i></div>
-</div>
+{{#each @params.widgets}}
+    <div class="thumbnail dashboards-thumbnail selectable" draggable="true" id="{{info.id}}" data-id="{{info.id}}"
+         data-type="gadget" ondragstart="portal.dashboards.functions.designer.widgetDrag(event)">
+        <h5 class="title" style="text-align: center">{{info.displayName}}</h5>
+        <div class="dashboard-icon"><i class="fw fw-statistics fw-5x"></i></div>
+    </div>
+{{/each}}

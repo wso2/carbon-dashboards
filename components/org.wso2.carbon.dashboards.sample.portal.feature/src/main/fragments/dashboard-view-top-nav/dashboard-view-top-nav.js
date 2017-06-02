@@ -44,7 +44,7 @@ function onGet(env) {
     return {
         isUserAvailable: isUserAvailable,
         isPersonalizeEnabled: false,
-        dashboardName: env.params.dashboard.name,
+        dashboardName: JSON.parse(env.params.dashboard).name,
         userName: userName,
         isSuperUser: isSuperUser,
         sharedDashboard: sharedDashboard,

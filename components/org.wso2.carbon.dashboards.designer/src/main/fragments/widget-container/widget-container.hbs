@@ -1,26 +1,24 @@
-<div class="grid-stack-item" data-id="{{@params.id}}" data-gs-x="{{@params.x}}" data-gs-y="{{@params.y}}"
-data-gs-width="{{@params.width}}" data-gs-height="{{@params.height}}" >
-    <div class="grid-stack-item-content dashboard-component-box gadget-wrapper"
-    ondrop="portal.dashboards.functions.designer.widgetDrop(event)"
-    ondragover="portal.dashboards.functions.designer.widgetAllowDrop(event)"
-    {{#if @params.widget}}
-    data-publisher="{{@params.widget.pubsub.isPublisher}}"
-    data-subscriber="{{@params.widget.pubsub.isSubscriber}}"
-    {{/if}}
-    id="{{@params.id}}">
-		<div class="dashboards-component gadget">
-            <div class="gadget-heading">
-                <h1 class="gadget-title truncate">:::</h1>
-                <div class="gadget-actions">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal"
-                        data-target="#modalDelete" title="Remove">
-                            <i class="icon fw fw-delete"></i>
-                        </button>
+{{#each @params.blocks}}
+    <div class="grid-stack-item" data-id="{{id}}" data-gs-x="{{x}}" data-gs-y="{{y}}" data-gs-width="{{width}}"
+         data-gs-height="{{height}}" >
+        <div class="grid-stack-item-content dashboard-component-box gadget-wrapper"
+             ondrop="portal.dashboards.functions.designer.widgetDrop(event)"
+             ondragover="portal.dashboards.functions.designer.widgetAllowDrop(event)"
+             id="{{id}}">
+            <div class="dashboards-component gadget">
+                <div class="gadget-heading">
+                    <h1 class="gadget-title truncate">:::</h1>
+                    <div class="gadget-actions">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dashboards-trash-handle" data-toggle="modal"
+                                    data-target="#modalDelete" title="Remove">
+                                <i class="icon fw fw-delete"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <div class="gadget-body dashboards-component-body"></div>
             </div>
-            <div class="gadget-body dashboards-component-body"></div>
         </div>
     </div>
-</div>
+{{/each}}

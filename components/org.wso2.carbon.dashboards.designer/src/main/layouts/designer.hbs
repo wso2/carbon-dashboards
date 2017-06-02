@@ -15,13 +15,36 @@
 <body>
 {{defineZone "task-bar"}}
 {{defineZone "left-nav-bar"}}
+<div class="page-content-wrapper">
 <div class="sidebar-wrapper" id="left-sidebar" data-side="left" data-width="250"
      data-offset-left="52" data-top="inherit" data-offset-bottom="40" 
      data-container=".page-content-wrapper" data-container-divide="true">
     {{defineZone "sidebar-nav-layouts"}}
     {{defineZone "sidebar-nav-widgets"}}
-    {{defineZone "sidebar-nav-dashboard-layouts"}}
+    {{defineZone "sidebar-nav-pages"}}
 </div>
+
+<!-- .left-sidebar-sub -->
+<div class="sidebar-wrapper sidebar-nav sidebar-nav-sub" id="left-sidebar-sub" data-side="left" data-width="250"
+     data-offset-left="302" data-offset-bottom="40" data-container=".page-content-wrapper">
+    <div class="nano">
+        <div class="nano-content">
+            <button class="btn btn-default close-handle" data-handle="close" data-toggle="sidebar"
+                    data-target="#left-sidebar-sub" aria-expanded="true" rel="createPage">
+                <i class="fw fw-cancel"></i>
+            </button>
+            <div class="add-padding-3x">
+                Select Layout
+                <hr />
+                <div id="ues-page-layouts">
+                    {{defineZone "layout-list"}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
 <div class="sidebar-wrapper" id="right-sidebar" data-side="right" data-width="250"
      data-offset-left="52" data-top="inherit" data-offset-bottom="40" 
      data-container=".page-content-wrapper" data-container-divide="true">

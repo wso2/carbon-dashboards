@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 function onGet(env) {
+    var dashboard = JSON.parse(env.params.dashboard);
+    var pages = [];
+    for (var key in dashboard.pages) {
+        if (dashboard.pages.hasOwnProperty(key)) {
+            pages.push({
+                id: key,
+                name: dashboard.pages[key].name
+            });
+        }
+    }
     return {
-        dashboardName: env.params.dashboard.name,
-        userAgent: "Trident",
-        isNoTrident: true
+        dashboard: {
+            name: dashboard.name,
+            id: dashboard.id,
+            hasPages: (pages.length > 0)
+        },
+        pages: pages
     };
 }
