@@ -239,6 +239,9 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         List<DashboardMetadata> dashboards = new ArrayList<>();
         String path = System.getProperty("carbon.home") + "/deployment/dashboards/";
         File dashboardsDir = new File(path);
+        if (!dashboardsDir.exists()) {
+            return dashboards;
+        }
         File[] files = dashboardsDir.listFiles((dir, name) -> {
             return name.endsWith(".json");
         });
