@@ -25,10 +25,30 @@
      * Initialize the dashboard viewer.
      * */
     var init = function () {
-        page = getPage();
+        var pageName = getQueryString()['page'];
+        page = getPage(pageName);
         generateWidgetInfoJSON();
         orderWidgets();
         renderBlocks();
+    };
+
+    /**
+     * Get query string as an object.
+     * @returns {{}}
+     */
+    var getQueryString = function () {
+        var startPos = location.href.indexOf('?');
+        if (startPos === -1) {
+            return {};
+        }
+        var result = {} ;
+        var qs = location.href.substring(startPos + 1);
+        var parts = qs.split('&');
+        for (var i = 0; i < parts.length; i++) {
+            var entry = parts[i].split('=');
+            result[entry[0] ] = entry.length > 1 ? entry[1] : true;
+        }
+        return result;
     };
 
     /**
@@ -48,9 +68,7 @@
      * @param dashboard dashboard object
      * @returns {*}
      */
-    var getPage = function () {
-        // TODO: Get 'pageName' from the URL. At the moment since multiple pages are not supported this stays undefined.
-        var pageName;
+    var getPage = function (pageName) {
         if (!pageName) {
             for (var name in dashboard.pages) {
                 if (dashboard.pages.hasOwnProperty(name)) {

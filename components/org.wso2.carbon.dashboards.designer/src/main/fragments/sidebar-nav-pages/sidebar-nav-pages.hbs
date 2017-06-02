@@ -1,0 +1,21 @@
+<div id="sidebarNavPages" data-type="pages" style="display: none;">
+    <div class="sidebar-brand">Pages</div>
+    <div class="add-padding-3x">
+        <button type="button" class="btn btn-primary btn-stack btn-block" data-toggle="sidebar" data-target="#left-sidebar-sub" aria-expanded="false" rel="createPage">
+            <span class="icon fw-stack fw-lg">
+                <i class="fw fw-circle-outline fw-stack-2x"></i>
+                <i class="fw fw-add fw-stack-1x"></i>
+            </span> Create Page
+        </button>
+        <div class=" form-group has-form-control-btn remove-margin-bottom add-margin-top-3x ues-search-box">
+            <button class="form-control-btn" type="button" title="Search">
+                <i class="fw fw-search" aria-hidden="true"></i>
+            </button>
+            <input type="text" class="form-control" placeholder="Search...">
+        </div>
+    </div>
+
+    <div class="panel-group add-padding-3x" id="ues-dashboard-pages" role="tablist" aria-multiselectable="true">
+        {{defineZone "pages-list"}}
+    </div>
+</div>

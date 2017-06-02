@@ -30,7 +30,7 @@
         var name = $("#dashboard-title").val();
         var description = $("#dashboard-description").val();
         return {
-            url: id,
+            id: id,
             name: name,
             version: 1,
             description: description,

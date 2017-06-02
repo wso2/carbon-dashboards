@@ -1,0 +1,44 @@
+{{#each @params.pages}}
+    <div class="panel panel-default">
+        <div class="panel-heading text-truncate dropdown ues-page-list-heading" role="tab" id="pagesButton{{./id}}"
+             data-toggle="collapse" data-parent="#ues-dashboard-pages" data-target="#pages{{./id}}"
+             aria-expanded="false" data-id="{{./id}}">
+            <h4 class="panel-title">
+            <span class="icon fw-stack">
+                <i class="fw fw-home fw-stack-1x"></i>
+                <i class="fw fw-circle-outline fw-stack-2x"></i>
+            </span> {{./title}} {{#if ./isDefective}}<i class="fw fw-alert text-danger defective-page-icon"></i>{{/if}}
+            </h4>
+            <span class="caret"></span>
+        </div>
+        <div id="pages{{./id}}" class="panel-collapse collapse ues-page-properties" role="tabpanel" data-id="{{./id}}">
+            <div class="panel-body add-padding-3x">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <label for="input-name" class="control-label">Title <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="page-title" maxlength="250" name="title" placeholder="Title" value="{{./title}}">
+                            <label id="title-error" class="required-error hide" for="title">Required</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <label for="input-name" class="control-label">URL <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="page-url" maxlength="100"  name="id" placeholder="URL" value="{{./id}}">
+                            <label id="id-error" class="required-error hide" for="id">Required</label>
+                        </div>
+                    </div>
+                    <!--<div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="landing"{{#if ./landing}} checked {{/if}} /> Use as landing
+                                </label>
+                            </div>
+                        </div>
+                    </div>-->
+                </form>
+            </div>
+        </div>
+    </div>
+{{/each}}

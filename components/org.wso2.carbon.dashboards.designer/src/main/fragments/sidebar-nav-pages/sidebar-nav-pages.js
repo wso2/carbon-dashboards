@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 function onGet(env) {
-    var dashboard = JSON.parse(env.params.dashboard);
-    var pages = [];
-    for (var key in dashboard.pages) {
-        if (dashboard.pages.hasOwnProperty(key)) {
-            pages.push({
-                id: key,
-                name: dashboard.pages[key].name
-            });
-        }
-    }
     return {
-        dashboard: {
-            name: dashboard.name,
-            id: dashboard.id,
-            hasPages: (pages.length > 0)
-        },
-        pages: pages
+        pages: [
+            {
+                id: 'test',
+                title: 'test',
+                isDefective: false
+            },
+            {
+                id: 'test1',
+                title: 'test1',
+                isDefective: false
+            },
+            {
+                id: 'test2',
+                title: 'test2',
+                isDefective: false
+            }
+        ]
     };
 }
