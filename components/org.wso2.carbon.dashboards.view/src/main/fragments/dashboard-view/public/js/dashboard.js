@@ -26,6 +26,9 @@
      * */
     var init = function () {
         var pageName = getQueryString()['page'];
+        if (pageName) {
+            pageName = pageName.split('#')[0];
+        }
         page = getPage(pageName);
         generateWidgetInfoJSON();
         orderWidgets();
