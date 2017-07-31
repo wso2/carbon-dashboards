@@ -1,0 +1,24 @@
+#menuContainer {
+    width: 20%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #222;
+}
+
+#menuContainer li {
+    cursor: move;
+    border-bottom: 1px solid #000;
+    border-top: 1px solid #333;
+    cursor: pointer;
+    padding: 10px 5px;
+    color: #BBB;
+    background: #1a1a1a;
+    font: 12px Arial, sans-serif;
+}
+
+#menuContainer li:hover {
+    background: #111;
+    color: #CCC;
+}
