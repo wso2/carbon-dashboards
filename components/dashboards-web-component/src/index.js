@@ -36,7 +36,7 @@ const config = {
                 title: 'Pie Chart',
                 type: 'react-component',
                 component: 'pieChart',
-                props: { id: uuid + 'pieChart' },
+                props: { id: uuid + 'pieChart'},
             },
             {
                 title: 'Publisher',
@@ -111,7 +111,7 @@ function addWidget(widget) {
         title: widget.title,
         type: 'react-component',
         component: widget.component,
-        props: { id },
+        props: { id: id },
         header: {
             show: true,
         },
@@ -132,10 +132,10 @@ function getGadgetUUID(widgetName) {
 
 myLayout.init();
 
-// myLayout.on('stateChanged', function () {
-//     $('#menuContainer').empty();
-//     initializeWidgetList();
-// });
+myLayout.on('stateChanged', function () {
+    document.getElementById("menuContainer").innerHTML = "";
+    initializeWidgetList();
+});
 
 window.onresize = function () {
     myLayout.updateSize();
