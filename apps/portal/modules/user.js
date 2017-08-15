@@ -29,11 +29,8 @@ var maxRolesLimit;
                 return false;
             }
         } catch (e) {
-            var message = "Invalid Domain Name";
-            if (e.message.toLowerCase().indexOf(message.toLowerCase()) >= 0) {
-                log.error("Invalid Domain Name: " + e.message);
-                return false;
-            }
+            log.error("Error when authenticating the user", e);
+            return false;
         }
 
         var user = carbon.server.tenantUser(username);
