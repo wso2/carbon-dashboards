@@ -22,13 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-
 /**
  * Class to represent a DashboardMetadata(Dashboard JSON).
  */
@@ -254,29 +247,7 @@ public class DashboardMetadata {
      * @return Object returns the content of dashboard
      */
     public Object getContent() throws DashboardException {
-        if (content == null) {
-            return null;
-        }
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-            br = new BufferedReader(new InputStreamReader((InputStream) content, Charset.defaultCharset()));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            throw new DashboardException("Error in retrieving dashboard content", e);
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    log.error("Error in closing dashboard content buffered reader");
-                }
-            }
-        }
-        return sb.toString();
+        return content;
     }
 
     /**
@@ -288,26 +259,4 @@ public class DashboardMetadata {
         this.content = content;
     }
 
-    /**
-     * This method is used to get the dashboard json as a inputstream
-     *
-     * @return InputStream returns the content as a inputstream
-     * @throws DashboardException
-     */
-    public InputStream getContentStream() throws DashboardException {
-
-        if (content == null) {
-            return new ByteArrayInputStream("".getBytes(Charset.forName("UTF-8")));
-        }
-        if (content instanceof byte[]) {
-            return new ByteArrayInputStream((byte[]) content);
-        } else if (content instanceof String) {
-            byte[] contentBytes = ((String) content).getBytes(Charset.forName("UTF-8"));
-            return new ByteArrayInputStream(contentBytes);
-        } else if (content instanceof InputStream) {
-            return (InputStream) content;
-        } else {
-            throw new DashboardException("Resource content is empty.");
-        }
-    }
 }

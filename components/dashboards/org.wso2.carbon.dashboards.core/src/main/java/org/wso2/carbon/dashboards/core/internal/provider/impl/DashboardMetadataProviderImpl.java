@@ -40,10 +40,8 @@ import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -218,11 +216,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
                 dashboard.setOwner("admin");
                 dashboard.setLastUpdatedBy("admin");
                 dashboard.setShared(false);
-
                 dashboard.setContent(content);
-                byte[] contentBytes = content.getBytes(Charset.defaultCharset());
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(contentBytes);
-                dashboard.setContent(inputStream);
             } catch (IOException e) {
                 throw new DashboardException("Unable to read the dashboard from the file system.");
             }
