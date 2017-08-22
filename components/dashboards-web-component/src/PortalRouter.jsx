@@ -18,7 +18,7 @@
  */
 
 import React from 'react';
-//import DashboardView from './DashboardView';
+import DashboardView from './DashboardView';
 import DashboardListing from './DashboardListing';
 import {
     Route,
@@ -31,6 +31,8 @@ class PortalRouter extends React.Component {
         return <div>
             <Switch>
                 <Route exact path='/portal' component={DashboardListing}/>
+                <Route path='*/dashboard/:id/:pageId' component={DashboardView}/>
+                <Route path='*/dashboard/:id' component={DashboardView}/>
             </Switch>
         </div>;
     }

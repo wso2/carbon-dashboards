@@ -23,11 +23,6 @@ import axios from 'axios';
 import NavigationBar from './NavigationBar';
 import DashboardThumbnail from './DashboardThumbnail';
 import '../public/css/dashboard.css';
-import {
-    Route,
-    Link,
-    Switch
-} from 'react-router-dom';
 
 class DashboardListing extends React.Component {
     constructor() {
@@ -39,7 +34,6 @@ class DashboardListing extends React.Component {
     }
 
     componentDidMount() {
-        document.getElementById('view').innerHTML = "";
         this.retrieveDashboards();
     }
 

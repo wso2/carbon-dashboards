@@ -58,3 +58,51 @@
 .dashboard-listing-header-logo {
     margin-right: 10px;
 }
+
+.dashboard-view {
+    margin-left: 15%;
+    height: 88vh;
+}
+
+.dashboard-view-full-width {
+    margin-left: 0;
+    height: 88vh;
+}
+
+.pages-navigation-panel {
+    width: 14%;
+    height: 100%;
+    background-color:#353c48;
+}
+
+.pages-nav-panel-product-logo {
+    text-align: center;
+    font-size: 50px;
+}
+
+.pages-nav-panel-dashboard-name {
+    text-align: center;
+    font-size: 25px;
+}
+
+.dashboard-view-header {
+    background-color: #353c48;
+    color: white;
+    height: 60px;
+    margin-bottom: 1%;
+    margin-left: 0;
+}
+
+.dashboard-view-header-toggled {
+    background-color: #353c48;
+    color: white;
+    height: 60px;
+    margin-bottom: 1%;
+    margin-left: 14%;
+}
+
+.pages-nav-toggle-btn {
+    float: left;
+    font-size: 30px;
+    background: #438cad;
+}
