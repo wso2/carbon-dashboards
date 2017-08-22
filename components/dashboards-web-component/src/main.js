@@ -17,44 +17,9 @@
  *
  */
 
-.dashboard-thumbnail {
-    margin-top: 15px;
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
+import PortalRouter from './PortalRouter';
 
-.dashboard-thumbnail-div {
-    background-color: #aab6cb;
-}
-
-.dashboard-thumbnail-logo {
-    font-size: 80px;
-}
-
-.dashboard-thumbnail-action-panel {
-    margin-top: 5px;
-}
-
-.dashboard-thumbnail-disabled-action-button {
-    opacity: .6;
-    pointer-events: none;
-    margin-left: 10px;
-}
-
-.dashboard-thumbnail-action-icon {
-    margin-right: 5px;
-}
-
-.dashboard-listing-header {
-    background-color: #353c48;
-    color: white;
-    float: left;
-    width: 100%;
-}
-
-.dashboard-listing-h1 {
-    padding: 10px;
-    margin: 0;
-}
-
-.dashboard-listing-header-logo {
-    margin-right: 10px;
-}
+ReactDOM.render(<Router history={true}><PortalRouter /></Router>, document.getElementById('content'));
