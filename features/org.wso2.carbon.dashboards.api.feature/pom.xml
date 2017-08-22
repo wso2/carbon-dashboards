@@ -92,39 +92,40 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-                <groupId>org.wso2.maven</groupId>
-                <artifactId>carbon-p2-plugin</artifactId>
+                <groupId>org.wso2.carbon.maven</groupId>
+                <artifactId>carbon-feature-plugin</artifactId>
+                <version>3.0.0</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <id>4-p2-feature-generation</id>
-                        <phase>package</phase>
+                        <id>1-p2-feature-generation</id>
                         <goals>
-                            <goal>p2-feature-gen</goal>
+                            <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.dashboards.api</id>
-                            <propertiesFile>../../etc/feature.properties</propertiesFile>
-                            <adviceFile>
-                                <properties>
-                                    <propertyDef>org.wso2.carbon.p2.category.type:server
-                                    </propertyDef>
-                                    <propertyDef>org.eclipse.equinox.p2.type.group:false
-                                    </propertyDef>
-                                </properties>
-                            </adviceFile>
+                            <propertyFile>../etc/feature.properties</propertyFile>
+                            <adviceFileContents>
+                                <advice>
+                                    <name>org.wso2.carbon.p2.category.type</name>
+                                    <value>server</value>
+                                </advice>
+                                <advice>
+                                    <name>org.eclipse.equinox.p2.type.group</name>
+                                    <value>true</value>
+                                </advice>
+                            </adviceFileContents>
                             <bundles>
-                                <bundleDef>
-                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.core:${carbon.dashboards.version}
-                                </bundleDef>
-                                <bundleDef>
-                                    org.wso2.carbon.dashboards:org.wso2.carbon.dashboards.api:${carbon.dashboards.version}
-                                </bundleDef>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.dashboards.core</symbolicName>
+                                    <version>${carbon.dashboards.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.dashboards.api</symbolicName>
+                                    <version>${carbon.dashboards.version}</version>
+                                </bundle>
                             </bundles>
-                            <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.datasource.core:${carbon.datasource.core.version}</importFeatureDef>
-                                <importFeatureDef>org.wso2.msf4j:${msf4j-core.version}</importFeatureDef>
-                            </importFeatures>
                         </configuration>
                     </execution>
                 </executions>
