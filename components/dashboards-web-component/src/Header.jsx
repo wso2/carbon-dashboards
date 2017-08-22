@@ -17,44 +17,17 @@
  *
  */
 
-.dashboard-thumbnail {
-    margin-top: 15px;
+import React from 'react';
+
+class Header extends React.Component {
+    render() {
+        return <div className="dashboard-listing-header">
+            <h1 className="text-center-xs dashboard-listing-h1">
+                <i className="icon fw fw-wso2-logo dashboard-listing-header-logo"></i>
+                {this.props.dashboardName}
+            </h1>
+        </div>;
+    }
 }
 
-.dashboard-thumbnail-div {
-    background-color: #aab6cb;
-}
-
-.dashboard-thumbnail-logo {
-    font-size: 80px;
-}
-
-.dashboard-thumbnail-action-panel {
-    margin-top: 5px;
-}
-
-.dashboard-thumbnail-disabled-action-button {
-    opacity: .6;
-    pointer-events: none;
-    margin-left: 10px;
-}
-
-.dashboard-thumbnail-action-icon {
-    margin-right: 5px;
-}
-
-.dashboard-listing-header {
-    background-color: #353c48;
-    color: white;
-    float: left;
-    width: 100%;
-}
-
-.dashboard-listing-h1 {
-    padding: 10px;
-    margin: 0;
-}
-
-.dashboard-listing-header-logo {
-    margin-right: 10px;
-}
+export default Header;

@@ -7,7 +7,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "clean": "rimraf dist",
         "dev": "webpack-dev-server --hot --inline --progress --history-api-fallback",
-        "lint": "eslint . --ext .jsx --ext .js"
+        "lint": "eslint . --ext .jsx --ext .js",
+        "build": "webpack -p"
     },
     "repository": {
         "type": "git",
@@ -22,10 +23,13 @@
         "axios": "^0.16.2",
         "css-loader": "^0.28.4",
         "d3": "^4.10.0",
-        "golden-layout": "^1.5.8",
+        "golden-layout": "^1.5.9",
         "html-loader": "^0.5.0",
         "react": "^15.6.1",
         "react-dom": "^15.6.1",
+        "react-router-dom": "^4.1.2",
+        "react-shadow": "^2.0.2",
+        "recharts": "^1.0.0-alpha.2",
         "rimraf": "^2.6.1",
         "style-loader": "^0.18.2",
         "webpack": "^3.4.1"
