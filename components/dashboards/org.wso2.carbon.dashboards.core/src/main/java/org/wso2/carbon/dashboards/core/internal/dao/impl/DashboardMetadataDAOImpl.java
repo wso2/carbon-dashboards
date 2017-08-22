@@ -18,6 +18,7 @@
  */
 package org.wso2.carbon.dashboards.core.internal.dao.impl;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
@@ -27,7 +28,8 @@ import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.SQLConstants;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,6 +54,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             conn = DAOUtils.getInstance().getConnection();
             conn.setAutoCommit(false);
             ps = conn.prepareStatement(query);
+            Blob blob = conn.createBlob();
             ps.setString(1, dashboardMetadata.getName());
             ps.setString(2, dashboardMetadata.getVersion());
             ps.setString(3, dashboardMetadata.getDescription());
@@ -59,14 +62,14 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             ps.setString(5, dashboardMetadata.getLastUpdatedBy());
             ps.setBoolean(6, dashboardMetadata.isShared());
             ps.setTimestamp(7, new Timestamp(new Date().getTime()));
-            ps.setBinaryStream(8, dashboardMetadata.getContentStream(),
-                    dashboardMetadata.getContentStream().available());
+            blob.setBytes(1, new Gson().toJson(dashboardMetadata.getContent()).getBytes("UTF-8"));
+            ps.setBlob(8, blob);
             ps.setString(9, dashboardMetadata.getUrl());
-            ps.setTimestamp(10,  new Timestamp(dashboardMetadata.getCreatedTime()));
+            ps.setTimestamp(10, new Timestamp(dashboardMetadata.getCreatedTime()));
             ps.setString(11, dashboardMetadata.getParentId());
             ps.execute();
             conn.commit();
-        } catch (SQLException | DashboardException | IOException e) {
+        } catch (SQLException | DashboardException | UnsupportedEncodingException e) {
             if (conn != null) {
                 try {
                     conn.rollback();
@@ -91,6 +94,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             conn = DAOUtils.getInstance().getConnection();
             conn.setAutoCommit(false);
             ps = conn.prepareStatement(query);
+            Blob blob = conn.createBlob();
             ps.setString(1, dashboardMetadata.getUrl());
             ps.setString(2, dashboardMetadata.getName());
             ps.setString(3, dashboardMetadata.getVersion());
@@ -99,13 +103,13 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             ps.setString(6, dashboardMetadata.getDescription());
             ps.setBoolean(7, dashboardMetadata.isShared());
             ps.setString(8, dashboardMetadata.getParentId());
-            ps.setBinaryStream(9, dashboardMetadata.getContentStream(),
-                    dashboardMetadata.getContentStream().available());
+            blob.setBytes(1, new Gson().toJson(dashboardMetadata.getContent()).getBytes("UTF-8"));
+            ps.setBlob(9, blob);
             ps.setTimestamp(10, new Timestamp(new Date().getTime()));
             ps.setTimestamp(11, new Timestamp(new Date().getTime()));
             ps.execute();
             conn.commit();
-        } catch (SQLException | IOException e) {
+        } catch (SQLException | UnsupportedEncodingException e) {
             if (conn != null) {
                 try {
                     conn.rollback();
@@ -166,7 +170,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             if (result.next()) {
                 return getMetadata(result);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | UnsupportedEncodingException e) {
             String msg = "Error in accessing dashboard core : " + e.getMessage();
             log.error(msg, e);
             throw new DashboardException(msg, e);
@@ -189,7 +193,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
             result = ps.executeQuery();
             metadataParser(list, result);
 
-        } catch (SQLException e) {
+        } catch (SQLException | UnsupportedEncodingException e) {
             String msg = "Error in accessing dashboard core : " + e.getMessage();
             log.error(msg, e);
             throw new DashboardException(msg, e);
@@ -199,14 +203,15 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
         return list;
     }
 
-    private void metadataParser(List<DashboardMetadata> list, ResultSet result) throws SQLException {
+    private void metadataParser(List<DashboardMetadata> list, ResultSet result) throws SQLException,
+            UnsupportedEncodingException {
         while (result.next()) {
             DashboardMetadata dashboardMetadata = getMetadata(result);
             list.add(dashboardMetadata);
         }
     }
 
-    private DashboardMetadata getMetadata(ResultSet result) throws SQLException {
+    private DashboardMetadata getMetadata(ResultSet result) throws SQLException, UnsupportedEncodingException {
         DashboardMetadata dashboardMetadata = new DashboardMetadata();
         dashboardMetadata.setUrl(result.getString(SQLConstants.DASHBOARD_URL));
         dashboardMetadata.setName(result.getString(SQLConstants.DASHBOARD_NAME));
@@ -215,7 +220,8 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
         dashboardMetadata.setLastUpdatedBy(result.getString(SQLConstants.DASHBOARD_UPDATEDBY));
         dashboardMetadata.setDescription(result.getString(SQLConstants.DASHBOARD_DESCRIPTION));
         dashboardMetadata.setShared(result.getBoolean(SQLConstants.DASHBOARD_SHARED));
-        dashboardMetadata.setContent(result.getBinaryStream(SQLConstants.DASHBOARD_CONTENT));
+        Blob contentBlob = result.getBlob(SQLConstants.DASHBOARD_CONTENT);
+        dashboardMetadata.setContent((new String(contentBlob.getBytes(1, (int) contentBlob.length()), "UTF-8")));
         dashboardMetadata.setParentId(result.getString(SQLConstants.DASHBOARD_PARENT_ID));
         dashboardMetadata.setCreatedTime(result.getTimestamp(SQLConstants.DASHBOARD_CREATED_TIME).getTime());
         dashboardMetadata.setLastUpdatedTime(result.getTimestamp(SQLConstants.DASHBOARD_LAST_UPDATED).getTime());
