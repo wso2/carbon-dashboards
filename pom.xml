@@ -38,11 +38,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.wso2.carbon.uuf</groupId>
-                <artifactId>org.wso2.carbon.uuf.core</artifactId>
-                <version>${carbon.uuf.core.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.wso2.carbon.datasources</groupId>
                 <artifactId>org.wso2.carbon.datasource.core</artifactId>
                 <version>${carbon.datasource.core.version}</version>

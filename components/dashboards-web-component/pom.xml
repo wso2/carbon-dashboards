@@ -95,6 +95,6 @@
 
     <properties>
         <npm.executable>npm</npm.executable>
-        <npm.build.command>dev</npm.build.command>
+        <npm.build.command>build</npm.build.command>
     </properties>
 </project>

@@ -38,7 +38,7 @@ class DashboardView extends React.Component {
 
     componentDidMount() {
         let httpClient = axios.create({
-            baseURL: window.location.origin + '/dashboard',
+            baseURL: window.location.origin + '/dashboards',
             timeout: 2000
         });
         httpClient.get(this.props.match.params.id).then(this.setDashboardProperties).catch(function (error) {
@@ -79,13 +79,17 @@ class DashboardView extends React.Component {
     render() {
         return <section>
             <DashboardViewHeader dashboardName={this.state.dashboardName}
-                                 togglePagesNavPanel={this.togglePagesNavPanel}></DashboardViewHeader>
-            <PagesNavigationPanel dashboardId={this.props.match.params.id} pages={this.state.pages}
+                                 togglePagesNavPanel={this.togglePagesNavPanel}>
+            </DashboardViewHeader>
+            <PagesNavigationPanel dashboardId={this.props.match.params.id}
+                                  pages={this.state.pages}
                                   dashboardName={this.state.dashboardName}
-                                  toggled={this.state.toggled}></PagesNavigationPanel>
+                                  toggled={this.state.toggled}>
+            </PagesNavigationPanel>
             <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
             <DashboardRenderingComponent
-                dashboardContent={this.getDashboardByPageId(this.props.match.params.pageId, this.state.dashboardContent)}></DashboardRenderingComponent>
+                dashboardContent={this.getDashboardByPageId(this.props.match.params.pageId, this.state.dashboardContent)}>
+            </DashboardRenderingComponent>
         </section>;
     }
 }

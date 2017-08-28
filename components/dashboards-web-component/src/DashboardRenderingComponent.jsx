@@ -28,7 +28,7 @@ let registeredWidgetsCount = 0;
 let widgets = new Map();
 let widgetCount = 0;
 
-class ViewComponent extends React.Component {
+class DashboardRenderingComponent extends React.Component {
     constructor(props) {
         super(props);
         this.renderDashboard = this.renderDashboard.bind(this);
@@ -49,7 +49,6 @@ class ViewComponent extends React.Component {
     }
 
     renderDashboard() {
-
         window.onresize = function () {
             dashboardLayout.updateSize();
         };
@@ -95,6 +94,7 @@ class ViewComponent extends React.Component {
     loadWidget(widgetID) {
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
+        //TODO Need to get the app context properly when the server is ready
         let appContext = window.location.pathname.split("/")[1];
         let baseURL = window.location.origin;
         script.type = 'text/javascript';
@@ -109,6 +109,7 @@ class ViewComponent extends React.Component {
                 this.findWidget(contentItem.content, widgets)
 
             } else {
+                //TODO Need to get the header config from widget configuration file
                 contentItem.header = {"show": true};
                 contentItem.isClosable = false;
                 contentItem.componentName = "lm-react-component";
@@ -133,4 +134,4 @@ function registerWidget(widgetId, widgetObj) {
 global.dashboard = {};
 global.dashboard.registerWidget = registerWidget;
 
-export default ViewComponent;
+export default DashboardRenderingComponent;

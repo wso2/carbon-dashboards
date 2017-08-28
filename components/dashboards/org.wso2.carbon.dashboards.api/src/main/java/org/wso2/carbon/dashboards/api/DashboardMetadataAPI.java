@@ -51,7 +51,7 @@ import javax.ws.rs.core.Response;
         service = Microservice.class,
         immediate = true
 )
-@Path("/dashboard")
+@Path("/dashboards")
 public class DashboardMetadataAPI implements Microservice {
 
     @Activate

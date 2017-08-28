@@ -44,7 +44,7 @@ class DashboardListing extends React.Component {
             timeout: 2000
         });
         let thisRef = this;
-        httpClient.get('/dashboard').then(function (response) {
+        httpClient.get('/dashboards').then(function (response) {
             let dashboardList;
             dashboardList = response.data.map(dashboard => {
                 return <DashboardThumbnail dashboard={dashboard}/>;
@@ -56,6 +56,7 @@ class DashboardListing extends React.Component {
     }
 
     render() {
+        //TODO Need to get the dashboardName using app context
         return <div>
             <Header dashboardName="Portal"/>
             <NavigationBar/>
