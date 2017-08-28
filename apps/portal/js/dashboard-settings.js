@@ -264,6 +264,19 @@ $(function () {
         }
     };
 
+    /**
+     * Sanitize the input value.
+     * @param input {String}
+     * @return string
+     * @private
+     */
+    var sanitizeInput = function (input) {
+        if (!input) {
+            return "";
+        }
+        return input.replace(/[^a-z0-9-\s]/gim, "");
+    };
+
     var initExistingRoles = function () {
         var i;
         var role;
@@ -622,7 +635,7 @@ $(function () {
                 showInlineError($(this), $("#title-error"));
             } else {
                 hideInlineError($(this), $("#title-error"));
-                dashboard.title = $(this).val();
+                dashboard.title = sanitizeInput($(this).val());
             }
         });
 
@@ -630,7 +643,7 @@ $(function () {
         $('#ues-dashboard-description').on('keypress', function (e) {
             return sanitizeOnKeyPress(this, e, /[^a-z0-9-.\s]/gim);
         }).on('change', function () {
-            dashboard.description = $(this).val();
+            dashboard.description = sanitizeInput($(this).val());
         });
 
         //Dashboard theme
