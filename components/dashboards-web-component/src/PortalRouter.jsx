@@ -27,6 +27,7 @@ import {
 } from 'react-router-dom';
 
 class PortalRouter extends React.Component {
+    //TODO portal is the app context. Need to get the app context properly and use here
     render() {
         return <div>
             <Switch>

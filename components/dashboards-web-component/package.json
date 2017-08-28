@@ -14,7 +14,6 @@
         "type": "git",
         "url": "git+https://github.com/wso2/carbon-dashboards.git"
     },
-    "author": "",
     "bugs": {
         "url": "https://github.com/wso2/carbon-dashboards/issues"
     },
@@ -22,7 +21,6 @@
     "dependencies": {
         "axios": "^0.16.2",
         "css-loader": "^0.28.4",
-        "d3": "^4.10.0",
         "golden-layout": "^1.5.9",
         "html-loader": "^0.5.0",
         "react": "^15.6.1",

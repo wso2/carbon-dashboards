@@ -65,7 +65,6 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            org.wso2.carbon.uuf.*;version="${carbon.uuf.core.version}",
                             org.osgi.framework.*;version="[1.8.0, 2.0.0)",
                             <!--org.wso2.carbon.messaging;version="${carbon.messaging.version}",-->
                             <!--TODO: replace below line with above commented line after carbon-messaging fix export version issue.-->
