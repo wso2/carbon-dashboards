@@ -20,7 +20,6 @@
 import React from 'react';
 import GoldenLayout from 'golden-layout';
 import 'golden-layout/src/css/goldenlayout-base.css';
-import 'golden-layout/src/css/goldenlayout-dark-theme.css';
 import '../public/css/dashboard.css';
 
 let dashboardLayout = new GoldenLayout();
