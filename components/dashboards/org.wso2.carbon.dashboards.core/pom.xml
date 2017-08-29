@@ -54,6 +54,11 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.core</artifactId>
+            <version>5.2.0-m3</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -78,7 +83,8 @@
                             com.google.common.*;version="${guava.version.range}",
                             org.slf4j.*;version="${slf4j.version.range}",
                             com.google.gson.*;version="[2.2.4,3)",
-                            javax.sql.*
+                            javax.sql.*,
+                            org.wso2.carbon.kernel.*
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.dashboards.core.*;version="${carbon.dashboards.version}",
@@ -104,4 +110,7 @@
             </plugin>
         </plugins>
     </build>
+    <properties>
+        <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
+    </properties>
 </project>
