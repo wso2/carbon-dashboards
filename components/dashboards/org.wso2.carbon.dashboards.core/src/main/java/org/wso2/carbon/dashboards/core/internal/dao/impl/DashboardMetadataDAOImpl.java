@@ -26,6 +26,7 @@ import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
+import org.wso2.carbon.dashboards.core.internal.dao.utils.QueryManager;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.SQLConstants;
 
 import java.io.UnsupportedEncodingException;
@@ -49,7 +50,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
         Connection conn = null;
         PreparedStatement ps = null;
-        String query = SQLConstants.MERGE_METADATA_QUERY_BY_URL_AND_OWNER;
+        String query = QueryManager.getInstance().getQuery(SQLConstants.MERGE_METADATA_BY_URL_AND_OWNER_QUERY);
         try {
             conn = DAOUtils.getInstance().getConnection();
             conn.setAutoCommit(false);
@@ -89,7 +90,7 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
         Connection conn = null;
         PreparedStatement ps = null;
-        String query = SQLConstants.ADD_METADATA_QUERY;
+        String query = QueryManager.getInstance().getQuery(SQLConstants.ADD_METADATA_QUERY);
         try {
             conn = DAOUtils.getInstance().getConnection();
             conn.setAutoCommit(false);
@@ -129,11 +130,11 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
     public void delete(String owner, String url) throws DashboardException {
         Connection conn = null;
         PreparedStatement ps = null;
-        String dbQuery = SQLConstants.DELETE_METADATA_QUERY;
+        String query = QueryManager.getInstance().getQuery(SQLConstants.DELETE_METADATA_QUERY);
         try {
             conn = DAOUtils.getInstance().getConnection();
             conn.setAutoCommit(false);
-            ps = conn.prepareStatement(dbQuery);
+            ps = conn.prepareStatement(query);
 
             ps.setString(1, owner);
             ps.setString(2, url);
@@ -161,10 +162,10 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet result = null;
-        String dbQuery = SQLConstants.GET_METADATA_BY_URL;
+        String query = QueryManager.getInstance().getQuery(SQLConstants.GET_METADATA_BY_URL_QUERY);
         try {
             conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(dbQuery);
+            ps = conn.prepareStatement(query);
             ps.setString(1, url);
             result = ps.executeQuery();
             if (result.next()) {
@@ -186,9 +187,10 @@ public class DashboardMetadataDAOImpl implements DashboardMetadataDAO {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet result = null;
+        String query = QueryManager.getInstance().getQuery(SQLConstants.GET_METADATA_BY_OWNER_QUERY);
         try {
             conn = DAOUtils.getInstance().getConnection();
-            ps = conn.prepareStatement(SQLConstants.GET_METADATA_BY_OWNER);
+            ps = conn.prepareStatement(query);
             ps.setString(1, owner);
             result = ps.executeQuery();
             metadataParser(list, result);
