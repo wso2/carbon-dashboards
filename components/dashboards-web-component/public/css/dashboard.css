@@ -62,6 +62,7 @@
 .dashboard-view {
     margin-left: 15%;
     height: 88vh;
+    margin-right: 10px;
 }
 
 .dashboard-view-full-width {
@@ -105,4 +106,13 @@
     float: left;
     font-size: 30px;
     background: #438cad;
+}
+
+.dark-light-theme-switch-div {
+    display:flex;
+    margin-left: 15px;
+}
+
+.dark-light-theme-switch-toggleBtn {
+    margin-left: 10px;
 }

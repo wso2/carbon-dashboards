@@ -19,10 +19,13 @@
 
 import React from 'react';
 import {Link} from 'react-router-dom';
+import Toggle from 'material-ui/Toggle';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 class PagesNavigationPanel extends React.Component {
     constructor(props) {
         super(props);
+        this.loadTheme = this.loadTheme.bind(this);
     }
 
     render() {
@@ -31,6 +34,7 @@ class PagesNavigationPanel extends React.Component {
                 return <li><Link to={this.props.dashboardId + "/" + page} replace>{page}</Link></li>;
             });
         }
+        this.loadTheme("", false);
         return <div className={"sidebar-wrapper sidebar-nav hidden-xs pages-navigation-panel " + this.props.toggled}>
             <div className="product-logo pages-nav-panel-product-logo">
                 <i className="icon fw fw-wso2-logo"></i>
@@ -43,7 +47,41 @@ class PagesNavigationPanel extends React.Component {
                     {this.props.pagesList}
                 </ul>
             </div>
+            <hr/>
+            <MuiThemeProvider>
+                <div className="dark-light-theme-switch-div">
+                    Light
+                    <Toggle
+                        onToggle={this.loadTheme}
+                        labelPosition="right"
+                        label="Dark"
+                        className="dark-light-theme-switch-toggleBtn"
+                    />
+                </div>
+            </MuiThemeProvider>
         </div>;
+    }
+
+    loadTheme(event, isInputChecked) {
+        var styleSheet = document.getElementById("dashboard-theme");
+        if (styleSheet !== null) {
+            styleSheet.disabled = true;
+            styleSheet.parentNode.removeChild(styleSheet);
+        }
+        let head = document.getElementsByTagName('head')[0];
+        let link = document.createElement('link');
+        //TODO Need to get the app context properly when the server is ready
+        let appContext = window.location.pathname.split("/")[1];
+        let baseURL = window.location.origin;
+        link.type = 'text/css';
+        if (isInputChecked) {
+            link.href = baseURL + "/" + appContext + "/themes/goldenlayout-dark-theme.css";
+        } else {
+            link.href = baseURL + "/" + appContext + "/themes/goldenlayout-light-theme.css";
+        }
+        link.id = "dashboard-theme";
+        link.rel = "stylesheet";
+        head.appendChild(link);
     }
 }
 
