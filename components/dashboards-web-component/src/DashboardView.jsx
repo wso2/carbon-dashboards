@@ -34,6 +34,7 @@ class DashboardView extends React.Component {
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
+        this.findPageByID = this.findPageByID.bind(this);
     }
 
     componentDidMount() {
@@ -47,25 +48,39 @@ class DashboardView extends React.Component {
     }
 
     setDashboardProperties(response) {
-        let pages;
-        pages = Object.keys(JSON.parse(response.data.content)[0]);
         this.setState({
             dashboardName: response.data.name,
-            dashboardContent: JSON.parse(response.data.content),
-            pages: pages
+            dashboardContent: (JSON.parse(response.data.content)).pages
         });
     }
 
     getDashboardByPageId(pageId, dashboardContent) {
         let dashboardPageContent = [];
-        if (dashboardContent[0]) {
-            if (!pageId) {
-                dashboardPageContent.push(dashboardContent[0]["page0"]);
-            } else {
-                dashboardPageContent.push(dashboardContent[0][pageId]);
+        if (pageId) {
+            let pages = pageId.split("/");
+            let parentPage = dashboardContent;
+            let selectedPage;
+            pages.forEach(page => {
+                selectedPage = this.findPageByID(page, parentPage);
+                parentPage = selectedPage.pages;
+            });
+            dashboardPageContent.push(selectedPage.content[0]);
+        } else {
+            if (dashboardContent[0]) {
+                dashboardPageContent.push(this.findPageByID("page1", dashboardContent).content[0]);
             }
         }
         return dashboardPageContent;
+    }
+
+    findPageByID(pageId, pagesList) {
+        let selectedPage;
+        pagesList.find(page => {
+            if (page.id === pageId) {
+                selectedPage = page;
+            }
+        });
+        return selectedPage;
     }
 
     togglePagesNavPanel(toggled) {
@@ -82,13 +97,14 @@ class DashboardView extends React.Component {
                                  togglePagesNavPanel={this.togglePagesNavPanel}>
             </DashboardViewHeader>
             <PagesNavigationPanel dashboardId={this.props.match.params.id}
-                                  pages={this.state.pages}
+                                  dashboardContent={this.state.dashboardContent}
                                   dashboardName={this.state.dashboardName}
-                                  toggled={this.state.toggled}>
+                                  toggled={this.state.toggled}
+                                  match={this.props.match}>
             </PagesNavigationPanel>
             <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
             <DashboardRenderingComponent
-                dashboardContent={this.getDashboardByPageId(this.props.match.params.pageId, this.state.dashboardContent)}>
+                dashboardContent={this.getDashboardByPageId(this.props.match.params[1], this.state.dashboardContent)}>
             </DashboardRenderingComponent>
         </section>;
     }

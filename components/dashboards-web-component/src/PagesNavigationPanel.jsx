@@ -18,20 +18,50 @@
  */
 
 import React from 'react';
-import {Link} from 'react-router-dom';
 import Toggle from 'material-ui/Toggle';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Paper from 'material-ui/Paper';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+import {Link} from 'react-router-dom';
 
 class PagesNavigationPanel extends React.Component {
     constructor(props) {
         super(props);
         this.loadTheme = this.loadTheme.bind(this);
+        this.generateDashboardPagesMenu = this.generateDashboardPagesMenu.bind(this);
+    }
+
+    generateDashboardPagesMenu(page, parentPageId) {
+        if (!page.pages) {
+            return <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` +
+            (parentPageId ? parentPageId + "/" + page.id : page.id)} replace={true}>
+                <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
+            </Link>;
+        } else {
+            parentPageId = parentPageId ? parentPageId + "/" + page.id : page.id;
+            return <section><Link
+                to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + parentPageId}
+                replace={true}>
+                <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
+            </Link>
+                <MenuItem primaryText="">
+                    { page.pages.map(page => {
+                        return this.generateDashboardPagesMenu(page, parentPageId)
+                    }) }
+                </MenuItem></section>;
+        }
     }
 
     render() {
-        if (this.props.pages) {
-            this.props.pagesList = this.props.pages.map(page => {
-                return <li><Link to={this.props.dashboardId + "/" + page} replace>{page}</Link></li>;
+        if (this.props.dashboardContent) {
+            this.props.pagesList = this.props.dashboardContent.map(page => {
+                return <MuiThemeProvider><Paper className="pages-menu">
+                    <Menu className="pages-menu">
+                        {this.generateDashboardPagesMenu(page)}
+                    </Menu>
+                </Paper></MuiThemeProvider>;
             });
         }
         this.loadTheme("", false);
