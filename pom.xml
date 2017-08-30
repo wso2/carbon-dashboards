@@ -92,12 +92,18 @@
                 <artifactId>org.wso2.carbon.dashboards.sample.store.provider</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.core</artifactId>
+                <version>${carbon.kernel.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <properties>
         <project.scm.id>github-scm</project.scm.id>
         <carbon.dashboards.version>4.0.0-SNAPSHOT</carbon.dashboards.version>
+        <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
         <carbon.datasource.core.version>1.0.0</carbon.datasource.core.version>
         <carbon.messaging.version>1.0.6</carbon.messaging.version>
         <msf4j-core.version>2.1.0</msf4j-core.version>
