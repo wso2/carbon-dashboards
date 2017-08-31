@@ -23,22 +23,17 @@ package org.wso2.carbon.dashboards.core.internal.dao.utils;
  */
 public class SQLConstants {
 
-    public static final String ADD_METADATA_QUERY = "add_metadata";
-    public static final String GET_METADATA_BY_URL_QUERY = "get_metadata_by_url";
-    public static final String GET_METADATA_BY_OWNER_QUERY = "get_metadata_by_owner";
-    public static final String DELETE_METADATA_QUERY = "delete_metadata";
-    public static final String MERGE_METADATA_BY_URL_AND_OWNER_QUERY = "merge_metadata_by_url_and_owner";
+    public static final String ADD_DASHBOARD_CONTENT_QUERY = "add_dashboard";
+    public static final String GET_DASHBOARD_METADATA_LIST_QUERY = "get_dashboard_metadata_list";
+    public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
+    public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
+    public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
 
     public static final String DASHBOARD_URL = "DASHBOARD_URL";
     public static final String DASHBOARD_NAME = "DASHBOARD_NAME";
-    public static final String DASHBOARD_VERSION = "DASHBOARD_VERSION";
-    public static final String DASHBOARD_OWNER = "DASHBOARD_OWNER";
-    public static final String DASHBOARD_UPDATEDBY = "DASHBOARD_UPDATEDBY";
     public static final String DASHBOARD_DESCRIPTION = "DASHBOARD_DESCRIPTION";
-    public static final String DASHBOARD_SHARED = "DASHBOARD_SHARED";
     public static final String DASHBOARD_CONTENT = "DASHBOARD_CONTENT";
     public static final String DASHBOARD_PARENT_ID = "DASHBOARD_PARENT_ID";
-    public static final String DASHBOARD_CREATED_TIME = "DASHBOARD_CREATED_TIME";
-    public static final String DASHBOARD_LAST_UPDATED = "DASHBOARD_LAST_UPDATED";
     public static final String DASHBOARD_ID = "DASHBOARD_ID";
+    public static final String DASHBOARD_LANDING_PAGE = "DASHBOARD_LANDING_PAGE";
 }

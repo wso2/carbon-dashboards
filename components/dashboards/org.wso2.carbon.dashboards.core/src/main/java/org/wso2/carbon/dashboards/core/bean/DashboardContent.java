@@ -25,7 +25,6 @@ public class DashboardContent {
     private String id;
     private String name;
     private String description;
-    private String version;
     private Object pages;
 
     public String getId() {
@@ -50,14 +49,6 @@ public class DashboardContent {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 
     public Object getPages() {

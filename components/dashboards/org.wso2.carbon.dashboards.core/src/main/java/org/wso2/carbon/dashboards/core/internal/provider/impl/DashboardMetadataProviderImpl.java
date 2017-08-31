@@ -46,7 +46,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -93,22 +92,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     @Override
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
-        if (dashboardMetadata.getOwner() != null) {
-            dashboardMetadata.setLastUpdatedBy(dashboardMetadata.getOwner());
-        }
-        long currentTime = (new Date()).getTime();
-        if (dashboardMetadata.getLastUpdatedTime() == 0L) {
-            dashboardMetadata.setLastUpdatedTime(currentTime);
-        }
-        if (dashboardMetadata.getCreatedTime() == 0L) {
-            dashboardMetadata.setCreatedTime(currentTime);
-        }
         dao.add(dashboardMetadata);
     }
 
     @Override
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
-        dashboardMetadata.setLastUpdatedTime((new Date()).getTime());
         dao.update(dashboardMetadata);
     }
 
@@ -212,11 +200,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
                 dashboard.setUrl((dashboardContent.getId()));
                 dashboard.setName(dashboardContent.getName());
                 dashboard.setDescription(dashboardContent.getDescription());
-                dashboard.setVersion(dashboardContent.getVersion());
-                dashboard.setOwner("admin");
-                dashboard.setLastUpdatedBy("admin");
-                dashboard.setShared(false);
-                dashboard.setContent(content);
+                dashboard.setPages(content);
             } catch (IOException e) {
                 throw new DashboardException("Unable to read the dashboard from the file system.");
             }
@@ -253,11 +237,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
                     metadata.setUrl((dashboardContent.getId()));
                     metadata.setName(dashboardContent.getName());
                     metadata.setDescription(dashboardContent.getDescription());
-                    metadata.setVersion(dashboardContent.getVersion());
-                    metadata.setOwner("admin");
-                    metadata.setLastUpdatedBy("admin");
-                    metadata.setShared(false);
-                    metadata.setContent(content);
+                    metadata.setPages(content);
                     dashboards.add(metadata);
                 } catch (IOException e) {
                     throw new DashboardException("Unable to read dashboards from the file system.");

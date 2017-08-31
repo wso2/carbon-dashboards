@@ -50,7 +50,7 @@ class DashboardView extends React.Component {
     setDashboardProperties(response) {
         this.setState({
             dashboardName: response.data.name,
-            dashboardContent: (JSON.parse(response.data.content)).pages
+            dashboardContent: (JSON.parse(response.data.pages))
         });
     }
 
