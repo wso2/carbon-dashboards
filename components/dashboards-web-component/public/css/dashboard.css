@@ -73,7 +73,7 @@
 .pages-navigation-panel {
     width: 14%;
     height: 100%;
-    background-color:#353c48;
+    background-color: #353c48;
 }
 
 .pages-nav-panel-product-logo {
@@ -84,6 +84,7 @@
 .pages-nav-panel-dashboard-name {
     text-align: center;
     font-size: 25px;
+    margin-bottom: 25px;
 }
 
 .dashboard-view-header {
@@ -109,10 +110,20 @@
 }
 
 .dark-light-theme-switch-div {
-    display:flex;
+    display: flex;
     margin-left: 15px;
 }
 
 .dark-light-theme-switch-toggleBtn {
     margin-left: 10px;
+}
+
+.pages-menu {
+    background-color: #1E2531;
+}
+
+.pages-menu-item {
+    background-color: #1E2531;
+    height: 40px;
+    min-height: 40px;
 }

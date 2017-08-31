@@ -32,8 +32,8 @@ class PortalRouter extends React.Component {
         return <div>
             <Switch>
                 <Route exact path='/portal' component={DashboardListing}/>
-                <Route path='*/dashboard/:id/:pageId' component={DashboardView}/>
-                <Route path='*/dashboard/:id' component={DashboardView}/>
+                <Route exact path='*/dashboards/:id' component={DashboardView}/>
+                <Route path='*/dashboards/:id/*' component={DashboardView}/>
             </Switch>
         </div>;
     }

@@ -36,7 +36,7 @@ class DashboardThumbnail extends React.Component {
                             </div>
                         </div>
                         <div className="dashboard-thumbnail-action-panel">
-                            <Link to={"dashboard/" + this.props.dashboard.url}>
+                            <Link to={"dashboards/" + this.props.dashboard.url}>
                                         <span className="fw-stack dashboard-thumbnail-action-icon">
                                             <i className="fw fw-circle-outline fw-stack-2x"></i>
                                             <i className="fw fw-view fw-stack-1x"></i>
