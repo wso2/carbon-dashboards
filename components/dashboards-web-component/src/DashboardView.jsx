@@ -71,21 +71,35 @@ class DashboardView extends React.Component {
 
     getDashboardByPageId(pageId, dashboardContent) {
         let dashboardPageContent = [];
-        if (pageId) {
-            let pages = pageId.split("/");
-            let parentPage = dashboardContent;
-            let selectedPage;
-            pages.forEach(page => {
-                selectedPage = this.findPageByID(page, parentPage);
-                parentPage = selectedPage.pages;
-            });
-            dashboardPageContent.push(selectedPage.content[0]);
-        } else {
-            if (dashboardContent[0]) {
-                dashboardPageContent.push(this.findPageByID("page1", dashboardContent).content[0]);
+        if (dashboardContent[0]) {
+            if (pageId) {
+                let pages = pageId.split("/");
+                let parentPage = dashboardContent;
+                let selectedPage;
+                pages.forEach(page => {
+                    selectedPage = this.findPageByID(page, parentPage);
+                    parentPage = selectedPage.pages;
+                });
+                dashboardPageContent.push(selectedPage.content[0]);
+            } else {
+                dashboardPageContent.push(this.findPageFromDashboardJSon(this.state.landingPage, dashboardContent).content[0]);
             }
         }
         return dashboardPageContent;
+    }
+
+    findPageFromDashboardJSon(pageId, pagesList) {
+        let selectedPage;
+        for (let page of pagesList) {
+            if (page.id === pageId) {
+                selectedPage = page;
+                break;
+            }
+            else if (page.pages) {
+                selectedPage = this.findPageFromDashboardJSon(pageId, page.pages)
+            }
+        }
+        return selectedPage;
     }
 
     findPageByID(pageId, pagesList) {
