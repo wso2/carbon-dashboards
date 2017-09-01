@@ -97,7 +97,7 @@ class DashboardRenderingComponent extends React.Component {
         let appContext = window.location.pathname.split("/")[1];
         let baseURL = window.location.origin;
         script.type = 'text/javascript';
-        script.src = baseURL + "/" + appContext + "/widgets/" + widgetID + "/" + widgetID + ".js";
+        script.src = baseURL + "/" + appContext + "/public/extensions/widgets/" + widgetID + "/" + widgetID + ".js";
         head.appendChild(script);
     }
 
