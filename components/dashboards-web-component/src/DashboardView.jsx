@@ -22,6 +22,7 @@ import DashboardViewHeader from './DashboardViewHeader';
 import DashboardRenderingComponent from './DashboardRenderingComponent';
 import PagesNavigationPanel from './PagesNavigationPanel';
 import axios from 'axios';
+import DashboardsAPIs from './utils/dashboard-apis';
 
 class DashboardView extends React.Component {
     constructor(props) {
@@ -38,11 +39,9 @@ class DashboardView extends React.Component {
     }
 
     componentDidMount() {
-        let httpClient = axios.create({
-            baseURL: window.location.origin + '/dashboards',
-            timeout: 2000
-        });
-        httpClient.get(this.props.match.params.id).then(this.setDashboardProperties).catch(function (error) {
+        let dashboardsAPis = new DashboardsAPIs();
+        let promised_dashboard = dashboardsAPis.getDashboardByID(this.props.match.params.id)
+        promised_dashboard.then(this.setDashboardProperties).catch(function (error) {
             //TODO Need to use proper notification library to show the error
         });
     }
