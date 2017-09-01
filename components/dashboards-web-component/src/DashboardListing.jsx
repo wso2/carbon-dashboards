@@ -23,6 +23,7 @@ import axios from 'axios';
 import NavigationBar from './NavigationBar';
 import DashboardThumbnail from './DashboardThumbnail';
 import '../public/css/dashboard.css';
+import DashboardsAPIs from './utils/dashboard-apis';
 
 class DashboardListing extends React.Component {
     constructor() {
@@ -38,21 +39,19 @@ class DashboardListing extends React.Component {
     }
 
     retrieveDashboards() {
-        //TODO Need to get the baseURL properly when the server part is ready
-        let httpClient = axios.create({
-            baseURL: window.location.origin,
-            timeout: 2000
-        });
+        let dashboardAPIs = new DashboardsAPIs();
+        let promised_dashboard_list = dashboardAPIs.getDashboardList();
         let thisRef = this;
-        httpClient.get('/dashboards').then(function (response) {
-            let dashboardList;
-            dashboardList = response.data.map(dashboard => {
-                return <DashboardThumbnail dashboard={dashboard}/>;
-            });
-            thisRef.setState({dashboard: dashboardList});
-        }).catch(function (error) {
-            //TODO Need to use proper notification library to show the error
-        });
+        promised_dashboard_list.then((response) => {
+                let dashboardList;
+                dashboardList = response.data.map(dashboard => {
+                    return <DashboardThumbnail dashboard={dashboard}/>;
+                });
+                thisRef.setState({dashboard: dashboardList});
+            }).catch(function (error) {
+                //TODO Need to use proper notification library to show the error
+            }
+        );
     }
 
     render() {
