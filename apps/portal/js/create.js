@@ -149,6 +149,9 @@ $(function () {
         if (!$.trim(title.val()) || !$.trim(id.val())) {
             !$.trim(title.val()) ? showInlineError(title, titleError) : showInlineError(id, idError);
         } else {
+            title.val(sanitizeInput(title.val()));
+            var description = $("#ues-dashboard-description");
+            description.val(sanitizeInput(description.val()));
             form.attr('action', url);
             $.ajax({
                 url: apiUrl,
