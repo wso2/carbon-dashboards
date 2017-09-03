@@ -17,30 +17,14 @@
  *
  */
 
-.dashboard-thumbnail {
-    margin-top: 15px;
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(48, 48, 48);
 }
 
-.dashboard-thumbnail-div {
-    background-color: #aab6cb;
-}
-
-.dashboard-thumbnail-logo {
-    font-size: 80px;
-}
-
-.dashboard-thumbnail-action-panel {
-    margin-top: 5px;
-}
-
-.dashboard-thumbnail-disabled-action-button {
-    opacity: .6;
-    pointer-events: none;
-    margin-left: 10px;
-}
-
-.dashboard-thumbnail-action-icon {
-    margin-right: 5px;
+a {
+    text-decoration: none;
 }
 
 .dashboard-listing-header {
@@ -60,9 +44,9 @@
 }
 
 .dashboard-view {
-    margin-left: 15%;
-    height: 88vh;
-    margin-right: 10px;
+    padding: 15px;
+    box-sizing: border-box;
+    height: calc(100vh - 64px);
 }
 
 .dashboard-view-full-width {
@@ -118,12 +102,74 @@
     margin-left: 10px;
 }
 
-.pages-menu {
-    background-color: #1E2531;
+.dashboard-view-product-logo {
+    text-align: center;
+    font-size: 50px;
+    margin-bottom: 15px;
+    padding-top: 24px;
 }
 
-.pages-menu-item {
-    background-color: #1E2531;
-    height: 40px;
-    min-height: 40px;
+.dashboard-view-product-name {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.content-drawer-closed {
+    padding-left: 0;
+}
+
+.content-drawer-opened {
+    padding-left: 256px;
+}
+
+/* dashboard listing grid */
+.dashboard-listing-container {
+    padding: 10px;
+}
+
+.dashboard-thumbnail {
+    width: 25%;
+    float: left;
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+}
+
+.dashboard-thumbnail .content {
+    background: #444; 
+    padding: 15px;
+    margin: 10px;
+}
+
+.dashboard-thumbnail h4, .dashboard-thumbnail p {
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-thumbnail h4 {
+    font-size: 24px;
+    font-weight: normal;
+    margin-bottom: 5px;
+}
+
+.dashboard-thumbnail p {
+    font-size: 14px;
+}
+
+.dashboard-thumbnail .actions {
+    padding-top: 15px
+}
+
+.dashboard-thumbnail .actions a {
+    color: rgb(48, 48, 48);
+}
+
+.dashboard-thumbnail .actions .icon {
+    margin-right: 5px;
+}
+
+.dashboard-thumbnail .actions a.disabled {
+    opacity: .6;
+    pointer-events: none;
+    margin-left: 10px;
 }

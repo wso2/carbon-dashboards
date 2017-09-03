@@ -18,15 +18,16 @@
  */
 
 import React from 'react';
+import AppBar from 'material-ui/AppBar/AppBar';
 
 class Header extends React.Component {
     render() {
-        return <div className="dashboard-listing-header">
-            <h1 className="text-center-xs dashboard-listing-h1">
-                <i className="icon fw fw-wso2-logo dashboard-listing-header-logo"></i>
-                {this.props.dashboardName}
-            </h1>
-        </div>;
+        return (
+            <AppBar
+                title={this.props.dashboardName}
+                iconClassNameRight="muidocs-icon-navigation-expand-more"
+            />
+        );
     }
 }
 

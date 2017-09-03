@@ -41,10 +41,7 @@ class DashboardRenderingComponent extends React.Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        if (JSON.stringify(this.props.dashboardContent) === JSON.stringify(nextProps.dashboardContent)) {
-            return false;
-        }
-        return true;
+        return JSON.stringify(this.props.dashboardContent) !== JSON.stringify(nextProps.dashboardContent); 
     }
 
     renderDashboard() {
