@@ -19,23 +19,41 @@
 
 import React from 'react';
 import Header from './Header';
-import axios from 'axios';
-import NavigationBar from './NavigationBar';
 import DashboardThumbnail from './DashboardThumbnail';
 import '../public/css/dashboard.css';
 import DashboardsAPIs from './utils/dashboard-apis';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
+const muiTheme = getMuiTheme(darkBaseTheme);
 
 class DashboardListing extends React.Component {
     constructor() {
         super();
         this.state = {
-            dashboard: ""
+            dashboards: "",
+            open: true
         };
         this.retrieveDashboards = this.retrieveDashboards.bind(this);
     }
 
     componentDidMount() {
         this.retrieveDashboards();
+    }
+
+    render() {
+        //TODO Need to get the dashboardName using app context
+        return (
+            <MuiThemeProvider muiTheme={muiTheme}>
+                <div>
+                    <Header dashboardName="Portal"/>
+                    <div className="dashboard-listing-container">
+                        {this.state.dashboards}
+                    </div>
+                </div>
+            </MuiThemeProvider>
+        );
     }
 
     retrieveDashboards() {
@@ -52,17 +70,6 @@ class DashboardListing extends React.Component {
                 //TODO Need to use proper notification library to show the error
             }
         );
-    }
-
-    render() {
-        //TODO Need to get the dashboardName using app context
-        return <div>
-            <Header dashboardName="Portal"/>
-            <NavigationBar/>
-            <div>
-                {this.state.dashboard}
-            </div>
-        </div>;
     }
 }
 

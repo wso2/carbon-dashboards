@@ -41,15 +41,15 @@ class ViewHeader extends React.Component {
     }
 
     render() {
-        return <div className="dashboard-view-header-toggled">
-            <a onClick={this.togglePagesNavPanel}
-               className="sidebar-toggle-button hidden-xs active pages-nav-toggle-btn"
-               aria-expanded={this.state.toggled}>
-                        <span className="icon fw-stack">
-                            <i className="fw fw-menu fw-stack-1x toggle-icon-left"></i>
-                        </span>
-            </a>
-        </div>;
+        return (
+            <div className="dashboard-view-header-toggled">
+                <a onClick={this.togglePagesNavPanel} className="sidebar-toggle-button hidden-xs active pages-nav-toggle-btn" aria-expanded={this.state.toggled}>
+                    <span className="icon fw-stack">
+                        <i className="fw fw-menu fw-stack-1x toggle-icon-left"></i>
+                    </span>
+                </a>
+            </div>
+        );
     }
 }
 

@@ -19,45 +19,53 @@
 
 import React from 'react';
 import {Link} from 'react-router-dom';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class DashboardThumbnail extends React.Component {
     render() {
+        let styles = {
+            card: {
+                "background-color": this.props.muiTheme.palette.primary3Color
+            },
+            title: {
+                "color": this.props.muiTheme.palette.textColor
+            },
+            subtitle: {
+                "color": this.props.muiTheme.palette.alternateTextColor
+            },
+            buttons: {
+                "margin-right": "15px"
+            }
+        }
+
         return (
-            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3 dashboard-thumbnail">
-                <div className="dashboard-thumbnail-div">
-                    <div className="add-padding-2x add-padding-top-5x">
-                        <div>
-                            <div className="media-left add-padding-right-4x add-padding-left-2x">
-                                <i className="fw fw-dashboard media-object-5x dashboard-thumbnail-logo"></i>
-                            </div>
-                            <div className="media-body">
-                                <h4 className="media-heading add-margin-top-1x">{this.props.dashboard.name}</h4>
-                                <p>{this.props.dashboard.description}</p>
-                            </div>
-                        </div>
-                        <div className="dashboard-thumbnail-action-panel">
-                            <Link to={"dashboards/" + this.props.dashboard.url}>
-                                        <span className="fw-stack dashboard-thumbnail-action-icon">
-                                            <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                            <i className="fw fw-view fw-stack-1x"></i>
-                                        </span>
-                                View
-                            </Link>
-                            <a href="" className="dashboard-thumbnail-disabled-action-button">
-                                        <span className="fw-stack dashboard-thumbnail-action-icon">
-                                            <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                            <i className="fw fw-edit fw-stack-1x"></i>
-                                        </span>
-                                Design
-                            </a>
-                            <a href="" className="dashboard-thumbnail-disabled-action-button">
-                                        <span className="fw-stack dashboard-thumbnail-action-icon">
-                                            <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                            <i className="fw fw-settings fw-stack-1x"></i>
-                                        </span>
-                                Settings
-                            </a>
-                        </div>
+            <div className="dashboard-thumbnail">
+                <div style={styles.card} className="content">
+                    <h4 style={styles.title}>{this.props.dashboard.name}</h4>
+                    <p style={styles.subtitle}>{this.props.dashboard.description}</p>
+
+                    <div className="actions">
+                        <Link to={"dashboards/" + this.props.dashboard.url}>
+                            <span className="fw-stack icon">
+                                <i className="fw fw-circle-outline fw-stack-2x"></i>
+                                <i className="fw fw-view fw-stack-1x"></i>
+                            </span>
+                            View
+                        </Link>
+                        <a href="" className="disabled">
+                            <span className="fw-stack icon">
+                                <i className="fw fw-circle-outline fw-stack-2x"></i>
+                                <i className="fw fw-edit fw-stack-1x"></i>
+                            </span>
+                            Design
+                        </a>
+                        <a href="" className="disabled">
+                            <span className="fw-stack icon">
+                                <i className="fw fw-circle-outline fw-stack-2x"></i>
+                                <i className="fw fw-settings fw-stack-1x"></i>
+                            </span>
+                            Settings
+                        </a>
                     </div>
                 </div>
             </div>

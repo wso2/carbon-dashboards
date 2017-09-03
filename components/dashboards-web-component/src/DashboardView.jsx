@@ -21,8 +21,14 @@ import React from 'react';
 import DashboardViewHeader from './DashboardViewHeader';
 import DashboardRenderingComponent from './DashboardRenderingComponent';
 import PagesNavigationPanel from './PagesNavigationPanel';
-import axios from 'axios';
 import DashboardsAPIs from './utils/dashboard-apis';
+import AppBar from 'material-ui/AppBar/AppBar';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import Drawer from 'material-ui/Drawer';
+
+const muiTheme = getMuiTheme(darkBaseTheme);
 
 class DashboardView extends React.Component {
     constructor(props) {
@@ -31,11 +37,21 @@ class DashboardView extends React.Component {
             pageId: this.props.match.params.pageId,
             toggled: "toggled",
             dashboardViewCSS: "dashboard-view",
-            dashboardContent: []
+            dashboardContent: [],
+            open: true,
+            contentClass: "content-drawer-opened"
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
         this.findPageByID = this.findPageByID.bind(this);
+        this.handleToggle = this.handleToggle.bind(this);
+    }
+
+    handleToggle() { 
+        this.setState({
+            open: !this.state.open,
+            contentClass: this.state.open ? "content-drawer-closed" : "content-drawer-opened"
+        });
     }
 
     componentDidMount() {
@@ -91,21 +107,30 @@ class DashboardView extends React.Component {
     }
 
     render() {
-        return <section>
-            <DashboardViewHeader dashboardName={this.state.dashboardName}
-                                 togglePagesNavPanel={this.togglePagesNavPanel}>
-            </DashboardViewHeader>
-            <PagesNavigationPanel dashboardId={this.props.match.params.id}
+        return (
+            <MuiThemeProvider muiTheme={muiTheme}>
+                <div>
+                    <Drawer open={this.state.open}>
+                        <PagesNavigationPanel dashboardId={this.props.match.params.id}
                                   dashboardContent={this.state.dashboardContent}
                                   dashboardName={this.state.dashboardName}
                                   toggled={this.state.toggled}
-                                  match={this.props.match}>
-            </PagesNavigationPanel>
-            <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
-            <DashboardRenderingComponent
-                dashboardContent={this.getDashboardByPageId(this.props.match.params[1], this.state.dashboardContent)}>
-            </DashboardRenderingComponent>
-        </section>;
+                                  match={this.props.match} />
+                    </Drawer>
+                    <div className={this.state.contentClass}>
+                        <AppBar
+                            title={this.props.dashboardName}
+                            iconClassNameRight="muidocs-icon-navigation-expand-more"
+                            onLeftIconButtonTouchTap={this.handleToggle}
+                        />
+                        <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
+                        <DashboardRenderingComponent
+                            dashboardContent={this.getDashboardByPageId(this.props.match.params[1], this.state.dashboardContent)} />
+                        
+                    </div>
+                </div>
+            </MuiThemeProvider>
+        );
     }
 }
 

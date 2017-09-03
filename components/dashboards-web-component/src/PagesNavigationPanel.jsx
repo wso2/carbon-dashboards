@@ -35,50 +35,54 @@ class PagesNavigationPanel extends React.Component {
 
     generateDashboardPagesMenu(page, parentPageId) {
         if (!page.pages) {
-            return <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` +
-            (parentPageId ? parentPageId + "/" + page.id : page.id)} replace={true}>
-                <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
-            </Link>;
+            return (
+                <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + (parentPageId ? parentPageId + "/" + page.id : page.id)} replace={true}>
+                    <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
+                </Link>
+            );
         } else {
             parentPageId = parentPageId ? parentPageId + "/" + page.id : page.id;
-            return <section><Link
-                to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + parentPageId}
-                replace={true}>
-                <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
-            </Link>
-                <MenuItem primaryText="">
-                    { page.pages.map(page => {
-                        return this.generateDashboardPagesMenu(page, parentPageId)
-                    }) }
-                </MenuItem></section>;
+            return (
+                <section>
+                    <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + parentPageId} replace={true}>
+                        <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
+                    </Link>
+                    <MenuItem primaryText="">
+                        {page.pages.map(page => {
+                            return this.generateDashboardPagesMenu(page, parentPageId)
+                        })}
+                    </MenuItem>    
+                </section>
+            );
         }
     }
 
     render() {
         if (this.props.dashboardContent) {
             this.props.pagesList = this.props.dashboardContent.map(page => {
-                return <MuiThemeProvider><Paper className="pages-menu">
-                    <Menu className="pages-menu">
-                        {this.generateDashboardPagesMenu(page)}
-                    </Menu>
-                </Paper></MuiThemeProvider>;
+                return (
+                    <Paper className="pages-menu">
+                        <Menu className="pages-menu">
+                            {this.generateDashboardPagesMenu(page)}
+                        </Menu>
+                    </Paper>
+                );
             });
         }
         this.loadTheme("", false);
-        return <div className={"sidebar-wrapper sidebar-nav hidden-xs pages-navigation-panel " + this.props.toggled}>
-            <div className="product-logo pages-nav-panel-product-logo">
-                <i className="icon fw fw-wso2-logo"></i>
-            </div>
-            <div className="product-name pages-nav-panel-dashboard-name">
-                {this.props.dashboardName}
-            </div>
+
+        return (
             <div>
-                <ul className="nav nav-pills nav-stacked menu-customize pages">
+                <div className="dashboard-view-product-logo">
+                    <i className="icon fw fw-wso2-logo"></i>
+                </div>
+                <div className="dashboard-view-product-name">
+                    {this.props.dashboardName}
+                </div>
+                <div>
                     {this.props.pagesList}
-                </ul>
-            </div>
-            <hr/>
-            <MuiThemeProvider>
+                </div>
+                <hr />
                 <div className="dark-light-theme-switch-div">
                     Light
                     <Toggle
@@ -88,8 +92,8 @@ class PagesNavigationPanel extends React.Component {
                         className="dark-light-theme-switch-toggleBtn"
                     />
                 </div>
-            </MuiThemeProvider>
-        </div>;
+            </div>
+        );
     }
 
     loadTheme(event, isInputChecked) {
