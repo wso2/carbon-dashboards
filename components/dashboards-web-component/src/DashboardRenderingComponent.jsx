@@ -33,6 +33,11 @@ class DashboardRenderingComponent extends React.Component {
         this.renderDashboard = this.renderDashboard.bind(this);
         this.loadWidget = this.loadWidget.bind(this);
         this.findWidget = this.findWidget.bind(this);
+        this.updateLayout = this.updateLayout.bind(this);
+    }
+
+    updateLayout() {
+        dashboardLayout.updateSize();
     }
 
     render() {

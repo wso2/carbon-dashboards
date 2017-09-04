@@ -52,6 +52,10 @@ class DashboardView extends React.Component {
             open: !this.state.open,
             contentClass: this.state.open ? "content-drawer-closed" : "content-drawer-opened"
         });
+        var that = this;
+        setTimeout(function() {
+            that.dashboardRenderingComponent.updateLayout();
+        }, 100);
     }
 
     componentDidMount() {
@@ -138,7 +142,7 @@ class DashboardView extends React.Component {
                             onLeftIconButtonTouchTap={this.handleToggle}
                         />
                         <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
-                        <DashboardRenderingComponent
+                        <DashboardRenderingComponent ref={(c) => {this.dashboardRenderingComponent = c;}}
                             dashboardContent={this.getDashboardByPageId(this.props.match.params[1], this.state.dashboardContent)} />
                         
                     </div>
