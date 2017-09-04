@@ -105,9 +105,9 @@ class PagesNavigationPanel extends React.Component {
         let baseURL = window.location.origin;
         link.type = 'text/css';
         if (isInputChecked) {
-            link.href = baseURL + "/" + appContext + "/themes/goldenlayout-dark-theme.css";
+            link.href = baseURL + "/" + appContext + "/public/themes/dark/css/goldenlayout-dark-theme.css";
         } else {
-            link.href = baseURL + "/" + appContext + "/themes/goldenlayout-light-theme.css";
+            link.href = baseURL + "/" + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
         }
         link.id = "dashboard-theme";
         link.rel = "stylesheet";
