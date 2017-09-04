@@ -59,13 +59,13 @@ class DashboardListing extends React.Component {
     retrieveDashboards() {
         let dashboardAPIs = new DashboardsAPIs();
         let promised_dashboard_list = dashboardAPIs.getDashboardList();
-        let thisRef = this;
+        let that = this;
         promised_dashboard_list.then((response) => {
                 let dashboardList;
                 dashboardList = response.data.map(dashboard => {
-                    return <DashboardThumbnail dashboard={dashboard}/>;
+                    return <DashboardThumbnail dashboard={dashboard} muiTheme={muiTheme}/>;
                 });
-                thisRef.setState({dashboard: dashboardList});
+                that.setState({dashboards: dashboardList});
             }).catch(function (error) {
                 //TODO Need to use proper notification library to show the error
             }

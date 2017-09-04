@@ -32,18 +32,14 @@ class DashboardThumbnail extends React.Component {
             },
             subtitle: {
                 "color": this.props.muiTheme.palette.alternateTextColor
-            },
-            buttons: {
-                "margin-right": "15px"
             }
-        }
+        };
 
         return (
             <div className="dashboard-thumbnail">
                 <div style={styles.card} className="content">
                     <h4 style={styles.title}>{this.props.dashboard.name}</h4>
                     <p style={styles.subtitle}>{this.props.dashboard.description}</p>
-
                     <div className="actions">
                         <Link to={"dashboards/" + this.props.dashboard.url}>
                             <span className="fw-stack icon">
