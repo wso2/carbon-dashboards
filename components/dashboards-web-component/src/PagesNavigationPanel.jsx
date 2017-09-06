@@ -31,12 +31,16 @@ class PagesNavigationPanel extends React.Component {
         super(props);
         this.loadTheme = this.loadTheme.bind(this);
         this.generateDashboardPagesMenu = this.generateDashboardPagesMenu.bind(this);
+        this.isThemeSwitchToggled = this.isThemeSwitchToggled.bind(this);
+        this.setThemeSwitchToggled = this.setThemeSwitchToggled.bind(this);
     }
 
     generateDashboardPagesMenu(page, parentPageId) {
         if (!page.pages) {
             return (
-                <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + (parentPageId ? parentPageId + "/" + page.id : page.id)} replace={true}>
+                <Link
+                    to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + (parentPageId ? parentPageId + "/" + page.id : page.id)}
+                    replace={true}>
                     <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
                 </Link>
             );
@@ -44,14 +48,15 @@ class PagesNavigationPanel extends React.Component {
             parentPageId = parentPageId ? parentPageId + "/" + page.id : page.id;
             return (
                 <section>
-                    <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + parentPageId} replace={true}>
+                    <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + parentPageId}
+                          replace={true}>
                         <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
                     </Link>
                     <MenuItem primaryText="">
                         {page.pages.map(page => {
                             return this.generateDashboardPagesMenu(page, parentPageId)
                         })}
-                    </MenuItem>    
+                    </MenuItem>
                 </section>
             );
         }
@@ -69,8 +74,7 @@ class PagesNavigationPanel extends React.Component {
                 );
             });
         }
-        this.loadTheme("", false);
-
+        this.loadTheme("", this.isThemeSwitchToggled());
         return (
             <div>
                 <div className="dashboard-view-product-logo">
@@ -89,11 +93,20 @@ class PagesNavigationPanel extends React.Component {
                         onToggle={this.loadTheme}
                         labelPosition="right"
                         label="Dark"
+                        defaultToggled={this.isThemeSwitchToggled()}
                         className="dark-light-theme-switch-toggleBtn"
                     />
                 </div>
             </div>
         );
+    }
+
+    isThemeSwitchToggled() {
+        return JSON.parse(window.localStorage.getItem("theme") ? window.localStorage.getItem("theme") : "true");
+    }
+
+    setThemeSwitchToggled(theme) {
+        window.localStorage.setItem("theme", theme);
     }
 
     loadTheme(event, isInputChecked) {
@@ -109,8 +122,10 @@ class PagesNavigationPanel extends React.Component {
         let baseURL = window.location.origin;
         link.type = 'text/css';
         if (isInputChecked) {
+            this.setThemeSwitchToggled(true);
             link.href = baseURL + "/" + appContext + "/public/themes/dark/css/goldenlayout-dark-theme.css";
         } else {
+            this.setThemeSwitchToggled(false);
             link.href = baseURL + "/" + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
         }
         link.id = "dashboard-theme";
