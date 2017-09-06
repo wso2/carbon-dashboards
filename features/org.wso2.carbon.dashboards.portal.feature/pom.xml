@@ -31,7 +31,6 @@
     <name>WSO2 Carbon - Dashboard Portal Feature</name>
     <url>http://wso2.org</url>
 
-
     <description>
         This feature contains the dashboard portal webapp
     </description>
@@ -46,7 +45,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -74,7 +72,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.wso2.carbon.maven</groupId>
                 <artifactId>carbon-feature-plugin</artifactId>
