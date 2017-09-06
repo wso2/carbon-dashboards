@@ -34,6 +34,7 @@
         <module>components/dashboards/org.wso2.carbon.dashboards.core</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
         <module>components/dashboards-web-component</module>
+        <module>features/org.wso2.carbon.dashboards.portal.feature</module>
     </modules>
     <dependencyManagement>
         <dependencies>
