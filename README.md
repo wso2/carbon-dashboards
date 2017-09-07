@@ -4,10 +4,10 @@
 
 Please follow the below steps to setup the WSO2 Dashboard Component.
 1. Clone and build carbon-dashboards repository. You need to build the "react-based-dashboard" branch
-2. Clone and build the carbon-ui-server repository available here ( Carbon-UI-Server - https://github
-.com/wso2/carbon-ui-server/ )
+2. Clone and build the carbon-ui-server repository available here ( Carbon-UI-Server - https://github.com/wso2/carbon-ui-server/ )
 3. Install Dashboard Core API Feature and Dashboard Portal Feature in to distribution available in carbon-ui-server.
-4. You can add following properties to pom file available in Carbon-UI-Server/tests/distribution directory.
+
+You can add following properties to pom file available in Carbon-UI-Server/tests/distribution directory.
 
 ```xml
         <dependency>
@@ -36,21 +36,20 @@ Please follow the below steps to setup the WSO2 Dashboard Component.
 
 ```
 
-5. Unzip the distribution and run the server. You can access the dashboard component from
-https://localhost:9292/portal/
-http://localhost:9090/portal/
+4. Unzip the distribution and run the server. You can access the dashboard component from
+https://localhost:9292/portal/ or http://localhost:9090/portal/
 
 ## License
 Carbon dashboards is available under the Apache 2 License.
 
 ## How To Contribute
-    Please report issues at WSO2 Carbon Dashboard Issues
-    Send your pull requests.
-    You can find more instructions on howto contribute on community site (http://wso2.com/community).
+* Please report issues at [WSO2 Dashboards Issues](https://github.com/wso2/carbon-dashboards/issues).
+* Send your pull requests [react-based-dashboard_branch](https://github.com/wso2/carbon-dashboards/tree/react-based-dashboard).
+* You can find more instructions on howto contribute on community site (http://wso2.com/community).
 
 ## Contact Us
 
 WSO2 developers can be contacted via the mailing lists:
 
-    WSO2 Developers List : dev@wso2.org
-    WSO2 Architecture List : architecture@wso2.org
+* WSO2 Developers List : dev@wso2.org
+* WSO2 Architecture List : architecture@wso2.org
