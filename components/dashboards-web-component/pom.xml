@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>dashboards-web-component</artifactId>
-    <version>4.0.0-m1</version>
+    <version>4.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Dashboard Web Component</name>
 
