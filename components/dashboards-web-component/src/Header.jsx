@@ -22,10 +22,17 @@ import AppBar from 'material-ui/AppBar/AppBar';
 
 class Header extends React.Component {
     render() {
+        let styles = {
+            'line-height': '64px',
+            'color': '#000',
+            'margin-top': '-10px',
+            'font-size': '34px'
+        };
+
         return (
             <AppBar
                 title={this.props.dashboardName}
-                iconClassNameRight="muidocs-icon-navigation-expand-more"
+                iconElementLeft={<i className="icon fw fw-wso2-logo" style={styles}></i>}
             />
         );
     }
