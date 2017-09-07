@@ -8,3 +8,5 @@ classpath
 *.ipr
 .idea
 .DS_Store            
+node_modules
+dist
