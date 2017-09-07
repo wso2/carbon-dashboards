@@ -7,8 +7,11 @@ export default class Widget extends Component {
     }
 
     render () {
+        let styles = {
+            padding: '30px 15px 15px 15px'
+        };
         return (
-            <div>  
+            <div style={styles}>  
                 {this.renderWidget()}
             </div>
         );
