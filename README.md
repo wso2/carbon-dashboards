@@ -1,6 +1,6 @@
-#WSO2 Dashboard Component
+# WSO2 Dashboard Component
 
-#Getting Started
+## Getting Started
 
 Please follow the below steps to setup the WSO2 Dashboard Component.
 1. Clone and build carbon-dashboards repository. You need to build the "react-based-dashboard" branch
@@ -40,15 +40,15 @@ Please follow the below steps to setup the WSO2 Dashboard Component.
 https://localhost:9292/portal/
 http://localhost:9090/portal/
 
-#License
+## License
 Carbon dashboards is available under the Apache 2 License.
 
-#How To Contribute
+## How To Contribute
     Please report issues at WSO2 Carbon Dashboard Issues
     Send your pull requests.
     You can find more instructions on howto contribute on community site (http://wso2.com/community).
 
-#Contact Us
+## Contact Us
 
 WSO2 developers can be contacted via the mailing lists:
 
