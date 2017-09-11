@@ -27,7 +27,7 @@ class DashboardsAPIS {
      */
     getHTTPClient() {
         let httpClient = axios.create({
-            baseURL: window.location.origin + '/dashboards',
+            baseURL: window.location.origin + '/apis/dashboards',
             timeout: 2000
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
