@@ -48,13 +48,13 @@ class DashboardThumbnail extends React.Component {
                             </span>
                             View
                         </Link>
-                        <a href="" className="disabled">
+                        <Link to={"designer/" + this.props.dashboard.url}>
                             <span className="fw-stack icon">
                                 <i className="fw fw-circle-outline fw-stack-2x"></i>
                                 <i className="fw fw-edit fw-stack-1x"></i>
                             </span>
                             Design
-                        </a>
+                        </Link>
                         <a href="" className="disabled">
                             <span className="fw-stack icon">
                                 <i className="fw fw-circle-outline fw-stack-2x"></i>

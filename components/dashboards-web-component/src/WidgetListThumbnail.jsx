@@ -18,25 +18,14 @@
  */
 
 import React from 'react';
-import AppBar from 'material-ui/AppBar/AppBar';
 
-class Header extends React.Component {
+class WidgetListThumbnail extends React.Component {
     render() {
-        let styles = {
-            'line-height': '64px',
-            'color': '#000',
-            'margin-top': '-10px',
-            'font-size': '34px'
-        };
-
-        return (
-            <AppBar
-                title={this.props.dashboardName}
-                className="header-component"
-                iconElementLeft={<i className="icon fw fw-wso2-logo" style={styles}></i>}
-            />
-        );
+        return <div id={this.props.widgetID} className="widget-list-thumbnail">
+            <div className="widget-list-thumbnail-header">{this.props.widgetName}</div>
+            <div><i className="fw fw-statistics fw-5x"></i></div>
+        </div>
     }
 }
 
-export default Header;
+export default WidgetListThumbnail;

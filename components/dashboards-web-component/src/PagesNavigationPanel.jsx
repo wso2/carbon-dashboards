@@ -19,7 +19,6 @@
 
 import React from 'react';
 import Toggle from 'material-ui/Toggle';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
