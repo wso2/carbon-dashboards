@@ -27,8 +27,32 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Drawer from 'material-ui/Drawer';
+import DashboardUtils from './utils/dashboard-utils';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
+
+let config = {
+    settings: {
+        hasHeaders: false,
+        constrainDragToContainer: false,
+        reorderEnabled: false,
+        selectionEnabled: false,
+        popoutWholeStack: false,
+        blockedPopoutsThrowError: true,
+        closePopoutsOnUnload: true,
+        showPopoutIcon: false,
+        showMaximiseIcon: false,
+        responsive: true,
+        isClosable: false,
+        responsiveMode: 'always',
+        showCloseIcon: false,
+    },
+    dimensions: {
+        minItemWidth: 400,
+    },
+    isClosable: false,
+    content: []
+};
 
 class DashboardView extends React.Component {
     constructor(props) {
@@ -43,17 +67,16 @@ class DashboardView extends React.Component {
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
-        this.findPageByID = this.findPageByID.bind(this);
         this.handleToggle = this.handleToggle.bind(this);
     }
 
-    handleToggle() { 
+    handleToggle() {
         this.setState({
             open: !this.state.open,
             contentClass: this.state.open ? "content-drawer-closed" : "content-drawer-opened"
         });
         var that = this;
-        setTimeout(function() {
+        setTimeout(function () {
             that.dashboardRenderingComponent.updateLayout();
         }, 100);
     }
@@ -74,49 +97,6 @@ class DashboardView extends React.Component {
         });
     }
 
-    getDashboardByPageId(pageId, dashboardContent) {
-        let dashboardPageContent = [];
-        if (dashboardContent[0]) {
-            if (pageId) {
-                let pages = pageId.split("/");
-                let parentPage = dashboardContent;
-                let selectedPage;
-                pages.forEach(page => {
-                    selectedPage = this.findPageByID(page, parentPage);
-                    parentPage = selectedPage.pages;
-                });
-                dashboardPageContent.push(selectedPage.content[0]);
-            } else {
-                dashboardPageContent.push(this.findPageFromDashboardJSon(this.state.landingPage, dashboardContent).content[0]);
-            }
-        }
-        return dashboardPageContent;
-    }
-
-    findPageFromDashboardJSon(pageId, pagesList) {
-        let selectedPage;
-        for (let page of pagesList) {
-            if (page.id === pageId) {
-                selectedPage = page;
-                break;
-            }
-            else if (page.pages) {
-                selectedPage = this.findPageFromDashboardJSon(pageId, page.pages)
-            }
-        }
-        return selectedPage;
-    }
-
-    findPageByID(pageId, pagesList) {
-        let selectedPage;
-        pagesList.find(page => {
-            if (page.id === pageId) {
-                selectedPage = page;
-            }
-        });
-        return selectedPage;
-    }
-
     togglePagesNavPanel(toggled) {
         if (toggled) {
             this.setState({toggled: "toggled", dashboardViewCSS: "dashboard-view"});
@@ -131,10 +111,10 @@ class DashboardView extends React.Component {
                 <div>
                     <Drawer open={this.state.open}>
                         <PagesNavigationPanel dashboardId={this.props.match.params.id}
-                                  dashboardContent={this.state.dashboardContent}
-                                  dashboardName={this.state.dashboardName}
-                                  toggled={this.state.toggled}
-                                  match={this.props.match} />
+                                              dashboardContent={this.state.dashboardContent}
+                                              dashboardName={this.state.dashboardName}
+                                              toggled={this.state.toggled}
+                                              match={this.props.match}/>
                     </Drawer>
                     <div className={this.state.contentClass}>
                         <AppBar
@@ -143,9 +123,12 @@ class DashboardView extends React.Component {
                             onLeftIconButtonTouchTap={this.handleToggle}
                         />
                         <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
-                        <DashboardRenderingComponent ref={(c) => {this.dashboardRenderingComponent = c;}}
-                            dashboardContent={this.getDashboardByPageId(this.props.match.params[1], this.state.dashboardContent)} />
-                        
+                        <DashboardRenderingComponent config={config} ref={(c) => {
+                            this.dashboardRenderingComponent = c;
+                        }}
+                        dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
+                            this.state.dashboardContent, this.state.landingPage)}/>
+
                     </div>
                 </div>
             </MuiThemeProvider>

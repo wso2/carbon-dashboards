@@ -18,20 +18,17 @@
  */
 
 import React from 'react';
-import GoldenLayout from 'golden-layout';
 import 'golden-layout/src/css/goldenlayout-base.css';
 import '../public/css/dashboard.css';
+import './WidgetLoadingComponent';
+import {widgetLoadingComponent} from './WidgetLoadingComponent';
 
-let dashboardLayout = new GoldenLayout();
-let registeredWidgetsCount = 0;
-let widgets = new Map();
-let widgetCount = 0;
+let dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance();
 
 class DashboardRenderingComponent extends React.Component {
     constructor(props) {
         super(props);
         this.renderDashboard = this.renderDashboard.bind(this);
-        this.loadWidget = this.loadWidget.bind(this);
         this.findWidget = this.findWidget.bind(this);
         this.updateLayout = this.updateLayout.bind(this);
     }
@@ -46,61 +43,28 @@ class DashboardRenderingComponent extends React.Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        return JSON.stringify(this.props.dashboardContent) !== JSON.stringify(nextProps.dashboardContent); 
+        return JSON.stringify(this.props.dashboardContent) !== JSON.stringify(nextProps.dashboardContent);
     }
 
     renderDashboard() {
         window.onresize = function () {
             dashboardLayout.updateSize();
         };
-
-        let config = {
-            settings: {
-                hasHeaders: false,
-                constrainDragToContainer: false,
-                reorderEnabled: false,
-                selectionEnabled: false,
-                popoutWholeStack: false,
-                blockedPopoutsThrowError: true,
-                closePopoutsOnUnload: true,
-                showPopoutIcon: false,
-                showMaximiseIcon: false,
-                responsive: true,
-                isClosable: false,
-                responsiveMode: 'always',
-                showCloseIcon: false,
-            },
-            dimensions: {
-                minItemWidth: 400,
-            },
-            isClosable: false,
-            content: []
-        };
-
         let widgetList = new Set();
-        widgets = new Map();
-        widgetCount = 0;
-        registeredWidgetsCount = 0;
+        widgetLoadingComponent.setWidgetsMap(new Map());
+        widgetLoadingComponent.setWidgetCount(0);
+        widgetLoadingComponent.setRegisteredWidgetsCount(0);
         this.findWidget(this.props.dashboardContent, widgetList);
-        widgetCount = widgetList.size;
+        widgetLoadingComponent.setWidgetCount(widgetList.size);
+        let config = this.props.config;
         config.content = this.props.dashboardContent;
         dashboardLayout.destroy();
-        dashboardLayout = new GoldenLayout(config, document.getElementById('dashboard-view'));
+        dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance(config,
+            document.getElementById('dashboard-view'));
         widgetList.forEach(widget => {
             widgetList.add(widget);
-            this.loadWidget(widget)
+            widgetLoadingComponent.loadWidget(widget)
         });
-    }
-
-    loadWidget(widgetID) {
-        let head = document.getElementsByTagName('head')[0];
-        let script = document.createElement('script');
-        //TODO Need to get the app context properly when the server is ready
-        let appContext = window.location.pathname.split("/")[1];
-        let baseURL = window.location.origin;
-        script.type = 'text/javascript';
-        script.src = baseURL + "/" + appContext + "/public/extensions/widgets/" + widgetID + "/" + widgetID + ".js";
-        head.appendChild(script);
     }
 
     findWidget(content, widgets) {
@@ -108,7 +72,6 @@ class DashboardRenderingComponent extends React.Component {
             if (!(contentItem.type === 'component')) {
                 contentItem.title = "";
                 this.findWidget(contentItem.content, widgets)
-
             } else {
                 //TODO Need to get the header config from widget configuration file
                 contentItem.header = {"show": true};
@@ -120,19 +83,5 @@ class DashboardRenderingComponent extends React.Component {
         return widgets;
     }
 }
-
-function registerWidget(widgetId, widgetObj) {
-    if (!widgets.get(widgetId)) {
-        widgets.set(widgetId, widgetObj);
-        dashboardLayout.registerComponent(widgetId, widgets.get(widgetId));
-        registeredWidgetsCount++;
-        if (registeredWidgetsCount === widgetCount) {
-            dashboardLayout.init();
-        }
-    }
-}
-
-global.dashboard = {};
-global.dashboard.registerWidget = registerWidget;
 
 export default DashboardRenderingComponent;
