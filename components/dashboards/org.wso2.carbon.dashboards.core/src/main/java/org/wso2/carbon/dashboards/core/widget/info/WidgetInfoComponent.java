@@ -42,7 +42,7 @@ public class WidgetInfoComponent {
     @Reference(
             name = "widgetinfo",
             service = WidgetInfoProvider.class,
-            cardinality = ReferenceCardinality.MULTIPLE,
+            cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unregisterWidgetInfoProvider")
     protected void registerWidgetInfoProvider(WidgetInfoProvider widgetInfoProvider, Map properties) {

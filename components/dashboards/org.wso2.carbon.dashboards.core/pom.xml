@@ -15,7 +15,8 @@
  ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
@@ -54,6 +55,10 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.uis</groupId>
+            <artifactId>org.wso2.carbon.uis.core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -80,6 +85,8 @@
                             com.google.gson.*;version="[2.2.4,3)",
                             javax.sql.*,
                             org.wso2.carbon.config.*;version="${carbon.config.version.range}"
+                            org.wso2.carbon.uis.spi.*;version="${carbon.ui.sever.version.range}",
+                            org.wso2.carbon.uis.api.*;version="${carbon.ui.sever.version.range}"
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.dashboards.core.*;version="${carbon.dashboards.version}",
@@ -99,8 +106,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                  <source>1.8</source>
-                  <target>1.8</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>

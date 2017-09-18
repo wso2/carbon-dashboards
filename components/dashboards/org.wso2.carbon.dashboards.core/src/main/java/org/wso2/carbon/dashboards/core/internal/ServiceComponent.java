@@ -23,6 +23,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.config.provider.ConfigProvider;
+import org.wso2.carbon.uis.spi.Server;
 
 /**
  * This is OSGi-components to register config provider class.
@@ -57,5 +58,20 @@ public class ServiceComponent {
      */
     protected void unregisterConfigProvider(ConfigProvider configProvider) {
         DataHolder.getInstance().setConfigProvider(null);
+    }
+
+    @Reference(
+            name = "carbon.ui.server",
+            service = org.wso2.carbon.uis.spi.Server.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterCarbonUIServer"
+    )
+    protected void registerCarbonUIServer(Server server) {
+        DataHolder.getInstance().setUiServer(server);
+    }
+
+    protected void unregisterCarbonUIServer(Server server) {
+        DataHolder.getInstance().setUiServer(null);
     }
 }
