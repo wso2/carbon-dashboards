@@ -19,6 +19,7 @@
 package org.wso2.carbon.dashboards.core.internal;
 
 import org.wso2.carbon.config.provider.ConfigProvider;
+import org.wso2.carbon.uis.spi.Server;
 
 /**
  * This is data holder for config provider implementations.
@@ -26,6 +27,7 @@ import org.wso2.carbon.config.provider.ConfigProvider;
 public class DataHolder {
     private static DataHolder instance = new DataHolder();
     private ConfigProvider configProvider;
+    private Server uiServer;
 
     private DataHolder() {
     }
@@ -55,5 +57,23 @@ public class DataHolder {
      */
     public void setConfigProvider(ConfigProvider configProvider) {
         this.configProvider = configProvider;
+    }
+
+    /**
+     * Returns instance of carbon-ui-server.
+     *
+     * @return Instance of carbon-ui-server
+     */
+    public Server getUiServer() {
+        return uiServer;
+    }
+
+    /**
+     * Sets instance of carbon-ui-server.
+     *
+     * @param uiServer Instance of config provider
+     */
+    public void setUiServer(Server uiServer) {
+        this.uiServer = uiServer;
     }
 }

@@ -18,14 +18,16 @@
  */
 package org.wso2.carbon.dashboards.api;
 
+import org.osgi.service.component.annotations.Component;
 import org.wso2.carbon.dashboards.core.widget.info.WidgetDataHolder;
 import org.wso2.carbon.dashboards.core.widget.info.WidgetInfoProvider;
+import org.wso2.carbon.dashboards.core.widget.info.WidgetInfoProviderImpl;
 import org.wso2.msf4j.Microservice;
 
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -38,6 +40,12 @@ import javax.ws.rs.core.Response;
 /**
  * This is the back-end api to get the widget related information.
  */
+@Component(
+        name = "org.wso2.carbon.dashboards.api.WidgetInfoProviderAPI",
+        service = Microservice.class,
+        immediate = true
+)
+@Path("/apis/widgets")
 public class WidgetInfoProviderAPI implements Microservice {
 
     /**
@@ -49,12 +57,9 @@ public class WidgetInfoProviderAPI implements Microservice {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWidgetsMetaInfo() {
-        List<WidgetInfoProvider> widgetInfoProviderImplList = WidgetDataHolder.getInstance().getWidgetInfoProviders();
-        List list = widgetInfoProviderImplList.stream()
-                .map(widget -> widget.getWidgetsMetaInfo())
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        return Response.ok().entity(list).build();
+        WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl();
+        Set extensions = widgetInfoProvider.getWidgetsMetaInfo().get();
+        return Response.ok().entity(extensions).build();
     }
 
     /**
