@@ -20,6 +20,8 @@ package org.wso2.carbon.dashboards.core.internal.dao.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.config.provider.ConfigProvider;
+import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.internal.DataHolder;
 
 import java.util.HashMap;
@@ -46,27 +48,17 @@ public class QueryManager {
         // TODO: Get the relevant type of the database from the config provider.
         String databaseType = "h2";
 
+        ConfigProvider configProvider = DataHolder.getInstance().getConfigProvider();
         try {
-            Map dashboardConfigs = DataHolder.getInstance().getConfigProvider().getConfigurationMap("wso2.dashboard");
-
-            if (null != dashboardConfigs) {
-                if (dashboardConfigs.containsKey("db_queries") && null != dashboardConfigs.get("db_queries")) {
-                    Map databaseTypes = (Map) dashboardConfigs.get("db_queries");
-                    if (null != databaseTypes && databaseTypes.containsKey(databaseType)) {
-                        Map dbQueries = (Map<String, String>) databaseTypes.get(databaseType);
-                        return (null != dbQueries) ? dbQueries : new HashMap<>();
-                    } else {
-                        throw new RuntimeException("Unable to find the database type: " + databaseType);
-                    }
-                } else {
-                    throw new RuntimeException("Unable to find database queries in the deployment.yaml");
-                }
+            DashboardConfigurations dashboardConfigurations = configProvider
+                    .getConfigurationObject(DashboardConfigurations.class);
+            if (!dashboardConfigurations.getQueries().containsKey(databaseType)) {
+                throw new RuntimeException("Unable to find the database type: " + databaseType);
             }
-
+            return dashboardConfigurations.getQueries().get(databaseType);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-
         return new HashMap<>();
     }
 

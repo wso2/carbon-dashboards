@@ -22,7 +22,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
+import org.wso2.carbon.config.provider.ConfigProvider;
 
 /**
  * This is OSGi-components to register config provider class.
@@ -33,6 +33,12 @@ import org.wso2.carbon.kernel.configprovider.ConfigProvider;
         immediate = true
 )
 public class ServiceComponent {
+    /**
+     * Get the ConfigProvider service.
+     * This is the bind method that gets called for ConfigProvider service registration that satisfy the policy.
+     *
+     * @param configProvider the ConfigProvider service that is registered as a service.
+     */
     @Reference(
             name = "carbon.config.provider",
             service = ConfigProvider.class,
@@ -44,6 +50,11 @@ public class ServiceComponent {
         DataHolder.getInstance().setConfigProvider(configProvider);
     }
 
+    /**
+     * This is the unbind method for the above reference that gets called for ConfigProvider instance un-registrations.
+     *
+     * @param configProvider the ConfigProvider service that get unregistered.
+     */
     protected void unregisterConfigProvider(ConfigProvider configProvider) {
         DataHolder.getInstance().setConfigProvider(null);
     }

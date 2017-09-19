@@ -18,7 +18,7 @@
  */
 package org.wso2.carbon.dashboards.core.internal;
 
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
+import org.wso2.carbon.config.provider.ConfigProvider;
 
 /**
  * This is data holder for config provider implementations.
