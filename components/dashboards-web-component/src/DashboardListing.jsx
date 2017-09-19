@@ -18,13 +18,18 @@
  */
 
 import React from 'react';
-import Header from './Header';
-import DashboardThumbnail from './DashboardThumbnail';
-import '../public/css/dashboard.css';
-import DashboardsAPIs from './utils/dashboard-apis';
+import {Link} from 'react-router-dom';
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+
+import Header from './Header';
+import DashboardThumbnail from './DashboardThumbnail';
+import DashboardsAPIs from './utils/dashboard-apis';
+import '../public/css/dashboard.css';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 
@@ -48,6 +53,15 @@ class DashboardListing extends React.Component {
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
                     <Header dashboardName="Portal"/>
+                    <Link to={"create"}>
+                        <div className="dashboard-listing-nav-bar ">
+                            <FloatingActionButton mini={true} className="create-dashboard-icon">
+                                <ContentAdd />
+                            </FloatingActionButton>
+                            <div className="create-dashboard-text"> Create Dashboard
+                            </div>
+                        </div>
+                    </Link>
                     <div className="dashboard-listing-container">
                         {this.state.dashboards}
                     </div>
@@ -61,12 +75,12 @@ class DashboardListing extends React.Component {
         let promised_dashboard_list = dashboardAPIs.getDashboardList();
         let that = this;
         promised_dashboard_list.then((response) => {
-                let dashboardList;
-                dashboardList = response.data.map(dashboard => {
-                    return <DashboardThumbnail dashboard={dashboard} muiTheme={muiTheme}/>;
-                });
-                that.setState({dashboards: dashboardList});
-            }).catch(function (error) {
+            let dashboardList;
+            dashboardList = response.data.map(dashboard => {
+                return <DashboardThumbnail dashboard={dashboard} muiTheme={muiTheme}/>;
+            });
+            that.setState({dashboards: dashboardList});
+        }).catch(function (error) {
                 //TODO Need to use proper notification library to show the error
             }
         );

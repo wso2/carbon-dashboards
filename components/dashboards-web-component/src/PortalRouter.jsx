@@ -21,6 +21,7 @@ import React from 'react';
 import DashboardView from './DashboardView';
 import DashboardListing from './DashboardListing';
 import DashboardDesigner from './DashboardDesigner';
+import DashboardCreate from './DashboardCreatePage';
 import {
     Route,
     Link,
@@ -33,6 +34,7 @@ class PortalRouter extends React.Component {
         return <div>
             <Switch>
                 <Route exact path='/portal' component={DashboardListing}/>
+                <Route exact path='/portal/create' component={DashboardCreate}/>
                 <Route exact path='*/designer/:id' component={DashboardDesigner}/>
                 <Route path='*/designer/:id/*' component={DashboardDesigner}/>
                 <Route exact path='*/dashboards/:id' component={DashboardView}/>

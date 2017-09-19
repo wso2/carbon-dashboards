@@ -17,16 +17,18 @@
  */
 
 import React from 'react';
-import Header from './Header';
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import WidgetsList from './WidgetsList';
-import {widgetLoadingComponent, dashboardLayout} from './WidgetLoadingComponent';
 import Drawer from 'material-ui/Drawer';
 import WidgetIcon from 'material-ui/svg-icons/device/widgets';
 import List from 'material-ui/List/';
 import ListItem from 'material-ui/List/ListItem';
+
+import Header from './Header';
+import WidgetsList from './WidgetsList';
+import {widgetLoadingComponent, dashboardLayout} from './WidgetLoadingComponent';
 import DashboardRenderingComponent from './DashboardRenderingComponent';
 import DashboardUtils from './utils/dashboard-utils';
 import DashboardsAPIs from './utils/dashboard-apis';
@@ -57,6 +59,7 @@ const config = {
 };
 
 let widgetList = [];
+let isDashboardLoaded = false;
 
 class DashboardDesigner extends React.Component {
     constructor() {
@@ -71,7 +74,7 @@ class DashboardDesigner extends React.Component {
         };
         this.getDashboardContent = this.getDashboardContent.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
-        this.callback = this.callback.bind(this);
+        this.initializeWidgetList = this.initializeWidgetList.bind(this);
         this.setWidgetList = this.setWidgetList.bind(this);
     }
 
@@ -124,27 +127,36 @@ class DashboardDesigner extends React.Component {
         promisedWidgetInfo.then(this.setWidgetList).catch(function (error) {
             //TODO Need to use proper notification library to show the error
         });
-        widgetLoadingComponent.setfinishedRegisteringCallback(this.callback);
+        widgetLoadingComponent.setfinishedRegisteringCallback(this.initializeWidgetList);
     }
 
     setWidgetList(response) {
+        widgetList = response.data;
         this.setState({
             widgetList: response.data
-        });
+        }, this.initializeWidgetList);
     }
 
 
-    callback() {
+    initializeWidgetList(isWidgetsLoaded) {
         let newItemConfig;
-        this.state.widgetList.map(widget => {
-            newItemConfig = {
-                title: widget.name,
-                type: 'react-component',
-                component: widget.name
-            };
-            widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig);
-            widgetLoadingComponent.loadWidget(widget.name)
-        });
+        if (isWidgetsLoaded) {
+            isDashboardLoaded = isWidgetsLoaded;
+        }
+        if (!(widgetList.length === 0) && isDashboardLoaded) {
+            widgetList.map(widget => {
+                newItemConfig = {
+                    title: widget.name,
+                    type: 'react-component',
+                    component: widget.name
+                };
+                widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig);
+                widgetLoadingComponent.loadWidget(widget.name)
+            });
+            if (!isWidgetsLoaded) {
+                widgetLoadingComponent.initializeDashboard();
+            }
+        }
     }
 
     getDashboardContent(pageId, dashboardContent, landingPage) {

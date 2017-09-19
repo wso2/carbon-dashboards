@@ -21,7 +21,7 @@ import React from 'react';
 
 class WidgetListThumbnail extends React.Component {
     render() {
-        return <div id={this.props.widgetID} className="widget-list-thumbnail">
+        return <div id={this.props.widgetID} className="widget-list-thumbnail" style={{display:this.props.isDisplayed}}>
             <div className="widget-list-thumbnail-header">{this.props.widgetName}</div>
             <div><i className="fw fw-statistics fw-5x"></i></div>
         </div>
