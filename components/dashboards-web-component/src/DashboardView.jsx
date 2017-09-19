@@ -18,15 +18,16 @@
  */
 
 import React from 'react';
-import DashboardViewHeader from './DashboardViewHeader';
-import DashboardRenderingComponent from './DashboardRenderingComponent';
-import PagesNavigationPanel from './PagesNavigationPanel';
-import DashboardsAPIs from './utils/dashboard-apis';
+
 import AppBar from 'material-ui/AppBar/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Drawer from 'material-ui/Drawer';
+
+import DashboardRenderingComponent from './DashboardRenderingComponent';
+import PagesNavigationPanel from './PagesNavigationPanel';
+import DashboardsAPIs from './utils/dashboard-apis';
 import DashboardUtils from './utils/dashboard-utils';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
@@ -83,7 +84,7 @@ class DashboardView extends React.Component {
 
     componentDidMount() {
         let dashboardsAPis = new DashboardsAPIs();
-        let promised_dashboard = dashboardsAPis.getDashboardByID(this.props.match.params.id)
+        let promised_dashboard = dashboardsAPis.getDashboardByID(this.props.match.params.id);
         promised_dashboard.then(this.setDashboardProperties).catch(function (error) {
             //TODO Need to use proper notification library to show the error
         });

@@ -18,10 +18,12 @@
  */
 
 import React from 'react';
-import 'golden-layout/src/css/goldenlayout-base.css';
-import '../public/css/dashboard.css';
+
 import './WidgetLoadingComponent';
 import {widgetLoadingComponent} from './WidgetLoadingComponent';
+
+import 'golden-layout/src/css/goldenlayout-base.css';
+import '../public/css/dashboard.css';
 
 let dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance();
 
@@ -54,13 +56,20 @@ class DashboardRenderingComponent extends React.Component {
         widgetLoadingComponent.setWidgetsMap(new Map());
         widgetLoadingComponent.setWidgetCount(0);
         widgetLoadingComponent.setRegisteredWidgetsCount(0);
-        this.findWidget(this.props.dashboardContent, widgetList);
-        widgetLoadingComponent.setWidgetCount(widgetList.size);
         let config = this.props.config;
         config.content = this.props.dashboardContent;
+        if (this.props.dashboardContent[0]) {
+            this.findWidget(this.props.dashboardContent, widgetList);
+        } else {
+            config.content = [];
+        }
+        widgetLoadingComponent.setWidgetCount(widgetList.size);
         dashboardLayout.destroy();
         dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance(config,
             document.getElementById('dashboard-view'));
+        if (widgetList.size === 0) {
+            widgetLoadingComponent.callFinishedRegisteringCallback();
+        }
         widgetList.forEach(widget => {
             widgetList.add(widget);
             widgetLoadingComponent.loadWidget(widget)

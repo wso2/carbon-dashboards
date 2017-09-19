@@ -26,12 +26,13 @@ let widgetCount = 0;
 let finishedRegisteringCallback;
 
 function registerWidget(widgetId, widgetObj) {
+
     if (!widgets.get(widgetId)) {
         widgets.set(widgetId, widgetObj);
         dashboardLayout.registerComponent(widgetId, widgets.get(widgetId));
         registeredWidgetsCount++;
         if (registeredWidgetsCount === widgetCount) {
-            finishedRegisteringCallback ? finishedRegisteringCallback() : "";
+            finishedRegisteringCallback ? finishedRegisteringCallback(true) : "";
             dashboardLayout.init();
         }
     }
@@ -73,6 +74,14 @@ class WidgetLoadingComponent {
 
     setfinishedRegisteringCallback(callback) {
         finishedRegisteringCallback = callback;
+    }
+
+    callFinishedRegisteringCallback(){
+        finishedRegisteringCallback ? finishedRegisteringCallback(true) : "";
+    }
+
+    initializeDashboard(){
+        dashboardLayout.init();
     }
 }
 

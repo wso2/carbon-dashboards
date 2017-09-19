@@ -19,7 +19,6 @@
 
 import React from 'react';
 import {Link} from 'react-router-dom';
-import RaisedButton from 'material-ui/RaisedButton';
 
 class DashboardThumbnail extends React.Component {
     render() {

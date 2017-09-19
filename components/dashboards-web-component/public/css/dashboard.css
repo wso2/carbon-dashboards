@@ -125,7 +125,7 @@ a {
 
 /* dashboard listing grid */
 .dashboard-listing-container {
-    padding: 74px 10px 10px 10px;
+    padding: 10px;
 }
 
 .dashboard-thumbnail {
@@ -262,4 +262,89 @@ a {
     margin: 0 0 0 15px;
     padding-top: 75px;
 
+}
+
+.create-dashboard-page-label-name {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 75px;
+    color: white;
+}
+
+.create-dashboard-page-label-url {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 265px;
+    color: white;
+}
+
+.create-dashboard-page-label-description {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 196px;
+    color: white;
+}
+
+.create-dashboard-form-group {
+    padding-top: 25px;
+    padding-left: 25px;
+}
+
+.create-dashboard-text-field-hint {
+    color: grey;
+    bottom: 0;
+}
+
+.create-dashboard-text-field {
+    color: black;
+}
+
+.create-dashboard-text-field-underline {
+    bottom: 0;
+    bottomBorder: 1px solid #424242;
+    color: blue;
+}
+
+.create-dashboard-text-box {
+    marginLeft: 15px;
+    width: 500px;
+    height: 25px;
+    color: black;
+}
+
+.create-dashboard-button {
+    margin-left: 40px;
+    margin-top: 35px;
+}
+
+.create-dashboard-divider {
+    margin-top: 15px;
+}
+
+.dashboard-listing-nav-bar {
+    width: 100%;
+    padding-top: 65px;
+    background-color: #37474F;
+}
+
+.create-dashboard-icon {
+    margin: 5px;
+}
+
+.create-dashboard-text {
+    display: inline;
+    font-family: sans-serif;
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    padding-top: 15px;
 }

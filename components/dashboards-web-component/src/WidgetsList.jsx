@@ -17,27 +17,51 @@
  *
  */
 import React from 'react';
+
 import Drawer from 'material-ui/Drawer';
-import WidgetListThumbnail from './WidgetListThumbnail';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
+
+import WidgetListThumbnail from './WidgetListThumbnail';
 
 class WidgetsList extends React.Component {
     constructor(props) {
         super(props);
         this.searchWidget = this.searchWidget.bind(this);
         this.state = {
-            widgetList: this.props.widgetList
-        }
+            widgetList: this.props.widgetList,
+            filteredWidgetSet: new Set(this.props.widgetList)
+        };
+        this.isDisplayed = this.isDisplayed.bind(this);
+
     }
 
     searchWidget(event, value) {
-        let filteredWidgetList = this.state.widgetList.filter(function (widget) {
+        let filteredWidgetList = this.props.widgetList.filter(function (widget) {
             return widget.name.toLowerCase().includes(value.toLowerCase());
         });
+        this.state.filteredWidgetSet = new Set(filteredWidgetList.map((widget) => {
+            return widget.name
+        }));
         this.setState({widgetList: filteredWidgetList});
     }
 
+    componentWillReceiveProps(props) {
+        this.state = {
+            widgetList: this.props.widgetList,
+            filteredWidgetSet: new Set(props.widgetList.map((widget) => {
+                return widget.name
+            }))
+        }
+    }
+
+    isDisplayed(widgetId) {
+        if (this.state.filteredWidgetSet.has(widgetId)) {
+            return "block";
+        } else {
+            return "none";
+        }
+    }
 
     render() {
         return (<div>
@@ -50,7 +74,8 @@ class WidgetsList extends React.Component {
                 <Divider/>
                 {
                     this.props.widgetList.map(widget => {
-                        return <WidgetListThumbnail widgetID={widget.name}
+                        return <WidgetListThumbnail data={this.state.widgetList} widgetID={widget.name}
+                                                    isDisplayed={this.isDisplayed(widget.name)}
                                                     widgetName={widget.name}></WidgetListThumbnail>;
                     })
                 }
