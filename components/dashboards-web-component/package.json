@@ -8,7 +8,8 @@
     "clean": "rimraf dist",
     "dev": "webpack-dev-server --hot --inline --progress --history-api-fallback",
     "lint": "eslint . --ext .jsx --ext .js",
-    "build": "webpack -p"
+    "build": "webpack -p",
+    "deploy": "cp ./dist/bundle.js $DS_HOME/deployment/reactapps/portal/public/js/"
   },
   "repository": {
     "type": "git",
