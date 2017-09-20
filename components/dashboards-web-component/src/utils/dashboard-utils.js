@@ -60,6 +60,10 @@ class DashboardUtils {
         });
         return selectedPage;
     }
+
+    sanitizeInput(input) {
+        return input.replace(/[^a-z0-9-\s]/gim, "");
+    };
 }
 
 export default DashboardUtils;

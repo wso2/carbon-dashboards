@@ -29,11 +29,13 @@ import Snackbar from 'material-ui/Snackbar';
 
 import Header from './Header';
 import DashboardAPIS from './utils/dashboard-apis';
+import DashboardUtils from './utils/dashboard-utils';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const hintStyle = {color: "grey", bottom: 0};
 const textareaStyle = {color: "black"};
 const underlineStyle = {bottom: 0, bottomBorder: "1px solid #424242", color: "blue"};
+const errorFieldStyle = {color: "#FF5722", marginTop: 5};
 const textFieldStyle = {marginLeft: 15, width: 500, height: 25, color: "black"};
 const messageBoxStyle = {textAlign: "center", color: "white"};
 const errorMessageStyle = {backgroundColor: "#FF5722", color: "white"};
@@ -48,9 +50,15 @@ class DashboardCreatePage extends React.Component {
         this.generateDashboardJSON = this.generateDashboardJSON.bind(this);
         this.state = {
             showMsg: false,
-            url: ""
+            url: "",
+            errorMessageName: "",
+            errorStyleName: "",
+            errorMessageURL: "",
+            errorStyleURL: ""
+
         };
         this.handleURL = this.handleURL.bind(this);
+        this.handleDashboardName = this.handleDashboardName.bind(this);
     }
 
     render() {
@@ -59,26 +67,28 @@ class DashboardCreatePage extends React.Component {
                 <Header dashboardName="Portal"></Header>
                 <h1 className="create-dashboard-header">Create a Dashboard</h1>
                 <Divider className="create-dashboard-divider"/>
-                <div class="form-group" className="create-dashboard-form-group">
+                <div className="create-dashboard-form-group">
                     <label className="create-dashboard-page-label-name">
-                        Name of your Dashboard <span class="required">*</span>
+                        Name of your Dashboard <span className="required">*</span>
                     </label>
-                    <TextField onChange={this.handleURL} id="dashboardName" hintStyle={hintStyle}
+                    <TextField errorText={this.state.errorMessageName} errorStyle={this.state.errorStyleName}
+                               onChange={this.handleDashboardName} id="dashboardName" hintStyle={hintStyle}
                                textareaStyle={textareaStyle}
                                underlineStyle={underlineStyle} style={textFieldStyle}
                                hintText="E.g. Sales Statistics"/>
                 </div>
-                <div class="form-group" className="create-dashboard-form-group">
+                <div className="create-dashboard-form-group">
                     <label className="create-dashboard-page-label-url">
-                        URL <span class="required">*</span>
+                        URL <span className="required">*</span>
                     </label>
-                    <TextField onChange={this.handleURL} value={this.state.url} id="dashboardURL" hintStyle={hintStyle}
+                    <TextField errorText={this.state.errorMessageURL} errorStyle={this.state.errorStyleURL}
+                               onChange={this.handleURL} value={this.state.url} id="dashboardURL" hintStyle={hintStyle}
                                textareaStyle={textareaStyle} underlineStyle={underlineStyle} style={textFieldStyle}
                                hintText="E.g. sales-stats"/>
                 </div>
-                <div class="form-group" className="create-dashboard-form-group">
+                <div className="create-dashboard-form-group">
                     <label className="create-dashboard-page-label-description">
-                        Description <span class="required">*</span>
+                        Description
                     </label>
                     <TextField id="dashboardDescription" hintStyle={hintStyle} textareaStyle={textareaStyle}
                                underlineStyle={underlineStyle} style={textFieldStyle}
@@ -95,13 +105,19 @@ class DashboardCreatePage extends React.Component {
 
     handleURL(event, value) {
         this.setState({
-            url: this.sanitizeInput(value.toLowerCase().replace(/\s+/g, ''))
+            url: new DashboardUtils().sanitizeInput(value.toLowerCase().replace(/\s+/g, '')),
+            errorMessageURL: "",
+            errorStyleURL: ""
         });
     }
 
-    sanitizeInput(input) {
-        return input.replace(/[^a-z0-9-\s]/gim, "");
-    };
+    handleDashboardName(event, value) {
+        this.setState({
+            url: new DashboardUtils().sanitizeInput(value.toLowerCase().replace(/\s+/g, '')),
+            errorMessageName: "",
+            errorStyleName: ""
+        });
+    }
 
     handleRequestClose() {
         this.setState({
@@ -130,6 +146,19 @@ class DashboardCreatePage extends React.Component {
         let dashboardName = document.getElementById("dashboardName").value;
         let dashboardURL = document.getElementById("dashboardURL").value;
         let dashboardDescription = document.getElementById("dashboardDescription").value;
+        if (!dashboardName) {
+            this.setState({
+                errorMessageName: "This field is required.",
+                errorStyleName: errorFieldStyle
+            });
+            return;
+        } else if (!dashboardURL) {
+            this.setState({
+                errorMessageURL: "This field is required.",
+                errorStyleURL: errorFieldStyle
+            });
+            return;
+        }
         let dashboardJson = {};
         dashboardJson.url = dashboardURL;
         dashboardJson.name = dashboardName;
@@ -137,28 +166,24 @@ class DashboardCreatePage extends React.Component {
         dashboardJson = this.generateDashboardJSON(dashboardJson);
         let dashboardAPIs = new DashboardAPIS();
         var that = this;
-        if (dashboardURL && dashboardName) {
-            dashboardAPIs.getDashboardByID(dashboardURL).then(function (response) {
-                if (typeof response.data === "string") {
-                    dashboardAPIs.createDashboard(dashboardJson).then(function (response) {
-                        if (response.status === 201) {
-                            that.showMessage("Dashboard is created successfully !!");
-                            setTimeout(function () {
-                                let appContext = window.location.pathname.split("/")[1];
-                                window.location.href = "/" + appContext + "/designer/" + dashboardURL;
-                            }, 1000)
-                        }
-                    })
-                }
-                else {
-                    that.showError("Dashboard already exists. Please use a different url !!");
-                }
-            }).catch(function () {
-                that.showError("Error in adding dashboard !!");
-            });
-        } else {
-            this.showError("Please fill the required fields !!");
-        }
+        dashboardAPIs.getDashboardByID(dashboardURL).then(function (response) {
+            if (typeof response.data === "string") {
+                dashboardAPIs.createDashboard(dashboardJson).then(function (response) {
+                    if (response.status === 201) {
+                        that.showMessage("Dashboard - " + dashboardName + " is created successfully !!");
+                        setTimeout(function () {
+                            let appContext = window.location.pathname.split("/")[1];
+                            window.location.href = "/" + appContext + "/designer/" + dashboardURL;
+                        }, 1000)
+                    }
+                })
+            }
+            else {
+                that.showError("Dashboard with same url already exists. Please use a different url !!");
+            }
+        }).catch(function () {
+            that.showError("Error in adding dashboard !!");
+        });
     }
 
     generateDashboardJSON(dashboardJson) {

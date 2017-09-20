@@ -272,6 +272,7 @@ a {
     display: inline-block;
     margin-right: 75px;
     color: white;
+    float: left;
 }
 
 .create-dashboard-page-label-url {
@@ -282,6 +283,7 @@ a {
     display: inline-block;
     margin-right: 265px;
     color: white;
+    float: left;
 }
 
 .create-dashboard-page-label-description {
@@ -290,7 +292,7 @@ a {
     margin: 15px;
     margin-bottom: 5px;
     display: inline-block;
-    margin-right: 196px;
+    margin-right: 210px;
     color: white;
 }
 
@@ -347,4 +349,8 @@ a {
     font-size: 20px;
     position: absolute;
     padding-top: 15px;
+}
+
+.required {
+    color: #FF5722;
 }
