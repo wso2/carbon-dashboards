@@ -42,18 +42,6 @@ class WidgetLoadingComponent {
 
     createGoldenLayoutInstance(config, container, layoutModifiedCallback) {
         dashboardLayout = new GoldenLayout(config, container);
-        dashboardLayout.on('initialised', function() {
-            dashboardLayout.on('itemCreated', function() {
-                if (layoutModifiedCallback) {
-                    layoutModifiedCallback(dashboardLayout.toConfig());
-                }
-            });
-            dashboardLayout.on('itemDestroyed', function() {
-                if (layoutModifiedCallback) {
-                    layoutModifiedCallback(dashboardLayout.toConfig());
-                }
-            });
-        });
         return dashboardLayout;
     }
 

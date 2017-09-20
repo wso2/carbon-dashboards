@@ -246,7 +246,7 @@ a {
 
 .dashboard-designer-container-expanded {
     width: 82%;
-    padding: 124px 10px 10px 310px;
+    padding: 124px 10px 10px 325px;
     color: white;
     height: 89vh;
     z-index: 0;
@@ -254,7 +254,7 @@ a {
 
 .dashboard-designer-container-collapsed {
     width: 96%;
-    padding: 74px 10px 10px 60px;
+    padding: 125px 10px 10px 65px;
     color: white;
     height: 89vh;
     z-index: 0;
