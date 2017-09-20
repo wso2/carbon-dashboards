@@ -126,6 +126,7 @@ a {
 /* dashboard listing grid */
 .dashboard-listing-container {
     padding: 10px;
+    padding-top: 115px;
 }
 
 .dashboard-thumbnail {
@@ -195,7 +196,7 @@ a {
 .designer-left-panel-list {
     background-color: #272c30 !important;
     z-index: 1301 !important;
-    top: 64px !important;
+    top: 115px !important;
 }
 
 .designer-left-panel-list-comp {
@@ -209,7 +210,7 @@ a {
 .designer-widget-list-panel {
     background-color: #373e44 !important;
     margin-left: 50px !important;
-    top: 64px !important;
+    top: 115px !important;
 }
 
 .designer-widget-list-panel {
@@ -245,9 +246,10 @@ a {
 
 .dashboard-designer-container-expanded {
     width: 82%;
-    padding: 74px 10px 10px 310px;
+    padding: 124px 10px 10px 310px;
     color: white;
     height: 89vh;
+    z-index: 0;
 }
 
 .dashboard-designer-container-collapsed {
@@ -255,13 +257,19 @@ a {
     padding: 74px 10px 10px 60px;
     color: white;
     height: 89vh;
+    z-index: 0;
 }
 
 .create-dashboard-header {
     color: #455a64;
     margin: 0 0 0 15px;
-    padding-top: 75px;
+    padding-top: 10px;
+}
 
+.dashboard-settings-header {
+    color: #455a64;
+    margin: 0 0 0 15px;
+    padding-top: 10px;
 }
 
 .create-dashboard-page-label-name {
@@ -275,6 +283,18 @@ a {
     float: left;
 }
 
+.dashboard-settings-page-label-name {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 88px;
+    color: white;
+    float: left;
+    margin-top: 5px;
+}
+
 .create-dashboard-page-label-url {
     font-family: "sans-serif";
     font-weight: bold;
@@ -284,6 +304,18 @@ a {
     margin-right: 265px;
     color: white;
     float: left;
+}
+
+.dashboard-settings-page-label-url {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 290px;
+    color: white;
+    float: left;
+    margin-top: 0;
 }
 
 .create-dashboard-page-label-description {
@@ -296,7 +328,22 @@ a {
     color: white;
 }
 
+.dashboard-settings-page-label-description {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 210px;
+    color: white;
+}
+
 .create-dashboard-form-group {
+    padding-top: 25px;
+    padding-left: 25px;
+}
+
+.dashboard-settings-form-group {
     padding-top: 25px;
     padding-left: 25px;
 }
@@ -328,17 +375,28 @@ a {
     margin-top: 35px;
 }
 
+.dashboard-settings-save-button {
+    margin-left: 40px;
+    margin-top: 35px;
+}
+
 .create-dashboard-divider {
     margin-top: 15px;
 }
 
-.dashboard-listing-nav-bar {
+.dashboard-settings-divider {
+    margin-top: 15px;
+}
+
+.portal-navigation-bar {
     width: 100%;
     padding-top: 65px;
     background-color: #37474F;
+    position: fixed;
+    z-index: 25;
 }
 
-.create-dashboard-icon {
+.navigation-icon {
     margin: 5px;
 }
 
@@ -351,6 +409,54 @@ a {
     padding-top: 15px;
 }
 
+.dashboard-settings-text {
+    display: inline;
+    font-family: sans-serif;
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    padding-top: 15px;
+}
+
 .required {
     color: #FF5722;
+}
+
+.no-widgets-text {
+    padding: 10px;
+    text-align: center;
+}
+
+.edit-dashboard-icon {
+    margin-left: 10px;
+}
+
+.create-page-form-container {
+    padding-top: 115px;
+}
+
+.dashboard-settings-page-form-container {
+    padding-top: 115px;
+}
+
+.trash-button-div {
+    position: absolute;
+    padding-top: 15px;
+}
+
+.trash-button-icon {
+    padding-left: 875px;
+    color: white;
+}
+
+.trash-button-icon:hover {
+    color: darkred;
+}
+
+.dashboard-thumbnail-deleted {
+    display: none;
+}
+
+.dashboard-settings-url {
+    color: white;
 }
