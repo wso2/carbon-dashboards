@@ -42,6 +42,18 @@ class WidgetLoadingComponent {
 
     createGoldenLayoutInstance(config, container) {
         dashboardLayout = new GoldenLayout(config, container);
+        dashboardLayout.on('initialised', function() {
+            alert('inited');
+            dashboardLayout.on('itemCreated', function() {
+                console.log('ic');
+                console.log(dashboardLayout.toConfig());
+            })
+
+            dashboardLayout.on('selectionChanged', function() {
+                console.log('sc');
+                console.log(dashboardLayout.toConfig());
+            })
+        });
         return dashboardLayout;
     }
 
@@ -77,11 +89,18 @@ class WidgetLoadingComponent {
     }
 
     callFinishedRegisteringCallback(){
-        finishedRegisteringCallback ? finishedRegisteringCallback(true) : "";
+        finishedRegisteringCallback ? finishedRegisteringCallback(true, true) : "";
     }
 
     initializeDashboard(){
         dashboardLayout.init();
+    }
+
+    onStateChanged(callback) {
+        dashboardLayout.on('stateChanged', function() {
+            console.log('in 2');
+            callback(dashboardLayout.toConfig());
+        });
     }
 }
 
