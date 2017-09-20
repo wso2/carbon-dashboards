@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
@@ -26,6 +27,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import Clear from 'material-ui/svg-icons/content/clear';
 
 import Header from './Header';
 import DashboardAPIS from './utils/dashboard-apis';
@@ -65,40 +68,53 @@ class DashboardCreatePage extends React.Component {
         return <MuiThemeProvider muiTheme={muiTheme}>
             <div>
                 <Header dashboardName="Portal"></Header>
-                <h1 className="create-dashboard-header">Create a Dashboard</h1>
-                <Divider className="create-dashboard-divider"/>
-                <div className="create-dashboard-form-group">
-                    <label className="create-dashboard-page-label-name">
-                        Name of your Dashboard <span className="required">*</span>
-                    </label>
-                    <TextField errorText={this.state.errorMessageName} errorStyle={this.state.errorStyleName}
-                               onChange={this.handleDashboardName} id="dashboardName" hintStyle={hintStyle}
-                               textareaStyle={textareaStyle}
-                               underlineStyle={underlineStyle} style={textFieldStyle}
-                               hintText="E.g. Sales Statistics"/>
+                <div className="portal-navigation-bar">
+                    <Link to={"/portal/"}>
+                        <FloatingActionButton mini={true} className="navigation-icon">
+                            <Clear />
+                        </FloatingActionButton>
+                        <div className="create-dashboard-text"> Cancel
+                        </div>
+                    </Link>
                 </div>
-                <div className="create-dashboard-form-group">
-                    <label className="create-dashboard-page-label-url">
-                        URL <span className="required">*</span>
-                    </label>
-                    <TextField errorText={this.state.errorMessageURL} errorStyle={this.state.errorStyleURL}
-                               onChange={this.handleURL} value={this.state.url} id="dashboardURL" hintStyle={hintStyle}
-                               textareaStyle={textareaStyle} underlineStyle={underlineStyle} style={textFieldStyle}
-                               hintText="E.g. sales-stats"/>
+                <div className="create-page-form-container">
+                    <h1 className="create-dashboard-header">Create a Dashboard</h1>
+                    <Divider className="create-dashboard-divider"/>
+                    <div className="create-dashboard-form-group">
+                        <label className="create-dashboard-page-label-name">
+                            Name of your Dashboard <span className="required">*</span>
+                        </label>
+                        <TextField errorText={this.state.errorMessageName} errorStyle={this.state.errorStyleName}
+                                   onChange={this.handleDashboardName} id="dashboardName" hintStyle={hintStyle}
+                                   textareaStyle={textareaStyle}
+                                   underlineStyle={underlineStyle} style={textFieldStyle}
+                                   hintText="E.g. Sales Statistics"/>
+                    </div>
+                    <div className="create-dashboard-form-group">
+                        <label className="create-dashboard-page-label-url">
+                            URL <span className="required">*</span>
+                        </label>
+                        <TextField errorText={this.state.errorMessageURL} errorStyle={this.state.errorStyleURL}
+                                   onChange={this.handleURL} value={this.state.url} id="dashboardURL"
+                                   hintStyle={hintStyle}
+                                   textareaStyle={textareaStyle} underlineStyle={underlineStyle} style={textFieldStyle}
+                                   hintText="E.g. sales-stats"/>
+                    </div>
+                    <div className="create-dashboard-form-group">
+                        <label className="create-dashboard-page-label-description">
+                            Description
+                        </label>
+                        <TextField id="dashboardDescription" hintStyle={hintStyle} textareaStyle={textareaStyle}
+                                   underlineStyle={underlineStyle} style={textFieldStyle}
+                                   hintText="E.g. Monthly Sales Statistics"/>
+                    </div>
+                    <RaisedButton onClick={this.addDashboard} label="Add" primary={true}
+                                  className="create-dashboard-button"/>
+                    <Snackbar contentStyle={messageBoxStyle} bodyStyle={this.state.messageStyle}
+                              open={this.state.showMsg}
+                              message={this.state.Message} autoHideDuration={4000}
+                              onRequestClose={this.handleRequestClose}/>
                 </div>
-                <div className="create-dashboard-form-group">
-                    <label className="create-dashboard-page-label-description">
-                        Description
-                    </label>
-                    <TextField id="dashboardDescription" hintStyle={hintStyle} textareaStyle={textareaStyle}
-                               underlineStyle={underlineStyle} style={textFieldStyle}
-                               hintText="E.g. Monthly Sales Statistics"/>
-                </div>
-                <RaisedButton onClick={this.addDashboard} label="Add" primary={true}
-                              className="create-dashboard-button"/>
-                <Snackbar contentStyle={messageBoxStyle} bodyStyle={this.state.messageStyle} open={this.state.showMsg}
-                          message={this.state.Message} autoHideDuration={4000}
-                          onRequestClose={this.handleRequestClose}/>
             </div>
         </MuiThemeProvider>;
     }

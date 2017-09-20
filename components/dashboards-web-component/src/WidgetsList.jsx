@@ -18,16 +18,14 @@
  */
 import React from 'react';
 
-import Drawer from 'material-ui/Drawer';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import WidgetInfoAPIS from './utils/widget-info-apis';
-import {widgetLoadingComponent, dashboardLayout} from './WidgetLoadingComponent';
+import {widgetLoadingComponent} from './WidgetLoadingComponent';
 import WidgetListThumbnail from './WidgetListThumbnail';
 
 const styles = {
-    open: {
-    },
+    open: {},
     close: {
         display: 'none'
     }
@@ -41,54 +39,37 @@ class WidgetsList extends React.Component {
         super(props);
         this.state = {
             widgets: [],
-            show: this.props.show
-        }
+            widgetList: "",
+            filteredWidgetSet: new Set(this.props.widgetList)
+        };
 
         this.searchWidget = this.searchWidget.bind(this);
-        // this.isDisplayed = this.isDisplayed.bind(this);
+        this.isDisplayed = this.isDisplayed.bind(this);
         this.setWidgets = this.setWidgets.bind(this);
     }
 
-    // searchWidget(event, value) {
-    //     let filteredWidgetList = this.props.widgetList.filter(function (widget) {
-    //         return widget.name.toLowerCase().includes(value.toLowerCase());
-    //     });
-    //     this.state.filteredWidgetSet = new Set(filteredWidgetList.map((widget) => {
-    //         return widget.name
-    //     }));
-    //     this.setState({widgetList: filteredWidgetList});
-    // }
-
     searchWidget(event, value) {
-        let filteredWidgetList = widgets.filter(function (widget) {
+        let filteredWidgetList = this.state.widgets.filter(function (widget) {
             return widget.name.toLowerCase().includes(value.toLowerCase());
         });
-        this.setState({widgets: filteredWidgetList});
+        this.state.filteredWidgetSet = new Set(filteredWidgetList.map((widget) => {
+            return widget.name
+        }));
+        this.setState({widgetList: filteredWidgetList});
     }
 
-    // componentWillReceiveProps(props) {
-    //     this.state = {
-    //         widgetList: this.props.widgetList,
-    //         filteredWidgetSet: new Set(props.widgetList.map((widget) => {
-    //             return widget.name
-    //         }))
-    //     }
-    // }
-
-    // isDisplayed(widgetId) {
-    //     if (this.state.filteredWidgetSet.has(widgetId)) {
-    //         return "block";
-    //     } else {
-    //         return "none";
-    //     }
-    // }
+    isDisplayed(widgetId) {
+        if (this.state.filteredWidgetSet.has(widgetId)) {
+            return "block";
+        } else {
+            return "none";
+        }
+    }
 
     componentDidMount() {
         let widgetInfoAPIS = new WidgetInfoAPIS();
         let promisedWidgetInfo = widgetInfoAPIS.getWidgetsInfo();
-        promisedWidgetInfo
-            .then(this.setWidgets)
-            .catch(function (error) {
+        promisedWidgetInfo.then(this.setWidgets).catch(function (error) {
             //TODO Need to use proper notification library to show the error
         });
         widgetLoadingComponent.setfinishedRegisteringCallback(this.initializeWidgetList);
@@ -97,7 +78,10 @@ class WidgetsList extends React.Component {
     setWidgets(response) {
         widgets = response.data;
         this.setState({
-            widgets: widgets
+            widgets: widgets,
+            filteredWidgetSet: new Set(widgets.map((widget) => {
+                return widget.name
+            }))
         }, this.initializeWidgetList);
     }
 
@@ -125,17 +109,23 @@ class WidgetsList extends React.Component {
     render() {
         return (
             <div style={this.props.show ? styles.open : styles.close}>
-                <div className="widget-list-header">WIDGETS LIST</div>
+                <div className="widget-list-header">WIDGET LIST</div>
                 <div className="widget-search-div">
-                    <TextField onChange={this.searchWidget} hintText="Search.." />
+                    <TextField className="widget-search-textfield" onChange={this.searchWidget} hintText="Search.."/>
                 </div>
                 <Divider/>
                 {
                     this.state.widgets.map(widget => {
-                        return <WidgetListThumbnail widgetID={widget.name} isDisplayed="block" widgetName={widget.name} />;
+                        return <WidgetListThumbnail widgetID={widget.name} isDisplayed={this.isDisplayed(widget.name)}
+                                                    data={this.state.widgetList} widgetName={widget.name}/>;
                     })
                 }
-        </div>);
+                <Divider/>
+                {
+                    this.state.filteredWidgetSet.size === 0 ?
+                        <div className="no-widgets-text">No widgets found !</div> : ""
+                }
+            </div>);
     }
 }
 
