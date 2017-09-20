@@ -2,7 +2,7 @@
     position: fixed;
     width: 58px;
     left: 0;
-    top: 64px;
+    top: 115px;
     bottom: 0;
     overflow: hidden;
     z-index: 1500;
@@ -18,7 +18,7 @@
 }
 
 .designer-left-pane {
-    padding: 74px 10px 10px 68px;
+    padding: 125px 10px 10px 68px;
 }
 
 .form-element {
