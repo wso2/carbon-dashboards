@@ -68,7 +68,6 @@ class DashboardRenderingComponent extends React.Component {
         dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance(config,
             document.getElementById('dashboard-view'));
         if (widgetList.size === 0) {
-            console.log('*************ttt');
             widgetLoadingComponent.callFinishedRegisteringCallback();
         }
         widgetList.forEach(widget => {
