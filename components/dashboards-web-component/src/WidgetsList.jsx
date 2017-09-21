@@ -42,10 +42,10 @@ class WidgetsList extends React.Component {
             widgetList: "",
             filteredWidgetSet: new Set(this.props.widgetList)
         };
-
         this.searchWidget = this.searchWidget.bind(this);
         this.isDisplayed = this.isDisplayed.bind(this);
         this.setWidgets = this.setWidgets.bind(this);
+        isDashboardLoaded = false;
     }
 
     searchWidget(event, value) {

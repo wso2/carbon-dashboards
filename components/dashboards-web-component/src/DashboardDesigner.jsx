@@ -28,6 +28,8 @@ import WidgetsIcon from 'material-ui/svg-icons/device/widgets';
 import PagesIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 
 import Header from './Header';
 import {widgetLoadingComponent, dashboardLayout} from './WidgetLoadingComponent';
@@ -36,8 +38,6 @@ import DashboardRenderingComponent from './DashboardRenderingComponent';
 import DashboardUtils from './utils/dashboard-utils';
 import WidgetsList from './WidgetsList';
 import PagesPanel from './designer/components/PagesPanel';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 import '../public/css/designer.css';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
@@ -70,8 +70,7 @@ const styleConstants = {
     sidebar: {
         styles: {
             width: '314px'
-        },
-
+        }
     }
 };
 
@@ -117,6 +116,10 @@ export default class DashboardDesigner extends React.Component {
         }).bind(this);
     }
 
+    componentWillMount(){
+        widgetLoadingComponent.setfinishedRegisteringCallback();
+    }
+
     render() {
         this.loadTheme();
         return (
@@ -146,11 +149,11 @@ export default class DashboardDesigner extends React.Component {
                                 <WidgetsList show={this.state.showWidgetsPanel}/>
                             </Drawer>
                         </div>
-
                         <div id="dashboard-view" className={this.state.designerClass}></div>
-                        <DashboardRenderingComponent onDashboardModified={this.dashboardModifiedHandler} config={config} name={this.state.dashboardContent} 
-                                dashboardContent={this.getDashboardContent(this.props.match.params[1], this.state.dashboardContent, this.state.landingPage)}/>
-
+                        <DashboardRenderingComponent onDashboardModified={this.dashboardModifiedHandler} config={config}
+                                                     name={this.state.dashboardContent}
+                                dashboardContent={this.getDashboardContent(this.props.match.params[1],
+                                    this.state.dashboardContent, this.state.landingPage)}/>
                         <Snackbar open={this.state.notify} message={this.state.notificationMessage}
                                   autoHideDuration={4000}/>
                     </div>
