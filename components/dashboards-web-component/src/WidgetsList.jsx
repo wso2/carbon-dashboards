@@ -92,6 +92,10 @@ class WidgetsList extends React.Component {
             //TODO Need to use proper notification library to show the error
         });
         widgetLoadingComponent.setfinishedRegisteringCallback(this.initializeWidgetList);
+        widgetLoadingComponent.onStateChanged(function(config) {
+            console.log('>>>>>>>>>>>>');
+            console.log(config);
+        })
     }
 
     setWidgets(response) {
