@@ -10,13 +10,13 @@ export default class PageEntry extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            page: props.page,
-            originalId: props.page.id
+            page: props.page
         };
         // Initializing the dirty flag. Based on this the onPageChanged event will be triggered.
         this.dirty = false;
         this.handleChange = this.handleChange.bind(this);
         this.savePage = this.savePage.bind(this);
+        this.deletePage = this.deletePage.bind(this);
     }
 
     render () {
@@ -34,6 +34,11 @@ export default class PageEntry extends Component {
                     <div className="form-element">
                         <label>Title:</label>
                         <TextField hintText="Title" onBlur={this.savePage} id="txt-page-title" value={this.state.page.title} onChange={this.handleChange} style={{width: '206px'}} />
+                    </div>
+                    <div>
+                        <IconButton tooltip="Delete Page" onClick={this.deletePage}>
+                            <DeleteIcon />
+                        </IconButton>
                     </div>
                 </CardText>
             </Card>
@@ -59,8 +64,14 @@ export default class PageEntry extends Component {
     savePage() {
         // Check if the onPageChanged event handler is defined and the page object is dirty. If so invoke the event.
         if (this.props.onPageChanged && this.dirty) {
-            this.props.onPageChanged(this.state.originalId, this.state.page)
+            this.props.onPageChanged(this.props.page.id, this.state.page)
             this.dirty = false;
+        }
+    }
+    
+    deletePage() {
+        if (this.props.onPageDeleted) {
+            this.props.onPageDeleted(this.props.page.id);
         }
     }
 }

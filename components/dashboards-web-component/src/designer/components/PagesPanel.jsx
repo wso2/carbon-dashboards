@@ -24,11 +24,14 @@ export default class PagesPanel extends Component {
         this.searchPages = this.searchPages.bind(this);
         this.addPage = this.addPage.bind(this);
         this.savePage = this.savePage.bind(this);
+        this.deletePage  = this.deletePage.bind(this);
         this.buildPages = this.buildPages.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        pages = this.buildPages(props.dashboard.pages);
+        let pagesObj = JSON.parse(props.dashboard.pages);
+        pages = this.buildPages(pagesObj);
+        console.log(props.dashboard);
         this.setState({
             pages: pages
         });
@@ -61,7 +64,7 @@ export default class PagesPanel extends Component {
                 {
                     this.state.pages.map(p => {
                         return (
-                            <PageEntry page={p} dashboardUrl={this.props.dashboard.url} pageUrl={p.url} onPageChanged={this.savePage} />
+                            <PageEntry page={p} dashboardUrl={this.props.dashboard.url} pageUrl={p.url} onPageChanged={this.savePage} onPageDeleted={this.deletePage} />
                         );
                     })
                 }
@@ -79,31 +82,56 @@ export default class PagesPanel extends Component {
     }
 
     addPage() {
-        let uniqueId = this.generatePageId(pages.length);
-        let id = 'page' + uniqueId;
-        let title = 'New Page - ' +uniqueId;
-        pages.push({ 
+        let id = this.generatePageId(pages.length);
+        pages.push({
             id: id,
-            title: title,
-            url: id
+            title: 'New Page'
         });
         this.setState({
             pages: pages
-        });
+        }); 
 
-        this.props.dashboard.pages.push({
+        let pagesObj = JSON.parse(this.props.dashboard.pages);
+        pagesObj.push({
             id: id,
-            name: title,
+            name: 'New Page',
             content: [],
             pages: []
         });
+
+        alert(JSON.stringify(pagesObj));
+
+        this.props.dashboard.pages = JSON.stringify(pagesObj);
+        // this.props.dashboard.pages = pagesObj;
+        // todo: call api
         let dashboardsAPIs = new DashboardsAPIs();
         dashboardsAPIs.updateDashboardByID(this.props.dashboard.id, this.props.dashboard);
+
         window.global.notify('Page added succcessfully!');
     }
 
+    deletePage(id) {
+        if (!confirm('Are you sure you want to delete the page')) {
+            return;
+        }
+        // todo delete page
+        let index = -1;
+        for(let i = 0; i < pages.length; i++) {
+            if (pages[i].id === id) {
+                index = i;
+            }
+        }
+        if (index > -1) {
+            pages.splice(index, 1);
+        }
+        this.setState({
+            pages: pages
+        });
+        window.global.notify('Page deleted successfully!');
+    }
+
     generatePageId(id) {
-        let candidateId = id;
+        let candidateId = 'page' + id;
         let hasPage = false;
         for (let i = 0; i < pages.length; i++) {
             if (pages[i].id.toLowerCase() === candidateId) {
@@ -118,44 +146,17 @@ export default class PagesPanel extends Component {
     }
 
     savePage(id, page) {
-        let path = page.url.split('/');
-        if (path.length > 1) {
-            // TODO: handle hierarchical pages
-            return;
-        }
-
-        if (path.length === 0) {
-            for(let i = 0; i < this.props.dashboard.pages.length; i++) {
-                if (this.props.dashboard.pages[i].landingPage) {
-                    this.props.dashboard.pages[i].id = page.id;
-                    this.props.dashboard.pages[i].name = page.title;
-                }
-            }
-        } else {
-            for(let i = 0; i < this.props.dashboard.pages.length; i++) {
-                if (this.props.dashboard.pages[i].id === id) {
-                    this.props.dashboard.pages[i].id = page.id;
-                    this.props.dashboard.pages[i].name = page.title;
-                }
-            }
-        }
-        let dashboardsAPIs = new DashboardsAPIs();
-        dashboardsAPIs.updateDashboardByID(this.props.dashboard.id, this.props.dashboard);
-
         for(let i = 0; i < pages.length; i++) {
             if (pages[i].id === id) {
                 pages[i] = page;
                 this.setState({
                     pages: pages
                 });
+                // TODO: Save this
                 break;
             }
         }
-        
-        let appContext = window.location.pathname.split('/')[1];
-        let url = '/' + appContext + '/designer/' + this.props.dashboard.url;
-        window.location.href = url;
-        
         window.global.notify('Dashboard saved successfully!');
+        console.log(pages);
     }
 }
