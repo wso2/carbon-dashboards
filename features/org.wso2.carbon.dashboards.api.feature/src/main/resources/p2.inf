@@ -1,2 +1,2 @@
 instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.api_${feature.version}/repository/database/DASHBOARD_DB.h2.db/,target:${installFolder}/../../wso2/default/database/DASHBOARD_DB.h2.db,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.api_${feature.version}/repository/database/DASHBOARD_DB.h2.db/,target:${installFolder}/../../wso2/dashboard/database/DASHBOARD_DB.h2.db,overwrite:true);\
