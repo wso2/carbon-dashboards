@@ -60,7 +60,7 @@
                                 <artifactItem>
                                     <groupId>org.wso2.carbon.dashboards</groupId>
                                     <artifactId>dashboards-web-component</artifactId>
-                                    <version>4.0.0-SNAPSHOT</version>
+                                    <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/target/portal/public/</outputDirectory>
