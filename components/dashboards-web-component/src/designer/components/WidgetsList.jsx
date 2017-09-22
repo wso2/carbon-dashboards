@@ -20,8 +20,8 @@ import React from 'react';
 
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
-import WidgetInfoAPIS from './utils/widget-info-apis';
-import {widgetLoadingComponent} from './WidgetLoadingComponent';
+import WidgetInfoAPIS from '../../utils/widget-info-apis';
+import {widgetLoadingComponent} from '../../utils/WidgetLoadingComponent';
 import WidgetListThumbnail from './WidgetListThumbnail';
 
 const styles = {

@@ -31,14 +31,14 @@ import Snackbar from 'material-ui/Snackbar';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 
-import Header from './Header';
-import {widgetLoadingComponent, dashboardLayout} from './WidgetLoadingComponent';
-import DashboardsAPIs from './utils/dashboard-apis';
-import DashboardRenderingComponent from './DashboardRenderingComponent';
-import DashboardUtils from './utils/dashboard-utils';
-import WidgetsList from './WidgetsList';
-import PagesPanel from './designer/components/PagesPanel';
-import '../public/css/designer.css';
+import Header from '../common/Header';
+import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
+import DashboardsAPIs from '../utils/dashboard-apis';
+import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
+import DashboardUtils from '../utils/dashboard-utils';
+import WidgetsList from './components/WidgetsList';
+import PagesPanel from './components/PagesPanel';
+import '../../public/css/designer.css';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const config = {
@@ -46,7 +46,7 @@ const config = {
         hasHeaders: true,
         constrainDragToContainer: true,
         reorderEnabled: true,
-        selectionEnabled: false,
+        selectionEnabled: true,
         popoutWholeStack: false,
         blockedPopoutsThrowError: true,
         closePopoutsOnUnload: true,

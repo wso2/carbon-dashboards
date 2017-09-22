@@ -20,7 +20,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import DashboardAPIs from './utils/dashboard-apis';
+import DashboardAPIs from '../utils/dashboard-apis';
 
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';

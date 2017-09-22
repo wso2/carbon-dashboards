@@ -25,6 +25,8 @@ export default class Widget extends Component {
         this.getDashboardAPI = this.getDashboardAPI.bind(this);
     }
 
+
+
     render () {
         let styles = {
             padding: '30px 15px 15px 15px'

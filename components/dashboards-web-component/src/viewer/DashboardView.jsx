@@ -25,10 +25,10 @@ import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Drawer from 'material-ui/Drawer';
 
-import DashboardRenderingComponent from './DashboardRenderingComponent';
-import PagesNavigationPanel from './PagesNavigationPanel';
-import DashboardsAPIs from './utils/dashboard-apis';
-import DashboardUtils from './utils/dashboard-utils';
+import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
+import PagesNavigationPanel from '../designer/components/PagesNavigationPanel';
+import DashboardsAPIs from '../utils/dashboard-apis';
+import DashboardUtils from '../utils/dashboard-utils';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 
