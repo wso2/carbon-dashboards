@@ -26,10 +26,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
-import Header from './Header';
+import Header from '../common/Header';
 import DashboardThumbnail from './DashboardThumbnail';
-import DashboardsAPIs from './utils/dashboard-apis';
-import '../public/css/dashboard.css';
+import DashboardsAPIs from '../utils/dashboard-apis';
+import '../../public/css/dashboard.css';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 

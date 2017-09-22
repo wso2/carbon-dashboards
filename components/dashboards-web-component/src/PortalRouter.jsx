@@ -18,11 +18,11 @@
  */
 
 import React from 'react';
-import DashboardView from './DashboardView';
-import DashboardListing from './DashboardListing';
-import DashboardDesigner from './DashboardDesigner';
-import DashboardCreate from './DashboardCreatePage';
-import DashboardSettings from './DashboardSettings';
+import DashboardView from './viewer/DashboardView';
+import DashboardListing from './listing/DashboardListing';
+import DashboardDesigner from './designer/DashboardDesigner';
+import DashboardCreate from './designer/DashboardCreatePage';
+import DashboardSettings from './designer/DashboardSettings';
 import {
     Route,
     Link,

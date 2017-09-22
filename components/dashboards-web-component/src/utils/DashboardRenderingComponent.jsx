@@ -19,11 +19,10 @@
 
 import React from 'react';
 
-import './WidgetLoadingComponent';
 import {widgetLoadingComponent} from './WidgetLoadingComponent';
 
 import 'golden-layout/src/css/goldenlayout-base.css';
-import '../public/css/dashboard.css';
+import '../../public/css/dashboard.css';
 
 let dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance();
 
