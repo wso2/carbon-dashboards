@@ -27,7 +27,7 @@ import DashboardDesigner from './designer/DashboardDesigner';
 import DashboardCreate from './designer/DashboardCreatePage';
 import DashboardSettings from './designer/DashboardSettings';
 
-export default class App extends Component {
+class App extends Component {
     render () {
         // TODO portal is the app context. Need to get the app context properly and use here
         return (
