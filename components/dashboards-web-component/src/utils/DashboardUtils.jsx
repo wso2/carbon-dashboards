@@ -17,7 +17,7 @@
  *
  */
 
-class DashboardUtils {
+export default class DashboardUtils {
     getDashboardByPageId(pageId, dashboardContent, landingPage) {
         let dashboardPageContent = [];
         if (dashboardContent[0]) {
@@ -65,5 +65,3 @@ class DashboardUtils {
         return input.replace(/[^a-z0-9-\s]/gim, "");
     };
 }
-
-export default DashboardUtils;

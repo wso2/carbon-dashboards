@@ -17,9 +17,38 @@
  *
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter as Router} from 'react-router-dom';
-import PortalRouter from './PortalRouter';
+import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
+// App components
+import DashboardView from './viewer/DashboardView';
+import DashboardListing from './listing/DashboardListing';
+import DashboardDesigner from './designer/DashboardDesigner';
+import DashboardCreate from './designer/DashboardCreatePage';
+import DashboardSettings from './designer/DashboardSettings';
 
-ReactDOM.render(<Router history={true}><PortalRouter /></Router>, document.getElementById('content'));
+export default class App extends Component {
+    render () {
+        // TODO portal is the app context. Need to get the app context properly and use here
+        return (
+            <BrowserRouter history>
+                <Switch>
+                    {/* Dashboard listing a.k.a. landing page */}
+                    <Route exact path='/portal' component={DashboardListing}/>
+                    {/* Create dashboard */}
+                    <Route exact path='/portal/create' component={DashboardCreate}/>
+                    {/* Dashboard settings */}
+                    <Route exact path='/portal/settings/:id' component={DashboardSettings}/>
+                    {/* Dashboard designer */}
+                    <Route exact path='*/designer/:id' component={DashboardDesigner}/>
+                    <Route path='*/designer/:id/*' component={DashboardDesigner}/>
+                    {/* Dashboard view */}
+                    <Route exact path='*/dashboards/:id' component={DashboardView}/>
+                    <Route path='*/dashboards/:id/*' component={DashboardView}/>
+                </Switch>
+            </BrowserRouter>
+        );
+    }
+}
+
+ReactDOM.render(<App />, document.getElementById('content'));

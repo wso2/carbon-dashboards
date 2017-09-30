@@ -27,8 +27,8 @@ import Drawer from 'material-ui/Drawer';
 
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import PagesNavigationPanel from '../designer/components/PagesNavigationPanel';
-import DashboardsAPIs from '../utils/dashboard-apis';
-import DashboardUtils from '../utils/dashboard-utils';
+import DashboardsAPIs from '../utils/apis/DashboardAPIs';
+import DashboardUtils from '../utils/DashboardUtils';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 

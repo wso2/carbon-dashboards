@@ -31,8 +31,8 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Clear from 'material-ui/svg-icons/content/clear';
 
 import Header from '../common/Header';
-import DashboardAPIS from '../utils/dashboard-apis';
-import DashboardUtils from '../utils/dashboard-utils';
+import DashboardAPIS from '../utils/apis/DashboardAPIs';
+import DashboardUtils from '../utils/DashboardUtils';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const hintStyle = {color: "grey", bottom: 0};

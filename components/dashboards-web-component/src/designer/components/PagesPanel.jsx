@@ -22,7 +22,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import AddCircleOutlineIcon from 'material-ui/svg-icons/content/add-circle-outline';
 import TextField from 'material-ui/TextField';
 import PageEntry from './PageEntry';
-import DashboardsAPIs from '../../utils/dashboard-apis';
+import DashboardsAPIs from '../../utils/apis/DashboardAPIs';
 
 var pages = [];
 

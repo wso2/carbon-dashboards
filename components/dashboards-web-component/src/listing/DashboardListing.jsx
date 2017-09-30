@@ -28,7 +28,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import Header from '../common/Header';
 import DashboardThumbnail from './DashboardThumbnail';
-import DashboardsAPIs from '../utils/dashboard-apis';
+import DashboardsAPIs from '../utils/apis/DashboardAPIs';
 import '../../public/css/dashboard.css';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
