@@ -33,9 +33,9 @@ import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 
 import Header from '../common/Header';
 import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
-import DashboardsAPIs from '../utils/dashboard-apis';
+import DashboardsAPIs from '../utils/apis/DashboardAPIs';
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
-import DashboardUtils from '../utils/dashboard-utils';
+import DashboardUtils from '../utils/DashboardUtils';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
 import '../../public/css/designer.css';

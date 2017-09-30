@@ -19,8 +19,7 @@
 
 import axios from 'axios';
 
-class DashboardsAPIS {
-
+export default class DashboardsAPIs {
     /**
      * This method will return the AXIOS http client.
      * @returns httpClient
@@ -75,7 +74,4 @@ class DashboardsAPIS {
     deleteDashboardByID(dashboardId) {
         return this.getHTTPClient().delete(dashboardId);
     }
-
 }
-
-export default DashboardsAPIS;

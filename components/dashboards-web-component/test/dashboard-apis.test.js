@@ -18,7 +18,7 @@
  */
 
 import {describe, it} from "mocha";
-import DashboardsAPIs from '../src/utils/dashboard-apis';
+import DashboardsAPIs from '../src/utils/apis/DashboardAPIs';
 import {assert} from 'chai';
 import TestUtils from './utils/test-utils';
 

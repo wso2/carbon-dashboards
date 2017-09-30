@@ -19,8 +19,7 @@
 
 import axios from 'axios';
 
-class WidgetInfoAPIS {
-
+export default class WidgetInfoAPIs {
     /**
      * This method will return the AXIOS http client.
      * @returns httpClient
@@ -41,5 +40,3 @@ class WidgetInfoAPIS {
         return this.getHTTPClient().get();
     }
 }
-
-export default WidgetInfoAPIS;

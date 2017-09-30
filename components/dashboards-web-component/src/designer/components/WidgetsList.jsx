@@ -20,7 +20,7 @@ import React from 'react';
 
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
-import WidgetInfoAPIS from '../../utils/widget-info-apis';
+import WidgetInfoAPIS from '../../utils/apis/WidgetInfoAPIs';
 import {widgetLoadingComponent} from '../../utils/WidgetLoadingComponent';
 import WidgetListThumbnail from './WidgetListThumbnail';
 
