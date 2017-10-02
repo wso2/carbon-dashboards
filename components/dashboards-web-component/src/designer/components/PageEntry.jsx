@@ -17,12 +17,13 @@
  *
  */
 
-import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
-
-import {Card, CardActions, CardHeader, CardText, CardTitle} from 'material-ui/Card';
+import React, {Component} from 'react';
+// Material-UI
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
-
+import RaisedButton from 'material-ui/RaisedButton';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
+// CSS
 import '../../../public/css/designer.css';
 
 export default class PageEntry extends Component {
@@ -30,60 +31,54 @@ export default class PageEntry extends Component {
         super(props);
         this.state = {
             page: props.page,
-            originalId: props.page.id
+            pageId: props.page.id
         };
-        // Initializing the dirty flag. Based on this the onPageChanged event will be triggered.
         this.dirty = false;
-        this.handleChange = this.handleChange.bind(this);
-        this.savePage = this.savePage.bind(this);
+        this.updatePage = this.updatePage.bind(this);
     }
 
-    render () {
-        let appContext = window.location.pathname.split('/')[1];
-        let url = '/' + appContext + '/designer/' + this.props.dashboardUrl + '/' + this.props.pageUrl;
-        let expanded = window.location.pathname.replace('/' + appContext + '/designer/' +
-                this.props.dashboardUrl + '/', '').toLowerCase() === this.props.pageUrl.toLowerCase();
+    render() {
         return (
-            <Card containerStyle={{'margin-bottom': '15px'}} expanded={expanded}>
-                <CardHeader title={<Link to={url} replace={true}>{this.state.page.title}</Link>} actAsExpander={true}
-                            showExpandableButton={true} />
-                <CardText expandable={true}>
-                    <div className="form-element">
-                        <label>URL:</label>
-                        <TextField hintText="URL" value={this.state.page.id} onBlur={this.savePage} id="txt-page-id"
-                                   onChange={this.handleChange} style={{width: '206px'}} />
-                    </div>
-                    <div className="form-element">
-                        <label>Title:</label>
-                        <TextField hintText="Title" onBlur={this.savePage} id="txt-page-title"
-                                   value={this.state.page.title} onChange={this.handleChange} style={{width: '206px'}} />
-                    </div>
+            <Card>
+                <CardHeader title={this.state.page.title} actAsExpander showExpandableButton/>
+                <CardText expandable>
+                    <TextField value={this.state.page.id} fullWidth floatingLabelText="URL"
+                               onBlur={this.updatePage}
+                               onChange={(e) => {
+                                   this.state.page.id = e.target.value;
+                                   this.setState({
+                                       page: this.state.page
+                                   });
+                                   this.dirty = true;
+                               }}/>
+                    <TextField value={this.state.page.title} fullWidth floatingLabelText="Title"
+                               onBlur={this.updatePage}
+                               onChange={(e) => {
+                                   this.state.page.title = e.target.value;
+                                   this.setState({
+                                       page: this.state.page
+                                   });
+                                   this.dirty = true;
+                               }}/>
+
+                    <RaisedButton label="Delete" labelPosition="after" secondary fullWidth icon={<DeleteIcon/>}
+                                  onClick={this.deletePage.bind(this)} />
                 </CardText>
             </Card>
         );
     }
 
-    handleChange(e) {
-        let page = this.state.page;
-        switch(e.target.getAttribute('id').toLowerCase()) {
-            case 'txt-page-id':
-                page.id = e.target.value;
-                break;
-            case 'txt-page-title':
-                page.title = e.target.value;
-                break;
+    updatePage() {
+        // Check if the onPageUpdated event handler is defined and the page object is dirty. If so invoke the event.
+        if (this.props.onPageUpdated && this.dirty) {
+            this.props.onPageUpdated(this.state.pageId, this.state.page);
+            this.dirty = false;
         }
-        this.setState({
-            page: page
-        });
-        this.dirty = true;
     }
 
-    savePage() {
-        // Check if the onPageChanged event handler is defined and the page object is dirty. If so invoke the event.
-        if (this.props.onPageChanged && this.dirty) {
-            this.props.onPageChanged(this.state.originalId, this.state.page)
-            this.dirty = false;
+    deletePage() {
+        if (this.props.onPageDeleted) {
+            this.props.onPageDeleted(this.state.pageId);
         }
     }
 }
