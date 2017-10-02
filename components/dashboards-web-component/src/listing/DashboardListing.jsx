@@ -52,7 +52,7 @@ class DashboardListing extends React.Component {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <Header dashboardName="Portal"/>
+                    <Header title="Portal"/>
                     <div className="portal-navigation-bar">
                         <Link to={"create"}>
                             <FloatingActionButton mini={true} className="navigation-icon">

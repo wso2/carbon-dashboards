@@ -64,4 +64,29 @@ export default class DashboardUtils {
     sanitizeInput(input) {
         return input.replace(/[^a-z0-9-\s]/gim, "");
     };
+
+    static findDashboardPageById(dashboard, pageId) {
+        if (!dashboard || !dashboard.pages) {
+            return {};
+        }
+        let page = this._findPageByIdRecursively(dashboard.pages, pageId);
+        return page || undefined;
+    }
+
+    static _findPageByIdRecursively(pages, id) {
+        pages = pages || [];
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i].id == id) {
+                return pages[i];
+            } else {
+                var p;
+                if (pages[i].hasOwnProperty('pages')) {
+                    p = this._findPageByIdRecursively(pages[i].pages, id);
+                }
+                if (p) {
+                    return p;
+                }
+            }
+        }
+    }
 }

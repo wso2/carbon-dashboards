@@ -137,7 +137,7 @@ class DashboardSettings extends React.Component {
     render() {
         return <MuiThemeProvider muiTheme={muiTheme}>
             <div>
-                <Header dashboardName="Portal"></Header>
+                <Header title="Portal"></Header>
                 <div className="portal-navigation-bar">
                     <Link to={"/portal/"}>
                         <FloatingActionButton mini={true} className="navigation-icon">

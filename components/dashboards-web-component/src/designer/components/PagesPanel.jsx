@@ -17,46 +17,68 @@
  *
  */
 
-import React, { Component } from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import AddCircleOutlineIcon from 'material-ui/svg-icons/content/add-circle-outline';
-import TextField from 'material-ui/TextField';
+import React, {Component} from 'react';
+// Components
 import PageEntry from './PageEntry';
-import DashboardsAPIs from '../../utils/apis/DashboardAPIs';
+import DashboardUtils from '../../utils/DashboardUtils';
+// Material-UI
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import AddCircleOutlineIcon from 'material-ui/svg-icons/content/add-circle-outline';
 
-var pages = [];
+let _pages = [];
 
-const styles = {
-    open: {
-    },
-    close: {
-        display: 'none'
-    }
-};
+const PAGE_ID_PREFIX = 'page';
+const PAGE_TITLE_PREFIX = 'New Page - ';
 
 export default class PagesPanel extends Component {
     constructor(props) {
         super(props);
+        _pages = this.buildPages(props.dashboard.pages);
         this.state = {
-            pages: pages
+            pages: _pages
         };
-        this.searchPages = this.searchPages.bind(this);
-        this.addPage = this.addPage.bind(this);
-        this.savePage = this.savePage.bind(this);
-        this.buildPages = this.buildPages.bind(this);
+        this.deletePageRecursively = this.deletePageRecursively.bind(this);
     }
 
-    componentWillReceiveProps(props) {
-        pages = this.buildPages(props.dashboard.pages);
+    componentWillReceiveProps(nextprops) {
+        _pages = this.buildPages(nextprops.dashboard.pages);
         this.setState({
-            pages: pages
+            pages: _pages
         });
     }
 
+    render() {
+        return (
+            <div>
+                <h3>Pages</h3>
+                <div style={{'text-align': 'center'}}>
+                    <RaisedButton label="Create Page" primary fullWidth icon={<AddCircleOutlineIcon/>}
+                                  onClick={this.addPage.bind(this)}/>
+                    <TextField hintText="Search..." onChange={(e) => this.searchPages(e)}/>
+                </div>
+                {
+                    this.state.pages.map(p => {
+                        return <PageEntry page={p}
+                                          onPageUpdated={this.updatePage.bind(this)}
+                                          onPageDeleted={this.deletePage.bind(this)}/>;
+                    })
+                }
+            </div>
+        );
+    }
+
+    /**
+     * Creates list of pages recursively.
+     * @param p
+     * @param a
+     * @param baseUrl
+     * @returns {*|Array}
+     */
     buildPages(p, a, baseUrl) {
         a = a || [];
         baseUrl = baseUrl || '';
-        for(var i = 0; i < p.length; i++) {
+        for (let i = 0; i < p.length; i++) {
             let pageUrl = baseUrl + p[i].id;
             a.push({
                 id: p[i].id,
@@ -70,28 +92,12 @@ export default class PagesPanel extends Component {
         return a;
     }
 
-    render () {
-        return (
-            <div style={this.props.show ? styles.open : styles.close}>
-                <div style={{'text-align': 'center'}}>
-                    <RaisedButton label="Create Page" primary={true} icon={<AddCircleOutlineIcon />}
-                                  style={{margin: 12}} onClick={this.addPage} />
-                    <TextField hintText="Search..." onChange={this.searchPages} />
-                </div>
-                {
-                    this.state.pages.map(p => {
-                        return (
-                            <PageEntry page={p} dashboardUrl={this.props.dashboard.url} pageUrl={p.url}
-                                       onPageChanged={this.savePage} />
-                        );
-                    })
-                }
-            </div>
-        );
-    }
-
+    /**
+     * Search pages.
+     * @param e
+     */
     searchPages(e) {
-        let filteredPages = pages.filter(function(p) {
+        let filteredPages = _pages.filter((p) => {
             return p.title.toLowerCase().includes(e.target.value.toLowerCase());
         });
         this.setState({
@@ -99,84 +105,92 @@ export default class PagesPanel extends Component {
         });
     }
 
+    /**
+     * Add new page.
+     */
     addPage() {
-        let uniqueId = this.generatePageId(pages.length);
-        let id = 'page' + uniqueId;
-        let title = 'New Page - ' +uniqueId;
-        pages.push({ 
-            id: id,
-            title: title,
-            url: id
-        });
-        this.setState({
-            pages: pages
-        });
-
+        let uniqueId = this.generatePageId();
+        let id = PAGE_ID_PREFIX + uniqueId;
+        let title = PAGE_TITLE_PREFIX + uniqueId;
         this.props.dashboard.pages.push({
             id: id,
             name: title,
             content: [],
             pages: []
         });
-        let dashboardsAPIs = new DashboardsAPIs();
-        dashboardsAPIs.updateDashboardByID(this.props.dashboard.id, this.props.dashboard);
-        window.global.notify('Page added succcessfully!');
+        this.savePages(this.props.dashboard.pages);
     }
 
+    /**
+     * Update page identified by Id.
+     * @param id
+     * @param page
+     */
+    updatePage(id, page) {
+        let p = DashboardUtils.findDashboardPageById(this.props.dashboard, id);
+        p.id = page.id;
+        p.name = page.title;
+        this.savePages(this.props.dashboard.pages);
+    }
+
+    /**
+     * Delete a page identified by Id.
+     * @param id
+     */
+    deletePage(id) {
+        let p = DashboardUtils.findDashboardPageById(this.props.dashboard, id);
+        if (p.pages && p.pages.length > 0) {
+            alert('Unable to delete this page since it contains sub-pages');
+            return;
+        }
+        this.deletePageRecursively(this.props.dashboard.pages, id);
+        this.savePages(this.props.dashboard.pages);
+    }
+
+    /**
+     * Traverse the page structure and delete specific page identified by Id.
+     * @param pages
+     * @param id
+     */
+    deletePageRecursively(pages, id) {
+        pages = pages || [];
+        for(var i = 0; i < pages.length; i++) {
+            if (pages[i].id === id) {
+                // todo delete page
+                pages.splice(i, 1);
+                break;
+            } else {
+                this.deletePageRecursively(pages[i].pages, id);
+            }
+        }
+    }
+
+    /**
+     * Save pages.
+     * @param pages
+     */
+    savePages(pages) {
+        this.props.dashboard.pages = pages;
+        if (this.props.onDashboardUpdated) {
+            this.props.onDashboardUpdated(this.props.dashboard);
+        }
+    }
+
+    /**
+     * Generate unique page Id.
+     * @param id
+     * @returns {*|number}
+     */
     generatePageId(id) {
-        let candidateId = id;
+        id = id || _pages.length + 1;
+        let candidateId = PAGE_ID_PREFIX + id;
         let hasPage = false;
-        for (let i = 0; i < pages.length; i++) {
-            if (pages[i].id.toLowerCase() === candidateId) {
+        for (let i = 0; i < _pages.length; i++) {
+            if (_pages[i].id.toLowerCase() === candidateId) {
                 hasPage = true;
                 break;
             }
         }
-        if (!hasPage) {
-            return candidateId;
-        }
-        return generatePageId(id);
-    }
-
-    savePage(id, page) {
-        let path = page.url.split('/');
-        if (path.length > 1) {
-            // TODO: handle hierarchical pages
-            return;
-        }
-
-        if (path.length === 0) {
-            for(let i = 0; i < this.props.dashboard.pages.length; i++) {
-                if (this.props.dashboard.pages[i].landingPage) {
-                    this.props.dashboard.pages[i].id = page.id;
-                    this.props.dashboard.pages[i].name = page.title;
-                }
-            }
-        } else {
-            for(let i = 0; i < this.props.dashboard.pages.length; i++) {
-                if (this.props.dashboard.pages[i].id === id) {
-                    this.props.dashboard.pages[i].id = page.id;
-                    this.props.dashboard.pages[i].name = page.title;
-                }
-            }
-        }
-        let dashboardsAPIs = new DashboardsAPIs();
-        dashboardsAPIs.updateDashboardByID(this.props.dashboard.id, this.props.dashboard);
-
-        for(let i = 0; i < pages.length; i++) {
-            if (pages[i].id === id) {
-                pages[i] = page;
-                this.setState({
-                    pages: pages
-                });
-                break;
-            }
-        }
-        
-        let appContext = window.location.pathname.split('/')[1];
-        let url = '/' + appContext + '/designer/' + this.props.dashboard.url;
-        window.location.href = url;
-        
-        window.global.notify('Dashboard saved successfully!');
+        return hasPage ? this.generatePageId(id + 1) : id;
     }
 }

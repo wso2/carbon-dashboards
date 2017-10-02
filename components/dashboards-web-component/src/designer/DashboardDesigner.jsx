@@ -16,9 +16,17 @@
  *  under the License.
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-
+// App Components
+import Header from '../common/Header';
+import DashboardsAPIs from '../utils/apis/DashboardAPIs';
+import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
+import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
+import DashboardUtils from '../utils/DashboardUtils';
+import WidgetsList from './components/WidgetsList';
+import PagesPanel from './components/PagesPanel';
+// Material UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -30,17 +38,19 @@ import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
-
-import Header from '../common/Header';
-import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
-import DashboardsAPIs from '../utils/apis/DashboardAPIs';
-import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
-import DashboardUtils from '../utils/DashboardUtils';
-import WidgetsList from './components/WidgetsList';
-import PagesPanel from './components/PagesPanel';
+// CSS
 import '../../public/css/designer.css';
+import './DashboardDesigner.css';
 
+/**
+ * Material-UI theme.
+ */
 const muiTheme = getMuiTheme(darkBaseTheme);
+
+/**
+ * Golden layout configurations.
+ * @type {{*}}
+ */
 const config = {
     settings: {
         hasHeaders: true,
@@ -63,50 +73,156 @@ const config = {
     content: [],
 };
 
-const styleConstants = {
-    actionPanel: {
-        width: 58
-    },
-    sidebar: {
-        styles: {
-            width: '314px'
-        }
-    }
+/**
+ * UI style constants.
+ * @type {{actionBarWidth: number, sidebarWidth: string}}
+ */
+const styles = {
+    actionBarWidth: 58,
+    sidebarWidth: '314px'
 };
 
-export default class DashboardDesigner extends React.Component {
+/**
+ * Sidebar panels.
+ * @type {{PAGES: string, WIDGETS: string}}
+ */
+const sidebarPanels = {
+    PAGES: 'PAGES',
+    WIDGETS: 'WIDGETS'
+};
+
+export default class DashboardDesigner extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            leftSidebarOpen: true,
-            showPagesPanel: false,
-            showWidgetsPanel: true,
-            dashboard: {},
-            dashboardUrl: '',
-            dashboardName: '',
-            dashboardContent: [],
-            landingPage: '',
+            dashboardId: this.props.match.params.dashboardId,
+            pageUrl: this.props.match.params[1],
+            dashboard: undefined,
+            leftSidebarOpen: false,
+            leftSidebarPanel: sidebarPanels.PAGES,
             designerClass: 'dashboard-designer-container-expanded'
         };
-        this.onWidgetsIconClick = this.onWidgetsIconClick.bind(this);
-        this.onPagesIconClick = this.onPagesIconClick.bind(this);
-        this.setDashboardProperties = this.setDashboardProperties.bind(this);
-        this.getDashboardContent = this.getDashboardContent.bind(this);
-        this.loadTheme = this.loadTheme.bind(this);
-        this.dashboardModifiedHandler = this.dashboardModifiedHandler.bind(this);
+        this.loadDashboard = this.loadDashboard.bind(this);
+        this.registerNotifier = this.registerNotifier.bind(this);
+        this.updateDashboard = this.updateDashboard.bind(this);
     }
 
     componentDidMount() {
-        let dashboardsAPIs = new DashboardsAPIs();
-        let promisedDashboard = dashboardsAPIs.getDashboardByID(this.props.match.params.id);
-        promisedDashboard.then(this.setDashboardProperties).catch(function (error) {
-            //TODO Need to use proper notification library to show the error
-        });
+        this.loadDashboard();
+        this.registerNotifier();
+        // Bind event handler for window resize
         window.onresize = function () {
             dashboardLayout.updateSize();
         };
+    }
 
-        // Register global method for notifications.
+    componentWillMount() {
+        widgetLoadingComponent.setfinishedRegisteringCallback();
+    }
+
+    render() {
+        if (!this.state.dashboard) {
+            return (<div/>);
+        }
+        this.loadTheme();
+        return (
+            <MuiThemeProvider muiTheme={muiTheme}>
+                <div>
+                    <Header title="Dashboard Designer"/>
+
+                    {/* Portal navigation bar */}
+                    <div className="navigation-bar">
+                        <Link to="/portal/">
+                            <FloatingActionButton mini className="navigation-icon">
+                                <BackIcon/>
+                            </FloatingActionButton>
+                        </Link>
+                    </div>
+
+                    {/* Left action bar */}
+                    <div className="left-action-bar">
+                        <Menu width={styles.actionBarWidth}>
+                            <MenuItem primaryText="&nbsp;" leftIcon={<WidgetsIcon/>}
+                                      onClick={this.toggleWidgetsPanel.bind(this)}/>
+                            <MenuItem primaryText="&nbsp;" leftIcon={<PagesIcon/>}
+                                      onClick={this.togglePagesPanel.bind(this)}/>
+                        </Menu>
+                    </div>
+
+                    {/* Left sidebar */}
+                    <div className="container">
+                        <Drawer open={this.state.leftSidebarOpen} containerClassName="left-sidebar"
+                                containerStyle={{width: styles.sidebarWidth}}>
+                            {
+                                (() => {
+                                    switch (this.state.leftSidebarPanel) {
+                                        case sidebarPanels.PAGES:
+                                            return <PagesPanel dashboard={this.state.dashboard}
+                                                               onDashboardUpdated={(d) => this.updateDashboard(d)}/>;
+                                            break;
+                                        case sidebarPanels.WIDGETS:
+                                            return <WidgetsList/>;
+                                            break;
+                                        default:
+                                            return '';
+                                            break;
+                                    }
+                                })()
+                            }
+                        </Drawer>
+                    </div>
+
+                    {/* Dashboard renderer */}
+                    <div id="dashboard-view" />
+                    <DashboardRenderingComponent
+                        config={config}
+                        dashboardContent={this.getDashboardContent(this.state.pageUrl, this.state.dashboard.pages,
+                            this.state.dashboard.landingPage)}/>
+
+                    {/* Notifier */}
+                    <Snackbar
+                        open={this.state.notify}
+                        message={this.state.notificationMessage}
+                        autoHideDuration={4000}/>
+                </div>
+            </MuiThemeProvider>
+        );
+    }
+
+    /**
+     * Load dashboard via the REST API.
+     */
+    loadDashboard() {
+        new DashboardsAPIs()
+            .getDashboardByID(this.state.dashboardId)
+            .then((response) => {
+                let dashboard = response.data;
+                dashboard.pages = JSON.parse(dashboard.pages);
+                this.setState({
+                    dashboard: dashboard
+                });
+            })
+            .catch((err) => {
+                //TODO Need to use proper notification library to show the error
+            });
+    }
+
+    /**
+     * Return content of the dashboard page based on the pageId
+     * @param pageId
+     * @param dashboardContent
+     * @param landingPage
+     * @returns {*}
+     */
+    getDashboardContent(pageId, dashboardContent, landingPage) {
+        return new DashboardUtils().getDashboardByPageId(pageId, dashboardContent, landingPage);
+    }
+
+    /**
+     * Register global notification method.
+     */
+    registerNotifier() {
+        // TODO use React context if possible to pass the notifier
         window.global = window.global || {};
         window.global.notify = (function (m) {
             this.setState({
@@ -116,134 +232,45 @@ export default class DashboardDesigner extends React.Component {
         }).bind(this);
     }
 
-    componentWillMount(){
-        widgetLoadingComponent.setfinishedRegisteringCallback();
-    }
-
-    render() {
-        this.loadTheme();
-        return (
-            <div>
-                <MuiThemeProvider muiTheme={muiTheme}>
-                    <div>
-                        <Header dashboardName="Dashboard Designer"/>
-                        <div className="portal-navigation-bar">
-                            <Link to={"/portal/"}>
-                                <FloatingActionButton mini={true} className="navigation-icon">
-                                    <BackIcon />
-                                </FloatingActionButton>
-                            </Link>
-                        </div>
-                        <div className="designer-left-action-panel">
-                            <Menu width={styleConstants.actionPanel.width}>
-                                <MenuItem primaryText="&nbsp;" leftIcon={<WidgetsIcon />}
-                                          onClick={this.onWidgetsIconClick}/>
-                                <MenuItem primaryText="&nbsp;" leftIcon={<PagesIcon />}
-                                          onClick={this.onPagesIconClick}/>
-                            </Menu>
-                        </div>
-                        <div className="designer-container">
-                            <Drawer open={this.state.leftSidebarOpen} containerClassName="designer-left-pane"
-                                    containerStyle={styleConstants.sidebar.styles}>
-                                <PagesPanel show={this.state.showPagesPanel} dashboard={this.state.dashboard}/>
-                                <WidgetsList show={this.state.showWidgetsPanel}/>
-                            </Drawer>
-                        </div>
-                        <div id="dashboard-view" className={this.state.designerClass}></div>
-                        <DashboardRenderingComponent onDashboardModified={this.dashboardModifiedHandler} config={config}
-                                                     name={this.state.dashboardContent}
-                                dashboardContent={this.getDashboardContent(this.props.match.params[1],
-                                    this.state.dashboardContent, this.state.landingPage)}/>
-                        <Snackbar open={this.state.notify} message={this.state.notificationMessage}
-                                  autoHideDuration={4000}/>
-                    </div>
-                </MuiThemeProvider>
-            </div>
-        );
-    }
-
-    dashboardModifiedHandler(config) {
-        var path = [];
-        let urlParts = window.location.pathname.split('/');
-        if (urlParts.length > 1) {
-            // todo hierarchical support needs to be implemented
-            return;
-        }
-        var pageToSave = undefined;
-        if (urlParts.length === 0) {
-            for(var i = 0; i < this.state.dashboard.pages.length; i++) {
-                if (this.state.dashboard.pages[i].landingPage) {
-                    pageToSave = this.state.dashboard.pages[i];
-                    break;
-                }
-            }
-        } else {
-            for(var i = 0; i < this.state.dashboard.pages.length; i++) {
-                if (this.state.dashboard.pages[i].id == path[0]) {
-                    pageToSave = this.state.dashboard.pages[i];
-                }
-            }
-        }
-        if (pageToSave) {
-            // page.content = this.formatGoldenLayoutConfig(config);
-            // let dashboardsAPIs = new DashboardsAPIs();
-            // dashboardsAPIs.updateDashboardByID(this.state.dashboard.id, this.state.dashboard);
-        }
-    }
-
-    formatGoldenLayoutConfig(config) {
-        return config;
-    }
-
-    setDashboardProperties(response) {
-        let dashboard = response.data;
-        dashboard.pages = JSON.parse(dashboard.pages);
-        this.setState({
-            dashboardName: dashboard.name,
-            dashboardContent: dashboard.pages,
-            dashboard: dashboard,
-            landingPage: dashboard.landingPage
-        });
-    }
-
-    onWidgetsIconClick() {
-        let leftSidebarOpen = this.state.showPagesPanel ? true : !this.state.leftSidebarOpen;
+    toggleWidgetsPanel() {
+        let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.PAGES ? true : !this.state.leftSidebarOpen;
         this.setState({
             leftSidebarOpen: leftSidebarOpen,
-            showWidgetsPanel: true,
-            showPagesPanel: false,
-            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" :
-                "dashboard-designer-container-collapsed"
+            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" : "dashboard-designer-container-collapsed",
+            leftSidebarPanel: sidebarPanels.WIDGETS
         });
         setTimeout(function () {
             dashboardLayout.updateSize();
         }, 10);
     }
 
-    onPagesIconClick() {
-        let leftSidebarOpen = this.state.showWidgetsPanel ? true : !this.state.leftSidebarOpen;
+    togglePagesPanel() {
+        let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.WIDGETS ? true : !this.state.leftSidebarOpen;
         this.setState({
             leftSidebarOpen: leftSidebarOpen,
-            showPagesPanel: true,
-            showWidgetsPanel: false,
-            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" :
-                "dashboard-designer-container-collapsed"
+            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" : "dashboard-designer-container-collapsed",
+            leftSidebarPanel: sidebarPanels.PAGES
         });
         setTimeout(function () {
             dashboardLayout.updateSize();
         }, 10);
     }
 
-    getDashboardContent(pageId, dashboardContent, landingPage) {
-        return new DashboardUtils().getDashboardByPageId(pageId, dashboardContent, landingPage);
+    updateDashboard(dashboard) {
+        new DashboardsAPIs().updateDashboardByID(dashboard.id, dashboard);
+        window.global.notify('Dashboard updated successfully!');
+        this.setState({
+            dashboard: dashboard
+        });
     }
 
     loadTheme() {
-        let head = document.getElementsByTagName('head')[0];
-        let link = document.createElement('link');
         //TODO Need to get the app context properly when the server is ready
         let appContext = window.location.pathname.split("/")[1];
         let baseURL = window.location.origin;
+
+        let head = document.getElementsByTagName('head')[0];
+        let link = document.createElement('link');
         link.type = 'text/css';
         link.href = baseURL + "/" + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
         link.rel = "stylesheet";

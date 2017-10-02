@@ -40,8 +40,8 @@ class App extends Component {
                     {/* Dashboard settings */}
                     <Route exact path='/portal/settings/:id' component={DashboardSettings}/>
                     {/* Dashboard designer */}
-                    <Route exact path='*/designer/:id' component={DashboardDesigner}/>
-                    <Route path='*/designer/:id/*' component={DashboardDesigner}/>
+                    <Route exact path='*/designer/:dashboardId' component={DashboardDesigner}/>
+                    <Route path='*/designer/:dashboardId/*' component={DashboardDesigner}/>
                     {/* Dashboard view */}
                     <Route exact path='*/dashboards/:id' component={DashboardView}/>
                     <Route path='*/dashboards/:id/*' component={DashboardView}/>

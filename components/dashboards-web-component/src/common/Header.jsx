@@ -17,26 +17,17 @@
  *
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import AppBar from 'material-ui/AppBar/AppBar';
 
-class Header extends React.Component {
+export default class Header extends Component {
     render() {
-        let styles = {
-            'line-height': '64px',
-            'color': '#000',
-            'margin-top': '-10px',
-            'font-size': '34px'
-        };
-
         return (
             <AppBar
-                title={this.props.dashboardName}
-                className="header-component"
-                iconElementLeft={<i className="icon fw fw-wso2-logo" style={styles}></i>}
+                title={this.props.title}
+                className="header"
+                iconElementLeft={<i className="icon fw fw-wso2-logo header-icon"></i>}
             />
         );
     }
 }
-
-export default Header;

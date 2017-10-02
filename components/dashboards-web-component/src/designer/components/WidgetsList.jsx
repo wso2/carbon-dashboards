@@ -17,24 +17,18 @@
  *
  */
 import React from 'react';
-
-import TextField from 'material-ui/TextField';
-import Divider from 'material-ui/Divider';
+//Components
 import WidgetInfoAPIS from '../../utils/apis/WidgetInfoAPIs';
 import {widgetLoadingComponent} from '../../utils/WidgetLoadingComponent';
 import WidgetListThumbnail from './WidgetListThumbnail';
+// Material-UI
+import TextField from 'material-ui/TextField';
+import Divider from 'material-ui/Divider';
 
-const styles = {
-    open: {},
-    close: {
-        display: 'none'
-    }
-};
+let widgets = [];
+let isDashboardLoaded = false;
 
-var widgets = [];
-var isDashboardLoaded = false;
-
-class WidgetsList extends React.Component {
+export default  class WidgetsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -108,8 +102,8 @@ class WidgetsList extends React.Component {
 
     render() {
         return (
-            <div style={this.props.show ? styles.open : styles.close}>
-                <div className="widget-list-header">WIDGET LIST</div>
+            <div>
+                <h3>Widgets</h3>
                 <div className="widget-search-div">
                     <TextField className="widget-search-textfield" onChange={this.searchWidget} hintText="Search.."/>
                 </div>
@@ -128,5 +122,3 @@ class WidgetsList extends React.Component {
             </div>);
     }
 }
-
-export default WidgetsList;
