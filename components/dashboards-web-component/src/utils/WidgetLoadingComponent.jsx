@@ -40,7 +40,7 @@ function registerWidget(widgetId, widgetObj) {
 
 class WidgetLoadingComponent {
 
-    createGoldenLayoutInstance(config, container, layoutModifiedCallback) {
+    createGoldenLayoutInstance(config, container) {
         dashboardLayout = new GoldenLayout(config, container);
         return dashboardLayout;
     }

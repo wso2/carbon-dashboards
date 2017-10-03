@@ -100,7 +100,7 @@ export default class DashboardDesigner extends Component {
             dashboard: undefined,
             leftSidebarOpen: false,
             leftSidebarPanel: sidebarPanels.PAGES,
-            designerClass: 'dashboard-designer-container-expanded'
+            designerClass: 'dashboard-designer-container-collapsed'
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
@@ -121,9 +121,6 @@ export default class DashboardDesigner extends Component {
     }
 
     render() {
-        if (!this.state.dashboard) {
-            return (<div/>);
-        }
         this.loadTheme();
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
@@ -173,11 +170,10 @@ export default class DashboardDesigner extends Component {
                     </div>
 
                     {/* Dashboard renderer */}
-                    <div id="dashboard-view" />
+                    <div id="dashboard-view" className={this.state.designerClass} />
                     <DashboardRenderingComponent
                         config={config}
-                        dashboardContent={this.getDashboardContent(this.state.pageUrl, this.state.dashboard.pages,
-                            this.state.dashboard.landingPage)}/>
+                        dashboardContent={this.getDashboardContent(this.state.pageUrl, this.state.dashboard)}/>
 
                     {/* Notifier */}
                     <Snackbar
@@ -210,12 +206,14 @@ export default class DashboardDesigner extends Component {
     /**
      * Return content of the dashboard page based on the pageId
      * @param pageId
-     * @param dashboardContent
-     * @param landingPage
+     * @param dashboard
      * @returns {*}
      */
-    getDashboardContent(pageId, dashboardContent, landingPage) {
-        return new DashboardUtils().getDashboardByPageId(pageId, dashboardContent, landingPage);
+    getDashboardContent(pageId, dashboard) {
+        if (dashboard && dashboard.pages) {
+            return new DashboardUtils().getDashboardByPageId(pageId, dashboard.pages,  dashboard.landingPage);
+        }
+        return {};
     }
 
     /**
@@ -232,6 +230,9 @@ export default class DashboardDesigner extends Component {
         }).bind(this);
     }
 
+    /**
+     * Toggle widgets panel.
+     */
     toggleWidgetsPanel() {
         let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.PAGES ? true : !this.state.leftSidebarOpen;
         this.setState({
@@ -244,6 +245,9 @@ export default class DashboardDesigner extends Component {
         }, 10);
     }
 
+    /**
+     * Toggle pages panel.
+     */
     togglePagesPanel() {
         let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.WIDGETS ? true : !this.state.leftSidebarOpen;
         this.setState({
@@ -256,6 +260,10 @@ export default class DashboardDesigner extends Component {
         }, 10);
     }
 
+    /**
+     * Save dashboard.
+     * @param dashboard
+     */
     updateDashboard(dashboard) {
         new DashboardsAPIs().updateDashboardByID(dashboard.id, dashboard);
         window.global.notify('Dashboard updated successfully!');
@@ -264,6 +272,9 @@ export default class DashboardDesigner extends Component {
         });
     }
 
+    /**
+     * Load GoldenLayout theme.
+     */
     loadTheme() {
         //TODO Need to get the app context properly when the server is ready
         let appContext = window.location.pathname.split("/")[1];
