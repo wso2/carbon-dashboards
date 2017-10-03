@@ -24,8 +24,6 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import Checkbox from 'material-ui/Checkbox';
-// CSS
-import '../../../public/css/designer.css';
 
 export default class PageEntry extends Component {
     constructor(props) {

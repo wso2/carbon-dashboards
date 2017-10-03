@@ -18,7 +18,6 @@
  */
 
 import React from 'react';
-import {Link} from 'react-router-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
@@ -27,12 +26,10 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import Clear from 'material-ui/svg-icons/content/clear';
+import ClearIcon from 'material-ui/svg-icons/content/clear';
 
 import Header from '../common/Header';
 import DashboardAPIS from '../utils/apis/DashboardAPIs';
-import DashboardUtils from '../utils/DashboardUtils';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const hintStyle = {color: "grey", bottom: 0};
@@ -137,16 +134,16 @@ class DashboardSettings extends React.Component {
     render() {
         return <MuiThemeProvider muiTheme={muiTheme}>
             <div>
-                <Header title="Portal"></Header>
-                <div className="portal-navigation-bar">
-                    <Link to={"/portal/"}>
-                        <FloatingActionButton mini={true} className="navigation-icon">
-                            <Clear />
-                        </FloatingActionButton>
-                        <div className="dashboard-settings-text"> Cancel
-                        </div>
-                    </Link>
+                <Header title="Portal" />
+
+                {/* Portal navigation bar */}
+                <div className="navigation-bar">
+                    <RaisedButton label="Cancel" icon={<ClearIcon/>} style={{'margin-right': '12px'}}
+                                  onClick={() => {
+                                      window.location.href = '/portal/';
+                                  }}/>
                 </div>
+
                 <div className="dashboard-settings-page-form-container">
                     <h1 className="dashboard-settings-header">Dashboard Settings</h1>
                     <Divider className="dashboard-settings-divider"/>

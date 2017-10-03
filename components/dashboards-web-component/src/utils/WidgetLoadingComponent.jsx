@@ -42,10 +42,7 @@ class WidgetLoadingComponent {
 
     createGoldenLayoutInstance(config, container, onModified) {
         dashboardLayout = new GoldenLayout(config, container);
-        if (onModified) {
-            dashboardLayout.on('itemCreated', onModified);
-            dashboardLayout.on('itemDestroyed', onModified);
-        }
+        // TODO identify an event which invokes when a component gets manipulated
         return dashboardLayout;
     }
 

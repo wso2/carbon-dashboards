@@ -2,7 +2,7 @@
     position: fixed;
     width: 58px;
     left: 0;
-    top: 115px;
+    top: 120px;
     bottom: 0;
     overflow: hidden;
     z-index: 1500;
@@ -18,7 +18,7 @@
 }
 
 .left-sidebar {
-    padding: 125px 10px 10px 68px;
+    padding: 10px 10px 10px 68px;
 }
 
 .left-sidebar h3 {
@@ -29,27 +29,22 @@
     padding: 15px 0;
 }
 
-/* todo: move to common*/
-.navigation-bar {
-    width: 100%;
-    background-color: #37474F;
+.designer-container-expanded {
     position: fixed;
-    z-index: 25;
-}
-
-.dashboard-designer-container-expanded {
-    width: calc(100% - 334px);
-    padding: 60px 10px 10px 325px;
-    color: white;
-    height: calc(100vh - 134px);
+    top: 130px;
+    right: 10px;
+    bottom: 10px;
+    left: 68px;;
     z-index: 0;
-}
-
-.dashboard-designer-container-collapsed {
-    width: calc(100% - 78px);
-    padding: 60px 10px 10px 65px;
     color: white;
-    height: calc(100vh - 134px);
-    z-index: 0;
 }
 
+.designer-container-collapsed {
+    position: fixed;
+    top: 130px;
+    right: 10px;
+    bottom: 10px;
+    left: 324px;
+    z-index: 0;
+    color: white;
+}
