@@ -23,6 +23,7 @@ import {Card, CardHeader, CardText} from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import Checkbox from 'material-ui/Checkbox';
 // CSS
 import '../../../public/css/designer.css';
 
@@ -39,7 +40,7 @@ export default class PageEntry extends Component {
 
     render() {
         return (
-            <Card>
+            <Card onExpandChange={(expanded) => this.entryExpanded(expanded)}>
                 <CardHeader title={this.state.page.title} actAsExpander showExpandableButton/>
                 <CardText expandable>
                     <TextField value={this.state.page.id} fullWidth floatingLabelText="URL"
@@ -60,9 +61,10 @@ export default class PageEntry extends Component {
                                    });
                                    this.dirty = true;
                                }}/>
-
+                    <Checkbox label="Make as Home Page" checked={this.state.page.landingPage}
+                              disabled={this.state.page.landingPage} onCheck={this.makeAsHomePage.bind(this)}/>
                     <RaisedButton label="Delete" labelPosition="after" secondary fullWidth icon={<DeleteIcon/>}
-                                  onClick={this.deletePage.bind(this)} />
+                                  onClick={this.deletePage.bind(this)} disabled={this.state.page.landingPage}/>
                 </CardText>
             </Card>
         );
@@ -79,6 +81,24 @@ export default class PageEntry extends Component {
     deletePage() {
         if (this.props.onPageDeleted) {
             this.props.onPageDeleted(this.state.pageId);
+        }
+    }
+
+    makeAsHomePage(e, checked) {
+        if (this.props.onLandingPageChanged) {
+            this.props.onLandingPageChanged(this.state.page.id);
+        }
+
+        let page = this.state.page;
+        page.landingPage = checked;
+        this.setState({
+            page: page
+        });
+    }
+
+    entryExpanded(expanded) {
+        if (expanded && this.props.onPageSelected) {
+            this.props.onPageSelected(this.state.page.id, this.state.page.url);
         }
     }
 }
