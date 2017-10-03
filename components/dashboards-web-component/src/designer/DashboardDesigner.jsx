@@ -17,7 +17,7 @@
  */
 
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 // App Components
 import Header from '../common/Header';
 import DashboardsAPIs from '../utils/apis/DashboardAPIs';
@@ -100,7 +100,9 @@ export default class DashboardDesigner extends Component {
             dashboard: undefined,
             leftSidebarOpen: false,
             leftSidebarPanel: sidebarPanels.PAGES,
-            designerClass: 'dashboard-designer-container-collapsed'
+            designerClass: 'dashboard-designer-container-collapsed',
+            redirect: false,
+            redirectUrl: ''
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
@@ -125,6 +127,13 @@ export default class DashboardDesigner extends Component {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
+                    {
+                        (() => {
+                            if (this.state.redirect) {
+                                return <Redirect to={this.state.redirectUrl}/>;
+                            }
+                        })()
+                    }
                     <Header title="Dashboard Designer"/>
 
                     {/* Portal navigation bar */}
@@ -152,7 +161,9 @@ export default class DashboardDesigner extends Component {
                                 containerStyle={{width: styles.sidebarWidth}}>
                             <PagesPanel dashboard={this.state.dashboard}
                                         onDashboardUpdated={(d) => this.updateDashboard(d)}
-                                        visible={this.state.leftSidebarPanel === sidebarPanels.PAGES}/>;
+                                        onLandingPageChanged={(id) => this.landingPageChanged(id)}
+                                        onPageSelected={(id, url) => this.pageNavigated(id, url)}
+                                        visible={this.state.leftSidebarPanel === sidebarPanels.PAGES}/>
                             <WidgetsList visible={this.state.leftSidebarPanel === sidebarPanels.WIDGETS}/>
                         </Drawer>
                     </div>
@@ -288,6 +299,16 @@ export default class DashboardDesigner extends Component {
     }
 
     /**
+     * Handles landing page changed event.
+     * @param id
+     */
+    landingPageChanged(id) {
+        let dashboard = this.state.dashboard;
+        dashboard.landingPage = id;
+        this.updateDashboard(dashboard);
+    }
+
+    /**
      * Load GoldenLayout theme.
      */
     loadTheme() {
@@ -301,5 +322,12 @@ export default class DashboardDesigner extends Component {
         link.href = baseURL + "/" + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
         link.rel = "stylesheet";
         head.appendChild(link);
+    }
+
+    pageNavigated(id, url) {
+        this.setState({
+            redirectUrl: '/portal/designer/' + this.state.dashboardId + '/' + url,
+            redirect: true
+        });
     }
 }

@@ -38,12 +38,14 @@ export default class PagesPanel extends Component {
             pages: _pages
         };
         this.deletePageRecursively = this.deletePageRecursively.bind(this);
+        this.buildPages = this.buildPages.bind(this);
     }
 
     componentWillReceiveProps(nextprops) {
         _pages = this.buildPages(nextprops.dashboard.pages);
         this.setState({
-            pages: _pages
+            pages: _pages,
+            dashboard: nextprops.dashboard
         });
     }
 
@@ -60,7 +62,9 @@ export default class PagesPanel extends Component {
                     this.state.pages.map(p => {
                         return <PageEntry page={p}
                                           onPageUpdated={this.updatePage.bind(this)}
-                                          onPageDeleted={this.deletePage.bind(this)}/>;
+                                          onPageDeleted={this.deletePage.bind(this)}
+                                          onLandingPageChanged={this.landingPageChanged.bind(this)}
+                                          onPageSelected={this.pageSelected.bind(this)}/>
                     })
                 }
             </div>
@@ -73,7 +77,7 @@ export default class PagesPanel extends Component {
      * @returns {*}
      */
     getPanelStyles(visible) {
-        return visible ? {}: {display: 'none'};
+        return visible ? {} : {display: 'none'};
     }
 
     /**
@@ -84,6 +88,10 @@ export default class PagesPanel extends Component {
      * @returns {*|Array}
      */
     buildPages(p, a, baseUrl) {
+        if (!this.state.dashboard) {
+            return [];
+        }
+
         a = a || [];
         baseUrl = baseUrl || '';
         for (let i = 0; i < p.length; i++) {
@@ -91,7 +99,8 @@ export default class PagesPanel extends Component {
             a.push({
                 id: p[i].id,
                 title: p[i].name,
-                url: pageUrl
+                url: pageUrl,
+                landingPage: (this.state.dashboard.landingPage === p[i].id)
             });
             if (p[i].pages && p[i].pages.length > 0) {
                 this.buildPages(p[i].pages, a, pageUrl + '/');
@@ -162,7 +171,7 @@ export default class PagesPanel extends Component {
      */
     deletePageRecursively(pages, id) {
         pages = pages || [];
-        for(var i = 0; i < pages.length; i++) {
+        for (var i = 0; i < pages.length; i++) {
             if (pages[i].id === id) {
                 // todo delete page
                 pages.splice(i, 1);
@@ -170,6 +179,16 @@ export default class PagesPanel extends Component {
             } else {
                 this.deletePageRecursively(pages[i].pages, id);
             }
+        }
+    }
+
+    /**
+     * Landing page changed.
+     * @param id
+     */
+    landingPageChanged(id) {
+        if (this.props.onLandingPageChanged) {
+            this.props.onLandingPageChanged(id);
         }
     }
 
@@ -200,5 +219,11 @@ export default class PagesPanel extends Component {
             }
         }
         return hasPage ? this.generatePageId(id + 1) : id;
+    }
+
+    pageSelected(id, url) {
+        if (this.props.onPageSelected) {
+            this.props.onPageSelected(id, url);
+        }
     }
 }
