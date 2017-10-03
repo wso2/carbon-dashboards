@@ -19,14 +19,14 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.0.0-m5-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>dashboards-web-component</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.0.0-m5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Dashboard Web Component</name>
 
