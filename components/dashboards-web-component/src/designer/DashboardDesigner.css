@@ -38,18 +38,18 @@
 }
 
 .dashboard-designer-container-expanded {
-    /*width: 82%;
-    padding: 124px 10px 10px 325px;
+    width: calc(100% - 334px);
+    padding: 60px 10px 10px 325px;
     color: white;
-    height: 89vh;
-    z-index: 0;*/
+    height: calc(100vh - 134px);
+    z-index: 0;
 }
 
 .dashboard-designer-container-collapsed {
-    /*width: 96%;*/
-    /*padding: 125px 10px 10px 65px;*/
-    /*color: white;*/
-    /*height: 89vh;*/
-    /*z-index: 0;*/
+    width: calc(100% - 78px);
+    padding: 60px 10px 10px 65px;
+    color: white;
+    height: calc(100vh - 134px);
+    z-index: 0;
 }
 

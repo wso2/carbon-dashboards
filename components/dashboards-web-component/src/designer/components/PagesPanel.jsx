@@ -34,7 +34,6 @@ const PAGE_TITLE_PREFIX = 'New Page - ';
 export default class PagesPanel extends Component {
     constructor(props) {
         super(props);
-        _pages = this.buildPages(props.dashboard.pages);
         this.state = {
             pages: _pages
         };
