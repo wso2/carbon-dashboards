@@ -96,7 +96,6 @@ export default class DashboardDesigner extends Component {
         super(props);
         this.state = {
             dashboardId: this.props.match.params.dashboardId,
-            pageUrl: this.props.match.params[1],
             dashboard: undefined,
             leftSidebarOpen: false,
             leftSidebarPanel: sidebarPanels.PAGES,
@@ -123,7 +122,7 @@ export default class DashboardDesigner extends Component {
     }
 
     render() {
-        this.loadTheme();
+        DashboardDesigner.loadTheme();
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
@@ -172,7 +171,7 @@ export default class DashboardDesigner extends Component {
                     <div id="dashboard-view" className={this.state.designerClass}/>
                     <DashboardRenderingComponent
                         config={config}
-                        dashboardContent={this.getDashboardContent(this.state.pageUrl, this.state.dashboard)}
+                        dashboardContent={DashboardDesigner.getDashboardContent(this.props.match.params[1], this.state.dashboard)}
                         onContentModified={this.updatePageContent.bind(this)}
                     />
 
@@ -191,7 +190,7 @@ export default class DashboardDesigner extends Component {
      */
     updatePageContent() {
         try {
-            var arr = this.state.pageUrl.split('/');
+            let arr = (this.props.match.params[1] || '').split('/');
             let pageId;
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i] !== '') {
@@ -235,7 +234,7 @@ export default class DashboardDesigner extends Component {
      * @param dashboard
      * @returns {*}
      */
-    getDashboardContent(pageId, dashboard) {
+    static getDashboardContent(pageId, dashboard) {
         if (dashboard && dashboard.pages) {
             return new DashboardUtils().getDashboardByPageId(pageId, dashboard.pages, dashboard.landingPage);
         }
@@ -311,7 +310,7 @@ export default class DashboardDesigner extends Component {
     /**
      * Load GoldenLayout theme.
      */
-    loadTheme() {
+    static loadTheme() {
         //TODO Need to get the app context properly when the server is ready
         let appContext = window.location.pathname.split("/")[1];
         let baseURL = window.location.origin;
