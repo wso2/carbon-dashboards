@@ -36,10 +36,10 @@ import WidgetsIcon from 'material-ui/svg-icons/device/widgets';
 import PagesIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
+import RaisedButton from 'material-ui/RaisedButton';
 // CSS
-import '../../public/css/designer.css';
+import '../common/Global.css';
 import './DashboardDesigner.css';
 
 /**
@@ -99,7 +99,7 @@ export default class DashboardDesigner extends Component {
             dashboard: undefined,
             leftSidebarOpen: false,
             leftSidebarPanel: sidebarPanels.PAGES,
-            designerClass: 'dashboard-designer-container-collapsed',
+            designerClass: 'designer-container-expanded',
             redirect: false,
             redirectUrl: ''
         };
@@ -137,11 +137,11 @@ export default class DashboardDesigner extends Component {
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <Link to="/portal/">
-                            <FloatingActionButton mini className="navigation-icon">
-                                <BackIcon/>
-                            </FloatingActionButton>
-                        </Link>
+                        <RaisedButton label="Back" icon={<BackIcon/>} style={{'margin-right': '12px'}}
+                                      onClick={() => {
+                                          window.location.href = '/portal/';
+                                      }}/>
+                        <RaisedButton label="Save" primary onClick={this.updatePageContent.bind(this)}/>
                     </div>
 
                     {/* Left action bar */}
@@ -157,7 +157,7 @@ export default class DashboardDesigner extends Component {
                     {/* Left sidebar */}
                     <div className="container">
                         <Drawer open={this.state.leftSidebarOpen} containerClassName="left-sidebar"
-                                containerStyle={{width: styles.sidebarWidth}}>
+                                containerStyle={{width: styles.sidebarWidth, top: '120px', height: 'auto', bottom: '0'}}>
                             <PagesPanel dashboard={this.state.dashboard}
                                         onDashboardUpdated={(d) => this.updateDashboard(d)}
                                         onLandingPageChanged={(id) => this.landingPageChanged(id)}
@@ -205,6 +205,7 @@ export default class DashboardDesigner extends Component {
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
             new DashboardsAPIs().updateDashboardByID(this.state.dashboard.id, dashboard);
+            window.global.notify('Dashboard updated successfully!');
         } catch (e) {
             // Absorb the error since this doesn't relevant to the end-user.
         }
@@ -262,7 +263,7 @@ export default class DashboardDesigner extends Component {
         let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.PAGES ? true : !this.state.leftSidebarOpen;
         this.setState({
             leftSidebarOpen: leftSidebarOpen,
-            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" : "dashboard-designer-container-collapsed",
+            designerClass: leftSidebarOpen ? "designer-container-collapsed" : "designer-container-expanded",
             leftSidebarPanel: sidebarPanels.WIDGETS
         });
         setTimeout(function () {
@@ -277,7 +278,7 @@ export default class DashboardDesigner extends Component {
         let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.WIDGETS ? true : !this.state.leftSidebarOpen;
         this.setState({
             leftSidebarOpen: leftSidebarOpen,
-            designerClass: leftSidebarOpen ? "dashboard-designer-container-expanded" : "dashboard-designer-container-collapsed",
+            designerClass: leftSidebarOpen ? "designer-container-collapsed" : "designer-container-expanded",
             leftSidebarPanel: sidebarPanels.PAGES
         });
         setTimeout(function () {

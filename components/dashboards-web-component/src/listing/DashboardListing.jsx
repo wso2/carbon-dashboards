@@ -18,18 +18,18 @@
  */
 
 import React from 'react';
-import {Link} from 'react-router-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import Header from '../common/Header';
 import DashboardThumbnail from './DashboardThumbnail';
 import DashboardsAPIs from '../utils/apis/DashboardAPIs';
 import '../../public/css/dashboard.css';
+import '../common/Global.css';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 
@@ -53,15 +53,16 @@ class DashboardListing extends React.Component {
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
                     <Header title="Portal"/>
-                    <div className="portal-navigation-bar">
-                        <Link to={"create"}>
-                            <FloatingActionButton mini={true} className="navigation-icon">
-                                <ContentAdd />
-                            </FloatingActionButton>
-                            <div className="create-dashboard-text"> Create Dashboard
-                            </div>
-                        </Link>
+
+                    {/* Portal navigation bar */}
+                    <div className="navigation-bar">
+                        <RaisedButton label="Create Dashboard" icon={<ContentAdd/>} primary
+                                      style={{'margin-right': '12px'}}
+                                      onClick={() => {
+                                          window.location.href = '/portal/create/';
+                                      }}/>
                     </div>
+
                     <div className="dashboard-listing-container">
                         {this.state.dashboards}
                     </div>

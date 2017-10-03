@@ -125,8 +125,11 @@ a {
 
 /* dashboard listing grid */
 .dashboard-listing-container {
-    padding: 10px;
-    padding-top: 115px;
+    position: fixed;
+    top: 130px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
 }
 
 .dashboard-thumbnail {
@@ -431,12 +434,13 @@ a {
     margin-left: 10px;
 }
 
-.create-page-form-container {
-    padding-top: 115px;
-}
-
+.create-page-form-container,
 .dashboard-settings-page-form-container {
-    padding-top: 115px;
+    position: fixed;
+    top: 130px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
 }
 
 .trash-button-div {
