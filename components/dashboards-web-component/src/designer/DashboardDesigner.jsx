@@ -150,30 +150,20 @@ export default class DashboardDesigner extends Component {
                     <div className="container">
                         <Drawer open={this.state.leftSidebarOpen} containerClassName="left-sidebar"
                                 containerStyle={{width: styles.sidebarWidth}}>
-                            {
-                                (() => {
-                                    switch (this.state.leftSidebarPanel) {
-                                        case sidebarPanels.PAGES:
-                                            return <PagesPanel dashboard={this.state.dashboard}
-                                                               onDashboardUpdated={(d) => this.updateDashboard(d)}/>;
-                                            break;
-                                        case sidebarPanels.WIDGETS:
-                                            return <WidgetsList/>;
-                                            break;
-                                        default:
-                                            return '';
-                                            break;
-                                    }
-                                })()
-                            }
+                            <PagesPanel dashboard={this.state.dashboard}
+                                        onDashboardUpdated={(d) => this.updateDashboard(d)}
+                                        visible={this.state.leftSidebarPanel === sidebarPanels.PAGES}/>;
+                            <WidgetsList visible={this.state.leftSidebarPanel === sidebarPanels.WIDGETS}/>
                         </Drawer>
                     </div>
 
                     {/* Dashboard renderer */}
-                    <div id="dashboard-view" className={this.state.designerClass} />
+                    <div id="dashboard-view" className={this.state.designerClass}/>
                     <DashboardRenderingComponent
                         config={config}
-                        dashboardContent={this.getDashboardContent(this.state.pageUrl, this.state.dashboard)}/>
+                        dashboardContent={this.getDashboardContent(this.state.pageUrl, this.state.dashboard)}
+                        onContentModified={this.updatePageContent.bind(this)}
+                    />
 
                     {/* Notifier */}
                     <Snackbar
@@ -183,6 +173,31 @@ export default class DashboardDesigner extends Component {
                 </div>
             </MuiThemeProvider>
         );
+    }
+
+    /**
+     * Update content of the page.
+     */
+    updatePageContent() {
+        try {
+            var arr = this.state.pageUrl.split('/');
+            let pageId;
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] !== '') {
+                    pageId = arr[i];
+                }
+            }
+            if (!pageId || pageId === '') {
+                pageId = this.state.dashboard.landingPage;
+            }
+
+            let dashboard = this.state.dashboard;
+            let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
+            p.content = dashboardLayout.toConfig().content;
+            new DashboardsAPIs().updateDashboardByID(this.state.dashboard.id, dashboard);
+        } catch (e) {
+            // Absorb the error since this doesn't relevant to the end-user.
+        }
     }
 
     /**
@@ -211,7 +226,7 @@ export default class DashboardDesigner extends Component {
      */
     getDashboardContent(pageId, dashboard) {
         if (dashboard && dashboard.pages) {
-            return new DashboardUtils().getDashboardByPageId(pageId, dashboard.pages,  dashboard.landingPage);
+            return new DashboardUtils().getDashboardByPageId(pageId, dashboard.pages, dashboard.landingPage);
         }
         return {};
     }

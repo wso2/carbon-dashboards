@@ -49,7 +49,7 @@ export default class PagesPanel extends Component {
 
     render() {
         return (
-            <div>
+            <div style={this.getPanelStyles(this.props.visible)}>
                 <h3>Pages</h3>
                 <div style={{'text-align': 'center'}}>
                     <RaisedButton label="Create Page" primary fullWidth icon={<AddCircleOutlineIcon/>}
@@ -65,6 +65,15 @@ export default class PagesPanel extends Component {
                 }
             </div>
         );
+    }
+
+    /**
+     * Get styles of the panel div.
+     * @param visible
+     * @returns {*}
+     */
+    getPanelStyles(visible) {
+        return visible ? {}: {display: 'none'};
     }
 
     /**

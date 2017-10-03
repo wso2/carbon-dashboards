@@ -40,8 +40,12 @@ function registerWidget(widgetId, widgetObj) {
 
 class WidgetLoadingComponent {
 
-    createGoldenLayoutInstance(config, container) {
+    createGoldenLayoutInstance(config, container, onModified) {
         dashboardLayout = new GoldenLayout(config, container);
+        if (onModified) {
+            dashboardLayout.on('itemCreated', onModified);
+            dashboardLayout.on('itemDestroyed', onModified);
+        }
         return dashboardLayout;
     }
 

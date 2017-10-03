@@ -102,7 +102,7 @@ export default  class WidgetsList extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={this.getPanelStyles(this.props.visible)}>
                 <h3>Widgets</h3>
                 <div className="widget-search-div">
                     <TextField className="widget-search-textfield" onChange={this.searchWidget} hintText="Search.."/>
@@ -120,5 +120,14 @@ export default  class WidgetsList extends React.Component {
                         <div className="no-widgets-text">No widgets found !</div> : ""
                 }
             </div>);
+    }
+
+    /**
+     * Get styles of the panel div.
+     * @param visible
+     * @returns {*}
+     */
+    getPanelStyles(visible) {
+        return visible ? {}: {display: 'none'};
     }
 }
