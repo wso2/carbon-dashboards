@@ -25,7 +25,7 @@
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
     <packaging>pom</packaging>
-    <version>4.0.0-m7-SNAPSHOT</version>
+    <version>4.0.0.m7-SNAPSHOT</version>
     <name>WSO2 Carbon Dashboards</name>
     <url>http://wso2.org</url>
 
@@ -54,11 +54,6 @@
                 <version>${msf4j-core.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito-core.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
@@ -74,6 +69,11 @@
                 <version>${gson.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.h2database.wso2</groupId>
+                <artifactId>h2-database-engine</artifactId>
+                <version>${h2.database.engine.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>org.wso2.carbon.dashboards.core</artifactId>
                 <version>${carbon.dashboards.version}</version>
@@ -85,7 +85,7 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
-                <artifactId>org.wso2.carbon.dashboards.sample.store.provider</artifactId>
+                <artifactId>dashboards-web-component</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
 
@@ -123,7 +123,7 @@
 
     <properties>
         <project.scm.id>github-scm</project.scm.id>
-        <carbon.dashboards.version>4.0.0-m7-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.0.0.m7-SNAPSHOT</carbon.dashboards.version>
         <carbon.messaging.version>2.3.2</carbon.messaging.version>
         <carbon.ui.server.version>0.9.1</carbon.ui.server.version>
         <carbon.ui.sever.version.range>[0.0.0,1.0.0]</carbon.ui.sever.version.range>
@@ -134,6 +134,7 @@
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <gson.version>2.2.4</gson.version>
         <gson.version.range>[2.2.4,3)</gson.version.range>
+        <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
