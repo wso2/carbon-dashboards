@@ -19,14 +19,9 @@
 package org.wso2.carbon.dashboards.api;
 
 import org.osgi.service.component.annotations.Component;
-import org.wso2.carbon.dashboards.core.widget.info.WidgetDataHolder;
-import org.wso2.carbon.dashboards.core.widget.info.WidgetInfoProvider;
 import org.wso2.carbon.dashboards.core.widget.info.WidgetInfoProviderImpl;
 import org.wso2.msf4j.Microservice;
 
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.ws.rs.GET;
@@ -72,16 +67,7 @@ public class WidgetInfoProviderAPI implements Microservice {
     @Path("/{id}/conf")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWidgetConf(@PathParam("id") String widgetId) {
-        List<WidgetInfoProvider> widgetInfoProviderImplList = WidgetDataHolder.getInstance().getWidgetInfoProviders();
-        String widgetConf = widgetInfoProviderImplList.stream()
-                .map(widget -> widget.getWidgetConf(widgetId).orElse(null))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-        if (widgetConf != null) {
-            return Response.ok().entity(widgetConf).build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok().build();
     }
 
     /**
@@ -93,15 +79,6 @@ public class WidgetInfoProviderAPI implements Microservice {
     @GET
     @Path("/{id}/thumbnail")
     public Response getThumbnail(@PathParam("id") String widgetId) {
-        List<WidgetInfoProvider> widgetInfoProviderImplList = WidgetDataHolder.getInstance().getWidgetInfoProviders();
-        java.nio.file.Path path = widgetInfoProviderImplList.stream()
-                .map(widget -> widget.getThumbnail(widgetId).orElse(null))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-        if (path != null && Files.exists(path)) {
-            return Response.ok(path.toFile()).build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).entity("Error in retrieving widget thumbnail").build();
+        return Response.ok().build();
     }
 }
