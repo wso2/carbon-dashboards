@@ -128,11 +128,12 @@ class DashboardRenderingComponent extends React.Component {
                 let widgetConfigs = contentItem.props.configs;
                 if (widgetConfigs) {
                     let pubsubTypes = widgetConfigs.pubsub ? widgetConfigs.pubsub.types : [];
+                    pubsubTypes = pubsubTypes ? pubsubTypes : [];
                     pubsubTypes.map(type => {
                         if (type === "publisher") {
-                            pubsubComponent.addPublisher(contentItem.component + "_"
+                            pubsubComponent.addPublisherToMap(contentItem.component + "_"
                                 + contentItem.props.id.substring(0, 3), contentItem.props.id);
-                        } else if (type === "subscriber") {
+                        } else if (type === "subscriber" && widgetConfigs.pubsub && widgetConfigs.pubsub.publishers) {
                             widgetConfigs.pubsub.publishers.map(publisher => {
                                 pubsubComponent.wire(contentItem.props.id, publisher);
                             });

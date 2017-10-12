@@ -22,6 +22,7 @@ import WidgetInfoAPIS from '../../utils/apis/WidgetInfoAPIs';
 import {dashboardLayout, widgetLoadingComponent} from '../../utils/WidgetLoadingComponent';
 import WidgetListThumbnail from './WidgetListThumbnail';
 import {pubsubComponent} from '../../utils/PubSubComponent';
+import DashboardUtils from '../../utils/DashboardUtils';
 // Material-UI
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
@@ -83,16 +84,6 @@ export default  class WidgetsList extends React.Component {
 
     initializeWidgetList(isWidgetsLoaded, initDashboardFlag) {
         let newItemConfig;
-        var generateguid = function () {
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-            }
-
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                s4() + '-' + s4() + s4() + s4();
-        };
 
         if (isWidgetsLoaded) {
             isDashboardLoaded = true;
@@ -103,7 +94,7 @@ export default  class WidgetsList extends React.Component {
                     title: widget.name,
                     type: 'react-component',
                     component: widget.name,
-                    props: {id: generateguid(), configs: widget.configs}
+                    props: {id: DashboardUtils.generateguid(), configs: widget.configs}
                 };
                 widgetListDragSources.set(widget.name, widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig));
                 widgetLoadingComponent.loadWidget(widget.name);
@@ -114,7 +105,6 @@ export default  class WidgetsList extends React.Component {
             let isItemCreated = false;
             dashboardLayout.on("initialised", function () {
                 isItemCreated = false;
-
                 dashboardLayout.on("componentCreated", function () {
                     isItemCreated = true;
                 });
@@ -122,15 +112,15 @@ export default  class WidgetsList extends React.Component {
                 dashboardLayout.on("itemDropped", function (item) {
                     if (item.isComponent && isItemCreated) {
                         isItemCreated = false;
-
                         newItemConfig = {
                             title: item.config.component,
                             type: 'react-component',
                             component: item.config.component,
-                            props: {id: generateguid(), configs: item.config.props.configs}
+                            props: {id: DashboardUtils.generateguid(), configs: item.config.props.configs}
                         };
 
-                        pubsubComponent.addWidgetToPublishersList(item.config);
+                        pubsubComponent.isPublisher(item.config) ? pubsubComponent.addPublisherToMap(item.config.component + "_"
+                            + item.config.props.id.substring(0, 3), item.config.props.id) : "";
                         let position = dashboardLayout._dragSources.indexOf(widgetListDragSources.get(item.config.component));
                         dashboardLayout._dragSources.splice(position, 1);
                         widgetListDragSources.get(item.config.component)._dragListener.destroy();
