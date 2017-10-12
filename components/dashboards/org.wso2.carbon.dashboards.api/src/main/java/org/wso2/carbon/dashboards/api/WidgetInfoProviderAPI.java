@@ -19,12 +19,8 @@
 package org.wso2.carbon.dashboards.api;
 
 import org.osgi.service.component.annotations.Component;
-import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.widget.info.WidgetInfoProviderImpl;
-import org.wso2.carbon.uis.api.Extension;
 import org.wso2.msf4j.Microservice;
-
-import java.util.Set;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

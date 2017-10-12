@@ -19,21 +19,20 @@
 package org.wso2.carbon.dashboards.core.widget.info;
 
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.internal.DataHolder;
 import org.wso2.carbon.uis.api.App;
 import org.wso2.carbon.uis.api.Extension;
-import org.wso2.carbon.uis.spi.Server;
-import java.io.File;
+
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -41,12 +40,13 @@ import java.util.stream.Collectors;
  */
 public class WidgetInfoProviderImpl {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WidgetInfoProviderImpl.class);
     private static final Gson GSON = new Gson();
 
     /**
      * List meta information of all widgets available in the store.
      *
-     * @return List list of meta information of all widgets
+     * @return Set set of meta information of all widgets
      */
     public Set<WidgetMetaInfo> getWidgetsMetaInfo() {
         App app = DataHolder.getInstance().getUiServer().getApp("portal")
@@ -58,10 +58,11 @@ public class WidgetInfoProviderImpl {
 
     private WidgetMetaInfo toWidgetMetaInfo(Extension extension) {
         try {
-            String widgetConf = new String(Files.readAllBytes(Paths.get(extension.getPath(), "widgetConf.json")));
+            String widgetConf = new String(Files.readAllBytes(Paths.get(extension.getPath(), "widgetConf.json")),
+                    StandardCharsets.UTF_8);
             return GSON.fromJson(widgetConf, WidgetMetaInfo.class);
         } catch (IOException e) {
-            // log
+            LOGGER.error("Error in reading widget configuration file !", e.getLocalizedMessage());
             return null;
         }
     }

@@ -30,32 +30,32 @@ class WidgetConfigurationPanel extends React.Component {
     constructor(props) {
         super(props);
         this.getPublishers = this.getPublishers.bind(this);
-        this.onCheck = this.onCheck.bind(this);
+        this.handlePublisherCheckBoxEvent = this.handlePublisherCheckBoxEvent.bind(this);
         this.state = {
             checked: false
         }
     }
 
-    onCheck(event, isInputChecked) {
+    handlePublisherCheckBoxEvent(event, isInputChecked) {
         let selectedWidget = dashboardLayout.selectedItem;
         if (isInputChecked) {
             pubsubComponent.wire(selectedWidget.config.content[0].props.id, event.currentTarget.id);
-            this.wirePubSubInDashboardJSON(dashboardLayout.toConfig().content, selectedWidget.config.content[0].props.id,
+            this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content, selectedWidget.config.content[0].props.id,
                 event.currentTarget.id);
             this.setState({checked: true});
         } else {
             if (pubsubComponent.unwire(selectedWidget.config.content[0].props.id, event.currentTarget.id)) {
-                this.unWirePubSubInDashboardJSON(dashboardLayout.toConfig().content,
+                this.unpersistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content,
                     selectedWidget.config.content[0].props.id, event.currentTarget.id);
                 this.setState({checked: false});
             }
         }
     }
 
-    wirePubSubInDashboardJSON(content, subscriberId, publisherId) {
+    persistPubSubWiringInDashboardJSON(content, subscriberId, publisherId) {
         content.forEach(contentItem => {
-            if (!(contentItem.type === 'component')) {
-                this.wirePubSubInDashboardJSON(contentItem.content, subscriberId, publisherId)
+            if (contentItem.type !== 'component') {
+                this.persistPubSubWiringInDashboardJSON(contentItem.content, subscriberId, publisherId)
             } else {
                 if (subscriberId === contentItem.props.id) {
                     if (!contentItem.props.configs.pubsub.publishers) {
@@ -67,10 +67,10 @@ class WidgetConfigurationPanel extends React.Component {
         });
     }
 
-    unWirePubSubInDashboardJSON(content, subscriberId, publisherId) {
+    unpersistPubSubWiringInDashboardJSON(content, subscriberId, publisherId) {
         content.forEach(contentItem => {
-            if (!(contentItem.type === 'component')) {
-                this.unWirePubSubInDashboardJSON(contentItem.content, subscriberId, publisherId)
+            if (contentItem.type !== 'component') {
+                this.unpersistPubSubWiringInDashboardJSON(contentItem.content, subscriberId, publisherId)
             } else {
                 if (subscriberId === contentItem.props.id) {
                     let position = contentItem.props.configs.pubsub.publishers.indexOf(publisherId);
@@ -90,7 +90,7 @@ class WidgetConfigurationPanel extends React.Component {
                 publishers.push(<Checkbox id={val}
                                           label={key.substring(0, key.length - 4)}
                                           name={key}
-                                          onCheck={this.onCheck}
+                                          onCheck={this.handlePublisherCheckBoxEvent}
                                           checked={this.state.checked}
                                           className="publishers-list"/>)
             }
@@ -99,12 +99,12 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     render() {
-        return <Drawer open={this.props.open} openSecondary={true}
-                       containerClassName="widget-configuration-panel">
+        return (<Drawer open={this.props.open} openSecondary={true}
+                        containerClassName="widget-configuration-panel">
             <div className="widget-configuration-panel-header">Widget Configuration</div>
             <div>Publishers</div>
             {this.getPublishers()}
-        </Drawer>;
+        </Drawer>);
     }
 
 }

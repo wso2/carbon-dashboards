@@ -195,11 +195,7 @@ export default class DashboardDesigner extends Component {
 
 
     handleWidgetConfiguration(event, isSameWidgetClicked) {
-        if (isSameWidgetClicked) {
-            this.setState({widgetConfigPanelOpen: false}, this.handleDashboardContainerStyles);
-        } else {
-            this.setState({widgetConfigPanelOpen: true}, this.handleDashboardContainerStyles);
-        }
+        this.setState({widgetConfigPanelOpen: !isSameWidgetClicked}, this.handleDashboardContainerStyles);
     }
 
     handleDashboardContainerStyles() {

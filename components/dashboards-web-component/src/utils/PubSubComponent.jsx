@@ -22,7 +22,7 @@ import {dashboardLayout} from './WidgetLoadingComponent';
 class PubSubComponent {
     constructor() {
         this.pubsubCallbackMap = new Map();
-        this.publishersList = new Map();
+        this.publishersMap = new Map();
     }
 
     wire(subscriberId, publisherId) {
@@ -41,24 +41,26 @@ class PubSubComponent {
         return false;
     }
 
-    addPublisher(generatedPublisherName, id) {
-        this.publishersList.set(generatedPublisherName, id);
+    addPublisherToMap(generatedPublisherName, id) {
+        this.publishersMap.set(generatedPublisherName, id);
     }
 
     getPublishersMap() {
-        return this.publishersList;
+        return this.publishersMap;
     }
 
-    addWidgetToPublishersList(widget) {
+    isPublisher(widget) {
         let widgetConfigs = widget.props.configs;
+        let isPublisher = false;
         if (widgetConfigs) {
             let pubsubTypes = widgetConfigs.pubsub ? widgetConfigs.pubsub.types : [];
             pubsubTypes.map(type => {
                 if (type === "publisher") {
-                    this.addPublisher(widget.component + "_" + widget.props.id.substring(0, 3), widget.props.id);
+                    isPublisher = true;
                 }
             });
         }
+        return isPublisher;
     }
 
 }
