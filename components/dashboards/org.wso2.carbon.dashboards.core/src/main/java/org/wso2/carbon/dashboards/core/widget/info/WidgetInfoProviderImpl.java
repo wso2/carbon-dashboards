@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,6 +54,7 @@ public class WidgetInfoProviderImpl {
                 .orElseThrow(() -> new IllegalStateException(""));
         return app.getExtensions("widgets").stream()
                 .map(this::toWidgetMetaInfo)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
@@ -62,7 +64,7 @@ public class WidgetInfoProviderImpl {
                     StandardCharsets.UTF_8);
             return GSON.fromJson(widgetConf, WidgetMetaInfo.class);
         } catch (IOException e) {
-            LOGGER.error("Error in reading widget configuration file !", e.getLocalizedMessage());
+            LOGGER.error("Error in reading widget configuration file of widget - " + extension.getName());
             return null;
         }
     }
