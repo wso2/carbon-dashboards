@@ -18,28 +18,52 @@
  */
 package org.wso2.carbon.dashboards.core.widget.info;
 
+import com.google.gson.Gson;
+import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.internal.DataHolder;
 import org.wso2.carbon.uis.api.App;
+import org.wso2.carbon.uis.api.Extension;
 import org.wso2.carbon.uis.spi.Server;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Interface to for getting widget related information.
  */
 public class WidgetInfoProviderImpl {
 
+    private static final Gson GSON = new Gson();
+
     /**
      * List meta information of all widgets available in the store.
      *
      * @return List list of meta information of all widgets
      */
-    public Optional<Set> getWidgetsMetaInfo() {
-        Server uiServer = DataHolder.getInstance().getUiServer();
-        App app = uiServer.getApp("portal").get();
-        Set extensions = app.getExtensions("widgets");
-        return Optional.ofNullable(extensions);
+    public Set<WidgetMetaInfo> getWidgetsMetaInfo() {
+        App app = DataHolder.getInstance().getUiServer().getApp("portal")
+                .orElseThrow(() -> new IllegalStateException(""));
+        return app.getExtensions("widgets").stream()
+                .map(this::toWidgetMetaInfo)
+                .collect(Collectors.toSet());
+    }
+
+    private WidgetMetaInfo toWidgetMetaInfo(Extension extension) {
+        try {
+            String widgetConf = new String(Files.readAllBytes(Paths.get(extension.getPath(), "widgetConf.json")));
+            return GSON.fromJson(widgetConf, WidgetMetaInfo.class);
+        } catch (IOException e) {
+            // log
+            return null;
+        }
     }
 
     /**

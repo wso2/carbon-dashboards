@@ -18,8 +18,10 @@
  */
 
 import React from 'react';
-import {widgetLoadingComponent} from './WidgetLoadingComponent';
 import 'golden-layout/src/css/goldenlayout-base.css';
+
+import {widgetLoadingComponent} from './WidgetLoadingComponent';
+import {pubsubComponent} from './PubSubComponent';
 
 let dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance();
 
@@ -29,6 +31,7 @@ class DashboardRenderingComponent extends React.Component {
         this.renderDashboard = this.renderDashboard.bind(this);
         this.findWidget = this.findWidget.bind(this);
         this.updateLayout = this.updateLayout.bind(this);
+        this.wirePubSubWidgets = this.wirePubSubWidgets.bind(this);
     }
 
     updateLayout() {
@@ -63,12 +66,80 @@ class DashboardRenderingComponent extends React.Component {
         dashboardLayout.destroy();
         dashboardLayout = widgetLoadingComponent.createGoldenLayoutInstance(config,
             document.getElementById('dashboard-view'), this.props.onContentModified);
+        let that = this;
+        dashboardLayout.on("initialised", function () {
+            that.wirePubSubWidgets(dashboardLayout.toConfig().content)
+        });
+
+        if (this.props.designer) {
+            this.handleWidgetConfigurationButton();
+        }
         if (widgetList.size === 0) {
             widgetLoadingComponent.callFinishedRegisteringCallback();
         }
         widgetList.forEach(widget => {
             widgetList.add(widget);
             widgetLoadingComponent.loadWidget(widget)
+        });
+    }
+
+    handleWidgetConfigurationButton() {
+        let that = this;
+        dashboardLayout.on("itemDropped", function (item) {
+            that.isSubscriber(item.config) ? "" : item.parent.header.controlsContainer.children()[0].remove();
+        });
+        dashboardLayout.on("itemCreated", function (item) {
+            if (item.isComponent && item.parent) {
+                item.parent.header.controlsContainer.children()[4].style.display = "list-item";
+                that.isSubscriber(item.config) ? "" : item.parent.header.controlsContainer.children()[0].remove();
+            }
+            else if (item.header) {
+                let element = document.createElement("i");
+                element.className = "fw fw-configarations widget-configuration-button";
+                let selectedWidget = item;
+                element.addEventListener("click", function (event) {
+                    let isSameWidgetClicked = selectedWidget.layoutManager.selectedItem === selectedWidget;
+                    if (isSameWidgetClicked) {
+                        selectedWidget.header.element[0].classList.remove("widget-title-bar-selected")
+                        selectedWidget.deselect();
+                    } else {
+                        selectedWidget.header.element[0].classList.add("widget-title-bar-selected")
+                        selectedWidget.select();
+                    }
+                    that.props.handleWidgetConfiguration(event, isSameWidgetClicked);
+                });
+                item.header.controlsContainer.prepend(element);
+            }
+        });
+    }
+
+    isSubscriber(widgetInfo) {
+        let widgetConfig = widgetInfo.props.configs;
+        return (widgetConfig && widgetConfig.pubsub && widgetConfig.pubsub.types &&
+        widgetConfig.pubsub.types.indexOf("subscriber") != -1);
+    }
+
+
+    wirePubSubWidgets(content) {
+        content.forEach(contentItem => {
+            if (!(contentItem.type === 'component')) {
+                this.wirePubSubWidgets(contentItem.content)
+            } else {
+                let widgetConfigs = contentItem.props.configs;
+                if (widgetConfigs) {
+                    let pubsubTypes = widgetConfigs.pubsub ? widgetConfigs.pubsub.types : [];
+                    pubsubTypes.map(type => {
+                        if (type === "publisher") {
+                            pubsubComponent.addPublisher(contentItem.component + "_"
+                                + contentItem.props.id.substring(0, 3), contentItem.props.id);
+                        } else if (type === "subscriber") {
+                            widgetConfigs.pubsub.publishers.map(publisher => {
+                                pubsubComponent.wire(contentItem.props.id, publisher);
+                            });
+                        }
+                    });
+                }
+            }
         });
     }
 

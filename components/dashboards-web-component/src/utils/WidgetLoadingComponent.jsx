@@ -38,6 +38,10 @@ function registerWidget(widgetId, widgetObj) {
     }
 }
 
+function getWidget(widgetId) {
+    return widgets.get(widgetId);
+}
+
 class WidgetLoadingComponent {
 
     createGoldenLayoutInstance(config, container, onModified) {
@@ -70,18 +74,18 @@ class WidgetLoadingComponent {
     }
 
     createDragSource(widget, newItemConfig) {
-        dashboardLayout.createDragSource(widget, newItemConfig);
+        return dashboardLayout.createDragSource(widget, newItemConfig);
     }
 
     setfinishedRegisteringCallback(callback) {
         finishedRegisteringCallback = callback;
     }
 
-    callFinishedRegisteringCallback(){
+    callFinishedRegisteringCallback() {
         finishedRegisteringCallback ? finishedRegisteringCallback(true, true) : "";
     }
 
-    initializeDashboard(){
+    initializeDashboard() {
         dashboardLayout.init();
     }
 }
@@ -90,5 +94,7 @@ let widgetLoadingComponent = new WidgetLoadingComponent();
 
 global.dashboard = {};
 global.dashboard.registerWidget = registerWidget;
+global.dashboard.getWidget = getWidget;
+global.dashboard.pubsubMap = new Map();
 
 export {registeredWidgetsCount, widgets, widgetCount, widgetLoadingComponent, dashboardLayout};

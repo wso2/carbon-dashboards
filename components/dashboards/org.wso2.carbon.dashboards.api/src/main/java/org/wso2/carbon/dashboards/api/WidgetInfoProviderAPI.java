@@ -19,7 +19,9 @@
 package org.wso2.carbon.dashboards.api;
 
 import org.osgi.service.component.annotations.Component;
+import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.widget.info.WidgetInfoProviderImpl;
+import org.wso2.carbon.uis.api.Extension;
 import org.wso2.msf4j.Microservice;
 
 import java.util.Set;
@@ -53,8 +55,7 @@ public class WidgetInfoProviderAPI implements Microservice {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWidgetsMetaInfo() {
         WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl();
-        Set extensions = widgetInfoProvider.getWidgetsMetaInfo().get();
-        return Response.ok().entity(extensions).build();
+        return Response.ok().entity(widgetInfoProvider.getWidgetsMetaInfo()).build();
     }
 
     /**
