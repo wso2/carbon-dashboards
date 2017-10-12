@@ -19,14 +19,16 @@
 import React from 'react';
 //Components
 import WidgetInfoAPIS from '../../utils/apis/WidgetInfoAPIs';
-import {widgetLoadingComponent} from '../../utils/WidgetLoadingComponent';
+import {dashboardLayout, widgetLoadingComponent} from '../../utils/WidgetLoadingComponent';
 import WidgetListThumbnail from './WidgetListThumbnail';
+import {pubsubComponent} from '../../utils/PubSubComponent';
 // Material-UI
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 
 let widgets = [];
 let isDashboardLoaded = false;
+let widgetListDragSources = new Map();
 
 export default  class WidgetsList extends React.Component {
     constructor(props) {
@@ -81,6 +83,17 @@ export default  class WidgetsList extends React.Component {
 
     initializeWidgetList(isWidgetsLoaded, initDashboardFlag) {
         let newItemConfig;
+        var generateguid = function () {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+                s4() + '-' + s4() + s4() + s4();
+        };
+
         if (isWidgetsLoaded) {
             isDashboardLoaded = true;
         }
@@ -89,16 +102,46 @@ export default  class WidgetsList extends React.Component {
                 newItemConfig = {
                     title: widget.name,
                     type: 'react-component',
-                    component: widget.name
+                    component: widget.name,
+                    props: {id: generateguid(), configs: widget.configs}
                 };
-                widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig);
+                widgetListDragSources.set(widget.name, widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig));
                 widgetLoadingComponent.loadWidget(widget.name);
             });
             if (initDashboardFlag) {
                 widgetLoadingComponent.initializeDashboard();
             }
+            let isItemCreated = false;
+            dashboardLayout.on("initialised", function () {
+                isItemCreated = false;
+
+                dashboardLayout.on("componentCreated", function () {
+                    isItemCreated = true;
+                });
+
+                dashboardLayout.on("itemDropped", function (item) {
+                    if (item.isComponent && isItemCreated) {
+                        isItemCreated = false;
+
+                        newItemConfig = {
+                            title: item.config.component,
+                            type: 'react-component',
+                            component: item.config.component,
+                            props: {id: generateguid(), configs: item.config.props.configs}
+                        };
+
+                        pubsubComponent.addWidgetToPublishersList(item.config);
+                        let position = dashboardLayout._dragSources.indexOf(widgetListDragSources.get(item.config.component));
+                        dashboardLayout._dragSources.splice(position, 1);
+                        widgetListDragSources.get(item.config.component)._dragListener.destroy();
+                        widgetListDragSources.set(item.config.component,
+                            widgetLoadingComponent.createDragSource(document.getElementById(item.config.component), newItemConfig));
+                    }
+                });
+            });
         }
     }
+
 
     render() {
         return (
@@ -128,6 +171,6 @@ export default  class WidgetsList extends React.Component {
      * @returns {*}
      */
     getPanelStyles(visible) {
-        return visible ? {}: {display: 'none'};
+        return visible ? {} : {display: 'none'};
     }
 }

@@ -17,7 +17,7 @@
  */
 
 import React, {Component} from 'react';
-import {Link, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 // App Components
 import Header from '../common/Header';
 import DashboardsAPIs from '../utils/apis/DashboardAPIs';
@@ -26,6 +26,7 @@ import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
+import WidgetConfigurationPanel from './components/WidgetConfigurationPanel';
 // Material UI
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
@@ -101,11 +102,14 @@ export default class DashboardDesigner extends Component {
             leftSidebarPanel: sidebarPanels.PAGES,
             designerClass: 'designer-container-expanded',
             redirect: false,
-            redirectUrl: ''
+            redirectUrl: '',
+            widgetConfigPanelOpen: false,
+            publishers: []
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
         this.updateDashboard = this.updateDashboard.bind(this);
+        this.handleWidgetConfiguration = this.handleWidgetConfiguration.bind(this);
     }
 
     componentDidMount() {
@@ -173,8 +177,12 @@ export default class DashboardDesigner extends Component {
                         config={config}
                         dashboardContent={DashboardDesigner.getDashboardContent(this.props.match.params[1], this.state.dashboard)}
                         onContentModified={this.updatePageContent.bind(this)}
+                        handleWidgetConfiguration={this.handleWidgetConfiguration}
+                        designer={true}
                     />
 
+                    <WidgetConfigurationPanel publishers={this.state.publishers}
+                                              open={this.state.widgetConfigPanelOpen}/>
                     {/* Notifier */}
                     <Snackbar
                         open={this.state.notify}
@@ -183,6 +191,33 @@ export default class DashboardDesigner extends Component {
                 </div>
             </MuiThemeProvider>
         );
+    }
+
+
+    handleWidgetConfiguration(event, isSameWidgetClicked) {
+        if (isSameWidgetClicked) {
+            this.setState({widgetConfigPanelOpen: false}, this.handleDashboardContainerStyles);
+        } else {
+            this.setState({widgetConfigPanelOpen: true}, this.handleDashboardContainerStyles);
+        }
+    }
+
+    handleDashboardContainerStyles() {
+        let dashboardViewClass;
+        if (this.state.leftSidebarOpen && this.state.widgetConfigPanelOpen) {
+            dashboardViewClass = "dashboard-designer-expanded-all";
+        } else if (this.state.leftSidebarOpen) {
+            dashboardViewClass = "designer-container-collapsed";
+        } else if (this.state.widgetConfigPanelOpen) {
+            dashboardViewClass = "dashboard-designer-container-collapsed-left"
+        } else {
+            dashboardViewClass = "designer-container-expanded";
+        }
+
+        this.setState({designerClass: dashboardViewClass});
+        setTimeout(function () {
+            dashboardLayout.updateSize();
+        }, 10);
     }
 
     /**
@@ -263,12 +298,8 @@ export default class DashboardDesigner extends Component {
         let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.PAGES ? true : !this.state.leftSidebarOpen;
         this.setState({
             leftSidebarOpen: leftSidebarOpen,
-            designerClass: leftSidebarOpen ? "designer-container-collapsed" : "designer-container-expanded",
             leftSidebarPanel: sidebarPanels.WIDGETS
-        });
-        setTimeout(function () {
-            dashboardLayout.updateSize();
-        }, 10);
+        }, this.handleDashboardContainerStyles);
     }
 
     /**
@@ -278,12 +309,8 @@ export default class DashboardDesigner extends Component {
         let leftSidebarOpen = this.state.leftSidebarPanel === sidebarPanels.WIDGETS ? true : !this.state.leftSidebarOpen;
         this.setState({
             leftSidebarOpen: leftSidebarOpen,
-            designerClass: leftSidebarOpen ? "designer-container-collapsed" : "designer-container-expanded",
             leftSidebarPanel: sidebarPanels.PAGES
-        });
-        setTimeout(function () {
-            dashboardLayout.updateSize();
-        }, 10);
+        }, this.handleDashboardContainerStyles);
     }
 
     /**
