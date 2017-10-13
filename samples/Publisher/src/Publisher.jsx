@@ -37,8 +37,6 @@ class Publisher extends Widget {
             this.publishedMsgSet.add(this.input.value);
             super.publish(this.input.value);
             this.setState({publishedMsg: this.input.value});
-        } else {
-            alert('No content to publish !');
         }
     }
 
