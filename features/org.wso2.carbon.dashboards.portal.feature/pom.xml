@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.0.1.m8-SNAPSHOT</version>
+        <version>4.0.0.m9-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -64,6 +64,15 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/target/portal/public/</outputDirectory>
                                     <includes>js/**</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.dashboards</groupId>
+                                    <artifactId>dashboards-web-component</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/target/portal/</outputDirectory>
+                                    <includes>pages/index.html</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
