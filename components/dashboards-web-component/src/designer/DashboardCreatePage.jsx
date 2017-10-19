@@ -32,6 +32,8 @@ import Header from '../common/Header';
 import DashboardAPIS from '../utils/apis/DashboardAPIs';
 import DashboardUtils from '../utils/DashboardUtils';
 
+import {FormattedMessage} from 'react-intl';
+
 const muiTheme = getMuiTheme(darkBaseTheme);
 const hintStyle = {color: "grey", bottom: 0};
 const textareaStyle = {color: "black"};
@@ -80,7 +82,8 @@ class DashboardCreatePage extends React.Component {
                     <Divider className="create-dashboard-divider"/>
                     <div className="create-dashboard-form-group">
                         <label className="create-dashboard-page-label-name">
-                            Name of your Dashboard <span className="required">*</span>
+                            <FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard"/>
+                            <span className="required">*</span>
                         </label>
                         <TextField errorText={this.state.errorMessageName} errorStyle={this.state.errorStyleName}
                                    onChange={this.handleDashboardName} id="dashboardName" hintStyle={hintStyle}
@@ -90,7 +93,8 @@ class DashboardCreatePage extends React.Component {
                     </div>
                     <div className="create-dashboard-form-group">
                         <label className="create-dashboard-page-label-url">
-                            URL <span className="required">*</span>
+                            <FormattedMessage id="dashboard.url" defaultMessage="URL"/>
+                            <span className="required">*</span>
                         </label>
                         <TextField errorText={this.state.errorMessageURL} errorStyle={this.state.errorStyleURL}
                                    onChange={this.handleURL} value={this.state.url} id="dashboardURL"
@@ -100,7 +104,7 @@ class DashboardCreatePage extends React.Component {
                     </div>
                     <div className="create-dashboard-form-group">
                         <label className="create-dashboard-page-label-description">
-                            Description
+                            <FormattedMessage id="dashboard.description" defaultMessage="Description"/>
                         </label>
                         <TextField id="dashboardDescription" hintStyle={hintStyle} textareaStyle={textareaStyle}
                                    underlineStyle={underlineStyle} style={textFieldStyle}

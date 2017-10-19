@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.0.1.m9-SNAPSHOT</version>
+        <version>4.0.0.m10-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -100,6 +100,10 @@
             <resource>
                 <directory>${basedir}/dist</directory>
                 <targetPath>js</targetPath>
+            </resource>
+            <resource>
+                <directory>${basedir}/public/locales</directory>
+                <targetPath>locales</targetPath>
             </resource>
             <resource>
                 <directory>${basedir}/public</directory>
