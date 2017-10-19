@@ -71,6 +71,15 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/target/portal/public/</outputDirectory>
+                                    <includes>locales/**</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.dashboards</groupId>
+                                    <artifactId>dashboards-web-component</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/target/portal/</outputDirectory>
                                     <includes>pages/index.html</includes>
                                 </artifactItem>

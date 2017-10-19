@@ -102,6 +102,10 @@
                 <targetPath>js</targetPath>
             </resource>
             <resource>
+                <directory>${basedir}/public/locales</directory>
+                <targetPath>locales</targetPath>
+            </resource>
+            <resource>
                 <directory>${basedir}/public</directory>
                 <includes>
                     <include>index.html</include>
