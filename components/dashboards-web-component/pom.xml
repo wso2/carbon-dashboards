@@ -89,7 +89,7 @@
                             <executable>${npm.executable}</executable>
                             <arguments>
                                 <argument>run</argument>
-                                <argument>${npm.build.command}</argument>
+                                <argument>build</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -117,6 +117,5 @@
 
     <properties>
         <npm.executable>npm</npm.executable>
-        <npm.build.command>build</npm.build.command>
     </properties>
 </project>
