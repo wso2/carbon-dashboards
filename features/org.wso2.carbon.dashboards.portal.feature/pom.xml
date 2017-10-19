@@ -81,7 +81,7 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/target/portal/</outputDirectory>
-                                    <includes>pages/index.html</includes>
+                                    <includes>pages/index.hbs</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

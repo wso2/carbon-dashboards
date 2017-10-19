@@ -108,7 +108,7 @@
             <resource>
                 <directory>${basedir}/public</directory>
                 <includes>
-                    <include>index.html</include>
+                    <include>index.hbs</include>
                 </includes>
                 <targetPath>pages</targetPath>
             </resource>
