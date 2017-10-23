@@ -18,7 +18,7 @@
  */
 import React from 'react';
 //Components
-import WidgetInfoAPIS from '../../utils/apis/WidgetInfoAPIs';
+import WidgetAPI from '../../utils/apis/WidgetAPI';
 import {dashboardLayout, widgetLoadingComponent} from '../../utils/WidgetLoadingComponent';
 import WidgetListThumbnail from './WidgetListThumbnail';
 import {pubsubComponent} from '../../utils/PubSubComponent';
@@ -66,8 +66,8 @@ export default  class WidgetsList extends React.Component {
     }
 
     componentDidMount() {
-        let widgetInfoAPIS = new WidgetInfoAPIS();
-        let promisedWidgetInfo = widgetInfoAPIS.getWidgetsInfo();
+        let widgetAPI = new WidgetAPI();
+        let promisedWidgetInfo = widgetAPI.getWidgetsInfo();
         promisedWidgetInfo.then(this.setWidgets).catch(function (error) {
             //TODO Need to use proper notification library to show the error
         });

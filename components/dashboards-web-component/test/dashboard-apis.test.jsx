@@ -18,7 +18,7 @@
  */
 
 import {describe, it} from "mocha";
-import DashboardsAPIs from '../src/utils/apis/DashboardAPIs';
+import DashboardAPI from '../src/utils/apis/DashboardAPI';
 import {assert} from 'chai';
 import TestUtils from './utils/test-utils';
 
@@ -46,14 +46,14 @@ describe('Dashboard',
         let sampleDashboardJson = sampleDashboardArray[0];
         const HTTP_STATUS_CODE_OK = 200;
         const HTTP_STATUS_CODE_CREATED = 201;
-        let dashboardsAPIs = new DashboardsAPIs();
+        let dashboardAPI = new DashboardAPI();
 
         describe('#createDashboard()',
             function () {
                 it('Should return HTTP 201 status code for newly created Dashboard',
                     function () {
                         sampleDashboardArray.forEach(dashboardJSON => {
-                            let promised_create = dashboardsAPIs.createDashboard(dashboardJSON);
+                            let promised_create = dashboardAPI.createDashboard(dashboardJSON);
                             return promised_create.then((response) => {
                                 assert.equal(response.status, HTTP_STATUS_CODE_CREATED, 'Error in creating the dashboard -' +
                                     ' Failed !');
@@ -67,7 +67,7 @@ describe('Dashboard',
             function () {
                 it('Should return HTTP 200 status code with dashboard list',
                     function () {
-                        let promised_get_list = dashboardsAPIs.getDashboardList();
+                        let promised_get_list = dashboardAPI.getDashboardList();
                         return promised_get_list.then((response) => {
                             assert.equal(response.status, HTTP_STATUS_CODE_OK, 'Error in retrieving dashboard list -' +
                                 ' Failed !');
@@ -89,7 +89,7 @@ describe('Dashboard',
             function () {
                 it('Should return HTTP 200 status code with dashboard content with given ID',
                     function () {
-                        let promised_get_dashboard = dashboardsAPIs.getDashboardByID("sampledashboard");
+                        let promised_get_dashboard = dashboardAPI.getDashboardByID("sampledashboard");
                         return promised_get_dashboard.then((response) => {
                             assert.equal(response.status, HTTP_STATUS_CODE_OK, 'Error in retrieving dashboard list - ' +
                                 'Failed !');
@@ -115,7 +115,7 @@ describe('Dashboard',
                 it('Should return HTTP 200 status code for given dashboard ID',
                     function () {
                         sampleDashboardJson.landingPage = "page1";
-                        let promised_update_dashboard = dashboardsAPIs.updateDashboardByID(sampleDashboardJson.url,
+                        let promised_update_dashboard = dashboardAPI.updateDashboardByID(sampleDashboardJson.url,
                             sampleDashboardJson);
                         return promised_update_dashboard.then((response) => {
                             assert.equal(response.status, HTTP_STATUS_CODE_OK, 'Error in updating dashboard - Failed !');
@@ -129,7 +129,7 @@ describe('Dashboard',
                 it('Should return HTTP 200 status code by deleting the dashboard with given ID',
                     function () {
                         sampleDashboardArray.forEach(dashboardJSON => {
-                            let promised_deleted = dashboardsAPIs.deleteDashboardByID(dashboardJSON.url);
+                            let promised_deleted = dashboardAPI.deleteDashboardByID(dashboardJSON.url);
                             return promised_deleted.then((response) => {
                                 assert.equal(response.status, HTTP_STATUS_CODE_OK, 'Error in deleting the dashboard - ' +
                                     'Failed !');

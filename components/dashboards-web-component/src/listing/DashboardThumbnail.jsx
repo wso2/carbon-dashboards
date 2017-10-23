@@ -20,7 +20,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import DashboardAPIs from '../utils/apis/DashboardAPIs';
+import DashboardAPI from '../utils/apis/DashboardAPI';
 
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -49,8 +49,8 @@ class DashboardThumbnail extends React.Component {
     }
 
     deleteDashboard() {
-        let dashboardAPIs = new DashboardAPIs();
-        dashboardAPIs.deleteDashboardByID(this.props.dashboard.url);
+        let dashboardAPI = new DashboardAPI();
+        dashboardAPI.deleteDashboardByID(this.props.dashboard.url);
         this.props.handleDelete();
         this.setState({deleteDashboardDialog: false, thumbnailStyle: "dashboard-thumbnail-deleted"});
     }

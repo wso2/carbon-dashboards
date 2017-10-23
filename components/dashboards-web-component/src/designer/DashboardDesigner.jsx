@@ -19,8 +19,8 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
 // App Components
-import Header from '../common/Header';
-import DashboardsAPIs from '../utils/apis/DashboardAPIs';
+import {Header} from '../common';
+import DashboardAPI from '../utils/apis/DashboardAPI';
 import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
@@ -237,7 +237,7 @@ export default class DashboardDesigner extends Component {
             let dashboard = this.state.dashboard;
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
-            new DashboardsAPIs().updateDashboardByID(this.state.dashboard.id, dashboard);
+            new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
             window.global.notify('Dashboard updated successfully!');
         } catch (e) {
             // Absorb the error since this doesn't relevant to the end-user.
@@ -248,7 +248,7 @@ export default class DashboardDesigner extends Component {
      * Load dashboard via the REST API.
      */
     loadDashboard() {
-        new DashboardsAPIs()
+        new DashboardAPI()
             .getDashboardByID(this.state.dashboardId)
             .then((response) => {
                 let dashboard = response.data;
@@ -316,7 +316,7 @@ export default class DashboardDesigner extends Component {
      * @param dashboard
      */
     updateDashboard(dashboard) {
-        new DashboardsAPIs().updateDashboardByID(dashboard.id, dashboard);
+        new DashboardAPI().updateDashboardByID(dashboard.id, dashboard);
         window.global.notify('Dashboard updated successfully!');
         this.setState({
             dashboard: dashboard

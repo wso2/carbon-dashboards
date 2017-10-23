@@ -19,9 +19,8 @@
 
 import React, {Component} from 'react';
 //App components
-import Header from '../common/Header';
-import FormPanel from '../common/FormPanel';
-import DashboardAPI from '../utils/apis/DashboardAPIs';
+import {FormPanel, Header} from '../common';
+import DashboardAPI from '../utils/apis/DashboardAPI';
 // Material-UI
 import {MuiThemeProvider, darkBaseTheme, getMuiTheme} from 'material-ui/styles';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -35,8 +34,8 @@ const styles = {
     errorMessage: {backgroundColor: "#FF5722", color: "white"},
     successMessage: {backgroundColor: "#4CAF50", color: "white"}
 };
-const constants = {
-    HTTP_OK: 200
+const httpStatus = {
+    ok: 200
 };
 
 export default class DashboardSettings extends Component {
@@ -141,7 +140,7 @@ export default class DashboardSettings extends Component {
         new DashboardAPI()
             .updateDashboardByID(this.props.match.params.id, this.state.dashboard)
             .then(response => {
-                if (response.status === constants.HTTP_OK) {
+                if (response.status === httpStatus.ok) {
                     this.showMessage("Dashboard '" + this.state.dashboard.name + "' is updated successfully.");
                 }
             })

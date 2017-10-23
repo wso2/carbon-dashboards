@@ -17,15 +17,15 @@
  *
  */
 
-import axios from 'axios';
+import Axios from 'axios';
 
-export default class DashboardsAPIs {
+export default class DashboardAPI {
     /**
      * This method will return the AXIOS http client.
      * @returns httpClient
      */
     getHTTPClient() {
-        let httpClient = axios.create({
+        let httpClient = Axios.create({
             baseURL: window.location.origin + '/apis/dashboards',
             timeout: 2000
         });

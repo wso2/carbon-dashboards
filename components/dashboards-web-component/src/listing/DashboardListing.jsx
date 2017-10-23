@@ -24,12 +24,10 @@ import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import RaisedButton from 'material-ui/RaisedButton';
-
 import {FormattedMessage} from 'react-intl';
-
-import Header from '../common/Header';
+import {Header} from '../common';
 import DashboardThumbnail from './DashboardThumbnail';
-import DashboardsAPIs from '../utils/apis/DashboardAPIs';
+import DashboardAPI from '../utils/apis/DashboardAPI';
 import '../../public/css/dashboard.css';
 import '../common/Global.css';
 
@@ -74,8 +72,8 @@ class DashboardListing extends React.Component {
     }
 
     retrieveDashboards() {
-        let dashboardAPIs = new DashboardsAPIs();
-        let promised_dashboard_list = dashboardAPIs.getDashboardList();
+        let dashboardAPI = new DashboardAPI();
+        let promised_dashboard_list = dashboardAPI.getDashboardList();
         let that = this;
         promised_dashboard_list.then((response) => {
             let dashboardList = [];

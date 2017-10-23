@@ -19,9 +19,8 @@
 
 import React, {Component} from 'react';
 // App component
-import Header from '../common/Header';
-import FormPanel from '../common/FormPanel';
-import DashboardAPI from '../utils/apis/DashboardAPIs';
+import {FormPanel, Header} from '../common';
+import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 // Material-UI
 import {MuiThemeProvider, darkBaseTheme, getMuiTheme} from 'material-ui/styles';
@@ -37,6 +36,11 @@ const styles = {
     messageBox: {textAlign: "center", color: "white"},
     errorMessage: {backgroundColor: "#FF5722", color: "white"},
     successMessage: {backgroundColor: "#4CAF50", color: "white"}
+};
+
+const httpStatus = {
+    accepted: 201,
+    conflict: 409
 };
 
 export default class DashboardCreatePage extends Component {
@@ -218,14 +222,14 @@ export default class DashboardCreatePage extends Component {
             .createDashboard(dashboard)
             .then(response => {
                 switch (response.status) {
-                    case 201:
+                    case httpStatus.accepted:
                         this.showMessage('Dashboard ' + dashboard.name + ' is created successfully!', styles.successMessage);
                         let dashboardUrl = this.state.dashboard.url;
                         setTimeout(function () {
                             window.location.href = window.contextPath + "/designer/" + dashboardURL;
                         }, 1000);
                         break;
-                    case 409:
+                    case httpStatus.conflict:
                         this.showError('Dashboard with same url already exists. Please use a different url.');
                         break;
                     default:
