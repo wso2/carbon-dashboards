@@ -17,204 +17,224 @@
  *
  */
 
-import React from 'react';
-
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import React, {Component} from 'react';
+// App component
+import Header from '../common/Header';
+import FormPanel from '../common/FormPanel';
+import DashboardAPI from '../utils/apis/DashboardAPIs';
+import DashboardUtils from '../utils/DashboardUtils';
+// Material-UI
+import {MuiThemeProvider, darkBaseTheme, getMuiTheme} from 'material-ui/styles';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
 import ClearIcon from 'material-ui/svg-icons/content/clear';
-
-import Header from '../common/Header';
-import DashboardAPIS from '../utils/apis/DashboardAPIs';
-import DashboardUtils from '../utils/DashboardUtils';
-
 import {FormattedMessage} from 'react-intl';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
-const hintStyle = {color: "grey", bottom: 0};
-const textareaStyle = {color: "black"};
-const underlineStyle = {bottom: 0, bottomBorder: "1px solid #424242", color: "blue"};
-const errorFieldStyle = {color: "#FF5722", marginTop: 5};
-const textFieldStyle = {marginLeft: 15, width: 500, height: 25, color: "black"};
-const messageBoxStyle = {textAlign: "center", color: "white"};
-const errorMessageStyle = {backgroundColor: "#FF5722", color: "white"};
-const successMessageStyle = {backgroundColor: "#4CAF50", color: "white"};
+const styles = {
+    fieldError: {color: "#FF5722"},
+    messageBox: {textAlign: "center", color: "white"},
+    errorMessage: {backgroundColor: "#FF5722", color: "white"},
+    successMessage: {backgroundColor: "#4CAF50", color: "white"}
+};
 
-class DashboardCreatePage extends React.Component {
-
+export default class DashboardCreatePage extends Component {
     constructor() {
         super();
-        this.addDashboard = this.addDashboard.bind(this);
-        this.handleRequestClose = this.handleRequestClose.bind(this);
-        this.generateDashboardJSON = this.generateDashboardJSON.bind(this);
         this.state = {
-            showMsg: false,
-            url: "",
-            errorMessageName: "",
-            errorStyleName: "",
-            errorMessageURL: "",
-            errorStyleURL: ""
-
+            showMessage: false,
+            message: '',
+            url: '',
+            fieldErrors: {
+                name: {error: '', style: ''},
+                url: {error: '', style: ''}
+            },
+            dashboard: {
+                name: '',
+                url: '',
+                description: ''
+            }
         };
-        this.handleURL = this.handleURL.bind(this);
-        this.handleDashboardName = this.handleDashboardName.bind(this);
+        this.addDashboard = this.addDashboard.bind(this);
+        this.validateFields = this.validateFields.bind(this);
     }
 
     render() {
-        return <MuiThemeProvider muiTheme={muiTheme}>
-            <div>
-                <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>} />
+        return (
+            <MuiThemeProvider muiTheme={muiTheme}>
+                <div>
+                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
 
-                {/* Portal navigation bar */}
-                <div className="navigation-bar">
-                    <RaisedButton label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>} icon={<ClearIcon/>} style={{'margin-right': '12px'}}
-                                  onClick={() => {
-                                      window.location.href = window.contextPath + '/';
-                                  }}/>
+                    {/* Portal navigation bar */}
+                    <div className="navigation-bar">
+                        <RaisedButton
+                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>}
+                            icon={<ClearIcon/>}
+                            style={{'margin-right': '12px'}}
+                            onClick={() => {
+                                window.location.href = window.contextPath + '/';
+                            }}/>
+                    </div>
+
+                    <FormPanel title={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/>} width="800">
+                        <TextField
+                            floatingLabelText={<FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard"/>}
+                            value={this.state.dashboard.name}
+                            hintText={<FormattedMessage id="dashboard.name.hint.text" defaultMessage="E.g. Sales Statistics"/>}
+                            fullWidth
+                            errorText={this.state.fieldErrors.name.error}
+                            errorStyle={this.state.fieldErrors.name.style}
+                            onChange={(e, value) => {
+                                this.state.fieldErrors.name = {error: '', style: ''};
+                                this.state.dashboard.name = value;
+                                this.state.dashboard.url = new DashboardUtils().sanitizeInput(value.toLowerCase()
+                                    .replace(/\s+/g, ''));
+                                this.setState({
+                                    fieldErrors: this.state.fieldErrors,
+                                    dashboard: this.state.dashboard
+                                });
+                            }}
+                        />
+                        <br/>
+                        <TextField
+                            floatingLabelText={<FormattedMessage id="dashboard.url" defaultMessage="URL"/>}
+                            value={this.state.dashboard.url}
+                            hintText={<FormattedMessage id="dashboard.url.hint.text" defaultMessage="E.g. sales-stats"/>}
+                            fullWidth
+                            errorText={this.state.fieldErrors.url.error}
+                            errorStyle={this.state.fieldErrors.url.style}
+                            onChange={(e, value) => {
+                                this.state.fieldErrors.url = {error: '', style: ''};
+                                this.state.dashboard.url = new DashboardUtils().sanitizeInput(value.toLowerCase()
+                                    .replace(/\s+/g, ''));
+                                this.setState({
+                                    fieldErrors: this.state.fieldErrors,
+                                    dashboard: this.state.dashboard
+                                });
+                            }}
+                        />
+                        <br/>
+                        <TextField
+                            floatingLabelText={<FormattedMessage id="dashboard.description" defaultMessage="Description"/>}
+                            hintText={<FormattedMessage id="dashboard.description.hint.text" defaultMessage="E.g. Monthly Sales Statistics"/>}
+                            value={this.state.dashboard.description}
+                            fullWidth
+                            onChange={(e, value) => {
+                                this.state.dashboard.description = value;
+                                this.setState({
+                                    dashboard: this.state.dashboard
+                                });
+                            }}
+                        />
+                        <br/>
+                        <br/>
+                        <RaisedButton
+                            onClick={this.addDashboard}
+                            label={<FormattedMessage id="add.button" defaultMessage="Add"/>}
+                            primary
+                        />
+                    </FormPanel>
+                    <Snackbar
+                        contentStyle={styles.messageBox}
+                        bodyStyle={this.state.messageStyle}
+                        open={this.state.showMessage}
+                        message={this.state.message}
+                        autoHideDuration={4000}
+                        onRequestClose={() => {
+                            this.setState({showMessage: false, message: ''});
+                        }}
+                    />
                 </div>
-
-                <div className="create-page-form-container">
-                    <h1 className="create-dashboard-header"><FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/></h1>
-                    <Divider className="create-dashboard-divider"/>
-                    <div className="create-dashboard-form-group">
-                        <label className="create-dashboard-page-label-name">
-                            <FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard"/>
-                            <span className="required">*</span>
-                        </label>
-                        <TextField errorText={this.state.errorMessageName} errorStyle={this.state.errorStyleName}
-                                   onChange={this.handleDashboardName} id="dashboardName" hintStyle={hintStyle}
-                                   textareaStyle={textareaStyle}
-                                   underlineStyle={underlineStyle} style={textFieldStyle}
-                                   hintText={<FormattedMessage id="dashboard.name.hint.text" defaultMessage="E.g. Sales Statistics"/>}/>
-                    </div>
-                    <div className="create-dashboard-form-group">
-                        <label className="create-dashboard-page-label-url">
-                            <FormattedMessage id="dashboard.url" defaultMessage="URL"/>
-                            <span className="required">*</span>
-                        </label>
-                        <TextField errorText={this.state.errorMessageURL} errorStyle={this.state.errorStyleURL}
-                                   onChange={this.handleURL} value={this.state.url} id="dashboardURL"
-                                   hintStyle={hintStyle}
-                                   textareaStyle={textareaStyle} underlineStyle={underlineStyle} style={textFieldStyle}
-                                   hintText={<FormattedMessage id="dashboard.url.hint.text" defaultMessage="E.g. sales-stats"/>}/>
-                    </div>
-                    <div className="create-dashboard-form-group">
-                        <label className="create-dashboard-page-label-description">
-                            <FormattedMessage id="dashboard.description" defaultMessage="Description"/>
-                        </label>
-                        <TextField id="dashboardDescription" hintStyle={hintStyle} textareaStyle={textareaStyle}
-                                   underlineStyle={underlineStyle} style={textFieldStyle}
-                                   hintText={<FormattedMessage id="dashboard.description.hint.text" defaultMessage="E.g. Monthly Sales Statistics"/>}/>
-                    </div>
-                    <RaisedButton onClick={this.addDashboard} label={<FormattedMessage id="add.button" defaultMessage="Add"/>} primary={true}
-                                  className="create-dashboard-button"/>
-                    <Snackbar contentStyle={messageBoxStyle} bodyStyle={this.state.messageStyle}
-                              open={this.state.showMsg}
-                              message={this.state.Message} autoHideDuration={4000}
-                              onRequestClose={this.handleRequestClose}/>
-                </div>
-            </div>
-        </MuiThemeProvider>;
+            </MuiThemeProvider>
+        );
     }
 
-    handleURL(event, value) {
-        this.setState({
-            url: new DashboardUtils().sanitizeInput(value.toLowerCase().replace(/\s+/g, '')),
-            errorMessageURL: "",
-            errorStyleURL: ""
-        });
-    }
-
-    handleDashboardName(event, value) {
-        this.setState({
-            url: new DashboardUtils().sanitizeInput(value.toLowerCase().replace(/\s+/g, '')),
-            errorMessageName: "",
-            errorStyleName: ""
-        });
-    }
-
-    handleRequestClose() {
-        this.setState({
-            showMsg: false,
-            Message: ""
-        });
-    }
-
+    /**
+     * Show error message.
+     * @param message
+     */
     showError(message) {
+        this.showMessage(message, styles.errorMessage);
+    }
+
+    /**
+     * Show info message.
+     * @param message
+     * @param styles
+     */
+    showMessage(message, styles = styles.successMessage) {
         this.setState({
-            messageStyle: errorMessageStyle,
-            showMsg: true,
-            Message: message
+            messageStyle: styles,
+            showMessage: true,
+            message: message
         });
     }
 
-    showMessage(message) {
-        this.setState({
-            messageStyle: successMessageStyle,
-            showMsg: true,
-            Message: message
-        });
+    /**
+     * Validate form fields.
+     * @returns {boolean}
+     */
+    validateFields() {
+        let valid = true;
+        if (this.state.dashboard.name === '') {
+            this.state.fieldErrors.name = {error: 'Required', style: styles.fieldError};
+            this.setState({fieldErrors: this.state.fieldErrors});
+            valid = false;
+        }
+
+        if (this.state.dashboard.url === '') {
+            this.state.fieldErrors.url = {error: 'Required', style: styles.fieldError};
+            this.setState({fieldErrors: this.state.fieldErrors});
+            valid = false;
+        }
+        return valid;
     }
 
+    /**
+     * Add dashboard.
+     */
     addDashboard() {
-        let dashboardName = document.getElementById("dashboardName").value;
-        let dashboardURL = document.getElementById("dashboardURL").value;
-        let dashboardDescription = document.getElementById("dashboardDescription").value;
-        if (!dashboardName) {
-            this.setState({
-                errorMessageName: "This field is required.",
-                errorStyleName: errorFieldStyle
-            });
-            return;
-        } else if (!dashboardURL) {
-            this.setState({
-                errorMessageURL: "This field is required.",
-                errorStyleURL: errorFieldStyle
-            });
+        if (!this.validateFields()) {
             return;
         }
-        let dashboardJson = {};
-        dashboardJson.url = dashboardURL;
-        dashboardJson.name = dashboardName;
-        dashboardJson.description = dashboardDescription;
-        dashboardJson = this.generateDashboardJSON(dashboardJson);
-        let dashboardAPIs = new DashboardAPIS();
-        var that = this;
-        dashboardAPIs.getDashboardByID(dashboardURL).then(function (response) {
-            if (typeof response.data === "string") {
-                dashboardAPIs.createDashboard(dashboardJson).then(function (response) {
-                    if (response.status === 201) {
-                        that.showMessage("Dashboard - " + dashboardName + " is created successfully !!");
-                        setTimeout(function () {
-                            let appContext = window.contextPath;
-                            window.location.href = appContext + "/designer/" + dashboardURL;
-                        }, 1000)
-                    }
-                })
-            }
-            else {
-                that.showError("Dashboard with same url already exists. Please use a different url !!");
-            }
-        }).catch(function () {
-            that.showError("Error in adding dashboard !!");
-        });
-    }
 
-    generateDashboardJSON(dashboardJson) {
-        dashboardJson.parentId = 0;
-        dashboardJson.landingPage = "home";
-        dashboardJson.pages = [];
-        let homePage = {};
-        homePage.id = "home";
-        homePage.name = "Home";
-        homePage.content = [];
-        dashboardJson.pages.push(homePage);
-        return dashboardJson;
+        let dashboard = {
+            url: this.state.dashboard.url,
+            name: this.state.dashboard.name,
+            description: this.state.dashboard.description,
+            parentId: 0,
+            landingPage: 'home',
+            pages: [
+                {
+                    id: 'home',
+                    name: 'Home',
+                    content: []
+                }
+            ]
+        };
+
+        new DashboardAPI()
+            .createDashboard(dashboard)
+            .then(response => {
+                switch (response.status) {
+                    case 201:
+                        this.showMessage('Dashboard ' + dashboard.name + ' is created successfully!', styles.successMessage);
+                        let dashboardUrl = this.state.dashboard.url;
+                        setTimeout(function () {
+                            window.location.href = window.contextPath + "/designer/" + dashboardURL;
+                        }, 1000);
+                        break;
+                    case 409:
+                        this.showError('Dashboard with same url already exists. Please use a different url.');
+                        break;
+                    default:
+                        this.showError('Unable to create the dashboard due to unknown error.');
+                        break;
+                }
+            })
+            .catch(() => {
+                this.showError("Error in adding dashboard!");
+            });
     }
 }
-
-export default DashboardCreatePage;

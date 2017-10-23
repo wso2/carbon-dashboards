@@ -18,7 +18,10 @@
  */
 
 import React, {Component} from 'react';
+// Material UI
 import AppBar from 'material-ui/AppBar/AppBar';
+// CSS
+import './Header.css';
 
 import './Header.css';
 
@@ -27,9 +30,16 @@ export default class Header extends Component {
         return (
             <AppBar
                 title={this.props.title}
-                className="header"
                 iconElementLeft={<i className="icon fw fw-wso2-logo header-icon"></i>}
             />
         );
     }
 }
+
+Header.propTypes = {
+    title: React.PropTypes.string
+};
+
+Header.defaultProps = {
+    title: 'Portal'
+};
