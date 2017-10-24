@@ -48,7 +48,6 @@ class DashboardListing extends React.Component {
     }
 
     render() {
-        //TODO Need to get the dashboardName using app context
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
@@ -59,7 +58,7 @@ class DashboardListing extends React.Component {
                         <RaisedButton label="Create Dashboard" icon={<ContentAdd/>} primary
                                       style={{'margin-right': '12px'}}
                                       onClick={() => {
-                                          window.location.href = '/portal/create/';
+                                          window.location.href = window.contextPath + '/create/';
                                       }}/>
                     </div>
 

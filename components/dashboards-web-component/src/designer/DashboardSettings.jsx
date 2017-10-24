@@ -140,7 +140,7 @@ class DashboardSettings extends React.Component {
                 <div className="navigation-bar">
                     <RaisedButton label="Cancel" icon={<ClearIcon/>} style={{'margin-right': '12px'}}
                                   onClick={() => {
-                                      window.location.href = '/portal/';
+                                      window.location.href = window.contextPath + '/';
                                   }}/>
                 </div>
 

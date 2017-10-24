@@ -143,7 +143,7 @@ export default class DashboardDesigner extends Component {
                     <div className="navigation-bar">
                         <RaisedButton label="Back" icon={<BackIcon/>} style={{'margin-right': '12px'}}
                                       onClick={() => {
-                                          window.location.href = '/portal/';
+                                          window.location.href = window.contextPath + '/';
                                       }}/>
                         <RaisedButton label="Save" primary onClick={this.updatePageContent.bind(this)}/>
                     </div>
@@ -335,21 +335,20 @@ export default class DashboardDesigner extends Component {
      * Load GoldenLayout theme.
      */
     static loadTheme() {
-        //TODO Need to get the app context properly when the server is ready
-        let appContext = window.location.pathname.split("/")[1];
+        let appContext = window.contextPath;
         let baseURL = window.location.origin;
 
         let head = document.getElementsByTagName('head')[0];
         let link = document.createElement('link');
         link.type = 'text/css';
-        link.href = baseURL + "/" + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
+        link.href = baseURL + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
         link.rel = "stylesheet";
         head.appendChild(link);
     }
 
     pageNavigated(id, url) {
         this.setState({
-            redirectUrl: '/portal/designer/' + this.state.dashboardId + '/' + url,
+            redirectUrl: window.contextPath +'/designer/' + this.state.dashboardId + '/' + url,
             redirect: true
         });
     }
