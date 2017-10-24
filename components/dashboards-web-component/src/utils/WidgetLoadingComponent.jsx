@@ -66,10 +66,10 @@ class WidgetLoadingComponent {
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
         //TODO Need to get the app context properly when the server is ready
-        let appContext = window.location.pathname.split("/")[1];
+        let appContext = window.contextPath;
         let baseURL = window.location.origin;
         script.type = 'text/javascript';
-        script.src = baseURL + "/" + appContext + "/public/extensions/widgets/" + widgetID + "/" + widgetID + ".js";
+        script.src = baseURL + appContext + "/public/extensions/widgets/" + widgetID + "/" + widgetID + ".js";
         head.appendChild(script);
     }
 

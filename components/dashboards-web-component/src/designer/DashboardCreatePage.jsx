@@ -73,7 +73,7 @@ class DashboardCreatePage extends React.Component {
                 <div className="navigation-bar">
                     <RaisedButton label="Cancel" icon={<ClearIcon/>} style={{'margin-right': '12px'}}
                                   onClick={() => {
-                                      window.location.href = '/portal/';
+                                      window.location.href = window.contextPath + '/';
                                   }}/>
                 </div>
 
@@ -190,8 +190,8 @@ class DashboardCreatePage extends React.Component {
                     if (response.status === 201) {
                         that.showMessage("Dashboard - " + dashboardName + " is created successfully !!");
                         setTimeout(function () {
-                            let appContext = window.location.pathname.split("/")[1];
-                            window.location.href = "/" + appContext + "/designer/" + dashboardURL;
+                            let appContext = window.contextPath;
+                            window.location.href = appContext + "/designer/" + dashboardURL;
                         }, 1000)
                     }
                 })

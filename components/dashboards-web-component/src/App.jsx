@@ -29,8 +29,8 @@ import DashboardDesigner from './designer/DashboardDesigner';
 import DashboardCreate from './designer/DashboardCreatePage';
 import DashboardSettings from './designer/DashboardSettings';
 
-//TODO: take appContext from UI server utility
-const publicPath = '/portal/public/app/';
+const appContext = window.contextPath;
+const publicPath = appContext + '/public/app/';
 const language = (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage;
 const languageWithoutRegionCode = language.toLowerCase().split(/[_-]+/)[0];
 
@@ -66,17 +66,16 @@ class App extends Component {
 
     }
     render () {
-        // TODO portal is the app context. Need to get the app context properly and use here
         return (
             <IntlProvider locale={language} messages={this.state.messages}>
                 <BrowserRouter history>
                     <Switch>
                         {/* Dashboard listing a.k.a. landing page */}
-                        <Route exact path='/portal' component={DashboardListing}/>
+                        <Route exact path= {appContext} component={DashboardListing}/>
                         {/* Create dashboard */}
-                        <Route exact path='/portal/create' component={DashboardCreate}/>
+                        <Route exact path={appContext + '/create'} component={DashboardCreate}/>
                         {/* Dashboard settings */}
-                        <Route exact path='/portal/settings/:id' component={DashboardSettings}/>
+                        <Route exact path={appContext + '/settings/:id'} component={DashboardSettings}/>
                         {/* Dashboard designer */}
                         <Route exact path='*/designer/:dashboardId' component={DashboardDesigner}/>
                         <Route path='*/designer/:dashboardId/*' component={DashboardDesigner}/>

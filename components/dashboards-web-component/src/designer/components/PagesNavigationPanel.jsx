@@ -116,16 +116,15 @@ class PagesNavigationPanel extends React.Component {
         }
         let head = document.getElementsByTagName('head')[0];
         let link = document.createElement('link');
-        //TODO Need to get the app context properly when the server is ready
-        let appContext = window.location.pathname.split("/")[1];
+        let appContext = window.contextPath;
         let baseURL = window.location.origin;
         link.type = 'text/css';
         if (isInputChecked) {
             this.setThemeSwitchToggled(true);
-            link.href = baseURL + "/" + appContext + "/public/themes/dark/css/goldenlayout-dark-theme.css";
+            link.href = baseURL + appContext + "/public/themes/dark/css/goldenlayout-dark-theme.css";
         } else {
             this.setThemeSwitchToggled(false);
-            link.href = baseURL + "/" + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
+            link.href = baseURL + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
         }
         link.id = "dashboard-theme";
         link.rel = "stylesheet";
