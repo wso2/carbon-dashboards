@@ -14,12 +14,13 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.0.1.m11-SNAPSHOT</version>
+        <version>4.0.0.m12-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -89,7 +90,7 @@
                             <executable>${npm.executable}</executable>
                             <arguments>
                                 <argument>run</argument>
-                                <argument>${npm.build.command}</argument>
+                                <argument>build</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -115,8 +116,37 @@
         </resources>
     </build>
 
-    <properties>
-        <npm.executable>npm</npm.executable>
-        <npm.build.command>build</npm.build.command>
-    </properties>
+    <profiles>
+        <profile>
+            <id>platform-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <npm.executable>npm.cmd</npm.executable>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <npm.executable>npm</npm.executable>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <npm.executable>npm</npm.executable>
+            </properties>
+        </profile>
+    </profiles>
 </project>
