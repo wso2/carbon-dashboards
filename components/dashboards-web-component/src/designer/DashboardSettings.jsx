@@ -28,6 +28,8 @@ import Divider from 'material-ui/Divider';
 import Snackbar from 'material-ui/Snackbar';
 import ClearIcon from 'material-ui/svg-icons/content/clear';
 
+import {FormattedMessage} from 'react-intl';
+
 import Header from '../common/Header';
 import DashboardAPIS from '../utils/apis/DashboardAPIs';
 
@@ -134,22 +136,23 @@ class DashboardSettings extends React.Component {
     render() {
         return <MuiThemeProvider muiTheme={muiTheme}>
             <div>
-                <Header title="Portal" />
+                <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>} />
 
                 {/* Portal navigation bar */}
                 <div className="navigation-bar">
-                    <RaisedButton label="Cancel" icon={<ClearIcon/>} style={{'margin-right': '12px'}}
+                    <RaisedButton label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>} icon={<ClearIcon/>} style={{'margin-right': '12px'}}
                                   onClick={() => {
                                       window.location.href = window.contextPath + '/';
                                   }}/>
                 </div>
 
                 <div className="dashboard-settings-page-form-container">
-                    <h1 className="dashboard-settings-header">Dashboard Settings</h1>
+                    <h1 className="dashboard-settings-header"><FormattedMessage id="dashboard.settings.title"
+                                                                                defaultMessage="Dashboard Settings"/></h1>
                     <Divider className="dashboard-settings-divider"/>
                     <div className="dashboard-settings-form-group">
                         <label className="dashboard-settings-page-label-url">
-                            URL
+                            <FormattedMessage id="dashboard.url" defaultMessage="URL"/>
                         </label>
                         <div className="dashboard-settings-url">
                             {"/" + this.props.match.params.id}
@@ -157,24 +160,27 @@ class DashboardSettings extends React.Component {
                     </div>
                     <div className="dashboard-settings-form-group">
                         <label className="dashboard-settings-page-label-name">
-                            Name of your Dashboard
+                            <FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard"/>
                         </label>
                         <TextField errorText={this.state.errorMessageName} errorStyle={this.state.errorStyleName}
                                    onChange={this.handleDashboardName} id="dashboardName" hintStyle={hintStyle}
                                    textareaStyle={textareaStyle}
                                    underlineStyle={underlineStyle} style={textFieldStyle}
-                                   hintText="E.g. Sales Statistics" value={this.state.dashboardName}/>
+                                   hintText={<FormattedMessage id="dashboard.name.hint.text" defaultMessage="E.g. Sales Statistics"/>}
+                                   value={this.state.dashboardName}/>
                     </div>
                     <div className="dashboard-settings-form-group">
                         <label className="dashboard-settings-page-label-description">
-                            Description
+                            <FormattedMessage id="dashboard.description" defaultMessage="Description"/>
                         </label>
                         <TextField id="dashboardDescription" hintStyle={hintStyle} textareaStyle={textareaStyle}
                                    underlineStyle={underlineStyle} style={textFieldStyle}
-                                   onChange={this.handleDashboardDescription} hintText="E.g. Monthly Sales Statistics"
+                                   onChange={this.handleDashboardDescription}
+                                   hintText={<FormattedMessage id="dashboard.description.hint.text" defaultMessage="E.g. Monthly Sales Statistics"/>}
                                    value={this.state.dashboardDescription}/>
                     </div>
-                    <RaisedButton onClick={this.updateDashboard} label="Save" primary={true}
+                    <RaisedButton onClick={this.updateDashboard}
+                                  label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary={true}
                                   className="dashboard-settings-save-button"/>
                 </div>
                 <Snackbar contentStyle={messageBoxStyle} bodyStyle={this.state.messageStyle} open={this.state.showMsg}

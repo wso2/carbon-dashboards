@@ -25,6 +25,8 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import {FormattedMessage} from 'react-intl';
+
 import Header from '../common/Header';
 import DashboardThumbnail from './DashboardThumbnail';
 import DashboardsAPIs from '../utils/apis/DashboardAPIs';
@@ -51,11 +53,11 @@ class DashboardListing extends React.Component {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <Header title="Portal"/>
+                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <RaisedButton label="Create Dashboard" icon={<ContentAdd/>} primary
+                        <RaisedButton label={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/>} icon={<ContentAdd/>} primary
                                       style={{'margin-right': '12px'}}
                                       onClick={() => {
                                           window.location.href = window.contextPath + '/create/';

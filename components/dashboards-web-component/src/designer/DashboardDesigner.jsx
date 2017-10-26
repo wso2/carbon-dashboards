@@ -39,6 +39,8 @@ import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 import RaisedButton from 'material-ui/RaisedButton';
+//React Intl for Localization
+import {FormattedMessage} from 'react-intl';
 // CSS
 import '../common/Global.css';
 import './DashboardDesigner.css';
@@ -137,15 +139,15 @@ export default class DashboardDesigner extends Component {
                             }
                         })()
                     }
-                    <Header title="Dashboard Designer"/>
+                    <Header title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer"/>}/>
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <RaisedButton label="Back" icon={<BackIcon/>} style={{'margin-right': '12px'}}
+                        <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>} icon={<BackIcon/>} style={{'margin-right': '12px'}}
                                       onClick={() => {
                                           window.location.href = window.contextPath + '/';
                                       }}/>
-                        <RaisedButton label="Save" primary onClick={this.updatePageContent.bind(this)}/>
+                        <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary onClick={this.updatePageContent.bind(this)}/>
                     </div>
 
                     {/* Left action bar */}
