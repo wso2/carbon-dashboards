@@ -27,6 +27,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import Snackbar from 'material-ui/Snackbar';
 import ClearIcon from 'material-ui/svg-icons/content/clear';
+import {FormattedMessage} from 'react-intl';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const styles = {
