@@ -25,6 +25,8 @@ import DashboardAPIs from '../utils/apis/DashboardAPIs';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
+import {FormattedMessage} from 'react-intl';
+
 class DashboardThumbnail extends React.Component {
 
     constructor() {
@@ -68,12 +70,12 @@ class DashboardThumbnail extends React.Component {
 
         let actionsButtons = [
             <FlatButton
-                label="Yes"
+                label={<FormattedMessage id="confirmation.yes" defaultMessage="Yes"/>}
                 primary={true}
                 onClick={this.deleteDashboard}
             />,
             <FlatButton
-                label="No"
+                label={<FormattedMessage id="confirmation.no" defaultMessage="No"/>}
                 primary={true}
                 onClick={this.handleClose}
             />,
@@ -102,21 +104,21 @@ class DashboardThumbnail extends React.Component {
                                 <i className="fw fw-circle-outline fw-stack-2x"></i>
                                 <i className="fw fw-view fw-stack-1x"></i>
                             </span>
-                                View
+                                <FormattedMessage id="view.button" defaultMessage="View"/>
                             </Link>
                             <Link to={"designer/" + this.props.dashboard.url}>
                             <span className="fw-stack icon edit-dashboard-icon">
                                 <i className="fw fw-circle-outline fw-stack-2x"></i>
                                 <i className="fw fw-edit fw-stack-1x"></i>
                             </span>
-                                Design
+                                <FormattedMessage id="design.button" defaultMessage="Design"/>
                             </Link>
                             <Link to={"settings/" + this.props.dashboard.url}>
                             <span className="fw-stack icon edit-dashboard-icon">
                                 <i className="fw fw-circle-outline fw-stack-2x"></i>
                                 <i className="fw fw-edit fw-stack-1x"></i>
                             </span>
-                                Settings
+                                <FormattedMessage id="settings.button" defaultMessage="Settings"/>
                             </Link>
                         </div>
                     </div>

@@ -25,6 +25,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import Checkbox from 'material-ui/Checkbox';
 
+import {FormattedMessage} from 'react-intl';
+
 export default class PageEntry extends Component {
     constructor(props) {
         super(props);
@@ -41,7 +43,7 @@ export default class PageEntry extends Component {
             <Card onExpandChange={(expanded) => this.entryExpanded(expanded)}>
                 <CardHeader title={this.state.page.title} actAsExpander showExpandableButton/>
                 <CardText expandable>
-                    <TextField value={this.state.page.id} fullWidth floatingLabelText="URL"
+                    <TextField value={this.state.page.id} fullWidth floatingLabelText={<FormattedMessage id="page.url" defaultMessage="URL"/>}
                                onBlur={this.updatePage}
                                onChange={(e) => {
                                    this.state.page.id = e.target.value;
@@ -50,7 +52,7 @@ export default class PageEntry extends Component {
                                    });
                                    this.dirty = true;
                                }}/>
-                    <TextField value={this.state.page.title} fullWidth floatingLabelText="Title"
+                    <TextField value={this.state.page.title} fullWidth floatingLabelText={<FormattedMessage id="page.title" defaultMessage="Title"/>}
                                onBlur={this.updatePage}
                                onChange={(e) => {
                                    this.state.page.title = e.target.value;
@@ -59,9 +61,9 @@ export default class PageEntry extends Component {
                                    });
                                    this.dirty = true;
                                }}/>
-                    <Checkbox label="Make as Home Page" checked={this.state.page.landingPage}
+                    <Checkbox label={<FormattedMessage id="make.homepage" defaultMessage="Make as Home Page"/>} checked={this.state.page.landingPage}
                               disabled={this.state.page.landingPage} onCheck={this.makeAsHomePage.bind(this)}/>
-                    <RaisedButton label="Delete" labelPosition="after" secondary fullWidth icon={<DeleteIcon/>}
+                    <RaisedButton label={<FormattedMessage id="delete" defaultMessage="Delete"/>} labelPosition="after" secondary fullWidth icon={<DeleteIcon/>}
                                   onClick={this.deletePage.bind(this)} disabled={this.state.page.landingPage}/>
                 </CardText>
             </Card>

@@ -25,6 +25,8 @@ import Checkbox from 'material-ui/Checkbox';
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
 
+import {FormattedMessage} from 'react-intl';
+
 class WidgetConfigurationPanel extends React.Component {
 
     constructor(props) {
@@ -101,8 +103,8 @@ class WidgetConfigurationPanel extends React.Component {
     render() {
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerClassName="widget-configuration-panel">
-            <div className="widget-configuration-panel-header">Widget Configuration</div>
-            <div>Publishers</div>
+            <div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>
+            <div><FormattedMessage id="publisher.list.heading" defaultMessage="Publishers"/></div>
             {this.getPublishers()}
         </Drawer>);
     }

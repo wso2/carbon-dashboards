@@ -27,6 +27,8 @@ import DashboardUtils from '../../utils/DashboardUtils';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 
+import {FormattedMessage} from 'react-intl';
+
 let widgets = [];
 let isDashboardLoaded = false;
 let widgetListDragSources = new Map();
@@ -138,7 +140,7 @@ export default  class WidgetsList extends React.Component {
             <div style={this.getPanelStyles(this.props.visible)}>
                 <h3>Widgets</h3>
                 <div className="widget-search-div">
-                    <TextField className="widget-search-textfield" onChange={this.searchWidget} hintText="Search.."/>
+                    <TextField className="widget-search-textfield" onChange={this.searchWidget} hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>}/>
                 </div>
                 <Divider/>
                 {
@@ -150,7 +152,7 @@ export default  class WidgetsList extends React.Component {
                 <Divider/>
                 {
                     this.state.filteredWidgetSet.size === 0 ?
-                        <div className="no-widgets-text">No widgets found !</div> : ""
+                        <div className="no-widgets-text"><FormattedMessage id="no.widgets.found" defaultMessage="No Widgets Found"/></div> : ""
                 }
             </div>);
     }

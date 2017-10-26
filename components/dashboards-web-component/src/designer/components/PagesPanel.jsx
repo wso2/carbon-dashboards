@@ -26,6 +26,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import AddCircleOutlineIcon from 'material-ui/svg-icons/content/add-circle-outline';
 
+import {FormattedMessage} from 'react-intl';
+
 let _pages = [];
 
 const PAGE_ID_PREFIX = 'page';
@@ -54,9 +56,9 @@ export default class PagesPanel extends Component {
             <div style={this.getPanelStyles(this.props.visible)}>
                 <h3>Pages</h3>
                 <div style={{'text-align': 'center'}}>
-                    <RaisedButton label="Create Page" primary fullWidth icon={<AddCircleOutlineIcon/>}
+                    <RaisedButton label={<FormattedMessage id="create.page" defaultMessage="Create Page"/>} primary fullWidth icon={<AddCircleOutlineIcon/>}
                                   onClick={this.addPage.bind(this)}/>
-                    <TextField hintText="Search..." onChange={(e) => this.searchPages(e)}/>
+                    <TextField hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>} onChange={(e) => this.searchPages(e)}/>
                 </div>
                 {
                     this.state.pages.map(p => {

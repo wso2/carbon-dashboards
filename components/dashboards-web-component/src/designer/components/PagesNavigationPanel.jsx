@@ -25,6 +25,8 @@ import MenuItem from 'material-ui/MenuItem';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import {Link} from 'react-router-dom';
 
+import {FormattedMessage} from 'react-intl';
+
 class PagesNavigationPanel extends React.Component {
     constructor(props) {
         super(props);
@@ -87,11 +89,11 @@ class PagesNavigationPanel extends React.Component {
                 </div>
                 <hr />
                 <div className="dark-light-theme-switch-div">
-                    Light
+                    <FormattedMessage id="light" defaultMessage="Light"/>
                     <Toggle
                         onToggle={this.loadTheme}
                         labelPosition="right"
-                        label="Dark"
+                        label={<FormattedMessage id="dark" defaultMessage="Dark"/>}
                         defaultToggled={this.isThemeSwitchToggled()}
                         className="dark-light-theme-switch-toggleBtn"
                     />

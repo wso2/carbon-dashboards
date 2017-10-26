@@ -67,18 +67,18 @@ class DashboardCreatePage extends React.Component {
     render() {
         return <MuiThemeProvider muiTheme={muiTheme}>
             <div>
-                <Header title="Portal" />
+                <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>} />
 
                 {/* Portal navigation bar */}
                 <div className="navigation-bar">
-                    <RaisedButton label="Cancel" icon={<ClearIcon/>} style={{'margin-right': '12px'}}
+                    <RaisedButton label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>} icon={<ClearIcon/>} style={{'margin-right': '12px'}}
                                   onClick={() => {
                                       window.location.href = window.contextPath + '/';
                                   }}/>
                 </div>
 
                 <div className="create-page-form-container">
-                    <h1 className="create-dashboard-header">Create a Dashboard</h1>
+                    <h1 className="create-dashboard-header"><FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/></h1>
                     <Divider className="create-dashboard-divider"/>
                     <div className="create-dashboard-form-group">
                         <label className="create-dashboard-page-label-name">
@@ -89,7 +89,7 @@ class DashboardCreatePage extends React.Component {
                                    onChange={this.handleDashboardName} id="dashboardName" hintStyle={hintStyle}
                                    textareaStyle={textareaStyle}
                                    underlineStyle={underlineStyle} style={textFieldStyle}
-                                   hintText="E.g. Sales Statistics"/>
+                                   hintText={<FormattedMessage id="dashboard.name.hint.text" defaultMessage="E.g. Sales Statistics"/>}/>
                     </div>
                     <div className="create-dashboard-form-group">
                         <label className="create-dashboard-page-label-url">
@@ -100,7 +100,7 @@ class DashboardCreatePage extends React.Component {
                                    onChange={this.handleURL} value={this.state.url} id="dashboardURL"
                                    hintStyle={hintStyle}
                                    textareaStyle={textareaStyle} underlineStyle={underlineStyle} style={textFieldStyle}
-                                   hintText="E.g. sales-stats"/>
+                                   hintText={<FormattedMessage id="dashboard.url.hint.text" defaultMessage="E.g. sales-stats"/>}/>
                     </div>
                     <div className="create-dashboard-form-group">
                         <label className="create-dashboard-page-label-description">
@@ -108,9 +108,9 @@ class DashboardCreatePage extends React.Component {
                         </label>
                         <TextField id="dashboardDescription" hintStyle={hintStyle} textareaStyle={textareaStyle}
                                    underlineStyle={underlineStyle} style={textFieldStyle}
-                                   hintText="E.g. Monthly Sales Statistics"/>
+                                   hintText={<FormattedMessage id="dashboard.description.hint.text" defaultMessage="E.g. Monthly Sales Statistics"/>}/>
                     </div>
-                    <RaisedButton onClick={this.addDashboard} label="Add" primary={true}
+                    <RaisedButton onClick={this.addDashboard} label={<FormattedMessage id="add.button" defaultMessage="Add"/>} primary={true}
                                   className="create-dashboard-button"/>
                     <Snackbar contentStyle={messageBoxStyle} bodyStyle={this.state.messageStyle}
                               open={this.state.showMsg}
