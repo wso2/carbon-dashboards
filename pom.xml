@@ -217,6 +217,18 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
+
+            <!--Samples-->
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.endpoint</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.feature</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
