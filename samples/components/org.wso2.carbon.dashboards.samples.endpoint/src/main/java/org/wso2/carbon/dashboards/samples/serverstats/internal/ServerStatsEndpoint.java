@@ -47,8 +47,7 @@ import javax.websocket.server.ServerEndpoint;
  */
 @Component(name = "org.wso2.carbon.dashboards.samples.serverstats.internal.ServerStatsEndpoint",
            service = WebSocketEndpoint.class,
-           immediate = true
-)
+           immediate = true)
 @ServerEndpoint("/server-stats/{type}")
 public class ServerStatsEndpoint implements WebSocketEndpoint {
 
@@ -57,12 +56,10 @@ public class ServerStatsEndpoint implements WebSocketEndpoint {
     private final Map<String, String> statsConsumerRegistrations = new HashMap<>();
     private ServerStatsProvider statsProvider;
 
-    @Reference(
-            service = ServerStatsProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unbindServerStatsProvider"
-    )
+    @Reference(service = ServerStatsProvider.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unbindServerStatsProvider")
     protected void setServerStatsProvider(ServerStatsProvider statsProvider) {
         this.statsProvider = statsProvider;
         LOGGER.debug("An instance of '{}' registered as a {}.", statsProvider.getClass(),
