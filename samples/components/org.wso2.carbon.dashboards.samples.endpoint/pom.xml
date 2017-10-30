@@ -68,4 +68,25 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
+
+    <properties>
+        <export.package>
+            !org.wso2.carbon.dashboards.samples.serverstats.internal*,
+            org.wso2.carbon.dashboards.samples.serverstats.*; version="${version}"
+        </export.package>
+        <import.package>
+            org.wso2.carbon.metrics.core.*; version="${carbon.metrics.version.range}",
+            org.wso2.msf4j.*; version="${msf4j-core.version.range}",
+            javax.ws.rs.*; version="${javax.ws.rs.version.range}",
+            javax.websocket.*; version="${javax.websocket.version.range}",
+            org.osgi.framework; version="${org.osgi.framework.version.range}",
+            org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
+            org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
+            org.slf4j.*; version="${slf4j.version.range}"
+        </import.package>
+        <private.package>org.wso2.carbon.dashboards.samples.serverstats.internal.*</private.package>
+        <carbon.component>
+            osgi.service; objectClass="org.wso2.msf4j.websocket.WebSocketEndpoint"
+        </carbon.component>
+    </properties>
 </project>
