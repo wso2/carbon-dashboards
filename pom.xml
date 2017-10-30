@@ -245,8 +245,11 @@
 
         <!--MSF4J-->
         <msf4j-core.version>2.3.0-m2</msf4j-core.version>
+        <msf4j-core.version.range>[2.3.0-m2, 3.0.0)</msf4j-core.version.range>
         <javax.ws.rs.version>2.0</javax.ws.rs.version>
+        <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
         <javax.websocket.version>1.1</javax.websocket.version>
+        <javax.websocket.version.range>[1.1.0, 2.0.0)</javax.websocket.version.range>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
@@ -260,6 +263,7 @@
 
         <!--Metrics-->
         <carbon.metrics.version>2.3.0</carbon.metrics.version>
+        <carbon.metrics.version.range>[2.3.0, 3.0.0)</carbon.metrics.version.range>
         <carbon.jndi.version>1.0.3</carbon.jndi.version>
         <carbon.datasources.version>1.1.2</carbon.datasources.version>
 
