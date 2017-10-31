@@ -91,8 +91,8 @@ class DashboardThumbnail extends React.Component {
                 ></Dialog>
                 <div className="dashboard-thumbnail">
                     <div className="trash-button-div" onClick={this.handleOpen}>
-                        <a href="#" className="trash-button-icon">
-                            <i className="fw fw-delete fw-stack-1x" title="Delete Dashboard"></i>
+                        <a href="#">
+                            <i className="fw fw-delete fw-stack-1x trash-button-icon" title="Delete Dashboard"></i>
                         </a>
                     </div>
                     <div style={styles.card} className="content">
