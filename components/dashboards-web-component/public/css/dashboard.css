@@ -464,3 +464,8 @@ a {
 .dashboard-settings-url {
     color: white;
 }
+
+.no-dashboard-label {
+    color: white;
+    font-size: 30px;
+}

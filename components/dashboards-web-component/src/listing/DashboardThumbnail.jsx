@@ -51,6 +51,7 @@ class DashboardThumbnail extends React.Component {
     deleteDashboard() {
         let dashboardAPIs = new DashboardAPIs();
         dashboardAPIs.deleteDashboardByID(this.props.dashboard.url);
+        this.props.handleDelete();
         this.setState({deleteDashboardDialog: false, thumbnailStyle: "dashboard-thumbnail-deleted"});
     }
 
