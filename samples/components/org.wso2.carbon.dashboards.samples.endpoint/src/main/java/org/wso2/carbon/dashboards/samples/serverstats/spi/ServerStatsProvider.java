@@ -16,26 +16,28 @@
  * under the License.
  */
 
-package org.wso2.carbon.dashboards.samples.serverstats;
+package org.wso2.carbon.dashboards.samples.serverstats.spi;
+
+import org.wso2.carbon.dashboards.samples.serverstats.api.StatType;
 
 /**
- * Statistics consumer.
+ * Represents a server stats provider.
  *
  * @since 4.0.0
  */
-public interface StatsConsumer {
+public interface ServerStatsProvider {
 
     /**
-     * Returns what type of statistics are consumed by this consumer.
+     * Returns type of statistics provided by this provider.
      *
-     * @return type of statistics that are consumed by the consumer
+     * @return stat type
      */
-    String getType();
+    StatType getStatType();
 
     /**
-     * Consumes supplied statistics value.
+     * Returns current statistic.
      *
-     * @param value value to be consumed
+     * @return current stat.
      */
-    void consume(double value);
+    Stat getStat();
 }
