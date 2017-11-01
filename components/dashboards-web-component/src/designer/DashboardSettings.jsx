@@ -18,16 +18,13 @@
  */
 
 import React, {Component} from 'react';
-//App components
+import {FormattedMessage} from 'react-intl';
+import {MuiThemeProvider, darkBaseTheme, getMuiTheme} from 'material-ui/styles';
+import {RaisedButton, TextField, Snackbar} from 'material-ui';
+import ClearIcon from 'material-ui/svg-icons/content/clear';
+
 import {FormPanel, Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
-// Material-UI
-import {MuiThemeProvider, darkBaseTheme, getMuiTheme} from 'material-ui/styles';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Snackbar from 'material-ui/Snackbar';
-import ClearIcon from 'material-ui/svg-icons/content/clear';
-import {FormattedMessage} from 'react-intl';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const styles = {
@@ -143,6 +140,7 @@ export default class DashboardSettings extends Component {
             .then(response => {
                 if (response.status === httpStatus.ok) {
                     this.showMessage("Dashboard '" + this.state.dashboard.name + "' is updated successfully.");
+                    setTimeout(() => window.location.href = window.contextPath, 1000);
                 }
             })
             .catch(error => {

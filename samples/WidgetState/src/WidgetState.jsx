@@ -33,12 +33,7 @@ class WidgetState extends Widget {
             inputVal: ''
         };
         this.btnPersistState = this.btnPersistState.bind(this);
-        this.onWidgetReady = this.onWidgetReady.bind(this);
         this.handleChange = this.handleChange.bind(this);
-    }
-
-    componentDidMount() {                        
-        this.onWidgetReady();
     }
 
     /**
@@ -68,26 +63,23 @@ class WidgetState extends Widget {
             }
         };
 
+        // Syntax: super.getDashboardAPI().state.get(<KEY>)
+        let message = super.getDashboardAPI().state.get('message');
+        let labelText = message && message != null && message !== ''  ?
+            'Persisted message found: ' + message :
+            'No persisted state found';
+
         return (
+
             <div style={styles.container}>
                 <div style={styles.controls}>
                     <strong>Message: </strong><input style={styles.inputBox} type="text" id="txtMessage" 
                         value={this.state.inputVal} onChange={this.handleChange} />
                     <button style={styles.button} onClick={this.btnPersistState}>Persist State</button>
                 </div>
-                <div style={styles.logPanel} id="divConsole"></div>
+                <div style={styles.logPanel} id="divConsole">{labelText}</div>
             </div>
         );
-    }
-
-    onWidgetReady() {
-        // Syntax: super.getDashboardAPI().state.get(<KEY>)
-        let message = super.getDashboardAPI().state.get('message');
-        if (message && message != null && message !== '') {
-            document.getElementById('divConsole').innerHTML = 'Persisted message found: ' + message;
-        } else {
-            document.getElementById('divConsole').innerHTML = "No persisted state found";
-        }
     }
 
     /**

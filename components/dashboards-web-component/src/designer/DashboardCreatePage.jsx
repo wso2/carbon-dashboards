@@ -18,17 +18,14 @@
  */
 
 import React, {Component} from 'react';
-// App component
+import {FormattedMessage} from 'react-intl';
+import {MuiThemeProvider, darkBaseTheme, getMuiTheme} from 'material-ui/styles';
+import {RaisedButton, TextField, Snackbar,} from 'material-ui';
+import ClearIcon from 'material-ui/svg-icons/content/clear';
+
 import {FormPanel, Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
-// Material-UI
-import {MuiThemeProvider, darkBaseTheme, getMuiTheme} from 'material-ui/styles';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import Snackbar from 'material-ui/Snackbar';
-import ClearIcon from 'material-ui/svg-icons/content/clear';
-import {FormattedMessage} from 'react-intl';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 const styles = {
@@ -120,8 +117,10 @@ export default class DashboardCreatePage extends Component {
                         />
                         <br/>
                         <TextField
-                            floatingLabelText={<FormattedMessage id="dashboard.description" defaultMessage="Description"/>}
-                            hintText={<FormattedMessage id="dashboard.description.hint.text" defaultMessage="E.g. Monthly Sales Statistics"/>}
+                            floatingLabelText={<FormattedMessage id="dashboard.description"
+                                                                 defaultMessage="Description"/>}
+                            hintText={<FormattedMessage id="dashboard.description.hint.text"
+                                                        defaultMessage="E.g. Monthly Sales Statistics"/>}
                             value={this.state.dashboard.description}
                             fullWidth
                             onChange={(e, value) => {
@@ -226,7 +225,7 @@ export default class DashboardCreatePage extends Component {
                         this.showMessage('Dashboard ' + dashboard.name + ' is created successfully!', styles.successMessage);
                         let dashboardUrl = this.state.dashboard.url;
                         setTimeout(function () {
-                            window.location.href = window.contextPath + "/designer/" + dashboardURL;
+                            window.location.href = window.contextPath + "/designer/" + dashboardUrl;
                         }, 1000);
                         break;
                     case httpStatus.conflict:

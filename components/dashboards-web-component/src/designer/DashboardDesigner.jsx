@@ -132,22 +132,20 @@ export default class DashboardDesigner extends Component {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    {
-                        (() => {
-                            if (this.state.redirect) {
-                                return <Redirect to={this.state.redirectUrl}/>;
-                            }
-                        })()
-                    }
-                    <Header title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer"/>}/>
+                    {this.state.redirect ? <Redirect to={this.state.redirectUrl}/> : ''}
+
+                    <Header
+                        title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer"/>}/>
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>} icon={<BackIcon/>} style={{'margin-right': '12px'}}
+                        <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>}
+                                      icon={<BackIcon/>} style={{'margin-right': '12px'}}
                                       onClick={() => {
                                           window.location.href = window.contextPath + '/';
                                       }}/>
-                        <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary onClick={this.updatePageContent.bind(this)}/>
+                        <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary
+                                      onClick={this.updatePageContent.bind(this)}/>
                     </div>
 
                     {/* Left action bar */}
@@ -163,7 +161,12 @@ export default class DashboardDesigner extends Component {
                     {/* Left sidebar */}
                     <div className="container">
                         <Drawer open={this.state.leftSidebarOpen} containerClassName="left-sidebar"
-                                containerStyle={{width: styles.sidebarWidth, top: '120px', height: 'auto', bottom: '0'}}>
+                                containerStyle={{
+                                    width: styles.sidebarWidth,
+                                    top: '120px',
+                                    height: 'auto',
+                                    bottom: '0'
+                                }}>
                             <PagesPanel dashboard={this.state.dashboard}
                                         onDashboardUpdated={(d) => this.updateDashboard(d)}
                                         onLandingPageChanged={(id) => this.landingPageChanged(id)}
