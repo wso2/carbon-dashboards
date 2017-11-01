@@ -73,23 +73,23 @@ public class ServerStatsEndpoint implements WebSocketEndpoint {
     }
 
     @OnOpen
-    protected void onOpen(@PathParam("type") String type, Session session) {
+    public void onOpen(@PathParam("type") String type, Session session) {
         statsConsumerRegistrations.put(session.getId(),
                                        statsProvider.registerConsumer(new EndpointStatsConsumer(type, session)));
     }
 
     @OnMessage
-    protected double onTextMessage(@PathParam("type") String type, String text, Session session) {
-        return statsProvider.getStats(type);
+    public String onTextMessage(@PathParam("type") String type, String text, Session session) {
+        return String.valueOf(statsProvider.getStats(type));
     }
 
     @OnClose
-    protected void onClose(@PathParam("type") String name, CloseReason closeReason, Session session) {
+    public void onClose(@PathParam("type") String name, CloseReason closeReason, Session session) {
         statsProvider.unregisterConsumer(statsConsumerRegistrations.get(session.getId()));
     }
 
     @OnError
-    protected void onError(Session session, Throwable throwable) {
+    public void onError(Session session, Throwable throwable) {
         LOGGER.error("An error occurred for '{}'.", session.getId(), throwable);
     }
 
