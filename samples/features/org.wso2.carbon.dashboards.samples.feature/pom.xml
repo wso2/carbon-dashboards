@@ -36,9 +36,16 @@
     </parent>
 
     <dependencies>
+        <!--Samples-->
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.endpoint</artifactId>
+        </dependency>
+
+        <!--Gson-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
     </dependencies>
 
@@ -70,6 +77,10 @@
                                 <bundle>
                                     <symbolicName>org.wso2.carbon.dashboards.samples.endpoint</symbolicName>
                                     <version>${carbon.dashboards.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>com.google.gson</symbolicName>
+                                    <version>${gson.version}</version>
                                 </bundle>
                             </bundles>
                         </configuration>

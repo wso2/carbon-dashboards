@@ -67,12 +67,19 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+
+        <!--Gson-->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>
         <export.package>
             !org.wso2.carbon.dashboards.samples.serverstats.internal*,
-            org.wso2.carbon.dashboards.samples.serverstats.*; version="${version}"
+            org.wso2.carbon.dashboards.samples.serverstats.api.*;version="${project.version}",
+            org.wso2.carbon.dashboards.samples.serverstats.spi.*;version="${project.version}"
         </export.package>
         <import.package>
             org.wso2.carbon.metrics.core.*; version="${carbon.metrics.version.range}",
@@ -82,7 +89,8 @@
             org.osgi.framework; version="${org.osgi.framework.version.range}",
             org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
-            org.slf4j.*; version="${slf4j.version.range}"
+            org.slf4j.*; version="${slf4j.version.range}",
+            com.google.gson.*; version="${gson.version.range}"
         </import.package>
         <private.package>org.wso2.carbon.dashboards.samples.serverstats.internal.*</private.package>
         <carbon.component>
