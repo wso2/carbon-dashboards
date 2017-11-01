@@ -134,9 +134,12 @@ a {
 
 .dashboard-thumbnail {
     width: 25%;
+    min-width: 350px;
     float: left;
     box-sizing: border-box;
     font-family: Roboto, sans-serif;
+    position: relative;
+    display: block;
 }
 
 .dashboard-thumbnail .content {
@@ -443,13 +446,10 @@ a {
     left: 10px;
 }
 
-.trash-button-div {
-    position: absolute;
-    padding-top: 15px;
-}
-
 .trash-button-icon {
-    padding-left: 875px;
+    text-align: right;
+    left: -15px;
+    top: 15px;
     color: white;
 }
 
@@ -463,4 +463,9 @@ a {
 
 .dashboard-settings-url {
     color: white;
+}
+
+.no-dashboard-label {
+    color: white;
+    font-size: 30px;
 }

@@ -51,6 +51,7 @@ class DashboardThumbnail extends React.Component {
     deleteDashboard() {
         let dashboardAPIs = new DashboardAPIs();
         dashboardAPIs.deleteDashboardByID(this.props.dashboard.url);
+        this.props.handleDelete();
         this.setState({deleteDashboardDialog: false, thumbnailStyle: "dashboard-thumbnail-deleted"});
     }
 
@@ -91,8 +92,8 @@ class DashboardThumbnail extends React.Component {
                 ></Dialog>
                 <div className="dashboard-thumbnail">
                     <div className="trash-button-div" onClick={this.handleOpen}>
-                        <a href="#" className="trash-button-icon">
-                            <i className="fw fw-delete fw-stack-1x" title="Delete Dashboard"></i>
+                        <a href="#">
+                            <i className="fw fw-delete fw-stack-1x trash-button-icon" title="Delete Dashboard"></i>
                         </a>
                     </div>
                     <div style={styles.card} className="content">

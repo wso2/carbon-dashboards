@@ -57,13 +57,14 @@ class DashboardListing extends React.Component {
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <RaisedButton label={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/>} icon={<ContentAdd/>} primary
-                                      style={{'margin-right': '12px'}}
-                                      onClick={() => {
-                                          window.location.href = window.contextPath + '/create/';
-                                      }}/>
+                        <RaisedButton
+                            label={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/>}
+                            icon={<ContentAdd/>} primary
+                            style={{'margin-right': '12px'}}
+                            onClick={() => {
+                                window.location.href = window.contextPath + '/create/';
+                            }}/>
                     </div>
-
                     <div className="dashboard-listing-container">
                         {this.state.dashboards}
                     </div>
@@ -77,10 +78,14 @@ class DashboardListing extends React.Component {
         let promised_dashboard_list = dashboardAPIs.getDashboardList();
         let that = this;
         promised_dashboard_list.then((response) => {
-            let dashboardList;
+            let dashboardList = [];
             dashboardList = response.data.map(dashboard => {
-                return <DashboardThumbnail dashboard={dashboard} muiTheme={muiTheme}/>;
+                return <DashboardThumbnail dashboard={dashboard} handleDelete={that.retrieveDashboards}
+                                           muiTheme={muiTheme}/>;
             });
+            if (dashboardList.length === 0) {
+                dashboardList.push(<div className="no-dashboard-label">No Dashboards Available</div>);
+            }
             that.setState({dashboards: dashboardList});
         }).catch(function (error) {
                 //TODO Need to use proper notification library to show the error

@@ -87,6 +87,35 @@ export default  class WidgetsList extends React.Component {
     initializeWidgetList(isWidgetsLoaded, initDashboardFlag) {
         let newItemConfig;
 
+        let isItemCreated = false;
+        dashboardLayout.on("initialised", function () {
+            isItemCreated = false;
+            dashboardLayout.on("componentCreated", function () {
+                isItemCreated = true;
+            });
+
+            dashboardLayout.on("itemDropped", function (item) {
+                if (item.isComponent && isItemCreated) {
+                    isItemCreated = false;
+                    newItemConfig = {
+                        title: item.config.component,
+                        type: 'react-component',
+                        component: item.config.component,
+                        props: {id: DashboardUtils.generateguid(), configs: item.config.props.configs}
+                    };
+
+                    pubsubComponent.isPublisher(item.config) ? pubsubComponent.addPublisherToMap(item.config.component
+                        + "_" + item.config.props.id.substring(0, 3), item.config.props.id) : "";
+                    let position = dashboardLayout._dragSources.indexOf(widgetListDragSources.get(item.config.component));
+                    dashboardLayout._dragSources.splice(position, 1);
+                    widgetListDragSources.get(item.config.component)._dragListener.destroy();
+                    widgetListDragSources.set(item.config.component,
+                        widgetLoadingComponent.createDragSource(document.getElementById(item.config.component),
+                            newItemConfig));
+                }
+            });
+        });
+
         if (isWidgetsLoaded) {
             isDashboardLoaded = true;
         }
@@ -104,33 +133,6 @@ export default  class WidgetsList extends React.Component {
             if (initDashboardFlag) {
                 widgetLoadingComponent.initializeDashboard();
             }
-            let isItemCreated = false;
-            dashboardLayout.on("initialised", function () {
-                isItemCreated = false;
-                dashboardLayout.on("componentCreated", function () {
-                    isItemCreated = true;
-                });
-
-                dashboardLayout.on("itemDropped", function (item) {
-                    if (item.isComponent && isItemCreated) {
-                        isItemCreated = false;
-                        newItemConfig = {
-                            title: item.config.component,
-                            type: 'react-component',
-                            component: item.config.component,
-                            props: {id: DashboardUtils.generateguid(), configs: item.config.props.configs}
-                        };
-
-                        pubsubComponent.isPublisher(item.config) ? pubsubComponent.addPublisherToMap(item.config.component + "_"
-                            + item.config.props.id.substring(0, 3), item.config.props.id) : "";
-                        let position = dashboardLayout._dragSources.indexOf(widgetListDragSources.get(item.config.component));
-                        dashboardLayout._dragSources.splice(position, 1);
-                        widgetListDragSources.get(item.config.component)._dragListener.destroy();
-                        widgetListDragSources.set(item.config.component,
-                            widgetLoadingComponent.createDragSource(document.getElementById(item.config.component), newItemConfig));
-                    }
-                });
-            });
         }
     }
 
