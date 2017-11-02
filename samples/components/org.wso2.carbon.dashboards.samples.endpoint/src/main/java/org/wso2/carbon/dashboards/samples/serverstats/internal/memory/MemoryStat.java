@@ -58,7 +58,7 @@ public class MemoryStat extends AbstractStat {
     @Override
     public String toJson() {
         JsonObject json = new JsonObject();
-        json.add("timestamp", new JsonPrimitive(getTimestamp().getEpochSecond()));
+        json.add("timestamp", new JsonPrimitive(getTimestamp().toEpochMilli()));
         JsonObject physical = new JsonObject();
         physical.add("size", new JsonPrimitive(physicalMemorySize));
         physical.add("used", new JsonPrimitive(physicalMemoryUsed));

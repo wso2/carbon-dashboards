@@ -54,7 +54,7 @@ public class CpuStat extends AbstractStat {
     @Override
     public String toJson() {
         JsonObject json = new JsonObject();
-        json.add("timestamp", new JsonPrimitive(getTimestamp().getEpochSecond()));
+        json.add("timestamp", new JsonPrimitive(getTimestamp().toEpochMilli()));
         json.add("process", new JsonPrimitive(processLoad));
         JsonObject system = new JsonObject();
         system.add("load", new JsonPrimitive(systemLoad));
