@@ -39,7 +39,7 @@ class MemoryUsage extends Component {
 
         this.publishData = this.publishData.bind(this);
         const self = this;
-        const ws = new WebSocket('ws://localhost:8080/server-stats/memory');
+        const ws = new WebSocket('ws://' + window.location.host + '/server-stats/memory');
         ws.onmessage = function (event) {
             let data = JSON.parse(event.data);
             self.publishData(data.timestamp, (data.physical.used / data.physical.size), data.heap.used
