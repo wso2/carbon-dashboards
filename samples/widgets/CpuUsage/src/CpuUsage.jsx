@@ -37,7 +37,7 @@ class CpuUsage extends Component {
 
         this.publishData = this.publishData.bind(this);
         const self = this;
-        const ws = new WebSocket('ws://localhost:8080/server-stats/cpu');
+        const ws = new WebSocket('ws://' + window.location.host + '/server-stats/cpu');
         ws.onmessage = function(event) {
             let data = JSON.parse(event.data);
             self.publishData(data.timestamp, data.process, data.system.load);
