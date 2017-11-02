@@ -17,10 +17,26 @@
  *
  */
 
-.navigation-bar {
-    width: 100%;
-    background-color: #37474f;
-    position: fixed;
-    z-index: 25;
-    padding: 10px 10px;
+import Axios from 'axios';
+
+export default class WidgetAPI {
+    /**
+     * This method will return the AXIOS http client.
+     * @returns httpClient
+     */
+    getHTTPClient() {
+        let httpClient = Axios.create({
+            baseURL: window.location.origin + '/apis/widgets',
+            timeout: 2000
+        });
+        return httpClient;
+    }
+
+    /**
+     * This method will get a list of widgets available in the server.
+     * @returns {*}
+     */
+    getWidgetsInfo() {
+        return this.getHTTPClient().get();
+    }
 }

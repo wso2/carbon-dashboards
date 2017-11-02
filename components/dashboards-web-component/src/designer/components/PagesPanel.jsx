@@ -138,6 +138,8 @@ export default class PagesPanel extends Component {
             pages: []
         });
         this.savePages(this.props.dashboard.pages);
+        // navigate to newly added page
+        window.location.href = window.contextPath + '/designer/' + this.props.dashboard.url + '/' + id;
     }
 
     /**
@@ -164,6 +166,8 @@ export default class PagesPanel extends Component {
         }
         this.deletePageRecursively(this.props.dashboard.pages, id);
         this.savePages(this.props.dashboard.pages);
+        // navigate to home page
+        window.location.href = window.contextPath + '/designer/' + this.props.dashboard.url;
     }
 
     /**

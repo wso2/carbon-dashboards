@@ -19,8 +19,8 @@
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
 // App Components
-import Header from '../common/Header';
-import DashboardsAPIs from '../utils/apis/DashboardAPIs';
+import {Header} from '../common';
+import DashboardAPI from '../utils/apis/DashboardAPI';
 import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
@@ -132,22 +132,20 @@ export default class DashboardDesigner extends Component {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    {
-                        (() => {
-                            if (this.state.redirect) {
-                                return <Redirect to={this.state.redirectUrl}/>;
-                            }
-                        })()
-                    }
-                    <Header title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer"/>}/>
+                    {this.state.redirect ? <Redirect to={this.state.redirectUrl}/> : ''}
+
+                    <Header
+                        title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer"/>}/>
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>} icon={<BackIcon/>} style={{'margin-right': '12px'}}
+                        <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>}
+                                      icon={<BackIcon/>} style={{'margin-right': '12px'}}
                                       onClick={() => {
                                           window.location.href = window.contextPath + '/';
                                       }}/>
-                        <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary onClick={this.updatePageContent.bind(this)}/>
+                        <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary
+                                      onClick={this.updatePageContent.bind(this)}/>
                     </div>
 
                     {/* Left action bar */}
@@ -163,7 +161,12 @@ export default class DashboardDesigner extends Component {
                     {/* Left sidebar */}
                     <div className="container">
                         <Drawer open={this.state.leftSidebarOpen} containerClassName="left-sidebar"
-                                containerStyle={{width: styles.sidebarWidth, top: '120px', height: 'auto', bottom: '0'}}>
+                                containerStyle={{
+                                    width: styles.sidebarWidth,
+                                    top: '120px',
+                                    height: 'auto',
+                                    bottom: '0'
+                                }}>
                             <PagesPanel dashboard={this.state.dashboard}
                                         onDashboardUpdated={(d) => this.updateDashboard(d)}
                                         onLandingPageChanged={(id) => this.landingPageChanged(id)}
@@ -237,7 +240,7 @@ export default class DashboardDesigner extends Component {
             let dashboard = this.state.dashboard;
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
-            new DashboardsAPIs().updateDashboardByID(this.state.dashboard.id, dashboard);
+            new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
             window.global.notify('Dashboard updated successfully!');
         } catch (e) {
             // Absorb the error since this doesn't relevant to the end-user.
@@ -248,7 +251,7 @@ export default class DashboardDesigner extends Component {
      * Load dashboard via the REST API.
      */
     loadDashboard() {
-        new DashboardsAPIs()
+        new DashboardAPI()
             .getDashboardByID(this.state.dashboardId)
             .then((response) => {
                 let dashboard = response.data;
@@ -316,7 +319,7 @@ export default class DashboardDesigner extends Component {
      * @param dashboard
      */
     updateDashboard(dashboard) {
-        new DashboardsAPIs().updateDashboardByID(dashboard.id, dashboard);
+        new DashboardAPI().updateDashboardByID(dashboard.id, dashboard);
         window.global.notify('Dashboard updated successfully!');
         this.setState({
             dashboard: dashboard

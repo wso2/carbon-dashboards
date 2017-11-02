@@ -17,10 +17,14 @@
  *
  */
 
-.navigation-bar {
-    width: 100%;
-    background-color: #37474f;
-    position: fixed;
-    z-index: 25;
-    padding: 10px 10px;
+.header-icon {
+    line-height: 64px;
+    color: #000;
+    margin-top: -10px;
+    font-size: 40px;
+}
+
+.header-right-btn-group .acc-name {
+    float: left;
+    padding-top: 15px;
 }

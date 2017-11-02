@@ -18,9 +18,8 @@
  */
 
 import React, { Component } from 'react';
-import Widget from './Widget';
 
-let serverData = [
+const serverData = [
     {
         name: 'Server 1',
         ip: '192.168.1.2',
@@ -38,7 +37,7 @@ let serverData = [
     }
 ];
 
-let styles = {
+const styles = {
     wrapper: {
         padding: '30px 15px 15px 15px',
         font: '11px Roboto, sans-serif'
@@ -81,7 +80,7 @@ let styles = {
         'margin-bottom': '15px',
         'border-bottom': '1px solid #444'
     }
-}
+};
 
 class ServerStatus extends Component {
     constructor(props) {
@@ -90,45 +89,34 @@ class ServerStatus extends Component {
             id: props.id,
             width: props.glContainer.width,
             height: props.glContainer.height,
-            servers: ""
         };
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
-        this.retrieveServers = this.retrieveServers.bind(this);
-    }
-
-    componentDidMount() {
-        this.retrieveServers();
     }
 
     render () {
         return (
             <section style={styles.wrapper}>
                 <h1 style={styles.h1}>System Analytics</h1>
-                {this.state.servers}
+                {
+                    serverData.map((server) => {
+                        return (
+                            <div style={styles.container}>
+                                <div style={server.status ? styles.containerDivUp : styles.containerDivDown}>
+                                    <h3 style={styles.h3}>{server.name}</h3>
+                                    <p style={styles.p}><strong>IP Address: </strong>{server.ip}</p>
+                                </div>
+                            </div>
+                        );
+                    })
+                }
             </section>
         );
-    }
-
-    retrieveServers() {
-        let servers = serverData.map((s) => {
-            return (
-                <div style={styles.container}>
-                    <div style={s.status ? styles.containerDivUp : styles.containerDivDown}>
-                        <h3 style={styles.h3}>{s.name}</h3>
-                        <p style={styles.p}><strong>IP Address: </strong>{s.ip}</p>
-                    </div>
-                </div>
-            );
-        });
-        this.setState({
-            servers: servers
-        });
     }
 
     handleResize() {
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
-};
+}
 
 global.dashboard.registerWidget("ServerStatus", ServerStatus);

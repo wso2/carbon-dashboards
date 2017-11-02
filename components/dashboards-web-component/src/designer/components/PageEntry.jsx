@@ -18,14 +18,11 @@
  */
 
 import React, {Component} from 'react';
-// Material-UI
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import DeleteIcon from 'material-ui/svg-icons/action/delete';
-import Checkbox from 'material-ui/Checkbox';
-
 import {FormattedMessage} from 'react-intl';
+
+import {Card, CardHeader, CardText} from 'material-ui/Card';
+import {TextField, RaisedButton, Checkbox} from 'material-ui';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
 export default class PageEntry extends Component {
     constructor(props) {
@@ -63,8 +60,10 @@ export default class PageEntry extends Component {
                                }}/>
                     <Checkbox label={<FormattedMessage id="make.homepage" defaultMessage="Make as Home Page"/>} checked={this.state.page.landingPage}
                               disabled={this.state.page.landingPage} onCheck={this.makeAsHomePage.bind(this)}/>
-                    <RaisedButton label={<FormattedMessage id="delete" defaultMessage="Delete"/>} labelPosition="after" secondary fullWidth icon={<DeleteIcon/>}
-                                  onClick={this.deletePage.bind(this)} disabled={this.state.page.landingPage}/>
+                    <RaisedButton label={<FormattedMessage id="delete" defaultMessage="Delete"/>} labelPosition="after" fullWidth icon={<DeleteIcon/>}
+                                  onClick={this.deletePage.bind(this)} disabled={this.state.page.landingPage}
+                                  backgroundColor="#ff0000"
+                    />
                 </CardText>
             </Card>
         );
