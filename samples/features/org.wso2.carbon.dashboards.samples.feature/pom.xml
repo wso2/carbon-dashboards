@@ -31,7 +31,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards.samples</groupId>
         <artifactId>samples-parent</artifactId>
-        <version>4.0.0.m13-SNAPSHOT</version>
+        <version>4.0.0.m16-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
