@@ -7,7 +7,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, './dist/'),
-        filename: 'bundle.js',
+        filename: 'CpuUsage.js'
     },
     module: {
         loaders: [
