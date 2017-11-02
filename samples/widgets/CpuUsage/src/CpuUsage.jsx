@@ -87,9 +87,9 @@ class CpuUsage extends Component {
                     <CartesianGrid strokeDasharray="10 10" vertical={false} />
                     <Tooltip />
                     <Legend />
-                    <Area type='monotone' dataKey='jvm' name='JVM %' stroke='#2196F3' fill='#2196F3'
-                          fillOpacity={0.6} isAnimationActive={false} />
                     <Area type='monotone' dataKey='system' name='System %' stroke='#FF9800' fill='#FF9800'
+                          fillOpacity={0.6} isAnimationActive={false} />
+                    <Area type='monotone' dataKey='jvm' name='JVM %' stroke='#2196F3' fill='#2196F3'
                           fillOpacity={0.6} isAnimationActive={false} />
                 </AreaChart>
             </section>
