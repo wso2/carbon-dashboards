@@ -23,7 +23,7 @@
 
     <artifactId>org.wso2.carbon.dashboards.samples.feature</artifactId>
     <packaging>carbon-feature</packaging>
-    <version>4.0.0.m13-SNAPSHOT</version>
+    <version>4.0.0.m16-SNAPSHOT</version>
 
     <name>WSO2 Carbon Dashboards - Samples - Carbon Feature</name>
     <url>http://wso2.org</url>
