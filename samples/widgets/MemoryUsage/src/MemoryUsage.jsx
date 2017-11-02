@@ -40,28 +40,31 @@ class MemoryUsage extends Component {
         this.publishData = this.publishData.bind(this);
         const self = this;
         const ws = new WebSocket('ws://localhost:8080/server-stats/memory');
-        ws.onmessage = function(event) {
-            self.publishData(event.data);
+        ws.onmessage = function (event) {
+            let data = JSON.parse(event.data);
+            self.publishData(data.timestamp, (data.physical.used / data.physical.size), data.heap.used
+                                                                                        / data.heap.size);
         };
     }
 
-    formatDateLabel(dt) {
+    static _formatDateLabel(dt) {
         let h = dt.getHours();
         let m = dt.getMinutes();
         let s = dt.getSeconds();
         return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
     }
 
-    publishData(memoryUsage) {
+    publishData(timestamp, physicalMemoryUsage, heapMemoryUsage) {
         data.push({
-            timestamp: this.formatDateLabel(new Date()),
-            memory: memoryUsage * 100
+            timestamp: MemoryUsage._formatDateLabel(new Date(timestamp)),
+            system: Math.round(physicalMemoryUsage * 100),
+            heap: Math.round(heapMemoryUsage * 100)
         });
 
         let arr = [];
         let count = data.length > DATA_POINT_COUNT ? data.length : DATA_POINT_COUNT;
-        for (var i = 0; i < count; i++) {
-            arr.push(data[i] || {timestamp: '', memory: null});
+        for (let i = 0; i < count; i++) {
+            arr.push(data[i] || {timestamp: '', system: null, heap: null});
         }
 
         if (arr.length > DATA_POINT_COUNT) {
@@ -71,7 +74,6 @@ class MemoryUsage extends Component {
         this.setState({
             data: arr
         });
-        //setTimeout(this.publishData, Math.round(1000 / REFRESH_RATE));
     }
 
     render() {
@@ -88,7 +90,9 @@ class MemoryUsage extends Component {
                     <CartesianGrid strokeDasharray="10 10" vertical={false} />
                     <Tooltip />
                     <Legend />
-                    <Line type='monotone' dataKey='memory' name='Memory %' stroke='#9C27B0'
+                    <Line name='System %' dataKey='system' type='monotone' stroke='#9C27B0' fill='#9C27B0'
+                          isAnimationActive={false} dot={false} />
+                    <Line name="Heap %" dataKey='heap' type='monotone' stroke='#2196F3' fill='#2196F3'
                           isAnimationActive={false} dot={false} />
                 </LineChart>
             </section>
