@@ -37,8 +37,9 @@ class CpuUsage extends Component {
 
         this.publishData = this.publishData.bind(this);
         const self = this;
-        const ws = new WebSocket('ws://' + window.location.host + '/server-stats/cpu');
-        ws.onmessage = function(event) {
+        let protocol = (window.location.protocol === "https:") ? "wss" : "ws";
+        let ws = new WebSocket(protocol + '://' + window.location.host + '/server-stats/cpu');
+        ws.onmessage = function (event) {
             let data = JSON.parse(event.data);
             self.publishData(data.timestamp, data.process, data.system.load);
         };
@@ -82,15 +83,15 @@ class CpuUsage extends Component {
             <section style={styles}>
                 <AreaChart width={this.state.width} height={this.state.height} data={this.state.data}
                            margin={{top: 30, right: 30, left: 20, bottom: 10}}>
-                    <XAxis dataKey="timestamp" />
+                    <XAxis dataKey="timestamp"/>
                     <YAxis />
-                    <CartesianGrid strokeDasharray="10 10" vertical={false} />
+                    <CartesianGrid strokeDasharray="10 10" vertical={false}/>
                     <Tooltip />
                     <Legend />
                     <Area type='monotone' dataKey='system' name='System %' stroke='#FF9800' fill='#FF9800'
-                          fillOpacity={0.6} isAnimationActive={false} />
+                          fillOpacity={0.6} isAnimationActive={false}/>
                     <Area type='monotone' dataKey='jvm' name='JVM %' stroke='#2196F3' fill='#2196F3'
-                          fillOpacity={0.6} isAnimationActive={false} />
+                          fillOpacity={0.6} isAnimationActive={false}/>
                 </AreaChart>
             </section>
         );
