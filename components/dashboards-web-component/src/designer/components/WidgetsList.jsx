@@ -32,6 +32,7 @@ import {FormattedMessage} from 'react-intl';
 let widgets = [];
 let isDashboardLoaded = false;
 let widgetListDragSources = new Map();
+let isPreviouslyInitialized = false;
 
 export default  class WidgetsList extends React.Component {
     constructor(props) {
@@ -85,6 +86,10 @@ export default  class WidgetsList extends React.Component {
     }
 
     initializeWidgetList(isWidgetsLoaded, initDashboardFlag) {
+        if (initDashboardFlag) {
+            isPreviouslyInitialized = true;
+        }
+
         let newItemConfig;
 
         let isItemCreated = false;
@@ -130,8 +135,9 @@ export default  class WidgetsList extends React.Component {
                 widgetListDragSources.set(widget.name, widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig));
                 widgetLoadingComponent.loadWidget(widget.name);
             });
-            if (initDashboardFlag) {
+            if (initDashboardFlag || isPreviouslyInitialized) {
                 widgetLoadingComponent.initializeDashboard();
+                isPreviouslyInitialized = false;
             }
         }
     }
