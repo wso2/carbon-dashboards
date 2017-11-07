@@ -37,7 +37,7 @@
     </parent>
 
     <modules>
-        <!--<module>CpuUsage</module>-->
+        <module>CpuUsage</module>
     </modules>
 
     <build>
