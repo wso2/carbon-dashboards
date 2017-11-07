@@ -44,6 +44,7 @@
         <module>ServerStatus</module>
         <module>Subscriber</module>
         <module>TotalUpdates</module>
+        <module>WidgetState</module>
     </modules>
 
     <build>

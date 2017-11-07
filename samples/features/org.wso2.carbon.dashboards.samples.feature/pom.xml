@@ -77,6 +77,11 @@
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.total-updates</artifactId>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+            <artifactId>org.wso2.carbon.dashboards.samples.widgets.widget-state</artifactId>
+            <type>zip</type>
+        </dependency>
 
         <!--Gson-->
         <dependency>
