@@ -42,6 +42,7 @@
         <module>MemoryUsage</module>
         <module>Publisher</module>
         <module>ServerStatus</module>
+        <module>Subscriber</module>
     </modules>
 
     <build>
