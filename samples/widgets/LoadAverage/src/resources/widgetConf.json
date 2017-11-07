@@ -1,7 +1,6 @@
 {
-  "name": "LoadAverage",
-  "id": "LoadAverage",
-  "thumbnailURL": "",
-  "configs": {
-  }
+    "name": "LoadAverage",
+    "id": "LoadAverage",
+    "thumbnailURL": "",
+    "configs": {}
 }

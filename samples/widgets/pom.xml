@@ -40,6 +40,7 @@
         <module>CpuUsage</module>
         <module>LoadAverage</module>
         <module>MemoryUsage</module>
+        <module>Publisher</module>
     </modules>
 
     <build>
