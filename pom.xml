@@ -255,6 +255,12 @@
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.subscriber</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
             <!--Feature-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples</groupId>
