@@ -38,6 +38,7 @@
     <modules>
         <module>components/org.wso2.carbon.dashboards.samples.endpoint</module>
         <module>features/org.wso2.carbon.dashboards.samples.feature</module>
+        <module>widgets</module>
     </modules>
 
 </project>
