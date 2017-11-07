@@ -39,6 +39,7 @@
     <modules>
         <module>CpuUsage</module>
         <module>LoadAverage</module>
+        <module>MemoryUsage</module>
     </modules>
 
     <build>
