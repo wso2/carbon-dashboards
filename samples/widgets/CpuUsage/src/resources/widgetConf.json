@@ -1,7 +1,6 @@
 {
-  "name": "CpuUsage",
-  "id": "CpuUsage",
-  "thumbnailURL": "",
-  "configs": {
-  }
+    "name": "CpuUsage",
+    "id": "CpuUsage",
+    "thumbnailURL": "",
+    "configs": {}
 }

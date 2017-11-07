@@ -52,6 +52,16 @@
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.load-average</artifactId>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+            <artifactId>org.wso2.carbon.dashboards.samples.widgets.memory-usage</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+            <artifactId>org.wso2.carbon.dashboards.samples.widgets.publisher</artifactId>
+            <type>zip</type>
+        </dependency>
 
         <!--Gson-->
         <dependency>
