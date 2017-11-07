@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "load-average-widget",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,7 +10,8 @@
     "start": "react-scripts start",
     "build": "webpack -p",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "clean": "rimraf dist"
   },
   "devDependencies": {
     "ajv": "^5.2.2",
@@ -19,6 +20,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
+    "copy-webpack-plugin": "^4.2.0",
     "node-sass": "^4.5.3",
     "recharts": "^1.0.0-alpha.4",
     "sass-loader": "^6.0.6",
