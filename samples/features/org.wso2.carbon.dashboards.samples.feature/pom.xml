@@ -151,6 +151,9 @@
             <resource>
                 <directory>${project.build.directory}/samples/</directory>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
         </resources>
     </build>
 
