@@ -224,6 +224,7 @@
                 <artifactId>org.wso2.carbon.dashboards.samples.endpoint</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
+            <!--Widgets-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
                 <artifactId>org.wso2.carbon.dashboards.samples.widgets.cpu-usage</artifactId>
@@ -236,6 +237,13 @@
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.memory-usage</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <!--Feature-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples</groupId>
                 <artifactId>org.wso2.carbon.dashboards.samples.feature</artifactId>
