@@ -41,6 +41,7 @@
         <module>LoadAverage</module>
         <module>MemoryUsage</module>
         <module>Publisher</module>
+        <module>ServerStatus</module>
     </modules>
 
     <build>
