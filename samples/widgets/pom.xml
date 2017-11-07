@@ -43,6 +43,7 @@
         <module>Publisher</module>
         <module>ServerStatus</module>
         <module>Subscriber</module>
+        <module>TotalUpdates</module>
     </modules>
 
     <build>
