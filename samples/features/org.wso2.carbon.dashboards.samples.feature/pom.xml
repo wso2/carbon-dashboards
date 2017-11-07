@@ -36,22 +36,27 @@
     </parent>
 
     <dependencies>
-        <!--Samples-->
+        <!--Samples - Endpoint-->
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.endpoint</artifactId>
+        </dependency>
+        <!--Samples - Widgets-->
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+            <artifactId>org.wso2.carbon.dashboards.samples.widgets.cpu-usage</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+            <artifactId>org.wso2.carbon.dashboards.samples.widgets.load-average</artifactId>
+            <type>zip</type>
         </dependency>
 
         <!--Gson-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-            <artifactId>org.wso2.carbon.dashboards.samples.widgets.cpu-usage</artifactId>
-            <type>zip</type>
         </dependency>
     </dependencies>
 
