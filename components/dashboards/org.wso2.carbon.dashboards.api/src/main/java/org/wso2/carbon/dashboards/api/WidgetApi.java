@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
         immediate = true
 )
 @Path("/apis/widgets")
-public class WidgetInfoProviderAPI implements Microservice {
+public class WidgetApi implements Microservice {
 
     /**
      * This method returns a list of meta information of widgets.
