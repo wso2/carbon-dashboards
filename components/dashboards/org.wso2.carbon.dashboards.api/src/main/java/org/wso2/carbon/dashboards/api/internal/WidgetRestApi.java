@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.dashboards.api;
+package org.wso2.carbon.dashboards.api.internal;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
