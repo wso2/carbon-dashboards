@@ -58,9 +58,9 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
            immediate = true
 )
 @Path("/apis/dashboards")
-public class DashboardApi implements Microservice {
+public class DashboardRestApi implements Microservice {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardApi.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApi.class);
 
     private DashboardMetadataProvider dashboardDataProvider;
 
