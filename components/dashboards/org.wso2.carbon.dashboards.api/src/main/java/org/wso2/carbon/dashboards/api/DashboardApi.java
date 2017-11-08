@@ -52,7 +52,7 @@ import javax.ws.rs.core.Response;
         immediate = true
 )
 @Path("/apis/dashboards")
-public class DashboardMetadataAPI implements Microservice {
+public class DashboardApi implements Microservice {
 
     @Activate
     protected void activate(BundleContext bundleContext) {
