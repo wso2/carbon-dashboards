@@ -61,6 +61,7 @@ public interface DashboardMetadataProvider {
      * @return DashboardMetadata instance
      * @throws DashboardException if an error occurs
      */
+    // TODO: 11/8/17 Since null can be returned, the return type should be changed to Optional<DashboardMetadata>
     DashboardMetadata get(Query query) throws DashboardException;
 
     /**
