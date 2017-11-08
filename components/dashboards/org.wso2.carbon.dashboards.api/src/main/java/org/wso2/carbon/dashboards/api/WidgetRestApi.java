@@ -41,12 +41,11 @@ import javax.ws.rs.core.Response;
  */
 @Component(name = "org.wso2.carbon.dashboards.api.WidgetApi",
            service = Microservice.class,
-           immediate = true
-)
+           immediate = true)
 @Path("/apis/widgets")
-public class WidgetApi implements Microservice {
+public class WidgetRestApi implements Microservice {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WidgetApi.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WidgetRestApi.class);
 
     @Activate
     protected void activate(BundleContext bundleContext) {
