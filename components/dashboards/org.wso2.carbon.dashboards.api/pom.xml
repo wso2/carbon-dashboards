@@ -71,8 +71,10 @@
 
     <properties>
         <export.package>
+            !org.wso2.carbon.dashboards.api.internal*
             org.wso2.carbon.dashboards.api.*; version="${project.version}"
         </export.package>
+        <private.package>org.wso2.carbon.dashboards.api.internal.*</private.package>
         <import.package>
             org.wso2.carbon.dashboards.core.*; version=${carbon.dashboards.version},
             org.wso2.carbon.dashboards.core.provider.*; version=${carbon.dashboards.version},
