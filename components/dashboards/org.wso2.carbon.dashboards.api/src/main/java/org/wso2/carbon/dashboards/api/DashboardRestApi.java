@@ -55,8 +55,7 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
  */
 @Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
            service = Microservice.class,
-           immediate = true
-)
+           immediate = true)
 @Path("/apis/dashboards")
 public class DashboardRestApi implements Microservice {
 
