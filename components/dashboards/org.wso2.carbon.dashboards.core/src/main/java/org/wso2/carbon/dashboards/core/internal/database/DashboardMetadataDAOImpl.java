@@ -25,7 +25,6 @@ import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
-import org.wso2.carbon.dashboards.core.internal.dao.utils.QueryManager;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.SQLConstants;
 
 import java.io.UnsupportedEncodingException;
