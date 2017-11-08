@@ -22,7 +22,8 @@
 
     <artifactId>org.wso2.carbon.dashboards.api</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon Dashboards - Metadata API</name>
+
+    <name>WSO2 Carbon Dashboards - REST API</name>
 
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
