@@ -1,27 +1,32 @@
-package org.wso2.carbon.dashboards.api;
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
+package org.wso2.carbon.dashboards.api;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.bean.Query;
@@ -30,7 +35,6 @@ import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
 import org.wso2.msf4j.Microservice;
 
 import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -42,128 +46,150 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
- * This is the API implementation for the meta data backend service.
+ * REST API for dashboard related operations.
+ *
+ * @since 4.0.0
  */
-@Component(
-        name = "org.wso2.carbon.dashboards.api.DashboardMetadataAPI",
-        service = Microservice.class,
-        immediate = true
+@Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
+           service = Microservice.class,
+           immediate = true
 )
 @Path("/apis/dashboards")
 public class DashboardApi implements Microservice {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardApi.class);
+
+    private DashboardMetadataProvider dashboardDataProvider;
+
     @Activate
     protected void activate(BundleContext bundleContext) {
-
+        LOGGER.debug("{} activated.", this.getClass().getName());
     }
 
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
+        LOGGER.debug("{} deactivated.", this.getClass().getName());
+    }
 
+    @Reference(name = "dashboardMetadata",
+               service = DashboardMetadataProvider.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetMetadataProvider")
+    protected void setMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
+        this.dashboardDataProvider = dashboardDataProvider;
+    }
+
+    protected void unsetMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
+        this.dashboardDataProvider = null;
     }
 
     /**
-     * Get list of dashboards available.
+     * Returns a list of available dashboards.
      *
-     * @return List of dashboards
-     * @throws DashboardException
+     * @return response that carries list of available dashboards
      */
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response list() throws DashboardException {
-        DashboardMetadataProvider provider = DataHolder.getInstance().getDashboardMetadataProvider();
-        if (provider != null) {
-            List<DashboardMetadata> dashboards = provider.list(new Query(getUsername()), new PaginationContext());
+    public Response get() {
+        try {
+            List<DashboardMetadata> dashboards = dashboardDataProvider.list(new Query(getUsername()),
+                                                                            new PaginationContext());
             return Response.ok().entity(dashboards).build();
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred when listing dashboards.", e);
+            return Response.serverError().entity("Cannot list dashboards.").build();
         }
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     /**
-     * Get a particular dashboard selected by the ID.
+     * Returns the dashboard for the given ID.
      *
-     * @param id Dashboard ID
-     * @return Dashboard metadata
-     * @throws DashboardException
+     * @param id dashboard ID
+     * @return response that carries dashboard data
      */
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response get(@PathParam("id") String id) throws DashboardException {
-        DashboardMetadataProvider provider = DataHolder.getInstance().getDashboardMetadataProvider();
-        if (provider != null) {
-            DashboardMetadata metadata = provider.get(new Query(getUsername(), id));
+    public Response get(@PathParam("id") String id) {
+        try {
+            DashboardMetadata metadata = dashboardDataProvider.get(new Query(getUsername(), id));
             if (metadata == null) {
-                Response.status(Response.Status.NOT_FOUND).build();
+                return Response.status(NOT_FOUND)
+                        .entity("Cannot find a dashboard for ID '" + id + "'.").build();
+            } else {
+                return Response.ok().entity(metadata).build();
             }
-            return Response.ok().entity(metadata).build();
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred when retrieving dashboard for ID '{}'.", id, e);
+            return Response.serverError().entity("Cannot find dashboard for ID '" + id + "'.").build();
         }
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     /**
-     * Create a new dashboard
+     * Creates a new dashboard.
      *
-     * @param dashboardMetadata Dashboard metadata
-     * @return Status
-     * @throws DashboardException
+     * @param dashboardMetadata data for the creating dashboard
+     * @return response
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response create(DashboardMetadata dashboardMetadata) throws DashboardException {
-        DashboardMetadataProvider provider = DataHolder.getInstance().getDashboardMetadataProvider();
-        if (provider != null) {
-            provider.add(dashboardMetadata);
+    public Response create(DashboardMetadata dashboardMetadata) {
+        try {
+            dashboardDataProvider.add(dashboardMetadata);
             return Response.status(Response.Status.CREATED).build();
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred when creating a new dashboard from {} data.", dashboardMetadata, e);
+            return Response.serverError()
+                    .entity("Cannot create a new dashboard from '" + dashboardMetadata + "'.").build();
         }
-        // TODO: Check the correct status code based on the exception.
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     /**
-     * Update a particular dashboard.
+     * Updates the dashboard corresponding to the supplied ID with the supplied data.
      *
-     * @param id                Dashboard ID
-     * @param dashboardMetadata Dashboard metadata
-     * @return Status
-     * @throws DashboardException
+     * @param id                ID of the dashboard to update
+     * @param dashboardMetadata updating data
+     * @return response
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response update(@PathParam("id") String id, DashboardMetadata dashboardMetadata) throws DashboardException {
-        DashboardMetadataProvider provider = DataHolder.getInstance().getDashboardMetadataProvider();
-        if (provider != null) {
-            provider.update(dashboardMetadata);
+    public Response update(@PathParam("id") String id, DashboardMetadata dashboardMetadata) {
+        try {
+            dashboardDataProvider.update(dashboardMetadata);
             return Response.ok().build();
+        } catch (DashboardException e) {
+            LOGGER.error("Ann error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
+            return Response.serverError().entity("Cannot update dashboard '" + id + "'.").build();
         }
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     /**
-     * Delete a particular dashboard.
+     * Deletes the dashboard corresponding to the supplied ID.
      *
-     * @param id Dashboard ID
-     * @return Status
-     * @throws DashboardException
+     * @param id ID of the dashboard to delete
+     * @return response
      */
     @DELETE
     @Path("/{id}")
-    public Response delete(@PathParam("id") String id) throws DashboardException {
-        DashboardMetadataProvider provider = DataHolder.getInstance().getDashboardMetadataProvider();
-        if (provider != null) {
-            provider.delete(new Query(getUsername(), id));
+    public Response delete(@PathParam("id") String id) {
+        try {
+            dashboardDataProvider.delete(new Query(getUsername(), id));
             return Response.ok().build();
+        } catch (DashboardException e) {
+            LOGGER.error("Ann error occurred when deleting dashboard '{}'.", id, e);
+            return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
         }
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     /**
