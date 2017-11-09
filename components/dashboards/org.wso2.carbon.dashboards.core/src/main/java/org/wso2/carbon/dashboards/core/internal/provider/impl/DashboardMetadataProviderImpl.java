@@ -37,7 +37,7 @@ import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAOImpl;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
-import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
+import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
 import java.io.File;

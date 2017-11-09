@@ -31,7 +31,7 @@ import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.bean.Query;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.provider.DashboardMetadataProvider;
+import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.msf4j.Microservice;
 
 import java.util.List;
