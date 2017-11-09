@@ -18,73 +18,114 @@
 package org.wso2.carbon.dashboards.core.internal;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
+import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.uis.api.App;
 import org.wso2.carbon.uis.api.Extension;
+import org.wso2.carbon.uis.spi.Server;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Interface to for getting widget related information.
+ * Default widget info provider.
+ *
+ * @since 4.0.0
  */
-public class WidgetInfoProviderImpl implements org.wso2.carbon.dashboards.core.WidgetInfoProvider {
+@Component(service = WidgetInfoProvider.class, immediate = true)
+public class WidgetInfoProviderImpl implements WidgetInfoProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetInfoProviderImpl.class);
     private static final Gson GSON = new Gson();
+    private static final String APP_NAME_DASHBOARD = "portal";
+    private static final String EXTENSION_TYPE_WIDGETS = "widgets";
 
-    /**
-     * List meta information of all widgets available in the store.
-     *
-     * @return Set set of meta information of all widgets
-     */
+    private Server uiServer;
+
+    @Activate
+    protected void activate(BundleContext bundleContext) {
+        LOGGER.debug("{} activated.", this.getClass().getName());
+    }
+
+    @Deactivate
+    protected void deactivate(BundleContext bundleContext) {
+        LOGGER.debug("{} deactivated.", this.getClass().getName());
+    }
+
+    @Reference(service = Server.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetCarbonUiServer")
+    protected void setCarbonUiServer(Server server) {
+        this.uiServer = server;
+    }
+
+    protected void unsetCarbonUiServer(Server server) {
+        this.uiServer = null;
+    }
+
     @Override
-    public Set<WidgetMetaInfo> getWidgetsMetaInfo() {
-        App app = DataHolder.getInstance().getUiServer().getApp("portal")
-                .orElseThrow(() -> new IllegalStateException(""));
-        return app.getExtensions("widgets").stream()
+    public Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetName) throws DashboardRuntimeException {
+        return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetName)
+                .map(this::toWidgetMetaInfo);
+    }
+
+    @Override
+    public Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardRuntimeException {
+        return getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
                 .map(this::toWidgetMetaInfo)
-                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Set<WidgetMetaInfo> getWidgetsMetaInfo() throws DashboardRuntimeException {
+        return getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
+                .map(this::toWidgetMetaInfo)
+                .collect(Collectors.toSet());
+    }
+
+    private App getDashboardApp() {
+        return uiServer.getApp(APP_NAME_DASHBOARD)
+                .orElseThrow(() -> new DashboardRuntimeException(
+                        "Cannot find dashboard web app named '" + APP_NAME_DASHBOARD + "'."));
+    }
+
     private WidgetMetaInfo toWidgetMetaInfo(Extension extension) {
+        Path widgetConfPath = Paths.get(extension.getPath(), "widgetConf.json");
         try {
-            String widgetConf = new String(Files.readAllBytes(Paths.get(extension.getPath(), "widgetConf.json")),
-                    StandardCharsets.UTF_8);
+            String widgetConf = new String(Files.readAllBytes(widgetConfPath), StandardCharsets.UTF_8);
             return GSON.fromJson(widgetConf, WidgetMetaInfo.class);
         } catch (IOException e) {
-            LOGGER.error("Error in reading widget configuration file of widget - " + extension.getName());
-            return null;
+            throw new DashboardRuntimeException(
+                    "Cannot read configuration file '" + widgetConfPath + "' of widget '" + extension.getName() + "'.");
+        } catch (JsonSyntaxException e) {
+            throw new DashboardRuntimeException(
+                    "Configuration file '" + widgetConfPath + "' of widget '" + extension.getName() + "' is invalid.");
         }
     }
 
-    /**
-     * Provide widget configuration file of the given widget.
-     *
-     * @param widgetId widget-id
-     * @return returns widget configuration of the given widget
-     */
     @Override
     public Optional<String> getWidgetConf(String widgetId) {
         return Optional.ofNullable("");
     }
 
-    /**
-     * Provide the thumbnail of the given widget id.
-     *
-     * @param widgetId widget-id
-     * @return returns the thumbnail of the given widget
-     */
     @Override
     public Optional<Path> getThumbnail(String widgetId) {
         return Optional.empty();
