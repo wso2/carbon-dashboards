@@ -19,7 +19,7 @@
 package org.wso2.carbon.dashboards.core.exception;
 
 /**
- * Indicates a generic runtime exception.
+ * Indicates a generic runtime exception occurred in dashboard.
  *
  * @since 4.0.0
  */
