@@ -23,17 +23,4 @@ package org.wso2.carbon.dashboards.core.internal.dao.utils;
  */
 public class SQLConstants {
 
-    public static final String ADD_DASHBOARD_CONTENT_QUERY = "add_dashboard";
-    public static final String GET_DASHBOARD_METADATA_LIST_QUERY = "get_dashboard_metadata_list";
-    public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
-    public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
-    public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
-
-    public static final String DASHBOARD_URL = "DASHBOARD_URL";
-    public static final String DASHBOARD_NAME = "DASHBOARD_NAME";
-    public static final String DASHBOARD_DESCRIPTION = "DASHBOARD_DESCRIPTION";
-    public static final String DASHBOARD_CONTENT = "DASHBOARD_CONTENT";
-    public static final String DASHBOARD_PARENT_ID = "DASHBOARD_PARENT_ID";
-    public static final String DASHBOARD_ID = "DASHBOARD_ID";
-    public static final String DASHBOARD_LANDING_PAGE = "DASHBOARD_LANDING_PAGE";
 }
