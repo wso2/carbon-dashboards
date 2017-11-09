@@ -46,6 +46,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
@@ -127,7 +128,7 @@ public class DashboardRestApi implements Microservice {
             }
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving dashboard for ID '{}'.", id, e);
-            return Response.serverError().entity("Cannot find dashboard for ID '" + id + "'.").build();
+            return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
         }
     }
 
@@ -144,7 +145,7 @@ public class DashboardRestApi implements Microservice {
     public Response create(DashboardMetadata dashboardMetadata) {
         try {
             dashboardDataProvider.add(dashboardMetadata);
-            return Response.status(Response.Status.CREATED).build();
+            return Response.status(CREATED).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new dashboard from {} data.", dashboardMetadata, e);
             return Response.serverError()

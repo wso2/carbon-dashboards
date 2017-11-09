@@ -22,9 +22,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.internal.WidgetInfoProviderImpl;
+import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
+import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
@@ -33,6 +37,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
  * REST API for widget related operations.
@@ -47,6 +53,8 @@ public class WidgetRestApi implements Microservice {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetRestApi.class);
 
+    private WidgetInfoProvider widgetInfoProvider;
+
     @Activate
     protected void activate(BundleContext bundleContext) {
         LOGGER.debug("{} activated.", this.getClass().getName());
@@ -57,17 +65,33 @@ public class WidgetRestApi implements Microservice {
         LOGGER.debug("{} deactivated.", this.getClass().getName());
     }
 
+    @Reference(service = WidgetInfoProvider.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetWidgetInfoProvider")
+    protected void setWidgetInfoProvider(WidgetInfoProvider widgetInfoProvider) {
+        this.widgetInfoProvider = widgetInfoProvider;
+    }
+
+    protected void unsetWidgetInfoProvider(WidgetInfoProvider widgetInfoProvider) {
+        this.widgetInfoProvider = null;
+    }
+
     /**
-     * This method returns a list of meta information of widgets.
+     * Returns a list of widget configurations.
      *
-     * @return List of widget related meta information
+     * @return response that carries list of widget configurations
      */
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWidgetsMetaInfo() {
-        WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl();
-        return Response.ok().entity(widgetInfoProvider.getWidgetsMetaInfo()).build();
+        try {
+            return okResponse(widgetInfoProvider.getAllWidgetConfigurations());
+        } catch (DashboardRuntimeException e) {
+            LOGGER.error("An error occurred when listing widget configurations.", e);
+            return serverErrorResponse("Cannot list widget configurations.");
+        }
     }
 
     /**
@@ -77,11 +101,17 @@ public class WidgetRestApi implements Microservice {
      * @return widget configuration
      */
     @GET
-    @Path("/{id}/conf")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWidgetConf(@PathParam("id") String widgetId) {
-        // TODO: 11/8/17 Implement
-        return Response.ok().build();
+        try {
+            return widgetInfoProvider.getWidgetConfiguration(widgetId)
+                    .map(WidgetRestApi::okResponse)
+                    .orElse(Response.status(NOT_FOUND).entity("Cannot find widget '" + widgetId + "'.").build());
+        } catch (DashboardRuntimeException e) {
+            LOGGER.error("An error occurred when retrieving configuration of widget '{}'.", widgetId, e);
+            return serverErrorResponse("Cannot retrieve configuration of widget '" + widgetId + "'.");
+        }
     }
 
     /**
@@ -95,5 +125,13 @@ public class WidgetRestApi implements Microservice {
     public Response getThumbnail(@PathParam("id") String widgetId) {
         // TODO: 11/8/17 Implement
         return Response.ok().build();
+    }
+
+    private static Response okResponse(Object content) {
+        return Response.ok().entity(content).build();
+    }
+
+    private static Response serverErrorResponse(String message) {
+        return Response.serverError().entity(message).build();
     }
 }
