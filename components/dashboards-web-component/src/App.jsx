@@ -17,71 +17,93 @@
  *
  */
 
+import Axios from 'axios';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
-import {addLocaleData, defineMessages, IntlProvider} from 'react-intl';
-import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
-// App components
-import DashboardView from './viewer/DashboardView';
-import DashboardListing from './listing/DashboardListing';
-import DashboardDesigner from './designer/DashboardDesigner';
-import DashboardCreate from './designer/DashboardCreatePage';
-import DashboardSettings from './designer/DashboardSettings';
+import { addLocaleData, defineMessages, IntlProvider } from 'react-intl';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
+import Login from './auth/Login';
+import Logout from './auth/Logout';
+import SecuredRouter from './auth/SecuredRouter';
+
+/**
+ * App context.
+ */
 const appContext = window.contextPath;
-const publicPath = appContext + '/public/app/';
+
+/**
+ * Language.
+ * @type {string}
+ */
 const language = (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage;
+
+/**
+ * Language without region code.
+ */
 const languageWithoutRegionCode = language.toLowerCase().split(/[_-]+/)[0];
 
+/**
+ * Entry-point of the portal application.
+ */
 class App extends Component {
+    /**
+     * Constructor. Initializes the state.
+     */
     constructor() {
         super();
         this.state = {
-            messages: {}
-        }
-
-    };
-    
-    componentWillMount(){
-        let localeFileName = (languageWithoutRegionCode || language || 'en');
-        let that = this;
-        axios.get(window.location.origin + publicPath + 'locales/' + localeFileName + '.json')
-            .then(function (response) {
-                addLocaleData(require('react-intl/locale-data/' + localeFileName));
-                that.setState({
-                    messages: defineMessages(response.data)
-                });
-            })
-            .catch(function (error) {
-                axios.get(window.location.origin + publicPath + 'locales/en.json')
-                    .then(function (response) {
-                        addLocaleData(require('react-intl/locale-data/en'));
-                        that.setState({
-                            messages: defineMessages(response.data)
-                        });
-                    }).catch(function (error) {
-                });
-            });
-
+            messages: {},
+        };
     }
-    render () {
+
+    /**
+     * Initialize i18n.
+     */
+    componentWillMount() {
+        const locale = (languageWithoutRegionCode || language || 'en');
+        this.loadLocale(locale).catch(() => {
+            this.loadLocale().catch(() => {
+                // TODO: Show error message.
+            });
+        });
+    }
+
+    /**
+     * Load locale file.
+     *
+     * @param {string} locale Locale name
+     * @returns {Promise} Promise
+     */
+    loadLocale(locale = 'en') {
+        return new Promise((resolve, reject) => {
+            Axios
+                .get(`${window.contextPath}/public/app/locales/${locale}.json`)
+                .then((response) => {
+                    // eslint-disable-next-line global-require, import/no-dynamic-require
+                    addLocaleData(require(`react-intl/locale-data/${locale}`));
+                    this.setState({ messages: defineMessages(response.data) });
+                    resolve();
+                })
+                .catch(error => reject(error));
+        });
+    }
+
+    /**
+     * Renders routing.
+     *
+     * @return {XML} HTML content
+     */
+    render() {
         return (
             <IntlProvider locale={language} messages={this.state.messages}>
                 <BrowserRouter history>
                     <Switch>
-                        {/* Dashboard listing a.k.a. landing page */}
-                        <Route exact path= {appContext} component={DashboardListing}/>
-                        {/* Create dashboard */}
-                        <Route exact path={appContext + '/create'} component={DashboardCreate}/>
-                        {/* Dashboard settings */}
-                        <Route exact path={appContext + '/settings/:id'} component={DashboardSettings}/>
-                        {/* Dashboard designer */}
-                        <Route exact path='*/designer/:dashboardId' component={DashboardDesigner}/>
-                        <Route path='*/designer/:dashboardId/*' component={DashboardDesigner}/>
-                        {/* Dashboard view */}
-                        <Route exact path='*/dashboards/:id' component={DashboardView}/>
-                        <Route path='*/dashboards/:id/*' component={DashboardView}/>
+                        {/* Authentication */}
+                        <Route path={`${appContext}/login`} component={Login} />
+                        <Route path={`${appContext}/logout`} component={Logout} />
+                        {/* Secured routes */}
+                        <Route component={SecuredRouter} />
                     </Switch>
                 </BrowserRouter>
             </IntlProvider>
