@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.widget.info.WidgetInfoProviderImpl;
+import org.wso2.carbon.dashboards.core.internal.WidgetInfoProviderImpl;
 import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.GET;
