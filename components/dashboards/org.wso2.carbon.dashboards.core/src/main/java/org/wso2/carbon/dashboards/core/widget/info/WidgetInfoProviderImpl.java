@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * Interface to for getting widget related information.
  */
-public class WidgetInfoProviderImpl {
+public class WidgetInfoProviderImpl implements org.wso2.carbon.dashboards.core.WidgetInfoProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetInfoProviderImpl.class);
     private static final Gson GSON = new Gson();
@@ -49,6 +49,7 @@ public class WidgetInfoProviderImpl {
      *
      * @return Set set of meta information of all widgets
      */
+    @Override
     public Set<WidgetMetaInfo> getWidgetsMetaInfo() {
         App app = DataHolder.getInstance().getUiServer().getApp("portal")
                 .orElseThrow(() -> new IllegalStateException(""));
@@ -75,6 +76,7 @@ public class WidgetInfoProviderImpl {
      * @param widgetId widget-id
      * @return returns widget configuration of the given widget
      */
+    @Override
     public Optional<String> getWidgetConf(String widgetId) {
         return Optional.ofNullable("");
     }
@@ -85,6 +87,7 @@ public class WidgetInfoProviderImpl {
      * @param widgetId widget-id
      * @return returns the thumbnail of the given widget
      */
+    @Override
     public Optional<Path> getThumbnail(String widgetId) {
         return Optional.empty();
     }
