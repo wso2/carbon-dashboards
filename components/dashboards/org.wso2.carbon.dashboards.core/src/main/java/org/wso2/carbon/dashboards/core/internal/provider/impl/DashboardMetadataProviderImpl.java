@@ -34,7 +34,7 @@ import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.bean.Query;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
+import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAO;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAOImpl;
 import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;

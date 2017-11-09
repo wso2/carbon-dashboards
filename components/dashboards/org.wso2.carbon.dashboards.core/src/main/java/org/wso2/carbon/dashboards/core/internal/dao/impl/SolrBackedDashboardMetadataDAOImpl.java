@@ -21,7 +21,7 @@ package org.wso2.carbon.dashboards.core.internal.dao.impl;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.internal.dao.DashboardMetadataDAO;
+import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAO;
 
 import java.util.List;
 
