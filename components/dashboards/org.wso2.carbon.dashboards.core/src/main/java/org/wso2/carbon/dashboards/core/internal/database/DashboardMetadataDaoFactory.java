@@ -50,7 +50,7 @@ public class DashboardMetadataDaoFactory {
         } catch (DataSourceException e) {
             throw new DashboardException("Cannot find data source named '" + DATA_SOURCE_NAME_DASHBOARD + "'.", e);
         }
-        QueryManager queryManager = new QueryManager(configProvider);
-        return new DashboardMetadataDao(dataSource, queryManager);
+        QueryProvider queryProvider = new QueryProvider(configProvider);
+        return new DashboardMetadataDao(dataSource, queryProvider);
     }
 }

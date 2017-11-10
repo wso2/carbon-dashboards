@@ -50,17 +50,17 @@ public class DashboardMetadataDao {
     private static final String COLUMN_DASHBOARD_URL = "DASHBOARD_URL";
 
     private final DataSource dataSource;
-    private final QueryManager queryManager;
+    private final QueryProvider queryProvider;
 
-    public DashboardMetadataDao(DataSource dataSource, QueryManager queryManager) {
+    public DashboardMetadataDao(DataSource dataSource, QueryProvider queryProvider) {
         this.dataSource = dataSource;
-        this.queryManager = queryManager;
+        this.queryProvider = queryProvider;
     }
 
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryManager.getQuery(QueryManager.UPDATE_DASHBOARD_CONTENT_QUERY);
+        String query = queryProvider.getQuery(QueryProvider.UPDATE_DASHBOARD_CONTENT_QUERY);
         try {
             connection = getConnection();
             connection.setAutoCommit(false);
@@ -88,7 +88,7 @@ public class DashboardMetadataDao {
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryManager.getQuery(QueryManager.ADD_DASHBOARD_CONTENT_QUERY);
+        String query = queryProvider.getQuery(QueryProvider.ADD_DASHBOARD_CONTENT_QUERY);
         try {
             connection = getConnection();
             connection.setAutoCommit(false);
@@ -115,7 +115,7 @@ public class DashboardMetadataDao {
     public void delete(String url) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryManager.getQuery(QueryManager.DELETE_DASHBOARD_BY_URL_QUERY);
+        String query = queryProvider.getQuery(QueryProvider.DELETE_DASHBOARD_BY_URL_QUERY);
         try {
             connection = getConnection();
             connection.setAutoCommit(false);
@@ -136,7 +136,7 @@ public class DashboardMetadataDao {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet result = null;
-        String query = queryManager.getQuery(QueryManager.GET_DASHBOARD_BY_URL_QUERY);
+        String query = queryProvider.getQuery(QueryProvider.GET_DASHBOARD_BY_URL_QUERY);
         try {
             connection = getConnection();
             ps = connection.prepareStatement(query);
@@ -163,7 +163,7 @@ public class DashboardMetadataDao {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet results = null;
-        String query = queryManager.getQuery(QueryManager.GET_DASHBOARD_METADATA_LIST_QUERY);
+        String query = queryProvider.getQuery(QueryProvider.GET_DASHBOARD_METADATA_LIST_QUERY);
         try {
             connection = getConnection();
             ps = connection.prepareStatement(query);
