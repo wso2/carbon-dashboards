@@ -17,7 +17,7 @@
 
 <FindBugsFilter>
     <Match>
-        <Class name="org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAOImpl"/>
+        <Class name="org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAO"/>
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Match>
 </FindBugsFilter>

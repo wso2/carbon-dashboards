@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
-import org.wso2.carbon.dashboards.core.internal.DataHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,28 +35,19 @@ public class QueryManager {
     public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
     public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
     public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryManager.class);
-    private static QueryManager instance = new QueryManager();
 
-    private Map<String, String> queries;
+    private final Map<String, String> queries;
 
-    private QueryManager() {
-        this.queries = readConfigs();
+    public QueryManager(ConfigProvider configProvider) {
+        this.queries = readConfigs(configProvider);
     }
 
-    public static QueryManager getInstance() {
-        return instance;
-    }
-
-    private Map<String, String> readConfigs() {
+    private Map<String, String> readConfigs(ConfigProvider configProvider) {
         // TODO: Get the relevant type of the database from the config provider.
         String databaseType = "h2";
-
-        ConfigProvider configProvider = DataHolder.getInstance().getConfigProvider();
         try {
-            DashboardConfigurations dashboardConfigurations = configProvider
-                    .getConfigurationObject(DashboardConfigurations.class);
+            DashboardConfigurations dashboardConfigurations = configProvider.getConfigurationObject(DashboardConfigurations.class);
             if (!dashboardConfigurations.getQueries().containsKey(databaseType)) {
                 throw new RuntimeException("Unable to find the database type: " + databaseType);
             }
