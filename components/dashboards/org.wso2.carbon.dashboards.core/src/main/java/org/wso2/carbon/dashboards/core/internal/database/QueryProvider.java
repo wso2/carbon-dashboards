@@ -28,18 +28,18 @@ import java.util.Map;
 /**
  * Holds the database queries.
  */
-public class QueryManager {
+public class QueryProvider {
 
     public static final String ADD_DASHBOARD_CONTENT_QUERY = "add_dashboard";
     public static final String GET_DASHBOARD_METADATA_LIST_QUERY = "get_dashboard_metadata_list";
     public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
     public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
     public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
-    private static final Logger LOGGER = LoggerFactory.getLogger(QueryManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryProvider.class);
 
     private final Map<String, String> queries;
 
-    public QueryManager(ConfigProvider configProvider) {
+    public QueryProvider(ConfigProvider configProvider) {
         this.queries = readConfigs(configProvider);
     }
 
