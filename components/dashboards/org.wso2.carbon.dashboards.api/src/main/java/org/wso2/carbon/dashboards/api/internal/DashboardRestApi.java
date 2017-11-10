@@ -182,14 +182,4 @@ public class DashboardRestApi implements Microservice {
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
         }
     }
-
-    /**
-     * Get username from the authentication headers.
-     *
-     * @return Username
-     */
-    private String getUsername() {
-        // TODO: Get the username from the authentication headers
-        return "admin";
-    }
 }
