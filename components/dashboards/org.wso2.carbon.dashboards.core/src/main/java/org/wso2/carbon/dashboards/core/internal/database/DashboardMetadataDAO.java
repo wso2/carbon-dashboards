@@ -21,7 +21,6 @@ import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
-import org.wso2.carbon.dashboards.core.bean.PaginationContext;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.nio.charset.StandardCharsets;
@@ -30,8 +29,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -110,7 +110,7 @@ public class DashboardMetadataDAO {
         }
     }
 
-    public void delete(String owner, String url) throws DashboardException {
+    public void delete(String url) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
         String query = queryManager.getQuery(QueryManager.DELETE_DASHBOARD_BY_URL_QUERY);
@@ -123,14 +123,13 @@ public class DashboardMetadataDAO {
             connection.commit();
         } catch (SQLException e) {
             rollbackQuietly(connection);
-            throw new DashboardException("Cannot delete dashboard '" + url + "' of owner '" + owner + "'.", e);
+            throw new DashboardException("Cannot delete dashboard '" + url + "'.", e);
         } finally {
             closeQuietly(connection, ps, null);
         }
     }
 
-    public DashboardMetadata get(String url) throws DashboardException {
-        DashboardMetadata dashboardMetadata = null;
+    public Optional<DashboardMetadata> get(String url) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet results = null;
@@ -140,20 +139,17 @@ public class DashboardMetadataDAO {
             ps = connection.prepareStatement(query);
             ps.setString(1, url);
             results = ps.executeQuery();
-            if (results.next()) {
-                dashboardMetadata = toDashboardMetadata(results);
-            }
+
+            return results.next() ? Optional.of(toDashboardMetadata(results)): Optional.empty();
         } catch (SQLException e) {
             throw new DashboardException("Cannot retrieve dashboard for URl '" + url + "'.", e);
         } finally {
             closeQuietly(connection, ps, results);
         }
-
-        return dashboardMetadata;
     }
 
-    public List<DashboardMetadata> list(String owner, PaginationContext paginationContext) throws DashboardException {
-        List<DashboardMetadata> dashboardMetadataList = new ArrayList<>();
+    public Set<DashboardMetadata> getAll() throws DashboardException {
+        Set<DashboardMetadata> dashboardMetadatas = new HashSet<>();
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet result = null;
@@ -163,15 +159,15 @@ public class DashboardMetadataDAO {
             ps = connection.prepareStatement(query);
             result = ps.executeQuery();
             while (result.next()) {
-                dashboardMetadataList.add(toDashboardMetadata(result));
+                dashboardMetadatas.add(toDashboardMetadata(result));
             }
         } catch (SQLException e) {
-            throw new DashboardException("Cannot retrieve dashboards of owner '" + owner + "'.", e);
+            throw new DashboardException("Cannot retrieve dashboards.", e);
         } finally {
             closeQuietly(connection, ps, result);
         }
 
-        return dashboardMetadataList;
+        return dashboardMetadatas;
     }
 
     private Connection getConnection() throws SQLException {

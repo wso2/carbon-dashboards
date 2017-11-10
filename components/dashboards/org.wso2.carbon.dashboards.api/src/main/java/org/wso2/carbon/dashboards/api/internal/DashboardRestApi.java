@@ -27,14 +27,11 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
-import org.wso2.carbon.dashboards.core.bean.PaginationContext;
-import org.wso2.carbon.dashboards.core.bean.Query;
-import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
+import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
 
-import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -98,9 +95,7 @@ public class DashboardRestApi implements Microservice {
     @Path("/")
     public Response get() {
         try {
-            List<DashboardMetadata> dashboards = dashboardDataProvider.list(new Query(getUsername()),
-                                                                            new PaginationContext());
-            return Response.ok().entity(dashboards).build();
+            return Response.ok().entity(dashboardDataProvider.getAll()).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when listing dashboards.", e);
             return Response.serverError().entity("Cannot list dashboards.").build();
@@ -119,13 +114,9 @@ public class DashboardRestApi implements Microservice {
     @Path("/{id}")
     public Response get(@PathParam("id") String id) {
         try {
-            DashboardMetadata metadata = dashboardDataProvider.get(new Query(getUsername(), id));
-            if (metadata == null) {
-                return Response.status(NOT_FOUND)
-                        .entity("Cannot find a dashboard for ID '" + id + "'.").build();
-            } else {
-                return Response.ok().entity(metadata).build();
-            }
+            return dashboardDataProvider.get(id)
+                    .map(metadata -> Response.ok().entity(metadata).build())
+                    .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + id + "'.").build());
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving dashboard for ID '{}'.", id, e);
             return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
@@ -184,7 +175,7 @@ public class DashboardRestApi implements Microservice {
     @Path("/{id}")
     public Response delete(@PathParam("id") String id) {
         try {
-            dashboardDataProvider.delete(new Query(getUsername(), id));
+            dashboardDataProvider.delete(id);
             return Response.ok().build();
         } catch (DashboardException e) {
             LOGGER.error("Ann error occurred when deleting dashboard '{}'.", id, e);
