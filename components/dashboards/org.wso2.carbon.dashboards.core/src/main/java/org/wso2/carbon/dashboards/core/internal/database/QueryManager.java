@@ -47,7 +47,8 @@ public class QueryManager {
         // TODO: Get the relevant type of the database from the config provider.
         String databaseType = "h2";
         try {
-            DashboardConfigurations dashboardConfigurations = configProvider.getConfigurationObject(DashboardConfigurations.class);
+            DashboardConfigurations dashboardConfigurations = configProvider.getConfigurationObject(
+                    DashboardConfigurations.class);
             if (!dashboardConfigurations.getQueries().containsKey(databaseType)) {
                 throw new RuntimeException("Unable to find the database type: " + databaseType);
             }

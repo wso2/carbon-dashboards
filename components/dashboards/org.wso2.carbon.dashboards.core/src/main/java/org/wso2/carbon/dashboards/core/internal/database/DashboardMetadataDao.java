@@ -37,9 +37,9 @@ import javax.sql.DataSource;
 /**
  * This is a core class of the DashboardMetadata JDBC Based implementation.
  */
-public class DashboardMetadataDAO {
+public class DashboardMetadataDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataDao.class);
     private static final Gson GSON = new Gson();
     private static final String COLUMN_DASHBOARD_LANDING_PAGE = "DASHBOARD_LANDING_PAGE";
     private static final String COLUMN_DASHBOARD_ID = "DASHBOARD_ID";
@@ -52,7 +52,7 @@ public class DashboardMetadataDAO {
     private final DataSource dataSource;
     private final QueryManager queryManager;
 
-    public DashboardMetadataDAO(DataSource dataSource, QueryManager queryManager) {
+    public DashboardMetadataDao(DataSource dataSource, QueryManager queryManager) {
         this.dataSource = dataSource;
         this.queryManager = queryManager;
     }
@@ -140,7 +140,7 @@ public class DashboardMetadataDAO {
             ps.setString(1, url);
             results = ps.executeQuery();
 
-            return results.next() ? Optional.of(toDashboardMetadata(results)): Optional.empty();
+            return results.next() ? Optional.of(toDashboardMetadata(results)) : Optional.empty();
         } catch (SQLException e) {
             throw new DashboardException("Cannot retrieve dashboard for URl '" + url + "'.", e);
         } finally {
