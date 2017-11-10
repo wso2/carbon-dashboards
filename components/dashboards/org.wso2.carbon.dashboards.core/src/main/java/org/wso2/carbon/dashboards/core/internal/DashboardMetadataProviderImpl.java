@@ -31,7 +31,7 @@ import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
-import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAO;
+import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDaoFactory;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
@@ -48,7 +48,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
 
-    private DashboardMetadataDAO dao;
+    private DashboardMetadataDao dao;
     private DataSourceService dataSourceService;
     private ConfigProvider configProvider;
 

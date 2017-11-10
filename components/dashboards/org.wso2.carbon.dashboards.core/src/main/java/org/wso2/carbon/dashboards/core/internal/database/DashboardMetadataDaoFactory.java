@@ -26,7 +26,7 @@ import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import javax.sql.DataSource;
 
 /**
- * Factory for {@link DashboardMetadataDAO} class.
+ * Factory for {@link DashboardMetadataDao} class.
  *
  * @since 4.0.0
  */
@@ -42,7 +42,7 @@ public class DashboardMetadataDaoFactory {
      * @return DAO
      * @throws DashboardException if cannot find required data source
      */
-    public static DashboardMetadataDAO createDao(DataSourceService dataSourceService, ConfigProvider configProvider)
+    public static DashboardMetadataDao createDao(DataSourceService dataSourceService, ConfigProvider configProvider)
             throws DashboardException {
         DataSource dataSource;
         try {
@@ -51,6 +51,6 @@ public class DashboardMetadataDaoFactory {
             throw new DashboardException("Cannot find data source named '" + DATA_SOURCE_NAME_DASHBOARD + "'.", e);
         }
         QueryManager queryManager = new QueryManager(configProvider);
-        return new DashboardMetadataDAO(dataSource, queryManager);
+        return new DashboardMetadataDao(dataSource, queryManager);
     }
 }
