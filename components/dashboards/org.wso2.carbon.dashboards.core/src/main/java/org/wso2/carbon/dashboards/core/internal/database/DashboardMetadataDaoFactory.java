@@ -18,7 +18,9 @@
 
 package org.wso2.carbon.dashboards.core.internal.database;
 
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
+import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
@@ -40,7 +42,7 @@ public class DashboardMetadataDaoFactory {
      * @param dataSourceService data sources service
      * @param configProvider    config provider
      * @return DAO
-     * @throws DashboardException if cannot find required data source
+     * @throws DashboardException if cannot find required data source or load dashboard configurations
      */
     public static DashboardMetadataDao createDao(DataSourceService dataSourceService, ConfigProvider configProvider)
             throws DashboardException {
@@ -50,7 +52,13 @@ public class DashboardMetadataDaoFactory {
         } catch (DataSourceException e) {
             throw new DashboardException("Cannot find data source named '" + DATA_SOURCE_NAME_DASHBOARD + "'.", e);
         }
-        QueryProvider queryProvider = new QueryProvider(configProvider);
+        DashboardConfigurations dashboardConfigurations;
+        try {
+            dashboardConfigurations = configProvider.getConfigurationObject(DashboardConfigurations.class);
+        } catch (ConfigurationException e) {
+            throw new DashboardException("Cannot load dashboard configurations from 'deployment.yaml'.", e);
+        }
+        QueryProvider queryProvider = new QueryProvider(dashboardConfigurations);
         return new DashboardMetadataDao(dataSource, queryProvider);
     }
 }
