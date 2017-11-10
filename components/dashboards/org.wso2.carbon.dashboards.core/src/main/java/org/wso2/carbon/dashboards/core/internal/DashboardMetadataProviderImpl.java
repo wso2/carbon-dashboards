@@ -17,8 +17,6 @@
  */
 package org.wso2.carbon.dashboards.core.internal;
 
-
-import com.google.gson.Gson;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -28,221 +26,97 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.bean.DashboardContent;
-import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
-import org.wso2.carbon.dashboards.core.bean.PaginationContext;
-import org.wso2.carbon.dashboards.core.bean.Query;
-import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAO;
-import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAOImpl;
-import org.wso2.carbon.dashboards.core.internal.dao.utils.DAOUtils;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
+import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDAO;
+import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDaoFactory;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.Set;
 
 /**
- * This is a core class of the DashboardMetadata business logic implementation.
+ * Default dashboard metadata provider.
+ *
+ * @since 4.0.0
  */
-@Component(name = "org.wso2.carbon.dashboards.core.internal.provider.impl.DashboardMetadataProviderImpl",
-        service = DashboardMetadataProvider.class,
-        immediate = true)
+@Component(service = DashboardMetadataProvider.class, immediate = true)
 public class DashboardMetadataProviderImpl implements DashboardMetadataProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
 
     private DashboardMetadataDAO dao;
+    private DataSourceService dataSourceService;
+    private ConfigProvider configProvider;
 
-    public DashboardMetadataProviderImpl(DashboardMetadataDAO dao) {
-        this.dao = dao;
-    }
-
-    public DashboardMetadataProviderImpl() {
-        this(new DashboardMetadataDAOImpl());
-    }
-
-    /**
-     * Get called when this osgi component get registered.
-     *
-     * @param bundleContext Context of the osgi component.
-     */
     @Activate
     protected void activate(BundleContext bundleContext) {
-        //TODO: Since this affects to server startup, We will move this db initialization at the first request in future
-        log.info("ServiceComponent activated.");
+        try {
+            this.dao = DashboardMetadataDaoFactory.createDao(dataSourceService, configProvider);
+        } catch (DashboardException e) {
+            throw new DashboardRuntimeException("Cannot create DAO for DB access.", e);
+        }
+        LOGGER.debug("{} activated.", this.getClass().getName());
     }
 
-    /**
-     * Get called when this osgi component get unregistered.
-     */
     @Deactivate
-    protected void deactivate() {
-        log.info("ServiceComponent deactivated.");
+    protected void deactivate(BundleContext bundleContext) {
+        LOGGER.debug("{} deactivated.", this.getClass().getName());
+    }
+
+    @Reference(service = DataSourceService.class,
+               cardinality = ReferenceCardinality.AT_LEAST_ONE,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetDataSourceService")
+    protected void setDataSourceService(DataSourceService dataSourceService) {
+        this.dataSourceService = dataSourceService;
+    }
+
+    protected void unsetDataSourceService(DataSourceService dataSourceService) {
+        this.dataSourceService = null;
+    }
+
+    @Reference(service = ConfigProvider.class,
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetConfigProvider")
+    protected void setConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = configProvider;
+    }
+
+    protected void unsetConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = null;
+    }
+
+    @Override
+    public Optional<DashboardMetadata> get(String dashboardUrl) throws DashboardException {
+        // TODO: 11/10/17 validate parameters
+        return dao.get(dashboardUrl);
+    }
+
+    @Override
+    public Set<DashboardMetadata> getAll() throws DashboardException {
+        return dao.getAll();
     }
 
     @Override
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
+        // TODO: 11/10/17 validate parameters
         dao.add(dashboardMetadata);
     }
 
     @Override
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
+        // TODO: 11/10/17 validate parameters
         dao.update(dashboardMetadata);
     }
 
     @Override
-    public void delete(Query query) throws DashboardException {
-        validateQuery(query);
-        if (query.getOwner() != null && query.getUrl() != null) {
-            dao.delete(query.getOwner(), query.getUrl());
-        } else {
-            throw new DashboardException("Insufficient parameters supplied to the command");
-        }
-    }
-
-    @Override
-    public DashboardMetadata get(Query query) throws DashboardException {
-        validateQuery(query);
-        if (query.getUrl() != null) {
-            DashboardMetadata dashboard = dao.get(query.getUrl());
-            if (dashboard == null) {
-                dashboard = getDashboardFromFilesystem(query);
-            }
-            return dashboard;
-        } else {
-            throw new DashboardException("Insufficient parameters supplied to the command");
-        }
-    }
-
-    @Override
-    public List<DashboardMetadata> list(Query query, PaginationContext paginationContext) throws DashboardException {
-        validateQuery(query);
-        if (query.getOwner() != null) {
-            Map<String, DashboardMetadata> dashboards = dao.list(query.getOwner(), paginationContext).stream()
-                    .collect(Collectors.toMap(DashboardMetadata::getUrl, Function.identity()));
-            getDashboardsFromFilesystem().stream()
-                    .filter(dashboard -> !dashboards.containsKey(dashboard.getId()))
-                    .forEach(dashboard -> {
-                        dashboards.put(dashboard.getId(), dashboard);
-                    });
-            return dashboards.entrySet()
-                    .stream()
-                    .map(e -> e.getValue())
-                    .collect(Collectors.toList());
-        } else {
-            throw new DashboardException("Insufficient parameters supplied to the command");
-        }
-    }
-
-    private void validateQuery(Query query) throws DashboardException {
-        if (query == null) {
-            throw new DashboardException("Unable to find DashboardMetadata. The query is empty");
-        }
-    }
-
-    @Reference(
-            name = "org.wso2.carbon.datasource.DataSourceService",
-            service = DataSourceService.class,
-            cardinality = ReferenceCardinality.AT_LEAST_ONE,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unregisterDataSourceService"
-    )
-    protected void registerDataSourceService(DataSourceService service, Map<String, String> properties) {
-
-        if (service == null) {
-            log.error("Data source service is null. Registering data source service is unsuccessful.");
-            return;
-        }
-
-        DAOUtils.setDataSourceService(service);
-
-        if (log.isInfoEnabled()) {
-            log.info("Data source service registered successfully.");
-        }
-    }
-
-    protected void unregisterDataSourceService(DataSourceService service) {
-
-        if (log.isInfoEnabled()) {
-            log.info("Data source service unregistered.");
-        }
-        DAOUtils.setDataSourceService(null);
-    }
-
-    /**
-     * Get dashboard from a file system.
-     *
-     * @param query
-     * @return
-     * @throws DashboardException
-     */
-    private DashboardMetadata getDashboardFromFilesystem(Query query) throws DashboardException {
-        DashboardMetadata dashboard = null;
-        String path = System.getProperty("carbon.home") + "/deployment/dashboards/" + query.getUrl() + ".json";
-        File dashboardJson = new File(path);
-        if (dashboardJson.exists()) {
-            try {
-                String content = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
-                DashboardContent dashboardContent = new Gson().fromJson(content, DashboardContent.class);
-
-                dashboard = new DashboardMetadata();
-                dashboard.setId(dashboardContent.getId());
-                dashboard.setUrl((dashboardContent.getId()));
-                dashboard.setName(dashboardContent.getName());
-                dashboard.setDescription(dashboardContent.getDescription());
-                dashboard.setPages(content);
-            } catch (IOException e) {
-                throw new DashboardException("Unable to read the dashboard from the file system.");
-            }
-        }
-        return dashboard;
-    }
-
-    /**
-     * Get dashboards from the file system.
-     *
-     * @return Dashboard metadata
-     * @throws DashboardException
-     */
-    private List<DashboardMetadata> getDashboardsFromFilesystem() throws DashboardException {
-        List<DashboardMetadata> dashboards = new ArrayList<>();
-        String path = System.getProperty("carbon.home") + "/deployment/dashboards/";
-        File dashboardsDir = new File(path);
-        if (!dashboardsDir.exists()) {
-            return dashboards;
-        }
-        File[] files = dashboardsDir.listFiles((dir, name) -> {
-            return name.endsWith(".json");
-        });
-
-        if (files != null) {
-            for (File dashboardJson : files) {
-                try {
-                    String content = new String(Files.readAllBytes(Paths.get(dashboardJson.getAbsolutePath())),
-                            StandardCharsets.UTF_8);
-                    DashboardContent dashboardContent = new Gson().fromJson(content, DashboardContent.class);
-
-                    DashboardMetadata metadata = new DashboardMetadata();
-                    metadata.setId(dashboardContent.getId());
-                    metadata.setUrl((dashboardContent.getId()));
-                    metadata.setName(dashboardContent.getName());
-                    metadata.setDescription(dashboardContent.getDescription());
-                    metadata.setPages(content);
-                    dashboards.add(metadata);
-                } catch (IOException e) {
-                    throw new DashboardException("Unable to read dashboards from the file system.");
-                }
-            }
-        }
-        return dashboards;
+    public void delete(String dashboardUrl) throws DashboardException {
+        // TODO: 11/10/17 validate parameters
+        dao.delete(dashboardUrl);
     }
 }
