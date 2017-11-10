@@ -77,6 +77,7 @@ public class DashboardMetadataDao {
             connection.commit();
         } catch (SQLException e) {
             rollbackQuietly(connection);
+            LOGGER.debug("Failed to execute SQL query {}", query);
             throw new DashboardException(
                     "Cannot update dashboard '" + dashboardMetadata.getId() + "' with " + dashboardMetadata + ".", e);
         } finally {
@@ -104,6 +105,7 @@ public class DashboardMetadataDao {
             connection.commit();
         } catch (SQLException e) {
             rollbackQuietly(connection);
+            LOGGER.debug("Failed to execute SQL query {}", query);
             throw new DashboardException("Cannot create a new dashboard with " + dashboardMetadata + ".", e);
         } finally {
             closeQuietly(connection, ps, null);
@@ -123,6 +125,7 @@ public class DashboardMetadataDao {
             connection.commit();
         } catch (SQLException e) {
             rollbackQuietly(connection);
+            LOGGER.debug("Failed to execute SQL query {}", query);
             throw new DashboardException("Cannot delete dashboard '" + url + "'.", e);
         } finally {
             closeQuietly(connection, ps, null);
@@ -132,19 +135,26 @@ public class DashboardMetadataDao {
     public Optional<DashboardMetadata> get(String url) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        ResultSet results = null;
+        ResultSet result = null;
         String query = queryManager.getQuery(QueryManager.GET_DASHBOARD_BY_URL_QUERY);
         try {
             connection = getConnection();
             ps = connection.prepareStatement(query);
             ps.setString(1, url);
-            results = ps.executeQuery();
+            result = ps.executeQuery();
 
-            return results.next() ? Optional.of(toDashboardMetadata(results)) : Optional.empty();
+            if (result.next()) {
+                DashboardMetadata dashboardMetadata = toDashboardMetadata(result);
+                dashboardMetadata.setPages(fromJasonBytes(result.getBlob(COLUMN_DASHBOARD_CONTENT)));
+                return Optional.of(dashboardMetadata);
+            } else {
+                return Optional.empty();
+            }
         } catch (SQLException e) {
+            LOGGER.debug("Failed to execute SQL query {}", query);
             throw new DashboardException("Cannot retrieve dashboard for URl '" + url + "'.", e);
         } finally {
-            closeQuietly(connection, ps, results);
+            closeQuietly(connection, ps, result);
         }
     }
 
@@ -152,19 +162,20 @@ public class DashboardMetadataDao {
         Set<DashboardMetadata> dashboardMetadatas = new HashSet<>();
         Connection connection = null;
         PreparedStatement ps = null;
-        ResultSet result = null;
+        ResultSet results = null;
         String query = queryManager.getQuery(QueryManager.GET_DASHBOARD_METADATA_LIST_QUERY);
         try {
             connection = getConnection();
             ps = connection.prepareStatement(query);
-            result = ps.executeQuery();
-            while (result.next()) {
-                dashboardMetadatas.add(toDashboardMetadata(result));
+            results = ps.executeQuery();
+            while (results.next()) {
+                dashboardMetadatas.add(toDashboardMetadata(results));
             }
         } catch (SQLException e) {
+            LOGGER.debug("Failed to execute SQL query {}", query);
             throw new DashboardException("Cannot retrieve dashboards.", e);
         } finally {
-            closeQuietly(connection, ps, result);
+            closeQuietly(connection, ps, results);
         }
 
         return dashboardMetadatas;
@@ -190,7 +201,6 @@ public class DashboardMetadataDao {
         dashboardMetadata.setDescription(result.getString(COLUMN_DASHBOARD_DESCRIPTION));
         dashboardMetadata.setParentId(result.getString(COLUMN_DASHBOARD_PARENT_ID));
         dashboardMetadata.setLandingPage(result.getString(COLUMN_DASHBOARD_LANDING_PAGE));
-        dashboardMetadata.setPages(fromJasonBytes(result.getBlob(COLUMN_DASHBOARD_CONTENT)));
         return dashboardMetadata;
     }
 
