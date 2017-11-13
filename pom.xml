@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- ~
- ~ Licensed under the Apache License, Version 2.0 (the "License");
- ~ you may not use this file except in compliance with the License.
- ~ You may obtain a copy of the License at
- ~
- ~      http://www.apache.org/licenses/LICENSE-2.0
- ~
- ~ Unless required by applicable law or agreed to in writing, software
- ~ distributed under the License is distributed on an "AS IS" BASIS,
- ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- ~ See the License for the specific language governing permissions and
- ~ limitations under the License.
--->
+  ~ Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.wso2.carbon.dashboards</groupId>
+    <artifactId>carbon-dashboards</artifactId>
+    <version>4.0.0.alpha4-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>WSO2 Carbon Dashboards - Parent</name>
+
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
         <version>5</version>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon.dashboards</groupId>
-    <artifactId>carbon-dashboards</artifactId>
-    <packaging>pom</packaging>
-    <version>4.0.0.alpha4-SNAPSHOT</version>
-    <name>WSO2 Carbon Dashboards</name>
-    <url>http://wso2.org</url>
-
     <modules>
-        <module>components/dashboards/org.wso2.carbon.dashboards.api</module>
         <module>components/dashboards/org.wso2.carbon.dashboards.core</module>
-        <module>features/org.wso2.carbon.dashboards.api.feature</module>
+        <module>components/dashboards/org.wso2.carbon.dashboards.api</module>
         <module>components/dashboards-web-component</module>
+        <module>features/org.wso2.carbon.dashboards.api.feature</module>
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>samples</module>
     </modules>
@@ -62,6 +65,12 @@
                 <groupId>org.wso2.carbon.datasources</groupId>
                 <artifactId>org.wso2.carbon.datasource.core</artifactId>
                 <version>${carbon.datasource.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.datasources</groupId>
+                <artifactId>org.wso2.carbon.datasource.core.feature</artifactId>
+                <version>${carbon.datasources.version}</version>
+                <type>zip</type>
             </dependency>
             <!--H2-->
             <dependency>
@@ -180,12 +189,6 @@
                 <version>${carbon.jndi.version}</version>
                 <type>zip</type>
             </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.datasources</groupId>
-                <artifactId>org.wso2.carbon.datasource.core.feature</artifactId>
-                <version>${carbon.datasources.version}</version>
-                <type>zip</type>
-            </dependency>
 
             <!--OSGi-->
             <dependency>
@@ -290,15 +293,22 @@
     </dependencyManagement>
 
     <properties>
-        <project.scm.id>github-scm</project.scm.id>
         <carbon.dashboards.version>4.0.0.alpha4-SNAPSHOT</carbon.dashboards.version>
-        <carbon.messaging.version>2.3.2</carbon.messaging.version>
+
+        <!-- Datasource -->
+        <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
+        <carbon.datasource.core.version.range>[1.0.0, 2.0.0)</carbon.datasource.core.version.range>
+        <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
+
+        <!--Config-->
+        <carbon.config.version>2.0.3</carbon.config.version>
+        <carbon.securevault.version>5.0.8</carbon.securevault.version>
+        <carbon.utils.version>2.0.2</carbon.utils.version>
+        <carbon.config.version.range>[2.0.0, 3.0.0)</carbon.config.version.range>
+
+        <!--UI Server-->
         <carbon.ui.server.version>0.9.1</carbon.ui.server.version>
         <carbon.ui.sever.version.range>[0.0.0,1.0.0]</carbon.ui.sever.version.range>
-        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
-        <gson.version>2.6.2</gson.version>
-        <gson.version.range>[2.6.2, 3.0.0)</gson.version.range>
-        <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
 
         <!--MSF4J-->
         <msf4j-core.version>2.3.0-m2</msf4j-core.version>
@@ -308,15 +318,9 @@
         <javax.websocket.version>1.1</javax.websocket.version>
         <javax.websocket.version.range>[1.1.0, 2.0.0)</javax.websocket.version.range>
 
-        <!-- Datasource -->
-        <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
-        <org.wso2.carbon.datasource.version.range>[1.0.0, 2.0.0)</org.wso2.carbon.datasource.version.range>
-
-        <!--Config-->
-        <carbon.config.version>2.0.3</carbon.config.version>
-        <carbon.securevault.version>5.0.8</carbon.securevault.version>
-        <carbon.utils.version>2.0.2</carbon.utils.version>
-        <carbon.config.version.range>[2.0.0, 3.0.0)</carbon.config.version.range>
+        <!--Transport-->
+        <carbon.messaging.version>3.0.0</carbon.messaging.version>
+        <carbon.transport.version>5.0.0-m1</carbon.transport.version>
 
         <!--Metrics-->
         <carbon.metrics.version>2.3.0</carbon.metrics.version>
@@ -339,9 +343,27 @@
         <slf4j.log4j.version>1.6.0</slf4j.log4j.version>
         <slf4j.log4j.version.range>[1.6.0, 2.0.0)</slf4j.log4j.version.range>
 
+        <!--Gson-->
+        <gson.version>2.6.2</gson.version>
+        <gson.version.range>[2.6.2, 3.0.0)</gson.version.range>
         <!--Snake YAML-->
         <org.snakeyaml.version>1.17</org.snakeyaml.version>
         <org.yaml.version.range>[1.17.0, 2.0.0)</org.yaml.version.range>
+
+        <!--Maven Plugin-->
+        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
+        <maven.exec.plugin.version>1.5.0</maven.exec.plugin.version>
+
+        <!--Character encoding for source files-->
+        <!--See: https://maven.apache.org/general.html#encoding-warning-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Can't run tests from IntelliJ IDEA without this. -->
+        <!-- One need to explicitly define this on bundle's pom.xml to add resources into its OSGi bundle. -->
+        <include.resource />
+
+        <!-- Release plugin ID for GitHub-->
+        <project.scm.id>github-scm</project.scm.id>
     </properties>
 
     <scm>
@@ -352,41 +374,8 @@
     </scm>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.1</version>
-            </extension>
-        </extensions>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-scr-plugin</artifactId>
-                    <version>1.7.2</version>
-                    <executions>
-                        <execution>
-                            <id>generate-scr-descriptor</id>
-                            <goals>
-                                <goal>scr</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <obrRepository>NONE</obrRepository>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.3</version>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
@@ -396,15 +385,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>${maven.antrunplugin.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>org.wso2.carbon.maven</groupId>
                     <artifactId>carbon-feature-plugin</artifactId>
                     <version>${carbon.feature.plugin.version}</version>
@@ -412,7 +392,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.5.0</version>
+                    <version>${maven.exec.plugin.version}</version>
                     <executions>
                         <execution>
                             <id>npm install (initialize)</id>
@@ -473,90 +453,9 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
-                    <groupId>com.soebes.maven.plugins</groupId>
-                    <artifactId>iterator-maven-plugin</artifactId>
-                    <version>0.5.1</version>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
-    <repositories>
-        <repository>
-            <id>wso2-nexus</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
-
-        <repository>
-            <id>wso2.releases</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
-
-        <repository>
-            <id>wso2.snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-
-        <pluginRepository>
-            <id>wso2.releases</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </pluginRepository>
-
-        <pluginRepository>
-            <id>wso2.snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-
-        <pluginRepository>
-            <id>wso2-nexus</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </pluginRepository>
-
-    </pluginRepositories>
 
     <profiles>
         <profile>
