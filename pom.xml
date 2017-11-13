@@ -297,18 +297,18 @@
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
-        <carbon.datasource.core.version.range>[1.0.0, 2.0.0)</carbon.datasource.core.version.range>
+        <carbon.datasource.core.version.range>[1.1.2, 2.0.0)</carbon.datasource.core.version.range>
         <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
 
         <!--Config-->
         <carbon.config.version>2.0.3</carbon.config.version>
+        <carbon.config.version.range>[2.0.3, 3.0.0)</carbon.config.version.range>
         <carbon.securevault.version>5.0.8</carbon.securevault.version>
         <carbon.utils.version>2.0.2</carbon.utils.version>
-        <carbon.config.version.range>[2.0.0, 3.0.0)</carbon.config.version.range>
 
         <!--UI Server-->
         <carbon.ui.server.version>0.9.1</carbon.ui.server.version>
-        <carbon.ui.sever.version.range>[0.0.0,1.0.0]</carbon.ui.sever.version.range>
+        <carbon.ui.sever.version.range>[0.9.1, 1.0.0]</carbon.ui.sever.version.range>
 
         <!--MSF4J-->
         <msf4j-core.version>2.3.0-m2</msf4j-core.version>
@@ -339,7 +339,7 @@
 
         <!--Logging-->
         <slf4j.version>1.7.5</slf4j.version>
-        <slf4j.version.range>[1.7,2)</slf4j.version.range>
+        <slf4j.version.range>[1.7, 2)</slf4j.version.range>
         <slf4j.log4j.version>1.6.0</slf4j.log4j.version>
         <slf4j.log4j.version.range>[1.6.0, 2.0.0)</slf4j.log4j.version.range>
 
