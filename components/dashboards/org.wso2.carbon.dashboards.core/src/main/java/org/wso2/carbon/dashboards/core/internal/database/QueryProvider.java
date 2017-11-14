@@ -17,15 +17,16 @@
  */
 package org.wso2.carbon.dashboards.core.internal.database;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
+import org.wso2.carbon.dashboards.core.bean.QueryConfiguration;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Properties;
+import java.util.List;
 
 /**
  * Provides SQl queries.
@@ -41,38 +42,55 @@ public class QueryProvider {
     public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
     public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
     public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
-    private static final String FILE_DEFAULT_SQL_QUERIES = "default-sql-queries.properties";
-    private static final Logger LOGGER = LoggerFactory.getLogger(QueryProvider.class);
+    private static final String FILE_SQL_QUERIES = "sql-queries.yaml";
 
-    private final Map<String, String> queries;
+    private final List<QueryConfiguration> queries;
 
     public QueryProvider(DashboardConfigurations dashboardConfigurations) {
         this.queries = readConfigs(dashboardConfigurations);
     }
 
     @SuppressWarnings("unchecked, rawtypes")
-    private Map<String, String> readConfigs(DashboardConfigurations dashboardConfigurations) {
-        Properties defaultSqlQueries = new Properties();
-        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(FILE_DEFAULT_SQL_QUERIES)) {
+    private List<QueryConfiguration> readConfigs(DashboardConfigurations dashboardConfigurations) {
+        List queries;
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(FILE_SQL_QUERIES)) {
             if (inputStream == null) {
-                throw new DashboardRuntimeException(
-                        "Cannot find file '" + FILE_DEFAULT_SQL_QUERIES + "' in class path.");
+                throw new DashboardRuntimeException("Cannot find file '" + FILE_SQL_QUERIES + "' in class path.");
             }
-            defaultSqlQueries.load(inputStream);
-        } catch (IllegalArgumentException e) {
-            throw new DashboardRuntimeException("Property file '" + FILE_DEFAULT_SQL_QUERIES + "' is invalid.", e);
+            Yaml yaml = new Yaml(new OsgiClassLoaderConstructor());
+            yaml.setBeanAccess(BeanAccess.FIELD);
+            queries = yaml.loadAs(inputStream, DashboardConfigurations.class).getQueries();
         } catch (IOException e) {
-            throw new DashboardRuntimeException("Cannot read property file '" + FILE_DEFAULT_SQL_QUERIES + "'.", e);
+            throw new DashboardRuntimeException("Cannot read YAML file '" + FILE_SQL_QUERIES + "' from classpath.", e);
+        } catch (Exception e) {
+            throw new DashboardRuntimeException("YAML file '" + FILE_SQL_QUERIES + "' is invalid.", e);
         }
 
         // TODO: 11/10/17 Merge default SQL queries with DashboardConfigurations.getQueries()
-        return (Map) defaultSqlQueries;
+        return queries;
     }
 
     public String getQuery(String key) {
-        if (!this.queries.containsKey(key)) {
-            throw new DashboardRuntimeException("Cannot find the SQl query for key '" + key + "'.");
+        final String dbType = "h2";
+        QueryConfiguration queryConfiguration = queries.stream()
+                .filter(config -> dbType.equals(config.getType()))
+                .findFirst()
+                .orElseThrow(() -> new DashboardRuntimeException(
+                        "Cannot find SQL query configuration for database type '" + dbType + "'."));
+        return queryConfiguration.getQuery(key)
+                .orElseThrow(() -> new DashboardRuntimeException("Cannot find the SQl query for key '" + key + "'."));
+    }
+
+    /**
+     * YAML constructor that loads classes in an OSGi environment.
+     *
+     * @since 4.0.0
+     */
+    private static class OsgiClassLoaderConstructor extends Constructor {
+
+        @Override
+        protected Class<?> getClassForName(String name) throws ClassNotFoundException {
+            return Class.forName(name, true, this.getClass().getClassLoader());
         }
-        return this.queries.get(key);
     }
 }
