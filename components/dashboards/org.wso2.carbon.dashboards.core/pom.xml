@@ -58,6 +58,11 @@
             <groupId>org.wso2.carbon.uis</groupId>
             <artifactId>org.wso2.carbon.uis</artifactId>
         </dependency>
+        <!--Snake YAML-->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -85,7 +90,8 @@
                             javax.sql.*,
                             org.wso2.carbon.config.*;version="${carbon.config.version.range}",
                             org.wso2.carbon.uis.spi.*;version="${carbon.ui.sever.version.range}",
-                            org.wso2.carbon.uis.api.*;version="${carbon.ui.sever.version.range}"
+                            org.wso2.carbon.uis.api.*;version="${carbon.ui.sever.version.range}",
+                            org.yaml.snakeyaml.*; version="${org.yaml.version.range}"
                         </Import-Package>
                         <Export-Package>
                             org.wso2.carbon.dashboards.core.*;version="${carbon.dashboards.version}",
