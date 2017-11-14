@@ -217,6 +217,12 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
+            <!--Snake YAML-->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${org.snakeyaml.version}</version>
+            </dependency>
 
             <!--Samples-->
             <dependency>
@@ -332,6 +338,10 @@
         <slf4j.version.range>[1.7,2)</slf4j.version.range>
         <slf4j.log4j.version>1.6.0</slf4j.log4j.version>
         <slf4j.log4j.version.range>[1.6.0, 2.0.0)</slf4j.log4j.version.range>
+
+        <!--Snake YAML-->
+        <org.snakeyaml.version>1.17</org.snakeyaml.version>
+        <org.yaml.version.range>[1.17.0, 2.0.0)</org.yaml.version.range>
     </properties>
 
     <scm>
