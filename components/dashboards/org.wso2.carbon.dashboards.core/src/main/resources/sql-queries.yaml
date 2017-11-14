@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+#
+# WSO2 Inc. licenses this file to you under the Apache License,
+# Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+queries:
+  - type: h2
+    version: null
+    mappings:
+      add_dashboard: INSERT INTO DASHBOARD_RESOURCE (DASHBOARD_URL, DASHBOARD_NAME, DASHBOARD_DESCRIPTION, DASHBOARD_PARENT_ID , DASHBOARD_LANDING_PAGE, DASHBOARD_CONTENT) VALUES (?, ?, ?, ?, ?, ?)
+      get_dashboard_by_url: SELECT DASHBOARD_ID, DASHBOARD_URL, DASHBOARD_NAME, DASHBOARD_DESCRIPTION, DASHBOARD_PARENT_ID, DASHBOARD_LANDING_PAGE, DASHBOARD_CONTENT FROM DASHBOARD_RESOURCE WHERE DASHBOARD_URL = ?
+      get_dashboard_metadata_list: SELECT DASHBOARD_ID, DASHBOARD_URL, DASHBOARD_NAME, DASHBOARD_DESCRIPTION, DASHBOARD_PARENT_ID, DASHBOARD_LANDING_PAGE FROM DASHBOARD_RESOURCE
+      delete_dashboard_by_url: DELETE FROM DASHBOARD_RESOURCE WHERE DASHBOARD_URL = ?
+      update_dashboard_content: MERGE INTO DASHBOARD_RESOURCE (DASHBOARD_NAME, DASHBOARD_DESCRIPTION, DASHBOARD_CONTENT, DASHBOARD_URL, DASHBOARD_PARENT_ID, DASHBOARD_LANDING_PAGE) KEY(DASHBOARD_URL) VALUES( ?, ?, ?, ?, ?, ?)
