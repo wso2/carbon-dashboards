@@ -297,6 +297,13 @@
                 <version>${junit.jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
+            <!--Mockito-->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.core.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -360,6 +367,8 @@
 
         <!--JUnit-->
         <junit.jupiter.version>5.0.2</junit.jupiter.version>
+        <!--Mockito-->
+        <mockito.core.version>2.11.0</mockito.core.version>
 
         <!--Maven Plugin-->
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
