@@ -34,7 +34,7 @@ import static org.wso2.carbon.dashboards.core.internal.database.QueryProvider.DE
 public class QueryProviderTest {
 
     @Test
-    void getQueryWithInvalidParams() {
+    void testGetQueryWithInvalidParams() {
         QueryProvider queryProvider = new QueryProvider(new DashboardConfigurations());
         Assertions.assertThrows(DashboardRuntimeException.class, () -> queryProvider.getQuery("foo", null, null));
         Assertions.assertThrows(DashboardRuntimeException.class,
@@ -44,14 +44,14 @@ public class QueryProviderTest {
     }
 
     @Test
-    void getQueryWithParams() {
+    void testGetQueryWithParams() {
         QueryProvider queryProvider = new QueryProvider(new DashboardConfigurations());
         String query = queryProvider.getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, "add_dashboard");
         Assertions.assertNotNull(query, "SQL query cannot be null");
     }
 
     @Test
-    void getQuery() {
+    void testGetQuery() {
         QueryProvider queryProvider = new QueryProvider(new DashboardConfigurations());
         String query = queryProvider.getQuery("add_dashboard");
         Assertions.assertNotNull(query, "SQL query cannot be null");
