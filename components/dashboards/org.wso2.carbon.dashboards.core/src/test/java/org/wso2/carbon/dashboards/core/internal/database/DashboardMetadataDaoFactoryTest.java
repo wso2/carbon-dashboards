@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 public class DashboardMetadataDaoFactoryTest {
 
     @Test
-    void createDaoWhenDataSourceServiceThrowException() throws Exception {
+    void testCreateDaoWhenDataSourceServiceThrowException() throws Exception {
         DataSourceService dataSourceService = mock(DataSourceService.class);
         when(dataSourceService.getDataSource(anyString())).thenThrow(DataSourceException.class);
         ConfigProvider configProvider = mock(ConfigProvider.class);
@@ -52,7 +52,7 @@ public class DashboardMetadataDaoFactoryTest {
     }
 
     @Test
-    void createDaoWhenConfigProviderThrowException() throws Exception {
+    void testCreateDaoWhenConfigProviderThrowException() throws Exception {
         DataSource dataSource = mock(DataSource.class);
         DataSourceService dataSourceService = mock(DataSourceService.class);
         when(dataSourceService.getDataSource(anyString())).thenReturn(dataSource);
@@ -66,7 +66,7 @@ public class DashboardMetadataDaoFactoryTest {
     }
 
     @Test
-    void createDaoSuccess() throws Exception {
+    void testCreateDaoSuccess() throws Exception {
         DataSource dataSource = mock(DataSource.class);
         DataSourceService dataSourceService = mock(DataSourceService.class);
         when(dataSourceService.getDataSource(anyString())).thenReturn(dataSource);
