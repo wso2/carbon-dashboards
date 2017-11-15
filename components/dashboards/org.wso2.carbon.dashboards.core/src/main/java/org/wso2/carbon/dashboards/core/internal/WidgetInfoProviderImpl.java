@@ -17,7 +17,6 @@
  */
 package org.wso2.carbon.dashboards.core.internal;
 
-import com.google.gson.Gson;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
 public class WidgetInfoProviderImpl implements WidgetInfoProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetInfoProviderImpl.class);
-    private static final Gson GSON = new Gson();
     private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
 
