@@ -48,10 +48,6 @@ public class QueryConfiguration {
         return version;
     }
 
-    public Map<String, String> getMappings() {
-        return mappings;
-    }
-
     public Optional<String> getQuery(String key) {
         return Optional.ofNullable(mappings.get(key));
     }

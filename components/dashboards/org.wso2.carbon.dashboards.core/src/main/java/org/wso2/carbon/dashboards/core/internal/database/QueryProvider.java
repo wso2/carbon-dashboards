@@ -27,6 +27,7 @@ import org.yaml.snakeyaml.introspector.BeanAccess;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Provides SQl queries.
@@ -42,6 +43,8 @@ public class QueryProvider {
     public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
     public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
     public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
+    public static final String DEFAULT_DB_TYPE = "h2";
+    public static final String DEFAULT_DB_VERSION = "1.2.140";
     private static final String FILE_SQL_QUERIES = "sql-queries.yaml";
 
     private final List<QueryConfiguration> queries;
@@ -70,10 +73,15 @@ public class QueryProvider {
         return queries;
     }
 
-    public String getQuery(String key) {
-        final String dbType = "h2";
+    @Deprecated
+    public String getQuery(String key) throws DashboardRuntimeException {
+        return getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, key);
+    }
+
+    public String getQuery(String dbType, String dbVersion, String key) throws DashboardRuntimeException {
         QueryConfiguration queryConfiguration = queries.stream()
-                .filter(config -> dbType.equals(config.getType()))
+                .filter(queryConfig -> Objects.equals(dbType, queryConfig.getType()) &&
+                                       Objects.equals(dbVersion, queryConfig.getVersion()))
                 .findFirst()
                 .orElseThrow(() -> new DashboardRuntimeException(
                         "Cannot find SQL query configuration for database type '" + dbType + "'."));
