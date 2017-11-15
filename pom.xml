@@ -289,6 +289,14 @@
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
             </dependency>
+
+            <!--JUnit-->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -349,6 +357,9 @@
         <!--Snake YAML-->
         <org.snakeyaml.version>1.17</org.snakeyaml.version>
         <org.yaml.version.range>[1.17.0, 2.0.0)</org.yaml.version.range>
+
+        <!--JUnit-->
+        <junit.jupiter.version>5.0.2</junit.jupiter.version>
 
         <!--Maven Plugin-->
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
