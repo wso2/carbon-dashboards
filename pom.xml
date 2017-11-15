@@ -373,6 +373,7 @@
         <!--Maven Plugin-->
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.exec.plugin.version>1.5.0</maven.exec.plugin.version>
+        <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
 
         <!--Character encoding for source files-->
         <!--See: https://maven.apache.org/general.html#encoding-warning-->
@@ -469,6 +470,35 @@
                                     <argument>run</argument>
                                     <argument>build</argument>
                                 </arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.maven.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>default-prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-check</id>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <configuration>
+                                <rules><!--no rules--></rules>
                             </configuration>
                         </execution>
                     </executions>
