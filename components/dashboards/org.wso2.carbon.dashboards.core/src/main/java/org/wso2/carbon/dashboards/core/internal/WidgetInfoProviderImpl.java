@@ -94,13 +94,6 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
                 .collect(Collectors.toSet());
     }
 
-    @Override
-    public Set<WidgetMetaInfo> getWidgetsMetaInfo() throws DashboardRuntimeException {
-        return getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
-                .map(this::toWidgetMetaInfo)
-                .collect(Collectors.toSet());
-    }
-
     private App getDashboardApp() {
         return uiServer.getApp(APP_NAME_DASHBOARD)
                 .orElseThrow(() -> new DashboardRuntimeException(
@@ -119,15 +112,5 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
             throw new DashboardRuntimeException(
                     "Configuration file '" + widgetConfPath + "' of widget '" + extension.getName() + "' is invalid.");
         }
-    }
-
-    @Override
-    public Optional<String> getWidgetConf(String widgetId) {
-        return Optional.ofNullable("");
-    }
-
-    @Override
-    public Optional<Path> getThumbnail(String widgetId) {
-        return Optional.empty();
     }
 }

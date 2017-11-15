@@ -21,7 +21,6 @@ package org.wso2.carbon.dashboards.core;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 
-import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 
@@ -48,13 +47,4 @@ public interface WidgetInfoProvider {
      * @throws DashboardRuntimeException if an error occurred when reading or processing configurations
      */
     Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardRuntimeException;
-
-    @Deprecated
-    Set<WidgetMetaInfo> getWidgetsMetaInfo();
-
-    @Deprecated
-    Optional<String> getWidgetConf(String widgetId);
-
-    @Deprecated
-    Optional<Path> getThumbnail(String widgetId);
 }
