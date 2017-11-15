@@ -18,7 +18,6 @@
 package org.wso2.carbon.dashboards.core.internal;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -31,15 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
 import org.wso2.carbon.uis.api.App;
-import org.wso2.carbon.uis.api.Extension;
 import org.wso2.carbon.uis.spi.Server;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -57,7 +51,19 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
     private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
 
+    private final WidgetConfigurationReader widgetConfigurationReader;
     private Server uiServer;
+
+    /**
+     * Creates a new widget info provider.
+     */
+    public WidgetInfoProviderImpl() {
+        this(new WidgetConfigurationReader());
+    }
+
+    WidgetInfoProviderImpl(WidgetConfigurationReader widgetConfigurationReader) {
+        this.widgetConfigurationReader = widgetConfigurationReader;
+    }
 
     @Activate
     protected void activate(BundleContext bundleContext) {
@@ -84,13 +90,13 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
     @Override
     public Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetName) throws DashboardRuntimeException {
         return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetName)
-                .map(this::toWidgetMetaInfo);
+                .map(widgetConfigurationReader::getConfiguration);
     }
 
     @Override
     public Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardRuntimeException {
         return getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
-                .map(this::toWidgetMetaInfo)
+                .map(widgetConfigurationReader::getConfiguration)
                 .collect(Collectors.toSet());
     }
 
@@ -98,19 +104,5 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
         return uiServer.getApp(APP_NAME_DASHBOARD)
                 .orElseThrow(() -> new DashboardRuntimeException(
                         "Cannot find dashboard web app named '" + APP_NAME_DASHBOARD + "'."));
-    }
-
-    private WidgetMetaInfo toWidgetMetaInfo(Extension extension) {
-        Path widgetConfPath = Paths.get(extension.getPath(), "widgetConf.json");
-        try {
-            String widgetConf = new String(Files.readAllBytes(widgetConfPath), StandardCharsets.UTF_8);
-            return GSON.fromJson(widgetConf, WidgetMetaInfo.class);
-        } catch (IOException e) {
-            throw new DashboardRuntimeException(
-                    "Cannot read configuration file '" + widgetConfPath + "' of widget '" + extension.getName() + "'.");
-        } catch (JsonSyntaxException e) {
-            throw new DashboardRuntimeException(
-                    "Configuration file '" + widgetConfPath + "' of widget '" + extension.getName() + "' is invalid.");
-        }
     }
 }
