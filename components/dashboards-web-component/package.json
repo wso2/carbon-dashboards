@@ -25,6 +25,7 @@
     "golden-layout": "^1.5.9",
     "html-loader": "^0.5.0",
     "material-ui": "^0.19.0",
+    "prop-types": "^15.6.0",
     "qs": "^6.5.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
