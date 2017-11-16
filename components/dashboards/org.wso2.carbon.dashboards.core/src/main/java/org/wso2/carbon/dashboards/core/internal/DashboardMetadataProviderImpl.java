@@ -32,6 +32,7 @@ import org.wso2.carbon.analytics.permissions.PermissionManager;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.analytics.permissions.bean.Permission;
 import org.wso2.carbon.analytics.permissions.bean.Role;
+import org.wso2.carbon.analytics.permissions.exceptions.PermissionException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
@@ -72,8 +73,9 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     public DashboardMetadataProviderImpl() {
     }
 
-    DashboardMetadataProviderImpl(DashboardMetadataDao dao) {
+    DashboardMetadataProviderImpl(DashboardMetadataDao dao, PermissionProvider permissionProvider) {
         this.dao = dao;
+        this.permissionProvider = permissionProvider;
     }
 
     @Activate
@@ -166,14 +168,18 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public Map<String, List<Role>> getDashboardRoles(String dashboardUrl) {
+    public Map<String, List<Role>> getDashboardRoles(String dashboardUrl) throws DashboardException {
         Map<String, List<Role>> roles = new HashMap<>();
-        roles.put("owners", permissionProvider.getGrantedRoles(
-                new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".owner")));
-        roles.put("editors", permissionProvider.getGrantedRoles(
-                new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".editor")));
-        roles.put("viewers", permissionProvider.getGrantedRoles(
-                new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".viewer")));
+        try {
+            roles.put("owners", permissionProvider.getGrantedRoles(
+                    new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".owner")));
+            roles.put("editors", permissionProvider.getGrantedRoles(
+                    new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".editor")));
+            roles.put("viewers", permissionProvider.getGrantedRoles(
+                    new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".viewer")));
+        } catch (PermissionException e) {
+            throw new DashboardException("Unable to get roles for the dashboard '" + dashboardUrl + "'", e);
+        }
         return roles;
     }
 
