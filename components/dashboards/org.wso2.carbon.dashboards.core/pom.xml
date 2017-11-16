@@ -97,6 +97,16 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
+        
+        <!-- Permission provider -->
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.analytics.idp.client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -126,7 +136,9 @@
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
             com.google.gson.*; version="${gson.version.range}",
-            org.yaml.snakeyaml.*; version="${org.yaml.version.range}"
+            org.yaml.snakeyaml.*; version="${org.yaml.version.range}",
+            org.wso2.carbon.analytics.permissions.*,
+            org.wso2.carbon.analytics.idp.client.*,
         </import.package>
         <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
     </properties>
