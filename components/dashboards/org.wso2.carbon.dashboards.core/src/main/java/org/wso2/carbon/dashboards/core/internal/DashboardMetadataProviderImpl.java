@@ -52,6 +52,16 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     private DataSourceService dataSourceService;
     private ConfigProvider configProvider;
 
+    /**
+     * Creates a new dashboard data provider.
+     */
+    public DashboardMetadataProviderImpl() {
+    }
+
+    DashboardMetadataProviderImpl(DashboardMetadataDao dao) {
+        this.dao = dao;
+    }
+
     @Activate
     protected void activate(BundleContext bundleContext) {
         try {
