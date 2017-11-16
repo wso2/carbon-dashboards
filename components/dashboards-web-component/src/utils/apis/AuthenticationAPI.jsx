@@ -19,6 +19,7 @@
 
 import Axios from 'axios';
 import Qs from 'qs';
+import { MediaType } from '../Constants';
 
 // TODO: Get following configurations from the deployment.yaml at the backend.
 /**
@@ -29,7 +30,6 @@ const constants = {
     basePath: window.location.origin,
     grantTypePassword: 'password',
     appContext: window.contextPath.substr(1),
-    authorizationHeader: 'Basic YWRtaW46YWRtaW4=',
 };
 
 /**
@@ -46,7 +46,7 @@ export default class AuthenticationAPI {
             baseURL: constants.basePath,
             timeout: 2000,
         });
-        client.defaults.headers.post['Content-Type'] = 'application/json';
+        client.defaults.headers.post['Content-Type'] = MediaType.APPLICATION_JSON;
         return client;
     }
 
@@ -68,8 +68,7 @@ export default class AuthenticationAPI {
                 rememberMe,
             }), {
                 headers: {
-                    Authorization: constants.authorizationHeader,
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': MediaType.APPLICATION_WWW_FORM_URLENCODED,
                 },
             });
     }
@@ -77,14 +76,15 @@ export default class AuthenticationAPI {
     /**
      * Logout user.
      *
+     * @param {string} token Partial access token
      * @return {AxiosPromise} Axios promise
      */
-    static logout() {
+    static logout(token) {
         return AuthenticationAPI
             .getHttpClient()
             .post(`/logout/${constants.appContext}`, null, {
                 headers: {
-                    Authorization: constants.authorizationHeader,
+                    Authorization: `Bearer ${token}`,
                 },
             });
     }

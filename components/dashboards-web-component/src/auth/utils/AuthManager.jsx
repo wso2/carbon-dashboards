@@ -75,10 +75,10 @@ export default class AuthManager {
         return new Promise((resolve, reject) => {
             AuthenticationAPI
                 .login(username, password, rememberMe)
-                .then(() => {
+                .then((response) => {
                     // TODO: Get user roles from the SCIM API.
                     const roles = [];
-                    AuthManager.setUser({ username, rememberMe, roles });
+                    AuthManager.setUser({ username, rememberMe, roles, token: response.data.partialAccessToken });
                     resolve();
                 })
                 .catch(error => reject(error));
@@ -93,7 +93,7 @@ export default class AuthManager {
     static logout() {
         return new Promise((resolve, reject) => {
             AuthenticationAPI
-                .logout()
+                .logout(AuthManager.getUser().token)
                 .then(() => {
                     AuthManager.clearUser();
                     resolve();
@@ -107,7 +107,7 @@ export default class AuthManager {
      *
      * @param {string} name Name of the cookie
      * @param {string} value Value of the cookie
-     * @param {number} expiresIn Expires in
+     * @param {number} expiresIn Number of milliseconds to expire the cookie
      */
     static setSessionCookie(name, value, expiresIn) {
         let expires = '';
