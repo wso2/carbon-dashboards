@@ -1,0 +1,10 @@
+{
+    "name": "LineChart",
+    "id": "LineChart",
+    "thumbnailURL": "http://example.com/thumbnail.png",
+    "configs": {
+        "pubsub": {
+            "types": ["publisher"]
+        }
+    }
+}
