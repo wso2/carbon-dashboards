@@ -37,7 +37,7 @@ public class WidgetConfigurationReaderTest {
     void testGetConfigurationWhenConfigurationFileAbsent() {
         Extension widget = new Extension("foo", EXTENSION_TYPE_WIDGETS, "/bar");
         Assertions.assertThrows(DashboardRuntimeException.class,
-                                () -> new WidgetConfigurationReader().getConfiguration(widget));
+                                () -> WidgetConfigurationReader.getConfiguration(widget));
     }
 
     @Test
@@ -45,14 +45,14 @@ public class WidgetConfigurationReaderTest {
         Extension widget = new Extension("CorruptedLineChart", EXTENSION_TYPE_WIDGETS,
                                          "src/test/resources/CorruptedLineChart");
         Assertions.assertThrows(DashboardRuntimeException.class,
-                                () -> new WidgetConfigurationReader().getConfiguration(widget));
+                                () -> WidgetConfigurationReader.getConfiguration(widget));
     }
 
     @Test
     void testGetConfiguration() {
         final String widgetName = "LineChart";
         Extension widget = new Extension(widgetName, EXTENSION_TYPE_WIDGETS, "src/test/resources/" + widgetName);
-        WidgetMetaInfo widgetMetaInfo = new WidgetConfigurationReader().getConfiguration(widget);
+        WidgetMetaInfo widgetMetaInfo = WidgetConfigurationReader.getConfiguration(widget);
 
         Assertions.assertEquals(widgetMetaInfo.getId(), widgetName);
         Assertions.assertEquals(widgetMetaInfo.getName(), widgetName);

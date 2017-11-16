@@ -20,9 +20,7 @@ package org.wso2.carbon.dashboards.core.internal;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
-import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
 import org.wso2.carbon.uis.api.App;
 import org.wso2.carbon.uis.api.Extension;
 import org.wso2.carbon.uis.spi.Server;
@@ -30,7 +28,6 @@ import org.wso2.carbon.uis.spi.Server;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -85,7 +82,7 @@ public class WidgetInfoProviderImplTest {
     }
 
     private static App createPortalApp() {
-        Extension chartWidget = new Extension("LineChart", "widgets", null);
+        Extension chartWidget = new Extension("LineChart", "widgets", "src/test/resources/LineChart");
         return new App("portal", "/portal", Collections.emptySortedSet(), Collections.singleton(chartWidget),
                        Collections.emptySet(), null, null, null);
     }
@@ -94,9 +91,7 @@ public class WidgetInfoProviderImplTest {
         App portalApp = createPortalApp();
         Server server = mock(Server.class);
         when(server.getApp(eq(portalApp.getName()))).thenReturn(Optional.of(portalApp));
-        WidgetConfigurationReader widgetConfigurationReader = mock(WidgetConfigurationReader.class);
-        when(widgetConfigurationReader.getConfiguration(any(Extension.class))).thenReturn(new WidgetMetaInfo());
-        WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl(widgetConfigurationReader);
+        WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl();
         widgetInfoProvider.setCarbonUiServer(server);
         return widgetInfoProvider;
     }
