@@ -17,29 +17,78 @@
  *
  */
 
-import React, {Component} from 'react';
-// Material UI
-import AppBar from 'material-ui/AppBar/AppBar';
-// CSS
-import './Header.css';
+import { AppBar, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import AuthManager from '../../auth/utils/AuthManager';
 
 import './Header.css';
 
+/**
+ * Header component.
+ */
 export default class Header extends Component {
+    /**
+     * Render right side header links.
+     *
+     * @returns {XML} HTML content
+     */
+    renderRightLinks() {
+        if (this.props.hideUserSettings) {
+            return <div />;
+        }
+
+        // If the user is not set show the login button. Else show account information.
+        const user = AuthManager.getUser();
+        if (!user) {
+            return (
+                <FlatButton
+                    label="Login"
+                    containerElement={<Link to={`${window.contextPath}/login?referrer=${window.location.pathname}`} />}
+                />
+            );
+        }
+
+        return (
+            <div className="header-right-btn-group">
+                <span className="acc-name">{user.username}</span>
+                <IconMenu
+                    iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+                    targetOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+                >
+                    <MenuItem
+                        primaryText="Logout"
+                        containerElement={<Link to={`${window.contextPath}/logout`} />}
+                    />
+                </IconMenu>
+            </div>
+        );
+    }
+
+    /**
+     * Render the component.
+     *
+     * @returns {XML} HTML content
+     */
     render() {
         return (
             <AppBar
                 title={this.props.title}
-                iconElementLeft={<i className="icon fw fw-wso2-logo header-icon"></i>}
+                iconElementLeft={<i className="icon fw fw-wso2-logo header-icon" />}
+                iconElementRight={this.renderRightLinks()}
             />
         );
     }
 }
 
 Header.propTypes = {
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    hideUserSettings: React.PropTypes.bool,
 };
 
 Header.defaultProps = {
-    title: 'Portal'
+    title: 'Portal',
+    hideUserSettings: false,
 };
