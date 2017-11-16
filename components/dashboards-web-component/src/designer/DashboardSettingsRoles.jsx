@@ -172,7 +172,6 @@ export default class DashboardSettingsRoles extends Component {
      * @returns {Promise} Promise
      */
     saveRoles() {
-        alert('saving roles');
         const { roles } = this.state;
         const obj = {
             owner: roles.owners.current,
