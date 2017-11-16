@@ -49,19 +49,7 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
     private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
 
-    private final WidgetConfigurationReader widgetConfigurationReader;
     private Server uiServer;
-
-    /**
-     * Creates a new widget info provider.
-     */
-    public WidgetInfoProviderImpl() {
-        this(new WidgetConfigurationReader());
-    }
-
-    WidgetInfoProviderImpl(WidgetConfigurationReader widgetConfigurationReader) {
-        this.widgetConfigurationReader = widgetConfigurationReader;
-    }
 
     @Activate
     protected void activate(BundleContext bundleContext) {
@@ -88,13 +76,13 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
     @Override
     public Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetName) throws DashboardRuntimeException {
         return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetName)
-                .map(widgetConfigurationReader::getConfiguration);
+                .map(WidgetConfigurationReader::getConfiguration);
     }
 
     @Override
     public Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardRuntimeException {
         return getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
-                .map(widgetConfigurationReader::getConfiguration)
+                .map(WidgetConfigurationReader::getConfiguration)
                 .collect(Collectors.toSet());
     }
 
