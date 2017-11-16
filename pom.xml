@@ -310,11 +310,25 @@
                 <version>${mockito.core.version}</version>
                 <scope>test</scope>
             </dependency>
+                
+            <!-- Analytics common -->
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.analytics.idp.client</artifactId>
+                <version>${carbon.analytics-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
+                <version>${carbon.analytics-common.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <properties>
         <carbon.dashboards.version>4.0.0.alpha4-SNAPSHOT</carbon.dashboards.version>
+
+        <carbon.analytics-common.version>6.0.9-SNAPSHOT</carbon.analytics-common.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
