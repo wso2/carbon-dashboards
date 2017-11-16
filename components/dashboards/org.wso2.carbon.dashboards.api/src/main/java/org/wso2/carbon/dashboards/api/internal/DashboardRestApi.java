@@ -56,8 +56,8 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
  * @since 4.0.0
  */
 @Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
-        service = Microservice.class,
-        immediate = true)
+           service = Microservice.class,
+           immediate = true)
 @Path("/apis/dashboards")
 public class DashboardRestApi implements Microservice {
 
@@ -195,12 +195,11 @@ public class DashboardRestApi implements Microservice {
             List<Role> allRoles = dashboardDataProvider.getAllRoles();
             return Response.ok()
                     .entity(allRoles)
-                    .type(MediaType.APPLICATION_JSON)
                     .build();
         } catch (DashboardException e) {
-            LOGGER.error("An error occurred while retrieving roles.", e);
+            LOGGER.error("Cannot retrieve user roles.", e);
             return Response.serverError()
-                    .entity("An error occurred while retrieving roles.")
+                    .entity("Cannot retrieve user roles.")
                     .build();
         }
     }
@@ -213,12 +212,11 @@ public class DashboardRestApi implements Microservice {
             List<Role> roles = dashboardDataProvider.getRolesByUsername(username);
             return Response.ok()
                     .entity(roles)
-                    .type(MediaType.APPLICATION_JSON)
                     .build();
         } catch (DashboardException e) {
-            LOGGER.error("An error occurred while retrieving user roles.", e);
+            LOGGER.error("Cannot retrieve user roles for '" + username + "'.", e);
             return Response.serverError()
-                    .entity("An error occurred while retrieving user roles.")
+                    .entity("Cannot retrieve user roles for '" + username + "'.")
                     .build();
         }
     }
@@ -227,10 +225,16 @@ public class DashboardRestApi implements Microservice {
     @Path("/{url}/roles")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDashboardRoles(@PathParam("url") String url) {
-        return Response.ok()
-                .entity(dashboardDataProvider.getDashboardRoles(url))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+        try {
+            return Response.ok()
+                    .entity(dashboardDataProvider.getDashboardRoles(url))
+                    .build();
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot retrieve roles for dashboard '" + url + "'", e);
+            return Response.serverError()
+                    .entity("Cannot retrieve roles for dashboard '" + url + "'")
+                    .build();
+        }
     }
 
     @POST
@@ -241,9 +245,9 @@ public class DashboardRestApi implements Microservice {
             dashboardDataProvider.updateDashboardRoles(url, roles);
             return Response.ok().build();
         } catch (DashboardException e) {
-            LOGGER.error("An error occurred while updating dashboard roles.", e);
+            LOGGER.error("Cannot update user roles of dashboard '" + url + "'.", e);
             return Response.serverError()
-                    .entity("An error occurred while updating dashboard roles.")
+                    .entity("Cannot update user roles of dashboard '" + url + "'.")
                     .build();
         }
     }

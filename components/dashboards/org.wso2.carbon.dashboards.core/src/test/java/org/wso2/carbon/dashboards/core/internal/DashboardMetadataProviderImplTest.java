@@ -52,7 +52,8 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         when(dao.get(eq("foo"))).thenReturn(Optional.of(new DashboardMetadata()));
         when(dao.get(eq("bar"))).thenReturn(Optional.empty());
-        DashboardMetadataProviderImpl dashboardMetadataProvider = new DashboardMetadataProviderImpl(dao);
+        DashboardMetadataProviderImpl dashboardMetadataProvider =
+                new DashboardMetadataProviderImpl(dao, new MockPermissionProvider());
 
         Assertions.assertTrue(dashboardMetadataProvider.get("foo").isPresent());
         Assertions.assertFalse(dashboardMetadataProvider.get("bar").isPresent());
@@ -63,7 +64,8 @@ public class DashboardMetadataProviderImplTest {
     void testGetAll() throws Exception {
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         when(dao.getAll()).thenReturn(Collections.singleton(new DashboardMetadata()));
-        DashboardMetadataProviderImpl dashboardMetadataProvider = new DashboardMetadataProviderImpl(dao);
+        DashboardMetadataProviderImpl dashboardMetadataProvider =
+                new DashboardMetadataProviderImpl(dao, new MockPermissionProvider());
 
         Assertions.assertEquals(dashboardMetadataProvider.getAll().size(), 1);
         verify(dao).getAll();
@@ -73,7 +75,8 @@ public class DashboardMetadataProviderImplTest {
     void testAdd() throws Exception {
         final DashboardMetadata dashboardMetadata = new DashboardMetadata();
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider = new DashboardMetadataProviderImpl(dao);
+        DashboardMetadataProviderImpl dashboardMetadataProvider =
+                new DashboardMetadataProviderImpl(dao, new MockPermissionProvider());
 
         dashboardMetadataProvider.add(dashboardMetadata);
         verify(dao).add(eq(dashboardMetadata));
@@ -83,7 +86,8 @@ public class DashboardMetadataProviderImplTest {
     void testUpdate() throws Exception {
         final DashboardMetadata dashboardMetadata = new DashboardMetadata();
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider = new DashboardMetadataProviderImpl(dao);
+        DashboardMetadataProviderImpl dashboardMetadataProvider =
+                new DashboardMetadataProviderImpl(dao, new MockPermissionProvider());
 
         dashboardMetadataProvider.update(dashboardMetadata);
         verify(dao).update(eq(dashboardMetadata));
@@ -93,7 +97,8 @@ public class DashboardMetadataProviderImplTest {
     void testDelete() throws Exception {
         final String dashboardUrl = "foo";
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider = new DashboardMetadataProviderImpl(dao);
+        DashboardMetadataProviderImpl dashboardMetadataProvider =
+                new DashboardMetadataProviderImpl(dao, new MockPermissionProvider());
 
         dashboardMetadataProvider.delete(dashboardUrl);
         verify(dao).delete(eq(dashboardUrl));

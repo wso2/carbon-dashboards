@@ -50,7 +50,7 @@ public interface DashboardMetadataProvider {
 
     void delete(String dashboardUrl) throws DashboardException;
 
-    Map<String, List<Role>> getDashboardRoles(String dashboardUrl);
+    Map<String, List<Role>> getDashboardRoles(String dashboardUrl) throws DashboardException;
 
     List<org.wso2.carbon.analytics.idp.client.core.models.Role> getAllRoles() throws DashboardException;
 
