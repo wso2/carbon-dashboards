@@ -204,7 +204,7 @@ public class DashboardMetadataDao {
         return dashboardMetadata;
     }
 
-    private static void closeQuietly(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
+    static void closeQuietly(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
         if (resultSet != null) {
             try {
                 resultSet.close();
@@ -228,7 +228,7 @@ public class DashboardMetadataDao {
         }
     }
 
-    private static void rollbackQuietly(Connection connection) {
+    static void rollbackQuietly(Connection connection) {
         if (connection != null) {
             try {
                 connection.rollback();
