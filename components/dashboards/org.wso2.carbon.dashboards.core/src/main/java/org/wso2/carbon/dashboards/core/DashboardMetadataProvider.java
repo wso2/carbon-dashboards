@@ -17,9 +17,12 @@
  */
 package org.wso2.carbon.dashboards.core;
 
+import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,4 +49,13 @@ public interface DashboardMetadataProvider {
     void update(DashboardMetadata dashboardMetadata) throws DashboardException;
 
     void delete(String dashboardUrl) throws DashboardException;
+
+    Map<String, List<Role>> getDashboardRoles(String dashboardUrl);
+
+    List<org.wso2.carbon.analytics.idp.client.core.models.Role> getAllRoles() throws DashboardException;
+
+    List<org.wso2.carbon.analytics.idp.client.core.models.Role> getRolesByUsername(String username)
+            throws DashboardException;
+
+    void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roles) throws DashboardException;
 }

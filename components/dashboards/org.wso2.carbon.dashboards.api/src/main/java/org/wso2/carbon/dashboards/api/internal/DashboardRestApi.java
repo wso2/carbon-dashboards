@@ -19,29 +19,20 @@
 package org.wso2.carbon.dashboards.api.internal;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.analytics.idp.client.core.models.Role;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Map;
 
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -52,8 +43,8 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
  * @since 4.0.0
  */
 @Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
-           service = Microservice.class,
-           immediate = true)
+        service = Microservice.class,
+        immediate = true)
 @Path("/apis/dashboards")
 public class DashboardRestApi implements Microservice {
 
@@ -72,10 +63,10 @@ public class DashboardRestApi implements Microservice {
     }
 
     @Reference(name = "dashboardMetadata",
-               service = DashboardMetadataProvider.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetMetadataProvider")
+            service = DashboardMetadataProvider.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetMetadataProvider")
     protected void setMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
         this.dashboardDataProvider = dashboardDataProvider;
     }
@@ -182,4 +173,66 @@ public class DashboardRestApi implements Microservice {
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
         }
     }
+
+    @GET
+    @Path("/roles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRoles() {
+        try {
+            List<Role> allRoles = dashboardDataProvider.getAllRoles();
+            return Response.ok()
+                    .entity(allRoles)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred while retrieving roles.", e);
+            return Response.serverError()
+                    .entity("An error occurred while retrieving roles.")
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/roles/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRolesByUsername(@PathParam("username") String username) {
+        try {
+            List<Role> roles = dashboardDataProvider.getRolesByUsername(username);
+            return Response.ok()
+                    .entity(roles)
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred while retrieving user roles.", e);
+            return Response.serverError()
+                    .entity("An error occurred while retrieving user roles.")
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/{url}/roles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDashboardRoles(@PathParam("url") String url) {
+        return Response.ok()
+                .entity(dashboardDataProvider.getDashboardRoles(url))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    @POST
+    @Path("/{url}/roles")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateDashboardRoles(@PathParam("url") String url, Map<String, List<String>> roles) {
+        try {
+            dashboardDataProvider.updateDashboardRoles(url, roles);
+            return Response.ok().build();
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred while updating dashboard roles.", e);
+            return Response.serverError()
+                    .entity("An error occurred while updating dashboard roles.")
+                    .build();
+        }
+    }
+
 }

@@ -26,6 +26,12 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
+import org.wso2.carbon.analytics.idp.client.core.exception.IdPClientException;
+import org.wso2.carbon.analytics.permissions.PermissionManager;
+import org.wso2.carbon.analytics.permissions.PermissionProvider;
+import org.wso2.carbon.analytics.permissions.bean.Permission;
+import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
@@ -35,6 +41,11 @@ import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDaoFactory;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,10 +58,13 @@ import java.util.Set;
 public class DashboardMetadataProviderImpl implements DashboardMetadataProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
+    private static final String PERMISSION_APP_NAME = "DASH";
 
     private DashboardMetadataDao dao;
     private DataSourceService dataSourceService;
     private ConfigProvider configProvider;
+    private PermissionProvider permissionProvider;
+    private IdPClient identityClient;
 
     /**
      * Creates a new dashboard data provider.
@@ -78,9 +92,9 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Reference(service = DataSourceService.class,
-               cardinality = ReferenceCardinality.AT_LEAST_ONE,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetDataSourceService")
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetDataSourceService")
     protected void setDataSourceService(DataSourceService dataSourceService) {
         this.dataSourceService = dataSourceService;
     }
@@ -90,15 +104,30 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Reference(service = ConfigProvider.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetConfigProvider")
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetConfigProvider")
     protected void setConfigProvider(ConfigProvider configProvider) {
         this.configProvider = configProvider;
     }
 
     protected void unsetConfigProvider(ConfigProvider configProvider) {
         this.configProvider = null;
+    }
+
+    @Reference(
+            name = "permission-manager",
+            service = PermissionManager.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetPermissionManager"
+    )
+    protected void setPermissionManager(PermissionManager permissionManager) {
+        this.permissionProvider = permissionManager.getProvider();
+    }
+
+    protected void unsetPermissionManager(PermissionManager permissionManager) {
+        this.permissionProvider = null;
     }
 
     @Override
@@ -116,6 +145,9 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
         // TODO: 11/10/17 validate parameters
         dao.add(dashboardMetadata);
+        for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
+            permissionProvider.addPermission(permission);
+        }
     }
 
     @Override
@@ -128,5 +160,99 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     public void delete(String dashboardUrl) throws DashboardException {
         // TODO: 11/10/17 validate parameters
         dao.delete(dashboardUrl);
+        for (Permission permission : buildDashboardPermissions(dashboardUrl)) {
+            permissionProvider.deletePermission(permission);
+        }
     }
+
+    @Override
+    public Map<String, List<Role>> getDashboardRoles(String dashboardUrl) {
+        Map<String, List<Role>> roles = new HashMap<>();
+        roles.put("owners", permissionProvider.getGrantedRoles(
+                new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".owner")));
+        roles.put("editors", permissionProvider.getGrantedRoles(
+                new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".editor")));
+        roles.put("viewers", permissionProvider.getGrantedRoles(
+                new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".viewer")));
+        return roles;
+    }
+
+    @Override
+    public List<org.wso2.carbon.analytics.idp.client.core.models.Role> getAllRoles() throws DashboardException {
+        try {
+            return identityClient.getAllRoles();
+        } catch (IdPClientException e) {
+            throw new DashboardException("Unable to get all user roles.", e);
+        }
+    }
+
+    @Override
+    public List<org.wso2.carbon.analytics.idp.client.core.models.Role> getRolesByUsername(String username)
+            throws DashboardException {
+        try {
+            return identityClient.getUserRoles(username);
+        } catch (IdPClientException e) {
+            throw new DashboardException("Unable to get user roles.", e);
+        }
+    }
+
+    @Override
+    public void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roleIdMap)
+            throws DashboardException {
+
+        List<org.wso2.carbon.analytics.idp.client.core.models.Role> allRoles = null;
+        try {
+            allRoles = identityClient.getAllRoles();
+        } catch (IdPClientException e) {
+            throw new DashboardException("Unable to get all user roles.", e);
+        }
+        Map<String, Role> allRoleMap = new HashMap<>();
+        for (org.wso2.carbon.analytics.idp.client.core.models.Role role : allRoles) {
+            allRoleMap.put(role.getDisplayName(), new Role(role.getId(), role.getDisplayName()));
+        }
+
+        Iterator iterator = roleIdMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Permission permission = new Permission(PERMISSION_APP_NAME,
+                    "dashboard." + dashboardUrl + "." + entry.getKey().toString());
+
+            permissionProvider.revokePermission(permission);
+            for (String roleId : (List<String>) entry.getValue()) {
+                permissionProvider.grantPermission(permission, allRoleMap.get(roleId));
+            }
+            iterator.remove();
+        }
+    }
+
+    /**
+     * Build basic dashboard permission string.
+     *
+     * @param dashboardUrl
+     * @return
+     */
+    private List<Permission> buildDashboardPermissions(String dashboardUrl) {
+        String prefix = "dashboard." + dashboardUrl;
+        List<Permission> permissions = new ArrayList<>();
+        permissions.add(new Permission(PERMISSION_APP_NAME, prefix + ".owner"));
+        permissions.add(new Permission(PERMISSION_APP_NAME, prefix + ".editor"));
+        permissions.add(new Permission(PERMISSION_APP_NAME, prefix + ".viewer"));
+        return permissions;
+    }
+
+    @Reference(
+            name = "IdPClient",
+            service = IdPClient.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetIdP"
+    )
+    protected void setIdP(IdPClient client) {
+        this.identityClient = client;
+    }
+
+    protected void unsetIdP(IdPClient client) {
+        this.identityClient = null;
+    }
+
 }
