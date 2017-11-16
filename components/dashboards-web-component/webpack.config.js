@@ -1,5 +1,6 @@
 const path = require('path');
-const webpack = require('webpack')
+const webpack = require('webpack');
+
 module.exports = {
     context: path.resolve(__dirname, './src'),
     entry: {
@@ -55,14 +56,23 @@ module.exports = {
                     loader: 'sass-loader',
                 }],
             },
-
+            // {
+            //     test: /\.jsx?$/,
+            //     loader: 'eslint-loader',
+            //     enforce: 'pre',
+            //     exclude: /node_modules/,
+            //     options: {
+            //         failOnWarning: false,
+            //         failOnError: true,
+            //     },
+            // },
         ],
     },
     plugins: [
         new webpack.ProvidePlugin({
-            'React': 'react',
-            'ReactDOM': 'react-dom'
-        })
+            React: 'react',
+            ReactDOM: 'react-dom',
+        }),
     ],
     resolve: {
         extensions: ['.js', '.json', '.jsx', '.scss'],

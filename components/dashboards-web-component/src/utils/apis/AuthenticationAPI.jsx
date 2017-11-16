@@ -21,16 +21,20 @@ import Axios from 'axios';
 import Qs from 'qs';
 import { MediaType } from '../Constants';
 
-// TODO: Get following configurations from the deployment.yaml at the backend.
 /**
- * Constants.
- * @type {{}}
+ * Authentication API base path.
  */
-const constants = {
-    basePath: window.location.origin,
-    grantTypePassword: 'password',
-    appContext: window.contextPath.substr(1),
-};
+const basePath = window.location.origin;
+
+/**
+ * Password grant type.
+ */
+const passwordGrantType = 'password';
+
+/**
+ * App context sans starting forward slash.
+ */
+const appContext = window.contextPath.substr(1);
 
 /**
  * Authentication API client.
@@ -43,7 +47,7 @@ export default class AuthenticationAPI {
      */
     static getHttpClient() {
         const client = Axios.create({
-            baseURL: constants.basePath,
+            baseURL: basePath,
             timeout: 2000,
         });
         client.defaults.headers.post['Content-Type'] = MediaType.APPLICATION_JSON;
@@ -61,10 +65,10 @@ export default class AuthenticationAPI {
     static login(username, password, rememberMe = false) {
         return AuthenticationAPI
             .getHttpClient()
-            .post(`/login/${constants.appContext}`, Qs.stringify({
+            .post(`/login/${appContext}`, Qs.stringify({
                 username,
                 password,
-                grantType: constants.grantTypePassword,
+                grantType: passwordGrantType,
                 rememberMe,
             }), {
                 headers: {
@@ -82,10 +86,33 @@ export default class AuthenticationAPI {
     static logout(token) {
         return AuthenticationAPI
             .getHttpClient()
-            .post(`/logout/${constants.appContext}`, null, {
+            .post(`/logout/${appContext}`, null, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
+    }
+
+    /**
+     * Get all roles.
+     * 
+     * @returns {Promise} Promise 
+     */
+    static getRoles() {
+        return AuthenticationAPI
+            .getHttpClient()
+            .get('/apis/dashboards/roles');
+    }
+
+    /**
+     * Get roles by username.
+     * 
+     * @param {string} username Username
+     * @returns {Promise} Promise
+     */
+    static getUserRoles(username) {
+        return AuthenticationAPI
+            .getHttpClient()
+            .get(`/apis/dashboards/roles/${username}`);
     }
 }

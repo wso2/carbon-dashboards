@@ -19,6 +19,9 @@
 
 import Axios from 'axios';
 
+/**
+ * Dashboard API.
+ */
 export default class DashboardAPI {
     /**
      * This method will return the AXIOS http client.
@@ -73,5 +76,30 @@ export default class DashboardAPI {
      */
     deleteDashboardByID(dashboardId) {
         return this.getHTTPClient().delete(dashboardId);
+    }
+
+    /**
+     * Get roles associated for a particular dashboard.
+     * 
+     * @param {string} dashboardId Dashboard ID
+     * @returns {{}} Roles
+     */
+    static getDashboardRoles(dashboardId) {
+        return new DashboardAPI()
+            .getHTTPClient()
+            .get(`${dashboardId}/roles`);
+    }
+
+    /**
+     * Update dashboard roles.
+     * 
+     * @param {string} dashboardId Dashboard ID
+     * @param {{}} roles Roles
+     * @returns {Promise} Promise
+     */
+    static updateDashboardRoles(dashboardId, roles) {
+        return new DashboardAPI()
+            .getHTTPClient()
+            .post(`${dashboardId}/roles`, roles);
     }
 }
