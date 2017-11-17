@@ -54,7 +54,7 @@ public class WidgetConfigurationReaderTest {
         Extension widget = new Extension(widgetName, EXTENSION_TYPE_WIDGETS, "src/test/resources/" + widgetName);
         WidgetMetaInfo widgetMetaInfo = WidgetConfigurationReader.getConfiguration(widget);
 
-        Assertions.assertEquals(widgetMetaInfo.getId(), widgetName);
-        Assertions.assertEquals(widgetMetaInfo.getName(), widgetName);
+        Assertions.assertEquals(widgetName, widgetMetaInfo.getId());
+        Assertions.assertEquals(widgetName, widgetMetaInfo.getName());
     }
 }
