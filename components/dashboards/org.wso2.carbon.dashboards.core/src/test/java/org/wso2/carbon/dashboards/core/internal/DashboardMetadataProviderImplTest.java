@@ -67,7 +67,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataProviderImpl dashboardMetadataProvider =
                 new DashboardMetadataProviderImpl(dao, new MockPermissionProvider());
 
-        Assertions.assertEquals(dashboardMetadataProvider.getAll().size(), 1);
+        Assertions.assertEquals(1, dashboardMetadataProvider.getAll().size());
         verify(dao).getAll();
     }
 
