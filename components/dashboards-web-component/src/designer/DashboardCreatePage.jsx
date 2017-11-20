@@ -137,12 +137,11 @@ export default class DashboardCreatePage extends Component {
                 },
             ],
         };
-
         new DashboardAPI()
             .createDashboard(dashboard)
             .then((response) => {
                 switch (response.status) {
-                    case HttpStatus.OK: {
+                    case HttpStatus.CREATED: {
                         this.showMessage(`Dashboard ${dashboard.name} is created successfully!`, styles.successMessage);
                         setTimeout(() => {
                             window.location.href = `${window.contextPath}/designer/${this.state.dashboard.url}`;
