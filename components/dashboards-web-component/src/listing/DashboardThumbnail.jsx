@@ -35,8 +35,7 @@ class DashboardThumbnail extends React.Component {
         this.handleClose = this.handleClose.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.state = {
-            deleteDashboardDialog: false,
-            thumbnailStyle: ""
+            deleteDashboardDialog: false
         };
     }
 
@@ -52,7 +51,7 @@ class DashboardThumbnail extends React.Component {
         let dashboardAPI = new DashboardAPI();
         dashboardAPI.deleteDashboardByID(this.props.dashboard.url);
         this.props.handleDelete();
-        this.setState({deleteDashboardDialog: false, thumbnailStyle: "dashboard-thumbnail-deleted"});
+        this.setState({deleteDashboardDialog: false});
     }
 
     render() {
@@ -83,7 +82,7 @@ class DashboardThumbnail extends React.Component {
         ];
 
         return (
-            <div className={this.state.thumbnailStyle}>
+            <div>
                 <Dialog
                     title={"Do you want to delete '" + this.props.dashboard.name + "' ?"}
                     actions={actionsButtons}
