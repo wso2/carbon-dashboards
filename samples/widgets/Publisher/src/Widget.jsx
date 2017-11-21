@@ -24,6 +24,20 @@ export default class Widget extends Component {
         super(props);
         this.getDashboardAPI = this.getDashboardAPI.bind(this);
         this.subscribe = this.subscribe.bind(this);
+        this.messageQueue = [];
+        this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
+        this.props.glContainer.layoutManager.on("initialised", this.publishQueuedMessages);
+    }
+
+    /**
+     * This method publishers the queued messages in the widget. The messages are queued when the widget tried to
+     * publish before initializing the dashboard.
+     *
+     */
+    publishQueuedMessages() {
+        for (let messageId in this.messageQueue) {
+            this.publish(this.messageQueue[messageId])
+        }
     }
 
     /**
@@ -40,7 +54,11 @@ export default class Widget extends Component {
      */
     publish(message) {
         let publishedChannel = this.props.id;
-        this.props.glEventHub.emit(publishedChannel, message);
+        if (!this.props.glContainer.layoutManager.isInitialised) {
+            this.messageQueue.push(message)
+        } else {
+            this.props.glEventHub.emit(publishedChannel, message);
+        }
     }
 
     /**
