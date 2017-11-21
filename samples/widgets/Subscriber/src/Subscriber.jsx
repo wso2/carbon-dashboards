@@ -17,6 +17,7 @@
  *
  */
 
+import React, {Component} from 'react';
 import Widget from './Widget';
 
 class Subscriber extends Widget {
@@ -25,10 +26,10 @@ class Subscriber extends Widget {
         this.state = {receivedMsg: ''};
         this.set = new Set();
         this.clearMsgs = this.clearMsgs.bind(this);
-        this.setReceivedMsg = this.setReceivedMsg.bind(this)
+        this.setReceivedMsg = this.setReceivedMsg.bind(this);
     }
 
-    componentDidMount() {
+    componentWillMount() {
         super.subscribe(this.setReceivedMsg);
     }
 
@@ -54,7 +55,7 @@ class Subscriber extends Widget {
         this.set.clear();
     }
 
-    render() {
+    renderWidget() {
         return (<section style={{marginTop: 25}}><h4 style={{display: 'inline', marginRight: 10}}>Received Messages</h4>
             <input
                 type="button"
