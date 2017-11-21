@@ -112,6 +112,7 @@ export default class DashboardDesigner extends Component {
         this.registerNotifier = this.registerNotifier.bind(this);
         this.updateDashboard = this.updateDashboard.bind(this);
         this.handleWidgetConfiguration = this.handleWidgetConfiguration.bind(this);
+        this.updatePageContent = this.updatePageContent.bind(this);
     }
 
     componentDidMount() {
@@ -145,7 +146,7 @@ export default class DashboardDesigner extends Component {
                                           window.location.href = window.contextPath + '/';
                                       }}/>
                         <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary
-                                      onClick={this.updatePageContent.bind(this)}/>
+                                      onClick={this.updatePageContent}/>
                     </div>
 
                     {/* Left action bar */}
