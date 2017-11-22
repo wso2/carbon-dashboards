@@ -18,6 +18,7 @@
  */
 
 import Axios from 'axios';
+import AuthManager from '../../auth/utils/AuthManager';
 
 export default class WidgetAPI {
     /**
@@ -26,8 +27,9 @@ export default class WidgetAPI {
      */
     getHTTPClient() {
         let httpClient = Axios.create({
-            baseURL: window.location.origin + '/apis/widgets',
-            timeout: 2000
+            baseURL: window.location.origin + '' + contextPath + '/apis/widgets',
+            timeout: 2000,
+            headers: {"Authorization": "Bearer " + AuthManager.getUser().token}
         });
         return httpClient;
     }
