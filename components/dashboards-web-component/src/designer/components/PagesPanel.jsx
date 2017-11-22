@@ -56,9 +56,11 @@ export default class PagesPanel extends Component {
             <div style={this.getPanelStyles(this.props.visible)}>
                 <h3>Pages</h3>
                 <div style={{'text-align': 'center'}}>
-                    <RaisedButton label={<FormattedMessage id="create.page" defaultMessage="Create Page"/>} primary fullWidth icon={<AddCircleOutlineIcon/>}
+                    <RaisedButton label={<FormattedMessage id="create.page" defaultMessage="Create Page"/>} primary
+                                  fullWidth icon={<AddCircleOutlineIcon/>}
                                   onClick={this.addPage.bind(this)}/>
-                    <TextField hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>} onChange={(e) => this.searchPages(e)}/>
+                    <TextField hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>}
+                               onChange={(e) => this.searchPages(e)}/>
                 </div>
                 {
                     this.state.pages.map(p => {
@@ -193,9 +195,14 @@ export default class PagesPanel extends Component {
      * @param id
      */
     landingPageChanged(id) {
+        let pages = this.state.pages.map(page => {
+            page.id !== id ? page.landingPage = false : page.landingPage = true;
+            return page;
+        });
         if (this.props.onLandingPageChanged) {
             this.props.onLandingPageChanged(id);
         }
+        this.setState({pages: pages});
     }
 
     /**

@@ -35,6 +35,10 @@ export default class PageEntry extends Component {
         this.updatePage = this.updatePage.bind(this);
     }
 
+    componentWillReceiveProps(nextProps){
+        this.setState({page:nextProps.page});
+    }
+
     render() {
         return (
             <Card onExpandChange={(expanded) => this.entryExpanded(expanded)}>
