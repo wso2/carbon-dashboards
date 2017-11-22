@@ -28,6 +28,7 @@ import { FormPanel, Header } from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 import { HttpStatus } from '../utils/Constants';
+import AuthManager from '../auth/utils/AuthManager';
 
 /**
  * Material UI theme.
@@ -64,6 +65,7 @@ export default class DashboardCreatePage extends Component {
             dashboard: {
                 name: '',
                 url: '',
+                owner:'',
                 description: '',
             },
         };
@@ -122,9 +124,10 @@ export default class DashboardCreatePage extends Component {
         if (!this.validateFields()) {
             return;
         }
-
+        //TODO : set the owner at the api layer once the backend apis are secured
         const dashboard = {
             url: this.state.dashboard.url,
+            owner: AuthManager.getUser().username,
             name: this.state.dashboard.name,
             description: this.state.dashboard.description,
             parentId: 0,
@@ -148,18 +151,18 @@ export default class DashboardCreatePage extends Component {
                         }, 1000);
                         break;
                     }
-                    case HttpStatus.CONFLICT: {
-                        this.showError('Dashboard with same url already exists. Please use a different url.');
-                        break;
-                    }
                     default: {
                         this.showError('Unable to create the dashboard due to unknown error.');
                         break;
                     }
                 }
             })
-            .catch(() => {
-                this.showError('Error in adding dashboard!');
+            .catch((error) => {
+                if (error.response.status === HttpStatus.CONFLICT){
+                    this.showError('Dashboard with same url already exists. Please use a different url.');
+                } else {
+                    this.showError('Error in adding dashboard!');
+                }
             });
     }
 

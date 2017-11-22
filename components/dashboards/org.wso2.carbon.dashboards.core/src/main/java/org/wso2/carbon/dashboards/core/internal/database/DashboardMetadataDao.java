@@ -41,13 +41,14 @@ public class DashboardMetadataDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataDao.class);
     private static final Gson GSON = new Gson();
-    private static final String COLUMN_DASHBOARD_LANDING_PAGE = "DASHBOARD_LANDING_PAGE";
-    private static final String COLUMN_DASHBOARD_ID = "DASHBOARD_ID";
-    private static final String COLUMN_DASHBOARD_PARENT_ID = "DASHBOARD_PARENT_ID";
-    private static final String COLUMN_DASHBOARD_CONTENT = "DASHBOARD_CONTENT";
-    private static final String COLUMN_DASHBOARD_DESCRIPTION = "DASHBOARD_DESCRIPTION";
-    private static final String COLUMN_DASHBOARD_NAME = "DASHBOARD_NAME";
-    private static final String COLUMN_DASHBOARD_URL = "DASHBOARD_URL";
+    private static final String COLUMN_DASHBOARD_LANDING_PAGE = "LANDING_PAGE";
+    private static final String COLUMN_DASHBOARD_ID = "ID";
+    private static final String COLUMN_DASHBOARD_PARENT_ID = "PARENT_ID";
+    private static final String COLUMN_DASHBOARD_CONTENT = "CONTENT";
+    private static final String COLUMN_DASHBOARD_DESCRIPTION = "DESCRIPTION";
+    private static final String COLUMN_DASHBOARD_NAME = "NAME";
+    private static final String COLUMN_DASHBOARD_URL = "URL";
+    private static final String COLUMN_DASHBOARD_OWNER = "OWNER";
 
     private final DataSource dataSource;
     private final QueryProvider queryProvider;
@@ -95,12 +96,13 @@ public class DashboardMetadataDao {
             ps = connection.prepareStatement(query);
             Blob blob = connection.createBlob();
             ps.setString(1, dashboardMetadata.getUrl());
-            ps.setString(2, dashboardMetadata.getName());
-            ps.setString(3, dashboardMetadata.getDescription());
-            ps.setString(4, dashboardMetadata.getParentId());
-            ps.setString(5, dashboardMetadata.getLandingPage());
+            ps.setString(2, dashboardMetadata.getOwner());
+            ps.setString(3, dashboardMetadata.getName());
+            ps.setString(4, dashboardMetadata.getDescription());
+            ps.setString(5, dashboardMetadata.getParentId());
+            ps.setString(6, dashboardMetadata.getLandingPage());
             blob.setBytes(1, toJsonBytes(dashboardMetadata.getPages()));
-            ps.setBlob(6, blob);
+            ps.setBlob(7, blob);
             ps.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -197,6 +199,7 @@ public class DashboardMetadataDao {
         DashboardMetadata dashboardMetadata = new DashboardMetadata();
         dashboardMetadata.setId(result.getString(COLUMN_DASHBOARD_ID));
         dashboardMetadata.setName(result.getString(COLUMN_DASHBOARD_NAME));
+        dashboardMetadata.setOwner(result.getString(COLUMN_DASHBOARD_OWNER));
         dashboardMetadata.setUrl(result.getString(COLUMN_DASHBOARD_URL));
         dashboardMetadata.setDescription(result.getString(COLUMN_DASHBOARD_DESCRIPTION));
         dashboardMetadata.setParentId(result.getString(COLUMN_DASHBOARD_PARENT_ID));

@@ -31,6 +31,7 @@ public class DashboardMetadata {
 
     protected String id;
     protected String url;
+    protected String owner;
     protected String name;
     protected String description;
     protected String landingPage;
@@ -54,7 +55,23 @@ public class DashboardMetadata {
     public void setUrl(String url) {
         this.url = url;
     }
+    /**
+     * This method is used to get owner of the dashboard
+     *
+     * @return String returns dashboard owner
+     */
+    public String getOwner() {
+        return owner;
+    }
 
+    /**
+     * This method is used to set the owner of dashboard
+     *
+     * @param owner owner of the dashboard
+     */
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
     /**
      * This method is used get the name of the dashboard
      *
