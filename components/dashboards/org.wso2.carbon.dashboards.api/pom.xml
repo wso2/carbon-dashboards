@@ -98,7 +98,7 @@
             org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
-            org.wso2.carbon.analytics.msf4j.interceptor.common.*
+            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics-common.version.range}"
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="2"
