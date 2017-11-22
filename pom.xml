@@ -16,7 +16,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.wso2.carbon.dashboards</groupId>
@@ -310,7 +311,7 @@
                 <version>${mockito.core.version}</version>
                 <scope>test</scope>
             </dependency>
-                
+
             <!-- Analytics common -->
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
@@ -320,6 +321,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
+                <version>${carbon.analytics-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
                 <version>${carbon.analytics-common.version}</version>
             </dependency>
         </dependencies>
@@ -403,7 +409,7 @@
 
         <!-- Can't run tests from IntelliJ IDEA without this. -->
         <!-- One need to explicitly define this on bundle's pom.xml to add resources into its OSGi bundle. -->
-        <include.resource />
+        <include.resource/>
 
         <!-- Release plugin ID for GitHub-->
         <project.scm.id>github-scm</project.scm.id>
