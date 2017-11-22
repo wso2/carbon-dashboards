@@ -17,6 +17,7 @@
  *
  */
 
+import React, {Component} from 'react';
 import Widget from './Widget';
 
 class Publisher extends Widget {
@@ -40,6 +41,10 @@ class Publisher extends Widget {
         }
     }
 
+    componentDidMount() {
+        super.publish("Initial Message");
+    }
+
     getPublishedMsgsOutput() {
         const output = [];
         for (const key of this.publishedMsgSet.values()) {
@@ -59,7 +64,7 @@ class Publisher extends Widget {
         this.input.value = event.target.value;
     }
 
-    render() {
+    renderWidget() {
         return (
             <section style={{marginTop: 25}}>
                 <form onSubmit={this.publishMsg}>

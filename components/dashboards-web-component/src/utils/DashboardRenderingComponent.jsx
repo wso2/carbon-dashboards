@@ -79,7 +79,7 @@ class DashboardRenderingComponent extends React.Component {
         }
         widgetList.forEach(widget => {
             widgetList.add(widget);
-            widgetLoadingComponent.loadWidget(widget)
+            widgetLoadingComponent.loadWidget(widget);
         });
     }
 
