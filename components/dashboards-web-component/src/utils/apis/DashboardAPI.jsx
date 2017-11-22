@@ -18,6 +18,7 @@
  */
 
 import Axios from 'axios';
+import AuthManager from '../../auth/utils/AuthManager';
 
 /**
  * Dashboard API.
@@ -29,8 +30,9 @@ export default class DashboardAPI {
      */
     getHTTPClient() {
         let httpClient = Axios.create({
-            baseURL: window.location.origin + '/apis/dashboards',
-            timeout: 2000
+            baseURL: window.location.origin + '' + contextPath + '/apis/dashboards',
+            timeout: 2000,
+            headers: {"Authorization": "Bearer " + AuthManager.getUser().token}
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
         return httpClient;
@@ -80,7 +82,7 @@ export default class DashboardAPI {
 
     /**
      * Get roles associated for a particular dashboard.
-     * 
+     *
      * @param {string} dashboardId Dashboard ID
      * @returns {{}} Roles
      */
@@ -92,7 +94,7 @@ export default class DashboardAPI {
 
     /**
      * Update dashboard roles.
-     * 
+     *
      * @param {string} dashboardId Dashboard ID
      * @param {{}} roles Roles
      * @returns {Promise} Promise
