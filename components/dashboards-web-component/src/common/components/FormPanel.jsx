@@ -21,6 +21,8 @@ import React, {Component} from "react";
 // Material-UI
 import {darkBaseTheme, getMuiTheme} from 'material-ui/styles';
 
+import PropTypes from 'prop-types';
+
 const muiTheme = getMuiTheme(darkBaseTheme);
 const titleStyles = {
     fontFamily: muiTheme.fontFamily,
@@ -31,7 +33,7 @@ export default class FormPanel extends Component {
     render() {
         let wrapperStyles = {
             margin: '0 auto',
-            width: this.props.width,
+            width: Number(this.props.width),
             paddingTop: this.props.paddingTop,
             paddingBottom: 15
         };
@@ -48,10 +50,10 @@ export default class FormPanel extends Component {
 }
 
 FormPanel.propTypes = {
-    title: React.PropTypes.string,
-    onSubmit: React.PropTypes.func,
-    width: React.PropTypes.number,
-    paddingTop: React.PropTypes.number
+    title: PropTypes.string,
+    onSubmit: PropTypes.func,
+    width: PropTypes.number,
+    paddingTop: PropTypes.number
 };
 
 FormPanel.defaultProps = {
