@@ -48,7 +48,7 @@ public class WidgetConfigurationReader {
      * @throws DashboardRuntimeException if cannot read configuration file or its is invalid
      */
     public static WidgetMetaInfo getConfiguration(Extension widget) throws DashboardRuntimeException {
-        Path widgetConfPath = Paths.get(widget.getPath(), FILE_NAME_WIDGET_CONFIGURATION);
+        Path widgetConfPath = Paths.get(widget.getLeastPriorityPath(), FILE_NAME_WIDGET_CONFIGURATION);
         try {
             String widgetConf = new String(Files.readAllBytes(widgetConfPath), StandardCharsets.UTF_8);
             return GSON.fromJson(widgetConf, WidgetMetaInfo.class);

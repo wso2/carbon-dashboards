@@ -84,7 +84,7 @@ public class WidgetInfoProviderImplTest {
     private static App createPortalApp() {
         Extension chartWidget = new Extension("LineChart", "widgets", "src/test/resources/LineChart");
         return new App("portal", "/portal", Collections.emptySortedSet(), Collections.singleton(chartWidget),
-                       Collections.emptySet(), null, null, null);
+                       Collections.emptySet(), Collections.emptySet(), null, null);
     }
 
     private static WidgetInfoProviderImpl createWidgetInfoProvider() {
