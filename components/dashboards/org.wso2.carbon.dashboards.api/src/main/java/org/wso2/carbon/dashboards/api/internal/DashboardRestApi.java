@@ -49,6 +49,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
@@ -142,8 +143,14 @@ public class DashboardRestApi implements Microservice {
     @Path("/")
     public Response create(DashboardMetadata dashboardMetadata) {
         try {
-            dashboardDataProvider.add(dashboardMetadata);
-            return Response.status(CREATED).build();
+            if (!dashboardDataProvider.get(dashboardMetadata.getUrl()).isPresent()) {
+                dashboardDataProvider.add(dashboardMetadata);
+                return Response.status(CREATED).build();
+            } else {
+                return Response.status(CONFLICT)
+                        .entity("Dashboard with URL " + dashboardMetadata.getUrl() + " already exists.")
+                        .build();
+            }
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new dashboard from {} data.", dashboardMetadata, e);
             return Response.serverError()
