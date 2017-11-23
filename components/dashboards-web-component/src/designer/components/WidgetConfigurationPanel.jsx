@@ -27,6 +27,12 @@ import {pubsubComponent} from '../../utils/PubSubComponent';
 
 import {FormattedMessage} from 'react-intl';
 
+const styles = {
+    widgetDrawer: {
+        background: '#192830'
+    }
+};
+
 class WidgetConfigurationPanel extends React.Component {
 
     constructor(props) {
@@ -102,6 +108,7 @@ class WidgetConfigurationPanel extends React.Component {
 
     render() {
         return (<Drawer open={this.props.open} openSecondary={true}
+                        containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
             <div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>
             <div><FormattedMessage id="publisher.list.heading" defaultMessage="Publishers"/></div>
