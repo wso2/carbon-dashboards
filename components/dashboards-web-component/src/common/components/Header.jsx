@@ -26,6 +26,21 @@ import AuthManager from '../../auth/utils/AuthManager';
 import './Header.css';
 
 /**
+ * Style constants.
+ */
+const styles = {
+    header: {
+        background: '#24353f',
+        height: '48px'
+    },
+    title: {
+        color: '#f5f5f5',
+        lineHeight: '48px',
+        fontSize: '19px'
+    }
+};
+
+/**
  * Header component.
  */
 export default class Header extends Component {
@@ -76,8 +91,10 @@ export default class Header extends Component {
         return (
             <AppBar
                 title={this.props.title}
-                iconElementLeft={<i className="icon fw fw-wso2-logo header-icon" />}
+                iconElementLeft={<i className="icon fw fw-wso2  header-icon" />}
                 iconElementRight={this.renderRightLinks()}
+                style={styles.header}
+                titleStyle={styles.title}
             />
         );
     }

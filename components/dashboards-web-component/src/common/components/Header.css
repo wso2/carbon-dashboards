@@ -18,12 +18,13 @@
  */
 
 .header-icon {
-    line-height: 64px;
-    color: #000;
-    margin-top: -10px;
-    font-size: 40px;
+    line-height: 46px;
+    margin-top: -7px;
+    font-size: 47px
 }
-
+.header-right-btn-group{
+    margin-top: -9px;
+}
 .header-right-btn-group .acc-name {
     float: left;
     padding-top: 15px;

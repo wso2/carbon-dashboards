@@ -22,7 +22,6 @@ import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { MuiThemeProvider, darkBaseTheme, getMuiTheme } from 'material-ui/styles';
 import { RaisedButton, TextField, Snackbar } from 'material-ui';
-import ClearIcon from 'material-ui/svg-icons/content/clear';
 
 import { FormPanel, Header } from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -177,16 +176,6 @@ export default class DashboardCreatePage extends Component {
                 <div>
                     <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
 
-                    {/* Portal navigation bar */}
-                    <div className="navigation-bar">
-                        <RaisedButton
-                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel" />}
-                            icon={<ClearIcon />}
-                            style={{ 'margin-right': '12px' }}
-                            containerElement={<Link to={window.contextPath} />}
-                        />
-                    </div>
-
                     <FormPanel
                         title={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard" />}
                         width="800"
@@ -262,6 +251,13 @@ export default class DashboardCreatePage extends Component {
                             onClick={this.addDashboard}
                             label={<FormattedMessage id="add.button" defaultMessage="Add" />}
                             primary
+                            style={{'margin-top':'30px'}}
+                        />
+                        <RaisedButton
+                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel" />}
+                            style={{'margin':'30px 10px'}}
+                            backgroundColor="rgb(13, 31, 39)"
+                            containerElement={<Link to={window.contextPath} />}
                         />
                     </FormPanel>
                     <Snackbar

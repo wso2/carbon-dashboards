@@ -139,6 +139,7 @@ export default class Login extends Component {
                                     rememberMe: checked,
                                 });
                             }}
+                            style={{'padding':'30px 0px'}}
                         />
                         <br />
                         <RaisedButton
@@ -146,6 +147,7 @@ export default class Login extends Component {
                             type="submit"
                             disabled={this.state.username === '' || this.state.password === ''}
                             label="Login"
+                            disabledBackgroundColor="rgb(27, 40, 47)"
                         />
                     </FormPanel>
                     <Snackbar
