@@ -18,7 +18,7 @@
  */
 
 import React, { Component } from 'react';
-import Widget from './Widget'
+import Widget from '@wso2-dashboards/widget';
 
 /**
  * This class depicts how the basic functions of widget state persistence works.
@@ -27,8 +27,8 @@ class WidgetState extends Widget {
     /**
      * Constructor.
      */
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             inputVal: ''
         };

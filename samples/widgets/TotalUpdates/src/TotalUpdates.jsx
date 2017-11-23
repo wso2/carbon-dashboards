@@ -19,6 +19,7 @@
 
 import React, { Component } from 'react';
 import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
+import Widget from '@wso2-dashboards/widget';
 
 var data = [
     {server: 'Server 1', updates: 40},
@@ -26,7 +27,7 @@ var data = [
     {server: 'Server 3', updates: 37}
 ];
 
-class TotalUpdates extends Component {
+class TotalUpdates extends Widget {
     constructor(props) {
         super(props);
         this.state = {

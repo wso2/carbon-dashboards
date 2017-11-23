@@ -19,7 +19,7 @@
 
 import React, {Component} from 'react';
 
-export default class Widget extends Component {
+class Widget extends Component {
     constructor(props) {
         super(props);
         this.getDashboardAPI = this.getDashboardAPI.bind(this);
@@ -115,3 +115,5 @@ export default class Widget extends Component {
         );
     }
 }
+
+export default Widget;

@@ -18,6 +18,7 @@
  */
 
 import React, { Component } from 'react';
+import Widget from '@wso2-dashboards/widget';
 
 const serverData = [
     {
@@ -82,7 +83,7 @@ const styles = {
     }
 };
 
-class ServerStatus extends Component {
+class ServerStatus extends Widget {
     constructor(props) {
         super(props);
         this.state = {

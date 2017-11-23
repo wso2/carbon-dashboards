@@ -18,12 +18,13 @@
 
 import React, {Component} from 'react';
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from 'recharts';
+import Widget from '@wso2-dashboards/widget';
 
 var data = [];
 const DATA_POINT_COUNT = 25;
 const REFRESH_RATE = 1;
 
-class LoadAverage extends Component {
+class LoadAverage extends Widget {
 
     constructor(props) {
         super(props);
