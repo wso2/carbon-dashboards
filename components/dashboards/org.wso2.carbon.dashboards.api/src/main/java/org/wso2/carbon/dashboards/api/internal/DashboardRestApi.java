@@ -28,10 +28,12 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
+import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
+import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import java.util.List;
 import java.util.Map;
@@ -61,7 +63,8 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 @Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
            service = Microservice.class,
            immediate = true)
-@Path("/apis/dashboards")
+@Path("/portal/apis/dashboards")
+@RequestInterceptor(AuthenticationInterceptor.class)
 public class DashboardRestApi implements Microservice {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApi.class);

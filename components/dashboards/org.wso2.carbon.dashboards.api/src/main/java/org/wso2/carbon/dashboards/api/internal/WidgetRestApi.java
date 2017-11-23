@@ -27,9 +27,11 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.msf4j.Microservice;
+import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -48,7 +50,8 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 @Component(name = "org.wso2.carbon.dashboards.api.WidgetApi",
            service = Microservice.class,
            immediate = true)
-@Path("/apis/widgets")
+@Path("/portal/apis/widgets")
+@RequestInterceptor(AuthenticationInterceptor.class)
 public class WidgetRestApi implements Microservice {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetRestApi.class);
