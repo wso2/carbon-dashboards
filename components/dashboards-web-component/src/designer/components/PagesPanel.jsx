@@ -22,7 +22,7 @@ import React, {Component} from 'react';
 import PageEntry from './PageEntry';
 import DashboardUtils from '../../utils/DashboardUtils';
 // Material-UI
-import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import AddCircleOutlineIcon from 'material-ui/svg-icons/content/add-circle-outline';
 
@@ -56,7 +56,7 @@ export default class PagesPanel extends Component {
             <div style={this.getPanelStyles(this.props.visible)}>
                 <h3>Pages</h3>
                 <div style={{'text-align': 'center'}}>
-                    <RaisedButton label={<FormattedMessage id="create.page" defaultMessage="Create Page"/>} primary
+                    <FlatButton label={<FormattedMessage id="create.page" defaultMessage="Create Page"/>} primary
                                   fullWidth icon={<AddCircleOutlineIcon/>}
                                   onClick={this.addPage.bind(this)}/>
                     <TextField hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>}

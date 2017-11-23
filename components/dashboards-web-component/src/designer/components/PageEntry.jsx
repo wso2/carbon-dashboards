@@ -24,6 +24,13 @@ import {Card, CardHeader, CardText} from 'material-ui/Card';
 import {TextField, RaisedButton, Checkbox} from 'material-ui';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
+const styles = {
+    pageCard: {
+        backgroundColor: '#17262e',
+        marginBottom: '5px'
+    }
+};
+
 export default class PageEntry extends Component {
     constructor(props) {
         super(props);
@@ -41,8 +48,8 @@ export default class PageEntry extends Component {
 
     render() {
         return (
-            <Card onExpandChange={(expanded) => this.entryExpanded(expanded)}>
-                <CardHeader title={this.state.page.title} actAsExpander showExpandableButton/>
+            <Card onExpandChange={(expanded) => this.entryExpanded(expanded)} style={styles.pageCard}>
+                <CardHeader title={this.state.page.title} actAsExpander showExpandableButton />
                 <CardText expandable>
                     <TextField value={this.state.page.id} fullWidth floatingLabelText={<FormattedMessage id="page.url" defaultMessage="URL"/>}
                                onBlur={this.updatePage}
@@ -63,10 +70,10 @@ export default class PageEntry extends Component {
                                    this.dirty = true;
                                }}/>
                     <Checkbox label={<FormattedMessage id="make.homepage" defaultMessage="Make as Home Page"/>} checked={this.state.page.landingPage}
-                              disabled={this.state.page.landingPage} onCheck={this.makeAsHomePage.bind(this)}/>
+                              disabled={this.state.page.landingPage} onCheck={this.makeAsHomePage.bind(this)} className="home-page-checkbox"/>
                     <RaisedButton label={<FormattedMessage id="delete" defaultMessage="Delete"/>} labelPosition="after" fullWidth icon={<DeleteIcon/>}
                                   onClick={this.deletePage.bind(this)} disabled={this.state.page.landingPage}
-                                  backgroundColor="#ff0000"
+                                  backgroundColor="#24353f" disabledBackgroundColor="#1c2b33"
                     />
                 </CardText>
             </Card>
