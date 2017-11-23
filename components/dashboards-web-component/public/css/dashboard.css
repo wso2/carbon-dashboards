@@ -20,7 +20,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: rgb(48, 48, 48);
+    background-color: #081921;
 }
 
 a {
@@ -145,7 +145,7 @@ a {
 .dashboard-thumbnail .content {
     background: #444;
     padding: 15px;
-    margin: 10px;
+    margin: 6px;
 }
 
 .dashboard-thumbnail h4, .dashboard-thumbnail p {
@@ -168,7 +168,7 @@ a {
 }
 
 .dashboard-thumbnail .actions a {
-    color: rgb(48, 48, 48);
+    color: #17262e;
 }
 
 .dashboard-thumbnail .actions .icon {
@@ -182,11 +182,9 @@ a {
 }
 
 .widget-list-thumbnail {
-    border: solid #0f0f10;
-    border-radius: 5px;
     padding: 20px;
     margin: 25px;
-    background-color: #5a5959;
+    background-color: #43525a;
 }
 
 .widget-list-thumbnail-header {
@@ -454,7 +452,7 @@ a {
 }
 
 .trash-button-icon:hover {
-    color: darkred;
+    color: #24353f;
 }
 
 .dashboard-thumbnail-deleted {

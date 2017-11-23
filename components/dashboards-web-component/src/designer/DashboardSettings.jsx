@@ -141,17 +141,6 @@ export default class DashboardSettings extends Component {
                     {/* Header */}
                     <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
 
-                    {/* Portal navigation bar */}
-                    <div className="navigation-bar">
-                        <Link to={window.contextPath}>
-                            <RaisedButton
-                                label={<FormattedMessage id="cancel.button" defaultMessage="Cancel" />}
-                                icon={<ClearIcon />}
-                                style={{ 'margin-right': '12px' }}
-                            />
-                        </Link>
-                    </div>
-
                     {/* Settings form */}
                     <FormPanel
                         title={<FormattedMessage id="dashboard.settings.title" defaultMessage="Dashboard Settings" />}
@@ -219,6 +208,14 @@ export default class DashboardSettings extends Component {
                             primary
                             disabled={this.state.dashboard.name === ''}
                         />
+
+                        <RaisedButton
+                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel" />}
+                            style={{'margin':'30px 10px'}}
+                            backgroundColor="rgb(13, 31, 39)"
+                            containerElement={<Link to={window.contextPath} />}
+                        />
+
                     </FormPanel>
 
                     {/* Snackbar */}

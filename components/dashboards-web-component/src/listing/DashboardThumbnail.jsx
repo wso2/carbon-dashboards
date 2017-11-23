@@ -116,7 +116,7 @@ class DashboardThumbnail extends React.Component {
                             <Link to={"settings/" + this.props.dashboard.url}>
                             <span className="fw-stack icon edit-dashboard-icon">
                                 <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                <i className="fw fw-edit fw-stack-1x"></i>
+                                <i className="fw fw-settings fw-stack-1x"></i>
                             </span>
                                 <FormattedMessage id="settings.button" defaultMessage="Settings"/>
                             </Link>

@@ -144,7 +144,8 @@ export default class DashboardDesigner extends Component {
                                       icon={<BackIcon/>} style={{'margin-right': '12px'}}
                                       onClick={() => {
                                           window.location.href = window.contextPath + '/';
-                                      }}/>
+                                      }}
+                                      backgroundColor="rgb(13, 31, 39)" />
                         <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary
                                       onClick={this.updatePageContent}/>
                     </div>
@@ -164,9 +165,10 @@ export default class DashboardDesigner extends Component {
                         <Drawer open={this.state.leftSidebarOpen} containerClassName="left-sidebar"
                                 containerStyle={{
                                     width: styles.sidebarWidth,
-                                    top: '120px',
+                                    top: '106px',
                                     height: 'auto',
-                                    bottom: '0'
+                                    bottom: '0',
+                                    backgroundColor: '#24353f'
                                 }}>
                             <PagesPanel dashboard={this.state.dashboard}
                                         onDashboardUpdated={(d) => this.updateDashboard(d)}

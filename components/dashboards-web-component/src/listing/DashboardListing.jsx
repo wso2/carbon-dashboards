@@ -23,7 +23,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import ContentAdd from 'material-ui/svg-icons/content/add';
-import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import {FormattedMessage} from 'react-intl';
 import {Header} from '../common';
 import DashboardThumbnail from './DashboardThumbnail';
@@ -55,10 +55,11 @@ class DashboardListing extends React.Component {
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <RaisedButton
+                        <FlatButton
                             label={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/>}
                             icon={<ContentAdd/>} primary
                             style={{'margin-right': '12px'}}
+                            labelStyle={{'paddingLeft': '2px' }}
                             onClick={() => {
                                 window.location.href = window.contextPath + '/create/';
                             }}/>

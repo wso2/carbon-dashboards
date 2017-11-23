@@ -2,11 +2,11 @@
     position: fixed;
     width: 58px;
     left: 0;
-    top: 120px;
+    top: 106px;
     bottom: 0;
     overflow: hidden;
     z-index: 1500;
-    background-color: rgb(37, 37, 37);;
+    background-color: #17262e;
 }
 
 .container {
@@ -23,7 +23,7 @@
 .left-sidebar h3 {
     text-transform: uppercase;
     text-align: center;
-    background-color: #4597a7;
+    background-color: #1e2d35;
     margin: -10px -10px 15px -10px;
     padding: 15px 0;
 }
