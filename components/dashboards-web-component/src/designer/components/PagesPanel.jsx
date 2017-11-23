@@ -44,11 +44,13 @@ export default class PagesPanel extends Component {
     }
 
     componentWillReceiveProps(nextprops) {
-        _pages = this.buildPages(nextprops.dashboard.pages);
-        this.setState({
-            pages: _pages,
-            dashboard: nextprops.dashboard
-        });
+        if (nextprops.dashboard) {
+            _pages = this.buildPages(nextprops.dashboard.pages);
+            this.setState({
+                pages: _pages,
+                dashboard: nextprops.dashboard
+            });
+        }
     }
 
     render() {

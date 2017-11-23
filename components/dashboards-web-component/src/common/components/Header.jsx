@@ -21,6 +21,8 @@ import { AppBar, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 import AuthManager from '../../auth/utils/AuthManager';
 
 import './Header.css';
@@ -101,8 +103,8 @@ export default class Header extends Component {
 }
 
 Header.propTypes = {
-    title: React.PropTypes.string,
-    hideUserSettings: React.PropTypes.bool,
+    title: PropTypes.string,
+    hideUserSettings: PropTypes.bool,
 };
 
 Header.defaultProps = {
