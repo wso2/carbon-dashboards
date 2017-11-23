@@ -28,14 +28,15 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
+import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
+import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -52,7 +53,6 @@ import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
-
 /**
  * REST API for dashboard related operations.
  *
@@ -61,7 +61,8 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 @Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
            service = Microservice.class,
            immediate = true)
-@Path("/apis/dashboards")
+@Path("/portal/apis/dashboards")
+@RequestInterceptor(AuthenticationInterceptor.class)
 public class DashboardRestApi implements Microservice {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApi.class);
@@ -142,11 +143,13 @@ public class DashboardRestApi implements Microservice {
     @Path("/")
     public Response create(DashboardMetadata dashboardMetadata) {
         try {
-            if (dashboardDataProvider.get(dashboardMetadata.getUrl()).equals(Optional.empty())) {
+            if (!dashboardDataProvider.get(dashboardMetadata.getUrl()).isPresent()) {
                 dashboardDataProvider.add(dashboardMetadata);
                 return Response.status(CREATED).build();
             } else {
-                return Response.status(CONFLICT).build();
+                return Response.status(CONFLICT)
+                        .entity("Dashboard with URL " + dashboardMetadata.getUrl() + " already exists.")
+                        .build();
             }
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new dashboard from {} data.", dashboardMetadata, e);
