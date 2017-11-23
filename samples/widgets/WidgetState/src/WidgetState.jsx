@@ -27,8 +27,8 @@ class WidgetState extends Widget {
     /**
      * Constructor.
      */
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             inputVal: ''
         };
