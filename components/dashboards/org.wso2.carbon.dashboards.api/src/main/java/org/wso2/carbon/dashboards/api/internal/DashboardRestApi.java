@@ -148,7 +148,7 @@ public class DashboardRestApi implements Microservice {
                 return Response.status(CREATED).build();
             } else {
                 return Response.status(CONFLICT)
-                        .entity("Dashboard with " + dashboardMetadata.getUrl() + " already exists.")
+                        .entity("Dashboard with URL " + dashboardMetadata.getUrl() + " already exists.")
                         .build();
             }
         } catch (DashboardException e) {
