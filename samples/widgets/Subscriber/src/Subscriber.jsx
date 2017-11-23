@@ -18,7 +18,7 @@
  */
 
 import React, {Component} from 'react';
-import Widget from './Widget';
+import Widget from '@wso2-dashboards/widget';
 
 class Subscriber extends Widget {
     constructor(props) {

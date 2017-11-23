@@ -18,11 +18,12 @@
 
 import React, {Component} from 'react';
 import {Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis} from 'recharts';
+import Widget from '@wso2-dashboards/widget';
 
 let data = [];
 const DATA_POINT_COUNT = 25;
 
-class CpuUsage extends Component {
+class CpuUsage extends Widget {
 
     constructor(props) {
         super(props);
