@@ -78,7 +78,11 @@ class DashboardListing extends React.Component {
         let that = this;
         promised_dashboard_list.then((response) => {
             let dashboardList = [];
-            dashboardList = response.data.map(dashboard => {
+            let dashboardArray = response.data;
+            dashboardArray.sort(function (dashboardA, dashboardB) {
+                return dashboardA.url > dashboardB.url;
+            });
+            dashboardList = dashboardArray.map(dashboard => {
                 return <DashboardThumbnail dashboard={dashboard} handleDelete={that.retrieveDashboards}
                                            muiTheme={muiTheme}/>;
             });
