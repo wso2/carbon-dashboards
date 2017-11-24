@@ -38,7 +38,9 @@ import PagesIcon from 'material-ui/svg-icons/editor/insert-drive-file';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
+import SaveIcon from 'material-ui/svg-icons/content/save';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 //React Intl for Localization
 import {FormattedMessage} from 'react-intl';
 // CSS
@@ -72,6 +74,7 @@ const config = {
     dimensions: {
         minItemWidth: 400,
         minItemHeight: 400,
+        headerHeight: 37
     },
     content: [],
 };
@@ -132,7 +135,7 @@ export default class DashboardDesigner extends Component {
         DashboardDesigner.loadTheme();
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
-                <div>
+                <div className="dashboard-designer">
                     {this.state.redirect ? <Redirect to={this.state.redirectUrl}/> : ''}
 
                     <Header
@@ -146,13 +149,15 @@ export default class DashboardDesigner extends Component {
                                           window.location.href = window.contextPath + '/';
                                       }}
                                       backgroundColor="rgb(13, 31, 39)" />
-                        <RaisedButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>} primary
+                        <FlatButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>}
+                                      primary
+                                      icon={<SaveIcon/>}
                                       onClick={this.updatePageContent}/>
                     </div>
 
                     {/* Left action bar */}
                     <div className="left-action-bar">
-                        <Menu width={styles.actionBarWidth}>
+                        <Menu width={styles.actionBarWidth} className="designer-left-menu">
                             <MenuItem primaryText="&nbsp;" leftIcon={<WidgetsIcon/>}
                                       onClick={this.toggleWidgetsPanel.bind(this)}/>
                             <MenuItem primaryText="&nbsp;" leftIcon={<PagesIcon/>}
@@ -349,7 +354,7 @@ export default class DashboardDesigner extends Component {
         let head = document.getElementsByTagName('head')[0];
         let link = document.createElement('link');
         link.type = 'text/css';
-        link.href = baseURL + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
+        link.href = baseURL + appContext + "/public/themes/dark/css/goldenlayout-dark-theme.css";
         link.rel = "stylesheet";
         head.appendChild(link);
     }

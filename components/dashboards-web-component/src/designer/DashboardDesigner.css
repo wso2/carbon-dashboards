@@ -25,7 +25,7 @@
     text-align: center;
     background-color: #1e2d35;
     margin: -10px -10px 15px -10px;
-    padding: 15px 0;
+    padding: 13px 0;
 }
 
 .designer-container-expanded {
@@ -96,4 +96,46 @@
 
 .home-page-checkbox {
     padding: 30px 0px;
+}
+
+.designer-left-menu {
+    padding: 0 !important;
+}
+
+/* dashboard designer golden layout style customizations */
+.dashboard-designer .lm_header.lm_selectable {
+    background: #192830 !important;
+    height: 37px !important;;
+}
+
+.dashboard-designer .lm_content {
+    background: #13222a !important;
+    border-color: #13222a !important;
+}
+
+.dashboard-designer .lm_header .lm_tab.lm_active {
+    box-shadow: none;
+    background: #13222a;
+    height: 25px;
+    margin-top: 0px;
+    border: none;
+}
+
+.dashboard-designer .lm_header .lm_tab {
+    border: none;
+    margin-right: 1px;
+    background: #22323c;
+    color: #bbb;
+    font-size: 14px;
+    box-shadow: none;
+    padding-top: 9px;
+    padding-bottom: 13px;
+}
+
+.dashboard-designer .lm_header .lm_controls {
+    padding: 10px;
+}
+
+.dashboard-designer .lm_header .lm_tab .lm_close_tab {
+    top: 11px;
 }
