@@ -33,7 +33,7 @@
     top: 130px;
     right: 10px;
     bottom: 10px;
-    left: 68px;;
+    left: 68px;
     z-index: 0;
     color: white;
 }
@@ -95,7 +95,7 @@
 }
 
 .home-page-checkbox {
-    padding: 30px 0px;
+    padding: 30px 0;
 }
 
 .designer-left-menu {
@@ -105,7 +105,7 @@
 /* dashboard designer golden layout style customizations */
 .dashboard-designer .lm_header.lm_selectable {
     background: #192830 !important;
-    height: 37px !important;;
+    height: 37px !important;
 }
 
 .dashboard-designer .lm_content {
@@ -117,7 +117,7 @@
     box-shadow: none;
     background: #13222a;
     height: 25px;
-    margin-top: 0px;
+    margin-top: 0;
     border: none;
 }
 
@@ -139,3 +139,4 @@
 .dashboard-designer .lm_header .lm_tab .lm_close_tab {
     top: 11px;
 }
+
