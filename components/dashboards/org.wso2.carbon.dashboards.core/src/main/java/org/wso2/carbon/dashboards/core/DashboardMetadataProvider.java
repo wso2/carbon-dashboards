@@ -24,7 +24,7 @@ import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import javax.ws.rs.core.Response;
 
 /**
  * Provider for dashboards related information.
@@ -42,13 +42,15 @@ public interface DashboardMetadataProvider {
      */
     Optional<DashboardMetadata> get(String dashboardUrl) throws DashboardException;
 
-    Set<DashboardMetadata> getAll() throws DashboardException;
+    Response getByUser(String user, String dashboardUrl) throws DashboardException;
 
-    void add(DashboardMetadata dashboardMetadata) throws DashboardException;
+    Response getAllByUser(String user) throws DashboardException;
 
-    void update(DashboardMetadata dashboardMetadata) throws DashboardException;
+    Response add(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
 
-    void delete(String dashboardUrl) throws DashboardException;
+    Response update(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
+
+    Response delete(String user, String dashboardUrl) throws DashboardException;
 
     Map<String, List<Role>> getDashboardRoles(String dashboardUrl) throws DashboardException;
 

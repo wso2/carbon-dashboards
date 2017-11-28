@@ -20,6 +20,7 @@ package org.wso2.carbon.dashboards.core.bean;
 
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
+import org.wso2.carbon.dashboards.core.bean.roles.provider.Roles;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,5 +38,12 @@ public class DashboardConfigurations {
 
     public List<QueryConfiguration> getQueries() {
         return queries;
+    }
+
+    @Element(description = "Map of roles list")
+    public Roles roles;
+
+    public Roles getRoles() {
+        return roles;
     }
 }

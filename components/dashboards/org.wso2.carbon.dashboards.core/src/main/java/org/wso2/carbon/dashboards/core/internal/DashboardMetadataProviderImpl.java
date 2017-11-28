@@ -33,13 +33,16 @@ import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.analytics.permissions.bean.Permission;
 import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.analytics.permissions.exceptions.PermissionException;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
+import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDaoFactory;
+import org.wso2.carbon.dashboards.core.internal.roles.provider.RolesProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
 import java.util.ArrayList;
@@ -49,6 +52,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import javax.ws.rs.core.Response;
+import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 /**
  * Default dashboard metadata provider.
@@ -60,12 +68,16 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
     private static final String PERMISSION_APP_NAME = "DASH";
+    private static final String VIEWER_PERMISSION_SUFFIX = ".viewer";
+    private static final String EDITOR_PERMISSION_SUFFIX = ".editor";
+    private static final String OWNER_PERMISSION_SUFFIX = ".owner";
 
     private DashboardMetadataDao dao;
     private DataSourceService dataSourceService;
     private ConfigProvider configProvider;
     private PermissionProvider permissionProvider;
     private IdPClient identityClient;
+    private RolesProvider rolesProvider;
 
     /**
      * Creates a new dashboard data provider.
@@ -73,9 +85,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     public DashboardMetadataProviderImpl() {
     }
 
-    DashboardMetadataProviderImpl(DashboardMetadataDao dao, PermissionProvider permissionProvider) {
+    DashboardMetadataProviderImpl(DashboardMetadataDao dao, PermissionProvider permissionProvider, RolesProvider
+            rolesProvider) {
         this.dao = dao;
         this.permissionProvider = permissionProvider;
+        this.rolesProvider = rolesProvider;
     }
 
     @Activate
@@ -139,31 +153,106 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public Set<DashboardMetadata> getAll() throws DashboardException {
-        return dao.getAll();
-    }
-
-    @Override
-    public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
+    public Response getByUser(String user, String dashboardUrl) throws DashboardException {
         // TODO: 11/10/17 validate parameters
-        dao.add(dashboardMetadata);
-        for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
-            permissionProvider.addPermission(permission);
+        if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardUrl.concat
+                (VIEWER_PERMISSION_SUFFIX)))
+                || permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardUrl.concat
+                (EDITOR_PERMISSION_SUFFIX))
+        ) || permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardUrl.concat
+                (OWNER_PERMISSION_SUFFIX))
+        )) {
+            return dao.get(dashboardUrl).map(metadata -> Response.ok().entity(metadata).build())
+                    .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + dashboardUrl + "'" +
+                            ".").build());
+        } else {
+            return Response.status(UNAUTHORIZED).entity("You are not authorized to access dashboard with the ID " +
+                    "" + dashboardUrl).build();
         }
     }
 
     @Override
-    public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
-        // TODO: 11/10/17 validate parameters
-        dao.update(dashboardMetadata);
+    public Response getAllByUser(String user) throws DashboardException {
+        Set<DashboardMetadata> dashboardList = dao.getAll();
+        Set<DashboardMetadata> dlist = dashboardList.stream().filter(dashboardMetadata -> {
+            if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardMetadata.getUrl()
+                    .concat(OWNER_PERMISSION_SUFFIX)))) {
+                dashboardMetadata.setHasOwnerPermission(true);
+                dashboardMetadata.setHasDesignerPermission(true);
+                dashboardMetadata.setHasViewerPermission(true);
+                return true;
+            } else if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardMetadata
+                    .getUrl().concat(EDITOR_PERMISSION_SUFFIX)))) {
+                dashboardMetadata.setHasDesignerPermission(true);
+                dashboardMetadata.setHasViewerPermission(true);
+                return true;
+            } else if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardMetadata
+                    .getUrl().concat(VIEWER_PERMISSION_SUFFIX)))) {
+                dashboardMetadata.setHasViewerPermission(true);
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toSet());
+        return Response.ok().entity(dlist).build();
     }
 
     @Override
-    public void delete(String dashboardUrl) throws DashboardException {
+    public Response add(String user, DashboardMetadata dashboardMetadata) throws DashboardException {
         // TODO: 11/10/17 validate parameters
-        dao.delete(dashboardUrl);
-        for (Permission permission : buildDashboardPermissions(dashboardUrl)) {
-            permissionProvider.deletePermission(permission);
+        List<Role> creatorRoles;
+        RolesProvider rolesProvider = null;
+        try {
+            rolesProvider = new RolesProvider(configProvider.getConfigurationObject(DashboardConfigurations
+                    .class));
+            creatorRoles = rolesProvider.getCreatorRoles();
+        } catch (ConfigurationException e) {
+            throw new DashboardException("Error in reading dashboard creator roles !", e);
+        }
+        Set<Role> filteredRole = creatorRoles.stream().filter(role -> hasRoles(user, role)).collect(Collectors.toSet());
+        if (!filteredRole.isEmpty()) {
+            dao.add(dashboardMetadata);
+            for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
+                permissionProvider.addPermission(permission);
+                for (Role role : rolesProvider.getCreatorRoles()) {
+                    permissionProvider.grantPermission(permission, role);
+                }
+            }
+            return Response.status(CREATED).build();
+        } else {
+            return Response.status(UNAUTHORIZED).entity("You do not have sufficient priviledges to add dashboards")
+                    .build();
+        }
+    }
+
+    @Override
+    public Response update(String user, DashboardMetadata dashboardMetadata) throws DashboardException {
+        // TODO: 11/10/17 validate parameters
+        if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardMetadata.getUrl()
+                .concat(OWNER_PERMISSION_SUFFIX)))
+                || permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME,
+                dashboardMetadata.getUrl().concat(EDITOR_PERMISSION_SUFFIX)))) {
+            dao.update(dashboardMetadata);
+            return Response.ok().build();
+        } else {
+            return Response.status(UNAUTHORIZED).entity("You do not sufficient priviledges to update the dashboard " +
+                    "with the ID " + dashboardMetadata.getUrl()).build();
+        }
+
+    }
+
+    @Override
+    public Response delete(String user, String dashboardUrl) throws DashboardException {
+        // TODO: 11/10/17 validate parameters
+        if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardUrl.concat
+                (OWNER_PERMISSION_SUFFIX)))) {
+            dao.delete(dashboardUrl);
+            for (Permission permission : buildDashboardPermissions(dashboardUrl)) {
+                permissionProvider.deletePermission(permission);
+            }
+            return Response.ok().build();
+        } else {
+            return Response.status(UNAUTHORIZED).entity("You are not authorized to delete the dashboard with the ID " +
+                    "" + dashboardUrl).build();
         }
     }
 
@@ -172,11 +261,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         Map<String, List<Role>> roles = new HashMap<>();
         try {
             roles.put("owners", permissionProvider.getGrantedRoles(
-                    new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".owner")));
+                    new Permission(PERMISSION_APP_NAME, dashboardUrl.concat(OWNER_PERMISSION_SUFFIX))));
             roles.put("editors", permissionProvider.getGrantedRoles(
-                    new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".editor")));
+                    new Permission(PERMISSION_APP_NAME, dashboardUrl.concat(EDITOR_PERMISSION_SUFFIX))));
             roles.put("viewers", permissionProvider.getGrantedRoles(
-                    new Permission(PERMISSION_APP_NAME, "dashboard." + dashboardUrl + ".viewer")));
+                    new Permission(PERMISSION_APP_NAME, dashboardUrl.concat(VIEWER_PERMISSION_SUFFIX))));
         } catch (PermissionException e) {
             throw new DashboardException("Unable to get roles for the dashboard '" + dashboardUrl + "'", e);
         }
@@ -220,9 +309,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         Iterator iterator = roleIdMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry) iterator.next();
-            Permission permission = new Permission(PERMISSION_APP_NAME,
-                    "dashboard." + dashboardUrl + "." + entry.getKey().toString());
-
+            Permission permission = new Permission(PERMISSION_APP_NAME, dashboardUrl + "." + entry.getKey().toString());
             permissionProvider.revokePermission(permission);
             for (String roleId : (List<String>) entry.getValue()) {
                 permissionProvider.grantPermission(permission, allRoleMap.get(roleId));
@@ -238,12 +325,26 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
      * @return
      */
     private List<Permission> buildDashboardPermissions(String dashboardUrl) {
-        String prefix = "dashboard." + dashboardUrl;
         List<Permission> permissions = new ArrayList<>();
-        permissions.add(new Permission(PERMISSION_APP_NAME, prefix + ".owner"));
-        permissions.add(new Permission(PERMISSION_APP_NAME, prefix + ".editor"));
-        permissions.add(new Permission(PERMISSION_APP_NAME, prefix + ".viewer"));
+        permissions.add(new Permission(PERMISSION_APP_NAME, dashboardUrl.concat(OWNER_PERMISSION_SUFFIX)));
+        permissions.add(new Permission(PERMISSION_APP_NAME, dashboardUrl.concat(EDITOR_PERMISSION_SUFFIX)));
+        permissions.add(new Permission(PERMISSION_APP_NAME, dashboardUrl.concat(VIEWER_PERMISSION_SUFFIX)));
         return permissions;
+    }
+
+    private boolean hasRoles(String user, Role role) {
+        try {
+            List<org.wso2.carbon.analytics.idp.client.core.models.Role> userRoles = identityClient.getUserRoles(user);
+            Set<org.wso2.carbon.analytics.idp.client.core.models.Role> filteredUserRoles = userRoles.stream().filter
+                    (userRole -> userRole.getId().equals(role.getId())).collect(Collectors.toSet());
+            if (filteredUserRoles.isEmpty()) {
+                return false;
+            }
+            return true;
+        } catch (IdPClientException e) {
+            LOGGER.error("Error in retrieving user roles for the user " + user, e);
+        }
+        return false;
     }
 
     @Reference(

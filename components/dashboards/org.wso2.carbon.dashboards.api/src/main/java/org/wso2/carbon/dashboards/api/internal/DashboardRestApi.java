@@ -33,6 +33,7 @@ import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
+import org.wso2.msf4j.Request;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import java.util.List;
@@ -46,12 +47,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.Response.Status.CONFLICT;
-import static javax.ws.rs.core.Response.Status.CREATED;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 /**
  * REST API for dashboard related operations.
@@ -59,8 +59,8 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
  * @since 4.0.0
  */
 @Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
-           service = Microservice.class,
-           immediate = true)
+        service = Microservice.class,
+        immediate = true)
 @Path("/portal/apis/dashboards")
 @RequestInterceptor(AuthenticationInterceptor.class)
 public class DashboardRestApi implements Microservice {
@@ -101,9 +101,9 @@ public class DashboardRestApi implements Microservice {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response get() {
+    public Response get(@Context Request request) {
         try {
-            return Response.ok().entity(dashboardDataProvider.getAll()).build();
+            return dashboardDataProvider.getAllByUser(request.getProperty("username").toString());
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when listing dashboards.", e);
             return Response.serverError().entity("Cannot list dashboards.").build();
@@ -120,11 +120,9 @@ public class DashboardRestApi implements Microservice {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response get(@PathParam("id") String id) {
+    public Response get(@PathParam("id") String id, @Context Request request) {
         try {
-            return dashboardDataProvider.get(id)
-                    .map(metadata -> Response.ok().entity(metadata).build())
-                    .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + id + "'.").build());
+            return dashboardDataProvider.getByUser(request.getProperty("username").toString(), id);
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving dashboard for ID '{}'.", id, e);
             return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
@@ -141,11 +139,10 @@ public class DashboardRestApi implements Microservice {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response create(DashboardMetadata dashboardMetadata) {
+    public Response create(@Context Request request, DashboardMetadata dashboardMetadata) {
         try {
             if (!dashboardDataProvider.get(dashboardMetadata.getUrl()).isPresent()) {
-                dashboardDataProvider.add(dashboardMetadata);
-                return Response.status(CREATED).build();
+                return dashboardDataProvider.add(request.getProperty("username").toString(), dashboardMetadata);
             } else {
                 return Response.status(CONFLICT)
                         .entity("Dashboard with URL " + dashboardMetadata.getUrl() + " already exists.")
@@ -169,10 +166,9 @@ public class DashboardRestApi implements Microservice {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response update(@PathParam("id") String id, DashboardMetadata dashboardMetadata) {
+    public Response update(@PathParam("id") String id, DashboardMetadata dashboardMetadata, @Context Request request) {
         try {
-            dashboardDataProvider.update(dashboardMetadata);
-            return Response.ok().build();
+            return dashboardDataProvider.update(request.getProperty("username").toString(), dashboardMetadata);
         } catch (DashboardException e) {
             LOGGER.error("Ann error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
             return Response.serverError().entity("Cannot update dashboard '" + id + "'.").build();
@@ -187,10 +183,9 @@ public class DashboardRestApi implements Microservice {
      */
     @DELETE
     @Path("/{id}")
-    public Response delete(@PathParam("id") String id) {
+    public Response delete(@PathParam("id") String id, @Context Request request) {
         try {
-            dashboardDataProvider.delete(id);
-            return Response.ok().build();
+            return dashboardDataProvider.delete(request.getProperty("username").toString(), id);
         } catch (DashboardException e) {
             LOGGER.error("Ann error occurred when deleting dashboard '{}'.", id, e);
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
