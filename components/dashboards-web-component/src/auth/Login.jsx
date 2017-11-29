@@ -29,6 +29,14 @@ import AuthManager from './utils/AuthManager';
 const muiTheme = getMuiTheme(darkBaseTheme);
 
 /**
+ * Style constants.
+ */
+const styles = {
+    messageBox: { textAlign: 'center', color: 'white' },
+    errorMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #e74c3c'},
+};
+
+/**
  * Login page.
  */
 export default class Login extends Component {
@@ -139,7 +147,7 @@ export default class Login extends Component {
                                     rememberMe: checked,
                                 });
                             }}
-                            style={{'padding':'30px 0px'}}
+                            style={{'margin':'30px 0'}}
                         />
                         <br />
                         <RaisedButton
@@ -154,6 +162,8 @@ export default class Login extends Component {
                         message={this.state.error}
                         open={this.state.showError}
                         autoHideDuration="4000"
+                        contentStyle={styles.messageBox}
+                        bodyStyle={styles.errorMessage}
                     />
                 </div>
             </MuiThemeProvider>

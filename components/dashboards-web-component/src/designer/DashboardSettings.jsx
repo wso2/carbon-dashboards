@@ -39,8 +39,8 @@ const muiTheme = getMuiTheme(darkBaseTheme);
  */
 const styles = {
     messageBox: { textAlign: 'center', color: 'white' },
-    errorMessage: { backgroundColor: '#FF5722', color: 'white' },
-    successMessage: { backgroundColor: '#4CAF50', color: 'white' },
+    errorMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #e74c3c'},
+    successMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #c0392b'},
 };
 
 /**

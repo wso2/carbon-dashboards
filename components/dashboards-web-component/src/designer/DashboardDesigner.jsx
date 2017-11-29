@@ -354,7 +354,7 @@ export default class DashboardDesigner extends Component {
         let head = document.getElementsByTagName('head')[0];
         let link = document.createElement('link');
         link.type = 'text/css';
-        link.href = baseURL + appContext + "/public/themes/dark/css/goldenlayout-dark-theme.css";
+        link.href = baseURL + appContext + "/public/themes/dark/css/custom-goldenlayout-dark-theme.css";
         link.rel = "stylesheet";
         head.appendChild(link);
     }

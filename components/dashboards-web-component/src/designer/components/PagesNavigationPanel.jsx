@@ -42,7 +42,7 @@ class PagesNavigationPanel extends React.Component {
                 <Link
                     to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + (parentPageId ? parentPageId + "/" + page.id : page.id)}
                     replace={true}>
-                    <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
+                    <MenuItem className="pages-menu-item" primaryText={page.name}/>
                 </Link>
             );
         } else {
@@ -51,7 +51,7 @@ class PagesNavigationPanel extends React.Component {
                 <section>
                     <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + parentPageId}
                           replace={true}>
-                        <MenuItem className="pages-menu-item" leftIcon={<ChevronRight/>} primaryText={page.name}/>
+                        <MenuItem className="pages-menu-item" primaryText={page.name}/>
                     </Link>
                     <MenuItem primaryText="">
                         {page.pages.map(page => {
@@ -62,12 +62,16 @@ class PagesNavigationPanel extends React.Component {
             );
         }
     }
+    
+    componentWillMount(){
+        this.loadTheme("", this.isThemeSwitchToggled());
+    }
 
     render() {
         if (this.props.dashboardContent) {
             this.props.pagesList = this.props.dashboardContent.map(page => {
                 return (
-                    <Paper className="pages-menu">
+                    <Paper className="pages-menu" style={{"backgroundColor":"transparent"}}>
                         <Menu className="pages-menu">
                             {this.generateDashboardPagesMenu(page)}
                         </Menu>
@@ -75,7 +79,7 @@ class PagesNavigationPanel extends React.Component {
                 );
             });
         }
-        this.loadTheme("", this.isThemeSwitchToggled());
+            
         return (
             <div>
                 <div className="dashboard-view-product-logo">
@@ -87,7 +91,6 @@ class PagesNavigationPanel extends React.Component {
                 <div>
                     {this.props.pagesList}
                 </div>
-                <hr />
                 <div className="dark-light-theme-switch-div">
                     <FormattedMessage id="light" defaultMessage="Light"/>
                     <Toggle
@@ -123,10 +126,12 @@ class PagesNavigationPanel extends React.Component {
         link.type = 'text/css';
         if (isInputChecked) {
             this.setThemeSwitchToggled(true);
-            link.href = baseURL + appContext + "/public/themes/dark/css/goldenlayout-dark-theme.css";
+            link.href = baseURL + appContext + "/public/themes/dark/css/custom-goldenlayout-dark-theme.css";
+            this.props.handleThemeSwitch(true);
         } else {
             this.setThemeSwitchToggled(false);
-            link.href = baseURL + appContext + "/public/themes/light/css/goldenlayout-light-theme.css";
+            link.href = baseURL + appContext + "/public/themes/light/css/custom-goldenlayout-light-theme.css";
+            this.props.handleThemeSwitch(false);
         }
         link.id = "dashboard-theme";
         link.rel = "stylesheet";
