@@ -32,8 +32,8 @@ import DashboardUtils from '../utils/DashboardUtils';
 const darkMuiTheme = getMuiTheme({
     "palette": {
         "primary1Color": "#24353f",
-        "textColor" : "#bbb",
-        "alternateTextColor" : "#bbb"
+        "textColor": "#bbb",
+        "alternateTextColor": "#bbb"
     },
     "drawer": {
         "color": "#17262e",
@@ -43,8 +43,8 @@ const darkMuiTheme = getMuiTheme({
 const lightMuiTheme = getMuiTheme({
     "palette": {
         "primary1Color": "#f1f1f1",
-        "textColor" : "#1d3644",
-        "alternateTextColor" : "#1d3644"
+        "textColor": "#1d3644",
+        "alternateTextColor": "#1d3644"
     },
     "drawer": {
         "color": "#d4d4d4",
@@ -127,11 +127,11 @@ class DashboardView extends React.Component {
             this.setState({toggled: "", dashboardViewCSS: "dashboard-view-full-width"});
         }
     }
-    
+
     handleTheme(isDarkTheme) {
         isDarkTheme ? document.body.style.background = '#081921' : document.body.style.background = '#fff';
-        let muiTheme = isDarkTheme ? getMuiTheme(darkMuiTheme): getMuiTheme(lightMuiTheme);
-        this.setState({muiTheme:muiTheme});
+        let muiTheme = isDarkTheme ? getMuiTheme(darkMuiTheme) : getMuiTheme(lightMuiTheme);
+        this.setState({muiTheme: muiTheme});
     }
 
     render() {
@@ -144,7 +144,7 @@ class DashboardView extends React.Component {
                                               dashboardName={this.state.dashboardName}
                                               toggled={this.state.toggled}
                                               match={this.props.match}
-                                              handleThemeSwitch = {this.handleTheme} />
+                                              handleThemeSwitch={this.handleTheme}/>
                     </Drawer>
                     <div className={this.state.contentClass}>
                         <AppBar
@@ -157,7 +157,7 @@ class DashboardView extends React.Component {
                         <DashboardRenderingComponent config={config} ref={(c) => {
                             this.dashboardRenderingComponent = c;
                         }}
-                        dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
+                                                     dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
                             this.state.dashboardContent, this.state.landingPage)}/>
 
                     </div>
