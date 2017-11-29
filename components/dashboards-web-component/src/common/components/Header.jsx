@@ -24,6 +24,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import AuthManager from '../../auth/utils/AuthManager';
+import Logo from '../../../public/images/wso2-logo.svg';
 
 import './Header.css';
 
@@ -93,7 +94,8 @@ export default class Header extends Component {
         return (
             <AppBar
                 title={this.props.title}
-                iconElementLeft={<i className="icon fw fw-wso2  header-icon" />}
+                iconElementLeft={<img height='24' src={Logo}/>}
+                iconStyleLeft={{margin:'12px 8px 0 -11px'}}
                 iconElementRight={this.renderRightLinks()}
                 style={styles.header}
                 titleStyle={styles.title}
