@@ -24,7 +24,7 @@ import DashboardAPI from '../utils/apis/DashboardAPI';
 import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
-import Error_401 from '../error-pages/Error_401';
+import Error401 from '../error-pages/Error401';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
 import WidgetConfigurationPanel from './components/WidgetConfigurationPanel';
@@ -137,7 +137,7 @@ export default class DashboardDesigner extends Component {
     render() {
         DashboardDesigner.loadTheme();
         if (!this.state.hasPermission) {
-            return <Error_401/>;
+            return <Error401/>;
         }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>

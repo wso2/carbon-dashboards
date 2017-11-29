@@ -39,7 +39,10 @@ const errorContainerStyles = {
     textAlign: "center"
 };
 
-class Error_401 extends Component {
+/**
+ *  This component provide a basic 401 error page.
+ */
+class Error401 extends Component {
     //TODO We need to remove this after finalizing the WSO2 theme. Because we need to get Error pages from it
     render() {
         return <MuiThemeProvider muiTheme={muiTheme}>
@@ -52,4 +55,4 @@ class Error_401 extends Component {
     }
 }
 
-export default Error_401;
+export default Error401;

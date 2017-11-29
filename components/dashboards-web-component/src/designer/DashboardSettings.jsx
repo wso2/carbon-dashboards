@@ -29,7 +29,7 @@ import {FormPanel, Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardSettingsRoles from './DashboardSettingsRoles';
 import {HttpStatus} from '../utils/Constants';
-import Error_401 from '../error-pages/Error_401';
+import Error401 from '../error-pages/Error401';
 
 /**
  * Material UI theme.
@@ -156,7 +156,7 @@ export default class DashboardSettings extends Component {
      */
     render() {
         if (!this.state.hasPermission) {
-            return <Error_401/>;
+            return <Error401/>;
         }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
