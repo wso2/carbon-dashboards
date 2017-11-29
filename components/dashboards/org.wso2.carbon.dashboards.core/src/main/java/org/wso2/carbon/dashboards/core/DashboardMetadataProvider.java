@@ -24,7 +24,7 @@ import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.ws.rs.core.Response;
+import java.util.Set;
 
 /**
  * Provider for dashboards related information.
@@ -42,16 +42,16 @@ public interface DashboardMetadataProvider {
      */
     Optional<DashboardMetadata> get(String dashboardUrl) throws DashboardException;
 
-    Response getDashboardByUser(String user, String dashboardUrl, Optional<String> originComponent) throws
+    Optional<DashboardMetadata> getDashboardByUser(String user, String dashboardUrl, String originComponent) throws
             DashboardException;
 
-    Response getAllByUser(String user) throws DashboardException;
+    Set<DashboardMetadata> getAllByUser(String user) throws DashboardException;
 
-    Response add(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
+    void add(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
 
-    Response update(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
+    void update(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
 
-    Response delete(String user, String dashboardUrl) throws DashboardException;
+    void delete(String user, String dashboardUrl) throws DashboardException;
 
     Map<String, List<Role>> getDashboardRoles(String dashboardUrl) throws DashboardException;
 
@@ -60,6 +60,6 @@ public interface DashboardMetadataProvider {
     List<org.wso2.carbon.analytics.idp.client.core.models.Role> getRolesByUsername(String username)
             throws DashboardException;
 
-    Response updateDashboardRoles(String user, String dashboardUrl, Map<String, List<String>> roles) throws
+    void updateDashboardRoles(String user, String dashboardUrl, Map<String, List<String>> roles) throws
             DashboardException;
 }
