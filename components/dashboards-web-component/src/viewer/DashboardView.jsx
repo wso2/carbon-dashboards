@@ -21,7 +21,6 @@ import React from 'react';
 
 import AppBar from 'material-ui/AppBar/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Drawer from 'material-ui/Drawer';
 
@@ -30,7 +29,27 @@ import PagesNavigationPanel from '../designer/components/PagesNavigationPanel';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 
-const muiTheme = getMuiTheme(darkBaseTheme);
+const darkMuiTheme = getMuiTheme({
+    "palette": {
+        "primary1Color": "#24353f",
+        "textColor" : "#bbb",
+        "alternateTextColor" : "#bbb"
+    },
+    "drawer": {
+        "color": "#17262e",
+    }
+});
+
+const lightMuiTheme = getMuiTheme({
+    "palette": {
+        "primary1Color": "#f1f1f1",
+        "textColor" : "#1d3644",
+        "alternateTextColor" : "#1d3644"
+    },
+    "drawer": {
+        "color": "#d4d4d4",
+    }
+});
 
 let config = {
     settings: {
@@ -50,6 +69,7 @@ let config = {
     },
     dimensions: {
         minItemWidth: 400,
+        headerHeight: 37
     },
     isClosable: false,
     content: []
@@ -64,11 +84,13 @@ class DashboardView extends React.Component {
             dashboardViewCSS: "dashboard-view",
             dashboardContent: [],
             open: true,
-            contentClass: "content-drawer-opened"
+            contentClass: "content-drawer-opened",
+            muiTheme: darkMuiTheme
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
         this.handleToggle = this.handleToggle.bind(this);
+        this.handleTheme = this.handleTheme.bind(this);
     }
 
     handleToggle() {
@@ -105,23 +127,31 @@ class DashboardView extends React.Component {
             this.setState({toggled: "", dashboardViewCSS: "dashboard-view-full-width"});
         }
     }
+    
+    handleTheme(isDarkTheme) {
+        isDarkTheme ? document.body.style.background = '#081921' : document.body.style.background = '#fff';
+        let muiTheme = isDarkTheme ? getMuiTheme(darkMuiTheme): getMuiTheme(lightMuiTheme);
+        this.setState({muiTheme:muiTheme});
+    }
 
     render() {
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={this.state.muiTheme}>
                 <div>
-                    <Drawer open={this.state.open}>
+                    <Drawer open={this.state.open} className="viewer-drawer">
                         <PagesNavigationPanel dashboardId={this.props.match.params.id}
                                               dashboardContent={this.state.dashboardContent}
                                               dashboardName={this.state.dashboardName}
                                               toggled={this.state.toggled}
-                                              match={this.props.match}/>
+                                              match={this.props.match}
+                                              handleThemeSwitch = {this.handleTheme} />
                     </Drawer>
                     <div className={this.state.contentClass}>
                         <AppBar
                             title={this.props.dashboardName}
                             iconClassNameRight="muidocs-icon-navigation-expand-more"
                             onLeftIconButtonTouchTap={this.handleToggle}
+                            className="app-bar"
                         />
                         <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
                         <DashboardRenderingComponent config={config} ref={(c) => {

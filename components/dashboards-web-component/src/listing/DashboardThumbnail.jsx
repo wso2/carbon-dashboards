@@ -57,13 +57,13 @@ class DashboardThumbnail extends React.Component {
     render() {
         let styles = {
             card: {
-                "background-color": this.props.muiTheme.palette.primary3Color
+                "background-color": "#5d6e77"
             },
             title: {
-                "color": this.props.muiTheme.palette.textColor
+                "color": "#eee"
             },
             subtitle: {
-                "color": this.props.muiTheme.palette.alternateTextColor,
+                "color": "#ccc",
                 height: 17
             }
         };

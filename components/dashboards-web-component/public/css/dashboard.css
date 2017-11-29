@@ -96,6 +96,7 @@ a {
 .dark-light-theme-switch-div {
     display: flex;
     margin-left: 15px;
+    margin-top: 20px;
 }
 
 .dark-light-theme-switch-toggleBtn {
@@ -168,7 +169,7 @@ a {
 }
 
 .dashboard-thumbnail .actions a {
-    color: #17262e;
+    color: #eee;
 }
 
 .dashboard-thumbnail .actions .icon {
@@ -448,11 +449,11 @@ a {
     text-align: right;
     left: -15px;
     top: 15px;
-    color: white;
+    color: #bbb;
 }
 
 .trash-button-icon:hover {
-    color: #24353f;
+    color: #fff;
 }
 
 .dashboard-thumbnail-deleted {
@@ -466,4 +467,24 @@ a {
 .no-dashboard-label {
     color: white;
     font-size: 30px;
+}
+
+.default-snackbar {
+    background-color: #24353f!important;
+    color: #f5f5f5;
+    border: 1px solid #e74c3c;
+}
+
+/* dashboard viewer styles */
+.app-bar{
+    height: 45px;
+    box-shadow: none!important;
+}
+
+.app-bar button{
+    margin: 0 -24px!important;
+}
+
+.viewer-drawer > div{
+    box-shadow: none!important;
 }
