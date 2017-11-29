@@ -28,6 +28,8 @@ import java.util.List;
  * This is the bean class for default roles in deployment yaml.
  */
 public class RolesProvider {
+
+    private List<Role> creatorRoles = new ArrayList<Role>();
     private static final String ROLE_ID = "dashboard_creator";
     private static final String ROLE_NAME = "dashboard_creator";
 

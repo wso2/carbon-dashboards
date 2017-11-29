@@ -40,6 +40,7 @@ import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
