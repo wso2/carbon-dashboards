@@ -62,8 +62,8 @@ class PagesNavigationPanel extends React.Component {
             );
         }
     }
-    
-    componentWillMount(){
+
+    componentWillMount() {
         this.loadTheme("", this.isThemeSwitchToggled());
     }
 
@@ -79,7 +79,7 @@ class PagesNavigationPanel extends React.Component {
                 );
             });
         }
-            
+
         return (
             <div>
                 <div className="dashboard-view-product-logo">

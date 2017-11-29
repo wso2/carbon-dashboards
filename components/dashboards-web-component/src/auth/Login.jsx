@@ -17,12 +17,12 @@
  *
  */
 
-import { Checkbox, RaisedButton, Snackbar, TextField } from 'material-ui';
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import {Checkbox, RaisedButton, Snackbar, TextField} from 'material-ui';
+import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 import Qs from 'qs';
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import { FormPanel, Header } from '../common';
+import React, {Component} from 'react';
+import {Redirect} from 'react-router-dom';
+import {FormPanel, Header} from '../common';
 
 import AuthManager from './utils/AuthManager';
 
@@ -32,8 +32,8 @@ const muiTheme = getMuiTheme(darkBaseTheme);
  * Style constants.
  */
 const styles = {
-    messageBox: { textAlign: 'center', color: 'white' },
-    errorMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #e74c3c'},
+    messageBox: {textAlign: 'center', color: 'white'},
+    errorMessage: {backgroundColor: '#17262e', color: 'white', border: '2px solid #e74c3c'},
 };
 
 /**
@@ -83,7 +83,7 @@ export default class Login extends Component {
         e.preventDefault();
         AuthManager
             .authenticate(this.state.username, this.state.password, this.state.rememberMe)
-            .then(() => this.setState({ authenticated: true }))
+            .then(() => this.setState({authenticated: true}))
             .catch((error) => {
                 const errorMessage = error.response && error.response.status === 401 ?
                     'Invalid username/password!' : 'Unknown error occurred!';
@@ -105,14 +105,14 @@ export default class Login extends Component {
         // If the user is already authenticated redirect to referrer link.
         if (this.state.authenticated) {
             return (
-                <Redirect to={this.state.referrer} />
+                <Redirect to={this.state.referrer}/>
             );
         }
 
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <Header title="Portal" hideUserSettings />
+                    <Header title="Portal" hideUserSettings/>
                     <FormPanel title="Login" onSubmit={this.authenticate}>
                         <TextField
                             fullWidth
