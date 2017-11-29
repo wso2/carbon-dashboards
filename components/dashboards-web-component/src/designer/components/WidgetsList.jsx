@@ -146,7 +146,7 @@ export default  class WidgetsList extends React.Component {
     render() {
         return (
             <div style={this.getPanelStyles(this.props.visible)}>
-                <h3>Widgets</h3>
+                <h3><FormattedMessage id="widgets.heading" defaultMessage="Widgets"/></h3>
                 <div className="widget-search-div">
                     <TextField className="widget-search-textfield" onChange={this.searchWidget} hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>}/>
                 </div>

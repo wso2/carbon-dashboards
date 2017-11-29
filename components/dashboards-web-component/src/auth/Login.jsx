@@ -22,7 +22,10 @@ import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 import Qs from 'qs';
 import React, {Component} from 'react';
 import {Redirect} from 'react-router-dom';
+import PropTypes from 'prop-types';
 import {FormPanel, Header} from '../common';
+
+import {FormattedMessage} from 'react-intl';
 
 import AuthManager from './utils/AuthManager';
 
@@ -86,7 +89,14 @@ export default class Login extends Component {
             .then(() => this.setState({authenticated: true}))
             .catch((error) => {
                 const errorMessage = error.response && error.response.status === 401 ?
-                    'Invalid username/password!' : 'Unknown error occurred!';
+                    this.context.intl.formatMessage({
+                        id: "login.error.message",
+                        defaultMessage: "Invalid username/password!"
+                    }) :
+                    this.context.intl.formatMessage({
+                        id: "login.unknown.error",
+                        defaultMessage: "Unknown error occurred!"
+                    });
                 this.setState({
                     username: '',
                     password: '',
@@ -112,11 +122,12 @@ export default class Login extends Component {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <Header title="Portal" hideUserSettings/>
-                    <FormPanel title="Login" onSubmit={this.authenticate}>
+                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>} hideUserSettings/>
+                    <FormPanel title={<FormattedMessage id="login.title" defaultMessage="Login"/>}
+                               onSubmit={this.authenticate}>
                         <TextField
                             fullWidth
-                            floatingLabelText="Username"
+                            floatingLabelText={<FormattedMessage id="login.username" defaultMessage="Username"/>}
                             value={this.state.username}
                             onChange={(e) => {
                                 this.setState({
@@ -129,7 +140,7 @@ export default class Login extends Component {
                         <TextField
                             fullWidth
                             type="password"
-                            floatingLabelText="Password"
+                            floatingLabelText={<FormattedMessage id="login.password" defaultMessage="Password"/>}
                             value={this.state.password}
                             onChange={(e) => {
                                 this.setState({
@@ -140,7 +151,7 @@ export default class Login extends Component {
                         />
                         <br />
                         <Checkbox
-                            label="Remember Me"
+                            label={<FormattedMessage id="login.rememberMe" defaultMessage="Remember Me"/>}
                             checked={this.state.rememberMe}
                             onCheck={(e, checked) => {
                                 this.setState({
@@ -154,7 +165,7 @@ export default class Login extends Component {
                             primary
                             type="submit"
                             disabled={this.state.username === '' || this.state.password === ''}
-                            label="Login"
+                            label={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                             disabledBackgroundColor="rgb(27, 40, 47)"
                         />
                     </FormPanel>
@@ -170,3 +181,7 @@ export default class Login extends Component {
         );
     }
 }
+
+Login.contextTypes = {
+    intl: PropTypes.object.isRequired
+};

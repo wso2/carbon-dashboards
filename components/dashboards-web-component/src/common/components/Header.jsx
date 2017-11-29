@@ -22,6 +22,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 import AuthManager from '../../auth/utils/AuthManager';
 import Logo from '../../../public/images/wso2-logo.svg';
@@ -77,7 +78,7 @@ export default class Header extends Component {
                     anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
                 >
                     <MenuItem
-                        primaryText="Logout"
+                        primaryText={<FormattedMessage id="logout" defaultMessage="Logout" />}
                         containerElement={<Link to={`${window.contextPath}/logout`} />}
                     />
                 </IconMenu>

@@ -21,6 +21,7 @@ import { RaisedButton, Snackbar, TextField } from 'material-ui';
 import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
 import ClearIcon from 'material-ui/svg-icons/content/clear';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 
@@ -79,7 +80,10 @@ export default class DashboardSettings extends Component {
 
         // Validate fields.
         if (dashboard.name.length === 0) {
-            this.showError('Please fill the dashboard name!');
+            this.showError(this.context.intl.formatMessage({
+                id: "settings.dashboard.name.missing",
+                defaultMessage: "Please fill the dashboard name!"
+            }));
             return;
         }
 
@@ -89,19 +93,28 @@ export default class DashboardSettings extends Component {
             .updateDashboardByID(dashboard.url, dashboard)
             .then((response) => {
                 if (response.status === HttpStatus.OK) {
-                    this.showMessage(`Dashboard '${dashboard.name}' is updated successfully.`);
+                    this.showMessage(this.context.intl.formatMessage({
+                        id: "dashboard.update.success",
+                        defaultMessage: "Dashboard updated successfully!"
+                    }));
                     setTimeout(() => {
                         window.location.href = window.contextPath;
                     }, 1000);
                 }
             })
-            .catch(() => this.showError('Failed updating dashboard roles.'));
+            .catch(() => this.showError(this.context.intl.formatMessage({
+                id: "settings.role.update.failure",
+                defaultMessage: "Failed updating dashboard roles."
+            })));
 
         // Save dashboard roles only if there are changes.
         if (this.rolesComponent) {
             this.rolesComponent
                 .saveRoles()
-                .then(() => this.showMessage('Dashboard roles saved successfully!'))
+                .then(() => this.showMessage(this.context.intl.formatMessage({
+                    id: "settings.role.update.success",
+                    defaultMessage: "Dashboard roles saved successfully!"
+                })))
                 .catch(error => this.showError(error));
         }
     }
@@ -234,4 +247,8 @@ export default class DashboardSettings extends Component {
         );
     }
 }
+
+DashboardSettings.contextTypes ={
+    intl: PropTypes.object.isRequired
+};
 

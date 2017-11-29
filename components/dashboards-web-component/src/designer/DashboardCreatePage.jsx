@@ -18,6 +18,7 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { MuiThemeProvider, darkBaseTheme, getMuiTheme } from 'material-ui/styles';
@@ -134,7 +135,7 @@ export default class DashboardCreatePage extends Component {
             pages: [
                 {
                     id: 'home',
-                    name: 'Home',
+                    name: this.context.intl.formatMessage({id: "home", defaultMessage: "Home"}),
                     content: [],
                 },
             ],
@@ -144,23 +145,35 @@ export default class DashboardCreatePage extends Component {
             .then((response) => {
                 switch (response.status) {
                     case HttpStatus.CREATED: {
-                        this.showMessage(`Dashboard ${dashboard.name} is created successfully!`, styles.successMessage);
+                        this.showMessage(this.context.intl.formatMessage({
+                                id: "dashboard.create.success",
+                                defaultMessage: "Dashboard {name} is created successfully!"
+                            }, {name: this.state.dashboard.name}), styles.successMessage);
                         setTimeout(() => {
                             window.location.href = `${window.contextPath}/designer/${this.state.dashboard.url}`;
                         }, 1000);
                         break;
                     }
                     default: {
-                        this.showError('Unable to create the dashboard due to unknown error.');
+                        this.showError(this.context.intl.formatMessage({
+                            id: "dashboard.create.failure",
+                            defaultMessage: "Unable to create the dashboard due to unknown error."
+                        }));
                         break;
                     }
                 }
             })
             .catch((error) => {
                 if (error.response.status === HttpStatus.CONFLICT){
-                    this.showError('Dashboard with same url already exists. Please use a different url.');
+                    this.showError(this.context.intl.formatMessage({
+                        id: "dashboard.error.sameurl",
+                        defaultMessage: "Dashboard with same url already exists. Please use a different url."
+                    }));
                 } else {
-                    this.showError('Error in adding dashboard!');
+                    this.showError(this.context.intl.formatMessage({
+                        id: "dashboard.add.error",
+                        defaultMessage: "Error in adding dashboard!"
+                    }));
                 }
             });
     }
@@ -186,10 +199,7 @@ export default class DashboardCreatePage extends Component {
                             }
                             value={this.state.dashboard.name}
                             hintText={
-                                <FormattedMessage
-                                    id="dashboard.name.hint.text"
-                                    defaultMessage="E.g. Sales Statistics"
-                                />
+                                <FormattedMessage id="dashboard.name.hint.text" defaultMessage="E.g. Sales Statistics" />
                             }
                             fullWidth
                             errorText={this.state.fieldErrors.name.error}
@@ -275,3 +285,7 @@ export default class DashboardCreatePage extends Component {
         );
     }
 }
+
+DashboardCreatePage.contextTypes ={
+    intl: PropTypes.object.isRequired
+};

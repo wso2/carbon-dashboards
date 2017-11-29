@@ -64,7 +64,7 @@ class DashboardListing extends React.Component {
                                 window.location.href = window.contextPath + '/create/';
                             }}/>
                     </div>
-                    <div className="dashboard-listing-container">
+                    <div className="dashboard-listing-container" style={{overflow:"auto"}}>
                         {this.state.dashboards}
                     </div>
                 </div>
@@ -87,7 +87,9 @@ class DashboardListing extends React.Component {
                                            muiTheme={muiTheme}/>;
             });
             if (dashboardList.length === 0) {
-                dashboardList.push(<div className="no-dashboard-label">No Dashboards Available</div>);
+                dashboardList.push(<div className="no-dashboard-label">
+                    <FormattedMessage id="listing.no.dashboards.available" defaultMessage="No Dashboards Available"/>
+                </div>);
             }
             that.setState({dashboards: dashboardList});
         }).catch(function (error) {
