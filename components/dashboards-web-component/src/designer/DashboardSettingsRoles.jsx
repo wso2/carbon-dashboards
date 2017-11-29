@@ -20,6 +20,7 @@
 import React, { Component } from 'react';
 import { AutoComplete, Chip } from 'material-ui';
 import PropTypes from 'prop-types';
+import {FormattedMessage} from 'react-intl';
 
 import AuthenticationAPI from '../utils/apis/AuthenticationAPI';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -204,7 +205,7 @@ export default class DashboardSettingsRoles extends Component {
                                     {actorLabels[actor]}
                                 </h3>
                                 <AutoComplete
-                                    floatingLabelText="Add role"
+                                    floatingLabelText={<FormattedMessage id="settings.add.role" defaultMessage="Add Role"/>}
                                     filter={AutoComplete.fuzzyFilter}
                                     dataSource={this.state.roles[actor].available}
                                     searchText={this.state.roles[actor].text}

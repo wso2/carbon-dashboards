@@ -41,6 +41,7 @@ import BackIcon from 'material-ui/svg-icons/navigation/arrow-back';
 import SaveIcon from 'material-ui/svg-icons/content/save';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import PropTypes from 'prop-types';
 //React Intl for Localization
 import {FormattedMessage} from 'react-intl';
 // CSS
@@ -148,11 +149,11 @@ export default class DashboardDesigner extends Component {
                                       onClick={() => {
                                           window.location.href = window.contextPath + '/';
                                       }}
-                                      backgroundColor="rgb(13, 31, 39)" />
+                                      backgroundColor="rgb(13, 31, 39)"/>
                         <FlatButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>}
-                                      primary
-                                      icon={<SaveIcon/>}
-                                      onClick={this.updatePageContent}/>
+                                    primary
+                                    icon={<SaveIcon/>}
+                                    onClick={this.updatePageContent}/>
                     </div>
 
                     {/* Left action bar */}
@@ -249,7 +250,10 @@ export default class DashboardDesigner extends Component {
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
-            window.global.notify('Dashboard updated successfully!');
+            window.global.notify(this.context.intl.formatMessage({
+                id: "dashboard.update.success",
+                defaultMessage: "Dashboard updated successfully!"
+            }));
         } catch (e) {
             // Absorb the error since this doesn't relevant to the end-user.
         }
@@ -328,7 +332,10 @@ export default class DashboardDesigner extends Component {
      */
     updateDashboard(dashboard) {
         new DashboardAPI().updateDashboardByID(dashboard.id, dashboard);
-        window.global.notify('Dashboard updated successfully!');
+        window.global.notify(this.context.intl.formatMessage({
+            id: "dashboard.update.success",
+            defaultMessage: "Dashboard updated successfully!"
+        }));
         this.setState({
             dashboard: dashboard
         });
@@ -361,8 +368,12 @@ export default class DashboardDesigner extends Component {
 
     pageNavigated(id, url) {
         this.setState({
-            redirectUrl: window.contextPath +'/designer/' + this.state.dashboardId + '/' + url,
+            redirectUrl: window.contextPath + '/designer/' + this.state.dashboardId + '/' + url,
             redirect: true
         });
     }
 }
+
+DashboardDesigner.contextTypes = {
+    intl: PropTypes.object.isRequired
+};

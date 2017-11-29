@@ -22,16 +22,13 @@ import React, {Component} from 'react';
 import PageEntry from './PageEntry';
 import DashboardUtils from '../../utils/DashboardUtils';
 // Material-UI
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
+import { FlatButton, Snackbar, TextField } from 'material-ui';
 import AddCircleOutlineIcon from 'material-ui/svg-icons/content/add-circle-outline';
+import PropTypes from 'prop-types';
 
 import {FormattedMessage} from 'react-intl';
 
 let _pages = [];
-
-const PAGE_ID_PREFIX = 'page';
-const PAGE_TITLE_PREFIX = 'New Page - ';
 
 export default class PagesPanel extends Component {
     constructor(props) {
@@ -56,7 +53,7 @@ export default class PagesPanel extends Component {
     render() {
         return (
             <div style={this.getPanelStyles(this.props.visible)}>
-                <h3>Pages</h3>
+                <h3><FormattedMessage id="pages.heading" defaultMessage="Pages"/></h3>
                 <div style={{'text-align': 'center'}}>
                     <FlatButton label={<FormattedMessage id="create.page" defaultMessage="Create Page"/>} primary
                                   fullWidth icon={<AddCircleOutlineIcon/>}
@@ -73,6 +70,11 @@ export default class PagesPanel extends Component {
                                           onPageSelected={this.pageSelected.bind(this)}/>
                     })
                 }
+                <Snackbar
+                    message={this.state.error}
+                    open={this.state.showError}
+                    autoHideDuration="4000"
+                />
             </div>
         );
     }
@@ -133,8 +135,8 @@ export default class PagesPanel extends Component {
      */
     addPage() {
         let uniqueId = this.generatePageId();
-        let id = PAGE_ID_PREFIX + uniqueId;
-        let title = PAGE_TITLE_PREFIX + uniqueId;
+        let id = this.context.intl.formatMessage({id:"page.id.prefix", defaultMessage: "page"}) + uniqueId;
+        let title =  this.context.intl.formatMessage({id:"page.title.prefix", defaultMessage: "New Page -"}) + uniqueId;
         this.props.dashboard.pages.push({
             id: id,
             name: title,
@@ -165,7 +167,12 @@ export default class PagesPanel extends Component {
     deletePage(id) {
         let p = DashboardUtils.findDashboardPageById(this.props.dashboard, id);
         if (p.pages && p.pages.length > 0) {
-            alert('Unable to delete this page since it contains sub-pages');
+            const errorMessage = this.context.intl.formatMessage({id:"page.delete.error",
+                defaultMessage: "Unable to delete this page since it contains sub-pages"});
+            this.setState({
+                error: errorMessage,
+                showError: true,
+            });
             return;
         }
         this.deletePageRecursively(this.props.dashboard.pages, id);
@@ -225,7 +232,7 @@ export default class PagesPanel extends Component {
      */
     generatePageId(id) {
         id = id || _pages.length + 1;
-        let candidateId = PAGE_ID_PREFIX + id;
+        let candidateId = this.context.intl.formatMessage({id:"page.id.prefix", defaultMessage: "page"}) + id;
         let hasPage = false;
         for (let i = 0; i < _pages.length; i++) {
             if (_pages[i].id.toLowerCase() === candidateId) {
@@ -242,3 +249,7 @@ export default class PagesPanel extends Component {
         }
     }
 }
+
+PagesPanel.contextTypes ={
+    intl: PropTypes.object.isRequired
+};
