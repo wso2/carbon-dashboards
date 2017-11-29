@@ -24,6 +24,11 @@ import AuthManager from '../../auth/utils/AuthManager';
  * Dashboard API.
  */
 export default class DashboardAPI {
+
+    constructor(originComponent) {
+        this.originComponent = originComponent;
+    }
+
     /**
      * This method will return the AXIOS http client.
      * @returns httpClient
@@ -59,6 +64,19 @@ export default class DashboardAPI {
      * @param dashboardId
      */
     getDashboardByID(dashboardId) {
+        switch (this.originComponent) {
+            case "designer": {
+                this.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = "designer";
+                break;
+            }
+            case "settings": {
+                this.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = "settings";
+                break;
+            }
+            default: {
+                break;
+            }
+        }
         return this.getHTTPClient().get(dashboardId);
     }
 

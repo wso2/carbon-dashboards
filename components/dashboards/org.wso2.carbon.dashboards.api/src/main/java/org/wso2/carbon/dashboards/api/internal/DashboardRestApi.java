@@ -38,6 +38,7 @@ import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -122,7 +123,8 @@ public class DashboardRestApi implements Microservice {
     @Path("/{id}")
     public Response get(@PathParam("id") String id, @Context Request request) {
         try {
-            return dashboardDataProvider.getByUser(request.getProperty("username").toString(), id);
+            return dashboardDataProvider.getDashboardByUser(request.getProperty("username").toString(), id, Optional
+                    .ofNullable(request.getHeader("X-Dashboard-Origin-Component")));
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving dashboard for ID '{}'.", id, e);
             return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
@@ -245,10 +247,10 @@ public class DashboardRestApi implements Microservice {
     @POST
     @Path("/{url}/roles")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDashboardRoles(@PathParam("url") String url, Map<String, List<String>> roles) {
+    public Response updateDashboardRoles(@PathParam("url") String url, @Context Request request, Map<String,
+            List<String>> roles) {
         try {
-            dashboardDataProvider.updateDashboardRoles(url, roles);
-            return Response.ok().build();
+            return dashboardDataProvider.updateDashboardRoles(request.getProperty("username").toString(), url, roles);
         } catch (DashboardException e) {
             LOGGER.error("Cannot update user roles of dashboard '" + url + "'.", e);
             return Response.serverError()
