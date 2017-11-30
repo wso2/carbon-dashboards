@@ -29,7 +29,6 @@ import java.util.List;
  */
 public class RolesProvider {
 
-    private List<Role> creatorRoles = new ArrayList<Role>();
     private static final String ROLE_ID = "dashboard_creator";
     private static final String ROLE_NAME = "dashboard_creator";
 
