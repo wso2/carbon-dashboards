@@ -126,6 +126,7 @@ public class DashboardMetadataProviderImplTest {
         userRoles.add(new org.wso2.carbon.analytics.idp.client.core.models.Role
                 ("test_role", "test_role"));
         when(idPClient.getUserRoles(anyString())).thenReturn(userRoles);
+        when(idPClient.getAdminRole()).thenReturn(new Role("test_role2", "test_role2"));
         Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 add("testUser", dashboardMetadata));
     }

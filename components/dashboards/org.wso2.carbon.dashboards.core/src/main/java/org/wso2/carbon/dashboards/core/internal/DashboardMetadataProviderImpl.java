@@ -328,8 +328,10 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     private boolean hasRoles(String user, Role role) {
         try {
+            org.wso2.carbon.analytics.idp.client.core.models.Role adminRole = identityClient.getAdminRole();
             return identityClient.getUserRoles(user).stream()
-                    .anyMatch(userRole -> Objects.equals(userRole.getId(), role.getId()));
+                    .anyMatch(userRole -> Objects.equals(userRole.getId(), role.getId()) || Objects.equals(userRole
+                            .getId(), adminRole.getId()));
         } catch (IdPClientException e) {
             LOGGER.error("Error in retrieving user roles for the user " + user, e);
         }
