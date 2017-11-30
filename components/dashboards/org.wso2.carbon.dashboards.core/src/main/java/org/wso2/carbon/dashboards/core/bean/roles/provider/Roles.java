@@ -35,8 +35,4 @@ public class Roles {
         return creator;
     }
 
-    public void setCreator(List<Role> creator) {
-        this.creator = creator;
-    }
-
 }

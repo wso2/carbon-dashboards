@@ -73,9 +73,6 @@ export default class DashboardAPI {
                 this.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = "settings";
                 break;
             }
-            default: {
-                break;
-            }
         }
         return this.getHTTPClient().get(dashboardId);
     }

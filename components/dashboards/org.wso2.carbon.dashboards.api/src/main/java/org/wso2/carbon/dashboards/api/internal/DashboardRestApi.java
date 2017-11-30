@@ -33,7 +33,7 @@ import org.wso2.carbon.analytics.msf4j.interceptor.common.util.InterceptorConsta
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.exception.DashboardUnauthorizedException;
+import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
@@ -108,10 +108,8 @@ public class DashboardRestApi implements Microservice {
     @Path("/")
     public Response get(@Context Request request) {
         try {
-            return Response.ok().entity(dashboardDataProvider.getAllByUser(request.getProperty(InterceptorConstants
-                    .PROPERTY_USERNAME)
-                    .toString())).build();
-        } catch (DashboardUnauthorizedException e) {
+            return Response.ok().entity(dashboardDataProvider.getAllByUser(getUserName(request))).build();
+        } catch (UnauthorizedException e) {
             return Response.status(UNAUTHORIZED).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when listing dashboards.", e);
@@ -131,13 +129,12 @@ public class DashboardRestApi implements Microservice {
     @Path("/{id}")
     public Response get(@PathParam("id") String id, @Context Request request) {
         try {
-            return dashboardDataProvider.getDashboardByUser(request.getProperty(InterceptorConstants
-                            .PROPERTY_USERNAME).toString(),
-                    id, request.getHeader("X-Dashboard-Origin-Component")).map(metadata ->
+            return dashboardDataProvider.getDashboardByUser(getUserName(request), id,
+                    request.getHeader("X-Dashboard-Origin-Component")).map(metadata ->
                     Response.ok().entity(metadata).build())
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + id + "'.").build());
-        } catch (DashboardUnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("You are not authorized to access the dashboard with ID" +
+        } catch (UnauthorizedException e) {
+            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to retrieve dashboard with ID : " +
                     id).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving dashboard for ID '{}'.", id, e);
@@ -158,16 +155,15 @@ public class DashboardRestApi implements Microservice {
     public Response create(@Context Request request, DashboardMetadata dashboardMetadata) {
         try {
             if (!dashboardDataProvider.get(dashboardMetadata.getUrl()).isPresent()) {
-                dashboardDataProvider.add(request.getProperty(InterceptorConstants.PROPERTY_USERNAME).toString(),
-                        dashboardMetadata);
+                dashboardDataProvider.add(getUserName(request), dashboardMetadata);
                 return Response.status(CREATED).build();
             } else {
                 return Response.status(CONFLICT)
                         .entity("Dashboard with URL " + dashboardMetadata.getUrl() + " already exists.")
                         .build();
             }
-        } catch (DashboardUnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("You are not authorized to create a dashboard").build();
+        } catch (UnauthorizedException e) {
+            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to create a dashboard").build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new dashboard from {} data.", dashboardMetadata, e);
             return Response.serverError()
@@ -188,11 +184,10 @@ public class DashboardRestApi implements Microservice {
     @Path("/{id}")
     public Response update(@PathParam("id") String id, DashboardMetadata dashboardMetadata, @Context Request request) {
         try {
-            dashboardDataProvider.update(request.getProperty(InterceptorConstants.PROPERTY_USERNAME).toString(),
-                    dashboardMetadata);
+            dashboardDataProvider.update(getUserName(request), dashboardMetadata);
             return Response.ok().build();
-        } catch (DashboardUnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("You are not authorized to update the dashboard with ID" +
+        } catch (UnauthorizedException e) {
+            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the dashboard with ID : " +
                     dashboardMetadata.getUrl()).build();
         } catch (DashboardException e) {
             LOGGER.error("Ann error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
@@ -210,11 +205,11 @@ public class DashboardRestApi implements Microservice {
     @Path("/{id}")
     public Response delete(@PathParam("id") String id, @Context Request request) {
         try {
-            dashboardDataProvider.delete(request.getProperty(InterceptorConstants.PROPERTY_USERNAME).toString(), id);
+            dashboardDataProvider.delete(getUserName(request), id);
             return Response.ok().build();
-        } catch (DashboardUnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("You are not authorized to delete the dashboard with ID" + id)
-                    .build();
+        } catch (UnauthorizedException e) {
+            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to delete the dashboard with ID : "
+                    + id).build();
         } catch (DashboardException e) {
             LOGGER.error("Ann error occurred when deleting dashboard '{}'.", id, e);
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
@@ -277,19 +272,21 @@ public class DashboardRestApi implements Microservice {
     public Response updateDashboardRoles(@PathParam("url") String url, @Context Request request, Map<String,
             List<String>> roles) {
         try {
-            dashboardDataProvider.updateDashboardRoles(request.getProperty(InterceptorConstants.PROPERTY_USERNAME)
-                            .toString(), url,
-                    roles);
+            dashboardDataProvider.updateDashboardRoles(getUserName(request), url, roles);
             return Response.ok().build();
-        } catch (DashboardUnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("You are not authorized to update the roles of dashboard with" +
-                    " ID" + url).build();
+        } catch (UnauthorizedException e) {
+            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the roles of dashboard " +
+                    "with ID : " + url).build();
         } catch (DashboardException e) {
             LOGGER.error("Cannot update user roles of dashboard '" + url + "'.", e);
             return Response.serverError()
                     .entity("Cannot update user roles of dashboard '" + url + "'.")
                     .build();
         }
+    }
+
+    private static String getUserName(Request request) {
+        return request.getProperty(InterceptorConstants.PROPERTY_USERNAME).toString();
     }
 
 }
