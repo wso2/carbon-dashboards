@@ -157,9 +157,13 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         boolean isAuthorized = originComponent != null ? checkPermissions(user, dashboardUrl, originComponent) :
                 checkPermissions(user, dashboardUrl);
         if (isAuthorized) {
-            return dao.get(dashboardUrl);
+            return get(dashboardUrl);
         } else {
+<<<<<<< efc9ceee027ff0a49a892a11aade4909e4d3f190
             throw new UnauthorizedException("Insufficient permissions to retrieve the dashboard with ID" +
+=======
+            throw new DashboardUnauthorizedException("You are not authorized to access the dashboard with ID - " +
+>>>>>>> Add unit tests for dashboard core component
                     dashboardUrl);
         }
     }
@@ -195,8 +199,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         List<Role> creatorRoles;
         RolesProvider rolesProvider = null;
         try {
-            rolesProvider = new RolesProvider(configProvider.getConfigurationObject(DashboardConfigurations
-                    .class));
+            rolesProvider = new RolesProvider(configProvider.getConfigurationObject(DashboardConfigurations.class));
             creatorRoles = rolesProvider.getCreatorRoles();
         } catch (ConfigurationException e) {
             throw new DashboardException("Error in reading dashboard creator roles !", e);
@@ -224,8 +227,13 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
                 dashboardMetadata.getUrl() + PERMISSION_SUFFIX_EDITOR))) {
             dao.update(dashboardMetadata);
         } else {
+<<<<<<< efc9ceee027ff0a49a892a11aade4909e4d3f190
             throw new UnauthorizedException("Insufficient permissions to update the dashboard with ID "
                     + dashboardMetadata.getUrl());
+=======
+            throw new DashboardUnauthorizedException("You are not authorized to update the dashboard with ID - " +
+                    "" + dashboardMetadata.getUrl());
+>>>>>>> Add unit tests for dashboard core component
         }
 
     }
@@ -240,7 +248,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
                 permissionProvider.deletePermission(permission);
             }
         } else {
+<<<<<<< efc9ceee027ff0a49a892a11aade4909e4d3f190
             throw new UnauthorizedException("Insufficient permissions to delete the dashboard with the ID " +
+=======
+            throw new DashboardUnauthorizedException("You are not authorized to delete the dashboard with the ID - " +
+>>>>>>> Add unit tests for dashboard core component
                     dashboardUrl);
         }
     }
