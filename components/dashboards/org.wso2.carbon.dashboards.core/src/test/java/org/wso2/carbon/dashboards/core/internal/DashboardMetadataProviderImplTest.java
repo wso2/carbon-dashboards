@@ -27,7 +27,7 @@ import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
-import org.wso2.carbon.dashboards.core.exception.DashboardUnauthorizedException;
+import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.roles.provider.RolesProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
@@ -126,7 +126,7 @@ public class DashboardMetadataProviderImplTest {
         userRoles.add(new org.wso2.carbon.analytics.idp.client.core.models.Role
                 ("test_role", "test_role"));
         when(idPClient.getUserRoles(anyString())).thenReturn(userRoles);
-        Assertions.assertThrows(DashboardUnauthorizedException.class, () -> dashboardMetadataProvider.
+        Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 add("testUser", dashboardMetadata));
     }
 
@@ -152,7 +152,7 @@ public class DashboardMetadataProviderImplTest {
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
         when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
-        Assertions.assertThrows(DashboardUnauthorizedException.class, () -> dashboardMetadataProvider.
+        Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 update("testUser1", dashboardMetadata));
     }
 
@@ -178,7 +178,7 @@ public class DashboardMetadataProviderImplTest {
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
         when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
-        Assertions.assertThrows(DashboardUnauthorizedException.class, () -> dashboardMetadataProvider.
+        Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 delete("testUser1", dashboardUrl));
     }
 
