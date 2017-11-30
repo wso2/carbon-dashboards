@@ -102,7 +102,7 @@ public class DashboardMetadataProviderImplTest {
         dashboardMetadataProvider.setIdP(idPClient);
         List<org.wso2.carbon.analytics.idp.client.core.models.Role> userRoles = new ArrayList<>();
         userRoles.add(new org.wso2.carbon.analytics.idp.client.core.models.Role
-                ("dashboard_creator", "dashboard_creator"));
+                ("admin", "admin"));
         when(idPClient.getUserRoles(anyString())).thenReturn(userRoles);
         dashboardMetadataProvider.add("", dashboardMetadata);
         verify(dao).add(eq(dashboardMetadata));

@@ -29,8 +29,8 @@ import java.util.List;
  */
 public class RolesProvider {
 
-    private static final String ROLE_ID = "dashboard_creator";
-    private static final String ROLE_NAME = "dashboard_creator";
+    private static final String ROLE_ID = "admin";
+    private static final String ROLE_NAME = "admin";
 
     private List<Role> creatorRoles = new ArrayList<Role>();
 
@@ -43,6 +43,7 @@ public class RolesProvider {
 
     private void readConfigs(DashboardConfigurations dashboardConfigurations) {
         if (!dashboardConfigurations.getRoles().getCreator().isEmpty()) {
+            creatorRoles = new ArrayList<>();
             creatorRoles = dashboardConfigurations.getRoles().getCreator();
         }
     }
