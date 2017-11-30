@@ -20,6 +20,7 @@ package org.wso2.carbon.dashboards.core.internal.roles.provider;
 
 import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
+
 import java.util.ArrayList;
 import java.util.List;
 
