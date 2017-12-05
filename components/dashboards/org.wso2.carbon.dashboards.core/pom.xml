@@ -138,7 +138,7 @@
             org.yaml.snakeyaml.*; version="${org.yaml.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
-            org.wso2.carbon.analytics.idp.client.*; version="${carbon.analytics-common.version.range}",
+            org.wso2.carbon.analytics.idp.client.*; version="${carbon.analytics-common.version.range}"
         </import.package>
         <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
     </properties>

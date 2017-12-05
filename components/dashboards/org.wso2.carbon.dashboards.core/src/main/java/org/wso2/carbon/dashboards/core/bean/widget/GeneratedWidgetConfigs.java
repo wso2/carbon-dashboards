@@ -1,12 +1,9 @@
 package org.wso2.carbon.dashboards.core.bean.widget;
 
-import java.io.Serializable;
-
 /**
  * Configuration bean class for generated widget configuration.
  */
-public class GeneratedWidgetConfigs implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class GeneratedWidgetConfigs {
     private String name;
     private String id;
     private String chartConfig;

@@ -100,10 +100,10 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
             WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
             WidgetConfigs widgetConfigs = new WidgetConfigs();
             widgetConfigs.setChartConfig(generatedWidgetConfigs.getChartConfig());
-            widgetConfigs.setChartConfig(generatedWidgetConfigs.getProviderConfig());
+            widgetConfigs.setProviderConfig(generatedWidgetConfigs.getProviderConfig());
             widgetConfigs.setGenerated(true);
             widgetMetaInfo.setId(generatedWidgetConfigs.getId());
-            widgetMetaInfo.setId(generatedWidgetConfigs.getName());
+            widgetMetaInfo.setName(generatedWidgetConfigs.getName());
             widgetMetaInfo.setConfigs(widgetConfigs);
             return Optional.ofNullable(widgetMetaInfo);
         } else {
@@ -140,7 +140,7 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
                 WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
                 WidgetConfigs widgetConfigs = new WidgetConfigs();
                 widgetMetaInfo.setId(generatedWidgetConfigs.getId());
-                widgetMetaInfo.setId(generatedWidgetConfigs.getName());
+                widgetMetaInfo.setName(generatedWidgetConfigs.getName());
                 widgetConfigs.setChartConfig(generatedWidgetConfigs.getChartConfig());
                 widgetConfigs.setProviderConfig(generatedWidgetConfigs.getProviderConfig());
                 widgetConfigs.setGenerated(true);

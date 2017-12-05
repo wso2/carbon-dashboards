@@ -17,13 +17,14 @@
  */
 package org.wso2.carbon.dashboards.core.internal.database;
 
-import org.apache.commons.lang3.SerializationUtils;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,6 +46,7 @@ public class WidgetMetadataDao {
 
     private final DataSource dataSource;
     private final QueryProvider queryProvider;
+    private static final Gson GSON = new Gson();
 
     public WidgetMetadataDao(DataSource dataSource, QueryProvider queryProvider) {
         this.dataSource = dataSource;
@@ -64,10 +66,10 @@ public class WidgetMetadataDao {
             connection = getConnection();
             ps = connection.prepareStatement(query);
             ps.setString(1, generatedWidgetConfigs.getId());
+            ps.setString(2, generatedWidgetConfigs.getName());
             Blob blob = connection.createBlob();
-            byte[] data = SerializationUtils.serialize(generatedWidgetConfigs);
-            blob.setBytes(1, data);
-            ps.setObject(2, blob);
+            blob.setBytes(1, toJsonBytes(generatedWidgetConfigs));
+            ps.setObject(3, blob);
             ps.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -77,6 +79,15 @@ public class WidgetMetadataDao {
         } finally {
             closeQuietly(connection, ps, null);
         }
+    }
+
+    private static byte[] toJsonBytes(Object dashboardPages) {
+        return GSON.toJson(dashboardPages).getBytes(StandardCharsets.UTF_8);
+    }
+
+    private static GeneratedWidgetConfigs fromJsonBytes(Blob byteBlob) throws SQLException {
+        return GSON.fromJson(new String(byteBlob.getBytes(1, (int) byteBlob.length()), StandardCharsets.UTF_8),
+                GeneratedWidgetConfigs.class);
     }
 
     public GeneratedWidgetConfigs getGeneratedWidgetConfigsForId(String widgetId) throws
@@ -91,7 +102,7 @@ public class WidgetMetadataDao {
             ps.setString(1, widgetId);
             resultSet = ps.executeQuery();
             if (resultSet.next()) {
-                return toWidgetMetaInfo(resultSet);
+                return fromJsonBytes(resultSet.getBlob(COLUMN_WIDGET_CONFIGS));
             }
         } catch (SQLException e) {
             rollbackQuietly(connection);
@@ -127,12 +138,6 @@ public class WidgetMetadataDao {
         } finally {
             closeQuietly(connection, ps, resultSet);
         }
-    }
-
-    private static GeneratedWidgetConfigs toWidgetMetaInfo(ResultSet result) throws SQLException {
-        Blob blob = result.getBlob(COLUMN_WIDGET_CONFIGS);
-        byte[] bData = blob.getBytes(1, (int) blob.length());
-        return ((GeneratedWidgetConfigs) SerializationUtils.deserialize(bData));
     }
 
     private static void closeQuietly(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
