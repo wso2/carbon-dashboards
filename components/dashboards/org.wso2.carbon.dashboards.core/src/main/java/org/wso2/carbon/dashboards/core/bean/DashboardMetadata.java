@@ -43,6 +43,7 @@ public class DashboardMetadata {
 
     /**
      * This method is to get whether user has owner permission or not
+     *
      * @return boolean hasOwnerPermission
      */
     public boolean isHasOwnerPermission() {
@@ -51,6 +52,7 @@ public class DashboardMetadata {
 
     /**
      * This method is to set whether user has owner permission or not
+     *
      * @param hasOwnerPermission
      */
     public void setHasOwnerPermission(boolean hasOwnerPermission) {
@@ -59,6 +61,7 @@ public class DashboardMetadata {
 
     /**
      * This method is to get whether user has designer/editor permission or not
+     *
      * @return boolean hasOwnerPermission
      */
     public boolean isHasDesignerPermission() {
@@ -67,6 +70,7 @@ public class DashboardMetadata {
 
     /**
      * This method is to set whether user has designer/editor permission or not
+     *
      * @param hasDesignerPermission
      */
     public void setHasDesignerPermission(boolean hasDesignerPermission) {
@@ -75,6 +79,7 @@ public class DashboardMetadata {
 
     /**
      * This method is to get whether user has viewer permission or not
+     *
      * @return boolean hasOwnerPermission
      */
     public boolean isHasViewerPermission() {
@@ -83,6 +88,7 @@ public class DashboardMetadata {
 
     /**
      * This method is to set whether user has viewer permission or not
+     *
      * @param hasViewerPermission
      */
     public void setHasViewerPermission(boolean hasViewerPermission) {

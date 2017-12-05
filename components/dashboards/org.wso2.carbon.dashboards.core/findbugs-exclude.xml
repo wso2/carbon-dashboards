@@ -20,4 +20,8 @@
         <Class name="org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDao"/>
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
     </Match>
+    <Match>
+        <Class name="org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDao"/>
+        <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
+    </Match>
 </FindBugsFilter>

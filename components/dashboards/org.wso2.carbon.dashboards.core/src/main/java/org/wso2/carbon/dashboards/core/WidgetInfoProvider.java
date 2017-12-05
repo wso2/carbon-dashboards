@@ -18,8 +18,9 @@
 
 package org.wso2.carbon.dashboards.core;
 
+import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
-import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -34,17 +35,35 @@ public interface WidgetInfoProvider {
     /**
      * Returns the configuration of the specified widget.
      *
-     * @param widgetName name of the widget
+     * @param widgetId id of the widget
      * @return configuration of the widget
-     * @throws DashboardRuntimeException if an error occurred when reading or processing configuration of the widget
+     * @throws DashboardException if an error occurred when reading or processing configuration of the widget
      */
-    Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetName) throws DashboardRuntimeException;
+    Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetId) throws DashboardException;
+
+    /**
+     * Add the configuration of the specified generated widget.
+     *
+     * @param generatedWidgetConfigs configurations of the generated widget
+     * @throws DashboardException if an error occurred when reading or processing configuration of the widget
+     */
+    void addGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException;
+
 
     /**
      * Returns configurations of al available widgets.
      *
      * @return configurations of the widgets
-     * @throws DashboardRuntimeException if an error occurred when reading or processing configurations
+     * @throws DashboardException if an error occurred when reading or processing configurations
      */
-    Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardRuntimeException;
+    Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardException;
+
+    /**
+     * Check for widget already present in database.
+     *
+     * @return is widget present condition.
+     * @throws DashboardException if an error occurred when reading or processing configurations
+     */
+    boolean isWidgetPresent(String widgetName) throws DashboardException;
+
 }

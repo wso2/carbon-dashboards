@@ -26,10 +26,17 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
+import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
+import org.wso2.carbon.dashboards.core.bean.widget.WidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDao;
+import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDaoFactory;
 import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
+import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.uis.api.App;
 import org.wso2.carbon.uis.spi.Server;
 
@@ -48,11 +55,23 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetInfoProviderImpl.class);
     private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
+    private WidgetMetadataDao widgetMetadataDao;
+    private DataSourceService dataSourceService;
+    private ConfigProvider configProvider;
+    private boolean isDaoInitialized = false;
 
     private Server uiServer;
 
     @Activate
     protected void activate(BundleContext bundleContext) {
+        try {
+            if (dataSourceService != null && configProvider != null) {
+                this.widgetMetadataDao = WidgetMetadataDaoFactory.createDao(dataSourceService, configProvider);
+                this.isDaoInitialized = true;
+            }
+        } catch (DashboardException e) {
+            //ignore as its required to start with default widget extension loading.
+        }
         LOGGER.debug("{} activated.", this.getClass().getName());
     }
 
@@ -62,9 +81,9 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
     }
 
     @Reference(service = Server.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetCarbonUiServer")
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetCarbonUiServer")
     protected void setCarbonUiServer(Server server) {
         this.uiServer = server;
     }
@@ -74,21 +93,91 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
     }
 
     @Override
-    public Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetName) throws DashboardRuntimeException {
-        return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetName)
-                .map(WidgetConfigurationReader::getConfiguration);
+    public Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetId) throws DashboardException {
+        GeneratedWidgetConfigs generatedWidgetConfigs = isDaoInitialized ? widgetMetadataDao
+                .getGeneratedWidgetConfigsForId(widgetId) : null;
+        if (generatedWidgetConfigs != null) {
+            WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
+            WidgetConfigs widgetConfigs = new WidgetConfigs();
+            widgetConfigs.setChartConfig(generatedWidgetConfigs.getChartConfig());
+            widgetConfigs.setChartConfig(generatedWidgetConfigs.getProviderConfig());
+            widgetConfigs.setGenerated(true);
+            widgetMetaInfo.setId(generatedWidgetConfigs.getId());
+            widgetMetaInfo.setId(generatedWidgetConfigs.getName());
+            widgetMetaInfo.setConfigs(widgetConfigs);
+            return Optional.ofNullable(widgetMetaInfo);
+        } else {
+            return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetId)
+                    .map(WidgetConfigurationReader::getConfiguration);
+        }
     }
 
     @Override
-    public Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardRuntimeException {
-        return getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
+    public void addGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException {
+        widgetMetadataDao.addGeneratedWidgetConfigs(generatedWidgetConfigs);
+    }
+
+    public boolean isWidgetPresent(String widgetName) throws DashboardException {
+        if (isDaoInitialized) {
+            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdMap();
+            for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
+                if (generatedWidgetConfigs.getName().equals(widgetName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardException {
+        Set<WidgetMetaInfo> widgetMetaInfoSet = getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
                 .map(WidgetConfigurationReader::getConfiguration)
                 .collect(Collectors.toSet());
+        if (isDaoInitialized) {
+            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdMap();
+            for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
+                WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
+                WidgetConfigs widgetConfigs = new WidgetConfigs();
+                widgetMetaInfo.setId(generatedWidgetConfigs.getId());
+                widgetMetaInfo.setId(generatedWidgetConfigs.getName());
+                widgetConfigs.setChartConfig(generatedWidgetConfigs.getChartConfig());
+                widgetConfigs.setProviderConfig(generatedWidgetConfigs.getProviderConfig());
+                widgetConfigs.setGenerated(true);
+                widgetMetaInfo.setConfigs(widgetConfigs);
+                widgetMetaInfoSet.add(widgetMetaInfo);
+            }
+        }
+        return widgetMetaInfoSet;
     }
 
     private App getDashboardApp() {
         return uiServer.getApp(APP_NAME_DASHBOARD)
                 .orElseThrow(() -> new DashboardRuntimeException(
                         "Cannot find dashboard web app named '" + APP_NAME_DASHBOARD + "'."));
+    }
+
+    @Reference(service = DataSourceService.class,
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetDataSourceService")
+    protected void setDataSourceService(DataSourceService dataSourceService) {
+        this.dataSourceService = dataSourceService;
+    }
+
+    protected void unsetDataSourceService(DataSourceService dataSourceService) {
+        this.dataSourceService = null;
+    }
+
+    @Reference(service = ConfigProvider.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetConfigProvider")
+    protected void setConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = configProvider;
+    }
+
+    protected void unsetConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = null;
     }
 }

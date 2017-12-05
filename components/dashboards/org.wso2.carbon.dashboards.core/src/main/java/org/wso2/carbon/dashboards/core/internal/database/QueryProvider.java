@@ -39,6 +39,9 @@ public class QueryProvider {
     // TODO: 11/10/17 Re-think this class after the common SQL query provider get released.
 
     public static final String ADD_DASHBOARD_CONTENT_QUERY = "add_dashboard";
+    public static final String ADD_WIDGET_CONFIG_QUERY = "add_widget_config";
+    public static final String GET_WIDGET_CONFIG_QUERY = "get_widget_config";
+    public static final String GET_WIDGET_NAME_ID_MAP_QUERY = "get_widget_name_id_map";
     public static final String GET_DASHBOARD_METADATA_LIST_QUERY = "get_dashboard_metadata_list";
     public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
     public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
@@ -81,7 +84,7 @@ public class QueryProvider {
     public String getQuery(String dbType, String dbVersion, String key) throws DashboardRuntimeException {
         QueryConfiguration queryConfiguration = queries.stream()
                 .filter(queryConfig -> Objects.equals(dbType, queryConfig.getType()) &&
-                                       Objects.equals(dbVersion, queryConfig.getVersion()))
+                        Objects.equals(dbVersion, queryConfig.getVersion()))
                 .findFirst()
                 .orElseThrow(() -> new DashboardRuntimeException(
                         "Cannot find SQL query configuration for database type '" + dbType + "'."));
