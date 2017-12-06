@@ -53,7 +53,7 @@ const lightMuiTheme = getMuiTheme({
 
 let config = {
     settings: {
-        hasHeaders: false,
+        hasHeaders: true,
         constrainDragToContainer: false,
         reorderEnabled: false,
         selectionEnabled: false,
@@ -61,7 +61,7 @@ let config = {
         blockedPopoutsThrowError: true,
         closePopoutsOnUnload: true,
         showPopoutIcon: false,
-        showMaximiseIcon: false,
+        showMaximiseIcon: true,
         responsive: true,
         isClosable: false,
         responsiveMode: 'always',
