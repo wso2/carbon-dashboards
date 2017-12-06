@@ -1,0 +1,12 @@
+{
+    "name": "Revenue",
+    "id": "Revenue",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "subscriber"
+            ]
+        }
+    }
+}
