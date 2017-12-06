@@ -51,7 +51,7 @@
   "settings.role.update.failure" : "Échec de la mise à jour des rôles de tableau de bord.",
   "settings.role.update.success" : "Les rôles du tableau de bord ont été enregistrés avec succès!",
   "settings.add.role" :"Ajouter un rôle",
-  "listing.no.dashboards.available" : "Pas de tableaux de bord disponibles"
-
-
+  "listing.no.dashboards.available" : "Pas de tableaux de bord disponibles",
+  "dashboard.unauthorized.title" : "401 Non autorisé",
+  "dashboard.unauthorized.message" : "Vous n'êtes pas autorisé à accéder à cette page"
 }

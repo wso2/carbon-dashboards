@@ -34,6 +34,7 @@ class DashboardThumbnail extends React.Component {
         this.deleteDashboard = this.deleteDashboard.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
+        this.generateDashboardThumbnail = this.generateDashboardThumbnail.bind(this);
         this.state = {
             deleteDashboardDialog: false
         };
@@ -81,6 +82,8 @@ class DashboardThumbnail extends React.Component {
             />,
         ];
 
+        let dashboardThumbnail = this.generateDashboardThumbnail();
+
         return (
             <div>
                 <Dialog
@@ -90,41 +93,64 @@ class DashboardThumbnail extends React.Component {
                     open={this.state.deleteDashboardDialog}
                 ></Dialog>
                 <div className="dashboard-thumbnail">
-                    <div className="trash-button-div" onClick={this.handleOpen}>
-                        <a href="#">
-                            <i className="fw fw-delete fw-stack-1x trash-button-icon" title="Delete Dashboard"></i>
-                        </a>
-                    </div>
+                    {dashboardThumbnail.deleteButton}
                     <div style={styles.card} className="content">
                         <h4 style={styles.title}>{this.props.dashboard.name}</h4>
                         <p style={styles.subtitle}>{this.props.dashboard.description}</p>
                         <div className="actions">
                             <Link to={"dashboards/" + this.props.dashboard.url}>
-                            <span className="fw-stack icon">
-                                <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                <i className="fw fw-view fw-stack-1x"></i>
-                            </span>
+                                <span className="fw-stack icon">
+                                    <i className="fw fw-circle-outline fw-stack-2x"></i>
+                                    <i className="fw fw-view fw-stack-1x"></i>
+                                </span>
                                 <FormattedMessage id="view.button" defaultMessage="View"/>
                             </Link>
-                            <Link to={"designer/" + this.props.dashboard.url}>
-                            <span className="fw-stack icon edit-dashboard-icon">
-                                <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                <i className="fw fw-edit fw-stack-1x"></i>
-                            </span>
-                                <FormattedMessage id="design.button" defaultMessage="Design"/>
-                            </Link>
-                            <Link to={"settings/" + this.props.dashboard.url}>
-                            <span className="fw-stack icon edit-dashboard-icon">
-                                <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                <i className="fw fw-settings fw-stack-1x"></i>
-                            </span>
-                                <FormattedMessage id="settings.button" defaultMessage="Settings"/>
-                            </Link>
+                            {dashboardThumbnail.designerButton}
+                            {dashboardThumbnail.settingsButton}
                         </div>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    generateDashboardThumbnail() {
+
+        let deleteBtn = (
+            <div className="trash-button-div" onClick={this.handleOpen}>
+                <a href="#">
+                <i className="fw fw-delete fw-stack-1x trash-button-icon" title="Delete Dashboard"></i>
+                </a>
+            </div>
+        );
+
+        let designerBtn = (
+            <Link to={"designer/" + this.props.dashboard.url}>
+                <span className="fw-stack icon edit-dashboard-icon">
+                    <i className="fw fw-circle-outline fw-stack-2x"></i>
+                    <i className="fw fw-edit fw-stack-1x"></i>
+                </span>
+            <FormattedMessage id="design.button" defaultMessage="Design"/>
+            </Link>
+        );
+
+        let settingsBtn = (
+            <Link to={"settings/" + this.props.dashboard.url}>
+                <span className="fw-stack icon edit-dashboard-icon">
+                    <i className="fw fw-circle-outline fw-stack-2x"></i>
+                    <i className="fw fw-settings fw-stack-1x"></i>
+                </span>
+            <FormattedMessage id="settings.button" defaultMessage="Settings"/>
+            </Link>
+        );
+
+        if (!this.props.dashboard.hasOwnerPermission) {
+            deleteBtn = null;
+            settingsBtn = null;
+        } if (!this.props.dashboard.hasDesignerPermission) {
+            designerBtn = null;
+        }
+        return {deleteButton: deleteBtn, designerButton: designerBtn, settingsButton: settingsBtn};
     }
 }
 

@@ -19,7 +19,8 @@
 
 import Axios from 'axios';
 import Qs from 'qs';
-import { MediaType } from '../Constants';
+import {MediaType} from '../Constants';
+import AuthManager from '../../auth/utils/AuthManager';
 
 /**
  * Authentication API base path.
@@ -95,24 +96,24 @@ export default class AuthenticationAPI {
 
     /**
      * Get all roles.
-     * 
-     * @returns {Promise} Promise 
+     *
+     * @returns {Promise} Promise
      */
     static getRoles() {
-        return AuthenticationAPI
-            .getHttpClient()
-            .get('/apis/dashboards/roles');
+        let client = AuthenticationAPI.getHttpClient();
+        client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().token;
+        return client.get('/portal/apis/dashboards/roles');
     }
 
     /**
      * Get roles by username.
-     * 
+     *
      * @param {string} username Username
      * @returns {Promise} Promise
      */
     static getUserRoles(username) {
-        return AuthenticationAPI
-            .getHttpClient()
-            .get(`/apis/dashboards/roles/${username}`);
+        let client = AuthenticationAPI.getHttpClient();
+        client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().token;
+        return client.get(`/portal/apis/dashboards/roles/${username}`);
     }
 }

@@ -37,6 +37,57 @@ public class DashboardMetadata {
     protected String landingPage;
     protected String parentId;
     protected Object pages;
+    protected boolean hasOwnerPermission;
+    protected boolean hasDesignerPermission;
+    protected boolean hasViewerPermission;
+
+    /**
+     * This method is to get whether user has owner permission or not
+     * @return boolean hasOwnerPermission
+     */
+    public boolean isHasOwnerPermission() {
+        return hasOwnerPermission;
+    }
+
+    /**
+     * This method is to set whether user has owner permission or not
+     * @param hasOwnerPermission
+     */
+    public void setHasOwnerPermission(boolean hasOwnerPermission) {
+        this.hasOwnerPermission = hasOwnerPermission;
+    }
+
+    /**
+     * This method is to get whether user has designer/editor permission or not
+     * @return boolean hasOwnerPermission
+     */
+    public boolean isHasDesignerPermission() {
+        return hasDesignerPermission;
+    }
+
+    /**
+     * This method is to set whether user has designer/editor permission or not
+     * @param hasDesignerPermission
+     */
+    public void setHasDesignerPermission(boolean hasDesignerPermission) {
+        this.hasDesignerPermission = hasDesignerPermission;
+    }
+
+    /**
+     * This method is to get whether user has viewer permission or not
+     * @return boolean hasOwnerPermission
+     */
+    public boolean isHasViewerPermission() {
+        return hasViewerPermission;
+    }
+
+    /**
+     * This method is to set whether user has viewer permission or not
+     * @param hasViewerPermission
+     */
+    public void setHasViewerPermission(boolean hasViewerPermission) {
+        this.hasViewerPermission = hasViewerPermission;
+    }
 
     /**
      * This method is used to get url of the dashboard
@@ -55,6 +106,7 @@ public class DashboardMetadata {
     public void setUrl(String url) {
         this.url = url;
     }
+
     /**
      * This method is used to get owner of the dashboard
      *
@@ -72,6 +124,7 @@ public class DashboardMetadata {
     public void setOwner(String owner) {
         this.owner = owner;
     }
+
     /**
      * This method is used get the name of the dashboard
      *

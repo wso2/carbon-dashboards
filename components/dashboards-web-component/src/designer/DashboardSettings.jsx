@@ -17,18 +17,19 @@
  *
  */
 
-import { RaisedButton, Snackbar, TextField } from 'material-ui';
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import {RaisedButton, Snackbar, TextField} from 'material-ui';
+import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 import ClearIcon from 'material-ui/svg-icons/content/clear';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 
-import { FormPanel, Header } from '../common';
+import {FormPanel, Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardSettingsRoles from './DashboardSettingsRoles';
-import { HttpStatus } from '../utils/Constants';
+import {HttpStatus} from '../utils/Constants';
+import Error401 from '../error-pages/Error401';
 
 /**
  * Material UI theme.
@@ -58,6 +59,7 @@ export default class DashboardSettings extends Component {
             dashboard: {},
             showMessage: false,
             message: '',
+            hasPermission: true
         };
         this.updateDashboard = this.updateDashboard.bind(this);
         this.showMessage = this.showMessage.bind(this);
@@ -67,16 +69,21 @@ export default class DashboardSettings extends Component {
      * Loads the dashboar via the API.
      */
     componentWillMount() {
-        new DashboardAPI()
+        new DashboardAPI("settings")
             .getDashboardByID(this.props.match.params.id)
-            .then(response => this.setState({ dashboard: response.data }));
+            .then(response => this.setState({dashboard: response.data}))
+            .catch((err) => {
+                if (err.response.status === 401) {
+                    this.setState({hasPermission: false});
+                }
+            });
     }
 
     /**
      * Update dashboard.
      */
     updateDashboard() {
-        const { dashboard } = this.state;
+        const {dashboard} = this.state;
 
         // Validate fields.
         if (dashboard.name.length === 0) {
@@ -121,7 +128,7 @@ export default class DashboardSettings extends Component {
 
     /**
      * Show error message.
-     * 
+     *
      * @param {string} message Error message.
      */
     showError(message) {
@@ -130,7 +137,7 @@ export default class DashboardSettings extends Component {
 
     /**
      * Show message.
-     * 
+     *
      * @param {string} message Message
      * @param {{}} style Styles
      */
@@ -144,24 +151,27 @@ export default class DashboardSettings extends Component {
 
     /**
      * Renders the settings page.
-     * 
+     *
      * @returns {XML} HTML content
      */
     render() {
+        if (!this.state.hasPermission) {
+            return <Error401/>;
+        }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
                     {/* Header */}
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
+                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
 
                     {/* Settings form */}
                     <FormPanel
-                        title={<FormattedMessage id="dashboard.settings.title" defaultMessage="Dashboard Settings" />}
+                        title={<FormattedMessage id="dashboard.settings.title" defaultMessage="Dashboard Settings"/>}
                         width="800"
                     >
                         {/* General information */}
                         <TextField
-                            floatingLabelText={<FormattedMessage id="dashboard.url" defaultMessage="URL" />}
+                            floatingLabelText={<FormattedMessage id="dashboard.url" defaultMessage="URL"/>}
                             disabled
                             fullWidth
                             value={'/' + this.props.match.params.id}
@@ -169,7 +179,7 @@ export default class DashboardSettings extends Component {
                         <br />
                         <TextField
                             floatingLabelText={
-                                <FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard" />
+                                <FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard"/>
                             }
                             hintText={
                                 <FormattedMessage
@@ -181,13 +191,13 @@ export default class DashboardSettings extends Component {
                             value={this.state.dashboard.name}
                             onChange={(e) => {
                                 this.state.dashboard.name = e.target.value;
-                                this.setState({ dashboard: this.state.dashboard });
+                                this.setState({dashboard: this.state.dashboard});
                             }}
                         />
                         <br />
                         <TextField
                             floatingLabelText={
-                                <FormattedMessage id="dashboard.description" defaultMessage="Description" />
+                                <FormattedMessage id="dashboard.description" defaultMessage="Description"/>
                             }
                             hintText={
                                 <FormattedMessage
@@ -200,7 +210,7 @@ export default class DashboardSettings extends Component {
                             value={this.state.dashboard.description}
                             onChange={(e) => {
                                 this.state.dashboard.description = e.target.value;
-                                this.setState({ dashboard: this.state.dashboard });
+                                this.setState({dashboard: this.state.dashboard});
                             }}
                         />
                         <br />
@@ -217,16 +227,16 @@ export default class DashboardSettings extends Component {
                         <br />
                         <RaisedButton
                             onClick={this.updateDashboard}
-                            label={<FormattedMessage id="save.button" defaultMessage="Save" />}
+                            label={<FormattedMessage id="save.button" defaultMessage="Save"/>}
                             primary
                             disabled={this.state.dashboard.name === ''}
                         />
 
                         <RaisedButton
-                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel" />}
-                            style={{'margin':'30px 10px'}}
+                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>}
+                            style={{'margin': '30px 10px'}}
                             backgroundColor="rgb(13, 31, 39)"
-                            containerElement={<Link to={window.contextPath} />}
+                            containerElement={<Link to={window.contextPath}/>}
                         />
 
                     </FormPanel>
@@ -239,7 +249,7 @@ export default class DashboardSettings extends Component {
                         message={this.state.message}
                         autoHideDuration={4000}
                         onRequestClose={() => {
-                            this.setState({ showMessage: false, message: '' });
+                            this.setState({showMessage: false, message: ''});
                         }}
                     />
                 </div>

@@ -24,6 +24,7 @@ import DashboardAPI from '../utils/apis/DashboardAPI';
 import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
+import Error401 from '../error-pages/Error401';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
 import WidgetConfigurationPanel from './components/WidgetConfigurationPanel';
@@ -110,7 +111,8 @@ export default class DashboardDesigner extends Component {
             redirect: false,
             redirectUrl: '',
             widgetConfigPanelOpen: false,
-            publishers: []
+            publishers: [],
+            hasPermission: true
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
@@ -134,6 +136,9 @@ export default class DashboardDesigner extends Component {
 
     render() {
         DashboardDesigner.loadTheme();
+        if (!this.state.hasPermission) {
+            return <Error401/>;
+        }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div className="dashboard-designer">
@@ -263,7 +268,7 @@ export default class DashboardDesigner extends Component {
      * Load dashboard via the REST API.
      */
     loadDashboard() {
-        new DashboardAPI()
+        new DashboardAPI("designer")
             .getDashboardByID(this.state.dashboardId)
             .then((response) => {
                 let dashboard = response.data;
@@ -273,7 +278,9 @@ export default class DashboardDesigner extends Component {
                 });
             })
             .catch((err) => {
-                //TODO Need to use proper notification library to show the error
+                if (err.response.status === 401) {
+                    this.setState({hasPermission: false});
+                }
             });
     }
 

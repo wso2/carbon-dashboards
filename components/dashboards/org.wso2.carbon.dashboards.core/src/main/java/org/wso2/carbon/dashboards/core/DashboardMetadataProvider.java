@@ -42,13 +42,16 @@ public interface DashboardMetadataProvider {
      */
     Optional<DashboardMetadata> get(String dashboardUrl) throws DashboardException;
 
-    Set<DashboardMetadata> getAll() throws DashboardException;
+    Optional<DashboardMetadata> getDashboardByUser(String user, String dashboardUrl, String originComponent) throws
+            DashboardException;
 
-    void add(DashboardMetadata dashboardMetadata) throws DashboardException;
+    Set<DashboardMetadata> getAllByUser(String user) throws DashboardException;
 
-    void update(DashboardMetadata dashboardMetadata) throws DashboardException;
+    void add(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
 
-    void delete(String dashboardUrl) throws DashboardException;
+    void update(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
+
+    void delete(String user, String dashboardUrl) throws DashboardException;
 
     Map<String, List<Role>> getDashboardRoles(String dashboardUrl) throws DashboardException;
 
@@ -57,5 +60,6 @@ public interface DashboardMetadataProvider {
     List<org.wso2.carbon.analytics.idp.client.core.models.Role> getRolesByUsername(String username)
             throws DashboardException;
 
-    void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roles) throws DashboardException;
+    void updateDashboardRoles(String user, String dashboardUrl, Map<String, List<String>> roles) throws
+            DashboardException;
 }
