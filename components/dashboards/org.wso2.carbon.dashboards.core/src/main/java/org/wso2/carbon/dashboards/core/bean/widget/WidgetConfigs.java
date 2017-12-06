@@ -23,6 +23,9 @@ package org.wso2.carbon.dashboards.core.bean.widget;
  */
 public class WidgetConfigs {
     private PubSub pubsub;
+    private String chartConfig;
+    private String providerConfig;
+    private boolean isGenerated;
 
     /**
      * This method is get pubsub configuration of the widget.
@@ -40,5 +43,29 @@ public class WidgetConfigs {
      */
     public void setPubsub(PubSub pubsub) {
         this.pubsub = pubsub;
+    }
+
+    public String getChartConfig() {
+        return chartConfig;
+    }
+
+    public void setChartConfig(String chartConfig) {
+        this.chartConfig = chartConfig;
+    }
+
+    public String getProviderConfig() {
+        return providerConfig;
+    }
+
+    public void setProviderConfig(String providerConfig) {
+        this.providerConfig = providerConfig;
+    }
+
+    public boolean isGenerated() {
+        return isGenerated;
+    }
+
+    public void setGenerated(boolean generated) {
+        isGenerated = generated;
     }
 }

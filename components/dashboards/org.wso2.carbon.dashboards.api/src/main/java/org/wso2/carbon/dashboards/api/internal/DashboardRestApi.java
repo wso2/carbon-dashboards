@@ -190,7 +190,7 @@ public class DashboardRestApi implements Microservice {
             return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the dashboard with ID : " +
                     dashboardMetadata.getUrl()).build();
         } catch (DashboardException e) {
-            LOGGER.error("Ann error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
+            LOGGER.error("An error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
             return Response.serverError().entity("Cannot update dashboard '" + id + "'.").build();
         }
     }
@@ -211,7 +211,7 @@ public class DashboardRestApi implements Microservice {
             return Response.status(UNAUTHORIZED).entity("Insufficient permissions to delete the dashboard with ID : "
                     + id).build();
         } catch (DashboardException e) {
-            LOGGER.error("Ann error occurred when deleting dashboard '{}'.", id, e);
+            LOGGER.error("An error occurred when deleting dashboard '{}'.", id, e);
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
         }
     }

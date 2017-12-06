@@ -20,6 +20,7 @@ package org.wso2.carbon.dashboards.core.internal;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.uis.api.App;
 import org.wso2.carbon.uis.api.Extension;
@@ -52,21 +53,21 @@ public class WidgetInfoProviderImplTest {
     }
 
     @Test
-    void testGetWidgetConfigurationOfAbsentWidget() {
+    void testGetWidgetConfigurationOfAbsentWidget() throws DashboardException {
         WidgetInfoProviderImpl widgetInfoProvider = createWidgetInfoProvider();
         Assertions.assertFalse(widgetInfoProvider.getWidgetConfiguration("table").isPresent(),
                                "No configuration for non-existing widget 'table'");
     }
 
     @Test
-    void testGetWidgetConfiguration() {
+    void testGetWidgetConfiguration() throws DashboardException {
         WidgetInfoProviderImpl widgetInfoProvider = createWidgetInfoProvider();
         Assertions.assertTrue(widgetInfoProvider.getWidgetConfiguration("LineChart").isPresent(),
                               "Configuration should available for widget 'LineChart'");
     }
 
     @Test
-    void testGetAllWidgetConfigurations() {
+    void testGetAllWidgetConfigurations() throws DashboardException {
         WidgetInfoProviderImpl widgetInfoProvider = createWidgetInfoProvider();
         Assertions.assertEquals(1, widgetInfoProvider.getAllWidgetConfigurations().size());
     }
