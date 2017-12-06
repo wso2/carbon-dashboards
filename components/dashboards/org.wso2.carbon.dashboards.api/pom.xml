@@ -106,7 +106,7 @@
             org.slf4j.*; version="${slf4j.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics-common.version.range}",
-            org.owasp.encoder.*;version="${owasp.encoder.version.range}"
+            org.owasp.encoder.*; version="${owasp.encoder.version.range}"
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="2"
