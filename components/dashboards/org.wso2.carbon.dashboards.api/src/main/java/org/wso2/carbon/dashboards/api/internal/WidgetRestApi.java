@@ -29,18 +29,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
-import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
+import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.OK;
 
 /**
  * REST API for widget related operations.
@@ -48,8 +54,8 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
  * @since 4.0.0
  */
 @Component(name = "org.wso2.carbon.dashboards.api.WidgetApi",
-           service = Microservice.class,
-           immediate = true)
+        service = Microservice.class,
+        immediate = true)
 @Path("/portal/apis/widgets")
 @RequestInterceptor(AuthenticationInterceptor.class)
 public class WidgetRestApi implements Microservice {
@@ -69,9 +75,9 @@ public class WidgetRestApi implements Microservice {
     }
 
     @Reference(service = WidgetInfoProvider.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetWidgetInfoProvider")
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetWidgetInfoProvider")
     protected void setWidgetInfoProvider(WidgetInfoProvider widgetInfoProvider) {
         this.widgetInfoProvider = widgetInfoProvider;
     }
@@ -91,7 +97,7 @@ public class WidgetRestApi implements Microservice {
     public Response getWidgetsMetaInfo() {
         try {
             return okResponse(widgetInfoProvider.getAllWidgetConfigurations());
-        } catch (DashboardRuntimeException e) {
+        } catch (DashboardException e) {
             LOGGER.error("An error occurred when listing widget configurations.", e);
             return serverErrorResponse("Cannot list widget configurations.");
         }
@@ -111,7 +117,7 @@ public class WidgetRestApi implements Microservice {
             return widgetInfoProvider.getWidgetConfiguration(widgetId)
                     .map(WidgetRestApi::okResponse)
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find widget '" + widgetId + "'.").build());
-        } catch (DashboardRuntimeException e) {
+        } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving configuration of widget '{}'.", widgetId, e);
             return serverErrorResponse("Cannot retrieve configuration of widget '" + widgetId + "'.");
         }
@@ -136,5 +142,50 @@ public class WidgetRestApi implements Microservice {
 
     private static Response serverErrorResponse(String message) {
         return Response.serverError().entity(message).build();
+    }
+
+    /**
+     * Validate widget name.
+     *
+     * @param widgetName data for the validate widget name.
+     * @return response
+     */
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{widgetName}/validate")
+    public Response validateWidgetName(@PathParam("widgetName") String widgetName) {
+        try {
+            if (!widgetInfoProvider.isWidgetPresent(widgetName)) {
+                return Response.status(OK).build();
+            } else {
+                return Response.status(CONFLICT).build();
+            }
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred when validating the widget name: ", widgetName, e);
+            return Response.serverError()
+                    .entity("An error occurred when validating the widget name: " + widgetName + ".").build();
+        }
+    }
+
+    /**
+     * Create a generated widget.
+     *
+     * @param generatedWidgetConfigs data for the creating widget.
+     * @return response
+     */
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
+    public Response create(GeneratedWidgetConfigs generatedWidgetConfigs) {
+        try {
+            widgetInfoProvider.addGeneratedWidgetConfigs(generatedWidgetConfigs);
+            return Response.status(CREATED).build();
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred when creating a new gadget from {} data.", generatedWidgetConfigs, e);
+            return Response.serverError()
+                    .entity("Cannot create a new gadget from '" + generatedWidgetConfigs + "'.").build();
+        }
     }
 }
