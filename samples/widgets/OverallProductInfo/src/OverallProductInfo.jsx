@@ -21,15 +21,19 @@ import React, {Component} from 'react';
 import VizG from 'react-vizgrammar';
 import Widget from '@wso2-dashboards/widget';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import RevertIcon from 'material-ui/svg-icons/action/cached';
-import FlatButton from 'material-ui/FlatButton';
-
-class RevenueByRegion extends Widget {
+class OverallProductInfo extends Widget {
     constructor(props) {
         super(props);
 
-        this.rowdata = [
+        this.overallProductData = [
+            ['ALL', 'ALL', 'ALL', 'Analytics', 2575573.16, 254, 141],
+            ['ALL', 'ALL', 'ALL', 'APIManager', 5928778.57, 564, 321],
+            ['ALL', 'ALL', 'ALL', 'ESB', 5914330.13, 412, 243],
+            ['ALL', 'ALL', 'ALL', 'IdentityServer', 2536874.28, 234, 136],
+            ['ALL', 'ALL', 'ALL', 'IOTServer', 497122.41, 60, 30]
+        ];
+
+        this.rowData = [
             ['Singapore', 'SGP', 'Asia', 'Analytics', 195684.75, 20, 10],
             ['Japan', 'JPN', 'Asia', 'APIManager', 142582.15, 18, 8],
             ['China', 'CHN', 'Asia', 'APIManager', 110025.78, 15, 9],
@@ -149,48 +153,21 @@ class RevenueByRegion extends Widget {
             ['Australia', 'AUS', 'ROW', 'IdentityServer', 224522.14, 25, 17]
         ];
 
-        this.configPieRegion = {
-            charts: [{
-                type: 'arc',
-                x: 'Revenue',
-                color: 'Region',
-                mode: 'pie',
-                colorScale: ['#4659f9', '#00dffc ', '#00b1e1', '#6f2e71', '#c43a5d', '#303869', '#3847c3']
-            }],
-            width: props.glContainer.width,
-            height: props.glContainer.height,
+        this.stackedBarChartConfig = {
+            x: 'Product',
+            charts: [{type: 'bar', y: 'Downloads', fill: '#4659f9'},
+                {type: 'bar', y: 'Customers', fill: '#00b7ee'}],
+            maxLength: 6,
+            width: this.props.glContainer.width,
+            height: this.props.glContainer.height,
             animate: true,
-            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"}
-        };
-
-        this.configPieProduct = {
-            charts: [{
-                type: 'arc',
-                x: 'Revenue',
-                color: 'Product',
-                mode: 'pie',
-                colorScale: ['#4659f9', '#00dffc ', '#00b1e1', '#6f2e71', '#c43a5d', '#303869', '#3847c3']
-            }],
-            width: props.glContainer.width,
-            height: props.glContainer.height,
-            animate: true,
-            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"}
-        };
-
-        this.aggregatedData = [
-            ['ALL', 'ALL', 'Africa', 'ALL', 397275.75, 28, 16],
-            ['ALL', 'ALL', 'Asia', 'ALL', 3163652.25, 324, 184],
-            ['ALL', 'ALL', 'Europe', 'ALL', 9588717.86, 861, 510],
-            ['ALL', 'ALL', 'LATAM', 'ALL', 1680438.18, 104, 54],
-            ['ALL', 'ALL', 'Middle East', 'ALL', 1954683.52, 204, 122],
-            ['ALL', 'ALL', 'North America', 'ALL', 2624787.48, 177, 103],
-            ['ALL', 'ALL', 'ROW', 'ALL', 728088.56, 72, 42]
-        ];
-
-        this.state = {
-            data: this.aggregatedData,
-            config: this.configPieRegion,
-            isDrillDowned: false
+            style: {
+                legendTitleColor: "#5d6e77",
+                legendTextColor: "#5d6e77",
+                tickLabelColor: "#5d6e77",
+                axisLabelColor: "#5d6e77"
+            },
+            gridColor: "#5d6e77"
         };
 
         this.metadata = {
@@ -198,49 +175,44 @@ class RevenueByRegion extends Widget {
             types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
 
-        this.handleClickEvent = this.handleClickEvent.bind(this);
+        this.state = {
+            data: this.overallProductData
+        };
+
+        this.setReceivedMsg = this.setReceivedMsg.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        this.props.glContainer.on('resize', this.handleResize);
     }
 
-    handleClickEvent(event) {
-        if (!this.state.isDrillDowned) {
-            let array = [];
-            this.rowdata.map(data => {
-                if (data[2] === event.datum.x) {
-                    array.push(data)
-                }
-            });
-            super.publish({selectedRegion: event.datum.x});
-            this.setState({config: this.configPieProduct, data: array, isDrillDowned: true});
-        } else {
-            super.publish({selectedRegion: "ALL"});
-            this.setState({config: this.configPieRegion, data: this.aggregatedData, isDrillDowned: false});
-        }
+    handleResize() {
+        this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
+    }
+
+    componentWillMount() {
+        super.subscribe(this.setReceivedMsg);
+    }
+
+    setReceivedMsg(receivedMsg) {
+        let array = [];
+        this.rowData.map(dataElement => {
+            if (dataElement[1] === receivedMsg.CountryCode) {
+                array.push(dataElement);
+            }
+        });
+        array.sort(function (dataA, dataB) {
+            return dataA[3] > dataB[3];
+        });
+        this.setState({data: array});
     }
 
     render() {
         return (
-            <MuiThemeProvider>
-                <section>
-                    <FlatButton
-                        backgroundColor="steelblue"
-                        hoverColor="#536DFE"
-                        icon={<RevertIcon style={{margin: "10px"}}/>}
-                        style={{marginLeft: "10px", minWidth: 0}}
-                        onClick={this.handleClickEvent}
-                        disabled={!this.state.isDrillDowned}
-                    />
-                    <div style={{
-                        marginTop: "5px",
-                        width: this.props.glContainer.width,
-                        height: this.props.glContainer.height
-                    }}>
-                        <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false}
-                              onClick={this.handleClickEvent}/>
-                    </div>
-                </section>
-            </MuiThemeProvider>
+            <div style={{marginTop: "5px"}}>
+                <VizG config={this.stackedBarChartConfig} metadata={this.metadata} data={this.state.data}
+                      append={false}/>
+            </div>
         );
     }
 }
 
-global.dashboard.registerWidget("RevenueByRegion", RevenueByRegion);
+global.dashboard.registerWidget("OverallProductInfo", OverallProductInfo);

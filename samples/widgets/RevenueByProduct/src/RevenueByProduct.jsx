@@ -18,7 +18,7 @@
  */
 
 import React, {Component} from 'react';
-import VizG from './chart-lib/VizG';
+import VizG from 'react-vizgrammar';
 import Widget from '@wso2-dashboards/widget';
 
 class RevenueByProduct extends Widget {
@@ -84,7 +84,7 @@ class RevenueByProduct extends Widget {
 
         this.barChartConfig = {
             x: 'Product',
-            charts: [{type: 'bar', y: 'Revenue'}],
+            charts: [{type: 'bar', y: 'Revenue', fill: '#10c469'}],
             maxLength: 5,
             width: props.glContainer.width,
             height: props.glContainer.height,

@@ -1,0 +1,12 @@
+{
+    "name": "OverallProductInfo",
+    "id": "OverallProductInfo",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "subscriber"
+            ]
+        }
+    }
+}

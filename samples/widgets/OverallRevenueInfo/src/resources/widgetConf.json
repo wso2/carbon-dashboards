@@ -1,0 +1,12 @@
+{
+    "name": "OverallRevenueInfo",
+    "id": "OverallRevenueInfo",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "subscriber"
+            ]
+        }
+    }
+}

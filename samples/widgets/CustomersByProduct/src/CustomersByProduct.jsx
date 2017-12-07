@@ -18,7 +18,7 @@
  */
 
 import React, {Component} from 'react';
-import VizG from './chart-lib/VizG';
+import VizG from 'react-vizgrammar';
 import Widget from '@wso2-dashboards/widget';
 
 class CustomersByProduct extends Widget {
@@ -34,14 +34,20 @@ class CustomersByProduct extends Widget {
 
         this.stackedBarChartConfig = {
             x: 'Product',
-            charts: [{type: 'bar', y: 'Downloads', fill: 'steelblue'},
-                {type: 'bar', y: 'Customers', fill: '#80ccff'}],
+            charts: [{type: 'bar', y: 'Downloads', fill: '#4659f9'},
+                {type: 'bar', y: 'Customers', fill: '#00b7ee'}],
             maxLength: 6,
             width: this.props.glContainer.width,
             height: this.props.glContainer.height,
             animate: true,
             legend: true,
-            style: {legendTitleColor: "", legendTextColor: "",}
+            style: {
+                legendTitleColor: "#5d6e77",
+                legendTextColor: "#5d6e77",
+                tickLabelColor: "#5d6e77",
+                axisLabelColor: "#5d6e77"
+            },
+            gridColor: "#5d6e77"
         };
 
         this.metadata = {

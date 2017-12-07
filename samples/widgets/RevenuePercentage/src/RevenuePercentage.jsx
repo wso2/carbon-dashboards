@@ -18,25 +18,28 @@
  */
 
 import React, {Component} from 'react';
-import VizG from './chart-lib/VizG';
+import VizG from 'react-vizgrammar';
 import Widget from '@wso2-dashboards/widget';
 
 class RevenuePercentage extends Widget {
     constructor(props) {
         super(props);
         this.config = {
-            charts: [{type: 'arc', x: 'Percentage', color: 'Percentage', colorScale: ['steelblue', '#80ccff']}],
+            charts: [{type: 'arc', x: 'Percentage', color: 'Percentage', colorScale: ['#c15832', '#dc8d48']}],
             tooltip: {enabled: false},
             legend: false,
             percentage: true,
             animate: true,
-            colorScale: ['steelblue', '#80ccff'],
-            height: props.glContainer.height
+            labelColor:'#5d6e77',
+            width:this.props.glContainer.width,
+            height:this.props.glContainer.height
         };
 
         this.state = {
             data: [[0]],
-            config: this.config
+            config: this.config,
+            width: this.props.glContainer.width,
+            height: this.props.glContainer.height
         };
 
         this.data = [
@@ -82,7 +85,7 @@ class RevenuePercentage extends Widget {
     render() {
         return (
             <section>
-                <div style={{marginTop: "5px", width: this.state.width, height: this.state.height}}>
+                <div style={{width:"100%"}}>
                     <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false}
                           onClick={this.handleClickEvent}/>
                 </div>

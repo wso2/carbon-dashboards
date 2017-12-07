@@ -1,5 +1,5 @@
 {
-    "name": "RevenuePercentage",
+    "name": "RevenueByCountry",
     "version": "0.1.0",
     "private": true,
     "dependencies": {

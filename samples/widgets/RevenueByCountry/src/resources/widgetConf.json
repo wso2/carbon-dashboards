@@ -1,0 +1,10 @@
+{
+    "name": "RevenueByCountry",
+    "id": "RevenueByCountry",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": ["publisher"]
+        }
+    }
+}

@@ -18,7 +18,7 @@
  */
 
 import React, {Component} from 'react';
-import VizG from './chart-lib/VizG';
+import VizG from 'react-vizgrammar';
 import Widget from '@wso2-dashboards/widget';
 
 class CustomersPerYear extends Widget {
@@ -34,11 +34,19 @@ class CustomersPerYear extends Widget {
 
         this.lineConfig = {
             x: 'Year',
-            charts: [{type: 'line', y: 'Downloads', fill: 'blue'}, {type: 'line', y: 'Customers', fill: 'red'}],
+            charts: [{type: 'line', y: 'Downloads', fill: '#00e1d6', style: {strokeWidth: 2, markRadius: 5}},
+                {type: 'line', y: 'Customers', fill: '#ff2e4e', style: {strokeWidth: 2, markRadius: 5}}],
             width: this.props.glContainer.width,
             height: this.props.glContainer.height,
             legend: true,
             animate: true,
+            style: {
+                legendTitleColor: "#5d6e77",
+                legendTextColor: "#5d6e77",
+                tickLabelColor: "#5d6e77",
+                axisLabelColor: "#5d6e77"
+            },
+            gridColor: "#5d6e77"
         };
 
         this.rowData = [
