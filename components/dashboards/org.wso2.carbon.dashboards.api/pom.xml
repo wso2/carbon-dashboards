@@ -28,7 +28,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.0.0.beta3-SNAPSHOT</version>
+        <version>4.0.1.beta3-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
@@ -82,6 +82,8 @@
             <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
         </dependency>
+
+        <!-- OWASP -->
         <dependency>
             <groupId>org.wso2.orbit.org.owasp.encoder</groupId>
             <artifactId>encoder</artifactId>
@@ -104,7 +106,7 @@
             org.slf4j.*; version="${slf4j.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics-common.version.range}",
-            org.owasp.encoder.*;version="${owasp.encoder.version.range}"
+            org.owasp.encoder.*; version="${owasp.encoder.version.range}"
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="2"
