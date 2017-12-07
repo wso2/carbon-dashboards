@@ -63,6 +63,14 @@ class DashboardListing extends React.Component {
                             onClick={() => {
                                 window.location.href = window.contextPath + '/create/';
                             }}/>
+                        <FlatButton
+                            label={<FormattedMessage id="create.gadget" defaultMessage="Create gadget"/>}
+                            icon={<ContentAdd/>} primary
+                            style={{'margin-right': '12px'}}
+                            labelStyle={{'paddingLeft': '2px' }}
+                            onClick={() => {
+                                window.location.href = window.contextPath + '/createGadget/';
+                            }}/>
                     </div>
                     <div className="dashboard-listing-container" style={{overflow:"auto"}}>
                         {this.state.dashboards}

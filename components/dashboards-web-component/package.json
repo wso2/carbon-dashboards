@@ -28,6 +28,7 @@
     "prop-types": "^15.6.0",
     "qs": "^6.5.1",
     "react": "^16.1.1",
+    "react-color": "^2.13.8",
     "react-dom": "^16.1.1",
     "react-intl": "^2.4.0",
     "react-router-dom": "^4.1.2",
