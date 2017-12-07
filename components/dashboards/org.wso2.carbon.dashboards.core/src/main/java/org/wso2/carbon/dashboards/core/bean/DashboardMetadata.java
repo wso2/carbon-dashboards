@@ -239,4 +239,8 @@ public class DashboardMetadata {
         this.pages = pages;
     }
 
+    @Override
+    public String toString() {
+        return "DashboardMetadata{url='" + url + "', owner='" + owner + "', name='" + name + "'}'";
+    }
 }

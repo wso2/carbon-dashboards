@@ -59,4 +59,14 @@ public class GeneratedWidgetConfigs {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "GeneratedWidgetConfigs{" +
+               "name='" + name + '\'' +
+               ", id='" + id + '\'' +
+               ", chartConfig='" + chartConfig + '\'' +
+               ", providerConfig='" + providerConfig + '\'' +
+               '}';
+    }
 }

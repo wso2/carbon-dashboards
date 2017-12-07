@@ -67,15 +67,13 @@ const config = {
         popoutWholeStack: false,
         blockedPopoutsThrowError: true,
         closePopoutsOnUnload: true,
-        showPopoutIcon: true,
+        showPopoutIcon: false,
         showMaximiseIcon: true,
         responsive: true,
         responsiveMode: 'always',
         showCloseIcon: true,
     },
     dimensions: {
-        minItemWidth: 400,
-        minItemHeight: 400,
         headerHeight: 37
     },
     content: [],

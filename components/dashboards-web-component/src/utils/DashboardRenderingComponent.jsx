@@ -90,7 +90,7 @@ class DashboardRenderingComponent extends React.Component {
         });
         dashboardLayout.on("itemCreated", function (item) {
             if (item.isComponent && item.parent) {
-                item.parent.header.controlsContainer.children()[4].style.display = "list-item";
+                item.parent.header.controlsContainer.children()[3].style.display = "list-item";
                 that.isSubscriber(item.config) ? "" : item.parent.header.controlsContainer.children()[0].remove();
             }
             else if (item.header) {
