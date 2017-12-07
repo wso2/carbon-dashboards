@@ -68,7 +68,6 @@ let config = {
         showCloseIcon: false,
     },
     dimensions: {
-        minItemWidth: 400,
         headerHeight: 37
     },
     isClosable: false,

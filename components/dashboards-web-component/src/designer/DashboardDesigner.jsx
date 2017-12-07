@@ -74,8 +74,6 @@ const config = {
         showCloseIcon: true,
     },
     dimensions: {
-        minItemWidth: 400,
-        minItemHeight: 400,
         headerHeight: 37
     },
     content: [],
