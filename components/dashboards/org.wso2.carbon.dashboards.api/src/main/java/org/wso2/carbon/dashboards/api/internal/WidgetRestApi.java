@@ -187,7 +187,7 @@ public class WidgetRestApi implements Microservice {
                 widgetMetadataProvider.delete(widgetId);
                 return Response.status(OK).build();
             } else {
-                return Response.status(NO_CONTENT).entity("Cannot find widget '" + widgetId + "'.").build();
+                return Response.status(422).entity("Cannot find widget '" + widgetId + "'.").build();
             }
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when deleting widget '{}'.", getEncodedString(widgetId), e);
