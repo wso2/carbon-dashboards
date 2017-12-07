@@ -62,7 +62,6 @@ export default class SecuredRouter extends Component {
 
                 {/* Create gadget */}
                 <Route exact path={`${appContext}/createGadget`} component={GadgetsGenerationWizard} />
-                {/*todo: look into the naming*/}
 
                 {/* Dashboard settings */}
                 <Route exact path={`${appContext}/settings/:id`} component={DashboardSettings} />
