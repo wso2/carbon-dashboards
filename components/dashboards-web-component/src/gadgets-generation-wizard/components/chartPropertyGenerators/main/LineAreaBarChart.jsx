@@ -22,19 +22,20 @@ import React, { Component } from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import { Card } from 'material-ui/Card';
 // App Components
-import SubChart from '../sub/Scatter';
+import SubChart from '../sub/LineAreaBarChart';
 import TextProperty from '../../inputTypes/TextProperty';
 import SwitchProperty from '../../inputTypes/SwitchProperty';
 import SelectProperty from '../../inputTypes/SelectProperty';
 import ColorProperty from '../../inputTypes/ColorProperty';
+import StreamProperty from '../../inputTypes/StreamProperty';
 // App Utilities
 import Types from '../../../utils/Types';
 import Configurations from '../../../utils/Configurations';
 
 /**
- * Represents a main Scatter chart
+ * Represents a main chart, that can have Line / Bar / Area as sub charts
  */
-class Scatter extends Component {
+class LineAreaBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -158,6 +159,16 @@ class Scatter extends Component {
     render() {
         return (
             <div>
+                <StreamProperty
+                    id="x"
+                    value={this.state.configuration.x}
+                    fieldName="Independent axis"
+                    onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                    metadata={this.props.metadata}
+                    fullWidth
+                />
+                <br />
+                <br />
                 <h3>Charts</h3>
                 <div>
                     {this.state.configuration.charts.map((chart, index) =>
@@ -180,7 +191,7 @@ class Scatter extends Component {
                         />))}
                     <FlatButton
                         label="Add Chart"
-                        onClick={() => this.addSubChart(Types.chart.scatterChart)}
+                        onClick={() => this.addSubChart(Types.chart.lineAreaBarChart)}
                         primary
                     />
                     <br />
@@ -199,6 +210,15 @@ class Scatter extends Component {
                     id="width"
                     value={this.state.configuration.width}
                     fieldName="Width of the chart in pixels"
+                    onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                    number
+                    fullWidth
+                />
+                <br />
+                <TextProperty
+                    id="maxLength"
+                    value={this.state.configuration.maxLength}
+                    fieldName="Maximum Length of the data set displayed"
                     onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
                     number
                     fullWidth
@@ -261,24 +281,6 @@ class Scatter extends Component {
                         fullWidth
                     />
                     <br />
-                    <TextProperty
-                        id="xAxisTickCount"
-                        value={this.state.configuration.xAxisTickCount}
-                        fieldName="Specify number of ticks in the x axis"
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                        number
-                        fullWidth
-                    />
-                    <br />
-                    <TextProperty
-                        id="yAxisTickCount"
-                        value={this.state.configuration.yAxisTickCount}
-                        fieldName="Specify number of ticks in the y axis"
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                        number
-                        fullWidth
-                    />
-                    <br />
                     <br />
                     <h3>Style</h3>
                     <ColorProperty
@@ -328,4 +330,4 @@ class Scatter extends Component {
     }
 }
 
-export default Scatter;
+export default LineAreaBar;

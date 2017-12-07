@@ -28,11 +28,11 @@ import Types from '../utils/Types';
 import Configurations from '../utils/Configurations';
 import Constants from '../utils/Constants';
 // App Components
-import LineAreaBarChart from './chartPropertyGenerators/main/LineAreaBar';
-import PieChart from './chartPropertyGenerators/main/Pie';
-import ScatterChart from './chartPropertyGenerators/main/Scatter';
-import NumberChart from './chartPropertyGenerators/main/Number';
-import GeographicalChart from './chartPropertyGenerators/main/Geographical';
+import LineAreaBarChart from './chartPropertyGenerators/main/LineAreaBarChart';
+import PieChart from './chartPropertyGenerators/main/PieChart';
+import ScatterChart from './chartPropertyGenerators/main/ScatterChart';
+import NumberChart from './chartPropertyGenerators/main/NumberChart';
+import GeographicalChart from './chartPropertyGenerators/main/GeographicalChart';
 import TableChart from './chartPropertyGenerators/main/TableChart';
 // App Utils
 import UtilFunctions from '../utils/UtilFunctions';
