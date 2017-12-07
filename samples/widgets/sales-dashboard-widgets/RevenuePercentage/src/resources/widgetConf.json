@@ -1,0 +1,12 @@
+{
+    "name": "Revenue Percentage",
+    "id": "RevenuePercentage",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "subscriber"
+            ]
+        }
+    }
+}

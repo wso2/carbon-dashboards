@@ -119,7 +119,7 @@ class DashboardThumbnail extends React.Component {
         let deleteBtn = (
             <div className="trash-button-div" onClick={this.handleOpen}>
                 <a href="#">
-                <i className="fw fw-delete fw-stack-1x trash-button-icon" title="Delete Dashboard"></i>
+                    <i className="fw fw-delete trash-button-icon" title="Delete Dashboard"></i>
                 </a>
             </div>
         );
@@ -130,7 +130,7 @@ class DashboardThumbnail extends React.Component {
                     <i className="fw fw-circle-outline fw-stack-2x"></i>
                     <i className="fw fw-edit fw-stack-1x"></i>
                 </span>
-            <FormattedMessage id="design.button" defaultMessage="Design"/>
+                <FormattedMessage id="design.button" defaultMessage="Design"/>
             </Link>
         );
 
@@ -140,14 +140,15 @@ class DashboardThumbnail extends React.Component {
                     <i className="fw fw-circle-outline fw-stack-2x"></i>
                     <i className="fw fw-settings fw-stack-1x"></i>
                 </span>
-            <FormattedMessage id="settings.button" defaultMessage="Settings"/>
+                <FormattedMessage id="settings.button" defaultMessage="Settings"/>
             </Link>
         );
 
         if (!this.props.dashboard.hasOwnerPermission) {
             deleteBtn = null;
             settingsBtn = null;
-        } if (!this.props.dashboard.hasDesignerPermission) {
+        }
+        if (!this.props.dashboard.hasDesignerPermission) {
             designerBtn = null;
         }
         return {deleteButton: deleteBtn, designerButton: designerBtn, settingsButton: settingsBtn};

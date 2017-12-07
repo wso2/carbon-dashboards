@@ -1,0 +1,12 @@
+{
+    "name": "Customers Per Year",
+    "id": "CustomersPerYear",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "subscriber"
+            ]
+        }
+    }
+}

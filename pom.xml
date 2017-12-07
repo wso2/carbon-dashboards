@@ -282,6 +282,60 @@
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.customers-by-product</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.customers-per-year</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.overall-revenue-info</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.product-info</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-country</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-product</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-region</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-percentage</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-per-year</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
             <!--Feature-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples</groupId>

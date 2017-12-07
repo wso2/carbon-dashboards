@@ -128,7 +128,7 @@ class DashboardView extends React.Component {
     }
 
     handleTheme(isDarkTheme) {
-        isDarkTheme ? document.body.style.background = '#081921' : document.body.style.background = '#fff';
+        isDarkTheme ? document.body.className = 'viewer-dark' : document.body.className = 'viewer-light';
         let muiTheme = isDarkTheme ? getMuiTheme(darkMuiTheme) : getMuiTheme(lightMuiTheme);
         this.setState({muiTheme: muiTheme});
     }

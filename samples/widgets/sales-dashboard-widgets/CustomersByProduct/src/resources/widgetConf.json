@@ -1,0 +1,12 @@
+{
+    "name": "Customers By Product",
+    "id": "CustomersByProduct",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "subscriber"
+            ]
+        }
+    }
+}
