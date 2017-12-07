@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.0.1.beta3-SNAPSHOT</version>
+    <version>4.0.0.beta3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
