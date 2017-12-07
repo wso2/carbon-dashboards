@@ -23,7 +23,7 @@ import AuthenticationAPI from '../../utils/apis/AuthenticationAPI';
  * Name of the session cookie.
  */
 const sessionUser = 'wso2dashboard_user';
-const timestampSkew = 200;
+const timestampSkew = 100 * 1000;
 
 /**
  * Authentication manager.
