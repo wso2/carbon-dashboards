@@ -42,6 +42,7 @@ public class QueryProvider {
     public static final String ADD_WIDGET_CONFIG_QUERY = "add_widget_config";
     public static final String GET_WIDGET_CONFIG_QUERY = "get_widget_config";
     public static final String GET_WIDGET_NAME_ID_MAP_QUERY = "get_widget_name_id_map";
+    public static final String DELETE_WIDGET_BY_ID = "delete_widget_by_id";
     public static final String GET_DASHBOARD_METADATA_LIST_QUERY = "get_dashboard_metadata_list";
     public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
     public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";

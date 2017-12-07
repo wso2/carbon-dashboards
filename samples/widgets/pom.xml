@@ -44,6 +44,15 @@
         <module>Subscriber</module>
         <module>TotalUpdates</module>
         <module>WidgetState</module>
+        <module>sales-dashboard-widgets/CustomersByProduct</module>
+        <module>sales-dashboard-widgets/CustomersPerYear</module>
+        <module>sales-dashboard-widgets/OverallProductInfo</module>
+        <module>sales-dashboard-widgets/OverallRevenueInfo</module>
+        <module>sales-dashboard-widgets/RevenueByCountry</module>
+        <module>sales-dashboard-widgets/RevenueByProduct</module>
+        <module>sales-dashboard-widgets/RevenueByRegion</module>
+        <module>sales-dashboard-widgets/RevenuePercentage</module>
+        <module>sales-dashboard-widgets/RevenuePerYear</module>
     </modules>
 
 </project>

@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
@@ -64,6 +63,7 @@ public class WidgetMetadataDao {
         generatedWidgetConfigs.setId(generatedWidgetConfigs.getName().replace(" ", "-"));
         try {
             connection = getConnection();
+            connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
             ps.setString(1, generatedWidgetConfigs.getId());
             ps.setString(2, generatedWidgetConfigs.getName());
@@ -81,8 +81,8 @@ public class WidgetMetadataDao {
         }
     }
 
-    private static byte[] toJsonBytes(Object dashboardPages) {
-        return GSON.toJson(dashboardPages).getBytes(StandardCharsets.UTF_8);
+    private static byte[] toJsonBytes(Object generatedWidgetConfigs) {
+        return GSON.toJson(generatedWidgetConfigs).getBytes(StandardCharsets.UTF_8);
     }
 
     private static GeneratedWidgetConfigs fromJsonBytes(Blob byteBlob) throws SQLException {
@@ -114,7 +114,7 @@ public class WidgetMetadataDao {
         return null;
     }
 
-    public Set<GeneratedWidgetConfigs> getGeneratedWidgetIdMap() throws DashboardRuntimeException {
+    public Set<GeneratedWidgetConfigs> getGeneratedWidgetIdSet() throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet resultSet = null;
@@ -134,13 +134,33 @@ public class WidgetMetadataDao {
         } catch (SQLException e) {
             rollbackQuietly(connection);
             LOGGER.debug("Failed to execute SQL query {}", query);
-            throw new DashboardRuntimeException("Failed to get widget widget name set.", e);
+            throw new DashboardException("Failed to get widget widget name set.", e);
         } finally {
             closeQuietly(connection, ps, resultSet);
         }
     }
 
-    private static void closeQuietly(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
+    public void delete(String widgetId) throws DashboardException {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        String query = queryProvider.getQuery(QueryProvider.DELETE_WIDGET_BY_ID);
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+            ps = connection.prepareStatement(query);
+            ps.setString(1, widgetId);
+            ps.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            rollbackQuietly(connection);
+            LOGGER.debug("Failed to execute SQL query {}", query);
+            throw new DashboardException("Cannot delete widget id: '" + widgetId + "'.", e);
+        } finally {
+            closeQuietly(connection, ps, null);
+        }
+    }
+
+    static void closeQuietly(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
         if (resultSet != null) {
             try {
                 resultSet.close();
@@ -164,7 +184,7 @@ public class WidgetMetadataDao {
         }
     }
 
-    private static void rollbackQuietly(Connection connection) {
+    static void rollbackQuietly(Connection connection) {
         if (connection != null) {
             try {
                 connection.rollback();

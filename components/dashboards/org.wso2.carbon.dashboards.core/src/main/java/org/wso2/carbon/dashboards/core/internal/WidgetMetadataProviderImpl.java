@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.config.provider.ConfigProvider;
-import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
+import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
@@ -49,10 +49,10 @@ import java.util.stream.Collectors;
  *
  * @since 4.0.0
  */
-@Component(service = WidgetInfoProvider.class, immediate = true)
-public class WidgetInfoProviderImpl implements WidgetInfoProvider {
+@Component(service = WidgetMetadataProvider.class, immediate = true)
+public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WidgetInfoProviderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WidgetMetadataProviderImpl.class);
     private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
     private WidgetMetadataDao widgetMetadataDao;
@@ -119,7 +119,7 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
 
     public boolean isWidgetPresent(String widgetName) throws DashboardException {
         if (isDaoInitialized) {
-            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdMap();
+            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdSet();
             for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
                 if (generatedWidgetConfigs.getName().equals(widgetName)) {
                     return true;
@@ -135,7 +135,7 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
                 .map(WidgetConfigurationReader::getConfiguration)
                 .collect(Collectors.toSet());
         if (isDaoInitialized) {
-            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdMap();
+            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdSet();
             for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
                 WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
                 WidgetConfigs widgetConfigs = new WidgetConfigs();
@@ -149,6 +149,11 @@ public class WidgetInfoProviderImpl implements WidgetInfoProvider {
             }
         }
         return widgetMetaInfoSet;
+    }
+
+    @Override
+    public void delete(String widgetId) throws DashboardException {
+        widgetMetadataDao.delete(widgetId);
     }
 
     private App getDashboardApp() {

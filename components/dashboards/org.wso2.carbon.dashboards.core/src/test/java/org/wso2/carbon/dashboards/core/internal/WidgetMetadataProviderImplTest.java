@@ -35,17 +35,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test cases for {@link WidgetInfoProviderImpl} class.
+ * Test cases for {@link WidgetMetadataProviderImpl} class.
  *
  * @since 4.0.0
  */
-public class WidgetInfoProviderImplTest {
+public class WidgetMetadataProviderImplTest {
 
     @Test
     void testGetWidgetConfigurationWithoutPortalApp() {
         Server server = mock(Server.class);
         when(server.getApp(anyString())).thenReturn(Optional.empty());
-        WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl();
+        WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
         widgetInfoProvider.setCarbonUiServer(server);
 
         Assertions.assertThrows(DashboardRuntimeException.class,
@@ -54,28 +54,28 @@ public class WidgetInfoProviderImplTest {
 
     @Test
     void testGetWidgetConfigurationOfAbsentWidget() throws DashboardException {
-        WidgetInfoProviderImpl widgetInfoProvider = createWidgetInfoProvider();
+        WidgetMetadataProviderImpl widgetInfoProvider = createWidgetInfoProvider();
         Assertions.assertFalse(widgetInfoProvider.getWidgetConfiguration("table").isPresent(),
                                "No configuration for non-existing widget 'table'");
     }
 
     @Test
     void testGetWidgetConfiguration() throws DashboardException {
-        WidgetInfoProviderImpl widgetInfoProvider = createWidgetInfoProvider();
+        WidgetMetadataProviderImpl widgetInfoProvider = createWidgetInfoProvider();
         Assertions.assertTrue(widgetInfoProvider.getWidgetConfiguration("LineChart").isPresent(),
                               "Configuration should available for widget 'LineChart'");
     }
 
     @Test
     void testGetAllWidgetConfigurations() throws DashboardException {
-        WidgetInfoProviderImpl widgetInfoProvider = createWidgetInfoProvider();
+        WidgetMetadataProviderImpl widgetInfoProvider = createWidgetInfoProvider();
         Assertions.assertEquals(1, widgetInfoProvider.getAllWidgetConfigurations().size());
     }
 
     @Test
     void testOthers() {
         Server server = mock(Server.class);
-        WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl();
+        WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
         widgetInfoProvider.activate(null);
         widgetInfoProvider.setCarbonUiServer(server);
         widgetInfoProvider.unsetCarbonUiServer(server);
@@ -88,11 +88,11 @@ public class WidgetInfoProviderImplTest {
                        Collections.emptySet(), Collections.emptySet(), null, null);
     }
 
-    private static WidgetInfoProviderImpl createWidgetInfoProvider() {
+    private static WidgetMetadataProviderImpl createWidgetInfoProvider() {
         App portalApp = createPortalApp();
         Server server = mock(Server.class);
         when(server.getApp(eq(portalApp.getName()))).thenReturn(Optional.of(portalApp));
-        WidgetInfoProviderImpl widgetInfoProvider = new WidgetInfoProviderImpl();
+        WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
         widgetInfoProvider.setCarbonUiServer(server);
         return widgetInfoProvider;
     }
