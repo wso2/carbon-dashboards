@@ -17,8 +17,8 @@
  */
 
 import React from 'react';
-import BasicChart from './BasicChart.jsx';
 import { VictoryLine, VictoryArea, VictoryGroup, VictoryBar, VictoryTooltip, VictoryStack } from 'victory';
+import BasicChart from './BasicChart.jsx';
 import VizGError from '../VizGError';
 
 export default class InlineChart extends BasicChart {
@@ -53,7 +53,7 @@ export default class InlineChart extends BasicChart {
                         legendItems.push({ name: dataSetName, symbol: { fill: chart.dataSetNames[dataSetName] } });
                         lineCharts.push((
                             <VictoryGroup
-                                key={`chart-${chartIndex}-${chart.type}-${dataSetName}`}
+                                key={`chart-${chart.id}-${chart.type}-${dataSetName}`}
                                 data={dataSets[dataSetName]}
                                 color={chart.dataSetNames[dataSetName]}
                                 height={height}
@@ -76,10 +76,14 @@ export default class InlineChart extends BasicChart {
                         legendItems.push({ name: dataSetName, symbol: { fill: chart.dataSetNames[dataSetName] } });
                         areaLocal.push((
                             <VictoryGroup
-                                key={`chart-${chartIndex}-${chart.type}-${dataSetName}`}
+                                key={`chart-${chart.id}-${chart.type}-${dataSetName}`}
                                 data={dataSets[dataSetName]}
                                 color={chart.dataSetNames[dataSetName]}
-                                style={{ data: { fillOpacity: config.charts[chartIndex].fillOpacity || 0.5, strokeWidth: 0.5 } }}
+                                style={{
+                                    data: {
+                                        fillOpacity: config.charts[chartIndex].fillOpacity || 0.5, strokeWidth: 0.5,
+                                    },
+                                }}
                                 height={height}
                                 width={width}
                                 padding={0}

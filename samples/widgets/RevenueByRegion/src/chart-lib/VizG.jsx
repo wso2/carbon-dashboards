@@ -35,7 +35,7 @@ class VizG extends Component {
             config: props.config,
             data: props.data,
             metadata: props.metadata,
-            onClick: props.onClick
+            onClick: props.onClick,
         };
     }
 
@@ -84,15 +84,34 @@ class VizG extends Component {
             case 'bar':
                 return (
                     <BasicCharts
-                        config={config} metadata={metadata}
-                        data={data} onClick={onClick}
+                        config={config}
+                        metadata={metadata}
+                        data={data}
+                        onClick={onClick}
                         yDomain={this.props.yDomain}
+                        append={this.props.append}
                     />
                 );
             case 'arc':
-                return (<PieCharts config={config} metadata={metadata} data={data} onClick={onClick} append={this.props.append}/>);
+                return (
+                    <PieCharts
+                        config={config}
+                        metadata={metadata}
+                        data={data}
+                        onClick={onClick}
+                        append={this.props.append}
+                    />
+                );
             case 'scatter':
-                return <ScatterCharts config={config} metadata={metadata} data={data} onClick={onClick} />;
+                return (
+                    <ScatterCharts
+                        config={config}
+                        metadata={metadata}
+                        data={data}
+                        onClick={onClick}
+                        append={this.props.append}
+                    />
+                );
             case 'map':
                 return <MapGenerator config={config} metadata={metadata} data={data} onClick={onClick} />;
             case 'table':
@@ -133,7 +152,7 @@ class VizG extends Component {
 
 VizG.defaultProps = {
     append: true,
-}
+};
 
 VizG.propTypes = {
     config: PropTypes.object.isRequired,

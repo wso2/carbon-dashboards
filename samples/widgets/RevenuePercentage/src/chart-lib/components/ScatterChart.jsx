@@ -19,8 +19,6 @@
 import React from 'react';
 import {
     VictoryTooltip,
-    VictoryContainer,
-    VictoryLegend,
     VictoryScatter,
 } from 'victory';
 import PropTypes from 'prop-types';
@@ -58,6 +56,11 @@ export default class ScatterCharts extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (!this.props.append) {
+            this.state.dataSets = {};
+            this.state.chartArray = [];
+            this.state.initialized = false;
+        }
         this._handleAndSortData(nextProps);
     }
 
@@ -87,7 +90,6 @@ export default class ScatterCharts extends React.Component {
             const sizeIndex = metadata.names.indexOf(chart.size);
             xScale = metadata.types[xIndex] === 'time' ? 'time' : xScale;
 
-
             if (xIndex === -1) {
                 throw new VizGError('ScatterChart', "Unknown 'x' field defined in the Scatter Plot config.");
             }
@@ -108,7 +110,7 @@ export default class ScatterCharts extends React.Component {
 
             if (metadata.types[colorIndex] === 'linear') {
                 legend = false;
-                data.map((datum) => {
+                data.forEach((datum) => {
                     dataSets['scatterChart' + chartIndex] = dataSets['scatterChart' + chartIndex] || [];
                     dataSets['scatterChart' + chartIndex].push({
                         x: datum[xIndex],
@@ -161,7 +163,7 @@ export default class ScatterCharts extends React.Component {
                         } else {
                             chartArray[chartIndex]
                                 .dataSetNames[dataSetName] = chartArray[chartIndex]
-                                    .colorScale[chartArray[chartIndex].colorIndex++];
+                                .colorScale[chartArray[chartIndex].colorIndex++];
                         }
                     }
                 });
@@ -202,7 +204,7 @@ export default class ScatterCharts extends React.Component {
 
         chartArray.map((chart, chartIndex) => {
             if (chart.colorType === 'linear') {
-                Object.keys(chart.dataSetNames).map((dataSetName) => {
+                Object.keys(chart.dataSetNames).forEach((dataSetName) => {
                     chartComponents.push((
                         <VictoryScatter
                             bubbleProperty='amount'
@@ -244,12 +246,19 @@ export default class ScatterCharts extends React.Component {
                                     },
                                 },
                             }]}
-
+                            animate={
+                                config.animate ?
+                                {
+                                    onEnter: {
+                                        duration: 100,
+                                    },
+                                } : null
+                            }
                         />
                     ));
                 });
             } else {
-                Object.keys(chart.dataSetNames).map((dataSetName) => {
+                Object.keys(chart.dataSetNames).forEach((dataSetName) => {
                     chartComponents.push((
                         <VictoryScatter
                             bubbleProperty='amount'
@@ -294,32 +303,32 @@ export default class ScatterCharts extends React.Component {
             <div style={{ overflow: 'hidden' }}>
                 <div
                     style={
-                        legend ?
-                            {
-                                width: !config.legendOrientation ? '80%' :
+                        config.legend && legend ?
+                        {
+                            width: !config.legendOrientation ? '80%' :
                                     (() => {
                                         if (config.legendOrientation === 'left' ||
                                             config.legendOrientation === 'right') {
                                             return '80%';
                                         } else return '100%';
                                     })(),
-                                display: !config.legendOrientation ? 'inline' :
+                            display: !config.legendOrientation ? 'inline' :
                                     (() => {
                                         if (config.legendOrientation === 'left' ||
                                             config.legendOrientation === 'right') {
                                             return 'inline';
                                         } else return null;
                                     })(),
-                                float: !config.legendOrientation ? 'right' : (() => {
-                                    if (config.legendOrientation === 'left') return 'right';
-                                    else if (config.legendOrientation === 'right') return 'left';
-                                    else return null;
-                                })(),
-                            } : null
+                            float: !config.legendOrientation ? 'right' : (() => {
+                                if (config.legendOrientation === 'left') return 'right';
+                                else if (config.legendOrientation === 'right') return 'left';
+                                else return null;
+                            })(),
+                        } : null
                     }
                 >
                     {
-                        legend && (config.legendOrientation && config.legendOrientation === 'top') ?
+                        config.legend && legend && (config.legendOrientation && config.legendOrientation === 'top') ?
                             getLegendComponent(config, legendItems, ignoreArray, this._legendInteraction, height, width)
                             : null
                     }
@@ -327,7 +336,7 @@ export default class ScatterCharts extends React.Component {
                         {chartComponents}
                     </ChartSkeleton>
                     {
-                        legend && (!config.legendOrientation || config.legendOrientation !== 'top') ?
+                        config.legend && legend && (!config.legendOrientation || config.legendOrientation !== 'top') ?
                             getLegendComponent(config, legendItems, ignoreArray, this._legendInteraction, height, width)
                             : null
                     }

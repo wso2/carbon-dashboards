@@ -21,6 +21,10 @@ import React, {Component} from 'react';
 import VizG from './chart-lib/VizG';
 import Widget from '@wso2-dashboards/widget';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import RevertIcon from 'material-ui/svg-icons/action/cached';
+import FlatButton from 'material-ui/FlatButton';
+
 class RevenueByRegion extends Widget {
     constructor(props) {
         super(props);
@@ -145,63 +149,82 @@ class RevenueByRegion extends Widget {
             ['Australia', 'AUS', 'ROW', 'D', 224522.14, 25, 17]
         ];
 
-        this.configPie = {
+        this.configPieRegion = {
             charts: [{type: 'arc', x: 'Revenue', color: 'Region', mode: 'pie'}],
             width: props.glContainer.width,
             height: props.glContainer.height,
-            animate:true
+            animate: true
         };
 
-        this.configPie2 = {
+        this.configPieProduct = {
             charts: [{type: 'arc', x: 'Revenue', color: 'Product', mode: 'pie'}],
             width: props.glContainer.width,
             height: props.glContainer.height,
-            animate:true
+            animate: true
         };
 
+        this.aggregatedData = [
+            ['ALL', 'ALL', 'Africa', 'ALL', 397275.75, 28, 16],
+            ['ALL', 'ALL', 'Asia', 'ALL', 3163652.25, 324, 184],
+            ['ALL', 'ALL', 'Europe', 'ALL', 9588717.86, 861, 510],
+            ['ALL', 'ALL', 'LATAM', 'ALL', 1680438.18, 104, 54],
+            ['ALL', 'ALL', 'Middle East', 'ALL', 1954683.52, 204, 122],
+            ['ALL', 'ALL', 'North America', 'ALL', 2624787.48, 177, 103],
+            ['ALL', 'ALL', 'ROW', 'ALL', 728088.56, 72, 42]
+        ];
+
         this.state = {
-            data: [
-                ['ALL', 'ALL', 'Africa', 'ALL', 397275.75, 28, 16],
-                ['ALL', 'ALL', 'Asia', 'ALL', 3163652.25, 324, 184],
-                ['ALL', 'ALL', 'Europe', 'ALL', 9588717.86, 861, 510],
-                ['ALL', 'ALL', 'LATAM', 'ALL', 1680438.18, 104, 54],
-                ['ALL', 'ALL', 'Middle East', 'ALL', 1954683.52, 204, 122],
-                ['ALL', 'ALL', 'North America', 'ALL', 2624787.48, 177, 103],
-                ['ALL', 'ALL', 'ROW', 'ALL', 728088.56, 72, 42]
-            ],
-            config:this.configPie
+            data: this.aggregatedData,
+            config: this.configPieRegion,
+            isDrillDowned: false
         };
 
         this.metadata = {
             names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Orders', 'Customers'],
             types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
-        this.isDrillDowned = false;
+
         this.handleClickEvent = this.handleClickEvent.bind(this);
     }
 
-    handleClickEvent(event){
-        if(!this.isDrillDowned) {
+    handleClickEvent(event) {
+        if (!this.state.isDrillDowned) {
             let array = [];
             this.rowdata.map(data => {
                 if (data[2] === event.datum.x) {
                     array.push(data)
                 }
             });
-            this.isDrillDowned = true;
-            super.publish({selectedRegion:event.datum.x});
-            this.setState({config: this.configPie2, data: array});
+            super.publish({selectedRegion: event.datum.x});
+            this.setState({config: this.configPieProduct, data: array, isDrillDowned: true});
+        } else {
+            super.publish({selectedRegion: "ALL"});
+            this.setState({config: this.configPieRegion, data: this.aggregatedData, isDrillDowned: false});
         }
     }
 
     render() {
-        console.log(this)
         return (
-            <section>
-                <div style={{marginTop: "5px", width: this.props.glContainer.width, height: this.props.glContainer.height}}>
-                    <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false} onClick={this.handleClickEvent}/>
-                </div>
-            </section>
+            <MuiThemeProvider>
+                <section>
+                    <FlatButton
+                        backgroundColor="steelblue"
+                        hoverColor="#536DFE"
+                        icon={<RevertIcon style={{margin: "10px"}}/>}
+                        style={{marginLeft: "10px", minWidth: 0}}
+                        onClick={this.handleClickEvent}
+                        disabled={!this.state.isDrillDowned}
+                    />
+                    <div style={{
+                        marginTop: "5px",
+                        width: this.props.glContainer.width,
+                        height: this.props.glContainer.height
+                    }}>
+                        <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false}
+                              onClick={this.handleClickEvent}/>
+                    </div>
+                </section>
+            </MuiThemeProvider>
         );
     }
 }

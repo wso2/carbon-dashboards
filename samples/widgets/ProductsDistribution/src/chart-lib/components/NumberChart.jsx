@@ -63,11 +63,10 @@ export default class NumberCharts extends React.Component {
     }
 
     render() {
-
         const { config } = this.props;
         const { width, height, prevValue, value } = this.state;
-        const highValueColor = '#109618';
-        const lowValueColor = '#B82E2E';
+        const highValueColor = config.highValueColor || '#109618';
+        const lowValueColor = config.lowValueColor || '#B82E2E';
 
         return (
             <svg height={'100%'} width={'100%'} viewBox={`0 0 ${width} ${height}`}>
@@ -77,7 +76,7 @@ export default class NumberCharts extends React.Component {
                     x={width / 2}
                     y={(height / 2) - 50}
                     text={config.title}
-                    style={{ fill: '#4d4d4d', fontSize: width / 25}}
+                    style={{ fill: '#4d4d4d', fontSize: width / 25 }}
                 />
                 <VictoryLabel
                     textAnchor="middle"
@@ -85,39 +84,65 @@ export default class NumberCharts extends React.Component {
                     x={width / 2}
                     y={(height / 2) - 10}
                     text={(value === null ? value : value.toFixed(3))}
-                    style={{ fill: '#919191', fontSize: width / 15}}
+                    style={{ fill: '#919191', fontSize: width / 15 }}
                 />
-                <VictoryLabel
-                    textAnchor="middle"
-                    verticalAnchor="middle"
-                    x={width / 2}
-                    y={(height / 2) + 10}
-                    text={(Math.abs(eval(prevValue - value))).toFixed(3)}
-                    style={{ fill: '#919191', fontSize: width / 15}}
-                />
-                <VictoryLabel
-                    textAnchor="middle"
-                    verticalAnchor="middle"
-                    x={width / 2}
-                    y={(height / 2) + 50}
-                    text={(Math.abs((100 * ((value - prevValue) / prevValue))).toFixed(2)) + '%'}
-                    style={{ fill: prevValue < value ? highValueColor : lowValueColor, fontSize: width / 20}}
-                />
-                <VictoryLabel
-                    textAnchor="middle"
-                    verticalAnchor="middle"
-                    x={(width / 2) + 50}
-                    y={((height / 2) + 50)}
-                    text={prevValue < value ? '↑' : prevValue === value ? '' : '↓'}
-                    style={{ fill: prevValue < value ? highValueColor : lowValueColor, fontSize: width / 20}}
-                />
+                {
+                    config.showDifference ?
+                        <VictoryLabel
+                            textAnchor="middle"
+                            verticalAnchor="middle"
+                            x={width / 2}
+                            y={(height / 2) + 10}
+                            text={(Math.abs(Number((prevValue - value)))).toFixed(3)}
+                            style={{ fill: '#919191', fontSize: width / 15 }}
+                        /> : null
+                }
+                {
+                    config.showPercentage ? [
+                        (<VictoryLabel
+                            textAnchor="middle"
+                            verticalAnchor="middle"
+                            x={width / 2}
+                            y={(height / 2) + 50}
+                            text={(Math.abs((100 * ((value - prevValue) / prevValue))).toFixed(2)) + '%'}
+                            style={{ fill: prevValue < value ? highValueColor : lowValueColor, fontSize: width / 20 }}
+                        />),
+                        (<VictoryLabel
+                            textAnchor="middle"
+                            verticalAnchor="middle"
+                            x={(width / 2) + 50}
+                            y={((height / 2) + 50)}
+                            text={(() => {
+                                if (prevValue < value) {
+                                    return '↑';
+                                } else if (prevValue === value) {
+                                    return '';
+                                } else {
+                                    return '↓';
+                                }
+                            })()}
+                            style={{ fill: prevValue < value ? highValueColor : lowValueColor, fontSize: width / 20 }}
+                        />)] : null
+                }
+
             </svg>
         );
     }
 }
 
 NumberCharts.propTypes = {
-    config: PropTypes.object.isRequired,
-    metadata: PropTypes.object.isRequired,
-    data: PropTypes.array
+    config: PropTypes.shape({
+        x: PropTypes.string,
+        title: PropTypes.string,
+        charts: PropTypes.arrayOf(PropTypes.shape({
+            type: PropTypes.string,
+        })),
+        showDifference: PropTypes.bool,
+        showPercentage: PropTypes.bool,
+    }).isRequired,
+    metadata: PropTypes.shape({
+        names: PropTypes.arrayOf(PropTypes.string),
+        types: PropTypes.arrayOf(PropTypes.string),
+    }),
+    data: PropTypes.array,
 };

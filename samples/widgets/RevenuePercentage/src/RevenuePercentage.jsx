@@ -25,18 +25,18 @@ class RevenuePercentage extends Widget {
     constructor(props) {
         super(props);
         this.config = {
-            charts: [{ type: 'arc', x: 'Percentage',color:'Percentage', colorScale: ['steelblue', '#80ccff'] }],
-            tooltip: { enabled: false },
+            charts: [{type: 'arc', x: 'Percentage', color: 'Percentage', colorScale: ['steelblue', '#80ccff']}],
+            tooltip: {enabled: false},
             legend: false,
             percentage: true,
+            animate: true,
             colorScale: ['steelblue', '#80ccff'],
-            width: 300,
-            height: 300,
+            height: props.glContainer.height
         };
 
         this.state = {
             data: [[0]],
-            config:this.config
+            config: this.config
         };
 
         this.data = [
@@ -55,6 +55,8 @@ class RevenuePercentage extends Widget {
         };
 
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        props.glContainer.on('resize', this.handleResize);
     }
 
     setReceivedMsg(receivedMsg) {
@@ -66,19 +68,23 @@ class RevenuePercentage extends Widget {
                 selectedRegionRevenue = dataElement[4];
             }
         });
-        this.setState({data:[[selectedRegionRevenue*100/totalRevenue]]});
+        this.setState({data: [[selectedRegionRevenue * 100 / totalRevenue]]});
     }
 
     componentWillMount() {
         super.subscribe(this.setReceivedMsg);
     }
 
+    handleResize() {
+        this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
+    }
+
     render() {
-        console.log(this)
         return (
             <section>
-                <div style={{marginTop: "5px", width:this.props.glContainer.width, height:this.props.glContainer.height}}>
-                    <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false} onClick={this.handleClickEvent}/>
+                <div style={{marginTop: "5px", width: this.state.width, height: this.state.height}}>
+                    <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false}
+                          onClick={this.handleClickEvent}/>
                 </div>
             </section>
         );

@@ -67,10 +67,10 @@ export default class MapGenerator extends React.Component {
     }
 
     _handleMouseEvent(evt) {
-		const {onClick} = this.props;
-		const {mapData} = this.state;
-		let data = mapData.filter(d => d.x === evt.id);
-		return onClick && onClick(data[0]);
+        const { onClick } = this.props;
+        const { mapData } = this.state;
+        const data = mapData.filter(d => d.x === evt.id);
+        return onClick && onClick(data[0]);
     }
 
     /**
@@ -114,7 +114,8 @@ export default class MapGenerator extends React.Component {
             colorType,
             ordinalColorMap,
             colorIndex,
-            colorScale } = this.state;
+            colorScale,
+        } = this.state;
         const mapConfig = config.charts[0];
         const xIndex = metadata.names.indexOf(config.x);
         const yIndex = metadata.names.indexOf(mapConfig.y);
@@ -224,7 +225,7 @@ export default class MapGenerator extends React.Component {
                     style={{
                         float: 'left',
                         width: '85%',
-						height: '100%',
+                        height: '100%',
                         display: 'inline',
                     }}
                 >
@@ -256,7 +257,6 @@ export default class MapGenerator extends React.Component {
                                         } else {
                                             dataTip = mapData.filter(x => x.x === geography.id);
                                         }
-
                                         if (dataTip.length > 0) {
                                             toolTip = '' +
                                                 config.x + ' : ' + dataTip[0].givenName + ', ' +

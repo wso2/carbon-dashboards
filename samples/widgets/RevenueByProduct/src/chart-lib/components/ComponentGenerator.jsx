@@ -41,12 +41,14 @@ export function getLineOrAreaComponent(config, chartIndex, onClick) {
                         config.charts[chartIndex].style.strokeWidth || null : null,
                 },
             }}
-            animate={{
-                onEnter: {
-                    duration: 500,
-                    before: () => ({_y:0})
-                }
-            }}
+            animate={
+                config.animate ?
+                {
+                    onEnter: {
+                        duration: 100,
+                    },
+                } : null
+            }
         />) :
         (<VictoryArea
             style={{
@@ -56,12 +58,14 @@ export function getLineOrAreaComponent(config, chartIndex, onClick) {
                         DEFAULT_AREA_FILL_OPACITY,
                 },
             }}
-            animate={{
-                onEnter: {
-                    duration: 500,
-                    before: () => ({_y:0})
-                }
-            }}
+            animate={
+                config.animate ?
+                {
+                    onEnter: {
+                        duration: 100,
+                    },
+                } : null
+            }
         />);
 
     return ([
@@ -99,12 +103,15 @@ export function getLineOrAreaComponent(config, chartIndex, onClick) {
                         },
                     },
                 }]}
-                animate={{
-                    onEnter: {
-                        duration: 500,
-                        before: () => ({_y:0})
-                    }
-                }}
+                animate={
+                    config.animate ?
+                    {
+                        onEnter: {
+                            duration: 100,
+                        },
+                    } : null
+                }
+
             />
         </VictoryPortal>),
     ]);
@@ -112,6 +119,7 @@ export function getLineOrAreaComponent(config, chartIndex, onClick) {
 
 export function getBarComponent(config, chartIndex, data, color, onClick) {
     return (
+
         <VictoryBar
             labels={d => `${config.x}:${d.x}\n${config.charts[chartIndex].y}:${d.y}`}
             labelComponent={
@@ -138,12 +146,14 @@ export function getBarComponent(config, chartIndex, data, color, onClick) {
                     },
                 },
             }]}
-            animate={{
-                onEnter: {
-                    duration: 100,
-                    before: () => ({_y:0})
-                }
-            }}
+            animate={
+                config.animate ?
+                {
+                    onEnter: {
+                        duration: 100,
+                    },
+                } : null
+            }
         />
     );
 }
@@ -238,8 +248,8 @@ export function getLegendComponent(config, legendItems, ignoreArray, interaction
 
 export function getBrushComponent(xScale, xRange, xDomain, reset, onChange) {
     return (
-        <div style={{ width: '80%', height: 40, display: 'inline', float: 'left', right: 10 }} >
-            <div style={{ width: '10%', display: 'inline', float: 'left', left: 20 }} >
+        <div style={{ width: '80%', height: 40, display: 'inline', float: 'left', right: 10 }}>
+            <div style={{ width: '10%', display: 'inline', float: 'left', left: 20 }}>
                 <button
                     onClick={() => {
                         reset(xRange);
@@ -248,7 +258,7 @@ export function getBrushComponent(xScale, xRange, xDomain, reset, onChange) {
                     Reset
                 </button>
             </div>
-            <div style={{ width: '90%', display: 'inline', float: 'right' }} >
+            <div style={{ width: '90%', display: 'inline', float: 'right' }}>
                 <Range
                     max={xScale === 'time' ? xRange[1].getDate() : xRange[1]}
                     min={xScale === 'time' ? xRange[0].getDate() : xRange[0]}

@@ -26,7 +26,7 @@ import {
     VictoryLabel,
 } from 'victory';
 import PropTypes from 'prop-types';
-import {getDefaultColorScale} from './helper';
+import { getDefaultColorScale } from './helper';
 import VizGError from '../VizGError';
 
 export default class PieCharts extends React.Component {
@@ -40,11 +40,11 @@ export default class PieCharts extends React.Component {
             initialized: false,
             xScale: 'linear',
             orientation: 'bottom',
-            legend: false,
+            legend: true,
             scatterPlotRange: [],
             randomUpdater: 0,
         };
-
+        this.config = props.config;
         this._handleAndSortData = this._handleAndSortData.bind(this);
         this._handleMouseEvent = this._handleMouseEvent.bind(this);
     }
@@ -67,7 +67,7 @@ export default class PieCharts extends React.Component {
     }
 
     _handleMouseEvent(evt) {
-        const {onClick} = this.props;
+        const { onClick } = this.props;
 
         return onClick && onClick(evt);
     }
@@ -78,9 +78,9 @@ export default class PieCharts extends React.Component {
      * @private
      */
     _handleAndSortData(props) {
-        const {config, metadata, data} = props;
-        let {dataSets, chartArray, initialized, xScale, orientation, legend, scatterPlotRange, randomUpdater} = this.state;
-        config.charts.map(() => {
+        const { config, metadata, data } = props;
+        let { dataSets, chartArray, initialized, xScale, orientation, legend, scatterPlotRange, randomUpdater } = this.state;
+        config.charts.forEach(() => {
             const arcConfig = config.charts[0];
             const xIndex = metadata.names.indexOf(arcConfig.x);
             const colorIndex = metadata.names.indexOf(arcConfig.color);
@@ -104,7 +104,7 @@ export default class PieCharts extends React.Component {
 
                     });
                 }
-                data.map((datum) => {
+                data.forEach((datum) => {
                     randomUpdater++;
                     const dataSetName = datum[colorIndex];
 
@@ -176,12 +176,12 @@ export default class PieCharts extends React.Component {
      * @private
      */
     _getPercentDataForPieChart(value) {
-        return [{x: 'primary', y: value}, {x: 'secondary', y: 100 - value}];
+        return [{ x: 'primary', y: value }, { x: 'secondary', y: 100 - value }];
     }
 
     render() {
-        const {config} = this.props;
-        const {height, width, chartArray, dataSets, xScale, legend, randomUpdater} = this.state;
+        const { config } = this.props;
+        const { height, width, chartArray, dataSets, xScale, legend, randomUpdater } = this.state;
         const chartComponents = [];
         const legendItems = [];
 
@@ -190,30 +190,33 @@ export default class PieCharts extends React.Component {
             let total = 0;
             if (!config.percentage) {
                 Object.keys(chart.dataSetNames).map((dataSetName) => {
-                    legendItems.push({name: dataSetName, symbol: {fill: chart.dataSetNames[dataSetName]}});
+                    legendItems.push({ name: dataSetName, symbol: { fill: chart.dataSetNames[dataSetName] } });
                     total += dataSets[dataSetName].y;
                     pieChartData.push(dataSets[dataSetName]);
                 });
             }
 
             chartComponents.push((
-                <svg width='100%' height={'100%'}
-                     viewBox={`0 0 ${height > width ? width : height} ${height > width ? width : height}`}>
+                <svg
+                    width='100%'
+                    height={'100%'}
+                    viewBox={`0 0 ${height > width ? width : height} ${height > width ? width : height}`}
+                >
                     <VictoryPie
                         height={height > width ? width : height}
                         width={height > width ? width : height}
                         colorScale={chart.colorScale}
                         data={config.percentage ? dataSets : pieChartData}
-                        labelComponent={config.percentage ? <VictoryLabel text={''}/> :
-                            <VictoryTooltip
-                                orientation='top'
-                                pointerLength={4}
-                                cornerRadius={2}
-                                flyoutStyle={{fill: '#000', fillOpacity: '0.8', strokeWidth: 0}}
-                                style={{fill: '#b0b0b0'}}
-                            />}
+                        labelComponent={config.percentage ? <VictoryLabel text={''} /> :
+                        <VictoryTooltip
+                            orientation='top'
+                            pointerLength={4}
+                            cornerRadius={2}
+                            flyoutStyle={{ fill: '#000', fillOpacity: '0.8', strokeWidth: 0 }}
+                            style={{ fill: '#b0b0b0' }}
+                        />}
                         labels={config.percentage === 'percentage' ? '' : d => `${d.x} : ${((d.y / total) * 100).toFixed(2)}%`}
-                        style={{labels: {fontSize: 6}}}
+                        style={{ labels: { fontSize: 6 } }}
                         labelRadius={height / 4}
                         innerRadius={chart.mode === 'donut' || config.percentage ? (height > width ? width : height / 4) + (config.innerRadius || 0) : 0}
                         events={[{
@@ -232,11 +235,11 @@ export default class PieCharts extends React.Component {
                         randomUpdater={randomUpdater}
                         animate={
                             config.animate ?
-                                {
-                                    onEnter: {
-                                        duration: 100,
-                                    },
-                                } : null
+                            {
+                                onEnter: {
+                                    duration: 100,
+                                },
+                            } : null
                         }
                     />
                     {
@@ -247,22 +250,22 @@ export default class PieCharts extends React.Component {
                                 x={height / 2}
                                 y={width / 2}
                                 text={`${Math.round(dataSets[0].y)}%`}
-                                style={{fontSize: 45, fill: config.labelColor || 'black'}}
+                                style={{ fontSize: 45, fill: config.labelColor || 'black' }}
                             /> : null
                     }
                 </svg>
             ));
         });
         return (
-            <div style={{overflow: 'hidden'}}>
+            <div style={{ overflow: 'hidden' }}>
                 {
-                    legend && (config.legendOrientation && config.legendOrientation === 'top') ?
+                    (config.legend || legend) && (config.legendOrientation && config.legendOrientation === 'top') ?
                         this.generateLegendComponent(config, legendItems) :
                         null
                 }
                 <div
                     style={{
-                        width: !legend ? '100%' :
+                        width: !(config.legend || legend) ? '100%' :
                             (() => {
                                 if (!config.legendOrientation) return '80%';
                                 else if (config.legendOrientation === 'left' || config.legendOrientation === 'right') {
@@ -285,7 +288,7 @@ export default class PieCharts extends React.Component {
                     {chartComponents}
                 </div>
                 {
-                    legend && (!config.legendOrientation || config.legendOrientation !== 'top') ?
+                    (config.legend || legend) && (!config.legendOrientation || config.legendOrientation !== 'top') ?
                         this.generateLegendComponent(config, legendItems) :
                         null
                 }
@@ -323,7 +326,7 @@ export default class PieCharts extends React.Component {
             >
                 <VictoryLegend
                     centerTitle
-                    containerComponent={<VictoryContainer responsive/>}
+                    containerComponent={<VictoryContainer responsive />}
                     height={(() => {
                         if (!config.legendOrientation) return this.state.height;
                         else if (config.legendOrientation === 'left' || config.legendOrientation === 'right') {
@@ -348,12 +351,12 @@ export default class PieCharts extends React.Component {
                     }
                     title="Legend"
                     style={{
-                        title: {fontSize: 25, fill: config.axisLabelColor},
-                        labels: {fontSize: 20, fill: config.axisLabelColor},
+                        title: { fontSize: 25, fill: config.axisLabelColor },
+                        labels: { fontSize: 20, fill: config.axisLabelColor },
                     }}
                     data={legendItems.length > 0 ? legendItems : [{
                         name: 'undefined',
-                        symbol: {fill: '#333'},
+                        symbol: { fill: '#333' },
                     }]}
                 />
             </div>

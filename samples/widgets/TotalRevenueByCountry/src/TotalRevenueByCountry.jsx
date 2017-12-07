@@ -62,7 +62,7 @@ class TotalRevenueByCountry extends Widget {
             ],
             selectedCountry: "All Countries"
         };
-        this.setSelectedCountry = this.setSelectedCountry.bind(this);
+
         this.mapConfig = {
             x: 'Country',
             charts: [{type: 'map', y: 'Revenue', mapType: 'world', colorScale: ['#9E9E9E', '#000080']}],
@@ -75,6 +75,7 @@ class TotalRevenueByCountry extends Widget {
             types: ['ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
 
+        this.setSelectedCountry = this.setSelectedCountry.bind(this);
     }
 
     setSelectedCountry(selected) {

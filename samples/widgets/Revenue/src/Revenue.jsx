@@ -26,13 +26,13 @@ class Revenue extends Widget {
         super(props);
         this.state = {
             data: [
-                ['ALL','ALL','ALL','E',497122.41,60,30],
-                ['ALL','ALL','ALL','D',2536874.28,234,136],
-                ['ALL','ALL','ALL','C',5914330.13,412,243],
-                ['ALL','ALL','ALL','B',5928778.57,564,321],
-                ['ALL','ALL','ALL','A',2575573.16,254,141]
+                ['ALL', 'ALL', 'ALL', 'E', 497122.41, 60, 30],
+                ['ALL', 'ALL', 'ALL', 'D', 2536874.28, 234, 136],
+                ['ALL', 'ALL', 'ALL', 'C', 5914330.13, 412, 243],
+                ['ALL', 'ALL', 'ALL', 'B', 5928778.57, 564, 321],
+                ['ALL', 'ALL', 'ALL', 'A', 2575573.16, 254, 141]
             ],
-            revenueData:[[19596589.35]]
+            revenueData: [[19596589.35]]
         };
 
         this.rowdata = [
@@ -155,11 +155,10 @@ class Revenue extends Widget {
             ['Australia', 'AUS', 'ROW', 'D', 224522.14, 25, 17]
         ];
 
-
         this.numberChart = {
             x: 'Revenue',
             title: 'Total Revenue',
-            charts: [{type:'number'}],
+            charts: [{type: 'number'}],
             showDifference: false,
             showPercentage: false,
             width: 400,
@@ -167,10 +166,10 @@ class Revenue extends Widget {
         };
 
         this.configPie = {
-            charts: [{ type: 'arc', x: 'Revenue', color: 'Product', mode: 'pie' }],
+            charts: [{type: 'arc', x: 'Revenue', color: 'Product', mode: 'pie'}],
             width: 300,
             height: 300,
-            animate:true
+            animate: true
         };
 
         this.metadataNumberChart = {
@@ -196,24 +195,22 @@ class Revenue extends Widget {
         array.push([receivedMsg.revenue]);
         let arrayData = [];
         this.rowdata.map(dataElement => {
-            if(dataElement[1] === receivedMsg.CountryCode){
+            if (dataElement[1] === receivedMsg.CountryCode) {
                 arrayData.push(dataElement);
             }
         });
-        console.log(array)
-        console.log(arrayData)
-        this.setState({revenueData:array,data:arrayData});
+        this.setState({revenueData: array, data: arrayData});
     }
 
     render() {
         return (
             <section>
                 <div style={{marginTop: "5px"}}>
-                    <div style={{float:"right"}}>
+                    <div style={{float: "right"}}>
                         <VizG config={this.numberChart} metadata={this.metadataNumberChart}
                               data={this.state.revenueData}/>
                     </div>
-                    <div style={{width:"85%"}}>
+                    <div style={{width: "85%"}}>
                         <VizG config={this.configPie} metadata={this.metadata} data={this.state.data} append={false}/>
                     </div>
                 </div>

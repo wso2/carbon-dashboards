@@ -1,0 +1,12 @@
+{
+    "name": "RevenuePerYear",
+    "id": "RevenuePerYear",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "subscriber"
+            ]
+        }
+    }
+}

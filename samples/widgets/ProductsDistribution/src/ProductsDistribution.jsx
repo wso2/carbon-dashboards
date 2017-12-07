@@ -26,11 +26,11 @@ class ProductsDistribution extends Widget {
         super(props);
 
         this.overallProductData = [
-            ['ALL', 'ALL', 'ALL', 'E', 497122.41, 60, 30],
-            ['ALL', 'ALL', 'ALL', 'D', 2536874.28, 234, 136],
-            ['ALL', 'ALL', 'ALL', 'C', 5914330.13, 412, 243],
+            ['ALL', 'ALL', 'ALL', 'A', 2575573.16, 254, 141],
             ['ALL', 'ALL', 'ALL', 'B', 5928778.57, 564, 321],
-            ['ALL', 'ALL', 'ALL', 'A', 2575573.16, 254, 141]
+            ['ALL', 'ALL', 'ALL', 'C', 5914330.13, 412, 243],
+            ['ALL', 'ALL', 'ALL', 'D', 2536874.28, 234, 136],
+            ['ALL', 'ALL', 'ALL', 'E', 497122.41, 60, 30]
         ];
 
         this.rowData = [
@@ -153,25 +153,33 @@ class ProductsDistribution extends Widget {
             ['Australia', 'AUS', 'ROW', 'D', 224522.14, 25, 17]
         ];
 
-        this.state = {
-            data: this.overallProductData
+        this.stackedBarChartConfig = {
+            x: 'Product',
+            charts: [{type: 'bar', y: 'Orders', fill: '#80ccff'},
+                {type: 'bar', y: 'Customers', fill: 'steelblue'}],
+            maxLength: 6,
+            width: this.props.glContainer.width,
+            height: this.props.glContainer.height,
+            animate: true,
+            style: {legendTitleColor: "", legendTextColor: "",}
         };
+
         this.metadata = {
             names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Orders', 'Customers'],
             types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
-        this.setReceivedMsg = this.setReceivedMsg.bind(this);
 
-        this.stackedBarChartConfig = {
-            x: 'Product',
-            charts: [{type: 'bar', y: 'Orders', fill: '#2ca02c'},
-                {type: 'bar', y: 'Customers', fill: '#ff7f0e'}],
-            maxLength: 6,
-            width: 700,
-            height: 450,
-            animation: true,
-            style: {legendTitleColor: "", legendTextColor: "",}
+        this.state = {
+            data: this.overallProductData
         };
+
+        this.setReceivedMsg = this.setReceivedMsg.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        this.props.glContainer.on('resize', this.handleResize);
+    }
+
+    handleResize() {
+        this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 
     componentWillMount() {
@@ -185,12 +193,15 @@ class ProductsDistribution extends Widget {
                 array.push(dataElement);
             }
         });
+        array.sort(function (dataA, dataB) {
+            return dataA[3] > dataB[3];
+        });
         this.setState({data: array});
     }
 
     render() {
         return (
-            <div style={{marginTop: "5px"}}>
+            <div style={{marginTop: "5px", width: this.state.width, height: this.state.height}}>
                 <VizG config={this.stackedBarChartConfig} metadata={this.metadata} data={this.state.data}
                       append={false}/>
             </div>

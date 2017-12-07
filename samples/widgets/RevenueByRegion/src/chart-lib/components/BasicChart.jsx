@@ -76,8 +76,6 @@ export default class BasicChart extends React.Component {
             this.state.initialized = false;
         }
 
-
-
         this.visualizeData(nextProps);
     }
 
@@ -157,8 +155,6 @@ export default class BasicChart extends React.Component {
         if (['linear', 'time', 'ordinal'].indexOf(metadata.types[xIndex].toLowerCase()) === -1) {
             throw new VizGError('BasicChart', 'Unknown metadata type is defined for x axis in the chart configuration');
         }
-        this.state.xScale = metadata.types[xIndex].toLowerCase();
-
         if (!initialized) {
             chartArray = this.generateChartArray(config.charts);
             initialized = true;
@@ -170,7 +166,7 @@ export default class BasicChart extends React.Component {
             data, xIndex, config.maxLength, chartArray, dataSets, xScale, xDomain, seriesMinXVal, seriesMaxXVal);
 
         plotData.initialized = initialized;
-        plotData.xScale = xScale;
+        plotData.xScale = metadata.types[xIndex].toLowerCase();
 
         this.setState(plotData);
     }
@@ -475,28 +471,30 @@ export default class BasicChart extends React.Component {
         return (
             <div style={{ overflow: 'hidden', zIndex: 99999 }}>
                 <div
-                    style={{
-                        width: !config.legendOrientation ? '80%' :
-                            (() => {
-                                if (config.legendOrientation === 'left' || config.legendOrientation === 'right') {
-                                    return '80%';
-                                } else return '100%';
+                    style={
+                        config.legend ? {
+                            width: !config.legendOrientation ? '80%' :
+                                (() => {
+                                    if (config.legendOrientation === 'left' || config.legendOrientation === 'right') {
+                                        return '80%';
+                                    } else return '100%';
+                                })(),
+                            display: !config.legendOrientation ? 'inline' :
+                                (() => {
+                                    if (config.legendOrientation === 'left' || config.legendOrientation === 'right') {
+                                        return 'inline';
+                                    } else return null;
+                                })(),
+                            float: !config.legendOrientation ? 'left' : (() => {
+                                if (config.legendOrientation === 'left') return 'right';
+                                else if (config.legendOrientation === 'right') return 'left';
+                                else return null;
                             })(),
-                        display: !config.legendOrientation ? 'inline' :
-                            (() => {
-                                if (config.legendOrientation === 'left' || config.legendOrientation === 'right') {
-                                    return 'inline';
-                                } else return null;
-                            })(),
-                        float: !config.legendOrientation ? 'left' : (() => {
-                            if (config.legendOrientation === 'left') return 'right';
-                            else if (config.legendOrientation === 'right') return 'left';
-                            else return null;
-                        })(),
-                    }}
+                        } : { width: '100%' }
+                    }
                 >
                     {
-                        config.legendOrientation && config.legendOrientation === 'top' ?
+                        config.legend && config.legendOrientation && config.legendOrientation === 'top' ?
                             getLegendComponent(config, legendItems, ignoreArray, this._legendInteraction, height, width)
                             : null
                     }
@@ -507,12 +505,14 @@ export default class BasicChart extends React.Component {
                         xScale={xScale}
                         yDomain={this.props.yDomain}
                         xDomain={this.state.xDomain}
+                        xRange={this.xRange}
+                        dataSets={dataSets}
                     >
                         {chartComponents}
                     </ChartSkeleton>
                 </div>
                 {
-                    ['bottom', 'left', 'right'].indexOf(config.legendOrientation) > -1 || !config.legendOrientation ?
+                    config.legend && (!config.legendOrientation || ['bottom', 'left', 'right'].indexOf(config.legendOrientation) > -1) ?
                         getLegendComponent(config, legendItems, ignoreArray, this._legendInteraction, height, width) :
                         null
                 }
@@ -526,7 +526,6 @@ export default class BasicChart extends React.Component {
         );
     }
 }
-
 
 BasicChart.defaultProps = {
     width: 800,
