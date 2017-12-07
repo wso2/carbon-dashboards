@@ -84,55 +84,46 @@
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.customers-by-product</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.customers-per-year</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.overall-revenue-info</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.product-info</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-country</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-product</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-region</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-percentage</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-per-year</artifactId>
-            <version>4.0.0.beta3-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
 
