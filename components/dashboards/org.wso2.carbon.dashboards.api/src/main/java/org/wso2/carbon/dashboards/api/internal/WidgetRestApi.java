@@ -122,7 +122,7 @@ public class WidgetRestApi implements Microservice {
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find widget '" + widgetId + "'.").build());
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving configuration of widget '{}'.",
-                         getEncodedString(widgetId), e);
+                    getEncodedString(widgetId), e);
             return serverErrorResponse("Cannot retrieve configuration of widget '" + widgetId + "'.");
         }
     }
@@ -167,7 +167,7 @@ public class WidgetRestApi implements Microservice {
             }
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when validating the widget name: " +
-                         getEncodedString(widgetName) + ".", e);
+                    getEncodedString(widgetName) + ".", e);
             return Response.serverError()
                     .entity("An error occurred when validating the widget name: " + widgetName + ".").build();
         }
@@ -190,7 +190,7 @@ public class WidgetRestApi implements Microservice {
                 return Response.status(NO_CONTENT).entity("Cannot find widget '" + widgetId + "'.").build();
             }
         } catch (DashboardException e) {
-            LOGGER.error("An error occurred when deleting widget '{}'.", widgetId, e);
+            LOGGER.error("An error occurred when deleting widget '{}'.", getEncodedString(widgetId), e);
             return Response.serverError().entity("Cannot delete widget '" + widgetId + "'.").build();
         }
     }
@@ -211,7 +211,7 @@ public class WidgetRestApi implements Microservice {
             return Response.status(CREATED).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new gadget from {} data.",
-                         getEncodedString(generatedWidgetConfigs.toString()), e);
+                    getEncodedString(generatedWidgetConfigs.toString()), e);
             return Response.serverError()
                     .entity("Cannot create a new gadget from '" + generatedWidgetConfigs + "'.").build();
         }
