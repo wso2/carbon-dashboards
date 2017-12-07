@@ -23,6 +23,7 @@ import AuthenticationAPI from '../../utils/apis/AuthenticationAPI';
  * Name of the session cookie.
  */
 const sessionUser = 'wso2dashboard_user';
+const timestampSkew = 200;
 
 /**
  * Authentication manager.
@@ -44,7 +45,7 @@ export default class AuthManager {
      * @param {{}} user  User object
      */
     static setUser(user) {
-        AuthManager.setSessionCookie(sessionUser, JSON.stringify(user), 3400 * 1000);
+        AuthManager.setSessionCookie(sessionUser, JSON.stringify(user), (user.validity - timestampSkew));
     }
 
     /**
@@ -78,7 +79,8 @@ export default class AuthManager {
                 .then((response) => {
                     // TODO: Get user roles from the SCIM API.
                     const roles = [];
-                    AuthManager.setUser({ username, rememberMe, roles, token: response.data.partialAccessToken });
+                    AuthManager.setUser({ username, rememberMe, roles, token: response.data.partialAccessToken,
+                        validity: response.data.validityPeriod });
                     resolve();
                 })
                 .catch(error => reject(error));
