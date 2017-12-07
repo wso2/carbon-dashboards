@@ -129,11 +129,11 @@ export default  class WidgetsList extends React.Component {
                 newItemConfig = {
                     title: widget.name,
                     type: 'react-component',
-                    component: widget.name,
+                    component: widget.id,
                     props: {id: DashboardUtils.generateguid(), configs: widget.configs}
                 };
-                widgetListDragSources.set(widget.name, widgetLoadingComponent.createDragSource(document.getElementById(widget.name), newItemConfig));
-                widgetLoadingComponent.loadWidget(widget.name);
+                widgetListDragSources.set(widget.id, widgetLoadingComponent.createDragSource(document.getElementById(widget.id), newItemConfig));
+                widgetLoadingComponent.loadWidget(widget.id);
             });
             if (initDashboardFlag || isPreviouslyInitialized) {
                 widgetLoadingComponent.initializeDashboard();
@@ -153,7 +153,7 @@ export default  class WidgetsList extends React.Component {
                 <Divider/>
                 {
                     this.state.widgets.map(widget => {
-                        return <WidgetListThumbnail widgetID={widget.name} isDisplayed={this.isDisplayed(widget.name)}
+                        return <WidgetListThumbnail widgetID={widget.id} isDisplayed={this.isDisplayed(widget.name)}
                                                     data={this.state.widgetList} widgetName={widget.name}/>;
                     })
                 }
