@@ -28,13 +28,14 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
-import org.wso2.carbon.dashboards.core.WidgetInfoProvider;
+import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -46,6 +47,7 @@ import javax.ws.rs.core.Response;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 
 /**
@@ -62,7 +64,7 @@ public class WidgetRestApi implements Microservice {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetRestApi.class);
 
-    private WidgetInfoProvider widgetInfoProvider;
+    private WidgetMetadataProvider widgetMetadataProvider;
 
     @Activate
     protected void activate(BundleContext bundleContext) {
@@ -74,16 +76,16 @@ public class WidgetRestApi implements Microservice {
         LOGGER.debug("{} deactivated.", this.getClass().getName());
     }
 
-    @Reference(service = WidgetInfoProvider.class,
+    @Reference(service = WidgetMetadataProvider.class,
             cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unsetWidgetInfoProvider")
-    protected void setWidgetInfoProvider(WidgetInfoProvider widgetInfoProvider) {
-        this.widgetInfoProvider = widgetInfoProvider;
+    protected void setWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
+        this.widgetMetadataProvider = widgetMetadataProvider;
     }
 
-    protected void unsetWidgetInfoProvider(WidgetInfoProvider widgetInfoProvider) {
-        this.widgetInfoProvider = null;
+    protected void unsetWidgetInfoProvider(WidgetMetadataProvider widgetMetadataProvider) {
+        this.widgetMetadataProvider = null;
     }
 
     /**
@@ -96,7 +98,7 @@ public class WidgetRestApi implements Microservice {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWidgetsMetaInfo() {
         try {
-            return okResponse(widgetInfoProvider.getAllWidgetConfigurations());
+            return okResponse(widgetMetadataProvider.getAllWidgetConfigurations());
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when listing widget configurations.", e);
             return serverErrorResponse("Cannot list widget configurations.");
@@ -114,11 +116,11 @@ public class WidgetRestApi implements Microservice {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWidgetConf(@PathParam("id") String widgetId) {
         try {
-            return widgetInfoProvider.getWidgetConfiguration(widgetId)
+            return widgetMetadataProvider.getWidgetConfiguration(widgetId)
                     .map(WidgetRestApi::okResponse)
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find widget '" + widgetId + "'.").build());
         } catch (DashboardException e) {
-            LOGGER.error("An error occurred when retrieving configuration of widget '{}'.", widgetId, e);
+            LOGGER.error("An error occurred when retrieving configuration of widget: '{}'.", widgetId, e);
             return serverErrorResponse("Cannot retrieve configuration of widget '" + widgetId + "'.");
         }
     }
@@ -156,15 +158,37 @@ public class WidgetRestApi implements Microservice {
     @Path("{widgetName}/validate")
     public Response validateWidgetName(@PathParam("widgetName") String widgetName) {
         try {
-            if (!widgetInfoProvider.isWidgetPresent(widgetName)) {
+            if (!widgetMetadataProvider.isWidgetPresent(widgetName)) {
                 return Response.status(OK).build();
             } else {
                 return Response.status(CONFLICT).build();
             }
         } catch (DashboardException e) {
-            LOGGER.error("An error occurred when validating the widget name: ", widgetName, e);
+            LOGGER.error("An error occurred when validating the widget name: {}", widgetName, e);
             return Response.serverError()
                     .entity("An error occurred when validating the widget name: " + widgetName + ".").build();
+        }
+    }
+
+    /**
+     * Deletes the widget corresponding to the provided ID.
+     *
+     * @param widgetId ID of the dashboard to delete
+     * @return response
+     */
+    @DELETE
+    @Path("/{id}")
+    public Response deleteWidget(@PathParam("id") String widgetId) {
+        try {
+            if (widgetMetadataProvider.isWidgetPresent(widgetId)) {
+                widgetMetadataProvider.delete(widgetId);
+                return Response.status(OK).build();
+            } else {
+                return Response.status(NO_CONTENT).entity("Cannot find widget '" + widgetId + "'.").build();
+            }
+        } catch (DashboardException e) {
+            LOGGER.error("An error occurred when deleting widget '{}'.", widgetId, e);
+            return Response.serverError().entity("Cannot delete widget '" + widgetId + "'.").build();
         }
     }
 
@@ -180,7 +204,7 @@ public class WidgetRestApi implements Microservice {
     @Path("/")
     public Response create(GeneratedWidgetConfigs generatedWidgetConfigs) {
         try {
-            widgetInfoProvider.addGeneratedWidgetConfigs(generatedWidgetConfigs);
+            widgetMetadataProvider.addGeneratedWidgetConfigs(generatedWidgetConfigs);
             return Response.status(CREATED).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new gadget from {} data.", generatedWidgetConfigs, e);

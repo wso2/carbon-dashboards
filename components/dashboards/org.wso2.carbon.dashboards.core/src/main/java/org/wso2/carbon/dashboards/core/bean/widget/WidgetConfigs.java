@@ -18,13 +18,15 @@
  */
 package org.wso2.carbon.dashboards.core.bean.widget;
 
+import com.google.gson.JsonElement;
+
 /**
  * Bean class for configs in widget configuration file.
  */
 public class WidgetConfigs {
     private PubSub pubsub;
-    private String chartConfig;
-    private String providerConfig;
+    private JsonElement chartConfig;
+    private JsonElement providerConfig;
     private boolean isGenerated;
 
     /**
@@ -45,19 +47,19 @@ public class WidgetConfigs {
         this.pubsub = pubsub;
     }
 
-    public String getChartConfig() {
+    public JsonElement getChartConfig() {
         return chartConfig;
     }
 
-    public void setChartConfig(String chartConfig) {
+    public void setChartConfig(JsonElement chartConfig) {
         this.chartConfig = chartConfig;
     }
 
-    public String getProviderConfig() {
+    public JsonElement getProviderConfig() {
         return providerConfig;
     }
 
-    public void setProviderConfig(String providerConfig) {
+    public void setProviderConfig(JsonElement providerConfig) {
         this.providerConfig = providerConfig;
     }
 

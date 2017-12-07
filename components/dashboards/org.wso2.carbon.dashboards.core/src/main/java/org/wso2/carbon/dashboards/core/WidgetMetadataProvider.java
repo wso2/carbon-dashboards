@@ -30,7 +30,7 @@ import java.util.Set;
  *
  * @since 4.0.0
  */
-public interface WidgetInfoProvider {
+public interface WidgetMetadataProvider {
 
     /**
      * Returns the configuration of the specified widget.
@@ -57,6 +57,9 @@ public interface WidgetInfoProvider {
      * @throws DashboardException if an error occurred when reading or processing configurations
      */
     Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardException;
+
+
+    void delete(String widgetId) throws DashboardException;
 
     /**
      * Check for widget already present in database.
