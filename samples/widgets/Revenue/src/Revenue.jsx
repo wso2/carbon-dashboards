@@ -167,10 +167,18 @@ class Revenue extends Widget {
 
         this.configPie = {
             charts: [{type: 'arc', x: 'Revenue', color: 'Product', mode: 'pie'}],
+            charts: [{
+                type: 'arc',
+                x: 'Revenue',
+                color: 'Product',
+                mode: 'pie',
+                colorScale: ['#4659f9', '#00dffc ', '#00b1e1', '#6f2e71', '#c43a5d']
+            }],
             width: 300,
             height: 300,
-            animate: true
-        };
+            animate: true,
+            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"}
+            };
 
         this.metadataNumberChart = {
             names: ['Revenue'],
@@ -206,11 +214,7 @@ class Revenue extends Widget {
         return (
             <section>
                 <div style={{marginTop: "5px"}}>
-                    <div style={{float: "right"}}>
-                        <VizG config={this.numberChart} metadata={this.metadataNumberChart}
-                              data={this.state.revenueData}/>
-                    </div>
-                    <div style={{width: "85%"}}>
+                    <div style={{width:"75%", margin:"auto"}}>
                         <VizG config={this.configPie} metadata={this.metadata} data={this.state.data} append={false}/>
                     </div>
                 </div>

@@ -60,12 +60,13 @@ class TotalRevenueByCountry extends Widget {
                 ['United Kingdom', 'GBR', 'Europe', 731890.48, 77, 44],
                 ['United States', 'USA', 'North America', 1156942.04, 99, 58]
             ],
-            selectedCountry: "All Countries"
+            selectedCountry: "All",
+            selectedRev: 19596589.35
         };
 
         this.mapConfig = {
             x: 'Country',
-            charts: [{type: 'map', y: 'Revenue', mapType: 'world', colorScale: ['#9E9E9E', '#000080']}],
+            charts: [{type: 'map', y: 'Revenue', mapType: 'world', colorScale: ['#ccc', '#0082ea']}],
             width: this.state.width,
             height: this.state.height
         };
@@ -80,20 +81,34 @@ class TotalRevenueByCountry extends Widget {
 
     setSelectedCountry(selected) {
         super.publish({"CountryName": selected.givenName, "CountryCode": selected.x, "revenue": selected.y});
-        this.setState({selectedCountry: selected.givenName});
+        this.setState({selectedCountry: selected.givenName, selectedRev: selected.y});
     }
 
     render() {
         return (
             <section>
-                <div style={{marginTop: "5px", width: "60%", float: "left"}}>
-                    <VizG config={this.mapConfig} metadata={this.metadata} data={this.state.data}
-                          onClick={this.setSelectedCountry}/>
-                </div>
-                <div style={{float: "right", color: "#EEEEEE", marginRight: "5%"}}>
-                    <h1>Pick a Country to view stats</h1>
-                    <div>Selected Country</div>
-                    <h2>{this.state.selectedCountry}</h2>
+                <div className="sample-dashboard-content">
+                    <div className="sample-dashboard-content-rev-text">
+                        <div className="sample-instructions">Pick a Country to view stats</div>
+                        <table className="sample-rev-table">
+                            <thead>
+                            <tr>
+                                <td>Country</td>
+                                <td>Revenue</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{this.state.selectedCountry}</td>
+                                <td><span className="currency">$</span>{this.state.selectedRev}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="sample-dashboard-content-map">
+                        <VizG config={this.mapConfig} metadata={this.metadata} data={this.state.data}
+                              onClick={this.setSelectedCountry}/>
+                    </div>
                 </div>
             </section>
 

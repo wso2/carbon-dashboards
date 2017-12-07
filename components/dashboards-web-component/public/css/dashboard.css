@@ -47,6 +47,7 @@ a {
     padding: 15px;
     box-sizing: border-box;
     height: calc(100vh - 64px);
+    font-family: Roboto, sans-serif;
 }
 
 .dashboard-view-full-width {
@@ -446,9 +447,9 @@ a {
 }
 
 .trash-button-icon {
-    text-align: right;
-    left: -15px;
+    position: absolute;
     top: 15px;
+    right: 15px;
     color: #bbb;
 }
 
@@ -477,6 +478,7 @@ a {
 
 /* dashboard viewer styles */
 .app-bar {
+    background-color: #8d979c;
     height: 45px;
     box-shadow: none !important;
 }
@@ -487,4 +489,65 @@ a {
 
 .viewer-drawer > div {
     box-shadow: none !important;
+}
+
+.viewer-dark, .viewer-light {
+    font-family: Roboto, sans-serif;
+}
+
+.viewer-dark {
+    background-color: #081921;
+}
+
+.viewer-light {
+    background-color: #fff;
+}
+
+/* sample dashboard styles */
+.sample-rev-table td {
+    padding: 0 60px 10px 0;
+    white-space: nowrap;
+}
+
+.viewer-dark .sample-rev-table tbody {
+    color: #bbb;
+    font-size: 38px;
+}
+
+.viewer-light .sample-rev-table tbody {
+    color: #5d6e77;
+    font-size: 38px;
+}
+
+.sample-rev-table thead {
+    color: #5d6e77;
+    font-size: 14px;
+}
+
+.sample-rev-table {
+    margin: 40px 0;
+}
+
+.sample-instructions {
+    font-size: 18px;
+    color: #5d6e77;
+    margin: 10px 0;
+}
+
+.sample-dashboard-content-rev-text {
+    width: 35%;
+    float: left;
+    box-sizing: border-box;
+    padding: 38px 30px;
+}
+
+.sample-dashboard-content-map {
+    width: 65%;
+    float: right;
+    box-sizing: border-box;
+    padding-right: 60px;
+}
+
+.sample-rev-table .currency {
+    font-size: 22px;
 }

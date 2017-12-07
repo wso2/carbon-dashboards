@@ -155,13 +155,14 @@ class ProductsDistribution extends Widget {
 
         this.stackedBarChartConfig = {
             x: 'Product',
-            charts: [{type: 'bar', y: 'Orders', fill: '#80ccff'},
-                {type: 'bar', y: 'Customers', fill: 'steelblue'}],
+            charts: [{type: 'bar', y: 'Orders', fill: '#4659f9'},
+                {type: 'bar', y: 'Customers', fill: '#00b7ee'}],
             maxLength: 6,
             width: this.props.glContainer.width,
             height: this.props.glContainer.height,
             animate: true,
-            style: {legendTitleColor: "", legendTextColor: "",}
+            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77", tickLabelColor: "#5d6e77", axisLabelColor: "#5d6e77"},
+            gridColor: "#5d6e77"
         };
 
         this.metadata = {
