@@ -27,6 +27,7 @@ import DashboardSettings from '../designer/DashboardSettings';
 import DashboardListing from '../listing/DashboardListing';
 import DashboardView from '../viewer/DashboardView';
 import AuthManager from './utils/AuthManager';
+import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
 
 /**
  * App context.
@@ -58,6 +59,10 @@ export default class SecuredRouter extends Component {
 
                 {/* Create dashboard */}
                 <Route exact path={`${appContext}/create`} component={DashboardCreatePage} />
+
+                {/* Create gadget */}
+                <Route exact path={`${appContext}/createGadget`} component={GadgetsGenerationWizard} />
+                {/*todo: look into the naming*/}
 
                 {/* Dashboard settings */}
                 <Route exact path={`${appContext}/settings/:id`} component={DashboardSettings} />
