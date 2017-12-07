@@ -25,49 +25,49 @@ class RevenueByProduct extends Widget {
     constructor(props) {
         super(props);
         this.overallProductData = [
-            ['ALL', 'ALL', 'ALL', 'A', 2575573.16, 254, 141],
-            ['ALL', 'ALL', 'ALL', 'B', 5928778.57, 564, 321],
-            ['ALL', 'ALL', 'ALL', 'C', 5914330.13, 412, 243],
-            ['ALL', 'ALL', 'ALL', 'D', 2536874.28, 234, 136],
-            ['ALL', 'ALL', 'ALL', 'E', 497122.41, 60, 30]
+            ['ALL', 'ALL', 'ALL', 'Analytics', 2575573.16, 254, 141],
+            ['ALL', 'ALL', 'ALL', 'APIManager', 5928778.57, 564, 321],
+            ['ALL', 'ALL', 'ALL', 'ESB', 5914330.13, 412, 243],
+            ['ALL', 'ALL', 'ALL', 'IdentityServer', 2536874.28, 234, 136],
+            ['ALL', 'ALL', 'ALL', 'IOTServer', 497122.41, 60, 30]
         ];
 
         this.rowData = [
-            ['ALL', 'ALL', 'Africa', 'A', 71425.25, 6, 3],
-            ['ALL', 'ALL', 'Africa', 'B', 171425.25, 12, 7],
-            ['ALL', 'ALL', 'Africa', 'C', 154425.25, 10, 6],
-            ['ALL', 'ALL', 'Africa', 'D', 0, 0, 0],
-            ['ALL', 'ALL', 'Africa', 'E', 0, 0, 0],
-            ['ALL', 'ALL', 'Asia', 'A', 981334.25, 100, 54],
-            ['ALL', 'ALL', 'Asia', 'B', 861334.25, 90, 57],
-            ['ALL', 'ALL', 'Asia', 'C', 915334.25, 88, 51],
-            ['ALL', 'ALL', 'Asia', 'D', 0, 0, 0],
-            ['ALL', 'ALL', 'Asia', 'E', 0, 0, 0],
-            ['ALL', 'ALL', 'Europe', 'A', 3267364.63, 292, 181],
-            ['ALL', 'ALL', 'Europe', 'B', 3249096.11, 310, 172],
-            ['ALL', 'ALL', 'Europe', 'C', 2078261.1, 175, 114],
-            ['ALL', 'ALL', 'Europe', 'D', 993996.02, 84, 43],
-            ['ALL', 'ALL', 'Europe', 'E', 0, 0, 0],
-            ['ALL', 'ALL', 'LATAM', 'A', 370146.06, 39, 23],
-            ['ALL', 'ALL', 'LATAM', 'B', 290146.06, 32, 16],
-            ['ALL', 'ALL', 'LATAM', 'C', 1020146.06, 33, 15],
-            ['ALL', 'ALL', 'LATAM', 'D', 0, 0, 0],
-            ['ALL', 'ALL', 'LATAM', 'E', 0, 0, 0],
-            ['ALL', 'ALL', 'Middle East', 'A', 130859.48, 13, 9],
-            ['ALL', 'ALL', 'Middle East', 'B', 367368.36, 31, 15],
-            ['ALL', 'ALL', 'Middle East', 'C', 436754.93, 51, 26],
-            ['ALL', 'ALL', 'Middle East', 'D', 928227.84, 95, 64],
-            ['ALL', 'ALL', 'Middle East', 'E', 91472.91, 14, 8],
-            ['ALL', 'ALL', 'North America', 'A', 324886.4, 37, 23],
-            ['ALL', 'ALL', 'North America', 'B', 774886.4, 70, 44],
-            ['ALL', 'ALL', 'North America', 'C', 1134886.4, 40, 24],
-            ['ALL', 'ALL', 'North America', 'D', 390128.28, 30, 12],
-            ['ALL', 'ALL', 'North America', 'E', 0, 0, 0],
-            ['ALL', 'ALL', 'ROW', 'A', 114522.14, 13, 8],
-            ['ALL', 'ALL', 'ROW', 'B', 214522.14, 19, 10],
-            ['ALL', 'ALL', 'ROW', 'C', 174522.14, 15, 7],
-            ['ALL', 'ALL', 'ROW', 'D', 224522.14, 25, 17],
-            ['ALL', 'ALL', 'ROW', 'E', 0, 0, 0]
+            ['ALL', 'ALL', 'Africa', 'Analytics', 71425.25, 6, 3],
+            ['ALL', 'ALL', 'Africa', 'APIManager', 171425.25, 12, 7],
+            ['ALL', 'ALL', 'Africa', 'ESB', 154425.25, 10, 6],
+            ['ALL', 'ALL', 'Africa', 'IdentityServer', 0, 0, 0],
+            ['ALL', 'ALL', 'Africa', 'IOTServer', 0, 0, 0],
+            ['ALL', 'ALL', 'Asia', 'Analytics', 981334.25, 100, 54],
+            ['ALL', 'ALL', 'Asia', 'APIManager', 861334.25, 90, 57],
+            ['ALL', 'ALL', 'Asia', 'ESB', 915334.25, 88, 51],
+            ['ALL', 'ALL', 'Asia', 'IdentityServer', 0, 0, 0],
+            ['ALL', 'ALL', 'Asia', 'IOTServer', 0, 0, 0],
+            ['ALL', 'ALL', 'Europe', 'Analytics', 3267364.63, 292, 181],
+            ['ALL', 'ALL', 'Europe', 'APIManager', 3249096.11, 310, 172],
+            ['ALL', 'ALL', 'Europe', 'ESB', 2078261.1, 175, 114],
+            ['ALL', 'ALL', 'Europe', 'IdentityServer', 993996.02, 84, 43],
+            ['ALL', 'ALL', 'Europe', 'IOTServer', 0, 0, 0],
+            ['ALL', 'ALL', 'LATAM', 'Analytics', 370146.06, 39, 23],
+            ['ALL', 'ALL', 'LATAM', 'APIManager', 290146.06, 32, 16],
+            ['ALL', 'ALL', 'LATAM', 'ESB', 1020146.06, 33, 15],
+            ['ALL', 'ALL', 'LATAM', 'IdentityServer', 0, 0, 0],
+            ['ALL', 'ALL', 'LATAM', 'IOTServer', 0, 0, 0],
+            ['ALL', 'ALL', 'Middle East', 'Analytics', 130859.48, 13, 9],
+            ['ALL', 'ALL', 'Middle East', 'APIManager', 367368.36, 31, 15],
+            ['ALL', 'ALL', 'Middle East', 'ESB', 436754.93, 51, 26],
+            ['ALL', 'ALL', 'Middle East', 'IdentityServer', 928227.84, 95, 64],
+            ['ALL', 'ALL', 'Middle East', 'IOTServer', 91472.91, 14, 8],
+            ['ALL', 'ALL', 'North America', 'Analytics', 324886.4, 37, 23],
+            ['ALL', 'ALL', 'North America', 'APIManager', 774886.4, 70, 44],
+            ['ALL', 'ALL', 'North America', 'ESB', 1134886.4, 40, 24],
+            ['ALL', 'ALL', 'North America', 'IdentityServer', 390128.28, 30, 12],
+            ['ALL', 'ALL', 'North America', 'IOTServer', 0, 0, 0],
+            ['ALL', 'ALL', 'ROW', 'Analytics', 114522.14, 13, 8],
+            ['ALL', 'ALL', 'ROW', 'APIManager', 214522.14, 19, 10],
+            ['ALL', 'ALL', 'ROW', 'ESB', 174522.14, 15, 7],
+            ['ALL', 'ALL', 'ROW', 'IdentityServer', 224522.14, 25, 17],
+            ['ALL', 'ALL', 'ROW', 'IOTServer', 0, 0, 0]
         ];
 
         this.state = {
@@ -78,7 +78,7 @@ class RevenueByProduct extends Widget {
         };
 
         this.metadata = {
-            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Orders', 'Customers'],
+            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Downloads', 'Customers'],
             types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
 

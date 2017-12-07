@@ -34,9 +34,9 @@ class CustomersPerYear extends Widget {
 
         this.lineConfig = {
             x: 'Year',
-            charts: [{type: 'line', y: 'Orders', fill: 'blue'}, {type: 'line', y: 'Customers', fill: 'red'}],
-            width: this.state.width,
-            height: this.state.height,
+            charts: [{type: 'line', y: 'Downloads', fill: 'blue'}, {type: 'line', y: 'Customers', fill: 'red'}],
+            width: this.props.glContainer.width,
+            height: this.props.glContainer.height,
             legend: true,
             animate: true,
         };
@@ -80,7 +80,7 @@ class CustomersPerYear extends Widget {
         ];
 
         this.metadata = {
-            names: ['Year', 'Region', 'Revenue', 'Orders', 'Customers'],
+            names: ['Year', 'Region', 'Revenue', 'Downloads', 'Customers'],
             types: ['ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
 

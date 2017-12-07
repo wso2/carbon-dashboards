@@ -35,8 +35,8 @@ class RevenuePerYear extends Widget {
         this.lineConfig = {
             x: 'Year',
             charts: [{type: 'line', y: 'Revenue', fill: 'steelblue'}],
-            width: this.state.width,
-            height: this.state.height,
+            width: this.props.glContainer.width,
+            height: this.props.glContainer.height,
             legend: true,
             animate: true,
         };
@@ -80,7 +80,7 @@ class RevenuePerYear extends Widget {
         ];
 
         this.metadata = {
-            names: ['Year', 'Region', 'Revenue', 'Orders', 'Customers'],
+            names: ['Year', 'Region', 'Revenue', 'Downloads', 'Customers'],
             types: ['ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
 

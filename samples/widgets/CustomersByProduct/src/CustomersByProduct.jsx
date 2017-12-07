@@ -25,16 +25,16 @@ class CustomersByProduct extends Widget {
     constructor(props) {
         super(props);
         this.totalPerProduct = [
-            ['A', 500, 301],
-            ['B', 564, 321],
-            ['C', 412, 243],
-            ['D', 234, 136],
-            ['E', 14, 8]
+            ['Analytics', 500, 301],
+            ['APIManager', 564, 321],
+            ['ESB', 412, 243],
+            ['IdentityServer', 234, 136],
+            ['IOTServer', 14, 8]
         ];
 
         this.stackedBarChartConfig = {
             x: 'Product',
-            charts: [{type: 'bar', y: 'Orders', fill: 'steelblue'},
+            charts: [{type: 'bar', y: 'Downloads', fill: 'steelblue'},
                 {type: 'bar', y: 'Customers', fill: '#80ccff'}],
             maxLength: 6,
             width: this.props.glContainer.width,
@@ -45,64 +45,64 @@ class CustomersByProduct extends Widget {
         };
 
         this.metadata = {
-            names: ['Product', 'Orders', 'Customers'],
+            names: ['Product', 'Downloads', 'Customers'],
             types: ['ordinal', 'linear', 'linear']
         };
 
         this.africaData = [
-            ["A", 6, 3],
-            ["B", 12, 7],
-            ["C", 10, 6],
-            ['D', 0, 0],
-            ['E', 0, 0]
+            ["Analytics", 6, 3],
+            ["APIManager", 12, 7],
+            ["ESB", 10, 6],
+            ['IdentityServer', 0, 0],
+            ['IOTServer', 0, 0]
         ];
 
         this.asiaData = [
-            ['A', 100, 54],
-            ['B', 90, 57],
-            ['C', 88, 51],
-            ['D', 0, 0],
-            ['E', 0, 0]
+            ['Analytics', 100, 54],
+            ['APIManager', 90, 57],
+            ['ESB', 88, 51],
+            ['IdentityServer', 0, 0],
+            ['IOTServer', 0, 0]
         ];
 
         this.europeData = [
-            ['A', 292, 181],
-            ['B', 310, 172],
-            ['C', 175, 114],
-            ['D', 84, 43],
-            ['E', 0, 0]
+            ['Analytics', 292, 181],
+            ['APIManager', 310, 172],
+            ['ESB', 175, 114],
+            ['IdentityServer', 84, 43],
+            ['IOTServer', 0, 0]
         ];
 
         this.latAmData = [
-            ['A', 39, 23],
-            ['B', 32, 16],
-            ['C', 33, 15],
-            ['D', 0, 0],
-            ['E', 0, 0]
+            ['Analytics', 39, 23],
+            ['APIManager', 32, 16],
+            ['ESB', 33, 15],
+            ['IdentityServer', 0, 0],
+            ['IOTServer', 0, 0]
         ];
 
         this.midEastData = [
-            ['A', 13, 9],
-            ['B', 31, 15],
-            ['C', 51, 26],
-            ['D', 95, 64],
-            ['E', 14, 8],
+            ['Analytics', 13, 9],
+            ['APIManager', 31, 15],
+            ['ESB', 51, 26],
+            ['IdentityServer', 95, 64],
+            ['IOTServer', 14, 8],
         ];
 
         this.northAmData = [
-            ['A', 37, 23],
-            ['B', 70, 44],
-            ['C', 40, 24],
-            ['D', 30, 12],
-            ['E', 0, 0]
+            ['Analytics', 37, 23],
+            ['APIManager', 70, 44],
+            ['ESB', 40, 24],
+            ['IdentityServer', 30, 12],
+            ['IOTServer', 0, 0]
         ];
 
         this.rowData = [
-            ["A", 13, 8],
-            ["B", 19, 10],
-            ["C", 15, 7],
-            ["D", 25, 17],
-            ['E', 0, 0]
+            ["Analytics", 13, 8],
+            ["APIManager", 19, 10],
+            ["ESB", 15, 7],
+            ["IdentityServer", 25, 17],
+            ['IOTServer', 0, 0]
 
         ];
 
