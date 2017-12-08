@@ -79,6 +79,26 @@ export default class AuthenticationAPI {
     }
 
     /**
+     * Get new token using refresh token
+     *
+     * @return {AxiosPromise} Axios promise
+     */
+    static getAccessTokenWithRefreshToken() {
+        return AuthenticationAPI
+            .getHttpClient()
+            .post(`/login/${appContext}`, Qs.stringify({
+                grantType: "refresh_token",
+                rememberMe: true
+            }), {
+                headers: {
+                    'Content-Type': MediaType.APPLICATION_WWW_FORM_URLENCODED,
+                    'Authorization': "Bearer " + AuthManager.getCookie('REFRESH_TOKEN'),
+                    'Accept': 'application/json'
+                },
+            });
+    }
+
+    /**
      * Logout user.
      *
      * @param {string} token Partial access token

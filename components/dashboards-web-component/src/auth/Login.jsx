@@ -77,6 +77,15 @@ export default class Login extends Component {
         }
     }
 
+    componentWillMount(){
+        if (AuthManager.isRememberMeSet()) {
+            AuthManager.authenticateWithRefreshToken()
+                .then((response) => {
+                    this.setState({authenticated: true})
+                });
+        }
+    }
+
     /**
      * Call authenticate API and authenticate the user.
      *

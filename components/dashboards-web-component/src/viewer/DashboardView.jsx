@@ -23,6 +23,7 @@ import AppBar from 'material-ui/AppBar/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Drawer from 'material-ui/Drawer';
+import CircularProgress from 'material-ui/CircularProgress';
 
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import PagesNavigationPanel from '../designer/components/PagesNavigationPanel';
@@ -84,7 +85,8 @@ class DashboardView extends React.Component {
             dashboardContent: [],
             open: true,
             contentClass: "content-drawer-opened",
-            muiTheme: darkMuiTheme
+            muiTheme: darkMuiTheme,
+            requestHideLoading: false,
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
@@ -134,6 +136,12 @@ class DashboardView extends React.Component {
     }
 
     render() {
+        let showLoading = true;
+        if (this.state.requestHideLoading) {
+            showLoading = false;
+            this.state.requestHideLoading = false;
+        }
+
         return (
             <MuiThemeProvider muiTheme={this.state.muiTheme}>
                 <div>
@@ -152,13 +160,29 @@ class DashboardView extends React.Component {
                             onLeftIconButtonTouchTap={this.handleToggle}
                             className="app-bar"
                         />
-                        <div id="dashboard-view" className={this.state.dashboardViewCSS}></div>
-                        <DashboardRenderingComponent config={config} ref={(c) => {
-                            this.dashboardRenderingComponent = c;
-                        }}
-                                                     dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
-                            this.state.dashboardContent, this.state.landingPage)}/>
-
+                        <div id="dashboard-view" className={this.state.dashboardViewCSS}
+                             style={{ color: this.state.muiTheme.palette.textColor }}>
+                            <div
+                                className="dashboard-spinner"
+                                style={showLoading ? {} : { display: 'none' }}
+                            >
+                                <CircularProgress size={150} thickness={10} />
+                                <div
+                                    className="loading-label"
+                                    style={{ color: this.state.muiTheme.palette.textColor }}>
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                        <DashboardRenderingComponent
+                            config={config}
+                            ref={(c) => {
+                                this.dashboardRenderingComponent = c;
+                            }}
+                            dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
+                                this.state.dashboardContent, this.state.landingPage)}
+                            onInitialized={() => this.setState({ requestHideLoading: true })}
+                        />
                     </div>
                 </div>
             </MuiThemeProvider>

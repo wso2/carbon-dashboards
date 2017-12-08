@@ -62,7 +62,6 @@ public interface WidgetMetadataProvider {
      * Delete the configuration of the specified widget.
      *
      * @param widgetId id of the widget
-     * @return configuration of the widget
      * @throws DashboardException if an error occurred when reading or processing configuration of the widget
      */
     void delete(String widgetId) throws DashboardException;
