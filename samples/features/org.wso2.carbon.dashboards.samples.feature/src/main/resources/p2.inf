@@ -16,10 +16,14 @@
 # under the License.
 #
 
+metaRequirements.0.namespace = org.eclipse.equinox.p2.iu
+metaRequirements.0.name = org.wso2.carbon.extensions.touchpoint
+metaRequirements.0.optional = true
+
 instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../deployment/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../deployment/web-ui-apps/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../deployment/web-ui-apps/portal/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../deployment/web-ui-apps/portal/extensions/);\
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../deployment/web-ui-apps/portal/extensions/widgets/);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.samples_${feature.version}/widgets/,target:${installFolder}/../../deployment/web-ui-apps/portal/extensions/widgets/,overwrite:true);
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/extensions/);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/extensions/widgets/);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.samples_${feature.version}/widgets/,target:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/extensions/widgets/,overwrite:true);
