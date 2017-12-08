@@ -74,7 +74,7 @@ class GadgetsGenerationWizard extends Component {
             chartConfiguration: {},
             metadata: {
                 names: ['rpm', 'torque', 'horsepower', 'EngineType'],
-                types: ['linear', 'linear', 'linear', 'ordinal'],
+                types: ['LINEAR', 'LINEAR', 'LINEAR', 'ORDINAL'],
             },
             data: [],
             // UI related

@@ -46,8 +46,8 @@ const Types = {
     },
     dataset: {
         metadata: {
-            linear: 'linear',
-            ordinal: 'ordinal',
+            linear: 'LINEAR',
+            ordinal: 'ORDINAL',
         },
     },
     // Some charts have the ability to be stacked
