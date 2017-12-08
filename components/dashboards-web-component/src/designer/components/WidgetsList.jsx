@@ -33,8 +33,9 @@ let widgets = [];
 let isDashboardLoaded = false;
 let widgetListDragSources = new Map();
 let isPreviouslyInitialized = false;
+let universalWidgetList = global.dashboard.universalWidgetList = [];
 
-export default  class WidgetsList extends React.Component {
+export default class WidgetsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -106,7 +107,11 @@ export default  class WidgetsList extends React.Component {
                         title: item.config.component,
                         type: 'react-component',
                         component: item.config.component,
-                        props: {id: DashboardUtils.generateguid(), configs: item.config.props.configs}
+                        props: {
+                            id: DashboardUtils.generateguid(),
+                            configs: item.config.props.configs,
+                            widgetID: item.config.props.widgetID
+                        }
                     };
 
                     pubsubComponent.isPublisher(item.config) ? pubsubComponent.addPublisherToMap(item.config.component
@@ -129,11 +134,15 @@ export default  class WidgetsList extends React.Component {
                 newItemConfig = {
                     title: widget.name,
                     type: 'react-component',
-                    component: widget.id,
-                    props: {id: DashboardUtils.generateguid(), configs: widget.configs}
+                    component: widget.configs.isGenerated ? "UniversalGadget" : widget.id,
+                    props: {id: DashboardUtils.generateguid(), configs: widget.configs, widgetID: widget.id}
                 };
                 widgetListDragSources.set(widget.id, widgetLoadingComponent.createDragSource(document.getElementById(widget.id), newItemConfig));
-                widgetLoadingComponent.loadWidget(widget.id);
+                if (widget.configs.isGenerated) {
+                    universalWidgetList.push(widget.id);
+                } else {
+                    widgetLoadingComponent.loadWidget(widget.id);
+                }
             });
             if (initDashboardFlag || isPreviouslyInitialized) {
                 widgetLoadingComponent.initializeDashboard();
@@ -148,7 +157,8 @@ export default  class WidgetsList extends React.Component {
             <div style={this.getPanelStyles(this.props.visible)}>
                 <h3><FormattedMessage id="widgets.heading" defaultMessage="Widgets"/></h3>
                 <div className="widget-search-div">
-                    <TextField className="widget-search-textfield" onChange={this.searchWidget} hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>}/>
+                    <TextField className="widget-search-textfield" onChange={this.searchWidget}
+                               hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search..."/>}/>
                 </div>
                 <Divider/>
                 {
@@ -160,7 +170,9 @@ export default  class WidgetsList extends React.Component {
                 <Divider/>
                 {
                     this.state.filteredWidgetSet.size === 0 ?
-                        <div className="no-widgets-text"><FormattedMessage id="no.widgets.found" defaultMessage="No Widgets Found"/></div> : ""
+                        <div className="no-widgets-text"><FormattedMessage id="no.widgets.found"
+                                                                           defaultMessage="No Widgets Found"/>
+                        </div> : ""
                 }
             </div>);
     }
