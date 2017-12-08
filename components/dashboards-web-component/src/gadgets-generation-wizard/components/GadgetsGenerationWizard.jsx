@@ -174,13 +174,13 @@ class GadgetsGenerationWizard extends Component {
             const submittableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: '',
-                configs: {
-                    chartConfig: this.state.chartConfiguration,
-                    providerConfig: {
+                chartConfig: this.state.chartConfiguration,
+                providerConfig: {
+                    configs: {
                         type: this.state.providerType,
-                        config: this.state.providerConfiguration,
-                    },
-                },
+                        config: this.state.providerConfiguration
+                    }
+                }
             };
             const apis = new GadgetsGenerationAPI();
             apis.addGadgetConfiguration(JSON.stringify(submittableConfig)).then((response) => {

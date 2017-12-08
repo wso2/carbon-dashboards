@@ -39,6 +39,7 @@ class DashboardRenderingComponent extends React.Component {
     }
 
     render() {
+        widgetLoadingComponent.loadWidget("UniversalGadget");
         this.renderDashboard();
         return null;
     }
