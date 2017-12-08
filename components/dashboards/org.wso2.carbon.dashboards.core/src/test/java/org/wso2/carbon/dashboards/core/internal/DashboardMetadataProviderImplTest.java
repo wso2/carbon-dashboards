@@ -20,9 +20,11 @@ package org.wso2.carbon.dashboards.core.internal;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
+import org.wso2.carbon.analytics.permissions.bean.Permission;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
@@ -40,7 +42,6 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -65,7 +66,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataProviderImpl dashboardMetadataProvider =
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
-        when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
+        when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
         Assertions.assertTrue(dashboardMetadataProvider.getDashboardByUser("testUser", "foo", "designer").isPresent());
         Assertions.assertFalse(dashboardMetadataProvider.getDashboardByUser("testUser", "bar", null).isPresent());
         Assertions.assertFalse(dashboardMetadataProvider.
@@ -81,7 +82,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataProviderImpl dashboardMetadataProvider =
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
-        when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
+        when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
         Assertions.assertEquals(1, dashboardMetadataProvider.getAllByUser("testUser").size());
         verify(dao).getAll();
     }
@@ -139,7 +140,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataProviderImpl dashboardMetadataProvider =
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
-        when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
+        when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
         dashboardMetadataProvider.update("testUser", dashboardMetadata);
         verify(dao).update(eq(dashboardMetadata));
     }
@@ -152,7 +153,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataProviderImpl dashboardMetadataProvider =
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
-        when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
+        when(permissionProvider.hasPermission(eq("testUser"), anyString())).thenReturn(true);
         Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 update("testUser1", dashboardMetadata));
     }
@@ -165,7 +166,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataProviderImpl dashboardMetadataProvider =
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
-        when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
+        when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
         dashboardMetadataProvider.delete("testUser", dashboardUrl);
         verify(dao).delete(eq(dashboardUrl));
     }
@@ -178,7 +179,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataProviderImpl dashboardMetadataProvider =
                 new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
                         DashboardConfigurations()));
-        when(permissionProvider.hasPermission(eq("testUser"), any())).thenReturn(true);
+        when(permissionProvider.hasPermission(eq("testUser"), anyString())).thenReturn(true);
         Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 delete("testUser1", dashboardUrl));
     }
