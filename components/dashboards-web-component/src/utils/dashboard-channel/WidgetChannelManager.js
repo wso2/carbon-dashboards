@@ -37,8 +37,6 @@ export default class WidgetChannelManager {
      * @param dataConfig
      */
     subscribeWidget(widgetId, callback, dataConfig) {
-        let config2 = dataConfig;
-        console.log('subscribewidget', dataConfig);
         this.widgetMap[widgetId] = callback;
         this.waitForConn(this.webSocket, () => {
             let configJSON = {
@@ -47,9 +45,8 @@ export default class WidgetChannelManager {
                 topic: widgetId,
                 action: 'subscribe'
             };
-            console.info('sending',configJSON);
-            this.webSocket.send(JSON.stringify(configJSON));
-        })
+        this.webSocket.send(JSON.stringify(configJSON));
+    })
     }
 
     /**
@@ -84,10 +81,7 @@ export default class WidgetChannelManager {
      * @private
      */
     _wsOnMessage(message) {
-        console.info(message);
         let data = JSON.parse(message.data);
-        console.info(data);
-        console.info(this.widgetMap);
         if (this.widgetMap[data.topic]) {
             this.widgetMap[data.topic](data);
         } else {
@@ -101,7 +95,6 @@ export default class WidgetChannelManager {
      * @private
      */
     _wsOnError(message) {
-        console.info(message);
         // TODO: handle error message
     }
 
@@ -111,7 +104,6 @@ export default class WidgetChannelManager {
      * @private
      */
     _wsOnClose(message) {
-        console.info('close');
         // TODO: handle on close event
     }
 
@@ -119,12 +111,12 @@ export default class WidgetChannelManager {
         let that = this;
         setTimeout(() => {
             if (socket.readyState === 1) {
-                if (callback !== null) {
-                    callback();
-                }
-            } else {
-                that.waitForConn(socket, callback);
+            if (callback !== null) {
+                callback();
             }
-        }, 1000)
+        } else {
+            that.waitForConn(socket, callback);
+        }
+    }, 1000)
     }
 }
