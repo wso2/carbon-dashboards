@@ -82,11 +82,4 @@ export default class UniversalWidget extends ExtendedWidget {
     }
 }
 
-global
-    .dashboard
-    .registerWidget(
-        "UniversalWidget"
-        ,
-        UniversalWidget
-    )
-;
+global.dashboard.registerWidget("UniversalWidget", UniversalWidget);
