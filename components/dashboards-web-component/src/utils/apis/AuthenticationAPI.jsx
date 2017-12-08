@@ -84,8 +84,6 @@ export default class AuthenticationAPI {
      * @return {AxiosPromise} Axios promise
      */
     static getAccessTokenWithRefreshToken() {
-        console.log("~~~~getAccessTokenWithRefreshToken");
-        console.log("refresh token " + AuthManager.getCookie('REFRESH_TOKEN'));
         return AuthenticationAPI
             .getHttpClient()
             .post(`/login/${appContext}`, Qs.stringify({
