@@ -9,7 +9,7 @@
     "dev": "webpack-dev-server --hot --inline --progress --history-api-fallback",
     "lint": "eslint . --ext .jsx --ext .js",
     "build": "webpack -p",
-    "deploy": "cp ./dist/bundle.js $DS_HOME/deployment/web-ui-apps/portal/public/js/"
+    "deploy": "cp ./dist/bundle.js $DS_HOME/wso2/dashboard/deployment/web-ui-apps/portal/public/js/"
   },
   "repository": {
     "type": "git",
