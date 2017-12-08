@@ -160,7 +160,8 @@ class DashboardView extends React.Component {
                             onLeftIconButtonTouchTap={this.handleToggle}
                             className="app-bar"
                         />
-                        <div id="dashboard-view" className={this.state.dashboardViewCSS}>
+                        <div id="dashboard-view" className={this.state.dashboardViewCSS}
+                             style={{ color: this.state.muiTheme.palette.textColor }}>
                             <div
                                 className="dashboard-spinner"
                                 style={showLoading ? {} : { display: 'none' }}
