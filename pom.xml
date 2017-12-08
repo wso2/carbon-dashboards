@@ -394,7 +394,7 @@
     <properties>
         <carbon.dashboards.version>4.0.0.beta3-SNAPSHOT</carbon.dashboards.version>
 
-        <carbon.analytics-common.version>6.0.20</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.0.32</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.20, 7.0.0)</carbon.analytics-common.version.range>
 
         <!-- Datasource -->
