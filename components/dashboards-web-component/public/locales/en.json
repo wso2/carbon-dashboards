@@ -8,6 +8,7 @@
   "login.error.message": "Invalid username/password!",
   "login.unknown.error" : "Unknown error occurred!",
   "create.dashboard" : "Create dashboard",
+  "create.gadget" : "Create gadget",
   "dashboard.name" : "Name of your Dashboard",
   "dashboard.name.hint.text" : "E.g. Sales Statistics",
   "dashboard.url" : "URL",

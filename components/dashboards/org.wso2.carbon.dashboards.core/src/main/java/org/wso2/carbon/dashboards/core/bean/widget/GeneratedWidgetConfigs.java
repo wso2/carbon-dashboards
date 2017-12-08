@@ -17,28 +17,30 @@
  */
 package org.wso2.carbon.dashboards.core.bean.widget;
 
+import com.google.gson.JsonElement;
+
 /**
  * Configuration bean class for generated widget configuration.
  */
 public class GeneratedWidgetConfigs {
     private String name;
     private String id;
-    private String chartConfig;
-    private String providerConfig;
+    private JsonElement chartConfig;
+    private JsonElement providerConfig;
 
-    public String getChartConfig() {
+    public JsonElement getChartConfig() {
         return chartConfig;
     }
 
-    public void setChartConfig(String chartConfig) {
+    public void setChartConfig(JsonElement chartConfig) {
         this.chartConfig = chartConfig;
     }
 
-    public String getProviderConfig() {
+    public JsonElement getProviderConfig() {
         return providerConfig;
     }
 
-    public void setProviderConfig(String providerConfig) {
+    public void setProviderConfig(JsonElement providerConfig) {
         this.providerConfig = providerConfig;
     }
 
@@ -56,5 +58,15 @@ public class GeneratedWidgetConfigs {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "GeneratedWidgetConfigs{" +
+               "name='" + name + '\'' +
+               ", id='" + id + '\'' +
+               ", chartConfig='" + chartConfig + '\'' +
+               ", providerConfig='" + providerConfig + '\'' +
+               '}';
     }
 }

@@ -1,0 +1,12 @@
+{
+    "name": "Revenue By Region",
+    "id": "RevenueByRegion",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "publisher"
+            ]
+        }
+    }
+}

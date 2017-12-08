@@ -282,6 +282,60 @@
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.customers-by-product</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.customers-per-year</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.overall-revenue-info</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.product-info</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-country</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-product</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-region</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-percentage</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-per-year</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
             <!--Feature-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples</groupId>
@@ -327,13 +381,20 @@
                 <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
                 <version>${carbon.analytics-common.version}</version>
             </dependency>
+
+            <!-- OWASP -->
+            <dependency>
+                <groupId>org.wso2.orbit.org.owasp.encoder</groupId>
+                <artifactId>encoder</artifactId>
+                <version>${owasp.encoder.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <properties>
         <carbon.dashboards.version>4.0.0.beta3-SNAPSHOT</carbon.dashboards.version>
 
-        <carbon.analytics-common.version>6.0.20</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.0.32</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.20, 7.0.0)</carbon.analytics-common.version.range>
 
         <!-- Datasource -->
@@ -348,12 +409,12 @@
         <carbon.utils.version>2.0.2</carbon.utils.version>
 
         <!--UI Server-->
-        <carbon.ui.server.version>0.12.4</carbon.ui.server.version>
-        <carbon.ui.sever.version.range>[0.12.4, 1.0.0]</carbon.ui.sever.version.range>
+        <carbon.ui.server.version>0.14.1</carbon.ui.server.version>
+        <carbon.ui.sever.version.range>[0.14.1, 1.0.0]</carbon.ui.sever.version.range>
 
         <!--MSF4J-->
-        <msf4j-core.version>2.3.0-m2</msf4j-core.version>
-        <msf4j-core.version.range>[2.3.0-m2, 3.0.0)</msf4j-core.version.range>
+        <msf4j-core.version>2.4.2</msf4j-core.version>
+        <msf4j-core.version.range>[2.4.2, 3.0.0)</msf4j-core.version.range>
         <javax.ws.rs.version>2.0</javax.ws.rs.version>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
         <javax.websocket.version>1.1</javax.websocket.version>
@@ -390,6 +451,10 @@
         <!--Snake YAML-->
         <org.snakeyaml.version>1.17</org.snakeyaml.version>
         <org.yaml.version.range>[1.17.0, 2.0.0)</org.yaml.version.range>
+
+        <!-- OWASP -->
+        <owasp.encoder.version>1.2.0.wso2v2</owasp.encoder.version>
+        <owasp.encoder.version.range>[1.2.0, 1.3.0)</owasp.encoder.version.range>
 
         <!--JUnit-->
         <junit.jupiter.version>5.0.2</junit.jupiter.version>

@@ -34,8 +34,8 @@ class LoadAverage extends Widget {
             height: props.glContainer.height,
             data: []
         };
-        this.handleResize = this.handleResize.bind(this);
-        this.props.glContainer.on('resize', this.handleResize);
+            this.handleResize = this.handleResize.bind(this);
+            this.props.glContainer.on('resize', this.handleResize);
 
         this.publishData = this.publishData.bind(this);
         const self = this;
