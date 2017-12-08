@@ -126,6 +126,11 @@
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-per-year</artifactId>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+            <artifactId>org.wso2.carbon.dashboards.samples.widgets.universal-widget</artifactId>
+            <type>zip</type>
+        </dependency>
 
         <!--Gson-->
         <dependency>
