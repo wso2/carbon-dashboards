@@ -68,7 +68,10 @@ class DashboardRenderingComponent extends React.Component {
             document.getElementById('dashboard-view'), this.props.onContentModified);
         let that = this;
         dashboardLayout.on("initialised", function () {
-            that.wirePubSubWidgets(dashboardLayout.toConfig().content)
+            that.wirePubSubWidgets(dashboardLayout.toConfig().content);
+            if (that.props.onInitialized) {
+                that.props.onInitialized();
+            }
         });
 
         if (this.props.designer) {
