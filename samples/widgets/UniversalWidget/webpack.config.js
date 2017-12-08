@@ -23,11 +23,11 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     context: path.resolve(__dirname, './src'),
     entry: {
-        index: './UniversalGadget.jsx'
+        index: './UniversalWidget.jsx'
     },
     output: {
-        path: path.resolve(__dirname, './dist/UniversalGadget/'),
-        filename: 'UniversalGadget.js'
+        path: path.resolve(__dirname, './dist/UniversalWidget/'),
+        filename: 'UniversalWidget.js'
     },
     module: {
         loaders: [
