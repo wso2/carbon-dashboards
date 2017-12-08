@@ -34,8 +34,9 @@ function registerWidget(widgetId, widgetObj) {
         if (registeredWidgetsCount === widgetCount) {
             finishedRegisteringCallback ? finishedRegisteringCallback(true) : "";
             global.dashboard.universalWidgetList.map(universalWidget => {
-                if (widgets.get("UniversalGadget")) {
-                    dashboardLayout.registerComponent(universalWidget, widgets.get("UniversalGadget"));
+                if (widgets.get("UniversalWidget") && widgets.get(universalWidget)) {
+                    widgets.set(universalWidget, widgets.get("UniversalWidget"));
+                    dashboardLayout.registerComponent(universalWidget, widgets.get("UniversalWidget"));
                 }
             });
             dashboardLayout.init();
@@ -92,14 +93,6 @@ class WidgetLoadingComponent {
 
     initializeDashboard() {
         dashboardLayout.init();
-    }
-
-    getWidgetMap() {
-        return widgets;
-    }
-
-    registerComponent(name,object){
-        dashboardLayout.registerComponent(name,object);
     }
 }
 
