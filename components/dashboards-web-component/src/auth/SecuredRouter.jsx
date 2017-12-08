@@ -46,7 +46,13 @@ export default class SecuredRouter extends Component {
     render() {
         // If the user is not logged in, redirect to the login page.
         if (!AuthManager.isLoggedIn()) {
-            const params = Qs.stringify({ referrer: this.props.location.pathname });
+            let referrer = this.props.location.pathname;
+            const arr = referrer.split('');
+            if (arr[arr.length - 1] !== '/') {
+                referrer += '/';
+            }
+
+            const params = Qs.stringify({ referrer });
             return (
                 <Redirect to={{ pathname: `${appContext}/login`, search: params }} />
             );
