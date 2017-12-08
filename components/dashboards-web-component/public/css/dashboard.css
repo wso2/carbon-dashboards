@@ -48,11 +48,13 @@ a {
     box-sizing: border-box;
     height: calc(100vh - 64px);
     font-family: Roboto, sans-serif;
+    position: relative;
 }
 
 .dashboard-view-full-width {
     margin-left: 0;
     height: 88vh;
+    position: relative;
 }
 
 .pages-navigation-panel {
@@ -550,4 +552,21 @@ a {
 
 .sample-rev-table .currency {
     font-size: 22px;
+}
+
+/* Dashboard loading spinner */
+.dashboard-spinner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    padding-top: 100px;
+}
+
+.dashboard-spinner .loading-label {
+    color: #fff;
+    text-align: center;
+    padding-top: 20px;
 }
