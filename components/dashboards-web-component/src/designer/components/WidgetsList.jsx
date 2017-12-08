@@ -134,12 +134,13 @@ export default class WidgetsList extends React.Component {
                 newItemConfig = {
                     title: widget.name,
                     type: 'react-component',
-                    component: widget.configs.isGenerated ? "UniversalGadget" : widget.id,
+                    component: widget.configs.isGenerated ? "UniversalWidget" : widget.id,
                     props: {id: DashboardUtils.generateguid(), configs: widget.configs, widgetID: widget.id}
                 };
                 widgetListDragSources.set(widget.id, widgetLoadingComponent.createDragSource(document.getElementById(widget.id), newItemConfig));
                 if (widget.configs.isGenerated) {
                     universalWidgetList.push(widget.id);
+                    widgetLoadingComponent.loadWidget("UniversalWidget");
                 } else {
                     widgetLoadingComponent.loadWidget(widget.id);
                 }

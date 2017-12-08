@@ -407,7 +407,7 @@
         <carbon.dashboards.version>4.0.0.beta3-SNAPSHOT</carbon.dashboards.version>
 
         <carbon.analytics-common.version>6.0.32</carbon.analytics-common.version>
-        <carbon.analytics-common.version.range>[6.0.32, 7.0.0)</carbon.analytics-common.version.range>
+        <carbon.analytics-common.version.range>[6.0.20, 7.0.0)</carbon.analytics-common.version.range>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
@@ -425,8 +425,8 @@
         <carbon.ui.sever.version.range>[0.14.1, 1.0.0]</carbon.ui.sever.version.range>
 
         <!--MSF4J-->
-        <msf4j-core.version>2.4.2</msf4j-core.version>
-        <msf4j-core.version.range>[2.4.2, 3.0.0)</msf4j-core.version.range>
+        <msf4j-core.version>2.5.0-beta</msf4j-core.version>
+        <msf4j-core.version.range>[2.5.0-beta, 3.0.0)</msf4j-core.version.range>
         <javax.ws.rs.version>2.0</javax.ws.rs.version>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
         <javax.websocket.version>1.1</javax.websocket.version>
