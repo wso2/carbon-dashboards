@@ -71,10 +71,12 @@ export default class AuthManager {
                 .getAccessTokenWithRefreshToken()
                 .then((response) => {
                     AuthManager.setUser({
-                        username:  window.localStorage.getItem("username"),
+                        username: window.localStorage.getItem("username"),
                         token: response.data.partialAccessToken,
                         validity: response.data.validityPeriod
                     });
+                    AuthManager.setCookie("REFRESH_TOKEN", response.data.partialRefreshToken,
+                        REFRESH_TOKEN_VALIDITY_PERIOD, window.contextPath);
                     resolve();
                 })
                 .catch(error => reject(error));
