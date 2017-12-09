@@ -79,7 +79,7 @@
             <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <groupId>org.wso2.carbon.analytics</groupId>
             <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
         </dependency>
 
@@ -105,7 +105,7 @@
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
-            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics-common.version.range}",
+            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics.version.range}",
             org.owasp.encoder.*; version="${owasp.encoder.version.range}"
         </import.package>
         <carbon.component>
