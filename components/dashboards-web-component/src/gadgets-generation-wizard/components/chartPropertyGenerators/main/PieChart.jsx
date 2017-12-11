@@ -177,7 +177,7 @@ class Pie extends Component {
                 <br />
                 {/* Optional configuration properties */}
                 <Card
-                    style={(this.state.expandAdvanced) ? ({ padding: 30 }) : ({ padding: 10 })}
+                    style={this.state.expandAdvanced ? { padding: 30 } : { padding: 10 }}
                     expanded={this.state.expandAdvanced}
                     onExpandChange={e => this.setState({ expandAdvanced: e })}
                 >

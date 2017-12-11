@@ -140,9 +140,6 @@ class ChartConfigurator extends Component {
     }
 
     /**
-     * Returns
-     */
-    /**
      * Returns the gadget to be submitted after validation. Empty object is returned when the gadget is not valid
      * @returns {{}}
      */
