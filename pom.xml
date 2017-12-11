@@ -336,6 +336,18 @@
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.universal-widget</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+                <artifactId>org.wso2.carbon.dashboards.samples.widgets.user-info</artifactId>
+                <version>${carbon.dashboards.version}</version>
+                <type>zip</type>
+            </dependency>
             <!--Feature-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples</groupId>
