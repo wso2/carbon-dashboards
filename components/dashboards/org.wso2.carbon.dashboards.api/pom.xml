@@ -49,6 +49,12 @@
             <artifactId>javax.ws.rs-api</artifactId>
         </dependency>
 
+        <!--UI Server-->
+        <dependency>
+            <groupId>org.wso2.carbon.uis</groupId>
+            <artifactId>org.wso2.carbon.uis</artifactId>
+        </dependency>
+
         <!--OSGi-->
         <dependency>
             <groupId>org.osgi</groupId>
@@ -79,7 +85,7 @@
             <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <groupId>org.wso2.carbon.analytics</groupId>
             <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
         </dependency>
 
@@ -100,16 +106,18 @@
             org.wso2.carbon.dashboards.core.*; version="${carbon.dashboards.version}",
             org.wso2.msf4j.*; version="${msf4j-core.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
+            org.wso2.carbon.uis.api.*; version="${carbon.ui.sever.version.range}",
+            org.wso2.carbon.uis.spi.*; version="${carbon.ui.sever.version.range}",
             org.osgi.framework; version="${org.osgi.framework.version.range}",
             org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
-            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics-common.version.range}",
+            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics.version.range}",
             org.owasp.encoder.*; version="${owasp.encoder.version.range}"
         </import.package>
         <carbon.component>
-            osgi.service; objectClass="org.wso2.msf4j.Microservice"; serviceCount="2"
+            osgi.service; objectClass="org.wso2.carbon.uis.spi.RestApiProvider"
         </carbon.component>
     </properties>
 
