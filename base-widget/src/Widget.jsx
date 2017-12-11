@@ -19,7 +19,12 @@
 
 import React, {Component} from 'react';
 
-class Widget extends Component {
+const SESSION_USER = 'wso2dashboard_user';
+
+/**
+ * Widget base class.
+ */
+export default class Widget extends Component {
     constructor(props) {
         super(props);
         this.getDashboardAPI = this.getDashboardAPI.bind(this);
@@ -100,8 +105,37 @@ class Widget extends Component {
                     state[key] = value;
                     setLocalState(state);
                 }
-            }
+            },
+            identity: {
+                get() {
+                    const user = JSON.parse(Widget.getSessionCookie(SESSION_USER));
+                    return {
+                        username: (user && user.username) ? user.username : null,
+                    };
+                },
+            },
         };
+    }
+
+    /**
+     * Get session cookie by name.
+     *
+     * @param {string} name Name of the cookie
+     * @returns {string} Content
+     */
+    static getSessionCookie(name) {
+        name = `${name}=`;
+        const arr = document.cookie.split(';');
+        for (let i = 0; i < arr.length; i++) {
+            let c = arr[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return '';
     }
 
     render() {
@@ -115,5 +149,3 @@ class Widget extends Component {
         );
     }
 }
-
-export default Widget;
