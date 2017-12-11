@@ -389,9 +389,9 @@
                 <version>${carbon.analytics-common.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <groupId>org.wso2.carbon.analytics</groupId>
                 <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
-                <version>${carbon.analytics-common.version}</version>
+                <version>${carbon.analytics.version}</version>
             </dependency>
 
             <!-- OWASP -->
@@ -406,8 +406,11 @@
     <properties>
         <carbon.dashboards.version>4.0.0.beta3-SNAPSHOT</carbon.dashboards.version>
 
-        <carbon.analytics-common.version>6.0.32</carbon.analytics-common.version>
-        <carbon.analytics-common.version.range>[6.0.20, 7.0.0)</carbon.analytics-common.version.range>
+        <!--Analytics-->
+        <carbon.analytics-common.version>6.0.36</carbon.analytics-common.version>
+        <carbon.analytics-common.version.range>[6.0.36, 7.0.0)</carbon.analytics-common.version.range>
+        <carbon.analytics.version>2.0.197</carbon.analytics.version>
+        <carbon.analytics.version.range>[2.0.197, 3.0.0)</carbon.analytics.version.range>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
@@ -421,8 +424,8 @@
         <carbon.utils.version>2.0.2</carbon.utils.version>
 
         <!--UI Server-->
-        <carbon.ui.server.version>0.14.1</carbon.ui.server.version>
-        <carbon.ui.sever.version.range>[0.14.1, 1.0.0]</carbon.ui.sever.version.range>
+        <carbon.ui.server.version>0.17.0</carbon.ui.server.version>
+        <carbon.ui.sever.version.range>[0.17.0, 1.0.0]</carbon.ui.sever.version.range>
 
         <!--MSF4J-->
         <msf4j-core.version>2.5.0-beta</msf4j-core.version>
