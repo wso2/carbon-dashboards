@@ -18,13 +18,6 @@
 
 package org.wso2.carbon.dashboards.api.internal;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,37 +48,21 @@ import static javax.ws.rs.core.Response.Status.OK;
  *
  * @since 4.0.0
  */
-@Component(name = "org.wso2.carbon.dashboards.api.WidgetApi",
-        service = Microservice.class,
-        immediate = true)
-@Path("/portal/apis/widgets")
 @RequestInterceptor(AuthenticationInterceptor.class)
 public class WidgetRestApi implements Microservice {
 
+    public static final String API_CONTEXT_PATH = "/apis/widgets";
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetRestApi.class);
 
-    private WidgetMetadataProvider widgetMetadataProvider;
+    private final WidgetMetadataProvider widgetMetadataProvider;
 
-    @Activate
-    protected void activate(BundleContext bundleContext) {
-        LOGGER.debug("{} activated.", this.getClass().getName());
-    }
-
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        LOGGER.debug("{} deactivated.", this.getClass().getName());
-    }
-
-    @Reference(service = WidgetMetadataProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetWidgetInfoProvider")
-    protected void setWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
+    /**
+     * Creates a new widget REST API.
+     *
+     * @param widgetMetadataProvider metadata provider for widgets
+     */
+    public WidgetRestApi(WidgetMetadataProvider widgetMetadataProvider) {
         this.widgetMetadataProvider = widgetMetadataProvider;
-    }
-
-    protected void unsetWidgetInfoProvider(WidgetMetadataProvider widgetMetadataProvider) {
-        this.widgetMetadataProvider = null;
     }
 
     /**
@@ -121,7 +98,7 @@ public class WidgetRestApi implements Microservice {
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find widget '" + widgetId + "'.").build());
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving configuration of widget '{}'.",
-                    getEncodedString(widgetId), e);
+                         getEncodedString(widgetId), e);
             return serverErrorResponse("Cannot retrieve configuration of widget '" + widgetId + "'.");
         }
     }
@@ -166,7 +143,7 @@ public class WidgetRestApi implements Microservice {
             }
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when validating the widget name: " +
-                    getEncodedString(widgetName) + ".", e);
+                         getEncodedString(widgetName) + ".", e);
             return Response.serverError()
                     .entity("An error occurred when validating the widget name: " + widgetName + ".").build();
         }
@@ -210,7 +187,7 @@ public class WidgetRestApi implements Microservice {
             return Response.status(CREATED).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new gadget from {} data.",
-                    getEncodedString(generatedWidgetConfigs.toString()), e);
+                         getEncodedString(generatedWidgetConfigs.toString()), e);
             return Response.serverError()
                     .entity("Cannot create a new gadget from '" + generatedWidgetConfigs + "'.").build();
         }
