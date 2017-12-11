@@ -55,6 +55,21 @@
             <artifactId>org.wso2.carbon.uis</artifactId>
         </dependency>
 
+        <!--Analytics-->
+        <dependency>
+            <groupId>org.wso2.carbon.analytics</groupId>
+            <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
+        </dependency>
+        <!-- Analytics common -->
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.analytics.idp.client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
+        </dependency>
+
         <!--OSGi-->
         <dependency>
             <groupId>org.osgi</groupId>
@@ -73,20 +88,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-
-        <!-- Analytics common -->
-        <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
-            <artifactId>org.wso2.carbon.analytics.idp.client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
-            <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.analytics</groupId>
-            <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
         </dependency>
 
         <!-- OWASP -->
@@ -108,12 +109,12 @@
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
             org.wso2.carbon.uis.api.*; version="${carbon.ui.sever.version.range}",
             org.wso2.carbon.uis.spi.*; version="${carbon.ui.sever.version.range}",
+            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics.version.range}",
+            org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.osgi.framework; version="${org.osgi.framework.version.range}",
             org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
-            org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
-            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics.version.range}",
             org.owasp.encoder.*; version="${owasp.encoder.version.range}"
         </import.package>
         <carbon.component>
