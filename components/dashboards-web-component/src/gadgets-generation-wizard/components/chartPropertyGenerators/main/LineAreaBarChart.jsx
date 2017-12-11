@@ -20,7 +20,7 @@
 import React, { Component } from 'react';
 // Material UI Components
 import FlatButton from 'material-ui/FlatButton';
-import { Card } from 'material-ui/Card';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 // App Components
 import SubChart from '../sub/LineAreaBarChart';
 import TextProperty from '../../inputTypes/TextProperty';
@@ -40,6 +40,7 @@ class LineAreaBar extends Component {
         super(props);
         this.state = {
             configuration: props.configuration,
+            expandAdvanced: false,
         };
     }
 
@@ -226,104 +227,116 @@ class LineAreaBar extends Component {
                 <br />
                 <br />
                 {/* Optional configuration properties */}
-                <Card style={{ padding: 50 }}>
-                    <h3>Advanced Settings</h3>
-                    <TextProperty
-                        id="xAxisLabel"
-                        value={this.state.configuration.xAxisLabel}
-                        fieldName="Label to be displayed in the x axis"
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                        fullWidth
+                <Card
+                    style={(this.state.expandAdvanced) ? ({ padding: 30 }) : ({ padding: 10 })}
+                    expanded={this.state.expandAdvanced}
+                    onExpandChange={e => this.setState({ expandAdvanced: e })}
+                >
+                    <CardHeader
+                        title="Advanced Settings"
+                        actAsExpander
+                        showExpandableButton
                     />
-                    <br />
-                    <TextProperty
-                        id="yAxisLabel"
-                        value={this.state.configuration.yAxisLabel}
-                        fieldName="Label to be displayed in the y axis"
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
-                    <br />
-                    <br />
-                    <SwitchProperty
-                        id="disableVerticalGrid"
-                        value={this.state.configuration.disableVerticalGrid}
-                        fieldName="Disable vertical grid lines in the chart"
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                    />
-                    <br />
-                    <br />
-                    <SwitchProperty
-                        id="disableHorizontalGrid"
-                        value={this.state.configuration.disableHorizontalGrid}
-                        fieldName="Disable horizontal grid lines in the chart"
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                    />
-                    <TextProperty
-                        id="timeFormat"
-                        value={this.state.configuration.timeFormat}
-                        fieldName="Time formatting regex of any time series reference"
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <a>(Refer : https://github.com/d3/d3-time-format/blob/master/README.md#locale_format)</a>
-                    <br />
-                    <SelectProperty
-                        id="legendOrientation"
-                        value={this.state.configuration.legendOrientation}
-                        fieldName="Orientation of the legend relative to the chart"
-                        options={{
-                            values: ['top', 'bottom', 'left', 'right'],
-                            texts: ['Top', 'Bottom', 'Left', 'Right'],
-                        }}
-                        onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
-                    <br />
-                    <h3>Style</h3>
-                    <ColorProperty
-                        id="axisLabelColor"
-                        value={this.state.configuration.style.axisLabelColor}
-                        fieldName="Color of the axis labels & tick labels in the axis"
-                        onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
-                    <ColorProperty
-                        id="legendTitleColor"
-                        value={this.state.configuration.style.legendTitleColor}
-                        fieldName="Text color of the legend title"
-                        onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
-                    <ColorProperty
-                        id="legendTextColor"
-                        value={this.state.configuration.style.legendTextColor}
-                        fieldName="Text color of the text in the legend"
-                        onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
-                    <TextProperty
-                        id="xAxisTickAngle"
-                        value={this.state.configuration.style.xAxisTickAngle}
-                        fieldName="Angle of the x axis ticks"
-                        number
-                        onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
-                    <TextProperty
-                        id="yAxisTickAngle"
-                        value={this.state.configuration.style.yAxisTickAngle}
-                        fieldName="Angle of the y axis ticks"
-                        number
-                        onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
-                        fullWidth
-                    />
+                    <CardMedia
+                        expandable
+                    >
+                        <TextProperty
+                            id="xAxisLabel"
+                            value={this.state.configuration.xAxisLabel}
+                            fieldName="Label to be displayed in the x axis"
+                            onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <TextProperty
+                            id="yAxisLabel"
+                            value={this.state.configuration.yAxisLabel}
+                            fieldName="Label to be displayed in the y axis"
+                            onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <br />
+                        <br />
+                        <SwitchProperty
+                            id="disableVerticalGrid"
+                            value={this.state.configuration.disableVerticalGrid}
+                            fieldName="Disable vertical grid lines in the chart"
+                            onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                        />
+                        <br />
+                        <br />
+                        <SwitchProperty
+                            id="disableHorizontalGrid"
+                            value={this.state.configuration.disableHorizontalGrid}
+                            fieldName="Disable horizontal grid lines in the chart"
+                            onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                        />
+                        <TextProperty
+                            id="timeFormat"
+                            value={this.state.configuration.timeFormat}
+                            fieldName="Time formatting regex of any time series reference"
+                            onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <a>(Refer : https://github.com/d3/d3-time-format/blob/master/README.md#locale_format)</a>
+                        <br />
+                        <SelectProperty
+                            id="legendOrientation"
+                            value={this.state.configuration.legendOrientation}
+                            fieldName="Orientation of the legend relative to the chart"
+                            options={{
+                                values: ['top', 'bottom', 'left', 'right'],
+                                texts: ['Top', 'Bottom', 'Left', 'Right'],
+                            }}
+                            onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <br />
+                        <h3>Style</h3>
+                        <ColorProperty
+                            id="axisLabelColor"
+                            value={this.state.configuration.style.axisLabelColor}
+                            fieldName="Color of the axis labels & tick labels in the axis"
+                            onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <ColorProperty
+                            id="legendTitleColor"
+                            value={this.state.configuration.style.legendTitleColor}
+                            fieldName="Text color of the legend title"
+                            onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <ColorProperty
+                            id="legendTextColor"
+                            value={this.state.configuration.style.legendTextColor}
+                            fieldName="Text color of the text in the legend"
+                            onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <TextProperty
+                            id="xAxisTickAngle"
+                            value={this.state.configuration.style.xAxisTickAngle}
+                            fieldName="Angle of the x axis ticks"
+                            number
+                            onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <TextProperty
+                            id="yAxisTickAngle"
+                            value={this.state.configuration.style.yAxisTickAngle}
+                            fieldName="Angle of the y axis ticks"
+                            number
+                            onChange={(id, value) => this.handleMainChartStylePropertyChange(id, value)}
+                            fullWidth
+                        />
+                    </CardMedia>
                 </Card>
             </div>
         );
