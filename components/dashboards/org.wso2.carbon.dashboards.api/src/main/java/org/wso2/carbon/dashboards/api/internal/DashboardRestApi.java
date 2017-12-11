@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.util.InterceptorConstants;
-import org.wso2.carbon.dashboards.api.util.LogEncoder;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
@@ -115,7 +114,7 @@ public class DashboardRestApi implements Microservice {
                                                         id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when retrieving" +
-                                       " dashboard for ID %s.", LogEncoder.getEncodedString(id)), e);
+                                       " dashboard for ID %s.", replaceCRLFCharacters(id)), e);
             return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
         }
     }
@@ -145,7 +144,7 @@ public class DashboardRestApi implements Microservice {
         } catch (DashboardException e) {
             // TODO: 12/7/17
             LOGGER.error("An error occurred when creating a new dashboard from {} data.",
-                         LogEncoder.getEncodedString(dashboardMetadata.toString()), e);
+                         replaceCRLFCharacters(dashboardMetadata.toString()), e);
             return Response.serverError()
                     .entity("Cannot create a new dashboard from '" + dashboardMetadata + "'.").build();
         }
@@ -192,7 +191,7 @@ public class DashboardRestApi implements Microservice {
                                                         + id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when deleting dashboard %s",
-                                       LogEncoder.getEncodedString(id)), e);
+                                       replaceCRLFCharacters(id)), e);
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
         }
     }
@@ -224,7 +223,7 @@ public class DashboardRestApi implements Microservice {
                     .entity(roles)
                     .build();
         } catch (DashboardException e) {
-            LOGGER.error("Cannot retrieve user roles for '" + LogEncoder.getEncodedString(username) + "'.", e);
+            LOGGER.error("Cannot retrieve user roles for '" + replaceCRLFCharacters(username) + "'.", e);
             return Response.serverError()
                     .entity("Cannot retrieve user roles for '" + username + "'.")
                     .build();
@@ -240,7 +239,7 @@ public class DashboardRestApi implements Microservice {
                     .entity(dashboardDataProvider.getDashboardRoles(url))
                     .build();
         } catch (DashboardException e) {
-            LOGGER.error("Cannot retrieve roles for dashboard '" + LogEncoder.getEncodedString(url) + "'", e);
+            LOGGER.error("Cannot retrieve roles for dashboard '" + replaceCRLFCharacters(url) + "'", e);
             return Response.serverError()
                     .entity("Cannot retrieve roles for dashboard '" + url + "'")
                     .build();
@@ -259,7 +258,7 @@ public class DashboardRestApi implements Microservice {
             return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the roles of dashboard " +
                                                         "with ID : " + url).build();
         } catch (DashboardException e) {
-            LOGGER.error("Cannot update user roles of dashboard '" + LogEncoder.getEncodedString(url) + "'.", e);
+            LOGGER.error("Cannot update user roles of dashboard '" + replaceCRLFCharacters(url) + "'.", e);
             return Response.serverError()
                     .entity("Cannot update user roles of dashboard '" + url + "'.")
                     .build();
@@ -270,4 +269,7 @@ public class DashboardRestApi implements Microservice {
         return request.getProperty(InterceptorConstants.PROPERTY_USERNAME).toString();
     }
 
+    private static String replaceCRLFCharacters(String str) {
+        return str.replace('\n', '_').replace('\r', '_');
+    }
 }

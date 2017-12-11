@@ -89,12 +89,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
-
-        <!-- OWASP -->
-        <dependency>
-            <groupId>org.wso2.orbit.org.owasp.encoder</groupId>
-            <artifactId>encoder</artifactId>
-        </dependency>
     </dependencies>
 
     <properties>
@@ -114,8 +108,7 @@
             org.osgi.framework; version="${org.osgi.framework.version.range}",
             org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
-            org.slf4j.*; version="${slf4j.version.range}",
-            org.owasp.encoder.*; version="${owasp.encoder.version.range}"
+            org.slf4j.*; version="${slf4j.version.range}"
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.carbon.uis.spi.RestApiProvider"
