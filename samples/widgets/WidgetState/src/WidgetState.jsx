@@ -17,7 +17,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import Widget from '@wso2-dashboards/widget';
 
 /**
@@ -63,11 +63,10 @@ class WidgetState extends Widget {
             }
         };
 
-        // Syntax: super.getDashboardAPI().state.get(<KEY>)
-        let message = super.getDashboardAPI().state.get('message');
+        // Syntax: super.getWidgetState(<KEY>)
+        let message = super.getWidgetState('message');
         let labelText = message && message != null && message !== ''  ?
-            'Persisted message found: ' + message :
-            'No persisted state found';
+            'Persisted message found: ' + message : 'No persisted state found';
 
         return (
 
@@ -86,9 +85,9 @@ class WidgetState extends Widget {
      * Event handler for set state button.
      */
     btnPersistState() {
-        // Syntax: super.getDashboardAPI().state.get(<KEY>, <VALUE>)
+        // Syntax: super.setWidgetState(<KEY>, <VALUE>)
         let message = document.getElementById('txtMessage').value;
-        super.getDashboardAPI().state.set('message', message);
+        super.setWidgetState('message', message);
         alert('State persisted successfully!');
     }
 
@@ -99,4 +98,4 @@ class WidgetState extends Widget {
     }
 }
 
-global.dashboard.registerWidget("WidgetState", WidgetState);
+global.dashboard.registerWidget('WidgetState', WidgetState);
