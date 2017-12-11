@@ -21,18 +21,10 @@ package org.wso2.carbon.dashboards.core.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.uis.api.App;
 import org.wso2.carbon.uis.api.Extension;
-import org.wso2.carbon.uis.spi.Server;
 
 import java.util.Collections;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test cases for {@link WidgetMetadataProviderImpl} class.
@@ -42,14 +34,10 @@ import static org.mockito.Mockito.when;
 public class WidgetMetadataProviderImplTest {
 
     @Test
-    void testGetWidgetConfigurationWithoutPortalApp() {
-        Server server = mock(Server.class);
-        when(server.getApp(anyString())).thenReturn(Optional.empty());
+    void testSetDashboardApp() {
         WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
-        widgetInfoProvider.setCarbonUiServer(server);
-
-        Assertions.assertThrows(DashboardRuntimeException.class,
-                                () -> widgetInfoProvider.getWidgetConfiguration("foo"));
+        Assertions.assertThrows(NullPointerException.class,
+                                () -> widgetInfoProvider.setDashboardApp(null));
     }
 
     @Test
@@ -74,11 +62,8 @@ public class WidgetMetadataProviderImplTest {
 
     @Test
     void testOthers() {
-        Server server = mock(Server.class);
         WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
         widgetInfoProvider.activate(null);
-        widgetInfoProvider.setCarbonUiServer(server);
-        widgetInfoProvider.unsetCarbonUiServer(server);
         widgetInfoProvider.deactivate(null);
     }
 
@@ -90,10 +75,8 @@ public class WidgetMetadataProviderImplTest {
 
     private static WidgetMetadataProviderImpl createWidgetInfoProvider() {
         App portalApp = createPortalApp();
-        Server server = mock(Server.class);
-        when(server.getApp(eq(portalApp.getName()))).thenReturn(Optional.of(portalApp));
         WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
-        widgetInfoProvider.setCarbonUiServer(server);
+        widgetInfoProvider.setDashboardApp(portalApp);
         return widgetInfoProvider;
     }
 }
