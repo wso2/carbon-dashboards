@@ -27,11 +27,16 @@ const SESSION_USER = 'wso2dashboard_user';
 export default class Widget extends Component {
     constructor(props) {
         super(props);
-        this.getDashboardAPI = this.getDashboardAPI.bind(this);
-        this.subscribe = this.subscribe.bind(this);
+
         this.messageQueue = [];
+        this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
+
+        this._getLocalState = this._getLocalState.bind(this);
+        this._setLocalState = this._setLocalState.bind(this);
+        this.getWidgetState = this.getWidgetState.bind(this);
+        this.setWidgetState = this.setWidgetState.bind(this);
+        this.subscribe = this.subscribe.bind(this);
         this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
-        this.props.glContainer.layoutManager.on("initialised", this.publishQueuedMessages);
     }
 
     /**
@@ -67,54 +72,24 @@ export default class Widget extends Component {
     }
 
     /**
-     * Returns the dashboards API functions.
+     * Build state object from the browser hash.
+     * 
+     * @return {{}} State
      */
-    getDashboardAPI() {
-        let that = this;
+    static _getStateObject() {
+        // De-serialize the object in suitable format
+        return (window.location.hash === '' || window.location.hash === '#') ?
+            {} : JSON.parse(window.location.hash.substr(1));
+    }
 
-        function getStateObject() {
-            // De-serialize the object in suitable format
-            return (window.location.hash === '' || window.location.hash === '#') ?
-                {} : JSON.parse(window.location.hash.substr(1));
-        }
-
-        function setStateObject(state) {
-            // Serialize the object in suitable format
-            window.location.hash = JSON.stringify(state);
-        }
-
-        function getLocalState() {
-            let allStates = getStateObject();
-            return allStates.hasOwnProperty(that.props.id) ? allStates[that.props.id] : {};
-        }
-
-        function setLocalState(state) {
-            let allStates = getStateObject();
-            allStates[that.props.id] = state;
-            setStateObject(allStates);
-        }
-
-        return {
-            state: {
-                get: function (key) {
-                    let state = getLocalState();
-                    return state.hasOwnProperty(key) ? state[key] : null;
-                },
-                set: function (key, value) {
-                    let state = getLocalState();
-                    state[key] = value;
-                    setLocalState(state);
-                }
-            },
-            identity: {
-                get() {
-                    const user = JSON.parse(Widget.getSessionCookie(SESSION_USER));
-                    return {
-                        username: (user && user.username) ? user.username : null,
-                    };
-                },
-            },
-        };
+    /**
+     * Set state object in the browser hash.
+     * 
+     * @param {{}} state State
+     */
+    static _setStateObject(state) {
+        // Serialize the object in suitable format
+        window.location.hash = JSON.stringify(state);
     }
 
     /**
@@ -123,7 +98,7 @@ export default class Widget extends Component {
      * @param {string} name Name of the cookie
      * @returns {string} Content
      */
-    static getSessionCookie(name) {
+    static _getSessionCookie(name) {
         name = `${name}=`;
         const arr = document.cookie.split(';');
         for (let i = 0; i < arr.length; i++) {
@@ -138,12 +113,70 @@ export default class Widget extends Component {
         return '';
     }
 
-    render() {
-        let styles = {
-            padding: '30px 15px 15px 15px'
+    /**
+     * Get local widget state.
+     * 
+     * @return {{}} State
+     */
+    _getLocalState() {
+        let states = Widget._getStateObject();
+        return Object.prototype.hasOwnProperty.call(states, this.props.id) ? states[this.props.id] : {};
+    }
+
+    /**
+     * Set local widget state.
+     * 
+     * @param {{}} state State
+     */
+    _setLocalState(state) {
+        let states = Widget._getStateObject();
+        states[this.props.id] = state;
+        Widget._setStateObject(states);
+    }
+
+    /**
+     * Get widget state.
+     * 
+     * @param {string} key Key
+     * @return {{}} State
+     */
+    getWidgetState(key) {
+        const state = this._getLocalState();
+        return Object.prototype.hasOwnProperty.call(state, key) ? state[key] : null;
+    }
+
+    /**
+     * Set widget state.
+     * 
+     * @param {string} key State key
+     * @param {{}} value State value
+     */
+    setWidgetState(key, value) {
+        const state = this._getLocalState();
+        state[key] = value;
+        this._setLocalState(state);
+    }
+
+    /**
+     * Get current user.
+     * 
+     * @return {{}} User object
+     */
+    getCurrentUser() {
+        const user = JSON.parse(Widget._getSessionCookie(SESSION_USER));
+        return {
+            username: (user && user.username) ? user.username : null,
         };
+    }
+
+    /**
+     * Render widget.
+     * 
+     * @return {string} HTML content
+     */
+    render() {
         return (
-            <div style={styles}>
+            <div style={{ padding: '30px 15px 15px 15px' }}>
                 {this.renderWidget()}
             </div>
         );
