@@ -32,14 +32,13 @@ import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDaoFactory;
 import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.uis.api.App;
-import org.wso2.carbon.uis.spi.Server;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,18 +48,20 @@ import java.util.stream.Collectors;
  *
  * @since 4.0.0
  */
-@Component(service = WidgetMetadataProvider.class, immediate = true)
+@Component(service = WidgetMetadataProvider.class,
+           immediate = true)
 public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetMetadataProviderImpl.class);
     private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
+
     private WidgetMetadataDao widgetMetadataDao;
     private DataSourceService dataSourceService;
     private ConfigProvider configProvider;
     private boolean isDaoInitialized = false;
 
-    private Server uiServer;
+    private App dashboardApp;
 
     @Activate
     protected void activate(BundleContext bundleContext) {
@@ -78,18 +79,6 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
     @Deactivate
     protected void deactivate(BundleContext bundleContext) {
         LOGGER.debug("{} deactivated.", this.getClass().getName());
-    }
-
-    @Reference(service = Server.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetCarbonUiServer")
-    protected void setCarbonUiServer(Server server) {
-        this.uiServer = server;
-    }
-
-    protected void unsetCarbonUiServer(Server server) {
-        this.uiServer = null;
     }
 
     @Override
@@ -156,16 +145,21 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
         widgetMetadataDao.delete(widgetId);
     }
 
-    private App getDashboardApp() {
-        return uiServer.getApp(APP_NAME_DASHBOARD)
-                .orElseThrow(() -> new DashboardRuntimeException(
-                        "Cannot find dashboard web app named '" + APP_NAME_DASHBOARD + "'."));
+    @Override
+    public void setDashboardApp(App dashboardApp) {
+        Objects.requireNonNull(dashboardApp, "Dashboard portal web app cannot be null.");
+        this.dashboardApp = dashboardApp;
+    }
+
+    @Override
+    public App getDashboardApp() {
+        return dashboardApp;
     }
 
     @Reference(service = DataSourceService.class,
-            cardinality = ReferenceCardinality.AT_LEAST_ONE,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetDataSourceService")
+               cardinality = ReferenceCardinality.AT_LEAST_ONE,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetDataSourceService")
     protected void setDataSourceService(DataSourceService dataSourceService) {
         this.dataSourceService = dataSourceService;
     }
@@ -175,9 +169,9 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
     }
 
     @Reference(service = ConfigProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetConfigProvider")
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetConfigProvider")
     protected void setConfigProvider(ConfigProvider configProvider) {
         this.configProvider = configProvider;
     }
