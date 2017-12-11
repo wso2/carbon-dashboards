@@ -18,65 +18,94 @@
  */
 
 import React, { Component } from 'react';
+import AuthManager from '../auth/utils/AuthManager';
 
+/**
+ * Widget base component.
+ */
 export default class Widget extends Component {
     constructor() {
         super();
         this.getDashboardAPI = this.getDashboardAPI.bind(this);
     }
 
-
-
-    render () {
-        let styles = {
-            padding: '30px 15px 15px 15px'
-        };
-        return (
-            <div style={styles}>  
-                {this.renderWidget()}
-            </div>
-        );
-    }
-
     /**
      * Returns the dashboards API functions.
+     * @return {{}} APIs
      */
     getDashboardAPI() {
-        let that = this;
+        const that = this;
+
+        /**
+         * Get state object.
+         * @return {{}} Current state
+         */
         function getStateObject() {
             // De-serialize the object in suitable format
-            return (window.location.hash === '' || window.location.hash === '#') ? 
-                {} : JSON.parse(window.location.hash.substr(1));   
+            return (window.location.hash === '' || window.location.hash === '#') ?
+                {} : JSON.parse(window.location.hash.substr(1));
         }
 
+        /**
+         * Set state object.
+         * @param {{}} state New state
+         */
         function setStateObject(state) {
             // Serialize the object in suitable format
             window.location.hash = JSON.stringify(state);
         }
 
+        /**
+         * Get local state.
+         * @return {{}} Local state
+         */
         function getLocalState() {
-            let allStates = getStateObject();
-            return allStates.hasOwnProperty(that.props.id) ? allStates[that.props.id] : {};
+            const allStates = getStateObject();
+            return Object.prototype.hasOwnProperty.call(allStates, that.props.id) ? allStates[that.props.id] : {};
         }
 
+        /**
+         * Set local state.
+         * @param {{}} state New state
+         */
         function setLocalState(state) {
-            let allStates = getStateObject();
+            const allStates = getStateObject();
             allStates[that.props.id] = state;
             setStateObject(allStates);
-        } 
+        }
 
         return {
             state: {
-                get: function(key) {
-                    let state = getLocalState();
-                    return state.hasOwnProperty(key) ? state[key] : null; 
+                get(key) {
+                    const state = getLocalState();
+                    return Object.prototype.hasOwnProperty.call(state, key) ? state[key] : null;
                 },
-                set: function(key, value) {
-                    let state = getLocalState();
+                set(key, value) {
+                    const state = getLocalState();
                     state[key] = value;
                     setLocalState(state);
-                }
-            }
+                },
+            },
+            identity: {
+                get() {
+                    const user = AuthManager.getUser();
+                    return {
+                        username: (user && user.username) ? user.username : null,
+                    };
+                },
+            },
         };
+    }
+
+    /**
+     * Returns HTML content.
+     * @return {XML} HTML contemnt
+     */
+    render() {
+        return (
+            <div style={{ padding: '30px 15px 15px 15px' }}>
+                {this.renderWidget()}
+            </div>
+        );
     }
 }
