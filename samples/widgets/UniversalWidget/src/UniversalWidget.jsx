@@ -15,7 +15,7 @@
 */
 import React from 'react';
 import ExtendedWidget from "./ExtendedWidget";
-import VizG from './chart-lib/VizG';
+import VizG from 'react-vizgrammar';
 import Axios from 'axios';
 import AuthManager from '../../../../components/dashboards-web-component/src/auth/utils/AuthManager';
 
