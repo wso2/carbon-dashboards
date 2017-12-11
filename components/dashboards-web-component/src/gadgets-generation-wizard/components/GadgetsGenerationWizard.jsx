@@ -170,7 +170,8 @@ class GadgetsGenerationWizard extends Component {
      * Submits gadget configuration
      */
     submitGadgetConfig() {
-        if (!UtilFunctions.isEmpty(this.state.chartConfiguration)) {
+        const validatedConfiguration = this.child.getValidatedConfiguration();
+        if (!UtilFunctions.isEmpty(validatedConfiguration)) {
             const submittableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: '',
@@ -319,6 +320,7 @@ class GadgetsGenerationWizard extends Component {
             case 2:
                 return (
                     <ChartConfigurator
+                        onRef={ref => (this.child = ref)}
                         metadata={this.state.metadata}
                         onConfigurationChange={this.updateChartConfiguration}
                         previewChart={this.state.previewChart}
@@ -441,7 +443,6 @@ class GadgetsGenerationWizard extends Component {
                         title={<FormattedMessage id="create.gadget" defaultMessage="Create gadget" />}
                         width="800"
                     >
-
                         <div style={{ align: 'center' }}>
                             <Stepper activeStep={stepIndex}>
                                 <Step>
