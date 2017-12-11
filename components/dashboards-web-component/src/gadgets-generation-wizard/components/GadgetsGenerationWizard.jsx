@@ -17,22 +17,23 @@
  *
  */
 
-import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
+import React, {Component} from 'react';
+import {FormattedMessage} from 'react-intl';
 // Material UI Components
-import { Step, StepLabel, Stepper } from 'material-ui/Stepper';
+import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import ExpandTransition from 'material-ui/internal/ExpandTransition';
-import Paper from 'material-ui/Paper';
+import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 // App Components
-import { FormPanel, Header } from '../../common';
+import {FormPanel, Header} from '../../common';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';
 import GadgetDetailsConfigurator from './GadgetDetailsConfigurator';
+import ChartPreviewer from './chartPreview/ChartPreviewer';
 // API
 import GadgetsGenerationAPI from '../../utils/apis/GadgetsGenerationAPI';
 
@@ -84,14 +85,14 @@ class GadgetsGenerationWizard extends Component {
             loading: false,
             finished: false,
             stepIndex: 0,
-            previewChart: false,
+            previewGadget: false,
+            previewConfiguration: {},
         };
         this.handleGadgetDetailsChange = this.handleGadgetDetailsChange.bind(this);
         this.handleProviderTypeChange = this.handleProviderTypeChange.bind(this);
         this.handleProviderConfigPropertyChange = this.handleProviderConfigPropertyChange.bind(this);
         this.updateChartConfiguration = this.updateChartConfiguration.bind(this);
-        this.toggleChartPreview = this.toggleChartPreview.bind(this);
-        this.updateChartPreview = this.updateChartPreview.bind(this);
+        this.previewGadget = this.previewGadget.bind(this);
         this.dummyAsync = this.dummyAsync.bind(this);
         this.handleNext = this.handleNext.bind(this);
         this.handlePrev = this.handlePrev.bind(this);
@@ -153,17 +154,31 @@ class GadgetsGenerationWizard extends Component {
     }
 
     /**
-     * Toggles the chart preview
+     * Previews the gadget
      */
-    toggleChartPreview() {
-        this.setState({ previewChart: (!this.state.previewChart) });
-    }
-
-    /**
-     * Updates the chart preview by passing random values
-     */
-    updateChartPreview(data) {
-        this.setState({ data });
+    previewGadget() {
+        const validatedConfiguration = this.child.getValidatedConfiguration();
+        if (!UtilFunctions.isEmpty(validatedConfiguration)) {
+            const previewableConfig = {
+                name: this.state.gadgetDetails.name,
+                id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
+                configs: {
+                    providerConfig: {
+                        configs: {
+                            type: this.state.providerType,
+                            config: this.state.providerConfiguration,
+                        },
+                    },
+                    chartConfig: validatedConfiguration,
+                },
+            };
+            this.setState({
+                previewConfiguration: previewableConfig,
+                previewGadget: true,
+            });
+        } else {
+            this.displaySnackbar('Please fill in required values', 'errorMessage');
+        }
     }
 
     /**
@@ -174,13 +189,15 @@ class GadgetsGenerationWizard extends Component {
         if (!UtilFunctions.isEmpty(validatedConfiguration)) {
             const submittableConfig = {
                 name: this.state.gadgetDetails.name,
-                id: '',
-                chartConfig: this.state.chartConfiguration,
-                providerConfig: {
-                    configs: {
-                        type: this.state.providerType,
-                        config: this.state.providerConfiguration
-                    }
+                id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
+                configs: {
+                    providerConfig: {
+                        configs: {
+                            type: this.state.providerType,
+                            config: this.state.providerConfiguration,
+                        },
+                    },
+                    chartConfig: validatedConfiguration,
                 }
             };
             const apis = new GadgetsGenerationAPI();
@@ -323,9 +340,7 @@ class GadgetsGenerationWizard extends Component {
                         onRef={ref => (this.child = ref)}
                         metadata={this.state.metadata}
                         onConfigurationChange={this.updateChartConfiguration}
-                        previewChart={this.state.previewChart}
-                        toggleChartPreview={this.toggleChartPreview}
-                        updateChartPreview={this.updateChartPreview}
+                        onPreview={this.previewGadget}
                     />
                 );
             default:
@@ -485,6 +500,13 @@ class GadgetsGenerationWizard extends Component {
                         contentStyle={styles.messageBox}
                         bodyStyle={styles[this.state.snackbarMessageType]}
                     />
+                    <Dialog
+                        modal={false}
+                        open={this.state.previewGadget}
+                        onRequestClose={() => this.setState({ previewGadget: false })}
+                    >
+                        <ChartPreviewer config={this.state.previewConfiguration} />
+                    </Dialog>
                 </div>
             </MuiThemeProvider>
         );

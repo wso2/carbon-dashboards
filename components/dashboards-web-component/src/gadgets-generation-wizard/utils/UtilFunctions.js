@@ -46,6 +46,15 @@ class UtilFunctions {
         return sentenceText.charAt(0).toUpperCase() + sentenceText.slice(1);
     }
 
+    /**
+     * Returns an ID out of the given text by converting to lowercase and replacing spaces with dashes
+     * @param text
+     * @returns {string}
+     */
+    static generateID(text) {
+        return text.replace(/\s+/g, '-').toLowerCase();
+    }
+
     /* Chart Validation & Preparation functions [START] */
 
     /**

@@ -18,23 +18,20 @@
  */
 
 import React, { Component } from 'react';
+import PreviewerWidget from './PreviewerWidget';
 
 /**
  * Previews the chart according to the values maintained in the state
  */
 class ChartPreviewer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            metadata: props.metadata,
-            configuration: props.configuration,
-            chartType: props.chartType,
-            data: [],
-        };
-    }
-
     render() {
-        return (<div style={{ margin: 50 }} />);
+        return (
+            <div>
+                <PreviewerWidget
+                    config={this.props.config}
+                />
+            </div>
+        );
     }
 }
 
