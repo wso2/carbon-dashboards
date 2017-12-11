@@ -190,6 +190,24 @@
                 <type>zip</type>
             </dependency>
 
+            <!--Analytics-->
+            <dependency>
+                <groupId>org.wso2.carbon.analytics</groupId>
+                <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
+                <version>${carbon.analytics.version}</version>
+            </dependency>
+            <!-- Analytics common -->
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.analytics.idp.client</artifactId>
+                <version>${carbon.analytics-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
+                <version>${carbon.analytics-common.version}</version>
+            </dependency>
+
             <!--OSGi-->
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -225,6 +243,12 @@
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${org.snakeyaml.version}</version>
+            </dependency>
+            <!-- OWASP -->
+            <dependency>
+                <groupId>org.wso2.orbit.org.owasp.encoder</groupId>
+                <artifactId>encoder</artifactId>
+                <version>${owasp.encoder.version}</version>
             </dependency>
 
             <!--Samples-->
@@ -376,41 +400,11 @@
                 <version>${mockito.core.version}</version>
                 <scope>test</scope>
             </dependency>
-
-            <!-- Analytics common -->
-            <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.analytics.idp.client</artifactId>
-                <version>${carbon.analytics-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.analytics-common</groupId>
-                <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
-                <version>${carbon.analytics-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.analytics</groupId>
-                <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
-                <version>${carbon.analytics.version}</version>
-            </dependency>
-
-            <!-- OWASP -->
-            <dependency>
-                <groupId>org.wso2.orbit.org.owasp.encoder</groupId>
-                <artifactId>encoder</artifactId>
-                <version>${owasp.encoder.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <properties>
         <carbon.dashboards.version>4.0.0.beta3-SNAPSHOT</carbon.dashboards.version>
-
-        <!--Analytics-->
-        <carbon.analytics-common.version>6.0.36</carbon.analytics-common.version>
-        <carbon.analytics-common.version.range>[6.0.36, 7.0.0)</carbon.analytics-common.version.range>
-        <carbon.analytics.version>2.0.197</carbon.analytics.version>
-        <carbon.analytics.version.range>[2.0.197, 3.0.0)</carbon.analytics.version.range>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
@@ -445,6 +439,13 @@
         <carbon.jndi.version>1.0.3</carbon.jndi.version>
         <carbon.datasources.version>1.1.2</carbon.datasources.version>
 
+        <!--Analytics-->
+        <carbon.analytics.version>2.0.197</carbon.analytics.version>
+        <carbon.analytics.version.range>[2.0.197, 3.0.0)</carbon.analytics.version.range>
+        <!--Analytics common-->
+        <carbon.analytics-common.version>6.0.36</carbon.analytics-common.version>
+        <carbon.analytics-common.version.range>[6.0.36, 7.0.0)</carbon.analytics-common.version.range>
+
         <!--OSGi-->
         <org.osgi.api.version>6.0.0</org.osgi.api.version>
         <org.wso2.eclipse.osgi.version>3.4.0.v20140312-2051</org.wso2.eclipse.osgi.version>
@@ -466,7 +467,6 @@
         <!--Snake YAML-->
         <org.snakeyaml.version>1.17</org.snakeyaml.version>
         <org.yaml.version.range>[1.17.0, 2.0.0)</org.yaml.version.range>
-
         <!-- OWASP -->
         <owasp.encoder.version>1.2.0.wso2v2</owasp.encoder.version>
         <owasp.encoder.version.range>[1.2.0, 1.3.0)</owasp.encoder.version.range>
