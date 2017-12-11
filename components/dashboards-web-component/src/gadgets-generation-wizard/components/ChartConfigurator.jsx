@@ -57,6 +57,14 @@ class ChartConfigurator extends Component {
         };
     }
 
+    componentDidMount() {
+        this.props.onRef(this);
+    }
+
+    componentWillUnmount() {
+        this.props.onRef(undefined);
+    }
+
     /**
      * Assigns selected chart type in the state and loads its default configuration
      * @param mainChartType
@@ -131,7 +139,11 @@ class ChartConfigurator extends Component {
         return (<div />);
     }
 
-    submitGadget() {
+    /**
+     * Returns the gadget to be submitted after validation. Empty object is returned when the gadget is not valid
+     * @returns {{}}
+     */
+    getValidatedConfiguration() {
         let configuration = this.state.chartConfiguration;
         let isGadgetConfigurationValid = false;
         switch (this.state.chartType) {
@@ -180,7 +192,7 @@ class ChartConfigurator extends Component {
         if (isGadgetConfigurationValid) {
             submittableConfig = configuration;
         }
-        this.props.onConfigurationChange(submittableConfig);
+        return submittableConfig;
     }
 
     /**

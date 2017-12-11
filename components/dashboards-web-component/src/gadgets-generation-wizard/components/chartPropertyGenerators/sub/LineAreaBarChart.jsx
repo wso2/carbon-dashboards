@@ -92,7 +92,6 @@ class LineAreaBar extends Component {
                         {/* When no selection has been made for 'color' */}
                         {(this.props.configuration.color === '') ?
                             (<div>
-                                <br />
                                 <ColorProperty
                                     id="fill"
                                     value={this.props.configuration.fill}
@@ -118,7 +117,7 @@ class LineAreaBar extends Component {
                         }
                         {/* No styling available for bar charts */}
                         {((this.props.configuration.type !== Types.chart.barChart)) ?
-                            (<div><br /><br /><h4>Chart Style</h4></div>) :
+                            (<div><br /><h4>Style</h4></div>) :
                             (null)
                         }
                         {((this.props.configuration.type === Types.chart.lineChart) ||
@@ -164,7 +163,6 @@ class LineAreaBar extends Component {
                             </div>) :
                             (null)
                         }
-                        <br />
                         <a>Color set to use in the charts</a>
                         {(this.props.configuration.colorScale.length === 0) ?
                             (

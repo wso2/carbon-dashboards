@@ -20,7 +20,7 @@
 import React, { Component } from 'react';
 // Material UI Components
 import FlatButton from 'material-ui/FlatButton';
-import { Card } from 'material-ui/Card';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
 import IconButton from 'material-ui/IconButton';
 import AddButton from 'material-ui/svg-icons/content/add';
@@ -42,6 +42,7 @@ class Pie extends Component {
         super(props);
         this.state = {
             configuration: props.configuration,
+            expandAdvanced: false,
         };
     }
 
@@ -155,78 +156,6 @@ class Pie extends Component {
                     fullWidth
                 />
                 <br />
-                <br />
-                <br />
-                <a>Color set to use in the charts</a>
-                {(this.props.configuration.charts[0].colorScale.length === 0) ?
-                    (
-                        <a>
-                            &nbsp; &nbsp;
-                            <FlatButton
-                                primary
-                                label="Default"
-                                onClick={() => this.addColorMember('colorScale')}
-                            />
-                        </a>
-                    ) : (null)}
-                <Table>
-                    <TableBody displayRowCheckbox={false}>
-                        {this.props.configuration.charts[0].colorScale.map((color, index) =>
-                            (<TableRow key={index}>
-                                <TableRowColumn>
-                                    <ColorProperty
-                                        id={'colorScale' + index}
-                                        value={color}
-                                        onChange={(id, value) =>
-                                            this.handleColorMemberChange('colorScale', index, value)}
-                                    />
-                                </TableRowColumn>
-                                <TableRowColumn>
-                                    <IconButton onClick={() =>
-                                        this.removeColorMember('colorScale', index)}
-                                    >
-                                        <ClearButton />
-                                    </IconButton>
-                                </TableRowColumn>
-                            </TableRow>))}
-                    </TableBody>
-                </Table>
-                <br />
-                {(this.props.configuration.charts[0].colorScale.length !== 0) ?
-                    (<div>
-                        <IconButton onClick={() => this.addColorMember('colorScale')}>
-                            <AddButton />
-                        </IconButton>
-                        <br />
-                    </div>) : (null)}
-                <br />
-                <a>If certain categories are required to be grouped in a certain color</a>
-                <Table>
-                    <TableBody displayRowCheckbox={false}>
-                        {this.props.configuration.charts[0].colorDomain.map((colorDomainMember, index) =>
-                            (<TableRow key={index}>
-                                <TableRowColumn>
-                                    <TextProperty
-                                        id={'colorDomain' + index}
-                                        value={colorDomainMember}
-                                        onChange={(id, value) =>
-                                            this.handleColorMemberChange('colorDomain', index, value)}
-                                    />
-                                    <br />
-                                </TableRowColumn>
-                                <TableRowColumn>
-                                    <IconButton onClick={() =>
-                                        this.removeColorMember('colorDomain', index)}
-                                    >
-                                        <ClearButton />
-                                    </IconButton>
-                                </TableRowColumn>
-                            </TableRow>))}
-                    </TableBody>
-                </Table>
-                <IconButton onClick={() => this.addColorMember('colorDomain')}>
-                    <AddButton />
-                </IconButton>
                 <TextProperty
                     id="height"
                     value={this.state.configuration.height}
@@ -247,40 +176,124 @@ class Pie extends Component {
                 <br />
                 <br />
                 {/* Optional configuration properties */}
-                <Card style={{ padding: 50 }}>
-                    <h3>Advanced Settings</h3>
-                    <SelectProperty
-                        id="legendOrientation"
-                        value={this.state.configuration.legendOrientation}
-                        fieldName="Orientation of the legend relative to the chart"
-                        options={{
-                            values: ['top', 'bottom', 'left', 'right'],
-                            texts: ['Top', 'Bottom', 'Left', 'Right'],
-                        }}
-                        onChange={(id, value) => this.handleChartPropertyChange(id, value)}
-                        fullWidth
+                <Card
+                    style={this.state.expandAdvanced ? { padding: 30 } : { padding: 10 }}
+                    expanded={this.state.expandAdvanced}
+                    onExpandChange={e => this.setState({ expandAdvanced: e })}
+                >
+                    <CardHeader
+                        title="Advanced Settings"
+                        actAsExpander
+                        showExpandableButton
                     />
-                    <br />
-                    <br />
-                    <h3>Style</h3>
-                    <ColorProperty
-                        id="legendTitleColor"
-                        value={this.state.configuration.style.legendTitleColor}
-                        fieldName="Text color of the legend title"
-                        onChange={(id, value) => this.handleChartStylePropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
-                    <ColorProperty
-                        id="legendTextColor"
-                        value={this.state.configuration.style.legendTextColor}
-                        fieldName="Text color of the text in the legend"
-                        onChange={(id, value) => this.handleChartStylePropertyChange(id, value)}
-                        fullWidth
-                    />
-                    <br />
+                    <CardMedia
+                        expandable
+                    >
+                        <SelectProperty
+                            id="legendOrientation"
+                            value={this.state.configuration.legendOrientation}
+                            fieldName="Orientation of the legend relative to the chart"
+                            options={{
+                                values: ['top', 'bottom', 'left', 'right'],
+                                texts: ['Top', 'Bottom', 'Left', 'Right'],
+                            }}
+                            onChange={(id, value) => this.handleChartPropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <br />
+                        <a style={{ verticalAlign: 'center' }}>Color set to use in the charts</a>
+                        {(this.props.configuration.charts[0].colorScale.length === 0) ?
+                            (
+                                <a>
+                                    &nbsp; &nbsp;
+                                    <FlatButton
+                                        primary
+                                        label="Default"
+                                        onClick={() => this.addColorMember('colorScale')}
+                                    />
+                                </a>
+                            ) : (null)}
+                        <Table>
+                            <TableBody displayRowCheckbox={false}>
+                                {this.props.configuration.charts[0].colorScale.map((color, index) =>
+                                    (<TableRow key={index}>
+                                        <TableRowColumn>
+                                            <ColorProperty
+                                                id={'colorScale' + index}
+                                                value={color}
+                                                onChange={(id, value) =>
+                                                    this.handleColorMemberChange('colorScale', index, value)}
+                                            />
+                                        </TableRowColumn>
+                                        <TableRowColumn>
+                                            <IconButton onClick={() =>
+                                                this.removeColorMember('colorScale', index)}
+                                            >
+                                                <ClearButton />
+                                            </IconButton>
+                                        </TableRowColumn>
+                                    </TableRow>))}
+                            </TableBody>
+                        </Table>
+                        <br />
+                        {(this.props.configuration.charts[0].colorScale.length !== 0) ?
+                            (<div>
+                                <IconButton onClick={() => this.addColorMember('colorScale')}>
+                                    <AddButton />
+                                </IconButton>
+                                <br />
+                            </div>) : (null)}
+                        <br />
+                        <a>If certain categories are required to be grouped in a certain color</a>
+                        <Table>
+                            <TableBody displayRowCheckbox={false}>
+                                {this.props.configuration.charts[0].colorDomain.map((colorDomainMember, index) =>
+                                    (<TableRow key={index}>
+                                        <TableRowColumn>
+                                            <TextProperty
+                                                id={'colorDomain' + index}
+                                                value={colorDomainMember}
+                                                onChange={(id, value) =>
+                                                    this.handleColorMemberChange('colorDomain', index, value)}
+                                            />
+                                            <br />
+                                        </TableRowColumn>
+                                        <TableRowColumn>
+                                            <IconButton onClick={() =>
+                                                this.removeColorMember('colorDomain', index)}
+                                            >
+                                                <ClearButton />
+                                            </IconButton>
+                                        </TableRowColumn>
+                                    </TableRow>))}
+                            </TableBody>
+                        </Table>
+                        <div>
+                            <IconButton onClick={() => this.addColorMember('colorDomain')}>
+                                <AddButton />
+                            </IconButton>
+                            <br />
+                        </div>
+                        <h3>Style</h3>
+                        <ColorProperty
+                            id="legendTitleColor"
+                            value={this.state.configuration.style.legendTitleColor}
+                            fieldName="Text color of the legend title"
+                            onChange={(id, value) => this.handleChartStylePropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                        <ColorProperty
+                            id="legendTextColor"
+                            value={this.state.configuration.style.legendTextColor}
+                            fieldName="Text color of the text in the legend"
+                            onChange={(id, value) => this.handleChartStylePropertyChange(id, value)}
+                            fullWidth
+                        />
+                        <br />
+                    </CardMedia>
                 </Card>
-
             </div>
         );
     }

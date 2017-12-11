@@ -41,6 +41,7 @@ class Geographical extends Component {
         super(props);
         this.state = {
             configuration: props.configuration,
+            expandAdvanced: false,
         };
     }
 
@@ -137,6 +138,23 @@ class Geographical extends Component {
                     fullWidth
                 />
                 <br />
+                <TextProperty
+                    id="height"
+                    value={this.state.configuration.height}
+                    fieldName="Height of the chart (in pixels)"
+                    onChange={(id, value) => this.handleMainPropertyChange(id, value)}
+                    number
+                    fullWidth
+                />
+                <br />
+                <TextProperty
+                    id="width"
+                    value={this.state.configuration.width}
+                    fieldName="Width of the chart (in pixels)"
+                    onChange={(id, value) => this.handleMainPropertyChange(id, value)}
+                    number
+                    fullWidth
+                />
                 <br />
                 <br />
                 <br />
@@ -182,25 +200,6 @@ class Geographical extends Component {
                         </IconButton>
                         <br />
                     </div>) : (null)}
-
-                <TextProperty
-                    id="height"
-                    value={this.state.configuration.height}
-                    fieldName="Height of the chart (in pixels)"
-                    onChange={(id, value) => this.handleMainPropertyChange(id, value)}
-                    number
-                    fullWidth
-                />
-                <br />
-                <TextProperty
-                    id="width"
-                    value={this.state.configuration.width}
-                    fieldName="Width of the chart (in pixels)"
-                    onChange={(id, value) => this.handleMainPropertyChange(id, value)}
-                    number
-                    fullWidth
-                />
-                <br />
             </div>
         );
     }
