@@ -134,31 +134,6 @@
                 <version>${javax.websocket.version}</version>
             </dependency>
 
-            <!--Transport-->
-            <dependency>
-                <groupId>org.wso2.carbon.messaging</groupId>
-                <artifactId>org.wso2.carbon.messaging</artifactId>
-                <version>${carbon.messaging.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.messaging</groupId>
-                <artifactId>org.wso2.carbon.messaging.feature</artifactId>
-                <version>${carbon.messaging.version}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.transport</groupId>
-                <artifactId>org.wso2.carbon.transport.http.netty.feature</artifactId>
-                <version>${carbon.transport.version}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.transport</groupId>
-                <artifactId>org.wso2.carbon.connector.framework.feature</artifactId>
-                <version>${carbon.transport.version}</version>
-                <type>zip</type>
-            </dependency>
-
             <!--Metrics-->
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
@@ -428,10 +403,6 @@
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
         <javax.websocket.version>1.1</javax.websocket.version>
         <javax.websocket.version.range>[1.1.0, 2.0.0)</javax.websocket.version.range>
-
-        <!--Transport-->
-        <carbon.messaging.version>3.0.0</carbon.messaging.version>
-        <carbon.transport.version>5.0.0-m1</carbon.transport.version>
 
         <!--Metrics-->
         <carbon.metrics.version>2.3.0</carbon.metrics.version>
