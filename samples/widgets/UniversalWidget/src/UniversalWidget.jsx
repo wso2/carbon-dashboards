@@ -39,7 +39,7 @@ export default class UniversalWidget extends ExtendedWidget {
     componentDidMount() {
         this.handleWidgetData = this.handleWidgetData.bind(this);
         this.getHTTPClient()
-            .get(`portal/apis/widgets/${this.props.widgetID}`)
+            .get(`apis/widgets/${this.props.widgetID}`)
             .then((message) => {
                 let providerConfiguration = message.data.configs.providerConfig;
                 super.getWidgetChannelManager().subscribeWidget(this.props.widgetID, this.handleWidgetData, providerConfiguration);
@@ -73,7 +73,7 @@ export default class UniversalWidget extends ExtendedWidget {
 
     getHTTPClient() {
         let httpClient = Axios.create({
-            baseURL: window.location.origin,
+            baseURL: window.location.origin+''+window.contextPath,
             timeout: 2000,
             headers: {"Authorization": "Bearer " + AuthManager.getUser().token},
         });
