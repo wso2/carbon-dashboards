@@ -36,16 +36,16 @@
     </parent>
 
     <modules>
-        <module>CpuUsage</module>
-        <module>LoadAverage</module>
-        <module>MemoryUsage</module>
-        <module>Publisher</module>
-        <module>ServerStatus</module>
-        <module>Subscriber</module>
-        <module>TotalUpdates</module>
+        <!--<module>CpuUsage</module>-->
+        <!--<module>LoadAverage</module>-->
+        <!--<module>MemoryUsage</module>-->
+        <!--<module>Publisher</module>-->
+        <!--<module>ServerStatus</module>-->
+        <!--<module>Subscriber</module>-->
+        <!--<module>TotalUpdates</module>-->
         <module>WidgetState</module>
         <module>UniversalWidget</module>
-        <module>UserInfo</module>
+        <!--<module>UserInfo</module>-->
         <module>sales-dashboard-widgets/CustomersByProduct</module>
         <module>sales-dashboard-widgets/CustomersPerYear</module>
         <module>sales-dashboard-widgets/OverallProductInfo</module>

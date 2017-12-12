@@ -129,12 +129,16 @@ class CustomersPerYear extends Widget {
 
     render() {
         return (
-            <section>
-                <div style={{margin: "5px", width: this.state.width, height: this.state.height}}>
-                    <VizG config={this.lineConfig} metadata={this.metadata} data={this.state.data} append={false}/>
+                <div style={{margin: "5px", width: this.props.glContainer.width, height: this.props.glContainer.height}}>
+                    <VizG
+                        config={this.lineConfig}
+                        metadata={this.metadata}
+                        data={this.state.data}
+                        append={false}
+                        height={this.props.glContainer.height}
+                        width={this.props.glContainer.width}
+                    />
                 </div>
-            </section>
-
         );
     }
 }

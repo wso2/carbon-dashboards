@@ -1,0 +1,148 @@
+Index: samples/widgets/sales-dashboard-widgets/CustomersByProduct/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/CustomersByProduct/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/CustomersByProduct/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -13,7 +13,7 @@
+         "react-simple-maps": "^0.9.0",
+         "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.7",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/CustomersPerYear/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/CustomersPerYear/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/CustomersPerYear/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -11,9 +11,8 @@
+         "react": "^16.1.1",
+         "react-dom": "^16.1.1",
+         "react-simple-maps": "^0.9.0",
+-        "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.3",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/OverallProductInfo/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/OverallProductInfo/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/OverallProductInfo/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -11,9 +11,8 @@
+         "react": "^16.1.1",
+         "react-dom": "^16.1.1",
+         "react-simple-maps": "^0.9.0",
+-        "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.3",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/OverallRevenueInfo/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/OverallRevenueInfo/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/OverallRevenueInfo/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -13,7 +13,7 @@
+         "react-simple-maps": "^0.9.0",
+         "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.7",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/RevenueByCountry/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/RevenueByCountry/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/RevenueByCountry/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -13,7 +13,7 @@
+         "react-simple-maps": "^0.9.0",
+         "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.7",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/RevenueByProduct/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/RevenueByProduct/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/RevenueByProduct/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -13,7 +13,7 @@
+         "react-simple-maps": "^0.9.0",
+         "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.7",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/RevenueByRegion/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/RevenueByRegion/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/RevenueByRegion/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -13,7 +13,7 @@
+         "react-simple-maps": "^0.9.0",
+         "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.7",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/RevenuePerYear/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/RevenuePerYear/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/RevenuePerYear/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -13,7 +13,7 @@
+         "react-simple-maps": "^0.9.0",
+         "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.7",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"
+Index: samples/widgets/sales-dashboard-widgets/RevenuePercentage/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- samples/widgets/sales-dashboard-widgets/RevenuePercentage/package.json	(revision 185d640c9b6f8c2d5324c24473cc11ca5a97ae4f)
++++ samples/widgets/sales-dashboard-widgets/RevenuePercentage/package.json	(revision b652707ed8aec3ddd61334b6fafcf012c7258c5a)
+@@ -13,7 +13,7 @@
+         "react-simple-maps": "^0.9.0",
+         "react-table": "^6.6.0",
+         "react-tooltip": "^3.4.0",
+-        "react-vizgrammar": "0.6.3",
++        "react-vizgrammar": "^0.6.7",
+         "rimraf": "^2.6.2",
+         "topojson-client": "^3.0.0",
+         "victory": "^0.22.2"

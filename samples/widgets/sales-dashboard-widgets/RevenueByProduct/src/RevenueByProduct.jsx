@@ -121,8 +121,14 @@ class RevenueByProduct extends Widget {
     render() {
         return (
             <div
-                style={{margin: "10px", width: this.state.width, height: this.state.height}}>
-                <VizG config={this.barChartConfig} metadata={this.metadata} data={this.state.data}/>
+                style={{margin: "10px", width: this.props.glContainer.width, height: this.props.glContainer.height}}>
+                <VizG
+                    config={this.barChartConfig}
+                    metadata={this.metadata}
+                    data={this.state.data}
+                    width={this.props.glContainer.width}
+                    height={this.props.glContainer.height}
+                />
             </div>
         );
     }

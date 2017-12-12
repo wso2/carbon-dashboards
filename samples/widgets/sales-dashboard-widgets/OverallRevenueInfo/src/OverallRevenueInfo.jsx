@@ -164,7 +164,7 @@ class OverallRevenueInfo extends Widget {
                 mode: 'pie',
                 colorScale: ['#4659f9', '#00dffc ', '#00b1e1', '#6f2e71', '#c43a5d']
             }],
-            width:515,
+            width: 515,
             animate: true,
             style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"}
         };
@@ -208,11 +208,16 @@ class OverallRevenueInfo extends Widget {
 
     render() {
         return (
-            <section>
-                <div style={{width:"100%" }}>
-                        <VizG config={this.configPie} metadata={this.metadata} data={this.state.data} append={false}/>
-                </div>
-            </section>
+            <div style={{marginTop: "5px", height: this.props.glContainer.height, width: this.props.glContainer.width}}>
+                <VizG
+                    config={this.configPie}
+                    metadata={this.metadata}
+                    data={this.state.data}
+                    append={false}
+                    height={this.props.glContainer.height}
+                    width={this.props.glContainer.width}
+                />
+            </div>
         );
     }
 }

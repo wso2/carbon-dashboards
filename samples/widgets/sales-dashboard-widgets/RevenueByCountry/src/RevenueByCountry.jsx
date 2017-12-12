@@ -86,7 +86,6 @@ class RevenueByCountry extends Widget {
 
     render() {
         return (
-            <section>
                 <div className="sample-dashboard-content">
                     <div className="sample-dashboard-content-rev-text">
                         <div className="sample-instructions">Pick a Country to view stats</div>
@@ -110,8 +109,6 @@ class RevenueByCountry extends Widget {
                               onClick={this.setSelectedCountry}/>
                     </div>
                 </div>
-            </section>
-
         );
     }
 }
