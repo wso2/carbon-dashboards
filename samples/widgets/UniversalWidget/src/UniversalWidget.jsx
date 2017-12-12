@@ -73,7 +73,7 @@ export default class UniversalWidget extends ExtendedWidget {
 
     getHTTPClient() {
         let httpClient = Axios.create({
-            baseURL: window.location.origin+''+window.contextPath,
+            baseURL: window.location.origin+window.contextPath,
             timeout: 2000,
             headers: {"Authorization": "Bearer " + AuthManager.getUser().token},
         });
