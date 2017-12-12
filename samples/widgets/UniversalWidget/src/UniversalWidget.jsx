@@ -63,15 +63,7 @@ export default class UniversalWidget extends ExtendedWidget {
 
     renderWidget() {
         return (
-            <div style={{ height:this.props.glContainer.height, width:this.props.glContainer.width }}>
-                <VizG
-                    config={this.state.config}
-                    metadata={this.state.metadata}
-                    data={this.state.data}
-                    height={this.props.glContainer.height}
-                    width={this.props.glContainer.height}
-                />
-            </div>
+            <VizG config={this.state.config} metadata={this.state.metadata} data={this.state.data} />
         );
     }
 
