@@ -21,8 +21,6 @@ import React, { Component } from 'react';
 // Material UI Components
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-// App Utils
-import Types from '../utils/Types';
 // App Components
 import TextProperty from './inputTypes/TextProperty';
 import SwitchProperty from './inputTypes/SwitchProperty';

@@ -17,18 +17,18 @@
  *
  */
 
-import React, {Component} from 'react';
-import {FormattedMessage} from 'react-intl';
+import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
 // Material UI Components
-import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
+import { Step, StepLabel, Stepper } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import ExpandTransition from 'material-ui/internal/ExpandTransition';
 import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
-import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
+import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
 // App Components
-import {FormPanel, Header} from '../../common';
+import { FormPanel, Header } from '../../common';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';

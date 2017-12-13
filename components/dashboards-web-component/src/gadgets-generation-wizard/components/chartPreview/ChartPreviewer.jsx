@@ -27,9 +27,7 @@ class ChartPreviewer extends Component {
     render() {
         return (
             <div>
-                <PreviewerWidget
-                    config={this.props.config}
-                />
+                <PreviewerWidget config={this.props.config} />
             </div>
         );
     }
