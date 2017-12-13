@@ -39,6 +39,7 @@ export default class PreviewerWidget extends React.Component {
             metadata: data.metadata,
             data: data.data,
         });
+        window.dispatchEvent(new Event('resize'));
     }
 
     render() {

@@ -91,6 +91,7 @@ class GadgetsGenerationWizard extends Component {
         this.handleGadgetDetailsChange = this.handleGadgetDetailsChange.bind(this);
         this.handleProviderTypeChange = this.handleProviderTypeChange.bind(this);
         this.handleProviderConfigPropertyChange = this.handleProviderConfigPropertyChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.updateChartConfiguration = this.updateChartConfiguration.bind(this);
         this.previewGadget = this.previewGadget.bind(this);
         this.dummyAsync = this.dummyAsync.bind(this);
@@ -221,6 +222,11 @@ class GadgetsGenerationWizard extends Component {
 
     /* Wizard pages navigation related functions [START] */
 
+    handleFormSubmit(event) {
+        event.preventDefault();
+        this.handleNext();
+    }
+
     dummyAsync(cb) {
         this.setState({ loading: true }, () => {
             this.asyncTimer = setTimeout(cb, 500);
@@ -251,7 +257,7 @@ class GadgetsGenerationWizard extends Component {
                     }).catch((error) => {
                         if (error.response) {
                             if (error.response.status === 409) {
-                                this.displaySnackbar('The widget name already exists', 'errorMessage');
+                                this.displaySnackbar('The gadget name already exists', 'errorMessage');
                             } else {
                                 this.displaySnackbar('Unable to proceed to the next step', 'errorMessage');
                             }
@@ -454,9 +460,18 @@ class GadgetsGenerationWizard extends Component {
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
                     <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
+                    <Dialog
+                        modal={false}
+                        open={this.state.previewGadget}
+                        onRequestClose={() => this.setState({ previewGadget: false })}
+                        repositionOnUpdate
+                    >
+                        <ChartPreviewer config={this.state.previewConfiguration} />
+                    </Dialog>
                     <FormPanel
-                        title={<FormattedMessage id="create.gadget" defaultMessage="Create gadget" />}
+                        title={<FormattedMessage id="create.gadget" defaultMessage="Create Gadget" />}
                         width="800"
+                        onSubmit={this.handleFormSubmit}
                     >
                         <div style={{ align: 'center' }}>
                             <Stepper activeStep={stepIndex}>
@@ -500,13 +515,7 @@ class GadgetsGenerationWizard extends Component {
                         contentStyle={styles.messageBox}
                         bodyStyle={styles[this.state.snackbarMessageType]}
                     />
-                    <Dialog
-                        modal={false}
-                        open={this.state.previewGadget}
-                        onRequestClose={() => this.setState({ previewGadget: false })}
-                    >
-                        <ChartPreviewer config={this.state.previewConfiguration} />
-                    </Dialog>
+
                 </div>
             </MuiThemeProvider>
         );
