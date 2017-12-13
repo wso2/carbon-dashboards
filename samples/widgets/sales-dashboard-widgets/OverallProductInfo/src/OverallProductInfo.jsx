@@ -207,7 +207,9 @@ class OverallProductInfo extends Widget {
 
     render() {
         return (
-            <div style={{marginTop: "5px", height: this.props.glContainer.height, width: this.props.glContainer.width}}>
+            <div
+                style={{ height: this.props.glContainer.height, width: this.props.glContainer.width, paddingBottom: 10 }}
+            >
                 <VizG
                     config={this.stackedBarChartConfig}
                     metadata={this.metadata}

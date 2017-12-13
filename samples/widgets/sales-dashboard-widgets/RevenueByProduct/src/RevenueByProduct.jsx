@@ -121,7 +121,8 @@ class RevenueByProduct extends Widget {
     render() {
         return (
             <div
-                style={{margin: "10px", width: this.props.glContainer.width, height: this.props.glContainer.height}}>
+                style={{ height: this.props.glContainer.height, width: this.props.glContainer.width, paddingBottom: 10 }}
+            >
                 <VizG
                     config={this.barChartConfig}
                     metadata={this.metadata}

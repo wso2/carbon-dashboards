@@ -36,8 +36,6 @@ class CustomersPerYear extends Widget {
             x: 'Year',
             charts: [{type: 'line', y: 'Downloads', fill: '#00e1d6', style: {strokeWidth: 2, markRadius: 5}},
                 {type: 'line', y: 'Customers', fill: '#ff2e4e', style: {strokeWidth: 2, markRadius: 5}}],
-            width: this.props.glContainer.width,
-            height: this.props.glContainer.height,
             legend: true,
             animate: true,
             style: {
