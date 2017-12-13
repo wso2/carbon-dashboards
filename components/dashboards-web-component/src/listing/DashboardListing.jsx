@@ -64,7 +64,7 @@ class DashboardListing extends React.Component {
                                 window.location.href = window.contextPath + '/create/';
                             }}/>
                         <FlatButton
-                            label={<FormattedMessage id="create.gadget" defaultMessage="Create Gadget"/>}
+                            label={<FormattedMessage id="create.widget" defaultMessage="Create Widget"/>}
                             icon={<ContentAdd/>} primary
                             style={{'margin-right': '12px'}}
                             labelStyle={{'paddingLeft': '2px' }}

@@ -204,16 +204,16 @@ class GadgetsGenerationWizard extends Component {
             const apis = new GadgetsGenerationAPI();
             apis.addGadgetConfiguration(JSON.stringify(submittableConfig)).then((response) => {
                 if (response.status === 201) {
-                    this.displaySnackbar(`Gadget ${this.state.gadgetDetails.name} was created successfully!`,
+                    this.displaySnackbar(`Widget ${this.state.gadgetDetails.name} was created successfully!`,
                         'successMessage');
                     setTimeout(() => {
                         window.location.href = appContext;
                     }, 1000);
                 } else {
-                    this.displaySnackbar('Failed to save the gadget', 'errorMessage');
+                    this.displaySnackbar('Failed to save the widget', 'errorMessage');
                 }
             }).catch(() => {
-                this.displaySnackbar('Failed to save the gadget', 'errorMessage');
+                this.displaySnackbar('Failed to save the widget', 'errorMessage');
             });
         } else {
             this.displaySnackbar('Please fill in required values', 'errorMessage');
@@ -257,7 +257,7 @@ class GadgetsGenerationWizard extends Component {
                     }).catch((error) => {
                         if (error.response) {
                             if (error.response.status === 409) {
-                                this.displaySnackbar('The gadget name already exists', 'errorMessage');
+                                this.displaySnackbar('The widget name already exists', 'errorMessage');
                             } else {
                                 this.displaySnackbar('Unable to proceed to the next step', 'errorMessage');
                             }
@@ -266,7 +266,7 @@ class GadgetsGenerationWizard extends Component {
                         }
                     });
                 } else {
-                    this.displaySnackbar('Gadget name can not be empty', 'errorMessage');
+                    this.displaySnackbar('Widget name can not be empty', 'errorMessage');
                 }
                 break;
             case (1):
@@ -469,7 +469,7 @@ class GadgetsGenerationWizard extends Component {
                         <ChartPreviewer config={this.state.previewConfiguration} />
                     </Dialog>
                     <FormPanel
-                        title={<FormattedMessage id="create.gadget" defaultMessage="Create Gadget" />}
+                        title={<FormattedMessage id="create.widget" defaultMessage="Create Widget" />}
                         width="800"
                         onSubmit={this.handleFormSubmit}
                     >
@@ -479,7 +479,7 @@ class GadgetsGenerationWizard extends Component {
                                     <StepLabel
                                         style={this.getStepperTextStyle(stepIndex, 0)}
                                     >
-                                        Enter gadget name
+                                        Enter widget name
                                     </StepLabel>
                                 </Step>
                                 <Step>
@@ -515,7 +515,6 @@ class GadgetsGenerationWizard extends Component {
                         contentStyle={styles.messageBox}
                         bodyStyle={styles[this.state.snackbarMessageType]}
                     />
-
                 </div>
             </MuiThemeProvider>
         );
