@@ -172,7 +172,7 @@ export default class DashboardCreatePage extends Component {
                 } else {
                     this.showError(this.context.intl.formatMessage({
                         id: "dashboard.add.error",
-                        defaultMessage: "Error in adding dashboard!"
+                        defaultMessage: "Couldn't create the dashboard!!"
                     }));
                 }
             });
@@ -190,7 +190,7 @@ export default class DashboardCreatePage extends Component {
                     <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
 
                     <FormPanel
-                        title={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard" />}
+                        title={<FormattedMessage id="create.dashboard" defaultMessage="Create Dashboard" />}
                         width="800"
                     >
                         <TextField

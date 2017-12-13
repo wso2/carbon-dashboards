@@ -22,7 +22,8 @@ import React, { Component } from 'react';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Snackbar from 'material-ui/Snackbar';
-import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton';
+import PollIcon from 'material-ui/svg-icons/social/poll';
 // App Utils
 import Types from '../utils/Types';
 import Configurations from '../utils/Configurations';
@@ -36,7 +37,6 @@ import GeographicalChart from './chartPropertyGenerators/main/GeographicalChart'
 import TableChart from './chartPropertyGenerators/main/TableChart';
 // App Utils
 import UtilFunctions from '../utils/UtilFunctions';
-import ChartPreviewer from './chartPreview/ChartPreviewer';
 
 /**
  * Displays chart type selection, and the properties related to the selected chart type
@@ -242,6 +242,14 @@ class ChartConfigurator extends Component {
                         />
                     </SelectField>
                     {this.displayChartProperties()}
+                    <br />
+                    <RaisedButton
+                        label="Preview"
+                        labelPosition="before"
+                        primary
+                        icon={<PollIcon />}
+                        onClick={() => this.props.onPreview()}
+                    />
                 </div>
                 <Snackbar
                     open={this.state.isSnackbarOpen}
@@ -254,18 +262,6 @@ class ChartConfigurator extends Component {
                         });
                     }}
                 />
-                <Dialog
-                    modal={false}
-                    open={this.props.previewChart}
-                    onRequestClose={() => this.props.toggleChartPreview()}
-                >
-                    <ChartPreviewer
-                        metadata={this.props.metadata}
-                        configuration={this.state.previewConfiguration}
-                        chartType={this.state.chartType}
-                        open={this.props.previewChart}
-                    />
-                </Dialog>
             </div>
         );
     }

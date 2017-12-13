@@ -8,7 +8,7 @@
   "login.error.message": "Nom d'utilisateur / mot de passe invalide!",
   "login.unknown.error" : "Une erreur inconnue s'est produite!",
   "create.dashboard" : "Créer un tableau de bord",
-  "create.gadget" : "Créer un gadget",
+  "create.widget" : "Créer un widget",
   "dashboard.name" : "Nom de votre tableau de bord",
   "dashboard.name.hint.text" : "Par exemple. Statistiques de ventes",
   "dashboard.url" : "URL",

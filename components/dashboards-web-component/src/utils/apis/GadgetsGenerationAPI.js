@@ -22,6 +22,11 @@ import axios from 'axios';
 import AuthManager from '../../auth/utils/AuthManager';
 
 /**
+ * App context.
+ */
+const appContext = window.contextPath;
+
+/**
  * Gadgets generation wizard API
  */
 class GadgetsGenerationAPI {
@@ -31,7 +36,7 @@ class GadgetsGenerationAPI {
      */
     getHTTPClient() {
         let httpClient = axios.create({
-            baseURL: window.location.origin,
+            baseURL: appContext + '/apis',
             timeout: 2000,
             headers: { "Authorization": "Bearer " + AuthManager.getUser().token },
         });
@@ -44,14 +49,14 @@ class GadgetsGenerationAPI {
      * @param widgetName
      */
     validateWidgetName(widgetName) {
-        return this.getHTTPClient().post(`portal/apis/widgets/${widgetName}/validate`);
+        return this.getHTTPClient().post(`/widgets/${widgetName}/validate`);
     }
 
     /**
      * Gets a list of available data providers
      */
     getProvidersList() {
-        return this.getHTTPClient().get('portal/apis/data-provider/list');
+        return this.getHTTPClient().get('/data-provider/list');
     }
 
     /**
@@ -59,7 +64,7 @@ class GadgetsGenerationAPI {
      * @param providerName
      */
     getProviderConfiguration(providerName) {
-        return this.getHTTPClient().get(`portal/apis/data-provider/${providerName}/config`);
+        return this.getHTTPClient().get(`/data-provider/${providerName}/config`);
     }
 
     /**
@@ -68,7 +73,7 @@ class GadgetsGenerationAPI {
      * @param providerConfig
      */
     getProviderMetadata(providerName, providerConfig) {
-        return this.getHTTPClient().post(`portal/apis/data-provider/${providerName}/validate`, providerConfig);
+        return this.getHTTPClient().post(`/data-provider/${providerName}/validate`, providerConfig);
     }
 
     /**
@@ -76,7 +81,7 @@ class GadgetsGenerationAPI {
      * @param gadgetConfig
      */
     addGadgetConfiguration(gadgetConfig) {
-        return this.getHTTPClient().post('portal/apis/widgets', gadgetConfig);
+        return this.getHTTPClient().post('/widgets', gadgetConfig);
     }
 }
 
