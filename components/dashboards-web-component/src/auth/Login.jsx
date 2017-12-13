@@ -141,7 +141,6 @@ export default class Login extends Component {
                             onChange={(e) => {
                                 this.setState({
                                     username: e.target.value,
-                                    error: false,
                                 });
                             }}
                         />
@@ -154,7 +153,6 @@ export default class Login extends Component {
                             onChange={(e) => {
                                 this.setState({
                                     password: e.target.value,
-                                    error: false,
                                 });
                             }}
                         />
@@ -184,6 +182,7 @@ export default class Login extends Component {
                         autoHideDuration="4000"
                         contentStyle={styles.messageBox}
                         bodyStyle={styles.errorMessage}
+                        onRequestClose={() => this.setState({error: '', showError: false})}
                     />
                 </div>
             </MuiThemeProvider>
