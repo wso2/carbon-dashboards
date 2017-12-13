@@ -208,11 +208,16 @@ class OverallRevenueInfo extends Widget {
 
     render() {
         return (
-            <section>
-                <div style={{width:"100%" }}>
-                        <VizG config={this.configPie} metadata={this.metadata} data={this.state.data} append={false}/>
-                </div>
-            </section>
+            <div style={{ height: this.props.glContainer.height, width: this.props.glContainer.width, paddingBottom: 10 }}>
+                <VizG
+                    config={this.configPie}
+                    metadata={this.metadata}
+                    data={this.state.data}
+                    append={false}
+                    height={this.props.glContainer.height}
+                    width={this.props.glContainer.width}
+                />
+            </div>
         );
     }
 }

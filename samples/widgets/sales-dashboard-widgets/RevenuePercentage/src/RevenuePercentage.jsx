@@ -84,12 +84,17 @@ class RevenuePercentage extends Widget {
 
     render() {
         return (
-            <section>
-                <div style={{width:"100%"}}>
-                    <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false}
-                          onClick={this.handleClickEvent}/>
-                </div>
-            </section>
+            <div style={{ width: this.props.glContainer.width, height: this.props.glContainer.height, marginBottom: 10 }}>
+                <VizG
+                    config={this.state.config}
+                    metadata={this.metadata}
+                    data={this.state.data}
+                    append={false}
+                    onClick={this.handleClickEvent}
+                    height={this.props.glContainer.height}
+                    width={this.props.glContainer.width}
+                />
+            </div>
         );
     }
 }

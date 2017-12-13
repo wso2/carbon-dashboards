@@ -86,32 +86,33 @@ class RevenueByCountry extends Widget {
 
     render() {
         return (
-            <section>
-                <div className="sample-dashboard-content">
-                    <div className="sample-dashboard-content-rev-text">
-                        <div className="sample-instructions">Pick a Country to view stats</div>
-                        <table className="sample-rev-table">
-                            <thead>
-                            <tr>
-                                <td>Country</td>
-                                <td>Revenue</td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>{this.state.selectedCountry}</td>
-                                <td><span className="currency">$</span>{this.state.selectedRev}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="sample-dashboard-content-map">
-                        <VizG config={this.mapConfig} metadata={this.metadata} data={this.state.data}
-                              onClick={this.setSelectedCountry}/>
-                    </div>
+            <div className="sample-dashboard-content">
+                <div className="sample-dashboard-content-rev-text">
+                    <div className="sample-instructions">Pick a Country to view stats</div>
+                    <table className="sample-rev-table" style={{marginTop: 70, marginLeft: 70}}>
+                        <thead>
+                        <tr>
+                            <td>Country</td>
+                            <td>Revenue</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{this.state.selectedCountry}</td>
+                            <td><span className="currency">$</span>{this.state.selectedRev}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </section>
-
+                <div className="sample-dashboard-content-map" style={{ height: '100%' }}>
+                    <VizG
+                        config={this.mapConfig}
+                        metadata={this.metadata}
+                        data={this.state.data}
+                        onClick={this.setSelectedCountry}
+                    />
+                </div>
+            </div>
         );
     }
 }

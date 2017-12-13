@@ -161,12 +161,22 @@ class CustomersByProduct extends Widget {
 
     render() {
         return (
-            <section>
-                <div style={{marginTop: "5px", width: this.state.width, height: this.state.height}}>
-                    <VizG config={this.stackedBarChartConfig} metadata={this.metadata} data={this.state.data}
-                          append={false}/>
-                </div>
-            </section>
+            <div
+                style={{
+                    marginTop: "5px",
+                    width: this.props.glContainer.width,
+                    height: this.props.glContainer.height,
+                }}
+            >
+                <VizG
+                    config={this.stackedBarChartConfig}
+                    metadata={this.metadata}
+                    data={this.state.data}
+                    append={false}
+                    height={this.props.glContainer.height}
+                    width={this.props.glContainer.width}
+                />
+            </div>
         );
     }
 }
