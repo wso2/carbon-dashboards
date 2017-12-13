@@ -31,7 +31,7 @@ class GadgetDetailsConfigurator extends Component {
                 <TextField
                     id='name'
                     name='name'
-                    floatingLabelText='Enter a name for the gadget'
+                    floatingLabelText='Enter a name for the widget'
                     hintText='E.g. Sales growth'
                     value={this.props.gadgetDetails.name}
                     onChange={e => this.props.handleGadgetDetailsChange('name', e.target.value)}

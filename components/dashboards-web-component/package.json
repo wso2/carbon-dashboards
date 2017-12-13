@@ -33,6 +33,7 @@
     "react-intl": "^2.4.0",
     "react-router-dom": "^4.1.2",
     "react-shadow": "^2.0.2",
+    "react-vizgrammar": "^0.6.7",
     "recharts": "^1.0.0-alpha.2",
     "rimraf": "^2.6.2",
     "style-loader": "^0.18.2",

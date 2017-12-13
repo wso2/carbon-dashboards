@@ -56,7 +56,7 @@ class DashboardListing extends React.Component {
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
                         <FlatButton
-                            label={<FormattedMessage id="create.dashboard" defaultMessage="Create dashboard"/>}
+                            label={<FormattedMessage id="create.dashboard" defaultMessage="Create Dashboard"/>}
                             icon={<ContentAdd/>} primary
                             style={{'margin-right': '12px'}}
                             labelStyle={{'paddingLeft': '2px' }}
@@ -64,7 +64,7 @@ class DashboardListing extends React.Component {
                                 window.location.href = window.contextPath + '/create/';
                             }}/>
                         <FlatButton
-                            label={<FormattedMessage id="create.gadget" defaultMessage="Create gadget"/>}
+                            label={<FormattedMessage id="create.widget" defaultMessage="Create Widget"/>}
                             icon={<ContentAdd/>} primary
                             style={{'margin-right': '12px'}}
                             labelStyle={{'paddingLeft': '2px' }}
