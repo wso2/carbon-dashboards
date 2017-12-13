@@ -220,24 +220,31 @@ class RevenueByRegion extends Widget {
     render() {
         return (
             <MuiThemeProvider>
-                <section>
-                    <FlatButton
-                        backgroundColor="steelblue"
-                        hoverColor="#536DFE"
-                        icon={<RevertIcon style={{margin: "10px"}}/>}
-                        style={{marginLeft: "10px", minWidth: 0}}
-                        onClick={this.handleClickEvent}
-                        disabled={!this.state.isDrillDowned}
-                    />
-                    <div style={{
-                        marginTop: "5px",
+                <FlatButton
+                    backgroundColor="steelblue"
+                    hoverColor="#536DFE"
+                    icon={<RevertIcon style={{margin: "10px"}}/>}
+                    style={{marginLeft: "10px", minWidth: 0}}
+                    onClick={this.handleClickEvent}
+                    disabled={!this.state.isDrillDowned}
+                />
+                <div
+                    style={{
                         width: this.props.glContainer.width,
-                        height: this.props.glContainer.height
-                    }}>
-                        <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false}
-                              onClick={this.handleClickEvent}/>
-                    </div>
-                </section>
+                        height: this.props.glContainer.height,
+                        marginBottom: 10
+                    }}
+                >
+                    <VizG
+                        config={this.state.config}
+                        metadata={this.metadata}
+                        data={this.state.data}
+                        append={false}
+                        onClick={this.handleClickEvent}
+                        height={this.props.glContainer.height}
+                        width={this.props.glContainer.width}
+                    />
+                </div>
             </MuiThemeProvider>
         );
     }

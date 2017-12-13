@@ -126,12 +126,16 @@ class RevenuePerYear extends Widget {
 
     render() {
         return (
-            <section>
-                <div style={{margin: "5px", width: this.state.width, height: this.state.height}}>
-                    <VizG config={this.lineConfig} metadata={this.metadata} data={this.state.data} append={false}/>
-                </div>
-            </section>
-
+            <div style={{ width: this.state.width, height: this.state.height, paddingBottom: 10 }}>
+                <VizG
+                    config={this.lineConfig}
+                    metadata={this.metadata}
+                    data={this.state.data}
+                    append={false}
+                    height={this.props.glContainer.height}
+                    width={this.props.glContainer.width}
+                />
+            </div>
         );
     }
 }
