@@ -236,7 +236,7 @@ export default class DashboardSettings extends Component {
                             label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>}
                             style={{'margin': '30px 10px'}}
                             backgroundColor="rgb(13, 31, 39)"
-                            containerElement={<Link to={window.contextPath}/>}
+                            containerElement={<Link to={`${window.contextPath}/`}/>}
                         />
 
                     </FormPanel>

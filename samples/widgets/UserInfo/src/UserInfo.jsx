@@ -17,7 +17,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React from 'react';
 import Widget from '@wso2-dashboards/widget';
 
 /**
@@ -43,9 +43,9 @@ class UserInfo extends Widget {
         };
 
         // This returns user object with available user info attributes.
-        // Syntax: super.getDashboardAPI().identity.get()
+        // Syntax: super.getCurrentUser()
         // Return {{username: string}}
-        const user = super.getDashboardAPI().identity.get();
+        const user = super.getCurrentUser();
         return (
             <div style={styles.container}>
                 <h3>User Information</h3>

@@ -21,6 +21,7 @@ package org.wso2.carbon.dashboards.core;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.uis.api.App;
 
 import java.util.Optional;
 import java.util.Set;
@@ -49,7 +50,6 @@ public interface WidgetMetadataProvider {
      */
     void addGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException;
 
-
     /**
      * Returns configurations of al available widgets.
      *
@@ -74,4 +74,17 @@ public interface WidgetMetadataProvider {
      */
     boolean isWidgetPresent(String widgetName) throws DashboardException;
 
+    /**
+     * Sets the dashboard portal app to this provider.
+     *
+     * @param dashboardApp dashboard portal app
+     */
+    void setDashboardApp(App dashboardApp);
+
+    /**
+     * Returns the dashboard portal app of this provider.
+     *
+     * @return dashboard portal app
+     */
+    App getDashboardApp();
 }

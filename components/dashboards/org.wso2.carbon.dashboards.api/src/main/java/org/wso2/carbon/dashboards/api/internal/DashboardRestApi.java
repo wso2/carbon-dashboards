@@ -18,19 +18,11 @@
 
 package org.wso2.carbon.dashboards.api.internal;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.util.InterceptorConstants;
-import org.wso2.carbon.dashboards.api.util.LogEncoder;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
@@ -41,7 +33,6 @@ import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -64,38 +55,21 @@ import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
  *
  * @since 4.0.0
  */
-@Component(name = "org.wso2.carbon.dashboards.api.DashboardApi",
-        service = Microservice.class,
-        immediate = true)
-@Path("/portal/apis/dashboards")
 @RequestInterceptor(AuthenticationInterceptor.class)
 public class DashboardRestApi implements Microservice {
 
+    public static final String API_CONTEXT_PATH = "/apis/dashboards";
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApi.class);
 
-    private DashboardMetadataProvider dashboardDataProvider;
+    private final DashboardMetadataProvider dashboardDataProvider;
 
-    @Activate
-    protected void activate(BundleContext bundleContext) {
-        LOGGER.debug("{} activated.", this.getClass().getName());
-    }
-
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        LOGGER.debug("{} deactivated.", this.getClass().getName());
-    }
-
-    @Reference(name = "dashboardMetadata",
-            service = DashboardMetadataProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetMetadataProvider")
-    protected void setMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
+    /**
+     * Creates a new dashboard REST API.
+     *
+     * @param dashboardDataProvider metadata provider for dhashboards
+     */
+    public DashboardRestApi(DashboardMetadataProvider dashboardDataProvider) {
         this.dashboardDataProvider = dashboardDataProvider;
-    }
-
-    protected void unsetMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
-        this.dashboardDataProvider = null;
     }
 
     /**
@@ -131,15 +105,16 @@ public class DashboardRestApi implements Microservice {
     public Response get(@PathParam("id") String id, @Context Request request) {
         try {
             return dashboardDataProvider.getDashboardByUser(getUserName(request), id,
-                    request.getHeader("X-Dashboard-Origin-Component")).map(metadata ->
-                    Response.ok().entity(metadata).build())
+                                                            request.getHeader("X-Dashboard-Origin-Component")).map(
+                    metadata ->
+                            Response.ok().entity(metadata).build())
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + id + "'.").build());
         } catch (UnauthorizedException e) {
             return Response.status(UNAUTHORIZED).entity("Insufficient permissions to retrieve dashboard with ID : " +
-                    id).build();
+                                                        id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when retrieving" +
-                    " dashboard for ID %s.", LogEncoder.getEncodedString(id)), e);
+                                       " dashboard for ID %s.", replaceCRLFCharacters(id)), e);
             return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
         }
     }
@@ -169,7 +144,7 @@ public class DashboardRestApi implements Microservice {
         } catch (DashboardException e) {
             // TODO: 12/7/17
             LOGGER.error("An error occurred when creating a new dashboard from {} data.",
-                    LogEncoder.getEncodedString(dashboardMetadata.toString()), e);
+                         replaceCRLFCharacters(dashboardMetadata.toString()), e);
             return Response.serverError()
                     .entity("Cannot create a new dashboard from '" + dashboardMetadata + "'.").build();
         }
@@ -192,7 +167,7 @@ public class DashboardRestApi implements Microservice {
             return Response.ok().build();
         } catch (UnauthorizedException e) {
             return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the dashboard with ID : " +
-                    dashboardMetadata.getUrl()).build();
+                                                        dashboardMetadata.getUrl()).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
             return Response.serverError().entity("Cannot update dashboard '" + id + "'.").build();
@@ -213,10 +188,10 @@ public class DashboardRestApi implements Microservice {
             return Response.ok().build();
         } catch (UnauthorizedException e) {
             return Response.status(UNAUTHORIZED).entity("Insufficient permissions to delete the dashboard with ID : "
-                    + id).build();
+                                                        + id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when deleting dashboard %s",
-                    LogEncoder.getEncodedString(id)), e);
+                                       replaceCRLFCharacters(id)), e);
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
         }
     }
@@ -248,7 +223,7 @@ public class DashboardRestApi implements Microservice {
                     .entity(roles)
                     .build();
         } catch (DashboardException e) {
-            LOGGER.error("Cannot retrieve user roles for '" + LogEncoder.getEncodedString(username) + "'.", e);
+            LOGGER.error("Cannot retrieve user roles for '" + replaceCRLFCharacters(username) + "'.", e);
             return Response.serverError()
                     .entity("Cannot retrieve user roles for '" + username + "'.")
                     .build();
@@ -264,7 +239,7 @@ public class DashboardRestApi implements Microservice {
                     .entity(dashboardDataProvider.getDashboardRoles(url))
                     .build();
         } catch (DashboardException e) {
-            LOGGER.error("Cannot retrieve roles for dashboard '" + LogEncoder.getEncodedString(url) + "'", e);
+            LOGGER.error("Cannot retrieve roles for dashboard '" + replaceCRLFCharacters(url) + "'", e);
             return Response.serverError()
                     .entity("Cannot retrieve roles for dashboard '" + url + "'")
                     .build();
@@ -281,9 +256,9 @@ public class DashboardRestApi implements Microservice {
             return Response.ok().build();
         } catch (UnauthorizedException e) {
             return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the roles of dashboard " +
-                    "with ID : " + url).build();
+                                                        "with ID : " + url).build();
         } catch (DashboardException e) {
-            LOGGER.error("Cannot update user roles of dashboard '" + LogEncoder.getEncodedString(url) + "'.", e);
+            LOGGER.error("Cannot update user roles of dashboard '" + replaceCRLFCharacters(url) + "'.", e);
             return Response.serverError()
                     .entity("Cannot update user roles of dashboard '" + url + "'.")
                     .build();
@@ -294,4 +269,7 @@ public class DashboardRestApi implements Microservice {
         return request.getProperty(InterceptorConstants.PROPERTY_USERNAME).toString();
     }
 
+    private static String replaceCRLFCharacters(String str) {
+        return str.replace('\n', '_').replace('\r', '_');
+    }
 }

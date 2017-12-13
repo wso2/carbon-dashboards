@@ -33,6 +33,12 @@ function registerWidget(widgetId, widgetObj) {
         registeredWidgetsCount++;
         if (registeredWidgetsCount === widgetCount) {
             finishedRegisteringCallback ? finishedRegisteringCallback(true) : "";
+            global.dashboard.universalWidgetList.map(universalWidget => {
+                if (widgets.get("UniversalWidget") && widgets.get(universalWidget)) {
+                    widgets.set(universalWidget, widgets.get("UniversalWidget"));
+                    dashboardLayout.registerComponent(universalWidget, widgets.get("UniversalWidget"));
+                }
+            });
             dashboardLayout.init();
         }
     }
