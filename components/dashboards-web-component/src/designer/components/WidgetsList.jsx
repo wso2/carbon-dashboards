@@ -164,8 +164,14 @@ export default class WidgetsList extends React.Component {
                 <Divider/>
                 {
                     this.state.widgets.map(widget => {
-                        return <WidgetListThumbnail widgetID={widget.id} isDisplayed={this.isDisplayed(widget.name)}
-                                                    data={this.state.widgetList} widgetName={widget.name}/>;
+                        if (widget.id !== 'UniversalWidget') {
+                            return <WidgetListThumbnail
+                                widgetID={widget.id}
+                                isDisplayed={this.isDisplayed(widget.name)}
+                                data={this.state.widgetList}
+                                widgetName={widget.name}
+                            />;
+                        }
                     })
                 }
                 <Divider/>
