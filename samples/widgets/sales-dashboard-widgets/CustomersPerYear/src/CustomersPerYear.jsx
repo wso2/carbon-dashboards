@@ -36,8 +36,6 @@ class CustomersPerYear extends Widget {
             x: 'Year',
             charts: [{type: 'line', y: 'Downloads', fill: '#00e1d6', style: {strokeWidth: 2, markRadius: 5}},
                 {type: 'line', y: 'Customers', fill: '#ff2e4e', style: {strokeWidth: 2, markRadius: 5}}],
-            width: this.props.glContainer.width,
-            height: this.props.glContainer.height,
             legend: true,
             animate: true,
             style: {
@@ -129,12 +127,16 @@ class CustomersPerYear extends Widget {
 
     render() {
         return (
-            <section>
-                <div style={{margin: "5px", width: this.state.width, height: this.state.height}}>
-                    <VizG config={this.lineConfig} metadata={this.metadata} data={this.state.data} append={false}/>
+                <div style={{margin: "5px", width: this.props.glContainer.width, height: this.props.glContainer.height}}>
+                    <VizG
+                        config={this.lineConfig}
+                        metadata={this.metadata}
+                        data={this.state.data}
+                        append={false}
+                        height={this.props.glContainer.height}
+                        width={this.props.glContainer.width}
+                    />
                 </div>
-            </section>
-
         );
     }
 }

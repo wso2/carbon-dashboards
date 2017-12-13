@@ -68,7 +68,11 @@ class RevenueByCountry extends Widget {
             x: 'Country',
             charts: [{type: 'map', y: 'Revenue', mapType: 'world', colorScale: ['#ccc', '#0082ea']}],
             width: this.state.width,
-            height: this.state.height
+            height: this.state.height,
+            style: {
+                legendTitleColor:'#5d6e77',
+                legendTextColor: '#5d6e77',
+            }
         };
 
         this.metadata = {
@@ -86,11 +90,10 @@ class RevenueByCountry extends Widget {
 
     render() {
         return (
-            <section>
                 <div className="sample-dashboard-content">
                     <div className="sample-dashboard-content-rev-text">
                         <div className="sample-instructions">Pick a Country to view stats</div>
-                        <table className="sample-rev-table">
+                        <table className="sample-rev-table" style={{marginTop: 70, marginLeft: 70}}>
                             <thead>
                             <tr>
                                 <td>Country</td>
@@ -105,13 +108,15 @@ class RevenueByCountry extends Widget {
                             </tbody>
                         </table>
                     </div>
-                    <div className="sample-dashboard-content-map">
-                        <VizG config={this.mapConfig} metadata={this.metadata} data={this.state.data}
-                              onClick={this.setSelectedCountry}/>
+                    <div className="sample-dashboard-content-map" style={{ height: '100%' }}>
+                            <VizG
+                                config={this.mapConfig}
+                                metadata={this.metadata}
+                                data={this.state.data}
+                                onClick={this.setSelectedCountry}
+                            />
                     </div>
                 </div>
-            </section>
-
         );
     }
 }

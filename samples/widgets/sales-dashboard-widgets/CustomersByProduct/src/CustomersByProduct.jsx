@@ -37,8 +37,6 @@ class CustomersByProduct extends Widget {
             charts: [{type: 'bar', y: 'Downloads', fill: '#4659f9'},
                 {type: 'bar', y: 'Customers', fill: '#00b7ee'}],
             maxLength: 6,
-            width: this.props.glContainer.width,
-            height: this.props.glContainer.height,
             animate: true,
             legend: true,
             style: {
@@ -162,9 +160,21 @@ class CustomersByProduct extends Widget {
     render() {
         return (
             <section>
-                <div style={{marginTop: "5px", width: this.state.width, height: this.state.height}}>
-                    <VizG config={this.stackedBarChartConfig} metadata={this.metadata} data={this.state.data}
-                          append={false}/>
+                <div
+                    style={{
+                        marginTop: "5px",
+                        width: this.props.glContainer.width,
+                        height: this.props.glContainer.height,
+                    }}
+                >
+                    <VizG
+                        config={this.stackedBarChartConfig}
+                        metadata={this.metadata}
+                        data={this.state.data}
+                        append={false}
+                        height={this.props.glContainer.height}
+                        width={this.props.glContainer.width}
+                    />
                 </div>
             </section>
         );

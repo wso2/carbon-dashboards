@@ -199,6 +199,13 @@ class RevenueByRegion extends Widget {
         };
 
         this.handleClickEvent = this.handleClickEvent.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        props.glContainer.on('resize', this.handleResize);
+
+    }
+
+    handleResize() {
+        this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 
     handleClickEvent(event) {
@@ -220,7 +227,6 @@ class RevenueByRegion extends Widget {
     render() {
         return (
             <MuiThemeProvider>
-                <section>
                     <FlatButton
                         backgroundColor="steelblue"
                         hoverColor="#536DFE"
@@ -229,15 +235,23 @@ class RevenueByRegion extends Widget {
                         onClick={this.handleClickEvent}
                         disabled={!this.state.isDrillDowned}
                     />
-                    <div style={{
-                        marginTop: "5px",
-                        width: this.props.glContainer.width,
-                        height: this.props.glContainer.height
-                    }}>
-                        <VizG config={this.state.config} metadata={this.metadata} data={this.state.data} append={false}
-                              onClick={this.handleClickEvent}/>
+                    <div
+                        style={{
+                            width: this.props.glContainer.width,
+                            height: this.props.glContainer.height,
+                            marginBottom: 10
+                        }}
+                    >
+                        <VizG
+                            config={this.state.config}
+                            metadata={this.metadata}
+                            data={this.state.data}
+                            append={false}
+                            onClick={this.handleClickEvent}
+                            height={this.props.glContainer.height}
+                            width={this.props.glContainer.width}
+                        />
                     </div>
-                </section>
             </MuiThemeProvider>
         );
     }
