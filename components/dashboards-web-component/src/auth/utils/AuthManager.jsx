@@ -185,7 +185,7 @@ export default class AuthManager {
      * @param {string} name Name of the cookie
      */
     static deleteSessionCookie(name) {
-        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/portal';
+        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=' + window.contextPath;
     }
 
     /**
@@ -232,6 +232,6 @@ export default class AuthManager {
      * @param {String} name : Name of the cookie which need to be deleted
      */
     static delete_cookie(name) {
-        document.cookie = name + '=; Path=' + "/" + '; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = name + '=; Path=' + window.contextPath + '; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
 }
