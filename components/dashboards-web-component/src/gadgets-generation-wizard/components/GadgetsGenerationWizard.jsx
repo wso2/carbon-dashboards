@@ -466,7 +466,9 @@ class GadgetsGenerationWizard extends Component {
                         onRequestClose={() => this.setState({ previewGadget: false })}
                         repositionOnUpdate
                     >
-                        <ChartPreviewer config={this.state.previewConfiguration} />
+                        <ChartPreviewer
+                            config={this.state.previewConfiguration}
+                        />
                     </Dialog>
                     <FormPanel
                         title={<FormattedMessage id="create.widget" defaultMessage="Create Widget" />}
