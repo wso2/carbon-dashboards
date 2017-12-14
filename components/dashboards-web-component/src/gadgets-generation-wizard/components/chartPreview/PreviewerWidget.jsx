@@ -35,8 +35,7 @@ export default class PreviewerWidget extends React.Component {
     }
 
     componentWillUnmount() {
-        let { config } = this.props;
-        this.channelManager.unsubscribeWidget(config.id);
+        this.channelManager.unsubscribeWidget(this.props.config.id);
     }
 
     _handleDataReceived(data) {
