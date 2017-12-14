@@ -17,18 +17,20 @@
  *
  */
 
-import React, {Component} from 'react';
-import {FormattedMessage} from 'react-intl';
+import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
 
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-import {TextField, RaisedButton, Checkbox} from 'material-ui';
+import { Card, CardHeader, CardText } from 'material-ui/Card';
+import { TextField, RaisedButton, Checkbox } from 'material-ui';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 
 const styles = {
     pageCard: {
         backgroundColor: '#17262e',
-        marginBottom: '5px'
-    }
+        marginBottom: '5px',
+    },
 };
 
 export default class PageEntry extends Component {
@@ -36,48 +38,16 @@ export default class PageEntry extends Component {
         super(props);
         this.state = {
             page: props.page,
-            pageId: props.page.id
+            showDeletePageEntry: false,
+            pageId: props.page.id,
         };
         this.dirty = false;
         this.updatePage = this.updatePage.bind(this);
+        this.deletePage = this.deletePage.bind(this);
     }
 
-    componentWillReceiveProps(nextProps){
-        this.setState({page:nextProps.page});
-    }
-
-    render() {
-        return (
-            <Card onExpandChange={(expanded) => this.entryExpanded(expanded)} style={styles.pageCard}>
-                <CardHeader title={this.state.page.title} actAsExpander showExpandableButton />
-                <CardText expandable>
-                    <TextField value={this.state.page.id} fullWidth floatingLabelText={<FormattedMessage id="page.url" defaultMessage="URL"/>}
-                               onBlur={this.updatePage}
-                               onChange={(e) => {
-                                   this.state.page.id = e.target.value;
-                                   this.setState({
-                                       page: this.state.page
-                                   });
-                                   this.dirty = true;
-                               }}/>
-                    <TextField value={this.state.page.title} fullWidth floatingLabelText={<FormattedMessage id="page.title" defaultMessage="Title"/>}
-                               onBlur={this.updatePage}
-                               onChange={(e) => {
-                                   this.state.page.title = e.target.value;
-                                   this.setState({
-                                       page: this.state.page
-                                   });
-                                   this.dirty = true;
-                               }}/>
-                    <Checkbox label={<FormattedMessage id="make.homepage" defaultMessage="Make as Home Page"/>} checked={this.state.page.landingPage}
-                              disabled={this.state.page.landingPage} onCheck={this.makeAsHomePage.bind(this)} className="home-page-checkbox"/>
-                    <RaisedButton label={<FormattedMessage id="delete" defaultMessage="Delete"/>} labelPosition="after" fullWidth icon={<DeleteIcon/>}
-                                  onClick={this.deletePage.bind(this)} disabled={this.state.page.landingPage}
-                                  backgroundColor="#24353f" disabledBackgroundColor="#1c2b33"
-                    />
-                </CardText>
-            </Card>
-        );
+    componentWillReceiveProps(nextProps) {
+        this.setState({ page: nextProps.page });
     }
 
     updatePage() {
@@ -94,15 +64,15 @@ export default class PageEntry extends Component {
         }
     }
 
-    makeAsHomePage(e, checked) {
+    markAsHomePage(e, checked) {
         if (this.props.onLandingPageChanged) {
             this.props.onLandingPageChanged(this.state.page.id);
         }
 
-        let page = this.state.page;
+        const page = this.state.page;
         page.landingPage = checked;
         this.setState({
-            page: page
+            page,
         });
     }
 
@@ -110,5 +80,78 @@ export default class PageEntry extends Component {
         if (expanded && this.props.onPageSelected) {
             this.props.onPageSelected(this.state.page.id, this.state.page.url);
         }
+    }
+
+    render() {
+        const actionsButtons = [
+            <FlatButton
+                label={<FormattedMessage id="confirmation.yes" defaultMessage="Yes" />}
+                primary
+                onClick={this.deletePage}
+            />,
+            <FlatButton
+                label={<FormattedMessage id="confirmation.no" defaultMessage="No" />}
+                primary
+                onClick={() => { this.setState({ showDeletePageEntry: false }); }}
+            />,
+        ];
+        return (
+            <div>
+                <Dialog
+                    title={"Do you want to delete '" + this.state.page.title + "' ?"}
+                    actions={actionsButtons}
+                    modal
+                    open={this.state.showDeletePageEntry}
+                />
+                <Card onExpandChange={expanded => this.entryExpanded(expanded)} style={styles.pageCard}>
+                    <CardHeader title={this.state.page.title} actAsExpander showExpandableButton />
+                    <CardText expandable>
+                        <TextField
+                            value={this.state.page.id}
+                            fullWidth
+                            floatingLabelText={<FormattedMessage id="page.url" defaultMessage="URL" />}
+                            onBlur={this.updatePage}
+                            onChange={(e) => {
+                                this.state.page.id = e.target.value;
+                                this.setState({
+                                    page: this.state.page,
+                                });
+                                this.dirty = true;
+                            }}
+                        />
+                        <TextField
+                            value={this.state.page.title}
+                            fullWidth
+                            floatingLabelText={<FormattedMessage id="page.title" defaultMessage="Title" />}
+                            onBlur={this.updatePage}
+                            onChange={(e) => {
+                                this.state.page.title = e.target.value;
+                                this.setState({
+                                    page: this.state.page,
+                                });
+                                this.dirty = true;
+                            }}
+                        />
+                        <Checkbox
+                            label={<FormattedMessage id="mark.homepage" defaultMessage="Mark as Home Page" />}
+                            checked={this.state.page.landingPage}
+                            disabled={this.state.page.landingPage}
+                            onCheck={this.markAsHomePage.bind(this)}
+                            className="home-page-checkbox"
+                        />
+                        <RaisedButton
+                            label={<FormattedMessage id="delete" defaultMessage="Delete" />}
+                            labelPosition="after"
+                            fullWidth
+                            icon={<DeleteIcon />}
+                            onClick={() => { this.setState({ showDeletePageEntry: true }); }}
+                            disabled={this.state.page.landingPage}
+                            backgroundColor="#24353f"
+                            disabledBackgroundColor="#1c2b33"
+                        />
+                    </CardText>
+                </Card>
+            </div>
+        );
     }
 }
