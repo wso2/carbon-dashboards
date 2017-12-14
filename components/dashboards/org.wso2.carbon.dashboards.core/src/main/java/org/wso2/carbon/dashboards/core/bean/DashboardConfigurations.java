@@ -24,6 +24,7 @@ import org.wso2.carbon.dashboards.core.bean.roles.provider.Roles;
 import org.wso2.carbon.database.query.manager.config.Queries;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Configuration bean class for dashboard.
@@ -34,16 +35,26 @@ import java.util.ArrayList;
 public class DashboardConfigurations {
 
     @Element(description = "Database queries template array list.")
-    ArrayList<Queries> queries = new ArrayList<>();
+    List<Queries> queries = new ArrayList<>();
 
     @Element(description = "Map of roles list")
     public Roles roles;
 
+    /**
+     * Get map of roles.
+     *
+     * @return
+     */
     public Roles getRoles() {
         return roles;
     }
 
-    public ArrayList<Queries> getQueries() {
+    /**
+     * Get dashboard queries.
+     *
+     * @return
+     */
+    public List<Queries> getQueries() {
         return queries;
     }
 }

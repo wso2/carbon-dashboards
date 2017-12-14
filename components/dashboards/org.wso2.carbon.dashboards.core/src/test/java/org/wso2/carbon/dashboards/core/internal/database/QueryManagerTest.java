@@ -21,7 +21,8 @@ package org.wso2.carbon.dashboards.core.internal.database;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
-import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+
+import java.sql.SQLException;
 
 import static org.wso2.carbon.dashboards.core.internal.database.QueryManager.DEFAULT_DB_TYPE;
 import static org.wso2.carbon.dashboards.core.internal.database.QueryManager.DEFAULT_DB_VERSION;
@@ -36,24 +37,17 @@ public class QueryManagerTest {
     @Test
     void testGetQueryWithInvalidParams() {
         QueryManager queryManager = new QueryManager(new DashboardConfigurations());
-        Assertions.assertThrows(DashboardRuntimeException.class, () -> queryManager.getQuery("foo", null, null));
-        Assertions.assertThrows(DashboardRuntimeException.class,
+        Assertions.assertThrows(SQLException.class, () -> queryManager.getQuery("foo", null, null));
+        Assertions.assertThrows(SQLException.class,
                                 () -> queryManager.getQuery(DEFAULT_DB_TYPE, "1.0.0", null));
-        Assertions.assertThrows(DashboardRuntimeException.class,
+        Assertions.assertThrows(SQLException.class,
                                 () -> queryManager.getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, "bar"));
     }
 
     @Test
-    void testGetQueryWithParams() {
+    void testGetQuery() throws SQLException {
         QueryManager queryManager = new QueryManager(new DashboardConfigurations());
         String query = queryManager.getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, "add_dashboard");
-        Assertions.assertNotNull(query, "SQL query cannot be null");
-    }
-
-    @Test
-    void testGetQuery() {
-        QueryManager queryManager = new QueryManager(new DashboardConfigurations());
-        String query = queryManager.getQuery("add_dashboard");
         Assertions.assertNotNull(query, "SQL query cannot be null");
     }
 }

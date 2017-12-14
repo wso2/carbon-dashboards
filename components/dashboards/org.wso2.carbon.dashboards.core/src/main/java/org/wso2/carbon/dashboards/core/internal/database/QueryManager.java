@@ -28,6 +28,8 @@ import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,25 +81,44 @@ public class QueryManager {
         return queries;
     }
 
-    @Deprecated
-    public String getQuery(String key) throws DashboardRuntimeException {
-        return getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, key);
+    /**
+     * Get SQL query.
+     *
+     * @param connection SQLConnection object.
+     * @param key        Query key
+     * @return SQL query
+     * @throws SQLException
+     */
+    public String getQuery(Connection connection, String key) throws SQLException {
+        return getQuery(connection.getMetaData().getDatabaseProductName(),
+                connection.getMetaData().getDatabaseProductVersion(), key);
     }
 
-    public String getQuery(String dbType, String dbVersion, String key) throws DashboardRuntimeException {
+    /**
+     * Get SQL query for specific database type and version.
+     *
+     * @param dbType    Database type
+     * @param dbVersion Database version
+     * @param key       Query key
+     * @return SQL query
+     * @throws SQLException
+     */
+    public String getQuery(String dbType, String dbVersion, String key) throws SQLException {
         String dbKey = dbType + "_" + dbVersion;
-        if (!queryMap.containsKey(dbKey)) {
-            Map<String, String> queries = null;
+
+        Map<String, String> queries = queryMap.get(dbKey);
+        if (queries == null) {
             try {
                 queries = QueryProvider.mergeMapping(dbType, dbVersion, componentQueries, deploymentQueries);
             } catch (QueryMappingNotAvailableException e) {
-                throw new DashboardRuntimeException("Unable to build database queries.", e);
+                throw new SQLException("Cannot find database queries for " + dbType + " " + dbVersion + ".", e);
             }
             queryMap.put(dbKey, queries);
         }
 
-        if (!queryMap.get(dbKey).containsKey(key)) {
-            throw new DashboardRuntimeException("Unable to find the configuration entry for the key: " + key);
+        String query = queries.get(key);
+        if (query == null) {
+            throw new SQLException("Cannot find query for " + key + " in " + dbType + " " + dbVersion + ".");
         }
         return queryMap.get(dbKey).get(key);
     }

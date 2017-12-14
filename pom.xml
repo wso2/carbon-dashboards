@@ -413,7 +413,7 @@
         <carbon.analytics.version>2.0.197</carbon.analytics.version>
         <carbon.analytics.version.range>[2.0.197, 3.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.0.40-SNAPSHOT</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.0.41</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.36, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->

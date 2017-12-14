@@ -130,9 +130,6 @@
         </export.package>
         <private.package>
             org.wso2.carbon.dashboards.core.internal.*,
-            org.wso2.carbon.database.query.manager.*,
-            org.wso2.carbon.database.query.manager.config.*,
-            org.wso2.carbon.database.query.manager.exception.*
         </private.package>
         <import.package>
             org.wso2.carbon.datasource.core.*; version="${carbon.datasource.core.version.range}",
@@ -141,6 +138,7 @@
             org.wso2.carbon.uis.spi.*; version="${carbon.ui.sever.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.wso2.carbon.analytics.idp.client.*; version="${carbon.analytics-common.version.range}",
+            org.wso2.carbon.database.query.manager.*; version="${carbon.analytics-common.version.range}",
             org.osgi.framework; version="${org.osgi.framework.version.range}",
             org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
