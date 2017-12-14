@@ -24,7 +24,7 @@ class Subscriber extends Widget {
     constructor(props) {
         super(props);
         this.state = {receivedMsg: ''};
-        this.set = new Set();
+        this.set = [];
         this.clearMsgs = this.clearMsgs.bind(this);
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
     }
@@ -34,16 +34,17 @@ class Subscriber extends Widget {
     }
 
     setReceivedMsg(receivedMsg) {
-        this.set.add(receivedMsg);
+        this.set.push({time: new Date(), value: receivedMsg});
         this.setState({receivedMsg});
     }
 
     generateOutput() {
         if (this.state.receivedMsg) {
             const output = [];
-            for (const key of this.set.values()) {
-                output.push(<div>[Received] {new Date().toTimeString()} [Message] - {key}</div>);
-            }
+            this.set.forEach(d => {
+               output.push(<div>[Received] {d.time.toTimeString()} [Message] - {d.value}</div>);
+            });
+
             return output;
         } else {
             return '';
@@ -52,7 +53,7 @@ class Subscriber extends Widget {
 
     clearMsgs() {
         this.setState({receivedMsg: ''});
-        this.set.clear();
+        this.set=[];
     }
 
     renderWidget() {

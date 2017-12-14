@@ -24,7 +24,7 @@ class Publisher extends Widget {
     constructor(props) {
         super(props);
         this.publishMsg = this.publishMsg.bind(this);
-        this.publishedMsgSet = new Set();
+        this.publishedMsgSet = [];
         this.state = {publishedMsg: ''};
         this.onChangeHandle = this.onChangeHandle.bind(this);
         this.getPublishedMsgsOutput = this.getPublishedMsgsOutput.bind(this);
@@ -35,7 +35,7 @@ class Publisher extends Widget {
         event.preventDefault();
         if (this.input.value) {
             this.state.inputVal = '';
-            this.publishedMsgSet.add(this.input.value);
+            this.publishedMsgSet.push({time: new Date(), value: this.input.value});
             super.publish(this.input.value);
             this.setState({publishedMsg: this.input.value});
         }
@@ -47,15 +47,15 @@ class Publisher extends Widget {
 
     getPublishedMsgsOutput() {
         const output = [];
-        for (const key of this.publishedMsgSet.values()) {
-            output.push(<div>[Sent] {new Date().toTimeString()} [Message] - {key}</div>);
-        }
+        this.publishedMsgSet.forEach((d,i) => {
+           output.push(<div>[Sent] {d.time.toTimeString()} [Message] - {d.value}</div>)
+        });
         return output;
     }
 
     clearMsgs() {
         this.setState({publishedMsg: ''});
-        this.publishedMsgSet.clear();
+        this.publishedMsgSet=[];
     }
 
     onChangeHandle(event) {
@@ -64,7 +64,7 @@ class Publisher extends Widget {
         this.input.value = event.target.value;
     }
 
-    renderWidget() {
+    render() {
         return (
             <section style={{marginTop: 25}}>
                 <form onSubmit={this.publishMsg}>
@@ -76,9 +76,9 @@ class Publisher extends Widget {
                         value={this.state.inputVal}
                         onChange={this.onChangeHandle}
                     />
-                    <br />
+                    <br/>
                     <input type="submit" value="Publish"/>
-                    <br />
+                    <br/>
                     <h4 style={{display: 'inline', marginRight: 10}}>Sent Messages</h4>
                     <input type="button" value="Clear" onClick={this.clearMsgs}/>
                 </form>
