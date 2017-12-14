@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
@@ -37,6 +36,7 @@ import java.sql.SQLException;
 import java.util.stream.Stream;
 import javax.sql.DataSource;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -80,7 +80,9 @@ public class WidgetMetadataDaoTest {
     private static WidgetMetadataDao createDao(Connection mockedConnection) throws SQLException {
         DataSource dataSource = mock(DataSource.class);
         when(dataSource.getConnection()).thenReturn(mockedConnection);
-        return new WidgetMetadataDao(dataSource, new QueryProvider(new DashboardConfigurations()));
+        QueryManager queryManager = mock(QueryManager.class);
+        when(queryManager.getQuery(any(), anyString())).thenReturn("");
+        return new WidgetMetadataDao(dataSource, queryManager);
     }
 
     private static Connection createConnection(PreparedStatement mockPreparedStatement) throws SQLException {
@@ -171,7 +173,7 @@ public class WidgetMetadataDaoTest {
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
 
-        Assertions.assertThrows(DashboardException.class, () -> dao.getGeneratedWidgetIdSet());
+        Assertions.assertThrows(DashboardException.class, dao::getGeneratedWidgetIdSet);
         verify(preparedStatement).close();
         verify(connection).close();
     }

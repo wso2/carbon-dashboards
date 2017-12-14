@@ -58,7 +58,7 @@ public class DashboardMetadataDaoFactory {
         } catch (ConfigurationException e) {
             throw new DashboardException("Cannot load dashboard configurations from 'deployment.yaml'.", e);
         }
-        QueryProvider queryProvider = new QueryProvider(dashboardConfigurations);
-        return new DashboardMetadataDao(dataSource, queryProvider);
+        QueryManager queryManager = new QueryManager(dashboardConfigurations);
+        return new DashboardMetadataDao(dataSource, queryManager);
     }
 }

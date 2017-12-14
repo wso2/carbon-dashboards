@@ -44,12 +44,12 @@ public class WidgetMetadataDao {
     private static final String COLUMN_WIDGET_CONFIGS = "WIDGET_CONFIGS";
 
     private final DataSource dataSource;
-    private final QueryProvider queryProvider;
+    private final QueryManager queryManager;
     private static final Gson GSON = new Gson();
 
-    public WidgetMetadataDao(DataSource dataSource, QueryProvider queryProvider) {
+    public WidgetMetadataDao(DataSource dataSource, QueryManager queryManager) {
         this.dataSource = dataSource;
-        this.queryProvider = queryProvider;
+        this.queryManager = queryManager;
     }
 
     private Connection getConnection() throws SQLException {
@@ -59,10 +59,11 @@ public class WidgetMetadataDao {
     public void addGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryProvider.getQuery(QueryProvider.ADD_WIDGET_CONFIG_QUERY);
+        String query = null;
         generatedWidgetConfigs.setId(generatedWidgetConfigs.getName().replace(" ", "-"));
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection, QueryManager.ADD_WIDGET_CONFIG_QUERY);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
             ps.setString(1, generatedWidgetConfigs.getId());
@@ -95,9 +96,10 @@ public class WidgetMetadataDao {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet resultSet = null;
-        String query = queryProvider.getQuery(QueryProvider.GET_WIDGET_CONFIG_QUERY);
+        String query = null;
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection, QueryManager.GET_WIDGET_CONFIG_QUERY);
             ps = connection.prepareStatement(query);
             ps.setString(1, widgetId);
             resultSet = ps.executeQuery();
@@ -118,9 +120,10 @@ public class WidgetMetadataDao {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet resultSet = null;
-        String query = queryProvider.getQuery(QueryProvider.GET_WIDGET_NAME_ID_MAP_QUERY);
+        String query = null;
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection, QueryManager.GET_WIDGET_NAME_ID_MAP_QUERY);
             ps = connection.prepareStatement(query);
             resultSet = ps.executeQuery();
             Set<GeneratedWidgetConfigs> widgetNameSet = new HashSet<>();
@@ -143,9 +146,10 @@ public class WidgetMetadataDao {
     public void delete(String widgetId) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryProvider.getQuery(QueryProvider.DELETE_WIDGET_BY_ID);
+        String query = null;
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection, QueryManager.DELETE_WIDGET_BY_ID);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
             ps.setString(1, widgetId);

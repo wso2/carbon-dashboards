@@ -53,6 +53,12 @@
             <groupId>com.h2database.wso2</groupId>
             <artifactId>h2-database-engine</artifactId>
         </dependency>
+
+        <!-- Common query manager -->
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.database.query.manager</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -91,6 +97,10 @@
                                 <bundle>
                                     <symbolicName>h2-database-engine</symbolicName>
                                     <version>${h2.database.engine.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.database.query.manager</symbolicName>
+                                    <version>${carbon.analytics-common.version}</version>
                                 </bundle>
                             </bundles>
                         </configuration>
