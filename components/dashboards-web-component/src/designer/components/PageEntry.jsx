@@ -44,7 +44,6 @@ export default class PageEntry extends Component {
         this.dirty = false;
         this.updatePage = this.updatePage.bind(this);
         this.deletePage = this.deletePage.bind(this);
-        this.handleClose = this.handleClose.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -93,7 +92,7 @@ export default class PageEntry extends Component {
             <FlatButton
                 label={<FormattedMessage id="confirmation.no" defaultMessage="No" />}
                 primary
-                onClick={() => { this.setState({ showDeletePageEntry: true }); }}
+                onClick={() => { this.setState({ showDeletePageEntry: false }); }}
             />,
         ];
         return (
