@@ -51,19 +51,22 @@ public class DashboardMetadataDao {
     private static final String COLUMN_DASHBOARD_OWNER = "OWNER";
 
     private final DataSource dataSource;
-    private final QueryProvider queryProvider;
+    private final QueryManager queryManager;
 
-    public DashboardMetadataDao(DataSource dataSource, QueryProvider queryProvider) {
+    public DashboardMetadataDao(DataSource dataSource, QueryManager queryManager) {
         this.dataSource = dataSource;
-        this.queryProvider = queryProvider;
+        this.queryManager = queryManager;
     }
 
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryProvider.getQuery(QueryProvider.UPDATE_DASHBOARD_CONTENT_QUERY);
+        String query = "";
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection.getMetaData().getDatabaseProductName(),
+                    connection.getMetaData().getDatabaseProductVersion(),
+                    QueryManager.UPDATE_DASHBOARD_CONTENT_QUERY);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
             ps.setString(1, dashboardMetadata.getName());
@@ -89,9 +92,12 @@ public class DashboardMetadataDao {
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryProvider.getQuery(QueryProvider.ADD_DASHBOARD_CONTENT_QUERY);
+        String query = "";
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection.getMetaData().getDatabaseProductName(),
+                    connection.getMetaData().getDatabaseProductVersion(),
+                    QueryManager.ADD_DASHBOARD_CONTENT_QUERY);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
             Blob blob = connection.createBlob();
@@ -117,9 +123,12 @@ public class DashboardMetadataDao {
     public void delete(String url) throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
-        String query = queryProvider.getQuery(QueryProvider.DELETE_DASHBOARD_BY_URL_QUERY);
+        String query = "";
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection.getMetaData().getDatabaseProductName(),
+                    connection.getMetaData().getDatabaseProductVersion(),
+                    QueryManager.DELETE_DASHBOARD_BY_URL_QUERY);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
             ps.setString(1, url);
@@ -138,9 +147,12 @@ public class DashboardMetadataDao {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet result = null;
-        String query = queryProvider.getQuery(QueryProvider.GET_DASHBOARD_BY_URL_QUERY);
+        String query = "";
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection.getMetaData().getDatabaseProductName(),
+                    connection.getMetaData().getDatabaseProductVersion(),
+                    QueryManager.GET_DASHBOARD_BY_URL_QUERY);
             ps = connection.prepareStatement(query);
             ps.setString(1, url);
             result = ps.executeQuery();
@@ -165,9 +177,12 @@ public class DashboardMetadataDao {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet results = null;
-        String query = queryProvider.getQuery(QueryProvider.GET_DASHBOARD_METADATA_LIST_QUERY);
+        String query = "";
         try {
             connection = getConnection();
+            query = queryManager.getQuery(connection.getMetaData().getDatabaseProductName(),
+                    connection.getMetaData().getDatabaseProductVersion(),
+                    QueryManager.GET_DASHBOARD_METADATA_LIST_QUERY);
             ps = connection.prepareStatement(query);
             results = ps.executeQuery();
             while (results.next()) {

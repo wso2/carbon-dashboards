@@ -60,6 +60,10 @@
             <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.database.query.manager</artifactId>
+        </dependency>
 
         <!--OSGi-->
         <dependency>
@@ -124,7 +128,12 @@
             org.wso2.carbon.dashboards.core.bean.*; version="${project.version}",
             org.wso2.carbon.dashboards.core.exception.*; version="${project.version}"
         </export.package>
-        <private.package>org.wso2.carbon.dashboards.core.internal.*</private.package>
+        <private.package>
+            org.wso2.carbon.dashboards.core.internal.*,
+            org.wso2.carbon.database.query.manager.*,
+            org.wso2.carbon.database.query.manager.config.*,
+            org.wso2.carbon.database.query.manager.exception.*
+        </private.package>
         <import.package>
             org.wso2.carbon.datasource.core.*; version="${carbon.datasource.core.version.range}",
             org.wso2.carbon.config.*; version="${carbon.config.version.range}",

@@ -31,6 +31,7 @@ import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,13 +81,16 @@ public class WidgetMetadataDaoTest {
     private static WidgetMetadataDao createDao(Connection mockedConnection) throws SQLException {
         DataSource dataSource = mock(DataSource.class);
         when(dataSource.getConnection()).thenReturn(mockedConnection);
-        return new WidgetMetadataDao(dataSource, new QueryProvider(new DashboardConfigurations()));
+        return new WidgetMetadataDao(dataSource, new QueryManager(new DashboardConfigurations()));
     }
 
     private static Connection createConnection(PreparedStatement mockPreparedStatement) throws SQLException {
         Connection connection = mock(Connection.class);
         when(connection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
         when(connection.createBlob()).thenReturn(mock(Blob.class));
+        when(connection.getMetaData()).thenReturn(mock(DatabaseMetaData.class));
+        when((connection.getMetaData().getDatabaseProductName())).thenReturn("H2");
+        when((connection.getMetaData().getDatabaseProductVersion())).thenReturn("default");
         return connection;
     }
 

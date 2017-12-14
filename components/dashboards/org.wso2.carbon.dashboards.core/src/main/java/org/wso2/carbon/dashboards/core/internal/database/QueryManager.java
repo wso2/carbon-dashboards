@@ -18,26 +18,26 @@
 package org.wso2.carbon.dashboards.core.internal.database;
 
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
-import org.wso2.carbon.dashboards.core.bean.QueryConfiguration;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
+import org.wso2.carbon.database.query.manager.QueryProvider;
+import org.wso2.carbon.database.query.manager.config.Queries;
+import org.wso2.carbon.database.query.manager.exception.QueryMappingNotAvailableException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 /**
  * Provides SQl queries.
  *
  * @since 4.0.0
  */
-public class QueryProvider {
-
-    // TODO: 11/10/17 Re-think this class after the common SQL query provider get released.
-
+public class QueryManager {
     public static final String ADD_DASHBOARD_CONTENT_QUERY = "add_dashboard";
     public static final String ADD_WIDGET_CONFIG_QUERY = "add_widget_config";
     public static final String GET_WIDGET_CONFIG_QUERY = "get_widget_config";
@@ -47,18 +47,22 @@ public class QueryProvider {
     public static final String GET_DASHBOARD_BY_URL_QUERY = "get_dashboard_by_url";
     public static final String DELETE_DASHBOARD_BY_URL_QUERY = "delete_dashboard_by_url";
     public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
-    public static final String DEFAULT_DB_TYPE = "h2";
-    public static final String DEFAULT_DB_VERSION = "1.2.140";
+    public static final String DEFAULT_DB_TYPE = "H2";
+    public static final String DEFAULT_DB_VERSION = "default";
     private static final String FILE_SQL_QUERIES = "sql-queries.yaml";
 
-    private final List<QueryConfiguration> queries;
+    private final List<Queries> componentQueries;
+    private final List<Queries> deploymentQueries;
 
-    public QueryProvider(DashboardConfigurations dashboardConfigurations) {
-        this.queries = readConfigs(dashboardConfigurations);
+    private final Map<String, Map<String, String>> queryMap = new HashMap<>();
+
+    public QueryManager(DashboardConfigurations dashboardConfigurations) {
+        this.componentQueries = readConfigs();
+        this.deploymentQueries = dashboardConfigurations.getQueries();
     }
 
     @SuppressWarnings("unchecked, rawtypes")
-    private List<QueryConfiguration> readConfigs(DashboardConfigurations dashboardConfigurations) {
+    private List<Queries> readConfigs() {
         List queries;
         try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(FILE_SQL_QUERIES)) {
             if (inputStream == null) {
@@ -72,8 +76,6 @@ public class QueryProvider {
         } catch (Exception e) {
             throw new DashboardRuntimeException("YAML file '" + FILE_SQL_QUERIES + "' is invalid.", e);
         }
-
-        // TODO: 11/10/17 Merge default SQL queries with DashboardConfigurations.getQueries()
         return queries;
     }
 
@@ -83,14 +85,21 @@ public class QueryProvider {
     }
 
     public String getQuery(String dbType, String dbVersion, String key) throws DashboardRuntimeException {
-        QueryConfiguration queryConfiguration = queries.stream()
-                .filter(queryConfig -> Objects.equals(dbType, queryConfig.getType()) &&
-                        Objects.equals(dbVersion, queryConfig.getVersion()))
-                .findFirst()
-                .orElseThrow(() -> new DashboardRuntimeException(
-                        "Cannot find SQL query configuration for database type '" + dbType + "'."));
-        return queryConfiguration.getQuery(key)
-                .orElseThrow(() -> new DashboardRuntimeException("Cannot find the SQl query for key '" + key + "'."));
+        String dbKey = dbType + "_" + dbVersion;
+        if (!queryMap.containsKey(dbKey)) {
+            Map<String, String> queries = null;
+            try {
+                queries = QueryProvider.mergeMapping(dbType, dbVersion, componentQueries, deploymentQueries);
+            } catch (QueryMappingNotAvailableException e) {
+                throw new DashboardRuntimeException("Unable to build database queries.", e);
+            }
+            queryMap.put(dbKey, queries);
+        }
+
+        if (!queryMap.get(dbKey).containsKey(key)) {
+            throw new DashboardRuntimeException("Unable to find the configuration entry for the key: " + key);
+        }
+        return queryMap.get(dbKey).get(key);
     }
 
     /**
@@ -99,7 +108,6 @@ public class QueryProvider {
      * @since 4.0.0
      */
     private static class OsgiClassLoaderConstructor extends Constructor {
-
         @Override
         protected Class<?> getClassForName(String name) throws ClassNotFoundException {
             return Class.forName(name, true, this.getClass().getClassLoader());

@@ -23,37 +23,37 @@ import org.junit.jupiter.api.Test;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 
-import static org.wso2.carbon.dashboards.core.internal.database.QueryProvider.DEFAULT_DB_TYPE;
-import static org.wso2.carbon.dashboards.core.internal.database.QueryProvider.DEFAULT_DB_VERSION;
+import static org.wso2.carbon.dashboards.core.internal.database.QueryManager.DEFAULT_DB_TYPE;
+import static org.wso2.carbon.dashboards.core.internal.database.QueryManager.DEFAULT_DB_VERSION;
 
 /**
- * Test cases for {@link QueryProvider} class.
+ * Test cases for {@link QueryManager} class.
  *
  * @since 4.0.0
  */
-public class QueryProviderTest {
+public class QueryManagerTest {
 
     @Test
     void testGetQueryWithInvalidParams() {
-        QueryProvider queryProvider = new QueryProvider(new DashboardConfigurations());
-        Assertions.assertThrows(DashboardRuntimeException.class, () -> queryProvider.getQuery("foo", null, null));
+        QueryManager queryManager = new QueryManager(new DashboardConfigurations());
+        Assertions.assertThrows(DashboardRuntimeException.class, () -> queryManager.getQuery("foo", null, null));
         Assertions.assertThrows(DashboardRuntimeException.class,
-                                () -> queryProvider.getQuery(DEFAULT_DB_TYPE, "1.0.0", null));
+                                () -> queryManager.getQuery(DEFAULT_DB_TYPE, "1.0.0", null));
         Assertions.assertThrows(DashboardRuntimeException.class,
-                                () -> queryProvider.getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, "bar"));
+                                () -> queryManager.getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, "bar"));
     }
 
     @Test
     void testGetQueryWithParams() {
-        QueryProvider queryProvider = new QueryProvider(new DashboardConfigurations());
-        String query = queryProvider.getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, "add_dashboard");
+        QueryManager queryManager = new QueryManager(new DashboardConfigurations());
+        String query = queryManager.getQuery(DEFAULT_DB_TYPE, DEFAULT_DB_VERSION, "add_dashboard");
         Assertions.assertNotNull(query, "SQL query cannot be null");
     }
 
     @Test
     void testGetQuery() {
-        QueryProvider queryProvider = new QueryProvider(new DashboardConfigurations());
-        String query = queryProvider.getQuery("add_dashboard");
+        QueryManager queryManager = new QueryManager(new DashboardConfigurations());
+        String query = queryManager.getQuery("add_dashboard");
         Assertions.assertNotNull(query, "SQL query cannot be null");
     }
 }

@@ -21,9 +21,9 @@ package org.wso2.carbon.dashboards.core.bean;
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
 import org.wso2.carbon.dashboards.core.bean.roles.provider.Roles;
+import org.wso2.carbon.database.query.manager.config.Queries;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Configuration bean class for dashboard.
@@ -33,17 +33,17 @@ import java.util.List;
 @Configuration(namespace = "wso2.dashboard", description = "WSO2 Dashboard configurations")
 public class DashboardConfigurations {
 
-    @Element(description = "Map of database queries")
-    private List<QueryConfiguration> queries = Collections.emptyList();
-
-    public List<QueryConfiguration> getQueries() {
-        return queries;
-    }
+    @Element(description = "Database queries template array list.")
+    ArrayList<Queries> queries = new ArrayList<>();
 
     @Element(description = "Map of roles list")
     public Roles roles;
 
     public Roles getRoles() {
         return roles;
+    }
+
+    public ArrayList<Queries> getQueries() {
+        return queries;
     }
 }
