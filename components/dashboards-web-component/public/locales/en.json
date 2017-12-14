@@ -27,7 +27,7 @@
   "page.id.prefix": "page",
   "page.title.prefix": "New Page -",
   "pages.heading" : "Pages",
-  "make.homepage" : "Make as Home Page",
+  "mark.homepage" : "Mark as Home Page",
   "widgets.heading" : "Widgets",
   "widget.configuration" : "Widget Configuration",
   "no.widgets.found" :"No Widgets Found",

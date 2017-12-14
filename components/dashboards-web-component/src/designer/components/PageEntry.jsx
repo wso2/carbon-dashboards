@@ -64,7 +64,7 @@ export default class PageEntry extends Component {
         }
     }
 
-    makeAsHomePage(e, checked) {
+    markAsHomePage(e, checked) {
         if (this.props.onLandingPageChanged) {
             this.props.onLandingPageChanged(this.state.page.id);
         }
@@ -133,10 +133,10 @@ export default class PageEntry extends Component {
                             }}
                         />
                         <Checkbox
-                            label={<FormattedMessage id="make.homepage" defaultMessage="Make as Home Page" />}
+                            label={<FormattedMessage id="mark.homepage" defaultMessage="Mark as Home Page" />}
                             checked={this.state.page.landingPage}
                             disabled={this.state.page.landingPage}
-                            onCheck={this.makeAsHomePage.bind(this)}
+                            onCheck={this.markAsHomePage.bind(this)}
                             className="home-page-checkbox"
                         />
                         <RaisedButton
