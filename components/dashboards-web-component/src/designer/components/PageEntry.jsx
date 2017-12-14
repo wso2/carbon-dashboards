@@ -30,7 +30,6 @@ const styles = {
     pageCard: {
         backgroundColor: '#17262e',
         marginBottom: '5px',
-        showDeletePageEntry: false,
     },
 };
 
@@ -39,6 +38,7 @@ export default class PageEntry extends Component {
         super(props);
         this.state = {
             page: props.page,
+            showDeletePageEntry: false,
             pageId: props.page.id,
         };
         this.dirty = false;
@@ -63,10 +63,6 @@ export default class PageEntry extends Component {
         if (this.props.onPageDeleted) {
             this.props.onPageDeleted(this.state.pageId);
         }
-    }
-
-    handleClose() {
-        this.setState({ showDeletePageEntry: true });
     }
 
     makeAsHomePage(e, checked) {
@@ -97,7 +93,7 @@ export default class PageEntry extends Component {
             <FlatButton
                 label={<FormattedMessage id="confirmation.no" defaultMessage="No" />}
                 primary
-                onClick={this.handleClose}
+                onClick={() => { this.setState({ showDeletePageEntry: true }); }}
             />,
         ];
         return (
