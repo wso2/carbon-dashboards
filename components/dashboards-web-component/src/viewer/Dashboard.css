@@ -27,10 +27,18 @@
     margin-top: -9px;
 }
 
-.viewer-header-right-btn-group .acc-name {
+.viewer-header-right-btn-group > span {
+    display: inline-block;
     float: left;
     padding-top: 15px;
     margin-right: 20px;
+}
+
+.viewer-header-right-btn-group > a {
+    display: inline-block;
+    float: left;
+    padding-top: 1px;
+    margin-right: 5px;
 }
 
 .viewer-app-bar {
