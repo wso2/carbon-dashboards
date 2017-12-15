@@ -23,6 +23,7 @@ import AuthenticationAPI from '../../utils/apis/AuthenticationAPI';
  * Name of the session cookie.
  */
 const sessionUser = 'DASHBOARD_USER';
+const REFRESH_TOKEN_COOKIE_NAME = 'REFRESH_TOKEN';
 const TIMESTAMP_SKEW =  100;
 const REFRESH_TOKEN_VALIDITY_PERIOD = 604800;
 
@@ -75,7 +76,7 @@ export default class AuthManager {
                         token: response.data.partialAccessToken,
                         validity: response.data.validityPeriod
                     });
-                    AuthManager.setCookie("REFRESH_TOKEN", response.data.partialRefreshToken,
+                    AuthManager.setCookie(REFRESH_TOKEN_COOKIE_NAME, response.data.partialRefreshToken,
                         REFRESH_TOKEN_VALIDITY_PERIOD, window.contextPath);
                     resolve();
                 })
@@ -116,7 +117,7 @@ export default class AuthManager {
                     if (rememberMe) {
                         window.localStorage.setItem("rememberMe", rememberMe);
                         window.localStorage.setItem("username", username);
-                        AuthManager.setCookie("REFRESH_TOKEN", response.data.lID,
+                        AuthManager.setCookie(REFRESH_TOKEN_COOKIE_NAME, response.data.lID,
                             REFRESH_TOKEN_VALIDITY_PERIOD, window.contextPath);
                     }
                     resolve();
@@ -137,7 +138,7 @@ export default class AuthManager {
                 .then(() => {
                     AuthManager.clearUser();
                     window.localStorage.clear();
-                    AuthManager.delete_cookie("REFRESH_TOKEN");
+                    AuthManager.delete_cookie(REFRESH_TOKEN_COOKIE_NAME);
                     resolve();
                 })
                 .catch(error => reject(error));

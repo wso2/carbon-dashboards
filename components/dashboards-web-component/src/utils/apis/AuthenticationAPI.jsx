@@ -92,7 +92,7 @@ export default class AuthenticationAPI {
             }), {
                 headers: {
                     'Content-Type': MediaType.APPLICATION_WWW_FORM_URLENCODED,
-                    'Authorization': "Bearer " + AuthManager.getCookie('REFRESH_TOKEN'),
+                    'Authorization': "Bearer " + AuthManager.getCookie(REFRESH_TOKEN_COOKIE_NAME),
                     'Accept': 'application/json'
                 },
             });
