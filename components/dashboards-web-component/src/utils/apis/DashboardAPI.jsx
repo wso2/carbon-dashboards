@@ -37,7 +37,7 @@ export default class DashboardAPI {
         let httpClient = Axios.create({
             baseURL: window.location.origin + '' + contextPath + '/apis/dashboards',
             timeout: 2000,
-            headers: {"Authorization": "Bearer " + AuthManager.getUser().token}
+            headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID}
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
         return httpClient;

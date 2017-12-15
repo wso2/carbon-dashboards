@@ -29,7 +29,7 @@ export default class WidgetAPI {
         let httpClient = Axios.create({
             baseURL: window.location.origin + '' + contextPath + '/apis/widgets',
             timeout: 2000,
-            headers: {"Authorization": "Bearer " + AuthManager.getUser().token}
+            headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID}
         });
         return httpClient;
     }

@@ -73,7 +73,7 @@ export default class AuthManager {
                 .then((response) => {
                     AuthManager.setUser({
                         username: window.localStorage.getItem("username"),
-                        token: response.data.pID,
+                        SDID: response.data.pID,
                         validity: response.data.validityPeriod
                     });
                     AuthManager.setCookie(REFRESH_TOKEN_COOKIE_NAME, response.data.lID,
@@ -111,7 +111,7 @@ export default class AuthManager {
                         username: response.data.authUser,
                         rememberMe,
                         roles: [],
-                        token: response.data.pID,
+                        SDID: response.data.pID,
                         validity: response.data.validityPeriod,
                     });
                     if (rememberMe) {
@@ -134,7 +134,7 @@ export default class AuthManager {
     static logout() {
         return new Promise((resolve, reject) => {
             AuthenticationAPI
-                .logout(AuthManager.getUser().token)
+                .logout(AuthManager.getUser().SDID)
                 .then(() => {
                     AuthManager.clearUser();
                     window.localStorage.clear();
