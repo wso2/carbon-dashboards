@@ -87,7 +87,7 @@ export default class AuthenticationAPI {
         return AuthenticationAPI
             .getHttpClient()
             .post(`/login/${appContext}`, Qs.stringify({
-                grantType: "refresh_token",
+                grantType: 'refresh_token',
                 rememberMe: true
             }), {
                 headers: {
@@ -121,7 +121,7 @@ export default class AuthenticationAPI {
      */
     static getRoles() {
         let client = AuthenticationAPI.getHttpClient();
-        client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().token;
+        client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().SDID;
         return client.get('/portal/apis/dashboards/roles');
     }
 
@@ -133,7 +133,7 @@ export default class AuthenticationAPI {
      */
     static getUserRoles(username) {
         let client = AuthenticationAPI.getHttpClient();
-        client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().token;
+        client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().SDID;
         return client.get(`/portal/apis/dashboards/roles/${username}`);
     }
 }

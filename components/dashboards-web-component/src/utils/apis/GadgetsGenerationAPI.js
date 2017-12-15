@@ -38,7 +38,7 @@ class GadgetsGenerationAPI {
         let httpClient = axios.create({
             baseURL: appContext + '/apis',
             timeout: 2000,
-            headers: { "Authorization": "Bearer " + AuthManager.getUser().token },
+            headers: { "Authorization": "Bearer " + AuthManager.getUser().SDID },
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
         return httpClient;
