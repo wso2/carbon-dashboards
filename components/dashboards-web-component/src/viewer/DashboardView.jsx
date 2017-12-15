@@ -22,6 +22,7 @@ import React from 'react';
 import { getMuiTheme, MuiThemeProvider, darkBaseTheme } from 'material-ui/styles';
 import CircularProgress from 'material-ui/CircularProgress';
 import { AppBar, Drawer, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
+import ActionHome from 'material-ui/svg-icons/action/home';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
@@ -152,8 +153,13 @@ class DashboardView extends React.Component {
 
         return (
             <div className="viewer-header-right-btn-group">
-                <span className="acc-name">{user.username}</span>
                 <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+                    <Link to={`${window.contextPath}/`}>
+                        <IconButton tooltip={<FormattedMessage id="viewer.back.tooltip" defaultMessage="Back to Home" />}>
+                            <ActionHome/>
+                        </IconButton>
+                    </Link>
+                    <span>{user.username}</span>
                     <IconMenu
                         iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
                         targetOrigin={{ horizontal: 'right', vertical: 'bottom' }}

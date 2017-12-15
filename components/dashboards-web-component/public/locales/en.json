@@ -54,5 +54,6 @@
   "settings.add.role" :"Add Role",
   "listing.no.dashboards.available" : "No Dashboards Available",
   "dashboard.unauthorized.title" : "401 Unauthorized",
-  "dashboard.unauthorized.message" : "You are not authorized to access this page"
+  "dashboard.unauthorized.message" : "You are not authorized to access this page",
+  "viewer.back.tooltip" : "Back to Home"
 }

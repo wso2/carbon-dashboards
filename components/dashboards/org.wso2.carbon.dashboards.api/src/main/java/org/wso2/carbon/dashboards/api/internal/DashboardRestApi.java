@@ -270,6 +270,9 @@ public class DashboardRestApi implements Microservice {
     }
 
     private static String replaceCRLFCharacters(String str) {
-        return str.replace('\n', '_').replace('\r', '_');
+        if (str != null) {
+            str = str.replace('\n', '_').replace('\r', '_');
+        }
+        return str;
     }
 }
