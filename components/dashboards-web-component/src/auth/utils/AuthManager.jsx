@@ -159,7 +159,7 @@ export default class AuthManager {
             d.setTime(d.getTime() + expiresIn);
             expires = `expires=${d.toUTCString()};`;
         }
-        document.cookie = `${name}=${value};${expires}path=${window.contextPath}`;
+        document.cookie = `${name}=${value};${expires}path=${window.contextPath};Secure`;
     }
 
     /**
