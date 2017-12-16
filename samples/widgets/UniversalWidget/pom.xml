@@ -22,7 +22,7 @@
 
     <artifactId>org.wso2.carbon.dashboards.samples.widgets.universal-widget</artifactId>
     <packaging>pom</packaging>
-    <version>4.0.0</version>
+    <version>4.0.1-SNAPSHOT</version>
 
     <name>WSO2 Carbon Dashboards - Samples - Widgets - Universal widget</name>
     <url>http://wso2.org</url>
@@ -30,7 +30,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
         <artifactId>widgets-parent</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
