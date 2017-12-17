@@ -61,7 +61,7 @@ class UtilFunctions {
      */
     static getDefaultH2Config() {
         return {
-            "datasourceName": "TRANSACTIONS_DB",
+            "datasourceName": "SAMPLE_DB",
             "query": "select * from TRANSACTIONS_TABLE",
             "tableName": "TRANSACTIONS_TABLE",
             "incrementalColumn": "CREDITCARDNO",
