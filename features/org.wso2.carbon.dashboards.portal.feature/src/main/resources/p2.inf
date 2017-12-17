@@ -25,3 +25,5 @@ org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/d
 org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/);\
 org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/);\
 org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.portal_${feature.version}/portal/,target:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/database/);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.portal_${feature.version}/database/TRANSACTIONS_DB.h2.db/,target:${installFolder}/../{runtime}/database/TRANSACTIONS_DB.h2.db,overwrite:true);
