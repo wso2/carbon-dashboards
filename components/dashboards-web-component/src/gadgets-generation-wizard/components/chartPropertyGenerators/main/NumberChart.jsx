@@ -54,7 +54,7 @@ class Number extends Component {
                 <StreamProperty
                     id="x"
                     value={this.state.configuration.x}
-                    fieldName="Number field to be displayed"
+                    fieldName="Number field to be displayed*"
                     filter={Types.dataset.metadata.linear}
                     onChange={(id, value) => this.handlePropertyChange(id, value)}
                     metadata={this.props.metadata}
@@ -64,7 +64,7 @@ class Number extends Component {
                 <TextProperty
                     id="title"
                     value={this.state.configuration.title}
-                    fieldName="Title to be displayed on the chart"
+                    fieldName="Title to be displayed on the chart*"
                     onChange={(id, value) => this.handlePropertyChange(id, value)}
                     fullWidth
                 />
@@ -84,24 +84,6 @@ class Number extends Component {
                     value={this.state.configuration.showPercentage}
                     fieldName="Show percentage difference with relation to the previous number"
                     onChange={(id, value) => this.handlePropertyChange(id, value)}
-                />
-                <br />
-                <TextProperty
-                    id="height"
-                    value={this.state.configuration.height}
-                    fieldName="Height of the chart (in pixels)"
-                    onChange={(id, value) => this.handlePropertyChange(id, value)}
-                    number
-                    fullWidth
-                />
-                <br />
-                <TextProperty
-                    id="width"
-                    value={this.state.configuration.width}
-                    fieldName="Width of the chart (in pixels)"
-                    onChange={(id, value) => this.handlePropertyChange(id, value)}
-                    number
-                    fullWidth
                 />
                 <br />
             </div>

@@ -53,7 +53,7 @@ class LineAreaBar extends Component {
                         <SelectProperty
                             id="type"
                             value={this.props.configuration.type}
-                            fieldName="Type of the chart"
+                            fieldName="Type of the chart*"
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             options={{
                                 values: [Types.chart.lineChart, Types.chart.areaChart, Types.chart.barChart],
@@ -66,7 +66,7 @@ class LineAreaBar extends Component {
                         <StreamProperty
                             id="y"
                             value={this.props.configuration.y}
-                            fieldName="Dependent axis"
+                            fieldName="Dependent axis*"
                             filter={Types.dataset.metadata.linear}
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             metadata={this.props.metadata}
