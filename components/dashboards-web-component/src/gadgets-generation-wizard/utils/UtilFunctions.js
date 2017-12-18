@@ -83,8 +83,6 @@ class UtilFunctions {
     static validateLineChartConfiguration(configuration) {
         // Main chart properties and number of sub charts
         if (configuration.x === '' ||
-            configuration.height === '' ||
-            configuration.width === '' ||
             configuration.maxLength === '' ||
             configuration.charts.length === 0) {
             return false;
@@ -157,6 +155,9 @@ class UtilFunctions {
                 delete subChart.style;
             }
         }
+        if (!configuration.legend) {
+            delete configuration.legend;
+        }
         // Remove unfilled Style properties
         for (const styleProperty in configuration.style) {
             if (Object.prototype.hasOwnProperty.call(configuration.style, styleProperty)) {
@@ -196,15 +197,12 @@ class UtilFunctions {
      */
     static validateScatterChartConfiguration(configuration) {
         // Main chart properties and number of sub charts
-        if (configuration.height === '' ||
-            configuration.width === '' ||
-            configuration.maxLength === '' ||
-            configuration.charts.length === 0) {
+        if (configuration.charts.length === 0) {
             return false;
         }
         // Sub chart properties
         for (const subChart of configuration.charts) {
-            if (subChart.x === '' || subChart.y === '') {
+            if (subChart.x === '' || subChart.y === '' || subChart.maxLength === '') {
                 return false;
             }
         }
@@ -296,8 +294,7 @@ class UtilFunctions {
             default :
                 break;
         }
-        return (!(configuration.charts[0].x === '' || configuration.charts[0].color === '' ||
-            configuration.height === '' || configuration.width === ''));
+        return (!(configuration.charts[0].x === '' || configuration.charts[0].color === ''));
     }
 
     /**
@@ -314,6 +311,9 @@ class UtilFunctions {
         }
         if (configuration.charts[0].colorDomain.length === 0) {
             delete configuration.charts[0].colorDomain;
+        }
+        if (!configuration.legend) {
+            delete configuration.legend;
         }
         for (const styleProperty in configuration.style) {
             if (Object.prototype.hasOwnProperty.call(configuration.style, styleProperty)) {
@@ -355,9 +355,7 @@ class UtilFunctions {
      */
     static validateNumberChartConfiguration(configuration) {
         return (!(configuration.x === '' ||
-            configuration.title === '' ||
-            configuration.height === '' ||
-            configuration.width === ''));
+            configuration.title === ''));
     }
 
     /**
@@ -380,7 +378,7 @@ class UtilFunctions {
      * @param configuration
      */
     static validateGeographicalChartConfiguration(configuration) {
-        if (configuration.x === '' || configuration.height === '' || configuration.width === '') {
+        if (configuration.x === '') {
             return false;
         }
 
@@ -398,6 +396,12 @@ class UtilFunctions {
      */
     static prepareGeographicalChartConfiguration(configuration) {
         configuration = JSON.parse(JSON.stringify(configuration)); // To avoid reference copying
+        if (configuration.legendTitleColor === '') {
+            delete configuration.legendTitleColor;
+        }
+        if (configuration.legendTextColor === '') {
+            delete configuration.legendTextColor;
+        }
         for (const subChart of configuration.charts) {
             if (subChart.colorScale.length === 0) {
                 delete subChart.colorScale;

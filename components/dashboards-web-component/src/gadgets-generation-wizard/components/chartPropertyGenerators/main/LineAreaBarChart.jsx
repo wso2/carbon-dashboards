@@ -163,7 +163,7 @@ class LineAreaBar extends Component {
                 <StreamProperty
                     id="x"
                     value={this.state.configuration.x}
-                    fieldName="Independent axis"
+                    fieldName="Independent axis*"
                     onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
                     metadata={this.props.metadata}
                     fullWidth
@@ -198,28 +198,17 @@ class LineAreaBar extends Component {
                     <br />
                 </div>
                 <br />
-                <TextProperty
-                    id="height"
-                    value={this.state.configuration.height}
-                    fieldName="Height of the chart in pixels"
+                <SwitchProperty
+                    id="legend"
+                    value={this.state.configuration.legend}
+                    fieldName="Show legend"
                     onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                    number
-                    fullWidth
-                />
-                <br />
-                <TextProperty
-                    id="width"
-                    value={this.state.configuration.width}
-                    fieldName="Width of the chart in pixels"
-                    onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                    number
-                    fullWidth
                 />
                 <br />
                 <TextProperty
                     id="maxLength"
                     value={this.state.configuration.maxLength}
-                    fieldName="Maximum Length of the data set displayed"
+                    fieldName="Maximum Length of the data set displayed*"
                     onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
                     number
                     fullWidth

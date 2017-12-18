@@ -68,7 +68,11 @@ class RevenueByCountry extends Widget {
             x: 'Country',
             charts: [{type: 'map', y: 'Revenue', mapType: 'world', colorScale: ['#ccc', '#0082ea']}],
             width: this.state.width,
-            height: this.state.height
+            height: this.state.height,
+            style: {
+                legendTitleColor: '#5d6e77',
+                legendTextColor: '#5d6e77',
+            },
         };
 
         this.metadata = {
@@ -77,6 +81,8 @@ class RevenueByCountry extends Widget {
         };
 
         this.setSelectedCountry = this.setSelectedCountry.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        this.props.glContainer.on('resize', this.handleResize);
     }
 
     setSelectedCountry(selected) {
@@ -84,27 +90,27 @@ class RevenueByCountry extends Widget {
         this.setState({selectedCountry: selected.givenName, selectedRev: selected.y});
     }
 
-    render() {
+    handleResize() {
+        this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
+    }
+
+    renderWidget() {
         return (
-            <div className="sample-dashboard-content">
-                <div className="sample-dashboard-content-rev-text">
-                    <div className="sample-instructions">Pick a Country to view stats</div>
-                    <table className="sample-rev-table" style={{marginTop: 70, marginLeft: 70}}>
-                        <thead>
-                        <tr>
-                            <td>Country</td>
-                            <td>Revenue</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>{this.state.selectedCountry}</td>
-                            <td><span className="currency">$</span>{this.state.selectedRev}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <div className="sample-dashboard-content" style={{height: this.props.glContainer.height}}>
+                <div className="sample-dashboard-content-rev-text" style={{height: '100%', color: '#5d6e77'}}  >
+                    <div style={{marginTop: 5, fontSize: '1.8em'}}>Pick a Country to view stats</div>
+                    <div style={{margin: 'auto', textAlign:'center', fontSize: '1.2em', overflow: 'hidden', paddingTop:15}}>
+                        <div style={{width: '50%', display: 'inline-block', float: 'left'}}>
+                            <strong style={{display: 'block'}}>Country</strong>
+                            <span style={{display: 'block'}}>{this.state.selectedCountry}</span>
+                        </div>
+                        <div style={{width: '50%', display: 'inline-block'}}>
+                            <strong style={{display: 'block'}}>Revenue</strong>
+                            <span style={{display: 'block'}}>{`$ ${this.state.selectedRev}`}</span>
+                        </div>
+                    </div>
                 </div>
-                <div className="sample-dashboard-content-map" style={{ height: '100%' }}>
+                <div className="sample-dashboard-content-map" style={{height: '100%'}}>
                     <VizG
                         config={this.mapConfig}
                         metadata={this.metadata}

@@ -25,6 +25,7 @@ import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
 import IconButton from 'material-ui/IconButton';
 import AddButton from 'material-ui/svg-icons/content/add';
 import ClearButton from 'material-ui/svg-icons/content/clear';
+import SwitchProperty from '../../inputTypes/SwitchProperty';
 // App Components
 import TextProperty from '../../inputTypes/TextProperty';
 import SelectProperty from '../../inputTypes/SelectProperty';
@@ -126,7 +127,7 @@ class Pie extends Component {
                 <StreamProperty
                     id="x"
                     value={this.state.configuration.charts[0].x}
-                    fieldName="Data field"
+                    fieldName="Data field*"
                     filter={Types.dataset.metadata.linear}
                     onChange={(id, value) => this.handleInnerChartPropertyChange(id, value)}
                     metadata={this.props.metadata}
@@ -136,7 +137,7 @@ class Pie extends Component {
                 <SelectProperty
                     id="chartType"
                     value={this.state.configuration.chartType}
-                    fieldName="Type of the chart"
+                    fieldName="Type of the chart*"
                     options={{
                         values: [Types.chart.pie, Types.chart.donut, Types.chart.gauge],
                         texts: [Constants.CHART_NAMES.PIE_CHART, Constants.CHART_NAMES.DONUT_CHART,
@@ -149,29 +150,19 @@ class Pie extends Component {
                 <StreamProperty
                     id="color"
                     value={this.props.configuration.charts[0].color}
-                    fieldName="Field to color categorize"
+                    fieldName="Field to color categorize*"
                     filter={Types.dataset.metadata.ordinal}
                     onChange={(id, value) => this.handleInnerChartPropertyChange(id, value)}
                     metadata={this.props.metadata}
                     fullWidth
                 />
                 <br />
-                <TextProperty
-                    id="height"
-                    value={this.state.configuration.height}
-                    fieldName="Height of the chart in pixels"
-                    onChange={(id, value) => this.handleChartPropertyChange(id, value)}
-                    number
-                    fullWidth
-                />
                 <br />
-                <TextProperty
-                    id="width"
-                    value={this.state.configuration.width}
-                    fieldName="Width of the chart in pixels"
+                <SwitchProperty
+                    id="legend"
+                    value={this.state.configuration.legend}
+                    fieldName="Show legend"
                     onChange={(id, value) => this.handleChartPropertyChange(id, value)}
-                    number
-                    fullWidth
                 />
                 <br />
                 <br />

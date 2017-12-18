@@ -53,8 +53,7 @@ const Configurations = {
                     colorDomain: [],
                 },
             ],
-            height: '',
-            width: '',
+            legend: false,
             maxLength: '',
             style: {
                 axisLabelColor: '',
@@ -85,8 +84,6 @@ const Configurations = {
                     maxLength: '',
                 },
             ],
-            height: '',
-            width: '',
             style: {
                 axisLabelColor: '',
                 legendTitleColor: '',
@@ -113,8 +110,7 @@ const Configurations = {
                     colorDomain: [],
                 },
             ],
-            height: '',
-            width: '',
+            legend: false,
             style: {
                 legendTitleColor: '',
                 legendTextColor: '',
@@ -131,12 +127,11 @@ const Configurations = {
             ],
             showDifference: false,
             showPercentage: false,
-            height: '',
-            width: '',
         },
         geographicalChart: {
-            type: 'map',
             x: '',
+            legendTitleColor: '',
+            legendTextColor: '',
             charts: [
                 {
                     type: 'map',
@@ -145,8 +140,6 @@ const Configurations = {
                     colorScale: [],
                 },
             ],
-            height: '',
-            width: '',
         },
         tableChart: {
             charts: [
