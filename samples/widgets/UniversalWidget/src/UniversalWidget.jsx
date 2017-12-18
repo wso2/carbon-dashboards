@@ -63,7 +63,15 @@ export default class UniversalWidget extends ExtendedWidget {
 
     renderWidget() {
         return (
-            <VizG config={this.state.config} metadata={this.state.metadata} data={this.state.data} />
+            <div style={{width: this.props.glContainer.width, height: this.props.glContainer.height }}>
+                <VizG
+                    config={this.state.config}
+                    metadata={this.state.metadata}
+                    data={this.state.data}
+                    height={this.props.glContainer.height}
+                    width={this.props.glContainer.width}
+                />
+            </div>
         );
     }
 
@@ -75,7 +83,7 @@ export default class UniversalWidget extends ExtendedWidget {
         let httpClient = Axios.create({
             baseURL: window.location.origin + window.contextPath,
             timeout: 2000,
-            headers: {"Authorization": "Bearer " + AuthManager.getUser().token},
+            headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID},
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
         return httpClient;
