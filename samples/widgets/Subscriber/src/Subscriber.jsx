@@ -19,6 +19,10 @@
 
 import React, {Component} from 'react';
 import Widget from '@wso2-dashboards/widget';
+import FlatButton from 'material-ui/FlatButton';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 
 class Subscriber extends Widget {
     constructor(props) {
@@ -42,7 +46,7 @@ class Subscriber extends Widget {
         if (this.state.receivedMsg) {
             const output = [];
             this.set.forEach(d => {
-               output.push(<div>[Received] {d.time.toTimeString()} [Message] - {d.value}</div>);
+                output.push(<div>[Received] {d.time.toTimeString()} [Message] - {d.value}</div>);
             });
 
             return output;
@@ -53,18 +57,28 @@ class Subscriber extends Widget {
 
     clearMsgs() {
         this.setState({receivedMsg: ''});
-        this.set=[];
+        this.set = [];
     }
 
     renderWidget() {
-        return (<section style={{marginTop: 25}}><h4 style={{display: 'inline', marginRight: 10}}>Received Messages</h4>
-            <input
-                type="button"
-                onClick={this.clearMsgs}
-                value="Clear"
-            />
-            <div>{this.generateOutput()}</div>
-        </section>);
+        return (
+            <MuiThemeProvider
+                muiTheme={getMuiTheme(darkBaseTheme)}
+            >
+                <section style={{marginTop: 25}}><h3 style={{display: 'inline', marginRight: 10}}>Received Messages</h3>
+                    <FlatButton
+                        backgroundColor={'#d3240b'}
+                        hoverColor={'#86170b'}
+                        label={"Clear"}
+                        onClick={this.clearMsgs}
+                        style={{
+                            marginLeft: 5
+                        }}
+                    />
+                    <div style={{marginTop: 10}}>{this.generateOutput()}</div>
+                </section>
+            </MuiThemeProvider>
+        );
     }
 }
 

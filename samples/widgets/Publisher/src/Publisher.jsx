@@ -19,6 +19,11 @@
 
 import React, {Component} from 'react';
 import Widget from '@wso2-dashboards/widget';
+import {MuiThemeProvider} from 'material-ui/styles';
+import TextField from 'material-ui/TextField';
+import FlatButton from 'material-ui/FlatButton';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 class Publisher extends Widget {
     constructor(props) {
@@ -29,10 +34,10 @@ class Publisher extends Widget {
         this.onChangeHandle = this.onChangeHandle.bind(this);
         this.getPublishedMsgsOutput = this.getPublishedMsgsOutput.bind(this);
         this.clearMsgs = this.clearMsgs.bind(this);
+        this.input={};
     }
 
-    publishMsg(event) {
-        event.preventDefault();
+    publishMsg() {
         if (this.input.value) {
             this.state.inputVal = '';
             this.publishedMsgSet.push({time: new Date(), value: this.input.value});
@@ -47,43 +52,65 @@ class Publisher extends Widget {
 
     getPublishedMsgsOutput() {
         const output = [];
-        this.publishedMsgSet.forEach((d,i) => {
-           output.push(<div>[Sent] {d.time.toTimeString()} [Message] - {d.value}</div>)
+        this.publishedMsgSet.forEach((d, i) => {
+            output.push(<div>[Sent] {d.time.toTimeString()} [Message] - {d.value}</div>)
         });
         return output;
     }
 
     clearMsgs() {
         this.setState({publishedMsg: ''});
-        this.publishedMsgSet=[];
+        this.publishedMsgSet = [];
     }
 
-    onChangeHandle(event) {
-        this.setState({inputVal: event.target.value});
+    onChangeHandle(event, value) {
+        this.setState({inputVal: value});
         this.input = {};
-        this.input.value = event.target.value;
+        this.input.value = value;
     }
 
     render() {
         return (
-            <section style={{marginTop: 25}}>
-                <form onSubmit={this.publishMsg}>
-                    <label style={{marginRight: 10}}>
-                        What do you want to publish
-                    </label>
-                    <input
-                        type="text"
-                        value={this.state.inputVal}
-                        onChange={this.onChangeHandle}
-                    />
-                    <br/>
-                    <input type="submit" value="Publish"/>
-                    <br/>
-                    <h4 style={{display: 'inline', marginRight: 10}}>Sent Messages</h4>
-                    <input type="button" value="Clear" onClick={this.clearMsgs}/>
-                </form>
-                {this.getPublishedMsgsOutput()}
-            </section>
+            <MuiThemeProvider
+                muiTheme={getMuiTheme(darkBaseTheme)}
+            >
+                <section style={{marginTop: 25, padding: 10}}>
+                    <div style={{overflow: 'hidden'}}>
+                        <div style={{width: '100%', paddingRight: 10, paddingLeft: 10 }}>
+                            <TextField
+                                hintText="Hint Text"
+                                fullWidth
+                                value={this.state.inputVal}
+                                onChange={(event, newValue) => {
+                                    this.setState({inputVal: newValue});
+                                    this.input = {};
+                                    this.input.value = newValue;
+                                }}
+                            />
+                        </div>
+                        <div style={{paddingLeft:10}}>
+                            <FlatButton
+                                backgroundColor={'#1d85d3'}
+                                hoverColor={'#1a619d'}
+                                label={"Publish"}
+                                onClick={this.publishMsg}
+                            />
+                            <FlatButton
+                                backgroundColor={'#d3240b'}
+                                hoverColor={'#86170b'}
+                                label={"Clear"}
+                                onClick={this.clearMsgs}
+                                style={{
+                                    marginLeft: 5
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div style={{paddingLeft: 15, marginTop: 10}}>
+                        {this.getPublishedMsgsOutput()}
+                    </div>
+                </section>
+            </MuiThemeProvider>
         );
     }
 }
