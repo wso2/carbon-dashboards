@@ -78,7 +78,6 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.json', '.jsx', '.scss']
     },
-    devtool: 'source-map',
     devServer: {
         contentBase: path.join(__dirname, 'public'),
         publicPath: '/dist/'
