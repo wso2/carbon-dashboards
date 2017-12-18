@@ -49,7 +49,7 @@ class Scatter extends Component {
                         <StreamProperty
                             id="x"
                             value={this.props.configuration.x}
-                            fieldName="X axis field"
+                            fieldName="X axis field*"
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             metadata={this.props.metadata}
                             fullWidth
@@ -58,7 +58,7 @@ class Scatter extends Component {
                         <StreamProperty
                             id="y"
                             value={this.props.configuration.y}
-                            fieldName="Y axis field"
+                            fieldName="Y axis field*"
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             metadata={this.props.metadata}
                             fullWidth
@@ -85,7 +85,7 @@ class Scatter extends Component {
                         <TextProperty
                             id="maxLength"
                             value={this.props.configuration.maxLength}
-                            fieldName="Maximum Length of the data set displayed"
+                            fieldName="Maximum Length of the data set displayed*"
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             number
                             fullWidth

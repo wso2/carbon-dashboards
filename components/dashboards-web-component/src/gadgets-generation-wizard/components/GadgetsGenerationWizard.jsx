@@ -132,6 +132,11 @@ class GadgetsGenerationWizard extends Component {
                     providerType,
                     providerConfiguration: UtilFunctions.getDefaultH2Config(),
                 });
+            } else {
+                this.setState({
+                    providerType,
+                    providerConfiguration: response.data,
+                });
             }
         }).catch(() => {
             this.displaySnackbar('Failed to load provider configurations', 'errorMessage');
@@ -194,14 +199,12 @@ class GadgetsGenerationWizard extends Component {
             const submittableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
-                configs: {
-                    providerConfig: {
-                        configs: {
-                            type: this.state.providerType,
-                            config: this.state.providerConfiguration,
-                        },
-                    },
-                    chartConfig: validatedConfiguration,
+                chartConfig: validatedConfiguration,
+                providerConfig: {
+                    configs: {
+                        type: this.state.providerType,
+                        config: this.state.providerConfiguration
+                    }
                 }
             };
             const apis = new GadgetsGenerationAPI();

@@ -145,7 +145,7 @@ class TableChart extends Component {
             <div>
                 <br />
                 <br />
-                <a>Columns and titles to be displayed</a>
+                <a>Columns and titles to be displayed*</a>
                 <FlatButton
                     label={(this.state.configuration.charts[0].filterColumn.indexOf(true) > -1) ?
                         ('Deselect All') : ('Select All')}
@@ -191,7 +191,7 @@ class TableChart extends Component {
                 <TextProperty
                     id="maxLength"
                     value={this.state.configuration.maxLength}
-                    fieldName="Maximum number of rows in the table"
+                    fieldName="Maximum number of rows in the table*"
                     onChange={(id, value) => this.handlePropertyChange(id, value)}
                     number
                     fullWidth
