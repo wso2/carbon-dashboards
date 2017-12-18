@@ -55,6 +55,24 @@ class UtilFunctions {
         return text.replace(/\s+/g, '-').toLowerCase();
     }
 
+    /**
+     * Returns default configuration of pre-configured H2 datasource
+     * @returns {{}}
+     */
+    static getDefaultH2Config() {
+        return {
+            "datasourceName": "SAMPLE_DB",
+            "query": "select * from TRANSACTIONS_TABLE",
+            "tableName": "TRANSACTIONS_TABLE",
+            "incrementalColumn": "CREDITCARDNO",
+            "publishingInterval": 6000,
+            "purgingInterval": 6000,
+            "publishingLimit": 1000,
+            "purgingLimit": 1000,
+            "isPurgingEnable": false
+        }
+    }
+
     /* Chart Validation & Preparation functions [START] */
 
     /**

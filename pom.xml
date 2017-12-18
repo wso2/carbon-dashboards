@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.0.0.beta6-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
@@ -378,7 +378,7 @@
     </dependencyManagement>
 
     <properties>
-        <carbon.dashboards.version>4.0.0.beta6-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.0.2-SNAPSHOT</carbon.dashboards.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
@@ -396,8 +396,8 @@
         <carbon.ui.sever.version.range>[0.17.0, 1.0.0]</carbon.ui.sever.version.range>
 
         <!--MSF4J-->
-        <msf4j-core.version>2.5.0-beta</msf4j-core.version>
-        <msf4j-core.version.range>[2.5.0-beta, 3.0.0)</msf4j-core.version.range>
+        <msf4j-core.version>2.5.0</msf4j-core.version>
+        <msf4j-core.version.range>[2.5.0, 3.0.0)</msf4j-core.version.range>
         <javax.ws.rs.version>2.0</javax.ws.rs.version>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
         <javax.websocket.version>1.1</javax.websocket.version>

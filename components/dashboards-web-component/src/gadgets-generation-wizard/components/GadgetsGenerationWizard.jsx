@@ -126,10 +126,13 @@ class GadgetsGenerationWizard extends Component {
     handleProviderTypeChange(providerType) {
         const apis = new GadgetsGenerationAPI();
         apis.getProviderConfiguration(providerType).then((response) => {
-            this.setState({
-                providerType,
-                providerConfiguration: response.data,
-            });
+            // Set configuration of pre-configured H2 database
+            if (providerType === 'RDBMSBatchDataProvider') {
+                this.setState({
+                    providerType,
+                    providerConfiguration: UtilFunctions.getDefaultH2Config(),
+                });
+            }
         }).catch(() => {
             this.displaySnackbar('Failed to load provider configurations', 'errorMessage');
         });
@@ -361,6 +364,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Next"
                         primary
+                        style={{ marginRight: 12 }}
                         onClick={this.handleNext}
                     />
                 );
@@ -369,6 +373,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Next"
                         primary
+                        style={{ marginRight: 12 }}
                         onClick={this.handleNext}
                     />
                 );
@@ -377,6 +382,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Create"
                         primary
+                        style={{ marginRight: 12 }}
                         onClick={() => this.submitGadgetConfig()}
                     />
                 );
@@ -418,6 +424,13 @@ class GadgetsGenerationWizard extends Component {
                         style={{ marginRight: 12 }}
                     />
                     {this.renderNextButton(stepIndex)}
+                    <FlatButton
+                        label="Cancel"
+                        onClick={() => {
+                            window.location.href = window.contextPath
+                        }}
+                        style={{ marginRight: 12 }}
+                    />
                 </div>
             </div>
         );

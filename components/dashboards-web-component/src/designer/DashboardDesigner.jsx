@@ -153,7 +153,7 @@ export default class DashboardDesigner extends Component {
                                           window.location.href = window.contextPath + '/';
                                       }}
                                       backgroundColor="rgb(13, 31, 39)"/>
-                        <FlatButton label={<FormattedMessage id="save.button" defaultMessage="Save"/>}
+                        <FlatButton label={<FormattedMessage id="save.page.button" defaultMessage="Save Page"/>}
                                     primary
                                     icon={<SaveIcon/>}
                                     onClick={this.updatePageContent}/>
