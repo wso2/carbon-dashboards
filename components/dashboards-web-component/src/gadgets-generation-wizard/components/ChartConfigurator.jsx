@@ -243,13 +243,15 @@ class ChartConfigurator extends Component {
                     </SelectField>
                     {this.displayChartProperties()}
                     <br />
-                    <RaisedButton
-                        label="Preview"
-                        labelPosition="before"
-                        primary
-                        icon={<PollIcon />}
-                        onClick={() => this.props.onPreview()}
-                    />
+                    {(this.state.chartType !== '') ?
+                        (<RaisedButton
+                            label="Preview"
+                            labelPosition="before"
+                            primary
+                            icon={<PollIcon />}
+                            onClick={() => this.props.onPreview()}
+                        />) :
+                        (null)}
                 </div>
                 <Snackbar
                     open={this.state.isSnackbarOpen}
