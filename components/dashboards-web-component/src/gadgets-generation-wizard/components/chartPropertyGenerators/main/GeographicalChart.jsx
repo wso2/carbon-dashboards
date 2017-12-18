@@ -109,7 +109,7 @@ class Geographical extends Component {
                 <StreamProperty
                     id="x"
                     value={this.state.configuration.x}
-                    fieldName="Field values to be plotted in the choropleth"
+                    fieldName="Field values to be plotted in the choropleth*"
                     filter={Types.dataset.metadata.linear}
                     onChange={(id, value) => this.handleMainPropertyChange(id, value)}
                     metadata={this.props.metadata}
@@ -119,7 +119,7 @@ class Geographical extends Component {
                 <StreamProperty
                     id="y"
                     value={this.state.configuration.charts[0].y}
-                    fieldName="Field values to be plotted in the map"
+                    fieldName="Field values to be plotted in the map*"
                     onChange={(id, value) => this.handleSubChartPropertyChange(id, value)}
                     metadata={this.props.metadata}
                     fullWidth
@@ -128,7 +128,7 @@ class Geographical extends Component {
                 <SelectProperty
                     id="mapType"
                     value={this.props.configuration.charts[0].mapType}
-                    fieldName="Type of the map"
+                    fieldName="Type of the map*"
                     onChange={(id, value) => this.handleSubChartPropertyChange(id, value)}
                     options={{
                         values: [Types.chart.world, Types.chart.europe, Types.chart.usa],
@@ -138,21 +138,19 @@ class Geographical extends Component {
                     fullWidth
                 />
                 <br />
-                <TextProperty
-                    id="height"
-                    value={this.state.configuration.height}
-                    fieldName="Height of the chart (in pixels)"
+                <ColorProperty
+                    id="legendTitleColor"
+                    value={this.state.configuration.legendTitleColor}
+                    fieldName="Color of the legend title"
                     onChange={(id, value) => this.handleMainPropertyChange(id, value)}
-                    number
                     fullWidth
                 />
                 <br />
-                <TextProperty
-                    id="width"
-                    value={this.state.configuration.width}
-                    fieldName="Width of the chart (in pixels)"
+                <ColorProperty
+                    id="legendTextColor"
+                    value={this.state.configuration.legendTextColor}
+                    fieldName="Color of the legend text"
                     onChange={(id, value) => this.handleMainPropertyChange(id, value)}
-                    number
                     fullWidth
                 />
                 <br />

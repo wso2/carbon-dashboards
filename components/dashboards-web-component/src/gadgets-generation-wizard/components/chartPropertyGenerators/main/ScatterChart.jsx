@@ -187,24 +187,6 @@ class Scatter extends Component {
                     <br />
                 </div>
                 <br />
-                <TextProperty
-                    id="height"
-                    value={this.state.configuration.height}
-                    fieldName="Height of the chart in pixels"
-                    onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                    number
-                    fullWidth
-                />
-                <br />
-                <TextProperty
-                    id="width"
-                    value={this.state.configuration.width}
-                    fieldName="Width of the chart in pixels"
-                    onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
-                    number
-                    fullWidth
-                />
-                <br />
                 <br />
                 {/* Optional configuration properties */}
                 <Card
