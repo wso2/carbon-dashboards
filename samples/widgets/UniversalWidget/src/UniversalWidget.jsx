@@ -75,7 +75,7 @@ export default class UniversalWidget extends ExtendedWidget {
         let httpClient = Axios.create({
             baseURL: window.location.origin + window.contextPath,
             timeout: 2000,
-            headers: {"Authorization": "Bearer " + AuthManager.getUser().token},
+            headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID},
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
         return httpClient;
