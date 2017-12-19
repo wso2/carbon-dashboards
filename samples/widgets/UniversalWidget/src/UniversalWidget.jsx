@@ -61,7 +61,7 @@ export default class UniversalWidget extends ExtendedWidget {
         })
     }
 
-    renderWidget() {
+    render() {
         return (
             <div style={{width: this.props.glContainer.width, height: this.props.glContainer.height }}>
                 <VizG
@@ -72,7 +72,7 @@ export default class UniversalWidget extends ExtendedWidget {
                     width={this.props.glContainer.width}
                 />
             </div>
-        );
+        )
     }
 
     handleResize() {
