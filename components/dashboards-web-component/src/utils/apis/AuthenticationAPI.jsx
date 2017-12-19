@@ -21,6 +21,7 @@ import Axios from 'axios';
 import Qs from 'qs';
 import {MediaType} from '../Constants';
 import AuthManager from '../../auth/utils/AuthManager';
+import DashboardUtils from '../DashboardUtils';
 
 /**
  * Authentication API base path.
@@ -71,6 +72,7 @@ export default class AuthenticationAPI {
                 password,
                 grantType: passwordGrantType,
                 rememberMe,
+                appId: 'dash-' + DashboardUtils.generateguid(),
             }), {
                 headers: {
                     'Content-Type': MediaType.APPLICATION_WWW_FORM_URLENCODED,
@@ -122,7 +124,7 @@ export default class AuthenticationAPI {
     static getRoles() {
         let client = AuthenticationAPI.getHttpClient();
         client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().SDID;
-        return client.get('/portal/apis/dashboards/roles');
+        return client.get(`${window.contextPath}/apis/dashboards/roles`);
     }
 
     /**
@@ -134,6 +136,6 @@ export default class AuthenticationAPI {
     static getUserRoles(username) {
         let client = AuthenticationAPI.getHttpClient();
         client.defaults.headers.common['Authorization'] = "Bearer " + AuthManager.getUser().SDID;
-        return client.get(`/portal/apis/dashboards/roles/${username}`);
+        return client.get(`${window.contextPath}/apis/dashboards/roles/${username}`);
     }
 }
