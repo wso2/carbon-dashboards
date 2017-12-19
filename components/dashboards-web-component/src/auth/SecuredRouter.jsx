@@ -55,7 +55,7 @@ export default class SecuredRouter extends Component {
                     AuthManager.authenticateWithRefreshToken();
                 }
             }
-        }, 600000);
+        }, 60000);
     }
     /**
      * Render routing.
