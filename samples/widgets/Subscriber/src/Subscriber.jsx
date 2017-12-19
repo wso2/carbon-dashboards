@@ -60,7 +60,7 @@ class Subscriber extends Widget {
         this.set = [];
     }
 
-    renderWidget() {
+    render() {
         return (
             <MuiThemeProvider
                 muiTheme={getMuiTheme(darkBaseTheme)}

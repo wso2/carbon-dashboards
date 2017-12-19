@@ -31,14 +31,13 @@ class UserInfo extends Widget {
         super(props);
     }
 
-    /**
-     * Implements the renderWidget function.
-     */
-    renderWidget () {
+
+    render() {
         let styles = {
             container: {
                 fontFamily: 'Roboto, sans-serif',
-                color: '#fff'
+                color: '#afafaf',
+                textAlign: 'center',
             },
         };
 
@@ -49,7 +48,7 @@ class UserInfo extends Widget {
         return (
             <div style={styles.container}>
                 <h3>User Information</h3>
-                <p style={{fontSize: 12}}><strong>Username: </strong>{user.username}</p>
+                <p style={{fontSize: '1.8em'}}><strong>Username: </strong>{user.username}</p>
             </div>
         );
     }

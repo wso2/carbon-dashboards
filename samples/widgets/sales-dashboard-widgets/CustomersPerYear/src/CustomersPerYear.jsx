@@ -139,7 +139,6 @@ class CustomersPerYear extends Widget {
                     width={this.props.glContainer.width}
                 />
             </div>
-
         );
     }
 }
