@@ -18,7 +18,7 @@
  */
 
 import React from 'react';
-import Widget from '../../../../base-widget/src/Widget';
+import Widget from '@wso2-dashboards/widget';
 
 /**
  * Demonstrates how to retrieve user information from a widget.
