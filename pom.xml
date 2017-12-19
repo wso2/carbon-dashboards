@@ -108,7 +108,7 @@
             <dependency>
                 <groupId>org.wso2.carbon.uis</groupId>
                 <artifactId>org.wso2.carbon.uis</artifactId>
-                <version>${carbon.ui.server.version}</version>
+                <version>${carbon.uiserver.version}</version>
             </dependency>
 
             <!--MSF4J-->
@@ -392,7 +392,7 @@
         <carbon.utils.version>2.0.2</carbon.utils.version>
 
         <!--UI Server-->
-        <carbon.ui.server.version>0.17.0</carbon.ui.server.version>
+        <carbon.uiserver.version>0.17.0</carbon.uiserver.version>
         <carbon.ui.sever.version.range>[0.17.0, 1.0.0]</carbon.ui.sever.version.range>
 
         <!--MSF4J-->
