@@ -187,6 +187,9 @@ class UtilFunctions {
         if (configuration.legendOrientation === '') {
             delete configuration.legendOrientation;
         }
+        if (configuration.append) {
+            delete configuration.append;
+        }
         return configuration;
     }
 
@@ -275,6 +278,9 @@ class UtilFunctions {
         if (configuration.yAxisTickCount === '') {
             delete configuration.yAxisTickCount;
         }
+        if (configuration.append) {
+            delete configuration.append;
+        }
         return configuration;
     }
 
@@ -344,6 +350,9 @@ class UtilFunctions {
             default :
                 configuration.charts[0].mode = Types.chart.pie;
                 break;
+        }
+        if (configuration.append) {
+            delete configuration.append;
         }
         delete configuration.chartType;
         return configuration;

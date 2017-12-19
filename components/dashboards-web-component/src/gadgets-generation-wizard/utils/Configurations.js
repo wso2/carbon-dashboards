@@ -68,6 +68,7 @@ const Configurations = {
             disableHorizontalGrid: false,
             timeFormat: '',
             legendOrientation: '',
+            append: true,
         },
         scatterChart: {
             type: 'scatter',
@@ -99,6 +100,7 @@ const Configurations = {
             legendOrientation: '',
             xAxisTickCount: '',
             yAxisTickCount: '',
+            append: true,
         },
         pieChart: {
             charts: [
@@ -116,6 +118,7 @@ const Configurations = {
                 legendTextColor: '',
             },
             legendOrientation: '',
+            append: true,
         },
         numberChart: {
             x: '',
