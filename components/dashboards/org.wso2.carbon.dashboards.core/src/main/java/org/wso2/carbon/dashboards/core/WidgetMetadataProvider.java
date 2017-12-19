@@ -21,7 +21,7 @@ package org.wso2.carbon.dashboards.core;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.uis.api.App;
+import org.wso2.carbon.uiserver.api.App;
 
 import java.util.Optional;
 import java.util.Set;
