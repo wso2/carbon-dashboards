@@ -78,6 +78,10 @@ public class WidgetRestApi implements Microservice {
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when listing widget configurations.", e);
             return serverErrorResponse("Cannot list widget configurations.");
+        } catch (Throwable throwable) {
+            LOGGER.error("Server error occurred when listing widget configurations.", throwable);
+            return Response.serverError()
+                    .entity("Server error occurred when listing widget configurations.").build();
         }
     }
 
@@ -97,8 +101,14 @@ public class WidgetRestApi implements Microservice {
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find widget '" + widgetId + "'.").build());
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when retrieving configuration of widget '{}'.",
-                         replaceCRLFCharacters(widgetId), e);
+                    replaceCRLFCharacters(widgetId), e);
             return serverErrorResponse("Cannot retrieve configuration of widget '" + widgetId + "'.");
+        } catch (Throwable throwable) {
+            LOGGER.error("Server error occurred when retrieving configuration of widget '{}': ",
+                    replaceCRLFCharacters(replaceCRLFCharacters(widgetId)), throwable);
+            return Response.serverError()
+                    .entity("Server error occurred when retrieving configuration of widget '{}': " +
+                            widgetId + "'.").build();
         }
     }
 
@@ -142,9 +152,15 @@ public class WidgetRestApi implements Microservice {
             }
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when validating the widget name: " +
-                         replaceCRLFCharacters(widgetName) + ".", e);
+                    replaceCRLFCharacters(widgetName) + ".", e);
             return Response.serverError()
                     .entity("An error occurred when validating the widget name: " + widgetName + ".").build();
+        } catch (Throwable throwable) {
+            LOGGER.error("Server error occurred when validating the widget name: ",
+                    replaceCRLFCharacters(replaceCRLFCharacters(widgetName)), throwable);
+            return Response.serverError()
+                    .entity("Server error occurred when validating the widget name: '" +
+                            widgetName + "'.").build();
         }
     }
 
@@ -167,6 +183,12 @@ public class WidgetRestApi implements Microservice {
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when deleting widget '{}'.", replaceCRLFCharacters(widgetId), e);
             return Response.serverError().entity("Cannot delete widget '" + widgetId + "'.").build();
+        } catch (Throwable throwable) {
+            LOGGER.error("Server error occurred when deleting widget '{}'. ",
+                    replaceCRLFCharacters(replaceCRLFCharacters(widgetId)), throwable);
+            return Response.serverError()
+                    .entity("Server error occurred when deleting widget '{}'. '" +
+                            widgetId + "'.").build();
         }
     }
 
@@ -186,9 +208,15 @@ public class WidgetRestApi implements Microservice {
             return Response.status(CREATED).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when creating a new gadget from {} data.",
-                         replaceCRLFCharacters(generatedWidgetConfigs.toString()), e);
+                    replaceCRLFCharacters(generatedWidgetConfigs.toString()), e);
             return Response.serverError()
                     .entity("Cannot create a new gadget from '" + generatedWidgetConfigs + "'.").build();
+        } catch (Throwable throwable) {
+            LOGGER.error("Server error occurred when creating a new gadget from {} data. ",
+                    replaceCRLFCharacters(generatedWidgetConfigs.toString()), throwable);
+            return Response.serverError()
+                    .entity("Server error occurred when creating a new gadget from {} data. '" +
+                            generatedWidgetConfigs.toString() + "'.").build();
         }
     }
 
