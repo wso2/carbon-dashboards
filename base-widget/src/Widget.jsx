@@ -168,17 +168,4 @@ export default class Widget extends Component {
             username: (user && user.username) ? user.username : null,
         };
     }
-
-    /**
-     * Render widget.
-     * 
-     * @return {string} HTML content
-     */
-    render() {
-        return (
-            <div style={{ padding: '30px 15px 15px 15px' }}>
-                {this.renderWidget()}
-            </div>
-        );
-    }
 }
