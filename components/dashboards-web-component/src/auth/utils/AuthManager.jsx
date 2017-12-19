@@ -22,12 +22,16 @@ import AuthenticationAPI from '../../utils/apis/AuthenticationAPI';
 /**
  * Name of the session cookie.
  */
-const sessionUser = 'DASHBOARD_USER';
+const SESSION_USER_COOKIE = 'DASHBOARD_USER';
+
 /**
  * Name of the refresh token cookie.
  */
-const REFRESH_TOKEN_COOKIE_NAME = 'REFRESH_TOKEN';
-const TIMESTAMP_SKEW =  100;
+const REFRESH_TOKEN_COOKIE = 'REFRESH_TOKEN';
+
+/**
+ * Refresh token validity period.
+ */
 const REFRESH_TOKEN_VALIDITY_PERIOD = 604800;
 
 /**
@@ -40,7 +44,7 @@ export default class AuthManager {
      * @returns {{}|null} User object
      */
     static getUser() {
-        const buffer = AuthManager.getCookie(sessionUser);
+        const buffer = AuthManager.getCookie(SESSION_USER_COOKIE);
         return buffer ? JSON.parse(buffer) : null;
     }
 
@@ -50,14 +54,16 @@ export default class AuthManager {
      * @param {{}} user  User object
      */
     static setUser(user) {
-        AuthManager.setCookie(sessionUser, JSON.stringify(user), (user.validity - TIMESTAMP_SKEW), window.contextPath);
+        AuthManager.setCookie(SESSION_USER_COOKIE, JSON.stringify(user), null, window.contextPath);
     }
 
     /**
-     * Delete user from the session cookie.
+     * Discard active user session.
      */
-    static clearUser() {
-        AuthManager.deleteCookie(sessionUser);
+    static discardSession() {
+        AuthManager.deleteCookie(SESSION_USER_COOKIE);
+        AuthManager.deleteCookie(REFRESH_TOKEN_COOKIE);
+        window.localStorage.clear();
     }
 
     /**
@@ -69,33 +75,26 @@ export default class AuthManager {
         return !!AuthManager.getUser();
     }
 
-    static authenticateWithRefreshToken(){
-        return new Promise((resolve, reject) => {
-            AuthenticationAPI
-                .getAccessTokenWithRefreshToken()
-                .then((response) => {
-                    AuthManager.setUser({
-                        username: window.localStorage.getItem("username"),
-                        SDID: response.data.pID,
-                        validity: response.data.validityPeriod
-                    });
-                    AuthManager.setCookie(REFRESH_TOKEN_COOKIE_NAME, response.data.lID,
-                        REFRESH_TOKEN_VALIDITY_PERIOD, window.contextPath);
-                    resolve();
-                })
-                .catch(error => reject(error));
-        }); 
-    }
-    
     /**
      * Check whether the rememberMe is set
      *
      * @returns {boolean} Status
      */
     static isRememberMeSet() {
-        return !!(window.localStorage.getItem("rememberMe"));
+        return (window.localStorage.getItem('rememberMe') === 'true');
     }
 
+    /**
+     * Calculate expiry time.
+     *
+     * @param validityPeriod
+     * @returns {Date}
+     */
+    static calculateExpiryTime(validityPeriod) {
+        let expires = new Date();
+        expires.setSeconds(expires.getSeconds() + validityPeriod);
+        return expires;
+    }
 
     /**
      * Authenticate the user and set the user into the session.
@@ -110,23 +109,55 @@ export default class AuthManager {
             AuthenticationAPI
                 .login(username, password, rememberMe)
                 .then((response) => {
-                    AuthManager.setUser({
-                        username: response.data.authUser,
-                        rememberMe,
-                        roles: [],
-                        SDID: response.data.pID,
-                        validity: response.data.validityPeriod,
-                    });
+                    const { authUser, pID, lID, validityPeriod } = response.data;
+
+                    window.localStorage.setItem('rememberMe', rememberMe);
                     if (rememberMe) {
-                        window.localStorage.setItem("rememberMe", rememberMe);
-                        window.localStorage.setItem("username", username);
-                        AuthManager.setCookie(REFRESH_TOKEN_COOKIE_NAME, response.data.lID,
-                            REFRESH_TOKEN_VALIDITY_PERIOD, window.contextPath);
+                        window.localStorage.setItem('username', authUser);
                     }
+                    // Set user in a cookie
+                    AuthManager.setUser({
+                        username: authUser,
+                        SDID: pID,
+                        validity: validityPeriod,
+                        expires: AuthManager.calculateExpiryTime(validityPeriod),
+                    });
+                    // If rememberMe, set refresh token into a persistent cookie else session cookie.
+                    const refreshTokenValidityPeriod = rememberMe ? REFRESH_TOKEN_VALIDITY_PERIOD : null;
+                    AuthManager.setCookie(REFRESH_TOKEN_COOKIE, lID, refreshTokenValidityPeriod, window.contextPath);
                     resolve();
                 })
                 .catch(error => reject(error));
         });
+    }
+
+    /**
+     * Authenticate the session using refresh token.
+     *
+     * @returns {Promise}
+     */
+    static authenticateWithRefreshToken(){
+        return new Promise((resolve, reject) => {
+            AuthenticationAPI
+                .getAccessTokenWithRefreshToken()
+                .then((response) => {
+                    const { pID, lID, validityPeriod } = response.data;
+
+                    const username = AuthManager.isRememberMeSet() ?
+                        window.localStorage.getItem('username') : AuthManager.getUser().username;
+                    AuthManager.setUser({
+                        username: username,
+                        SDID: pID,
+                        validity: validityPeriod,
+                        expires: AuthManager.calculateExpiryTime(validityPeriod),
+                    });
+                    // If rememberMe, set refresh token into a persistent cookie else session cookie.
+                    const refreshTokenValidityPeriod = AuthManager.isRememberMeSet() ? REFRESH_TOKEN_VALIDITY_PERIOD : null;
+                    AuthManager.setCookie(REFRESH_TOKEN_COOKIE, lID, refreshTokenValidityPeriod, window.contextPath);
+                    resolve();
+                })
+                .catch(error => reject(error));
+        }); 
     }
 
     /**
@@ -139,9 +170,7 @@ export default class AuthManager {
             AuthenticationAPI
                 .logout(AuthManager.getUser().SDID)
                 .then(() => {
-                    AuthManager.clearUser();
-                    window.localStorage.clear();
-                    AuthManager.deleteCookie(REFRESH_TOKEN_COOKIE_NAME);
+                    AuthManager.discardSession();
                     resolve();
                 })
                 .catch(error => reject(error));

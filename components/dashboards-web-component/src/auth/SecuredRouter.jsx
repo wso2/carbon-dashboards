@@ -35,9 +35,28 @@ import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/Gad
 const appContext = window.contextPath;
 
 /**
+ * Session skew.
+ */
+const sessionSkew = 100;
+
+/**
  * Secured router (protects secured pages).
  */
 export default class SecuredRouter extends Component {
+
+    /**
+     * Refreshes the access token by validating the expiration timee.
+     */
+    componentWillMount() {
+        setInterval(function() {
+            if (AuthManager.getUser()) {
+                const expiresOn = new Date(AuthManager.getUser().expires);
+                if ((expiresOn - new Date()) / 1000 < sessionSkew) {
+                    AuthManager.authenticateWithRefreshToken();
+                }
+            }
+        }, 600000);
+    }
     /**
      * Render routing.
      *
