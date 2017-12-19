@@ -21,8 +21,8 @@ package org.wso2.carbon.dashboards.core.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.uis.api.App;
-import org.wso2.carbon.uis.api.Extension;
+import org.wso2.carbon.uiserver.api.App;
+import org.wso2.carbon.uiserver.api.Extension;
 
 import java.util.Collections;
 

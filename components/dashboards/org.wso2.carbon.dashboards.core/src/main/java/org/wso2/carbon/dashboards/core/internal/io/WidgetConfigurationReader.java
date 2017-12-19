@@ -22,7 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
-import org.wso2.carbon.uis.api.Extension;
+import org.wso2.carbon.uiserver.api.Extension;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
