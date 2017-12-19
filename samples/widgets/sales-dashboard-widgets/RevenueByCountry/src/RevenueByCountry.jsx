@@ -94,7 +94,7 @@ class RevenueByCountry extends Widget {
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 
-    renderWidget() {
+    render() {
         return (
             <div className="sample-dashboard-content" style={{height: this.props.glContainer.height}}>
                 <div className="sample-dashboard-content-rev-text" style={{height: '100%', color: '#5d6e77'}}  >
