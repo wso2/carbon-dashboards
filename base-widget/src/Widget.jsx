@@ -19,7 +19,7 @@
 
 import React, {Component} from 'react';
 
-const SESSION_USER = 'wso2dashboard_user';
+const SESSION_USER = 'DASHBOARD_USER';
 
 /**
  * Widget base class.
