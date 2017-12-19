@@ -31,10 +31,8 @@ class UserInfo extends Widget {
         super(props);
     }
 
-    /**
-     * Implements the renderWidget function.
-     */
-    renderWidget () {
+
+    render() {
         let styles = {
             container: {
                 fontFamily: 'Roboto, sans-serif',
