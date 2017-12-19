@@ -229,6 +229,16 @@ class LineAreaBar extends Component {
                     <CardMedia
                         expandable
                     >
+                        <br />
+                        <br />
+                        <SwitchProperty
+                            id="append"
+                            value={this.state.configuration.append}
+                            fieldName="Append new data to the chart"
+                            onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
+                        />
+                        <br />
+                        <br />
                         <TextProperty
                             id="xAxisLabel"
                             value={this.state.configuration.xAxisLabel}
