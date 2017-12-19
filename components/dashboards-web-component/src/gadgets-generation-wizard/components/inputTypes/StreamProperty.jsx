@@ -30,12 +30,23 @@ class StreamProperty extends React.Component {
         // Filter out ordinal / linear stream fields
         const filteredFields = [];
         if (this.props.filter) {
-            for (let i = 0; i < this.props.metadata.names.length; i++) {
-                if (this.props.metadata.types[i] === this.props.filter) {
-                    filteredFields.push(this.props.metadata.names[i]);
+            if (typeof(this.props.filter) === 'object') {
+                // Multiple filters given as array
+                for (let i = 0; i < this.props.metadata.names.length; i++) {
+                    if (this.props.filter.indexOf(this.props.metadata.types[i]) > -1) {
+                        filteredFields.push(this.props.metadata.names[i]);
+                    }
+                }
+            } else {
+                // Single filter
+                for (let i = 0; i < this.props.metadata.names.length; i++) {
+                    if (this.props.metadata.types[i] === this.props.filter) {
+                        filteredFields.push(this.props.metadata.names[i]);
+                    }
                 }
             }
         } else {
+            // No filter
             for (let i = 0; i < this.props.metadata.names.length; i++) {
                 filteredFields.push(this.props.metadata.names[i]);
             }

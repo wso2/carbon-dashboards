@@ -19,7 +19,7 @@
 
 import React, {Component} from 'react';
 
-const SESSION_USER = 'wso2dashboard_user';
+const SESSION_USER = 'DASHBOARD_USER';
 
 /**
  * Widget base class.
@@ -167,18 +167,5 @@ export default class Widget extends Component {
         return {
             username: (user && user.username) ? user.username : null,
         };
-    }
-
-    /**
-     * Render widget.
-     * 
-     * @return {string} HTML content
-     */
-    render() {
-        return (
-            <div style={{ padding: '30px 15px 15px 15px' }}>
-                {this.renderWidget()}
-            </div>
-        );
     }
 }

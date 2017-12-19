@@ -48,6 +48,7 @@ const Types = {
         metadata: {
             linear: 'LINEAR',
             ordinal: 'ORDINAL',
+            time: 'TIME',
         },
     },
     // Some charts have the ability to be stacked

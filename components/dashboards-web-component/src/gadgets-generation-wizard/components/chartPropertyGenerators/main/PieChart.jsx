@@ -180,6 +180,16 @@ class Pie extends Component {
                     <CardMedia
                         expandable
                     >
+                        <br />
+                        <br />
+                        <SwitchProperty
+                            id="append"
+                            value={this.state.configuration.append}
+                            fieldName="Append new data to the chart"
+                            onChange={(id, value) => this.handleChartPropertyChange(id, value)}
+                        />
+                        <br />
+                        <br />
                         <SelectProperty
                             id="legendOrientation"
                             value={this.state.configuration.legendOrientation}

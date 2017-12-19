@@ -18,13 +18,7 @@
  */
 
 import React from 'react';
-// import Widget from '@wso2-dashboards/widget';
-import Widget from '../../../../base-widget/src/Widget';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import {Card, CardHeader, List, ListItem, FontIcon} from 'material-ui';
-import AccountIcon from 'material-ui/svg-icons/action/account-circle';
+import Widget from '@wso2-dashboards/widget';
 
 /**
  * Demonstrates how to retrieve user information from a widget.
@@ -37,14 +31,12 @@ class UserInfo extends Widget {
         super(props);
     }
 
-    /**
-     * Implements the renderWidget function.
-     */
-    render () {
+
+    render() {
         let styles = {
             container: {
                 fontFamily: 'Roboto, sans-serif',
-                color: '#9c9c9c',
+                color: '#afafaf',
                 textAlign: 'center',
             },
         };
@@ -54,12 +46,10 @@ class UserInfo extends Widget {
         // Return {{username: string}}
         const user = super.getCurrentUser();
         return (
-            <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
-                <div style={styles.container}>
-                    <h3>User Information</h3>
-                    <p style={{fontSize: '1.8em'}}><strong>Username: </strong>{user.username}</p>
-                </div>
-            </MuiThemeProvider>
+            <div style={styles.container}>
+                <h3>User Information</h3>
+                <p style={{fontSize: '1.8em'}}><strong>Username: </strong>{user.username}</p>
+            </div>
         );
     }
 }

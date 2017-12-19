@@ -39,7 +39,7 @@ class WidgetState extends Widget {
     /**
      * Implements the renderWidget function.
      */
-    renderWidget () {
+    render() {
         let styles = {
             container: {
                 font: '12px Roboto, sans-serif',
