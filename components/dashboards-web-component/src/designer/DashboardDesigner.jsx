@@ -103,9 +103,9 @@ export default class DashboardDesigner extends Component {
         this.state = {
             dashboardId: this.props.match.params.dashboardId,
             dashboard: undefined,
-            leftSidebarOpen: false,
-            leftSidebarPanel: sidebarPanels.PAGES,
-            designerClass: 'designer-container-expanded',
+            leftSidebarOpen: true,
+            leftSidebarPanel: sidebarPanels.WIDGETS,
+            designerClass: 'designer-container-collapsed',
             redirect: false,
             redirectUrl: '',
             widgetConfigPanelOpen: false,
