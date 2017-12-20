@@ -158,6 +158,10 @@ export default class PagesPanel extends Component {
         p.id = page.id;
         p.name = page.title;
         this.savePages(this.props.dashboard.pages);
+        // If the page id has been modified, need to redirect the user to the page with the new url.
+        if (id != page.id) {
+            window.location.href = window.contextPath + '/designer/' + this.props.dashboard.url + '/' + page.id;
+        }
     }
 
     /**
