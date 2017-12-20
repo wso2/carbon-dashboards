@@ -19,19 +19,20 @@
 
 import React from 'react';
 
-import { getMuiTheme, MuiThemeProvider, darkBaseTheme } from 'material-ui/styles';
+import {getMuiTheme, MuiThemeProvider, darkBaseTheme} from 'material-ui/styles';
 import CircularProgress from 'material-ui/CircularProgress';
-import { AppBar, Drawer, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
+import {AppBar, Drawer, FlatButton, IconButton, IconMenu, MenuItem} from 'material-ui';
 import ActionHome from 'material-ui/svg-icons/action/home';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import { Link } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import {Link} from 'react-router-dom';
+import {FormattedMessage} from 'react-intl';
 
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import PagesNavigationPanel from '../designer/components/PagesNavigationPanel';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 import AuthManager from '../auth/utils/AuthManager';
+import Error404 from '../error-pages/Error404';
 import './Dashboard.css';
 
 const darkMuiTheme = getMuiTheme({
@@ -91,6 +92,7 @@ class DashboardView extends React.Component {
             contentClass: "content-drawer-opened",
             muiTheme: darkMuiTheme,
             requestHideLoading: false,
+            invalidURL: false,
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
@@ -111,9 +113,16 @@ class DashboardView extends React.Component {
 
     componentDidMount() {
         let dashboardAPI = new DashboardAPI();
-        let promised_dashboard = dashboardAPI.getDashboardByID(this.props.match.params.id);
-        promised_dashboard.then(this.setDashboardProperties).catch(function (error) {
-            //TODO Need to use proper notification library to show the error
+
+        dashboardAPI.getDashboardList().then((response) => {
+            if (response.data.filter((d) => d.url === this.props.match.params.id).length > 0) {
+                let promised_dashboard = dashboardAPI.getDashboardByID(this.props.match.params.id);
+                promised_dashboard.then(this.setDashboardProperties).catch(function (error) {
+                    //TODO Need to use proper notification library to show the error
+                });
+            } else {
+                this.setState({invalidURL: true, requestHideLoading:true})
+            }
         });
     }
 
@@ -127,16 +136,16 @@ class DashboardView extends React.Component {
 
     togglePagesNavPanel(toggled) {
         if (toggled) {
-            this.setState({ toggled: "toggled", dashboardViewCSS: "dashboard-view" });
+            this.setState({toggled: "toggled", dashboardViewCSS: "dashboard-view"});
         } else {
-            this.setState({ toggled: "", dashboardViewCSS: "dashboard-view-full-width" });
+            this.setState({toggled: "", dashboardViewCSS: "dashboard-view-full-width"});
         }
     }
 
     handleTheme(isDarkTheme) {
         isDarkTheme ? document.body.className = 'viewer-dark' : document.body.className = 'viewer-light';
         let muiTheme = isDarkTheme ? getMuiTheme(darkMuiTheme) : getMuiTheme(lightMuiTheme);
-        this.setState({ muiTheme: muiTheme });
+        this.setState({muiTheme: muiTheme});
     }
 
     /**
@@ -148,26 +157,27 @@ class DashboardView extends React.Component {
         // If the user is not set show the login button. Else show account information.
         const user = AuthManager.getUser();
         if (!user) {
-            return <span />
+            return <span/>
         }
 
         return (
             <div className="viewer-header-right-btn-group">
                 <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
                     <Link to={`${window.contextPath}/`}>
-                        <IconButton tooltip={<FormattedMessage id="viewer.back.tooltip" defaultMessage="Back to Home" />}>
+                        <IconButton
+                            tooltip={<FormattedMessage id="viewer.back.tooltip" defaultMessage="Back to Home"/>}>
                             <ActionHome/>
                         </IconButton>
                     </Link>
                     <span>{user.username}</span>
                     <IconMenu
-                        iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-                        targetOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                        anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        iconButtonElement={<IconButton><MoreVertIcon/></IconButton>}
+                        targetOrigin={{horizontal: 'right', vertical: 'bottom'}}
+                        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                     >
                         <MenuItem
-                            primaryText={<FormattedMessage id="logout" defaultMessage="Logout" />}
-                            containerElement={<Link to={`${window.contextPath}/logout`} />}
+                            primaryText={<FormattedMessage id="logout" defaultMessage="Logout"/>}
+                            containerElement={<Link to={`${window.contextPath}/logout`}/>}
                         />
                     </IconMenu>
                 </MuiThemeProvider>
@@ -184,49 +194,53 @@ class DashboardView extends React.Component {
 
         return (
             <MuiThemeProvider muiTheme={this.state.muiTheme}>
-                <div>
-                    <Drawer open={this.state.open} className="viewer-drawer">
-                        <PagesNavigationPanel dashboardId={this.props.match.params.id}
-                                              dashboardContent={this.state.dashboardContent}
-                                              dashboardName={this.state.dashboardName}
-                                              toggled={this.state.toggled}
-                                              match={this.props.match}
-                                              handleThemeSwitch={this.handleTheme} />
-                    </Drawer>
-                    <div className={this.state.contentClass}>
-                        <AppBar
-                            title=""
-                            iconClassNameRight="muidocs-icon-navigation-expand-more"
-                            onLeftIconButtonTouchTap={this.handleToggle}
-                            className="viewer-app-bar"
-                            iconElementRight={this.renderRightLinks()}
-                            containerStyle={{ paddingRight: 15 }}
-                        />
-                        <div id="dashboard-view" className={this.state.dashboardViewCSS}
-                             style={{ color: this.state.muiTheme.palette.textColor }}>
-                            <div
-                                className="dashboard-spinner"
-                                style={showLoading ? {} : { display: 'none' }}
-                            >
-                                <CircularProgress size={150} thickness={10} />
-                                <div
-                                    className="loading-label"
-                                    style={{ color: this.state.muiTheme.palette.textColor }}>
-                                    Loading...
+                {
+                    this.state.invalidURL ?
+                        <Error404 />:
+                        <div>
+                            <Drawer open={this.state.open} className="viewer-drawer">
+                                <PagesNavigationPanel dashboardId={this.props.match.params.id}
+                                                      dashboardContent={this.state.dashboardContent}
+                                                      dashboardName={this.state.dashboardName}
+                                                      toggled={this.state.toggled}
+                                                      match={this.props.match}
+                                                      handleThemeSwitch={this.handleTheme}/>
+                            </Drawer>
+                            <div className={this.state.contentClass}>
+                                <AppBar
+                                    title=""
+                                    iconClassNameRight="muidocs-icon-navigation-expand-more"
+                                    onLeftIconButtonTouchTap={this.handleToggle}
+                                    className="viewer-app-bar"
+                                    iconElementRight={this.renderRightLinks()}
+                                    containerStyle={{paddingRight: 15}}
+                                />
+                                <div id="dashboard-view" className={this.state.dashboardViewCSS}
+                                     style={{color: this.state.muiTheme.palette.textColor}}>
+                                    <div
+                                        className="dashboard-spinner"
+                                        style={showLoading ? {} : {display: 'none'}}
+                                    >
+                                        <CircularProgress size={150} thickness={10}/>
+                                        <div
+                                            className="loading-label"
+                                            style={{color: this.state.muiTheme.palette.textColor}}>
+                                            Loading...
+                                        </div>
+                                    </div>
                                 </div>
+                                <DashboardRenderingComponent
+                                    config={config}
+                                    ref={(c) => {
+                                        this.dashboardRenderingComponent = c;
+                                    }}
+                                    dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
+                                        this.state.dashboardContent, this.state.landingPage)}
+                                    onInitialized={() => this.setState({requestHideLoading: true})}
+                                />
                             </div>
                         </div>
-                        <DashboardRenderingComponent
-                            config={config}
-                            ref={(c) => {
-                                this.dashboardRenderingComponent = c;
-                            }}
-                            dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
-                                this.state.dashboardContent, this.state.landingPage)}
-                            onInitialized={() => this.setState({ requestHideLoading: true })}
-                        />
-                    </div>
-                </div>
+                }
             </MuiThemeProvider>
         );
     }

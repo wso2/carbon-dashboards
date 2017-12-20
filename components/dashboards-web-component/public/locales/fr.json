@@ -56,5 +56,7 @@
   "listing.no.dashboards.available" : "Pas de tableaux de bord disponibles",
   "dashboard.unauthorized.title" : "401 Non autorisé",
   "dashboard.unauthorized.message" : "Vous n'êtes pas autorisé à accéder à cette page",
-  "viewer.back.tooltip" : "De retour à la maison"
+  "viewer.back.tooltip" : "De retour à la maison",
+  "dashboard.notFound.title": "404 Page non trouvée.",
+  "dashboard.notFound.message": "La page que vous essayez d'accéder a peut-être été renommée, supprimée ou n'a jamais existé."
 }
