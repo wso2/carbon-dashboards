@@ -396,7 +396,7 @@
         <carbon.uiserver.version.range>[0.19.2, 1.0.0]</carbon.uiserver.version.range>
 
         <!--MSF4J-->
-        <msf4j-core.version>2.5.0</msf4j-core.version>
+        <msf4j-core.version>2.5.2</msf4j-core.version>
         <msf4j-core.version.range>[2.5.0, 3.0.0)</msf4j-core.version.range>
         <javax.ws.rs.version>2.0</javax.ws.rs.version>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
