@@ -65,10 +65,10 @@ class UtilFunctions {
             "query": "select * from TRANSACTIONS_TABLE",
             "tableName": "TRANSACTIONS_TABLE",
             "incrementalColumn": "CREDITCARDNO",
-            "publishingInterval": 6000,
-            "purgingInterval": 6000,
-            "publishingLimit": 1000,
-            "purgingLimit": 1000,
+            "publishingInterval": 1,
+            "purgingInterval": 60,
+            "publishingLimit": 30,
+            "purgingLimit": 30,
             "isPurgingEnable": false
         }
     }
