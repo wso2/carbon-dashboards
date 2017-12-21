@@ -163,7 +163,7 @@ class LineAreaBar extends Component {
                 <StreamProperty
                     id="x"
                     value={this.state.configuration.x}
-                    fieldName="Independent axis*"
+                    fieldName="X axis field*"
                     onChange={(id, value) => this.handleMainChartPropertyChange(id, value)}
                     metadata={this.props.metadata}
                     fullWidth

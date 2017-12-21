@@ -29,6 +29,8 @@ import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
 import ColorProperty from '../../inputTypes/ColorProperty';
 import TextProperty from '../../inputTypes/TextProperty';
 import StreamProperty from '../../inputTypes/StreamProperty';
+// App Utils
+import Types from '../../../utils/Types';
 
 /**
  * Represents a sub chart of scatter chart
@@ -59,6 +61,7 @@ class Scatter extends Component {
                             id="y"
                             value={this.props.configuration.y}
                             fieldName="Y axis field*"
+                            filter={Types.dataset.metadata.linear}
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             metadata={this.props.metadata}
                             fullWidth
@@ -73,12 +76,13 @@ class Scatter extends Component {
                             fullWidth
                         />
                         <br />
-                        <TextProperty
+                        <StreamProperty
                             id="size"
                             value={this.props.configuration.size}
-                            fieldName="Size of the mark"
+                            fieldName="Field, using which, mark sizes are categorized"
+                            metadata={this.props.metadata}
+                            filter={Types.dataset.metadata.linear}
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
-                            number
                             fullWidth
                         />
                         <br />
