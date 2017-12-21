@@ -38,9 +38,9 @@ const Constants = {
         SCATTER_CHART: 'Scatter Chart',
         NUMBER_CHART: 'Number Chart',
         GEOGRAPHICAL_CHART: 'Geographical Chart',
-        WORLD_MAP: 'World',
-        EUROPE_MAP: 'Europe',
-        USA_MAP: 'USA',
+        WORLD_MAP: 'world',
+        EUROPE_MAP: 'europe',
+        USA_MAP: 'usa',
         TABLE_CHART: 'Table Chart',
     },
 };

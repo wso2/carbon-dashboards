@@ -66,7 +66,7 @@ class LineAreaBar extends Component {
                         <StreamProperty
                             id="y"
                             value={this.props.configuration.y}
-                            fieldName="Dependent axis*"
+                            fieldName="Y axis field*"
                             filter={Types.dataset.metadata.linear}
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             metadata={this.props.metadata}

@@ -110,7 +110,7 @@ class Geographical extends Component {
                     id="x"
                     value={this.state.configuration.x}
                     fieldName="Field values to be plotted in the choropleth*"
-                    filter={Types.dataset.metadata.linear}
+                    filter={Types.dataset.metadata.ordinal}
                     onChange={(id, value) => this.handleMainPropertyChange(id, value)}
                     metadata={this.props.metadata}
                     fullWidth
@@ -120,6 +120,7 @@ class Geographical extends Component {
                     id="y"
                     value={this.state.configuration.charts[0].y}
                     fieldName="Field values to be plotted in the map*"
+                    filter={[Types.dataset.metadata.ordinal, Types.dataset.metadata.linear]}
                     onChange={(id, value) => this.handleSubChartPropertyChange(id, value)}
                     metadata={this.props.metadata}
                     fullWidth

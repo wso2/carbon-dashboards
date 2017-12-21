@@ -73,12 +73,12 @@ class Scatter extends Component {
                             fullWidth
                         />
                         <br />
-                        <TextProperty
+                        <StreamProperty
                             id="size"
                             value={this.props.configuration.size}
-                            fieldName="Size of the mark"
+                            fieldName="Field, using which, mark sizes are categorized"
+                            metadata={this.props.metadata}
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
-                            number
                             fullWidth
                         />
                         <br />
