@@ -36,7 +36,7 @@ import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDaoFactory;
 import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.uis.api.App;
+import org.wso2.carbon.uiserver.api.App;
 
 import java.util.Objects;
 import java.util.Optional;

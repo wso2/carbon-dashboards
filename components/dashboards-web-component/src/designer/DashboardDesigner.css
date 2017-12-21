@@ -51,7 +51,7 @@
 
 .dashboard-designer-expanded-all {
     width: 68%;
-    padding: 65px 10px 10px 325px;
+    padding: 8px 10px 0 325px;
     color: white;
     height: 89vh;
     z-index: 0;
@@ -59,7 +59,7 @@
 
 .dashboard-designer-container-collapsed-left {
     width: 82%;
-    padding: 65px 10px 10px 65px;
+    padding: 8px 10px 0 65px;
     color: white;
     height: 89vh;
     z-index: 0;

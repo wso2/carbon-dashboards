@@ -199,6 +199,12 @@ class RevenueByRegion extends Widget {
         };
 
         this.handleClickEvent = this.handleClickEvent.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        props.glContainer.on('resize', this.handleResize);
+    }
+
+    handleResize() {
+        this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 
     handleClickEvent(event) {

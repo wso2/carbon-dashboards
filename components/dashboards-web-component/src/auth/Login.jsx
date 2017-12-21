@@ -77,12 +77,13 @@ export default class Login extends Component {
         }
     }
 
+    /**
+     * Refresh the access token when the browser session is restored.
+     */
     componentWillMount(){
-        if (AuthManager.isRememberMeSet()) {
+        if (AuthManager.isRememberMeSet() && !AuthManager.isLoggedIn()) {
             AuthManager.authenticateWithRefreshToken()
-                .then((response) => {
-                    this.setState({authenticated: true})
-                });
+                .then(() => this.setState({authenticated: true}));
         }
     }
 
