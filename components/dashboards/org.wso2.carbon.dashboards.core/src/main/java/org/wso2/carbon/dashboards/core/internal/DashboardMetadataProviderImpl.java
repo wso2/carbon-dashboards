@@ -349,7 +349,8 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     private boolean checkPermissions(String user, String dashboardUrl, String originComponent) {
         switch (originComponent) {
             case "designer":
-                return hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_EDITOR);
+                return hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_EDITOR) ||
+                        hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_OWNER);
             case "settings":
                 return hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_OWNER);
             default:
