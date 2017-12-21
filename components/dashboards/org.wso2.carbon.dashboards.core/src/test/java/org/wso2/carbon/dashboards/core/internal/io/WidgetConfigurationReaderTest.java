@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
-import org.wso2.carbon.uis.api.Extension;
+import org.wso2.carbon.uiserver.api.Extension;
 
 /**
  * Test cases for {@link WidgetConfigurationReader} class.
