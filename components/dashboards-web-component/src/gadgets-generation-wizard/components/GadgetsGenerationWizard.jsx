@@ -279,32 +279,20 @@ class GadgetsGenerationWizard extends Component {
                 // Validate provider configuration and get metadata
                 let isProviderConfigurationValid = true;
                 if (!UtilFunctions.isEmpty(this.state.providerConfiguration)) {
-                    for (const property in this.state.providerConfiguration) {
-                        if (Object.prototype.hasOwnProperty.call(this.state.providerConfiguration, property)) {
-                            if (this.state.providerConfiguration[property] === '') {
-                                isProviderConfigurationValid = false;
-                                break;
-                            }
+                    apis.getProviderMetadata(this.state.providerType,
+                        this.state.providerConfiguration).then((response) => {
+                        if (!this.state.loading) {
+                            this.dummyAsync(() => this.setState({
+                                loading: false,
+                                isGadgetDetailsValid: true,
+                                stepIndex: stepIndex + 1,
+                                finished: stepIndex >= 2,
+                                metadata: response.data,
+                            }));
                         }
-                    }
-                    if (isProviderConfigurationValid) {
-                        apis.getProviderMetadata(this.state.providerType,
-                            this.state.providerConfiguration).then((response) => {
-                            if (!this.state.loading) {
-                                this.dummyAsync(() => this.setState({
-                                    loading: false,
-                                    isGadgetDetailsValid: true,
-                                    stepIndex: stepIndex + 1,
-                                    finished: stepIndex >= 2,
-                                    metadata: response.data,
-                                }));
-                            }
-                        }).catch(() => {
-                            this.displaySnackbar('Unable to process your request', 'errorMessage');
-                        });
-                    } else {
-                        this.displaySnackbar('Please fill in values for all the fields', 'errorMessage');
-                    }
+                    }).catch(() => {
+                        this.displaySnackbar('Unable to process your request', 'errorMessage');
+                    });
                 } else {
                     this.displaySnackbar('Please select a data provider and configure details', 'errorMessage');
                 }
