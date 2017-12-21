@@ -192,21 +192,23 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     @Override
     public void add(String user, DashboardMetadata dashboardMetadata) throws DashboardException {
         // TODO: 11/10/17 validate parameters
-        List<Role> creatorRoles;
+        List<String> creatorRoleIds;
         RolesProvider rolesProvider = null;
         try {
             rolesProvider = new RolesProvider(configProvider.getConfigurationObject(DashboardConfigurations.class));
-            creatorRoles = rolesProvider.getCreatorRoles();
+            creatorRoleIds = rolesProvider.getCreatorRoleIds();
         } catch (ConfigurationException e) {
             throw new DashboardException("Error in reading dashboard creator roles !", e);
         }
-        Set<Role> filteredRole = creatorRoles.stream().filter(role -> hasRoles(user, role)).collect(Collectors.toSet());
-        if (!filteredRole.isEmpty()) {
+        Set<String> filteredRoleIds = creatorRoleIds.stream()
+                .filter(role -> hasRoles(user, role))
+                .collect(Collectors.toSet());
+        if (!filteredRoleIds.isEmpty()) {
             dao.add(dashboardMetadata);
             for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
                 permissionProvider.addPermission(permission);
-                for (Role role : rolesProvider.getCreatorRoles()) {
-                    permissionProvider.grantPermission(permission, role);
+                for (String roleId : rolesProvider.getCreatorRoleIds()) {
+                    permissionProvider.grantPermission(permission, new Role(roleId, ""));
                 }
             }
         } else {
@@ -326,11 +328,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         return permissions;
     }
 
-    private boolean hasRoles(String user, Role role) {
+    private boolean hasRoles(String user, String roleId) {
         try {
             org.wso2.carbon.analytics.idp.client.core.models.Role adminRole = identityClient.getAdminRole();
             return identityClient.getUserRoles(user).stream()
-                    .anyMatch(userRole -> Objects.equals(userRole.getId(), role.getId()) || Objects.equals(userRole
+                    .anyMatch(userRole -> Objects.equals(userRole.getId(), roleId) || Objects.equals(userRole
                             .getId(), adminRole.getId()));
         } catch (IdPClientException e) {
             LOGGER.error("Error in retrieving user roles for the user " + user, e);
