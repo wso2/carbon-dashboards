@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.dashboards.core.bean.roles.provider;
 
-import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.config.annotation.Element;
 
 import java.util.Collections;
@@ -30,10 +29,10 @@ import java.util.List;
 public class Roles {
 
     @Element(description = "list of dashboard creator roles")
-    private List<Role> creator = Collections.emptyList();
+    private List<String> creators = Collections.emptyList();
 
-    public List<Role> getCreator() {
-        return creator;
+    public List<String> getCreators() {
+        return creators;
     }
 
 }

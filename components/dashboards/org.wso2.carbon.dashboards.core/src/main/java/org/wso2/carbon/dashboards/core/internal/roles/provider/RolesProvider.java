@@ -18,7 +18,6 @@
 
 package org.wso2.carbon.dashboards.core.internal.roles.provider;
 
-import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 
 import java.util.ArrayList;
@@ -30,25 +29,23 @@ import java.util.List;
 public class RolesProvider {
 
     private static final String ROLE_ID = "admin";
-    private static final String ROLE_NAME = "admin";
 
-    private List<Role> creatorRoles = new ArrayList<Role>();
+    private List<String> creatorRoleIds = new ArrayList<>();
 
     public RolesProvider(DashboardConfigurations dashboardConfigurations) {
-        creatorRoles.add(new Role(ROLE_ID, ROLE_NAME));
+        creatorRoleIds.add(ROLE_ID);
         if (dashboardConfigurations.getRoles() != null) {
             readConfigs(dashboardConfigurations);
         }
     }
 
     private void readConfigs(DashboardConfigurations dashboardConfigurations) {
-        if (!dashboardConfigurations.getRoles().getCreator().isEmpty()) {
-            creatorRoles = new ArrayList<>();
-            creatorRoles = dashboardConfigurations.getRoles().getCreator();
+        if (!dashboardConfigurations.getRoles().getCreators().isEmpty()) {
+            creatorRoleIds = dashboardConfigurations.getRoles().getCreators();
         }
     }
 
-    public List<Role> getCreatorRoles() {
-        return creatorRoles;
+    public List<String> getCreatorRoleIds() {
+        return creatorRoleIds;
     }
 }
