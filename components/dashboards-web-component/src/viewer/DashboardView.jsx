@@ -90,6 +90,7 @@ class DashboardView extends React.Component {
             dashboardContent: [],
             open: true,
             contentClass: "content-drawer-opened",
+            isDark: false,
             muiTheme: darkMuiTheme,
             requestHideLoading: false,
             invalidURL: false,
@@ -142,10 +143,11 @@ class DashboardView extends React.Component {
         }
     }
 
-    handleTheme(isDarkTheme) {
-        isDarkTheme ? document.body.className = 'viewer-dark' : document.body.className = 'viewer-light';
-        let muiTheme = isDarkTheme ? getMuiTheme(darkMuiTheme) : getMuiTheme(lightMuiTheme);
-        this.setState({ muiTheme: muiTheme });
+    handleTheme(isDark) {
+        this.setState({
+            muiTheme: isDark ? getMuiTheme(darkMuiTheme) : getMuiTheme(lightMuiTheme),
+            isDark,
+        });
     }
 
     /**
@@ -192,6 +194,8 @@ class DashboardView extends React.Component {
             this.state.requestHideLoading = false;
         }
 
+        const themeClass = this.state.isDark ? 'viewer-dark' : 'viewer-light';
+
         return (
             <MuiThemeProvider muiTheme={this.state.muiTheme}>
                 {
@@ -206,7 +210,7 @@ class DashboardView extends React.Component {
                                                       match={this.props.match}
                                                       handleThemeSwitch={this.handleTheme}/>
                             </Drawer>
-                            <div className={this.state.contentClass}>
+                            <div className={`content-box ${this.state.contentClass} ${themeClass}`}>
                                 <AppBar
                                     title=""
                                     iconClassNameRight="muidocs-icon-navigation-expand-more"

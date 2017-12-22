@@ -119,6 +119,14 @@ a {
     margin-bottom: 10px;
 }
 
+.content-box {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
 .content-drawer-closed {
     padding-left: 0;
 }
