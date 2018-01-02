@@ -28,7 +28,7 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
-import PagesNavigationPanel from '../designer/components/PagesNavigationPanel';
+import Sidebar from './components/Sidebar';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 import AuthManager from '../auth/utils/AuthManager';
@@ -128,10 +128,13 @@ class DashboardView extends React.Component {
     }
 
     setDashboardProperties(response) {
+        const dashboard = response.data;
+        dashboard.pages = JSON.parse(dashboard.pages);
         this.setState({
-            dashboardName: response.data.name,
-            dashboardContent: (JSON.parse(response.data.pages)),
-            landingPage: response.data.landingPage
+            dashboard,
+            dashboardName: dashboard.name,
+            dashboardContent: dashboard.pages,
+            landingPage: dashboard.landingPage,
         });
     }
 
@@ -195,6 +198,11 @@ class DashboardView extends React.Component {
         }
 
         const themeClass = this.state.isDark ? 'viewer-dark' : 'viewer-light';
+        const dashboard = this.state.dashboard || {
+            name: '',
+            pages: [],
+            landingPage: '',
+        };
 
         return (
             <MuiThemeProvider muiTheme={this.state.muiTheme}>
@@ -203,12 +211,15 @@ class DashboardView extends React.Component {
                         <Error404 />:
                         <div>
                             <Drawer open={this.state.open} className="viewer-drawer">
-                                <PagesNavigationPanel dashboardId={this.props.match.params.id}
-                                                      dashboardContent={this.state.dashboardContent}
-                                                      dashboardName={this.state.dashboardName}
-                                                      toggled={this.state.toggled}
-                                                      match={this.props.match}
-                                                      handleThemeSwitch={this.handleTheme}/>
+                                <Sidebar
+                                    dashboard={dashboard}
+                                    dashboardId={this.props.match.params.id}
+                                    dashboardContent={this.state.dashboardContent}
+                                    dashboardName={this.state.dashboardName}
+                                    toggled={this.state.toggled}
+                                    match={this.props.match}
+                                    handleThemeSwitch={this.handleTheme}
+                                />
                             </Drawer>
                             <div className={`content-box ${this.state.contentClass} ${themeClass}`}>
                                 <AppBar
