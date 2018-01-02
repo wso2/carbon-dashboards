@@ -23,7 +23,7 @@ import ClearIcon from 'material-ui/svg-icons/content/clear';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import {FormPanel, Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -48,7 +48,7 @@ const styles = {
 /**
  * Dashboard settings.
  */
-export default class DashboardSettings extends Component {
+class DashboardSettings extends Component {
     /**
      * Constructor.
      * Initilaizes the component state.
@@ -105,7 +105,7 @@ export default class DashboardSettings extends Component {
                         defaultMessage: "Dashboard updated successfully!"
                     }));
                     setTimeout(() => {
-                        window.location.href = window.contextPath;
+                        this.props.history.push(window.contextPath);
                     }, 1000);
                 }
             })
@@ -262,3 +262,4 @@ DashboardSettings.contextTypes ={
     intl: PropTypes.object.isRequired
 };
 
+export default withRouter(DashboardSettings);
