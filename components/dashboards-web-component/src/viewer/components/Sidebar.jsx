@@ -19,48 +19,16 @@
 
 import React from 'react';
 import Toggle from 'material-ui/Toggle';
-import Paper from 'material-ui/Paper';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
-import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
-import {Link} from 'react-router-dom';
+import PageMenu from './PageMenu';
 
 import {FormattedMessage} from 'react-intl';
 
-class PagesNavigationPanel extends React.Component {
+export default class Sidebar extends React.Component {
     constructor(props) {
         super(props);
         this.loadTheme = this.loadTheme.bind(this);
-        this.generateDashboardPagesMenu = this.generateDashboardPagesMenu.bind(this);
         this.isThemeSwitchToggled = this.isThemeSwitchToggled.bind(this);
         this.setThemeSwitchToggled = this.setThemeSwitchToggled.bind(this);
-    }
-
-    generateDashboardPagesMenu(page, parentPageId) {
-        if (!page.pages) {
-            return (
-                <Link
-                    to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + (parentPageId ? parentPageId + "/" + page.id : page.id)}
-                    replace={true}>
-                    <MenuItem className="pages-menu-item" primaryText={page.name}/>
-                </Link>
-            );
-        } else {
-            parentPageId = parentPageId ? parentPageId + "/" + page.id : page.id;
-            return (
-                <section>
-                    <Link to={`${this.props.match.params[0]}/dashboards/${this.props.match.params.id}/` + parentPageId}
-                          replace={true}>
-                        <MenuItem className="pages-menu-item" primaryText={page.name}/>
-                    </Link>
-                    <MenuItem primaryText="">
-                        {page.pages.map(page => {
-                            return this.generateDashboardPagesMenu(page, parentPageId)
-                        })}
-                    </MenuItem>
-                </section>
-            );
-        }
     }
 
     componentWillMount() {
@@ -68,18 +36,6 @@ class PagesNavigationPanel extends React.Component {
     }
 
     render() {
-        if (this.props.dashboardContent) {
-            this.props.pagesList = this.props.dashboardContent.map(page => {
-                return (
-                    <Paper className="pages-menu" style={{"backgroundColor":"transparent"}}>
-                        <Menu className="pages-menu">
-                            {this.generateDashboardPagesMenu(page)}
-                        </Menu>
-                    </Paper>
-                );
-            });
-        }
-
         return (
             <div>
                 <div className="dashboard-view-product-logo">
@@ -88,9 +44,7 @@ class PagesNavigationPanel extends React.Component {
                 <div className="dashboard-view-product-name">
                     {this.props.dashboardName}
                 </div>
-                <div>
-                    {this.props.pagesList}
-                </div>
+                <PageMenu dashboard={this.props.dashboard} />
                 <div className="dark-light-theme-switch-div">
                     <FormattedMessage id="light" defaultMessage="Light"/>
                     <Toggle
@@ -138,5 +92,3 @@ class PagesNavigationPanel extends React.Component {
         head.appendChild(link);
     }
 }
-
-export default PagesNavigationPanel;
