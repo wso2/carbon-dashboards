@@ -30,6 +30,7 @@ import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardSettingsRoles from './DashboardSettingsRoles';
 import {HttpStatus} from '../utils/Constants';
 import Error401 from '../error-pages/Error401';
+import Error404 from '../error-pages/Error404';
 
 /**
  * Material UI theme.
@@ -59,7 +60,8 @@ export default class DashboardSettings extends Component {
             dashboard: {},
             showMessage: false,
             message: '',
-            hasPermission: true
+            hasPermission: true,
+            hasDashboard: true,
         };
         this.updateDashboard = this.updateDashboard.bind(this);
         this.showMessage = this.showMessage.bind(this);
@@ -75,6 +77,8 @@ export default class DashboardSettings extends Component {
             .catch((err) => {
                 if (err.response.status === 401) {
                     this.setState({hasPermission: false});
+                } else if (err.response.status === 404) {
+                    this.setState({hasDashboard: false});
                 }
             });
     }
@@ -157,6 +161,8 @@ export default class DashboardSettings extends Component {
     render() {
         if (!this.state.hasPermission) {
             return <Error401/>;
+        } else if (!this.state.hasDashboard) {
+            return <Error404/>;
         }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>

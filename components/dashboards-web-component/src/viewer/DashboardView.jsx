@@ -32,6 +32,7 @@ import Sidebar from './components/Sidebar';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 import AuthManager from '../auth/utils/AuthManager';
+import Error401 from '../error-pages/Error401';
 import Error404 from '../error-pages/Error404';
 import './Dashboard.css';
 
@@ -93,7 +94,8 @@ class DashboardView extends React.Component {
             isDark: false,
             muiTheme: darkMuiTheme,
             requestHideLoading: false,
-            invalidURL: false,
+            hasPermission: true,
+            hasDashboard: true
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
@@ -114,15 +116,13 @@ class DashboardView extends React.Component {
 
     componentDidMount() {
         let dashboardAPI = new DashboardAPI();
-
-        dashboardAPI.getDashboardList().then((response) => {
-            if (response.data.filter((d) => d.url === this.props.match.params.id).length > 0) {
-                let promised_dashboard = dashboardAPI.getDashboardByID(this.props.match.params.id);
-                promised_dashboard.then(this.setDashboardProperties).catch(function (error) {
-                    //TODO Need to use proper notification library to show the error
-                });
-            } else {
-                this.setState({invalidURL: true, requestHideLoading:true})
+        let promised_dashboard = dashboardAPI.getDashboardByID(this.props.match.params.id);
+        let that = this;
+        promised_dashboard.then(this.setDashboardProperties).catch(function (err) {
+            if (err.response.status === 401) {
+                that.setState({hasPermission: false});
+            } else if (err.response.status === 404) {
+                that.setState({hasDashboard: false});
             }
         });
     }
@@ -191,6 +191,16 @@ class DashboardView extends React.Component {
     }
 
     render() {
+
+        let dashboardPageContent = new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
+            this.state.dashboardContent, this.state.landingPage);
+
+        if (!this.state.hasPermission) {
+            return <Error401/>;
+        } else if (!this.state.hasDashboard || dashboardPageContent[0] == "") {
+            return <Error404/>;
+        }
+
         let showLoading = true;
         if (this.state.requestHideLoading) {
             showLoading = false;
@@ -206,9 +216,6 @@ class DashboardView extends React.Component {
 
         return (
             <MuiThemeProvider muiTheme={this.state.muiTheme}>
-                {
-                    this.state.invalidURL ?
-                        <Error404 />:
                         <div>
                             <Drawer open={this.state.open} className="viewer-drawer">
                                 <Sidebar
@@ -249,13 +256,11 @@ class DashboardView extends React.Component {
                                     ref={(c) => {
                                         this.dashboardRenderingComponent = c;
                                     }}
-                                    dashboardContent={new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
-                                        this.state.dashboardContent, this.state.landingPage)}
+                                    dashboardContent={dashboardPageContent}
                                     onInitialized={() => this.setState({ requestHideLoading: true })}
                                 />
                             </div>
                         </div>
-                }
             </MuiThemeProvider>
         );
     }

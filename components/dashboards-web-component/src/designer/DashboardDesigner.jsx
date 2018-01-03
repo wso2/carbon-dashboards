@@ -25,6 +25,7 @@ import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingCom
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
 import Error401 from '../error-pages/Error401';
+import Error404 from '../error-pages/Error404';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
 import WidgetConfigurationPanel from './components/WidgetConfigurationPanel';
@@ -110,7 +111,8 @@ export default class DashboardDesigner extends Component {
             redirectUrl: '',
             widgetConfigPanelOpen: false,
             publishers: [],
-            hasPermission: true
+            hasPermission: true,
+            hasDashboard: true,
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
@@ -134,8 +136,12 @@ export default class DashboardDesigner extends Component {
 
     render() {
         DashboardDesigner.loadTheme();
+        let dashboardPageContent = DashboardDesigner.getDashboardContent(this.props.match.params[1],
+            this.state.dashboard)[0];
         if (!this.state.hasPermission) {
             return <Error401/>;
+        } else if (!this.state.hasDashboard || dashboardPageContent == "") {
+            return <Error404/>;
         }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
@@ -278,6 +284,8 @@ export default class DashboardDesigner extends Component {
             .catch((err) => {
                 if (err.response.status === 401) {
                     this.setState({hasPermission: false});
+                } else if (err.response.status === 404) {
+                    this.setState({hasDashboard: false});
                 }
             });
     }
