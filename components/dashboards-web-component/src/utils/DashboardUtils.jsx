@@ -27,9 +27,9 @@ export default class DashboardUtils {
                 let selectedPage;
                 pages.forEach(page => {
                     selectedPage = this.findPageByID(page, parentPage);
-                    parentPage = selectedPage.pages;
+                    parentPage = selectedPage ? selectedPage.pages : [];
                 });
-                dashboardPageContent.push(selectedPage.content[0]);
+                dashboardPageContent.push(selectedPage ? selectedPage.content[0] : "");
             } else {
                 dashboardPageContent.push(this.findPageFromDashboardJSon(landingPage, dashboardContent).content[0]);
             }
