@@ -20,6 +20,7 @@
 import React from 'react';
 import Toggle from 'material-ui/Toggle';
 import PageMenu from './PageMenu';
+import ReactTooltip from 'react-tooltip'
 
 import {FormattedMessage} from 'react-intl';
 
@@ -45,7 +46,7 @@ export default class Sidebar extends React.Component {
                     {this.props.dashboardName}
                 </div>
                 <PageMenu dashboard={this.props.dashboard} />
-                <div className="dark-light-theme-switch-div">
+                <div className="dark-light-theme-switch-div" data-tip="Switch Dashboard Theme">
                     <FormattedMessage id="light" defaultMessage="Light"/>
                     <Toggle
                         onToggle={this.loadTheme}
@@ -55,6 +56,7 @@ export default class Sidebar extends React.Component {
                         className="dark-light-theme-switch-toggleBtn"
                     />
                 </div>
+                <ReactTooltip />
             </div>
         );
     }
