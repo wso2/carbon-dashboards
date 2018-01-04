@@ -78,6 +78,9 @@ export default class WidgetsList extends React.Component {
 
     setWidgets(response) {
         widgets = response.data;
+        widgets.sort(function (a, b) {
+            return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+        });
         this.setState({
             widgets: widgets,
             filteredWidgetSet: new Set(widgets.map((widget) => {
