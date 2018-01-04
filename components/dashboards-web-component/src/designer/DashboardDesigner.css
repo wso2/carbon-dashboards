@@ -50,7 +50,7 @@
 }
 
 .dashboard-designer-expanded-all {
-    width: 68%;
+    width: calc(100% - 600px);
     padding: 8px 10px 0 325px;
     color: white;
     height: 89vh;
@@ -58,7 +58,7 @@
 }
 
 .dashboard-designer-container-collapsed-left {
-    width: 82%;
+    width: calc(100% - 330px);
     padding: 8px 10px 0 65px;
     color: white;
     height: 89vh;
@@ -82,7 +82,6 @@
 .widget-configuration-panel {
     padding-top: 125px;
     padding-left: 10px;
-    z-index: 0 !important;
 }
 
 .widget-configuration-panel-header {
