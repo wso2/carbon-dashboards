@@ -258,6 +258,7 @@ export default class DashboardDesigner extends Component {
             let dashboard = this.state.dashboard;
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
+            this.cleanDashboardJSON(dashboard.pages);
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
             window.global.notify(this.context.intl.formatMessage({
                 id: "dashboard.update.success",
@@ -265,6 +266,27 @@ export default class DashboardDesigner extends Component {
             }));
         } catch (e) {
             // Absorb the error since this doesn't relevant to the end-user.
+        }
+    }
+
+    cleanDashboardJSON(content) {
+        if(!Array.isArray(content)) {
+            delete content.reorderEnabled;
+            if(content.hasOwnProperty('content')) {
+                delete content.activeItemIndex;
+                this.cleanDashboardJSON(content.content);
+            } else {
+                delete content.componentName;
+                delete content.componentState;
+                delete content.header;
+            }
+            if(content.hasOwnProperty('pages')) {
+                this.cleanDashboardJSON(content.pages);
+            }
+        } else {
+            content.forEach((item) => {
+                this.cleanDashboardJSON(item);
+            });
         }
     }
 
