@@ -195,6 +195,8 @@ class DashboardView extends React.Component {
         let dashboardPageContent = new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
             this.state.dashboardContent, this.state.landingPage);
 
+        let selectedPage = this.props.match.params[1] ? this.props.match.params[1] : this.state.landingPage;
+
         if (!this.state.hasPermission) {
             return <Error401/>;
         } else if (!this.state.hasDashboard || dashboardPageContent[0] == "") {
@@ -223,6 +225,7 @@ class DashboardView extends React.Component {
                                     dashboardId={this.props.match.params.id}
                                     dashboardContent={this.state.dashboardContent}
                                     dashboardName={this.state.dashboardName}
+                                    selectedPage={selectedPage}
                                     toggled={this.state.toggled}
                                     match={this.props.match}
                                     handleThemeSwitch={this.handleTheme}

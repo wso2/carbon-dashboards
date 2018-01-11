@@ -37,6 +37,14 @@ class PageMenu extends Component {
         // Generate the URL of the current page.
         const url = parentUrl ? parentUrl + '/' + page.id : page.id;
 
+        let listItemStyleObject;
+
+        if (this.props.selectedPage === url) {
+            listItemStyleObject = {backgroundColor: "#37474F"};
+        } else {
+            listItemStyleObject = {};
+        }
+
         // Generate sub-pages.
         let subpages = [];
         if (page.pages) {
@@ -51,6 +59,7 @@ class PageMenu extends Component {
                 initiallyOpen
                 primaryText={page.name}
                 nestedItems={subpages}
+                style={listItemStyleObject}
                 onClick={() => {
                     this.props.history.push(`${window.contextPath}/dashboards/${this.props.dashboard.url}/${url}`);
                 }}
