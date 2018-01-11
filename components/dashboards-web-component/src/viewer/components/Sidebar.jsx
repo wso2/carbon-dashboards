@@ -45,7 +45,7 @@ export default class Sidebar extends React.Component {
                 <div className="dashboard-view-product-name">
                     {this.props.dashboardName}
                 </div>
-                <PageMenu dashboard={this.props.dashboard} />
+                <PageMenu selectedPage={this.props.selectedPage} dashboard={this.props.dashboard} />
                 <div className="dark-light-theme-switch-div" data-tip="Switch Dashboard Theme">
                     <FormattedMessage id="light" defaultMessage="Light"/>
                     <Toggle
