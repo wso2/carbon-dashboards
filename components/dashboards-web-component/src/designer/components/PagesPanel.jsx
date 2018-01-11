@@ -18,6 +18,7 @@
  */
 
 import React, {Component} from 'react';
+import {withRouter} from 'react-router-dom';
 // Components
 import PageEntry from './PageEntry';
 import DashboardUtils from '../../utils/DashboardUtils';
@@ -30,7 +31,7 @@ import {FormattedMessage} from 'react-intl';
 
 let _pages = [];
 
-export default class PagesPanel extends Component {
+class PagesPanel extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -145,7 +146,7 @@ export default class PagesPanel extends Component {
         });
         this.savePages(this.props.dashboard.pages);
         // navigate to newly added page
-        window.location.href = window.contextPath + '/designer/' + this.props.dashboard.url + '/' + id;
+        this.props.history.push(window.contextPath + '/designer/' + this.props.dashboard.url + '/' + id)
     }
 
     /**
@@ -160,7 +161,7 @@ export default class PagesPanel extends Component {
         this.savePages(this.props.dashboard.pages);
         // If the page id has been modified, need to redirect the user to the page with the new url.
         if (id != page.id) {
-            window.location.href = window.contextPath + '/designer/' + this.props.dashboard.url + '/' + page.id;
+            this.props.history.push(window.contextPath + '/designer/' + this.props.dashboard.url + '/' + page.id);
         }
     }
 
@@ -182,7 +183,7 @@ export default class PagesPanel extends Component {
         this.deletePageRecursively(this.props.dashboard.pages, id);
         this.savePages(this.props.dashboard.pages);
         // navigate to home page
-        window.location.href = window.contextPath + '/designer/' + this.props.dashboard.url;
+        this.props.history.push(window.contextPath + '/designer/' + this.props.dashboard.url);
     }
 
     /**
@@ -257,3 +258,5 @@ export default class PagesPanel extends Component {
 PagesPanel.contextTypes ={
     intl: PropTypes.object.isRequired
 };
+
+export default withRouter(PagesPanel);
