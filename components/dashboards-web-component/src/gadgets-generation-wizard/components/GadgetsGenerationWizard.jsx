@@ -19,6 +19,7 @@
 
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
+import { withRouter } from 'react-router-dom';
 // Material UI Components
 import { Step, StepLabel, Stepper } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -213,7 +214,7 @@ class GadgetsGenerationWizard extends Component {
                     this.displaySnackbar(`Widget ${this.state.gadgetDetails.name} was created successfully!`,
                         'successMessage');
                     setTimeout(() => {
-                        window.location.href = appContext;
+                        this.props.history.push(appContext);
                     }, 1000);
                 } else {
                     this.displaySnackbar('Failed to save the widget', 'errorMessage');

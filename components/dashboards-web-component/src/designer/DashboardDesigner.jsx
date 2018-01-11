@@ -17,7 +17,7 @@
  */
 
 import React, {Component} from 'react';
-import {Redirect} from 'react-router-dom';
+import {Redirect, Link} from 'react-router-dom';
 // App Components
 import {Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -153,12 +153,11 @@ export default class DashboardDesigner extends Component {
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>}
-                                      icon={<BackIcon/>} style={{'margin-right': '12px'}}
-                                      onClick={() => {
-                                          window.location.href = window.contextPath + '/';
-                                      }}
-                                      backgroundColor="rgb(13, 31, 39)"/>
+                        <Link to={window.contextPath + '/'}>
+                            <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>}
+                                          icon={<BackIcon/>} style={{'margin-right': '12px'}}
+                                          backgroundColor="rgb(13, 31, 39)" />
+                        </Link>
                         <FlatButton label={<FormattedMessage id="save.page.button" defaultMessage="Save Page"/>}
                                     primary
                                     icon={<SaveIcon/>}

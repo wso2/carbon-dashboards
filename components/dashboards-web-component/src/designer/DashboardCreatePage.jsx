@@ -23,6 +23,7 @@ import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 import { MuiThemeProvider, darkBaseTheme, getMuiTheme } from 'material-ui/styles';
 import { RaisedButton, TextField, Snackbar } from 'material-ui';
+import { withRouter } from 'react-router-dom';
 
 import { FormPanel, Header } from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -48,7 +49,7 @@ const styles = {
 /**
  * Create dashboard component.
  */
-export default class DashboardCreatePage extends Component {
+class DashboardCreatePage extends Component {
     /**
      * Constructor.
      */
@@ -150,7 +151,7 @@ export default class DashboardCreatePage extends Component {
                                 defaultMessage: "Dashboard {name} is created successfully!"
                             }, {name: this.state.dashboard.name}), styles.successMessage);
                         setTimeout(() => {
-                            window.location.href = `${window.contextPath}/designer/${this.state.dashboard.url}`;
+                            this.props.history.push(`${window.contextPath}/designer/${this.state.dashboard.url}`)
                         }, 1000);
                         break;
                     }
@@ -289,3 +290,5 @@ export default class DashboardCreatePage extends Component {
 DashboardCreatePage.contextTypes ={
     intl: PropTypes.object.isRequired
 };
+
+export default withRouter(DashboardCreatePage);
