@@ -132,6 +132,12 @@ export default class DashboardDesigner extends Component {
 
     componentWillMount() {
         widgetLoadingComponent.setfinishedRegisteringCallback();
+        if (this.props.match.params[1]) {
+            this.setState({
+                leftSidebarOpen: true,
+                leftSidebarPanel: sidebarPanels.PAGES
+            });
+        }
     }
 
     render() {
@@ -140,8 +146,6 @@ export default class DashboardDesigner extends Component {
             this.state.dashboard)[0];
         if (!this.state.hasPermission) {
             return <Error401/>;
-        } else if (!this.state.hasDashboard || dashboardPageContent == "") {
-            return <Error404/>;
         }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>

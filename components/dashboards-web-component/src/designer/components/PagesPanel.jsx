@@ -42,7 +42,7 @@ export default class PagesPanel extends Component {
 
     componentWillReceiveProps(nextprops) {
         if (nextprops.dashboard) {
-            _pages = this.buildPages(nextprops.dashboard.pages);
+            _pages = this.buildPages(nextprops.dashboard);
             this.setState({
                 pages: _pages,
                 dashboard: nextprops.dashboard
@@ -96,22 +96,22 @@ export default class PagesPanel extends Component {
      * @returns {*|Array}
      */
     buildPages(p, a, baseUrl) {
-        if (!this.state.dashboard) {
+        if (!p) {
             return [];
         }
 
         a = a || [];
         baseUrl = baseUrl || '';
-        for (let i = 0; i < p.length; i++) {
-            let pageUrl = baseUrl + p[i].id;
+        for (let i = 0; i < p.pages.length; i++) {
+            let pageUrl = baseUrl + p.pages[i].id;
             a.push({
-                id: p[i].id,
-                title: p[i].name,
+                id: p.pages[i].id,
+                title: p.pages[i].name,
                 url: pageUrl,
-                landingPage: (this.state.dashboard.landingPage === p[i].id)
+                landingPage: (p.landingPage === p.pages[i].id)
             });
-            if (p[i].pages && p[i].pages.length > 0) {
-                this.buildPages(p[i].pages, a, pageUrl + '/');
+            if (p.pages[i].pages && p.pages[i].pages.length > 0) {
+                this.buildPages(p.pages[i].pages, a, pageUrl + '/');
             }
         }
         return a;
