@@ -19,6 +19,7 @@
 import React, {Component} from 'react';
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from 'recharts';
 import Widget from '@wso2-dashboards/widget';
+import '../../recharts-style.css';
 
 var data = [];
 const DATA_POINT_COUNT = 25;
