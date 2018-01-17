@@ -23,9 +23,11 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "copy-webpack-plugin": "^4.2.0",
+    "css-loader": "^0.28.8",
     "node-sass": "^4.5.3",
     "recharts": "^1.0.0-alpha.4",
     "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.1",
     "webpack": "^3.5.6"
   }
 }

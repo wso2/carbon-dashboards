@@ -26,6 +26,8 @@
         "node-sass": "^4.5.3",
         "recharts": "^1.0.0-alpha.4",
         "sass-loader": "^6.0.6",
-        "webpack": "^3.5.6"
+        "webpack": "^3.5.6",
+        "style-loader": "^0.19.1",
+        "css-loader": "^0.28.8"
     }
 }
