@@ -20,7 +20,7 @@
 import React, { Component } from 'react';
 import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend} from 'recharts';
 import Widget from '@wso2-dashboards/widget';
-import '../../recharts-style.css';
+import './recharts-style.css';
 
 var data = [
     {server: 'Server 1', updates: 40},

@@ -19,7 +19,7 @@
 import React, {Component} from 'react';
 import {Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis} from 'recharts';
 import Widget from '@wso2-dashboards/widget';
-import '../../recharts-style.css';
+import './recharts-style.css';
 
 let data = [];
 const DATA_POINT_COUNT = 25;
