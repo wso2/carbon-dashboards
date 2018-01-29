@@ -113,6 +113,7 @@ export default class DashboardDesigner extends Component {
             publishers: [],
             hasPermission: true,
             hasDashboard: true,
+            isSessionValid: true
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
@@ -141,6 +142,11 @@ export default class DashboardDesigner extends Component {
     }
 
     render() {
+        if (!this.state.isSessionValid) {
+            return (
+                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
+            );
+        }
         DashboardDesigner.loadTheme();
         let dashboardPageContent = DashboardDesigner.getDashboardContent(this.props.match.params[1],
             this.state.dashboard)[0];
@@ -307,10 +313,12 @@ export default class DashboardDesigner extends Component {
                 });
             })
             .catch((err) => {
-                if (err.response.status === 401) {
+                if (err.response.status === 403) {
                     this.setState({hasPermission: false});
                 } else if (err.response.status === 404) {
                     this.setState({hasDashboard: false});
+                } else if (err.response.status === 401) {
+                    this.setState({isSessionValid: false});
                 }
             });
     }

@@ -47,8 +47,8 @@ import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 /**
  * REST API for dashboard related operations.
@@ -85,7 +85,7 @@ public class DashboardRestApi implements Microservice {
         try {
             return Response.ok().entity(dashboardDataProvider.getAllByUser(getUserName(request))).build();
         } catch (UnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).build();
+            return Response.status(FORBIDDEN).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when listing dashboards.", e);
             return Response.serverError().entity("Cannot list dashboards.").build();
@@ -110,7 +110,7 @@ public class DashboardRestApi implements Microservice {
                             Response.ok().entity(metadata).build())
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + id + "'.").build());
         } catch (UnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to retrieve dashboard with ID : " +
+            return Response.status(FORBIDDEN).entity("Insufficient permissions to retrieve dashboard with ID : " +
                                                         id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when retrieving" +
@@ -140,7 +140,7 @@ public class DashboardRestApi implements Microservice {
                         .build();
             }
         } catch (UnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to create a dashboard").build();
+            return Response.status(FORBIDDEN).entity("Insufficient permissions to create a dashboard").build();
         } catch (DashboardException e) {
             // TODO: 12/7/17
             LOGGER.error("An error occurred when creating a new dashboard from {} data.",
@@ -166,7 +166,7 @@ public class DashboardRestApi implements Microservice {
             dashboardDataProvider.update(getUserName(request), dashboardMetadata);
             return Response.ok().build();
         } catch (UnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the dashboard with ID : " +
+            return Response.status(FORBIDDEN).entity("Insufficient permissions to update the dashboard with ID : " +
                                                         dashboardMetadata.getUrl()).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
@@ -187,7 +187,7 @@ public class DashboardRestApi implements Microservice {
             dashboardDataProvider.delete(getUserName(request), id);
             return Response.ok().build();
         } catch (UnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to delete the dashboard with ID : "
+            return Response.status(FORBIDDEN).entity("Insufficient permissions to delete the dashboard with ID : "
                                                         + id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when deleting dashboard %s",
@@ -255,7 +255,7 @@ public class DashboardRestApi implements Microservice {
             dashboardDataProvider.updateDashboardRoles(getUserName(request), url, roles);
             return Response.ok().build();
         } catch (UnauthorizedException e) {
-            return Response.status(UNAUTHORIZED).entity("Insufficient permissions to update the roles of dashboard " +
+            return Response.status(FORBIDDEN).entity("Insufficient permissions to update the roles of dashboard " +
                                                         "with ID : " + url).build();
         } catch (DashboardException e) {
             LOGGER.error("Cannot update user roles of dashboard '" + replaceCRLFCharacters(url) + "'.", e);

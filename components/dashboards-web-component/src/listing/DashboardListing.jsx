@@ -30,6 +30,7 @@ import DashboardThumbnail from './DashboardThumbnail';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import '../../public/css/dashboard.css';
 import '../common/Global.css';
+import { Redirect } from 'react-router-dom';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 
@@ -38,7 +39,8 @@ class DashboardListing extends React.Component {
         super();
         this.state = {
             dashboards: "",
-            open: true
+            open: true,
+            isSessionValid: true,
         };
         this.retrieveDashboards = this.retrieveDashboards.bind(this);
     }
@@ -48,6 +50,11 @@ class DashboardListing extends React.Component {
     }
 
     render() {
+        if (!this.state.isSessionValid) {
+            return (
+                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
+            );
+        }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
@@ -101,6 +108,9 @@ class DashboardListing extends React.Component {
             }
             that.setState({dashboards: dashboardList});
         }).catch(function (error) {
+                if (error.response.status === 401) {
+                    that.setState({isSessionValid: false});
+                }
                 //TODO Need to use proper notification library to show the error
             }
         );
