@@ -26,6 +26,7 @@ import ActionHome from 'material-ui/svg-icons/action/home';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { Redirect } from 'react-router-dom';
 
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import Sidebar from './components/Sidebar';
@@ -95,7 +96,8 @@ class DashboardView extends React.Component {
             muiTheme: darkMuiTheme,
             requestHideLoading: false,
             hasPermission: true,
-            hasDashboard: true
+            hasDashboard: true,
+            isSessionValid: true
         };
         this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
         this.setDashboardProperties = this.setDashboardProperties.bind(this);
@@ -119,10 +121,12 @@ class DashboardView extends React.Component {
         let promised_dashboard = dashboardAPI.getDashboardByID(this.props.match.params.id);
         let that = this;
         promised_dashboard.then(this.setDashboardProperties).catch(function (err) {
-            if (err.response.status === 401) {
+            if (err.response.status === 403) {
                 that.setState({hasPermission: false});
             } else if (err.response.status === 404) {
                 that.setState({hasDashboard: false});
+            } else if (err.response.status === 401) {
+                that.setState({isSessionValid: false});
             }
         });
     }
@@ -191,6 +195,12 @@ class DashboardView extends React.Component {
     }
 
     render() {
+
+        if (!this.state.isSessionValid) {
+            return (
+                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
+            );
+        }
 
         let dashboardPageContent = new DashboardUtils().getDashboardByPageId(this.props.match.params[1],
             this.state.dashboardContent, this.state.landingPage);

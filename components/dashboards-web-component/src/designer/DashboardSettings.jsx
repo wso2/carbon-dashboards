@@ -24,6 +24,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 import {FormPanel, Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -62,6 +63,7 @@ class DashboardSettings extends Component {
             message: '',
             hasPermission: true,
             hasDashboard: true,
+            isSessionValid: true
         };
         this.updateDashboard = this.updateDashboard.bind(this);
         this.showMessage = this.showMessage.bind(this);
@@ -75,10 +77,12 @@ class DashboardSettings extends Component {
             .getDashboardByID(this.props.match.params.id)
             .then(response => this.setState({dashboard: response.data}))
             .catch((err) => {
-                if (err.response.status === 401) {
+                if (err.response.status === 403) {
                     this.setState({hasPermission: false});
                 } else if (err.response.status === 404) {
                     this.setState({hasDashboard: false});
+                } else if (err.response.status === 401) {
+                    this.setState({isSessionValid: false});
                 }
             });
     }
@@ -159,7 +163,11 @@ class DashboardSettings extends Component {
      * @returns {XML} HTML content
      */
     render() {
-        if (!this.state.hasPermission) {
+        if (!this.state.isSessionValid) {
+            return (
+                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
+            );
+        } else if (!this.state.hasPermission) {
             return <Error401/>;
         } else if (!this.state.hasDashboard) {
             return <Error404/>;
