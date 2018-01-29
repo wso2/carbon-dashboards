@@ -30,7 +30,7 @@ import {FormPanel, Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardSettingsRoles from './DashboardSettingsRoles';
 import {HttpStatus} from '../utils/Constants';
-import Error401 from '../error-pages/Error401';
+import Error403 from '../error-pages/Error403';
 import Error404 from '../error-pages/Error404';
 
 /**
@@ -168,7 +168,7 @@ class DashboardSettings extends Component {
                 <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
             );
         } else if (!this.state.hasPermission) {
-            return <Error401/>;
+            return <Error403/>;
         } else if (!this.state.hasDashboard) {
             return <Error404/>;
         }

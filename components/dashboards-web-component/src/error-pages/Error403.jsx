@@ -45,24 +45,24 @@ const errorContainerStyles = {
 /**
  *  This component provide a basic 401 error page.
  */
-class Error401 extends Component {
+class Error403 extends Component {
     //TODO We need to remove this after finalizing the WSO2 theme. Because we need to get Error pages from it
     render() {
         return <MuiThemeProvider muiTheme={muiTheme}>
             <Header/>
             <div style={errorContainerStyles}>
                 <h1 style={errorTitleStyles}><FormattedMessage id="dashboard.unauthorized.title"
-                                                               defaultMessage="401 Unauthorized"/></h1>
+                                                               defaultMessage="403 Forbidden"/></h1>
                 <h1 style={errorMessageStyles}><FormattedMessage id="dashboard.unauthorized.message"
-                                                                 defaultMessage="You are not authorized to access this page"/>
+                                           defaultMessage="You do not have sufficient privileges to access this page"/>
                 </h1>
             </div>
         </MuiThemeProvider>;
     }
 }
 
-Error401.contextTypes = {
+Error403.contextTypes = {
     intl: PropTypes.object.isRequired
 };
 
-export default Error401;
+export default Error403;
