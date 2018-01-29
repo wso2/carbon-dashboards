@@ -54,8 +54,8 @@
   "settings.role.update.success" : "Dashboard roles saved successfully!",
   "settings.add.role" :"Add Role",
   "listing.no.dashboards.available" : "No Dashboards Available",
-  "dashboard.unauthorized.title" : "401 Unauthorized",
-  "dashboard.unauthorized.message" : "You are not authorized to access this page",
+  "dashboard.unauthorized.title" : "403 Forbidden",
+  "dashboard.unauthorized.message" : "You do not have sufficient privileges to access this page",
   "viewer.back.tooltip" : "Back to Home",
   "dashboard.notFound.title": "404 Page Not Found.",
   "dashboard.notFound.message": "The Page you are trying to access may have been renamed, removed or might never existed."

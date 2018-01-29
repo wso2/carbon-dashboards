@@ -33,7 +33,7 @@ import Sidebar from './components/Sidebar';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 import AuthManager from '../auth/utils/AuthManager';
-import Error401 from '../error-pages/Error401';
+import Error403 from '../error-pages/Error403';
 import Error404 from '../error-pages/Error404';
 import './Dashboard.css';
 
@@ -208,7 +208,7 @@ class DashboardView extends React.Component {
         let selectedPage = this.props.match.params[1] ? this.props.match.params[1] : this.state.landingPage;
 
         if (!this.state.hasPermission) {
-            return <Error401/>;
+            return <Error403/>;
         } else if (!this.state.hasDashboard || dashboardPageContent[0] == "") {
             return <Error404/>;
         }
