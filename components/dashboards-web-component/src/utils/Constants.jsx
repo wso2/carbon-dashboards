@@ -24,6 +24,9 @@ const HttpStatus = {
     OK: 200,
     CREATED: 201,
     CONFLICT: 409,
+    FORBIDDEN: 403,
+    NOTFOUND: 404,
+    UNAUTHORIZED: 401
 };
 
 /**

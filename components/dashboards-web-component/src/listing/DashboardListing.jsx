@@ -31,6 +31,7 @@ import DashboardAPI from '../utils/apis/DashboardAPI';
 import '../../public/css/dashboard.css';
 import '../common/Global.css';
 import { Redirect } from 'react-router-dom';
+import {HttpStatus} from "../utils/Constants";
 
 const muiTheme = getMuiTheme(darkBaseTheme);
 
@@ -108,7 +109,7 @@ class DashboardListing extends React.Component {
             }
             that.setState({dashboards: dashboardList});
         }).catch(function (error) {
-                if (error.response.status === 401) {
+                if (error.response.status === HttpStatus.UNAUTHORIZED) {
                     that.setState({isSessionValid: false});
                 }
                 //TODO Need to use proper notification library to show the error
