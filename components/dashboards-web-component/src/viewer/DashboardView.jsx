@@ -36,6 +36,7 @@ import AuthManager from '../auth/utils/AuthManager';
 import Error403 from '../error-pages/Error403';
 import Error404 from '../error-pages/Error404';
 import './Dashboard.css';
+import {HttpStatus} from "../utils/Constants";
 
 const darkMuiTheme = getMuiTheme({
     "palette": {
@@ -121,11 +122,11 @@ class DashboardView extends React.Component {
         let promised_dashboard = dashboardAPI.getDashboardByID(this.props.match.params.id);
         let that = this;
         promised_dashboard.then(this.setDashboardProperties).catch(function (err) {
-            if (err.response.status === 403) {
+            if (err.response.status === HttpStatus.FORBIDDEN) {
                 that.setState({hasPermission: false});
-            } else if (err.response.status === 404) {
+            } else if (err.response.status === HttpStatus.NOTFOUND) {
                 that.setState({hasDashboard: false});
-            } else if (err.response.status === 401) {
+            } else if (err.response.status === HttpStatus.UNAUTHORIZED) {
                 that.setState({isSessionValid: false});
             }
         });

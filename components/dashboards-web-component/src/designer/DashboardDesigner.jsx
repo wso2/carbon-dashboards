@@ -49,6 +49,7 @@ import {FormattedMessage} from 'react-intl';
 // CSS
 import '../common/Global.css';
 import './DashboardDesigner.css';
+import {HttpStatus} from "../utils/Constants";
 
 /**
  * Material-UI theme.
@@ -313,11 +314,11 @@ export default class DashboardDesigner extends Component {
                 });
             })
             .catch((err) => {
-                if (err.response.status === 403) {
+                if (err.response.status === HttpStatus.FORBIDDEN) {
                     this.setState({hasPermission: false});
-                } else if (err.response.status === 404) {
+                } else if (err.response.status === HttpStatus.NOTFOUND) {
                     this.setState({hasDashboard: false});
-                } else if (err.response.status === 401) {
+                } else if (err.response.status === HttpStatus.UNAUTHORIZED) {
                     this.setState({isSessionValid: false});
                 }
             });
