@@ -112,7 +112,7 @@ class PagesPanel extends Component {
                 landingPage: (p.landingPage === p.pages[i].id)
             });
             if (p.pages[i].pages && p.pages[i].pages.length > 0) {
-                this.buildPages(p.pages[i].pages, a, pageUrl + '/');
+                this.buildPages(p.pages[i], a, pageUrl + '/');
             }
         }
         return a;
