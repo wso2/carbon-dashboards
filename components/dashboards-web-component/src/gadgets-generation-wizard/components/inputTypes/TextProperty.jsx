@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -46,10 +46,11 @@ class TextProperty extends React.Component {
                 id={this.props.id}
                 name={this.props.id}
                 floatingLabelText={(this.props.fieldName) ? (this.props.fieldName) : (null)}
-                type={(this.props.number) ? ('number') : ('text')}
+                type={this.props.number ? 'number' : 'text'}
                 value={this.props.value}
                 onChange={e => this.props.onChange(this.props.id, this.convertValue(e.target.value))}
-                fullWidth={(this.props.fullWidth)}
+                fullWidth={this.props.fullWidth}
+                multiLine={this.props.multiline}
                 style={(this.props.fullWidth) ? (null) : ({ width: this.props.width })}
             />
         );

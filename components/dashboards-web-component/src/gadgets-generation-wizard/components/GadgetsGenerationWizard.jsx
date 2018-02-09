@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -54,7 +54,7 @@ const styles = {
     successMessage: { backgroundColor: '#4CAF50', color: 'white' },
     completedStepperText: {color: 'white'},
     activeStepperText: { color: '#0097A7' },
-    inactiveStepperText: { color: '#9E9E9E' },
+    inactiveStepperText: { color: '#FFFFFF', opacity: 0.3 },
 };
 
 /**
@@ -73,6 +73,7 @@ class GadgetsGenerationWizard extends Component {
             providerType: '',
             providersList: [],
             providerConfiguration: {},
+            providerConfigRenderTypes: {},
             chartConfiguration: {},
             metadata: {
                 names: ['rpm', 'torque', 'horsepower', 'EngineType'],
@@ -101,7 +102,7 @@ class GadgetsGenerationWizard extends Component {
     }
 
     componentDidMount() {
-        const api = new GadgetsGenerationAPI()
+        const api = new GadgetsGenerationAPI();
         api.getProvidersList().then((response) => {
             this.setState({
                 providersList: response.data,
@@ -131,12 +132,14 @@ class GadgetsGenerationWizard extends Component {
             if (providerType === 'RDBMSBatchDataProvider') {
                 this.setState({
                     providerType,
+                    providerConfigRenderTypes: UtilFunctions.getDefaultH2RenderTypes(),
                     providerConfiguration: UtilFunctions.getDefaultH2Config(),
                 });
             } else {
                 this.setState({
                     providerType,
-                    providerConfiguration: response.data,
+                    providerConfigRenderTypes: response.data[0],
+                    providerConfiguration: response.data[1],
                 });
             }
         }).catch(() => {
@@ -331,6 +334,7 @@ class GadgetsGenerationWizard extends Component {
                         providersList={this.state.providersList}
                         providerType={this.state.providerType}
                         configuration={this.state.providerConfiguration}
+                        configRenderTypes={this.state.providerConfigRenderTypes}
                         handleProviderTypeChange={this.handleProviderTypeChange}
                         handleProviderConfigPropertyChange={this.handleProviderConfigPropertyChange}
                     />
