@@ -24,7 +24,11 @@ import MenuItem from 'material-ui/MenuItem';
 // App Components
 import TextProperty from './inputTypes/TextProperty';
 import SwitchProperty from './inputTypes/SwitchProperty';
+import CodeProperty from './inputTypes/CodeProperty';
+// Util Functions
 import UtilFunctions from '../utils/UtilFunctions';
+// App Constants
+import Types from '../utils/Types';
 
 /**
  * Displays data provider selection, and the properties related to the selected provider type
@@ -34,11 +38,15 @@ class ProviderConfigurator extends Component {
         super(props);
         this.state = {
             configuration: props.configuration,
+            configRenderTypes: props.configRenderTypes,
         };
     }
 
     componentWillReceiveProps(props) {
-        this.setState({configuration: props.configuration});
+        this.setState({
+            configuration: props.configuration,
+            configRenderTypes: props.configRenderTypes,
+        });
     }
 
     /**
@@ -53,31 +61,18 @@ class ProviderConfigurator extends Component {
         }
 
         return propertyKeys.map(key => (
-            this.renderAsInputField(key)
+            this.renderAsInputField(key, this.state.configRenderTypes[key])
         ));
     }
 
     /**
      * Returns input fields according to the value provided
      * @param value
+     * @param type
      */
-    renderAsInputField(value) {
-        switch (typeof (this.state.configuration[value])) {
-            case ('number'):
-                return (
-                    <div>
-                        <TextProperty
-                            id={value}
-                            value={this.props.configuration[value]}
-                            fieldName={UtilFunctions.toSentenceCase(value)}
-                            onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
-                            number
-                            fullWidth
-                        />
-                        <br />
-                    </div>
-                );
-            case ('boolean'):
+    renderAsInputField(value, type) {
+        switch (type) {
+            case (Types.inputFields.SWITCH):
                 return (
                     <div>
                         <br />
@@ -85,6 +80,20 @@ class ProviderConfigurator extends Component {
                             id={value}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
+                            onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
+                        />
+                        <br />
+                    </div>
+                );
+            case (Types.inputFields.SQL_CODE):
+            case (Types.inputFields.SIDDHI_CODE):
+                return (
+                    <div>
+                        <CodeProperty
+                            id={value}
+                            value={this.props.configuration[value]}
+                            fieldName={UtilFunctions.toSentenceCase(value)}
+                            mode={(type === Types.inputFields.SQL_CODE) ? 'sql' : 'text'}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
                         <br />
@@ -98,6 +107,8 @@ class ProviderConfigurator extends Component {
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
+                            number={type === Types.inputFields.NUMBER}
+                            multiLine={type === Types.inputFields.TEXT_AREA}
                             fullWidth
                         />
                         <br />

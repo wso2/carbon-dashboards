@@ -74,6 +74,25 @@ class UtilFunctions {
         }
     }
 
+    /**
+     * Returns default render types of pre-configured H2 datasource
+     * @returns {{}}
+     */
+    static getDefaultH2RenderTypes() {
+        return {
+            "datasourceName": "TEXT_FIELD",
+            "query": "SQL_CODE",
+            "tableName": "TEXT_FIELD",
+            "incrementalColumn": "TEXT_FIELD",
+            "timeColumns": "TEXT_FIELD",
+            "publishingInterval": 'NUMBER',
+            "purgingInterval": 'NUMBER',
+            "publishingLimit": 'NUMBER',
+            "purgingLimit": 'NUMBER',
+            "isPurgingEnable": 'SWITCH'
+        }
+    }
+
     /* Chart Validation & Preparation functions [START] */
 
     /**

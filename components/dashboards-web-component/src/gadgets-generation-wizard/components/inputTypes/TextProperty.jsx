@@ -46,10 +46,11 @@ class TextProperty extends React.Component {
                 id={this.props.id}
                 name={this.props.id}
                 floatingLabelText={(this.props.fieldName) ? (this.props.fieldName) : (null)}
-                type={(this.props.number) ? ('number') : ('text')}
+                type={this.props.number ? 'number' : 'text'}
                 value={this.props.value}
                 onChange={e => this.props.onChange(this.props.id, this.convertValue(e.target.value))}
-                fullWidth={(this.props.fullWidth)}
+                fullWidth={this.props.fullWidth}
+                multiLine={this.props.multiline}
                 style={(this.props.fullWidth) ? (null) : ({ width: this.props.width })}
             />
         );
