@@ -55,6 +55,15 @@ const Types = {
     chartStacking: {
         stacked: 'stacked',
     },
+    // Provider configuration input fields
+    inputFields: {
+        TEXT_FIELD: 'TEXT_FIELD',
+        TEXT_AREA: 'TEXT_AREA',
+        NUMBER: 'NUMBER',
+        SWITCH: 'SWITCH',
+        SQL_CODE: 'SQL_CODE',
+        SIDDHI_CODE: 'SIDDHI_CODE'
+    }
 };
 
 export default Types;
