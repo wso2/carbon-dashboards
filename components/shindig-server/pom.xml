@@ -71,6 +71,7 @@
                         <configuration>
                             <tasks>
                                 <property name="tempdir" value="target/temp" />
+                                <property name="apache.commons.fileupload.version" value="1.3.1"/>
                                 <unzip dest="${tempdir}/shindig">
                                     <fileset dir="target/">
                                         <include name="shindig-server-${carbon.dashboards.version}.war" />
@@ -93,6 +94,8 @@
                                     <fileset dir="src/main/resources" includes="error-pages/**">
                                     </fileset>
                                 </copy>
+                                <!--apache-commons-fileupload.1.3.1.jar is a vulnerable jar. It is removed here-->
+                                <delete file="${tempdir}/shindig/WEB-INF/lib/commons-fileupload-${apache.commons.fileupload.version}.jar" />
                                 <zip destfile="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}.jar" basedir="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}" />
                                 <delete dir="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}" />
                                 <zip destfile="target/shindig-server-${carbon.dashboards.version}.war" basedir="${tempdir}/shindig" />
