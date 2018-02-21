@@ -36,6 +36,7 @@
         <module>components/dashboards/org.wso2.carbon.dashboards.core</module>
         <module>components/dashboards/org.wso2.carbon.dashboards.api</module>
         <module>components/dashboards-web-component</module>
+        <module>components/universal-widget</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>samples</module>
@@ -57,6 +58,13 @@
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>dashboards-web-component</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+
+            <!--Universal Widget-->
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>universal-widget</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
 

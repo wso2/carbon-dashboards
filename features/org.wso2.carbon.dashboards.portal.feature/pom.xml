@@ -42,6 +42,10 @@
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>dashboards-web-component</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>universal-widget</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -85,6 +89,15 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/target/portal/</outputDirectory>
                                     <includes>pages/index.hbs</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.dashboards</groupId>
+                                    <artifactId>universal-widget</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/target/portal/extensions/widgets/</outputDirectory>
+                                    <includes>UniversalWidget/**</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

@@ -13,11 +13,12 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 */
+
 import React from 'react';
 import ExtendedWidget from "./ExtendedWidget";
 import VizG from 'react-vizgrammar';
 import Axios from 'axios';
-import AuthManager from '../../../../components/dashboards-web-component/src/auth/utils/AuthManager';
+import AuthManager from '../../dashboards-web-component/src/auth/utils/AuthManager';
 
 export default class UniversalWidget extends ExtendedWidget {
 
