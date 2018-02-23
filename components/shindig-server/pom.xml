@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>2.0.14-SNAPSHOT</version>
+        <version>2.0.14</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -71,7 +71,7 @@
                         <configuration>
                             <tasks>
                                 <property name="tempdir" value="target/temp" />
-                                <property name="apache.commons.fileupload.version" value="1.3.1"/>
+                                <property name="apache.commons.fileupload.version" value="1.3.1" />
                                 <unzip dest="${tempdir}/shindig">
                                     <fileset dir="target/">
                                         <include name="shindig-server-${carbon.dashboards.version}.war" />
