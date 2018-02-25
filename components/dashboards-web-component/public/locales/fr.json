@@ -58,5 +58,11 @@
   "dashboard.unauthorized.message" : "Vous n'avez pas les privilèges suffisants pour accéder à cette page",
   "viewer.back.tooltip" : "De retour à la maison",
   "dashboard.notFound.title": "404 Page non trouvée.",
-  "dashboard.notFound.message": "La page que vous essayez d'accéder a peut-être été renommée, supprimée ou n'a jamais existé."
+  "dashboard.notFound.message": "La page que vous essayez d'accéder a peut-être été renommée, supprimée ou n'a jamais existé.",
+  "login.cookie.policy.before": "Après une connexion réussie, nous utilisons un cookie dans votre navigateur pour suivre votre session. Vous pouvez consulter notre ",
+  "login.cookie.policy": "Politique de cookie",
+  "login.cookie.policy.after": " pour plus de détails.",
+  "login.privacy.policy.before": "En vous connectant, vous acceptez notre ",
+  "login.privacy.policy": "Politique de confidentialité",
+  "login.privacy.policy.after": "."
 }
