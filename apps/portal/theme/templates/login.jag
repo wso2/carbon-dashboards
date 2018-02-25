@@ -55,6 +55,27 @@
 
                     <button class="btn btn-lg btn-primary btn-block ues-signin" type="submit">
                         <%= i18n.localize("login.label")%></button>
+                    
+                    <br />
+                    <div class="alert alert-warning margin-bottom-half" role="alert">
+                        <div>
+                            <%= i18n.localize("cookie.policy.before")%>
+                            <a href="/privacy-policies/cookie-policy" target="_blank">
+                                <%= i18n.localize("cookie.policy")%>
+                            </a>
+                            <%= i18n.localize("cookie.policy.after")%>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning margin-bottom-half" role="alert">
+                        <div>
+                            <%= i18n.localize("privacy.policy.before")%>
+                            <a href="/privacy-policies/privacy-policy" target="_blank">
+                                <%= i18n.localize("privacy.policy")%>
+                             </a>
+                            <%= i18n.localize("privacy.policy.after")%>
+                        </div>
+                    </div>
                 </form>
                 <% if (message) { %>
                 <div class="alert alert-danger" role="alert"><%= i18n.localize(message)%></div>
