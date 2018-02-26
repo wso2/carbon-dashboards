@@ -1,3 +1,4 @@
+{
   "edit.button": "සකසන්න",
   "logout.label": "ඉවත්වන්න",
   "login.label": "පිවිසෙන්න​",
@@ -180,6 +181,12 @@
   "cannot.delete.gadget" : "Cannot delete the gadget",
   "cannot.delete.layout" : "Cannot delete the layout",
   "something.wrong" : "Something went wrong. Try again later.",
-  "timeout" : "Timeout Interval"
+  "timeout" : "Timeout Interval",
+  "privacy.policy": "Privacy Policy",
+  "cookie.policy": "Cookie Policy",
+  "cookie.policy.before": "By signing in, you agree to our ",
+  "cookie.policy.after": ".",
+  "privacy.policy.before": "After a successful sign in, we use a cookie in your browser to track your session. You can refer our ",
+  "privacy.policy.after": " for more details."
 }
 
