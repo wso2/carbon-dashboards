@@ -2,5 +2,7 @@
     "name": "CpuUsage",
     "id": "CpuUsage",
     "thumbnailURL": "",
-    "configs": {}
+    "configs": {
+        "userPrefs": true
+    }
 }

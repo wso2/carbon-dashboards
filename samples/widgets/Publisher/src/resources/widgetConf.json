@@ -5,6 +5,7 @@
     "configs": {
         "pubsub": {
             "types": ["publisher"]
-        }
+        },
+        "userPrefs": true
     }
 }

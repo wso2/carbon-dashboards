@@ -120,7 +120,10 @@ export default class DashboardDesigner extends Component {
         this.registerNotifier = this.registerNotifier.bind(this);
         this.updateDashboard = this.updateDashboard.bind(this);
         this.handleWidgetConfiguration = this.handleWidgetConfiguration.bind(this);
+        this.updateDashboardByWidgetConfPanel = this.updateDashboardByWidgetConfPanel.bind(this);
         this.updatePageContent = this.updatePageContent.bind(this);
+        this.getDashboard = this.getDashboard.bind(this);
+        this.getPageId = this.getPageId.bind(this);
     }
 
     componentDidMount() {
@@ -215,6 +218,9 @@ export default class DashboardDesigner extends Component {
                     />
 
                     <WidgetConfigurationPanel publishers={this.state.publishers}
+                                              updateDashboardByWidgetConfPanel = {this.updateDashboardByWidgetConfPanel}
+                                              getDashboard = {this.getDashboard}
+                                              getPageId = {this.getPageId}
                                               open={this.state.widgetConfigPanelOpen}/>
                     {/* Notifier */}
                     <Snackbar
@@ -383,6 +389,37 @@ export default class DashboardDesigner extends Component {
             id: "dashboard.update.success",
             defaultMessage: "Dashboard updated successfully!"
         }));
+        this.setState({
+            dashboard: dashboard
+        });
+    }
+    /**
+     * to get the current dashboard state
+     */
+    getDashboard() {
+        return this.state.dashboard;
+    }
+
+    getPageId() {
+
+        let pageId = this.props.match.params[1];
+
+        if (!pageId || pageId === '') {
+            pageId = this.state.dashboard.landingPage;
+        }
+
+        return pageId;
+    }
+    /**
+     * reflect changes from WidgetConfigurationPanel on dashboard.
+     * @param dashboard
+     */
+    updateDashboardByWidgetConfPanel(dashboard) {
+        // new DashboardAPI().updateDashboardByID(dashboard.id, dashboard);
+        // window.global.notify(this.context.intl.formatMessage({
+        //     id: "dashboard.update.success",
+        //     defaultMessage: "Dashboard updated successfully!"
+        // }));
         this.setState({
             dashboard: dashboard
         });

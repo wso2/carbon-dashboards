@@ -19,6 +19,8 @@
 package org.wso2.carbon.dashboards.core.bean.widget;
 
 import com.google.gson.JsonElement;
+import java.util.List;
+
 
 /**
  * Bean class for configs in widget configuration file.
@@ -28,6 +30,7 @@ public class WidgetConfigs {
     private JsonElement chartConfig;
     private JsonElement providerConfig;
     private boolean isGenerated;
+    private List<Options> options;
 
     /**
      * This method is get pubsub configuration of the widget.
@@ -45,6 +48,23 @@ public class WidgetConfigs {
      */
     public void setPubsub(PubSub pubsub) {
         this.pubsub = pubsub;
+    }
+    /**
+     * This method is used to get options configuration of the widget.
+     *
+     * @return options configuration
+     */
+    public List<Options> getOptions() {
+        return options;
+    }
+
+    /**
+     * This method is used to set the options configuration of the widget.
+     *
+     * @param options options configuration of the widget
+     */
+    public void setOptions(List<Options> options) {
+        this.options = options;
     }
 
     public JsonElement getChartConfig() {
