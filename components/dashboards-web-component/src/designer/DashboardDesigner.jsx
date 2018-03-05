@@ -394,32 +394,26 @@ export default class DashboardDesigner extends Component {
         });
     }
     /**
-     * to get the current dashboard state
+     * To get the current dashboard state
      */
     getDashboard() {
         return this.state.dashboard;
     }
-
+    /**
+     * To get the pageID of the current page at Designer view
+     */
     getPageId() {
-
         let pageId = this.props.match.params[1];
-
         if (!pageId || pageId === '') {
             pageId = this.state.dashboard.landingPage;
         }
-
         return pageId;
     }
     /**
-     * reflect changes from WidgetConfigurationPanel on dashboard.
+     * To reflect changes from WidgetConfigurationPanel on dashboard.
      * @param dashboard
      */
     updateDashboardByWidgetConfPanel(dashboard) {
-        // new DashboardAPI().updateDashboardByID(dashboard.id, dashboard);
-        // window.global.notify(this.context.intl.formatMessage({
-        //     id: "dashboard.update.success",
-        //     defaultMessage: "Dashboard updated successfully!"
-        // }));
         this.setState({
             dashboard: dashboard
         });
