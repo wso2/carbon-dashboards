@@ -73,115 +73,31 @@ class RevenueByProduct extends Widget {
         this.state = {
             data: this.overallProductData,
             width: props.glContainer.width,
-            height: props.glContainer.height,
-            options: this.props.configs.options,
-            xLabel: this.props.configs.options[0].defaultData,
-            yLabel: this.props.configs.options[1].defaultData,
-            chartColour: this.props.configs.options[2].defaultData
+            height: props.glContainer.height
+
         };
 
-
-        // this.state = {
-        //     data: this.overallProductData,
-        //     width: props.glContainer.width,
-        //     height: props.glContainer.height,
-        //     options: this.props.configs.options,
-        //     xLabel: "Revenue",
-        //     yLabel: "Product",
-        //     chartColour: "Green"
-        // };
-
-
-        // this.barChartConfig = {
-        //     x: this.state.xLabel,
-        //     charts: [{type: 'bar', y: this.state.yLabel, fill: this.state.chartColour}],
-        //     maxLength: 5,
-        //     width: props.glContainer.width,
-        //     height: props.glContainer.height,
-        //     animate: true
-        // };
+        this.metadata = {
+            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Downloads', 'Customers'],
+            types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
+        };
 
         this.barChartConfig = {
-            x: this.state.options[0].defaultData,
-            charts: [{type: 'bar', y: this.state.options[1].defaultData, fill: this.state.options[2].defaultData}],
+            x: 'Product',
+            charts: [{type: 'bar', y: 'Revenue', fill: '#10c469'}],
             maxLength: 5,
             width: props.glContainer.width,
             height: props.glContainer.height,
             animate: true
         };
-        this.metadata = {
-            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Downloads', 'Customers'],
-            types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
-        };       
 
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
-        this.changeXlabel = this.changeXlabel.bind(this);
-        this.changeYlabel = this.changeYlabel.bind(this);
-        this.changeChartFillColour = this.changeChartFillColour.bind(this);
-
-        console.log(this.props);
-        
-    }
-
-    componentDidMount() {
-
-        /**
-         * This method is called by subscriber widget to set the listener callback.
-         * @param listnerCallback
-         */
-        // function test(message){
-        //     console.log(message);
-        // }
-        //
-        // super.addOptionListner(this.props.id,test);
-
-
-        // function subscribeTest(channel,listenerCallback) {
-        //     this.props.glEventHub.on(channel, listenerCallback)
-        // }
-        //
-        // let channel = this.props.id + this.props.widgetID;
-        // subscribeTest(channel,test);
-        //
-        // function test(message){
-        //     console.log(message);
-        // }
-        // console.log();
-        // var theWidget = document.getElementById(this.props.id);
-        // theWidget.addEventListener("focus", HandleMessage, false);
-        // console.log(theWidget);
-        // // new message: raise HandleMessage event
-        // function HandleMessage(e) {
-        //
-        //     e.preventDefault();
-        //   console.log("EVENTRECEIVED",e);
-        //
-        // }
     }
 
     handleResize() {
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
-    }
-
-    changeXlabel(newValue){
-        let barChartConfig = this.state.barChartConfig;
-        barChartConfig.x = newValue;
-        this.setState({barChartConfig: barChartConfig});
-    }
-
-
-    changeYlabel(newValue){
-        let barChartConfig = this.state.barChartConfig;
-        barChartConfig.charts[0].y = newValue;
-        this.setState({barChartConfig: barChartConfig});
-    }
-
-    changeChartFillColour(newColour){
-        let barChartConfig = this.state.barChartConfig;
-        barChartConfig.charts[0].fill = newColour;
-        this.setState({barChartConfig: barChartConfig});
     }
 
     componentWillMount() {

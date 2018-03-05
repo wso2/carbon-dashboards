@@ -423,6 +423,29 @@ export default class DashboardDesigner extends Component {
         this.setState({
             dashboard: dashboard
         });
+
+
+        // // new message: raise newMessage event
+        // function SendUpdateMessage(e, WidgetId) {
+        //
+        //     e.preventDefault();
+        //     var msg = document.getElementById("msg").value.trim();
+        //
+        //     if (msg && window.CustomEvent) {
+        //         var event = new CustomEvent("newMessage", {
+        //             detail: {
+        //                 id: WidgetId
+        //                 message: msg,
+        //                 time: new Date(),
+        //             },
+        //             bubbles: true,
+        //             cancelable: true
+        //         });
+        //
+        //         e.currentTarget.dispatchEvent(event);
+        //     }
+        //
+        // }
     }
 
     /**

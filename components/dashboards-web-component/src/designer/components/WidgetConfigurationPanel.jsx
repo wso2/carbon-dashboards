@@ -27,6 +27,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
+import notify from '../../utils/DashboardOptionListener';
 
 // import {FormattedMessage} from 'react-intl';
 
@@ -51,7 +52,33 @@ class WidgetConfigurationPanel extends React.Component {
             checked: false,
             options: ["value","value2"]
         }
+        // this.messageQueue = [];
+        // this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
+        // this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
+        // this.publishTest = this.publishTest.bind(this);
     }
+
+    // /**
+    //  * This method publishers the queued messages in the widget. The messages are queued when the widget tried to
+    //  * publish before initializing the dashboard.
+    //  *
+    //  */
+    // publishQueuedMessages() {
+    //     for (let messageId in this.messageQueue) {
+    //         this.publishTest(this.messageQueue[messageId])
+    //     }
+    // }
+    //
+    // /**
+    //  * This method is called by publisher widgetConfPanel to publish messages.
+    //  */
+    // publishTest(channel,message) {
+    //     if (!this.props.glContainer.layoutManager.isInitialised) {
+    //         this.messageQueue.push(message)
+    //     } else {
+    //         this.props.glEventHub.emit(channel, message);
+    //     }
+    // }
 
     handlePublisherCheckBoxEvent(event, isInputChecked) {
         let selectedWidget = dashboardLayout.selectedItem;
@@ -106,7 +133,7 @@ class WidgetConfigurationPanel extends React.Component {
             }
         }
 
-        var WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
+
         let page = getPage(this.props.getDashboard(),this.props.getPageId());
         let widget = search(page,dashboardLayout.selectedItem.config.content[0].props.id);
         widget.props.configs.options[0].defaultData ="NEW";
@@ -130,8 +157,10 @@ class WidgetConfigurationPanel extends React.Component {
         }
         console.log(options);
         console.log(widget);
-
-        //  console.log("+++++++++++++++++++++++++++++/////////////////////+++++++++++++++++++");
+        // var id = dashboardLayout.selectedItem.config.content[0].props.id;
+        // var WidgetId = dashboardLayout.selectedItem.config.content[0].props.widgetID;
+        // this.publishTest(id+WidgetId,"MESSAGE");
+        // //  console.log("+++++++++++++++++++++++++++++/////////////////////+++++++++++++++++++");
         // console.log(dashboardLayout);        
         // console.log(dashboardLayout.selectedItem);        
         // console.log(dashboardLayout.selectedItem.config.content[0].props.id);
@@ -155,6 +184,8 @@ class WidgetConfigurationPanel extends React.Component {
         // console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
         console.log(this.props.getDashboard());
+        let WidgetId = page.dashboardLayout.selectedItem.config.content[0].props.id;
+        notify(WidgetId);
     }
 
 
@@ -220,6 +251,11 @@ class WidgetConfigurationPanel extends React.Component {
         console.log(this.props.getDashboard());
         this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
 
+        // var id = dashboardLayout.selectedItem.config.content[0].props.id;
+        // var WidgetIdName = dashboardLayout.selectedItem.config.content[0].props.widgetID;
+        // this.publishTest(id+WidgetIdName,"MESSAGE");
+
+        notify(WidgetId);
     }
 
     handlePreferenceSelectListEvent(event, key, payload) {
@@ -264,6 +300,21 @@ class WidgetConfigurationPanel extends React.Component {
                 }
                 return x;
             }
+
+            // var customEvent = new CustomEvent(
+            //     "newMessage",
+            //     {
+            //         detail: {
+            //             message: "Hello World!",
+            //             time: new Date(),
+            //         },
+            //         bubbles: true,
+            //         cancelable: true
+            //     }
+            // );
+            //
+            // document.getElementById(optionId).dispatchEvent(customEvent);
+            // console.log("Event Fired",customEvent);
         }
 
         var WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
@@ -281,8 +332,14 @@ class WidgetConfigurationPanel extends React.Component {
         }
         console.log(options);
         console.log(widget);
-console.log(this.props.getDashboard());
+        console.log(this.props.getDashboard());
                 this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
+
+        // var id = dashboardLayout.selectedItem.config.content[0].props.id;
+        // var WidgetIdName = dashboardLayout.selectedItem.config.content[0].props.widgetID;
+        // this.publishTest(id+WidgetIdName,"MESSAGE");
+
+        notify(WidgetId);
 
     }
 

@@ -1,6 +1,6 @@
 {
-    "name": "Revenue By Product",
-    "id": "RevenueByProduct",
+    "name": "Revenue By Product With User Preferences",
+    "id": "RevenueByProductWithUserPreferences",
     "thumbnailURL": "",
     "configs": {
         "pubsub": {
@@ -8,7 +8,6 @@
                 "subscriber"
             ]
         },
-
         "options" : [
             {
                 "id": "xLabel",
@@ -26,8 +25,8 @@
                 "id": "chartColour",
                 "title": "Chart Colour",
                 "type" : "TypeEnum",
-                "possibleValues" : ["red","green","gold"],
-                "defaultData" : "green"
+                "possibleValues" : ["Monaco","Arial","Consolas"],
+                "defaultData" : "Monaco"
             }
         ]
     }
