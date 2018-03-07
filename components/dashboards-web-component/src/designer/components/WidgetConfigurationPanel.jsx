@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import _ from 'lodash';
 
 import Drawer from 'material-ui/Drawer';
 import Checkbox from 'material-ui/Checkbox';
@@ -27,6 +28,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
+
 import notify from '../../utils/DashboardOptionListener';
 
 // import {FormattedMessage} from 'react-intl';
@@ -43,15 +45,23 @@ class WidgetConfigurationPanel extends React.Component {
     constructor(props) {
         super(props);
         this.getPublishers = this.getPublishers.bind(this);
-        // this.getPreferences = this.getPreferences().bind(this);
+        this.getPreferences = this.getPreferences.bind(this);
         this.handlePublisherCheckBoxEvent = this.handlePublisherCheckBoxEvent.bind(this);
         this.handlePreferenceCheckBoxEvent = this.handlePreferenceCheckBoxEvent.bind(this);
         this.handlePreferenceTextBoxEvent = this.handlePreferenceTextBoxEvent.bind(this);
+        this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent,900)
         this.handlePreferenceSelectListEvent = this.handlePreferenceSelectListEvent.bind(this);
+        // let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
+        let options = dashboardLayout.selectedItem;
+        console.log("selectedItem",options);
+
         this.state = {
             checked: false,
-            options: dashboardLayout.selectedItem.config.content[0].props.configs.options
+            options : null
+            // options: dashboardLayout.selectedItem.config.content[0].props.configs.options
         }
+
+
         // this.messageQueue = [];
         // this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
         // this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
@@ -79,6 +89,12 @@ class WidgetConfigurationPanel extends React.Component {
     //         this.props.glEventHub.emit(channel, message);
     //     }
     // }
+
+
+    componentWillReceiveProps(nextProps){
+        console.log("NEXTPROPSWDTCONF:",nextProps)
+        // this.setState({user: nextProps.user})
+    }
 
     handlePublisherCheckBoxEvent(event, isInputChecked) {
         let selectedWidget = dashboardLayout.selectedItem;
@@ -130,17 +146,17 @@ class WidgetConfigurationPanel extends React.Component {
             }
         }
 
-        let widgetId = page.dashboardLayout.selectedItem.config.content[0].props.id;
-        let page = getPage(this.props.getDashboard(),this.props.getPageId());
+        let dashboard = this.props.getDashboard()
+        let pageId = this.props.getPageId()
+        let page = getPage(dashboard,pageId);
+        let widgetId = dashboardLayout.selectedItem.config.content[0].props.id;
         let widget = search(page,widgetId);
-
+        let flag = false;
         if(isInputChecked){
-            this.state.options[i].defaultData = true;
-            this.setState({options: this.state.options});
+            flag = true;
         }
         else{
-            this.state.options[i].defaultData = false;
-            this.setState({options: this.state.options});
+           flag = false;
         }
         console.log(event.target.id);
 
@@ -149,9 +165,17 @@ class WidgetConfigurationPanel extends React.Component {
 
         for (let i = 0; i < options.length; i++) {
             if(options[i].id === optionId){
-                options[i].defaultData = this.state.checked;
+                options[i].defaultData = flag;
+                let stateObject = this.state;
+
+                stateObject.options = options;
+
+                this.setState(stateObject);
+                console.log("STATE",this.state);
+                console.log("THIS",this)
             }
         }
+
         console.log(options);
         console.log(widget);
         // var id = dashboardLayout.selectedItem.config.content[0].props.id;
@@ -178,16 +202,23 @@ class WidgetConfigurationPanel extends React.Component {
         // let widget2 = search(page,dashboardLayout.selectedItem.config.content[0].props.id);
         //  console.log(widget2);
         // console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
-        console.log(this.props.getDashboard());
-        notify(widgetId);
+        
+        console.log(this.props.getDashboard())
+        // this.props.updateDashboard(this.props.getDashboard());
+        this.props.updateDashboardByWidgetConfPanel(dashboard);
+        // this.props.updatePageContent();
+
+        // console.log(this.props.getDashboard());
+        // // notify(widgetId);
+
     }
 
 
 
     handlePreferenceTextBoxEvent(event, newValue) {
-      console.log("event",event);
-      console.log(newValue);
+        event.persist();
+        console.log("event",event);
+        console.log(newValue);
         let optionId = event.target.id;
 
         /**
@@ -224,7 +255,9 @@ class WidgetConfigurationPanel extends React.Component {
         }
 
         var WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
-        let page = getPage(this.props.getDashboard(),this.props.getPageId());
+        let dashboard = this.props.getDashboard();
+        let pageId = this.props.getPageId();
+        let page = getPage(dashboard,pageId);
         let widget = search(page,WidgetId);
 
         let options = widget.props.configs.options;
@@ -232,20 +265,26 @@ class WidgetConfigurationPanel extends React.Component {
         for (let i = 0; i < options.length; i++) {
             if(options[i].id === optionId){
                 options[i].defaultData = newValue;
-                this.state.options[i].defaultData = newValue;
-                this.setState({options: this.state.options});
+                let stateObject = this.state;
+
+                stateObject.options = options;
+
+                this.setState(stateObject);
+                console.log("STATE",this.state);
+                console.log("THIS",this)
             }
         }
-        console.log(options);
-        console.log(widget);
-
-        console.log(this.props.getDashboard());
-        this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
 
 
-        // var id = dashboardLayout.selectedItem.config.content[0].props.id;
-        // var WidgetIdName = dashboardLayout.selectedItem.config.content[0].props.widgetID;
-        // this.publishTest(id+WidgetIdName,"MESSAGE");
+        console.log("options",options);
+        console.log("widget",widget);
+
+        // this.props.updateDashboardByWidgetConfPanel(dashboard);
+        console.log(this.props.getDashboard(),dashboard)
+        this.props.updateDashboard(dashboard);
+        // console.log(this.props.getDashboard(),dashboard);
+        // this.props.updateDashboardByWidgetConfPanel(dashboard);
+        // this.props.updatePageContent();
 
     }
 
@@ -302,27 +341,32 @@ class WidgetConfigurationPanel extends React.Component {
             // console.log("Event Fired",customEvent);
         }
 
+        // var beforeTest = JSON.stringify(dashboardLayout.selectedItem.)
+
         let WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
-        let page = getPage(this.props.getDashboard(),this.props.getPageId());
+        let dashboard = this.props.getDashboard();
+        let pageId = this.props.getPageId();
+        let page = getPage(dashboard,pageId);
         let widget = search(page,WidgetId);
 
         let options = widget.props.configs.options;
         for (let i = 0; i < options.length; i++) {
             if(options[i].id === optionId){
                 options[i].defaultData = payload;
-                this.state.options[i].defaultData = payload;
-                this.setState({options: this.state.options});
+                let stateObject = this.state;
+
+                stateObject.options = options;
+
+                this.setState(stateObject);
+                console.log("STATE",this.state);
+                console.log("THIS",key,this)
             }
         }
         console.log(options);
         console.log(widget);
-        console.log(this.props.getDashboard());
-
-                //this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
-
-        // var id = dashboardLayout.selectedItem.config.content[0].props.id;
-        // var WidgetIdName = dashboardLayout.selectedItem.config.content[0].props.widgetID;
-        // this.publishTest(id+WidgetIdName,"MESSAGE");
+        // this.props.updateDashboardByWidgetConfPanel(dashboard);
+        console.log(this.props.getDashboard())
+        this.props.updateDashboard(this.props.getDashboard());
 
     }
 
@@ -375,59 +419,69 @@ class WidgetConfigurationPanel extends React.Component {
 
     getPreferences() {
         let preferences = [];
-        if (dashboardLayout.selectedItem && dashboardLayout.selectedItem.config.content[0].props.configs) {
-            console.log(dashboardLayout.selectedItem.config.content[0].props.configs.options);
-            let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
-            // preferences = options;
-            console.log(dashboardLayout.selectedItem);
-            if(options != undefined){
-               
-                for(let i =0 ; i< options.length; i++){
-                    switch (options[i].type){
-                        case "TypeText":
-                            preferences.push(<div>
-                                {options[i].title} : <TextField id = {options[i].id}
-                                                        hintText={this.state.options[i].defaultData}
-                                                        onChange={this.handlePreferenceTextBoxEvent}
-                                                        name={options[i].title}/>
-                            </div>);
-                            console.log(options[i].defaultData)
-                            break;
-                        case "TypeEnum":
-                            let items = [];
-                            if(options[i].possibleValues){
-                                for (let j = 0; j < options[i].possibleValues.length ; j++) {
-                                    items.push( <MenuItem key={options[i].possibleValues[j]} id = {options[i].id} value={options[i].possibleValues[j]} primaryText={options[i].possibleValues[j]} />)
-                                }
-                            console.log(options[i].defaultData)
-                            }
-                            preferences.push(<div>
-                                {options[i].title} : <SelectField 
-                                onChange = {this.handlePreferenceSelectListEvent}
-                                value = {this.state.options[i].defaultData}
-                                id ={options[i].id} >
-                                    {items}
-                                </SelectField>
-                            </div>);
-                            break;
-                        case "TypeBoolean":
-                            preferences.push(<div>
-                                <Checkbox id={options[i].id}
-                                          label={options[i].title}
-                                          name={options[i].title}
-                                          onCheck={this.handlePreferenceCheckBoxEvent}
-                                          checked={this.state.options[i].defaultData}/>
-                            </div>);
-                            console.log(options[i].defaultData)
-                            break;
-                        default :
-                            break;
+        if (!(dashboardLayout.selectedItem && dashboardLayout.selectedItem.config.content[0].props.configs)) {
+            return <div>No Options</div>; //TODO:
+        }
 
-                    }
+        console.log(dashboardLayout.selectedItem.config.content[0].props.configs.options);
+        let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
+
+        let newState = this.state;
+        newState.options = newState.options || options;
+        this.state = newState;
+        console.log("Selected Item: ", dashboardLayout.selectedItem);
+
+        if (options) {
+
+            for (let i = 0; i < options.length; i++) {
+                switch (options[i].type) {
+                    case "TypeText":
+                        preferences.push(<div>
+                            {options[i].title} :<TextField id={options[i].id}
+                                           hintText={this.state.options[i].defaultData}
+                                           onChange={this.handlePreferenceTextBoxEvent}
+                                           name={options[i].title}/>
+                            </div>);
+                        console.log("TextField", options[i].defaultData);
+                        console.log("TextField", dashboardLayout.selectedItem.config.content[0].props.configs.options[i].defaultData)
+                        break;
+                    case "TypeEnum":
+                        let items = [];
+                        if (options[i].possibleValues) {
+                            for (let j = 0; j < options[i].possibleValues.length; j++) {
+                                items.push(<MenuItem key={options[i].possibleValues[j]} id={options[i].id}
+                                                     value={options[i].possibleValues[j]}
+                                                     primaryText={options[i].possibleValues[j]}/>)
+                            }
+                            console.log("SelectField", options[i].defaultData)
+                            console.log("SelectField", dashboardLayout.selectedItem.config.content[0].props.configs.options[i].defaultData)
+                        }
+                        preferences.push(<div>
+                            {options[i].title} : <SelectField
+                            onChange={this.handlePreferenceSelectListEvent}
+                            value={this.state.options[i].defaultData}
+                            id={options[i].id}>
+                            {items}
+                        </SelectField>
+                        </div>);
+                        break;
+                    case "TypeBoolean":
+                        preferences.push(<div>
+                            <Checkbox id={options[i].id}
+                                      label={options[i].title}
+                                      onCheck={this.handlePreferenceCheckBoxEvent}
+                                      checked={this.state.options[i].defaultData}/>
+                        </div>);
+                        console.log("Checkbox", options[i].defaultData)
+                        console.log("Checkbox", dashboardLayout.selectedItem.config.content[0].props.configs.options[i].defaultData)
+                        break;
+                    default :
+                        break;
+
                 }
             }
-
         }
+
         return preferences;
     }
 

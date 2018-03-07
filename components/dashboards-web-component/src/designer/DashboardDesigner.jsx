@@ -124,6 +124,7 @@ export default class DashboardDesigner extends Component {
         this.updatePageContent = this.updatePageContent.bind(this);
         this.getDashboard = this.getDashboard.bind(this);
         this.getPageId = this.getPageId.bind(this);
+
     }
 
     componentDidMount() {
@@ -146,6 +147,7 @@ export default class DashboardDesigner extends Component {
     }
 
     render() {
+        console.log("render Invoked!");
         if (!this.state.isSessionValid) {
             return (
                 <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
@@ -220,6 +222,9 @@ export default class DashboardDesigner extends Component {
                     <WidgetConfigurationPanel publishers={this.state.publishers}
                                               updateDashboardByWidgetConfPanel = {this.updateDashboardByWidgetConfPanel}
                                               getDashboard = {this.getDashboard}
+                                              updateDashboard = {this.updateDashboard}
+                                              updatePageContent = {this.updatePageContent}
+                                              loadDashboard = {this.loadDashboard}
                                               getPageId = {this.getPageId}
                                               open={this.state.widgetConfigPanelOpen}/>
                     {/* Notifier */}
@@ -272,6 +277,9 @@ export default class DashboardDesigner extends Component {
             }
 
             let dashboard = this.state.dashboard;
+            console.log("####################################################")
+            console.log("dashboard",dashboard)
+            console.log("####################################################")
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
             this.cleanDashboardJSON(dashboard.pages);
@@ -389,6 +397,7 @@ export default class DashboardDesigner extends Component {
             id: "dashboard.update.success",
             defaultMessage: "Dashboard updated successfully!"
         }));
+        console.log('test1',dashboard);
         this.setState({
             dashboard: dashboard
         });
@@ -414,32 +423,9 @@ export default class DashboardDesigner extends Component {
      * @param dashboard
      */
     updateDashboardByWidgetConfPanel(dashboard) {
-        this.setState({
-            dashboard: dashboard
-        });
-
-
-        // // new message: raise newMessage event
-        // function SendUpdateMessage(e, WidgetId) {
-        //
-        //     e.preventDefault();
-        //     var msg = document.getElementById("msg").value.trim();
-        //
-        //     if (msg && window.CustomEvent) {
-        //         var event = new CustomEvent("newMessage", {
-        //             detail: {
-        //                 id: WidgetId
-        //                 message: msg,
-        //                 time: new Date(),
-        //             },
-        //             bubbles: true,
-        //             cancelable: true
-        //         });
-        //
-        //         e.currentTarget.dispatchEvent(event);
-        //     }
-        //
-        // }
+        let state = this.state;
+        state.dashboard = dashboard;
+        this.setState(state);
     }
 
     /**

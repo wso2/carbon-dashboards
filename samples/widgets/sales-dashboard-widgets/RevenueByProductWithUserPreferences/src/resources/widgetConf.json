@@ -12,20 +12,22 @@
             {
                 "id": "xLabel",
                 "title": "X Label",
-                "type" : "TypeText",
+                "type" : "TypeEnum",
+                "possibleValues" : ["Country", "Country Code", "Region", "Product", "Revenue", "Downloads", "Customers"],
                 "defaultData" : "Product"
             },
             {
                 "id": "yLabel",
                 "title": "Y Label",
-                "type" : "TypeText",
+                "type" : "TypeEnum",
+                "possibleValues" : ["Country", "Country Code", "Region", "Product", "Revenue", "Downloads", "Customers"],
                 "defaultData" : "Revenue"
             },
             {
                 "id": "chartColour",
                 "title": "Chart Colour",
                 "type" : "TypeEnum",
-                "possibleValues" : ["Monaco","Arial","Consolas"],
+                "possibleValues" : ["Red","Green","Yellow","Blue"],
                 "defaultData" : "Monaco"
             }
         ]

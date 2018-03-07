@@ -70,14 +70,13 @@ class RevenueByProduct extends Widget {
             ['ALL', 'ALL', 'ROW', 'IOTServer', 0, 0, 0]
         ];
 
+        console.log('config prop', this.props.configs.options);
+
         this.state = {
             data: this.overallProductData,
             width: props.glContainer.width,
             height: props.glContainer.height,
-            options: this.props.configs.options,
-            xLabel: this.props.configs.options[0].defaultData,
-            yLabel: this.props.configs.options[1].defaultData,
-            chartColour: this.props.configs.options[2].defaultData
+            options: this.props.configs.options
         };
 
 
@@ -123,6 +122,11 @@ class RevenueByProduct extends Widget {
 
         console.log(this.props);
         
+    }
+
+    componentWillReceiveProps(nextProps){
+        console.log("NEXT PROPS:",nextProps)
+        this.setState({options: nextProps.configs.options})
     }
 
     componentDidMount() {
