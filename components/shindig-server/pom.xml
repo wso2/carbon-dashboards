@@ -30,7 +30,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.shindig</groupId>
+            <groupId>org.wso2.org.apache.shindig</groupId>
             <artifactId>shindig-server</artifactId>
             <type>war</type>
         </dependency>
