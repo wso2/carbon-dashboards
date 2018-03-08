@@ -29,7 +29,7 @@ import MenuItem from 'material-ui/MenuItem';
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
 
-import notify from '../../utils/DashboardOptionListener';
+// import notify from '../../utils/DashboardOptionListener';
 
 // import {FormattedMessage} from 'react-intl';
 
@@ -57,15 +57,10 @@ class WidgetConfigurationPanel extends React.Component {
 
         this.state = {
             checked: false,
-            options : null
+            options : null,
+            id : null
             // options: dashboardLayout.selectedItem.config.content[0].props.configs.options
         }
-
-
-        // this.messageQueue = [];
-        // this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
-        // this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
-        // this.publishTest = this.publishTest.bind(this);
     }
 
     // /**
@@ -206,6 +201,7 @@ class WidgetConfigurationPanel extends React.Component {
         console.log(this.props.getDashboard())
         // this.props.updateDashboard(this.props.getDashboard());
         this.props.updateDashboardByWidgetConfPanel(dashboard);
+        console.log("HERE",this.props.getDashboard())
         // this.props.updatePageContent();
 
         // console.log(this.props.getDashboard());
@@ -280,10 +276,11 @@ class WidgetConfigurationPanel extends React.Component {
         console.log("widget",widget);
 
         // this.props.updateDashboardByWidgetConfPanel(dashboard);
-        console.log(this.props.getDashboard(),dashboard)
-        this.props.updateDashboard(dashboard);
+        // console.log(this.props.getDashboard(),dashboard)
+        // this.props.updateDashboard(dashboard);
         // console.log(this.props.getDashboard(),dashboard);
-        // this.props.updateDashboardByWidgetConfPanel(dashboard);
+        this.props.updateDashboardByWidgetConfPanel(dashboard);
+        console.log("HERE",this.props.getDashboard())
         // this.props.updatePageContent();
 
     }
@@ -364,9 +361,15 @@ class WidgetConfigurationPanel extends React.Component {
         }
         console.log(options);
         console.log(widget);
+
+        console.log(JSON.stringify(dashboard)===JSON.stringify(this.props.getDashboard()))
+        this.props.changeParentState(dashboard);
+
         // this.props.updateDashboardByWidgetConfPanel(dashboard);
-        console.log(this.props.getDashboard())
-        this.props.updateDashboard(this.props.getDashboard());
+        console.log("updated",dashboard);
+        console.log("HERE",this.props.getDashboard())
+        // this.props.changeParentState(dashboard);
+        // this.props.updateDashboard(this.props.getDashboard());
 
     }
 
@@ -426,9 +429,14 @@ class WidgetConfigurationPanel extends React.Component {
         console.log(dashboardLayout.selectedItem.config.content[0].props.configs.options);
         let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
 
-        let newState = this.state;
-        newState.options = newState.options || options;
-        this.state = newState;
+        let newId = dashboardLayout.selectedItem.config.content[0].props.configs.id;
+        if(this.state.id !== newId){
+            let newState = this.state;
+            newState.options = newState.options || options;
+            this.state = newState;
+            this.state.id = newId;
+        }
+
         console.log("Selected Item: ", dashboardLayout.selectedItem);
 
         if (options) {
@@ -502,80 +510,9 @@ class WidgetConfigurationPanel extends React.Component {
                 <h2>Options</h2>
                 {this.getPreferences()}
 
-                {/*<div>*/}
-                        {/*Widget Name :<TextField hintText="Sample Widget" /><br />*/}
-                        {/*Widget Title :<TextField hintText="Sample Widget Title" /><br />*/}
-                        {/*Widget Title Font :<SelectField>*/}
-                        {/*{items}*/}
-                    {/*</SelectField>*/}
-                    {/*<Checkbox label="Title is Bold"/>*/}
-                    {/*/!*<List>*!/*/}
-                        {/*/!*<ListItem primaryText="Inbox" leftIcon={<ContentInbox />} />*!/*/}
-                        {/*/!*<ListItem primaryText="Starred" leftIcon={<ActionGrade />} />*!/*/}
-                        {/*/!*<ListItem primaryText="Sent mail" leftIcon={<ContentSend />} />*!/*/}
-                        {/*/!*<ListItem primaryText="Drafts" leftIcon={<ContentDrafts />} />*!/*/}
-                        {/*/!*<ListItem primaryText="Inbox" leftIcon={<ContentInbox />} />*!/*/}
-                    {/*/!*</List>*!/*/}
-                        {/*/!*Title Font :  <select name="OptionDropDown">*!/*/}
-                        {/*/!*<option value="Option1"><font face="Monaco">Monaco</font></option>*!/*/}
-                        {/*/!*<option value="Option1"><font face="Arial">Arial</font></option>*!/*/}
-                        {/*/!*<option value="Option1"><font face="Console">Console</font></option>*!/*/}
-                        {/*/!*</select>*!/*/}
-                        {/*/!*<br/><br/> Bold Text : <input type="checkbox" name="BarChart" value="BarChart"/>*!/*/}
-                {/*</div>*/}
-
             </div>
         </Drawer>);
     }
 
 }
 export default WidgetConfigurationPanel;
-
-class UserPreferences extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.options = [  {
-            id: "titleText",
-            title: "Title Text",
-            type : "text",
-            defaultData : "Sample Widget Title"
-        },
-            {
-                id: "titleFont",
-                title: "Title Font",
-                type : "enum",
-                possibleValues : ["Monaco","Arial","Consolas"],
-                defaultData : "Monaco"
-            },
-            {
-                id: "isPieChart",
-                title: "is Pie Chart",
-                type : "boolean",
-                defaultData : "true"
-            }]
-
-        this.state = {
-            options: []
-        }
-    }
-
-    createOptions(options){
-
-        let element = [];
-
-       options.forEach(function (item,index){
-           element.push(item);
-       } );
-
-        return element;
-    }
-
-    render() {
-        return (
-            <div>
-                <h1>this is my component</h1>
-            </div>
-        );
-    }
-}

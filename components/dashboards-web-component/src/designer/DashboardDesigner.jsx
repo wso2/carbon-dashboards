@@ -18,6 +18,9 @@
 
 import React, {Component} from 'react';
 import {Redirect, Link} from 'react-router-dom';
+import _ from 'lodash';
+
+
 // App Components
 import {Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -124,7 +127,7 @@ export default class DashboardDesigner extends Component {
         this.updatePageContent = this.updatePageContent.bind(this);
         this.getDashboard = this.getDashboard.bind(this);
         this.getPageId = this.getPageId.bind(this);
-
+        this.changeParentState = this.changeParentState.bind(this);
     }
 
     componentDidMount() {
@@ -220,12 +223,14 @@ export default class DashboardDesigner extends Component {
                     />
 
                     <WidgetConfigurationPanel publishers={this.state.publishers}
+                                              dashboard={this.state.dashboard}
                                               updateDashboardByWidgetConfPanel = {this.updateDashboardByWidgetConfPanel}
                                               getDashboard = {this.getDashboard}
                                               updateDashboard = {this.updateDashboard}
                                               updatePageContent = {this.updatePageContent}
                                               loadDashboard = {this.loadDashboard}
                                               getPageId = {this.getPageId}
+                                              changeParentState = {this.changeParentState}
                                               open={this.state.widgetConfigPanelOpen}/>
                     {/* Notifier */}
                     <Snackbar
@@ -276,14 +281,183 @@ export default class DashboardDesigner extends Component {
                 pageId = this.state.dashboard.landingPage;
             }
 
-            let dashboard = this.state.dashboard;
+            function difference(object, base) {
+                function changes(object, base) {
+                    return _.transform(object, function(result, value, key) {
+                        if (!_.isEqual(value, base[key])) {
+                            result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
+                        }
+                    });
+                }
+                return changes(object, base);
+            }
+
+            var deepDiffMapper = function() {
+                return {
+                    VALUE_CREATED: 'created',
+                    VALUE_UPDATED: 'updated',
+                    VALUE_DELETED: 'deleted',
+                    VALUE_UNCHANGED: 'unchanged',
+                    map: function(obj1, obj2) {
+                        if (this.isFunction(obj1) || this.isFunction(obj2)) {
+                            throw 'Invalid argument. Function given, object expected.';
+                        }
+                        if (this.isValue(obj1) || this.isValue(obj2)) {
+                            return {
+                                type: this.compareValues(obj1, obj2),
+                                data: (obj1 === undefined) ? obj2 : obj1
+                            };
+                        }
+
+                        var diff = {};
+                        for (var key in obj1) {
+                            if (this.isFunction(obj1[key])) {
+                                continue;
+                            }
+
+                            var value2 = undefined;
+                            if ('undefined' != typeof(obj2[key])) {
+                                value2 = obj2[key];
+                            }
+
+                            diff[key] = this.map(obj1[key], value2);
+                        }
+                        for (var key in obj2) {
+                            if (this.isFunction(obj2[key]) || ('undefined' != typeof(diff[key]))) {
+                                continue;
+                            }
+
+                            diff[key] = this.map(undefined, obj2[key]);
+                        }
+
+                        return diff;
+
+                    },
+                    compareValues: function(value1, value2) {
+                        if (value1 === value2) {
+                            return this.VALUE_UNCHANGED;
+                        }
+                        if (this.isDate(value1) && this.isDate(value2) && value1.getTime() === value2.getTime()) {
+                            return this.VALUE_UNCHANGED;
+                        }
+                        if ('undefined' == typeof(value1)) {
+                            return this.VALUE_CREATED;
+                        }
+                        if ('undefined' == typeof(value2)) {
+                            return this.VALUE_DELETED;
+                        }
+
+                        return this.VALUE_UPDATED;
+                    },
+                    isFunction: function(obj) {
+                        return {}.toString.apply(obj) === '[object Function]';
+                    },
+                    isArray: function(obj) {
+                        return {}.toString.apply(obj) === '[object Array]';
+                    },
+                    isObject: function(obj) {
+                        return {}.toString.apply(obj) === '[object Object]';
+                    },
+                    isDate: function(obj) {
+                        return {}.toString.apply(obj) === '[object Date]';
+                    },
+                    isValue: function(obj) {
+                        return !this.isObject(obj) && !this.isArray(obj);
+                    }
+                }
+            }();
+
+            let dashboard = this.getDashboard();
+            let  dashboardCopy = JSON.parse(JSON.stringify(dashboard))
             console.log("####################################################")
-            console.log("dashboard",dashboard)
+            console.log("dashboardToSave",dashboard)
             console.log("####################################################")
+
+            var optionsMap = new Object();
+
+            /**
+             * helper function to get the page from a given dashboard given the pageId
+             * */
+            function getPage(dashboard,pageID){
+                let pages = dashboard.pages;
+                if(pages){
+                    for (let i = 0; i < pages.length; i++) {
+                        let page = pages[i];
+                        if(page.id === pageID ){
+                            return page;
+                        }
+                    }
+                }
+                return null;
+            }
+            alert(pageId)
+            let page = getPage(dashboard,pageId);
+            function searchforWidgetsInAPage(page,OptionsMap){
+                let obj = page;
+                if(obj.type && obj.type === "component" && obj.props && obj.props.id){
+                    console.log("Found :",obj.props.id);
+                    let newObj = JSON.parse(JSON.stringify(obj))
+                    OptionsMap[obj.props.id] = newObj.props.configs.options;
+                }
+                else if(obj.content){
+                    for (let i = 0; i < obj.content.length ; i++) {
+                        searchforWidgetsInAPage(obj.content[i],OptionsMap);
+                    }
+
+                }
+                console.log(OptionsMap);
+            }
+
+            /**
+             * helper function to replace Options
+             * */
+            function searchAndReplaceOptions(page,OptionsMap){
+                let obj = page;
+                if(obj.type && obj.type === "component" && obj.props && obj.props.id){
+                    console.log("Found and Replaced:",obj.props.id);
+                    obj.props.configs.options = OptionsMap[obj.props.id];
+                }
+                else if(obj.content){
+                    for (let i = 0; i < obj.content.length ; i++) {
+                        searchAndReplaceOptions(obj.content[i],OptionsMap);
+                    }
+
+                }
+                console.log("InSearhandreplace",OptionsMap);
+            }
+            searchforWidgetsInAPage(page,optionsMap);
+            alert("dashboardBeforeSaveBegin")
+            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
+            alert("dashboardAfterfindDashboardPageById()")
+            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
             p.content = dashboardLayout.toConfig().content;
+            console.log("diff",difference(dashboardCopy,dashboard))
+            var result = deepDiffMapper.map(dashboardCopy,dashboard)
+            console.log(result);
+            alert("dashboardAfterdashboardLayout.toConfig()")
+            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
+            // dashboard = Object.assign(dashboard, dashboardCopy);
+            // alert("dashboardAfterAssignment")
+            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+            let newPage = getPage(dashboard,pageId);
+            console.log("New Page",newPage);
+            searchAndReplaceOptions(newPage,optionsMap)
+
             this.cleanDashboardJSON(dashboard.pages);
+            alert("dashboardAftercleanDashboardJSON()")
+            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
+            alert("dashboardAfterAPICall()")
+            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
+
+            alert("theCopy")
+            alert(dashboardCopy.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
             window.global.notify(this.context.intl.formatMessage({
                 id: "dashboard.update.success",
                 defaultMessage: "Dashboard updated successfully!"
@@ -291,6 +465,17 @@ export default class DashboardDesigner extends Component {
         } catch (e) {
             // Absorb the error since this doesn't relevant to the end-user.
         }
+    }
+
+    changeParentState(dashboard) {
+        console.log("coming...",dashboard);
+        alert("coming");
+        alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+        this.state.dashboard = dashboard;
+        console.log("after update...",this.state.dashboard);
+        alert("after update");
+        alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
     }
 
     cleanDashboardJSON(content) {
@@ -406,6 +591,9 @@ export default class DashboardDesigner extends Component {
      * To get the current dashboard state
      */
     getDashboard() {
+        alert("getDashboard");
+        alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+        console.log("getDashboardCalled",this.state.dashboard);
         return this.state.dashboard;
     }
     /**
