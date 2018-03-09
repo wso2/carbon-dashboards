@@ -36,29 +36,32 @@ import {pubsubComponent} from '../../utils/PubSubComponent';
 
 const styles = {
     widgetDrawer: {
-        background: '#192830'
+        background: '#192830',
+        zIndex: 0
     }
 };
 
 class WidgetConfigurationPanel extends React.Component {
 
     constructor(props) {
+        console.log("Props",props)
         super(props);
         this.getPublishers = this.getPublishers.bind(this);
         this.getPreferences = this.getPreferences.bind(this);
         this.handlePublisherCheckBoxEvent = this.handlePublisherCheckBoxEvent.bind(this);
         this.handlePreferenceCheckBoxEvent = this.handlePreferenceCheckBoxEvent.bind(this);
         this.handlePreferenceTextBoxEvent = this.handlePreferenceTextBoxEvent.bind(this);
-        this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent,900)
+        this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent.bind(this), 900);
         this.handlePreferenceSelectListEvent = this.handlePreferenceSelectListEvent.bind(this);
+        this.test = this.test.bind(this);
         // let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
         let options = dashboardLayout.selectedItem;
-        console.log("selectedItem",options);
+        console.log("selectedItem", options);
 
         this.state = {
             checked: false,
-            options : null,
-            id : null
+            options: null,
+            id: null
             // options: dashboardLayout.selectedItem.config.content[0].props.configs.options
         }
     }
@@ -86,9 +89,9 @@ class WidgetConfigurationPanel extends React.Component {
     // }
 
 
-    componentWillReceiveProps(nextProps){
-        console.log("NEXTPROPSWDTCONF:",nextProps)
-        // this.setState({user: nextProps.user})
+    componentWillReceiveProps(nextProps) {
+        console.log("NEXTPROPSWDTCONF:", nextProps)
+        this.setState({user: nextProps.user})
     }
 
     handlePublisherCheckBoxEvent(event, isInputChecked) {
@@ -109,33 +112,34 @@ class WidgetConfigurationPanel extends React.Component {
 
     handlePreferenceCheckBoxEvent(event, isInputChecked) {
         /**
-        * helper function to get the page from a given dashboard given the pageId
+         * helper function to get the page from a given dashboard given the pageId
          * */
-        function getPage(dashboard,pageID){
+        function getPage(dashboard, pageID) {
             let pages = dashboard.pages;
-            if(pages){
+            if (pages) {
                 for (let i = 0; i < pages.length; i++) {
                     let page = pages[i];
-                    if(page.id === pageID ){
+                    if (page.id === pageID) {
                         return page;
                     }
                 }
             }
             return null;
         }
+
         /**
          * helper function to get the widget from a given page given the widgetId
          * */
-        function search(page,id){
-           let obj = page;
-            if(obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id){
+        function search(page, id) {
+            let obj = page;
+            if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
                 console.log(obj.props.id);
-                    return obj;
+                return obj;
             }
-            else if(obj.content){
+            else if (obj.content) {
                 let x = null;
-                for (let i = 0; i < obj.content.length ; i++) {
-                    x = x || search(obj.content[i],id);
+                for (let i = 0; i < obj.content.length; i++) {
+                    x = x || search(obj.content[i], id);
                 }
                 return x;
             }
@@ -143,15 +147,15 @@ class WidgetConfigurationPanel extends React.Component {
 
         let dashboard = this.props.getDashboard()
         let pageId = this.props.getPageId()
-        let page = getPage(dashboard,pageId);
+        let page = getPage(dashboard, pageId);
         let widgetId = dashboardLayout.selectedItem.config.content[0].props.id;
-        let widget = search(page,widgetId);
+        let widget = search(page, widgetId);
         let flag = false;
-        if(isInputChecked){
+        if (isInputChecked) {
             flag = true;
         }
-        else{
-           flag = false;
+        else {
+            flag = false;
         }
         console.log(event.target.id);
 
@@ -159,15 +163,15 @@ class WidgetConfigurationPanel extends React.Component {
         let options = widget.props.configs.options;
 
         for (let i = 0; i < options.length; i++) {
-            if(options[i].id === optionId){
+            if (options[i].id === optionId) {
                 options[i].defaultData = flag;
                 let stateObject = this.state;
 
                 stateObject.options = options;
 
                 this.setState(stateObject);
-                console.log("STATE",this.state);
-                console.log("THIS",this)
+                console.log("STATE", this.state);
+                console.log("THIS", this)
             }
         }
 
@@ -197,11 +201,11 @@ class WidgetConfigurationPanel extends React.Component {
         // let widget2 = search(page,dashboardLayout.selectedItem.config.content[0].props.id);
         //  console.log(widget2);
         // console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        
+
         console.log(this.props.getDashboard())
         // this.props.updateDashboard(this.props.getDashboard());
         this.props.updateDashboardByWidgetConfPanel(dashboard);
-        console.log("HERE",this.props.getDashboard())
+        console.log("HERE", this.props.getDashboard())
         // this.props.updatePageContent();
 
         // console.log(this.props.getDashboard());
@@ -210,41 +214,41 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
 
-
     handlePreferenceTextBoxEvent(event, newValue) {
         event.persist();
-        console.log("event",event);
+        console.log("event", event);
         console.log(newValue);
         let optionId = event.target.id;
 
         /**
          * helper function to get the page from a given dashboard given the pageId
          * */
-        function getPage(dashboard,pageID){
+        function getPage(dashboard, pageID) {
             let pages = dashboard.pages;
-            if(pages){
+            if (pages) {
                 for (let i = 0; i < pages.length; i++) {
                     let page = pages[i];
-                    if(page.id === pageID ){
+                    if (page.id === pageID) {
                         return page;
                     }
                 }
             }
             return null;
         }
+
         /**
          * helper function to get the widget from a given page given the widgetId
          * */
-        function search(page,id){
-           let obj = page;
-            if(obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id){
+        function search(page, id) {
+            let obj = page;
+            if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
                 console.log(obj.props.id);
-                    return obj;
+                return obj;
             }
-            else if(obj.content){
+            else if (obj.content) {
                 let x = null;
-                for (let i = 0; i < obj.content.length ; i++) {
-                    x = x || search(obj.content[i],id);
+                for (let i = 0; i < obj.content.length; i++) {
+                    x = x || search(obj.content[i], id);
                 }
                 return x;
             }
@@ -253,71 +257,72 @@ class WidgetConfigurationPanel extends React.Component {
         var WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
         let dashboard = this.props.getDashboard();
         let pageId = this.props.getPageId();
-        let page = getPage(dashboard,pageId);
-        let widget = search(page,WidgetId);
+        let page = getPage(dashboard, pageId);
+        let widget = search(page, WidgetId);
 
         let options = widget.props.configs.options;
 
         for (let i = 0; i < options.length; i++) {
-            if(options[i].id === optionId){
+            if (options[i].id === optionId) {
                 options[i].defaultData = newValue;
                 let stateObject = this.state;
 
                 stateObject.options = options;
 
                 this.setState(stateObject);
-                console.log("STATE",this.state);
-                console.log("THIS",this)
+                console.log("STATE", this.state);
+                console.log("THIS", this)
             }
         }
 
 
-        console.log("options",options);
-        console.log("widget",widget);
+        console.log("options", options);
+        console.log("widget", widget);
 
         // this.props.updateDashboardByWidgetConfPanel(dashboard);
         // console.log(this.props.getDashboard(),dashboard)
         // this.props.updateDashboard(dashboard);
         // console.log(this.props.getDashboard(),dashboard);
         this.props.updateDashboardByWidgetConfPanel(dashboard);
-        console.log("HERE",this.props.getDashboard())
+        // console.log("HERE",this.props.getDashboard())
         // this.props.updatePageContent();
 
     }
 
     handlePreferenceSelectListEvent(event, key, payload) {
-        console.log("event",event);
+        console.log("event", event);
         console.log(payload);
         let optionId = event.target.parentElement.parentElement.parentElement.id;
 
         /**
          * helper function to get the page from a given dashboard given the pageId
          * */
-        function getPage(dashboard,pageID){
+        function getPage(dashboard, pageID) {
             let pages = dashboard.pages;
-            if(pages){
+            if (pages) {
                 for (let i = 0; i < pages.length; i++) {
                     let page = pages[i];
-                    if(page.id === pageID ){
+                    if (page.id === pageID) {
                         return page;
                     }
                 }
             }
             return null;
         }
+
         /**
          * helper function to get the widget from a given page given the widgetId
          * */
-        function search(page,id){
-           let obj = page;
-            if(obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id){
+        function search(page, id) {
+            let obj = page;
+            if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
                 console.log(obj.props.id);
-                    return obj;
+                return obj;
             }
-            else if(obj.content){
+            else if (obj.content) {
                 let x = null;
-                for (let i = 0; i < obj.content.length ; i++) {
-                    x = x || search(obj.content[i],id);
+                for (let i = 0; i < obj.content.length; i++) {
+                    x = x || search(obj.content[i], id);
                 }
                 return x;
             }
@@ -343,32 +348,32 @@ class WidgetConfigurationPanel extends React.Component {
         let WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
         let dashboard = this.props.getDashboard();
         let pageId = this.props.getPageId();
-        let page = getPage(dashboard,pageId);
-        let widget = search(page,WidgetId);
+        let page = getPage(dashboard, pageId);
+        let widget = search(page, WidgetId);
 
         let options = widget.props.configs.options;
         for (let i = 0; i < options.length; i++) {
-            if(options[i].id === optionId){
+            if (options[i].id === optionId) {
                 options[i].defaultData = payload;
                 let stateObject = this.state;
 
                 stateObject.options = options;
 
                 this.setState(stateObject);
-                console.log("STATE",this.state);
-                console.log("THIS",key,this)
+                console.log("STATE", this.state);
+                console.log("THIS", key, this)
             }
         }
         console.log(options);
         console.log(widget);
 
-        console.log(JSON.stringify(dashboard)===JSON.stringify(this.props.getDashboard()))
-        this.props.changeParentState(dashboard);
+        // console.log(JSON.stringify(dashboard)===JSON.stringify(this.props.getDashboard()))
+        this.props.updateDashboardByWidgetConfPanel(dashboard);
 
         // this.props.updateDashboardByWidgetConfPanel(dashboard);
-        console.log("updated",dashboard);
-        console.log("HERE",this.props.getDashboard())
-        // this.props.changeParentState(dashboard);
+        // console.log("updated",dashboard);
+        // console.log("HERE",this.props.getDashboard())
+        // // this.props.changeParentState(dashboard);
         // this.props.updateDashboard(this.props.getDashboard());
 
     }
@@ -429,12 +434,18 @@ class WidgetConfigurationPanel extends React.Component {
         console.log(dashboardLayout.selectedItem.config.content[0].props.configs.options);
         let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
 
-        let newId = dashboardLayout.selectedItem.config.content[0].props.configs.id;
-        if(this.state.id !== newId){
+        let newId = dashboardLayout.selectedItem.config.content[0].props.id;
+        console.log("dashboardLayout",dashboardLayout)
+        console.log("received ID",newId);
+
+        if (this.state.id !== newId) {
             let newState = this.state;
-            newState.options = newState.options || options;
-            this.state = newState;
-            this.state.id = newId;
+            newState.options =  options;
+            // this.state = newState;
+            newState.id = newId;
+            this.setState(newState);
+            console.log("Options", newState.options);
+            console.log("Changing ID",newId);
         }
 
         console.log("Selected Item: ", dashboardLayout.selectedItem);
@@ -446,10 +457,13 @@ class WidgetConfigurationPanel extends React.Component {
                     case "TypeText":
                         preferences.push(<div>
                             {options[i].title} :<TextField id={options[i].id}
-                                           hintText={this.state.options[i].defaultData}
-                                           onChange={this.handlePreferenceTextBoxEvent}
-                                           name={options[i].title}/>
-                            </div>);
+                                                           defaultValue={this.state.options[i].defaultData}
+                                                           onChange={(event, newValue) => {
+                                                               event.persist();
+                                                               this.handlePreferenceTextBoxEvent(event, newValue)
+                                                           }}
+                                                           name={options[i].title}/>
+                        </div>);
                         console.log("TextField", options[i].defaultData);
                         console.log("TextField", dashboardLayout.selectedItem.config.content[0].props.configs.options[i].defaultData)
                         break;
@@ -493,13 +507,17 @@ class WidgetConfigurationPanel extends React.Component {
         return preferences;
     }
 
-    render() {
-        const items = [
-            <MenuItem key={1} value={1} primaryText="Monaco" />,
-            <MenuItem key={2} value={2} primaryText="Arial" />,
-            <MenuItem key={3} value={3} primaryText="Console" />,
-        ];
+    test(){
+        if(this.state.options && this.state.options[0].defaultData){
+            // return (this.state.options[0].defaultData)
+            return (this.state.options.id)
 
+        }
+        return "NO OPs"
+    }
+
+    render() {
+            console.log("RERENDERING")
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
@@ -509,10 +527,13 @@ class WidgetConfigurationPanel extends React.Component {
                 <h1>Widget Configuration</h1>
                 <h2>Options</h2>
                 {this.getPreferences()}
-
+            </div>
+            <div>
+                {this.test()}
             </div>
         </Drawer>);
     }
 
 }
+
 export default WidgetConfigurationPanel;

@@ -62,7 +62,7 @@
     padding: 8px 10px 0 65px;
     color: white;
     height: 89vh;
-    z-index: 0;
+    z-index: 1;
 }
 
 .widget-configuration-button {

@@ -17,18 +17,15 @@
  */
 
 import React, {Component} from 'react';
-import {Redirect, Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import _ from 'lodash';
-
-
 // App Components
 import {Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
-import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
+import {dashboardLayout, widgetLoadingComponent} from '../utils/WidgetLoadingComponent';
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
 import Error403 from '../error-pages/Error403';
-import Error404 from '../error-pages/Error404';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
 import WidgetConfigurationPanel from './components/WidgetConfigurationPanel';
@@ -396,8 +393,10 @@ export default class DashboardDesigner extends Component {
                 let obj = page;
                 if(obj.type && obj.type === "component" && obj.props && obj.props.id){
                     console.log("Found :",obj.props.id);
-                    let newObj = JSON.parse(JSON.stringify(obj))
-                    OptionsMap[obj.props.id] = newObj.props.configs.options;
+                    if(obj.props.configs.options){
+                        let newObj = JSON.parse(JSON.stringify(obj))
+                        OptionsMap[obj.props.id] = newObj.props.configs.options;
+                    }
                 }
                 else if(obj.content){
                     for (let i = 0; i < obj.content.length ; i++) {
@@ -415,7 +414,9 @@ export default class DashboardDesigner extends Component {
                 let obj = page;
                 if(obj.type && obj.type === "component" && obj.props && obj.props.id){
                     console.log("Found and Replaced:",obj.props.id);
-                    obj.props.configs.options = OptionsMap[obj.props.id];
+                    if(OptionsMap[obj.props.id]){
+                        obj.props.configs.options = OptionsMap[obj.props.id];
+                    }
                 }
                 else if(obj.content){
                     for (let i = 0; i < obj.content.length ; i++) {
@@ -427,17 +428,18 @@ export default class DashboardDesigner extends Component {
             }
             searchforWidgetsInAPage(page,optionsMap);
             alert("dashboardBeforeSaveBegin")
-            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             alert("dashboardAfterfindDashboardPageById()")
-            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
             p.content = dashboardLayout.toConfig().content;
-            console.log("diff",difference(dashboardCopy,dashboard))
-            var result = deepDiffMapper.map(dashboardCopy,dashboard)
-            console.log(result);
+            // console.log("diff",difference(dashboardCopy,dashboard))
+            // var result = deepDiffMapper.map(dashboardCopy,dashboard)
+            // console.log(result);
             alert("dashboardAfterdashboardLayout.toConfig()")
-            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+            console.log("Here",dashboard)
+            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
             // dashboard = Object.assign(dashboard, dashboardCopy);
             // alert("dashboardAfterAssignment")
@@ -447,16 +449,16 @@ export default class DashboardDesigner extends Component {
             searchAndReplaceOptions(newPage,optionsMap)
 
             this.cleanDashboardJSON(dashboard.pages);
-            alert("dashboardAftercleanDashboardJSON()")
-            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+            // alert("dashboardAftercleanDashboardJSON()")
+            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
-            alert("dashboardAfterAPICall()")
-            alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+            // alert("dashboardAfterAPICall()")
+            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
 
-            alert("theCopy")
-            alert(dashboardCopy.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+            // alert("theCopy")
+            // alert(dashboardCopy.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
             window.global.notify(this.context.intl.formatMessage({
                 id: "dashboard.update.success",
@@ -470,11 +472,11 @@ export default class DashboardDesigner extends Component {
     changeParentState(dashboard) {
         console.log("coming...",dashboard);
         alert("coming");
-        alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+        // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
         this.state.dashboard = dashboard;
         console.log("after update...",this.state.dashboard);
         alert("after update");
-        alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+        // alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
     }
 
@@ -592,7 +594,7 @@ export default class DashboardDesigner extends Component {
      */
     getDashboard() {
         alert("getDashboard");
-        alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+        // alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
         console.log("getDashboardCalled",this.state.dashboard);
         return this.state.dashboard;
     }
