@@ -369,7 +369,7 @@ class WidgetConfigurationPanel extends React.Component {
 
         // console.log(JSON.stringify(dashboard)===JSON.stringify(this.props.getDashboard()))
         this.props.updateDashboardByWidgetConfPanel(dashboard);
-
+        this.props.updatePageContent()
         // this.props.updateDashboardByWidgetConfPanel(dashboard);
         // console.log("updated",dashboard);
         // console.log("HERE",this.props.getDashboard())

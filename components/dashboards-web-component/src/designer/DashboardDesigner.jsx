@@ -387,7 +387,7 @@ export default class DashboardDesigner extends Component {
                 }
                 return null;
             }
-            alert(pageId)
+            // alert(pageId)
             let page = getPage(dashboard,pageId);
             function searchforWidgetsInAPage(page,OptionsMap){
                 let obj = page;
@@ -427,17 +427,17 @@ export default class DashboardDesigner extends Component {
                 console.log("InSearhandreplace",OptionsMap);
             }
             searchforWidgetsInAPage(page,optionsMap);
-            alert("dashboardBeforeSaveBegin")
+            // alert("dashboardBeforeSaveBegin")
             // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
-            alert("dashboardAfterfindDashboardPageById()")
+            // alert("dashboardAfterfindDashboardPageById()")
             // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
             p.content = dashboardLayout.toConfig().content;
             // console.log("diff",difference(dashboardCopy,dashboard))
             // var result = deepDiffMapper.map(dashboardCopy,dashboard)
             // console.log(result);
-            alert("dashboardAfterdashboardLayout.toConfig()")
+            // alert("dashboardAfterdashboardLayout.toConfig()")
             console.log("Here",dashboard)
             // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
@@ -455,10 +455,12 @@ export default class DashboardDesigner extends Component {
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
             // alert("dashboardAfterAPICall()")
             // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
-
-
             // alert("theCopy")
-            // alert(dashboardCopy.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
+            let newState = this.state;
+            newState.widgetConfigPanelOpen = false
+            this.setState(newState)
+            this.handleDashboardContainerStyles()
 
             window.global.notify(this.context.intl.formatMessage({
                 id: "dashboard.update.success",
@@ -593,9 +595,6 @@ export default class DashboardDesigner extends Component {
      * To get the current dashboard state
      */
     getDashboard() {
-        alert("getDashboard");
-        // alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
-        console.log("getDashboardCalled",this.state.dashboard);
         return this.state.dashboard;
     }
     /**
