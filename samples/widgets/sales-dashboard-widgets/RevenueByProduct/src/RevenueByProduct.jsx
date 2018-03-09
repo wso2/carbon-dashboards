@@ -70,35 +70,12 @@ class RevenueByProduct extends Widget {
             ['ALL', 'ALL', 'ROW', 'IOTServer', 0, 0, 0]
         ];
 
-        console.log('config prop', this.props.configs.options);
-
         this.state = {
             data: this.overallProductData,
             width: props.glContainer.width,
             height: props.glContainer.height,
             options: this.props.configs.options
         };
-
-
-        // this.state = {
-        //     data: this.overallProductData,
-        //     width: props.glContainer.width,
-        //     height: props.glContainer.height,
-        //     options: this.props.configs.options,
-        //     xLabel: "Revenue",
-        //     yLabel: "Product",
-        //     chartColour: "Green"
-        // };
-
-
-        // this.barChartConfig = {
-        //     x: this.state.xLabel,
-        //     charts: [{type: 'bar', y: this.state.yLabel, fill: this.state.chartColour}],
-        //     maxLength: 5,
-        //     width: props.glContainer.width,
-        //     height: props.glContainer.height,
-        //     animate: true
-        // };
 
         this.barChartConfig = {
             x: this.state.options[0].defaultData,
@@ -116,77 +93,13 @@ class RevenueByProduct extends Widget {
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
-        this.changeXlabel = this.changeXlabel.bind(this);
-        this.changeYlabel = this.changeYlabel.bind(this);
-        this.changeChartFillColour = this.changeChartFillColour.bind(this);
 
-        console.log(this.props);
-        
-    }
-
-    componentWillReceiveProps(nextProps){
-        console.log("NEXT PROPS:",nextProps)
-        this.setState({options: nextProps.configs.options})
-    }
-
-    componentDidMount() {
-
-        /**
-         * This method is called by subscriber widget to set the listener callback.
-         * @param listnerCallback
-         */
-        // function test(message){
-        //     console.log(message);
-        // }
-        //
-        // super.addOptionListner(this.props.id,test);
-
-
-        // function subscribeTest(channel,listenerCallback) {
-        //     this.props.glEventHub.on(channel, listenerCallback)
-        // }
-        //
-        // let channel = this.props.id + this.props.widgetID;
-        // subscribeTest(channel,test);
-        //
-        // function test(message){
-        //     console.log(message);
-        // }
-        // console.log();
-        // var theWidget = document.getElementById(this.props.id);
-        // theWidget.addEventListener("focus", HandleMessage, false);
-        // console.log(theWidget);
-        // // new message: raise HandleMessage event
-        // function HandleMessage(e) {
-        //
-        //     e.preventDefault();
-        //   console.log("EVENTRECEIVED",e);
-        //
-        // }
     }
 
     handleResize() {
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 
-    changeXlabel(newValue){
-        let barChartConfig = this.state.barChartConfig;
-        barChartConfig.x = newValue;
-        this.setState({barChartConfig: barChartConfig});
-    }
-
-
-    changeYlabel(newValue){
-        let barChartConfig = this.state.barChartConfig;
-        barChartConfig.charts[0].y = newValue;
-        this.setState({barChartConfig: barChartConfig});
-    }
-
-    changeChartFillColour(newColour){
-        let barChartConfig = this.state.barChartConfig;
-        barChartConfig.charts[0].fill = newColour;
-        this.setState({barChartConfig: barChartConfig});
-    }
 
     componentWillMount() {
         super.subscribe(this.setReceivedMsg);

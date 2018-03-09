@@ -44,7 +44,6 @@ const styles = {
 class WidgetConfigurationPanel extends React.Component {
 
     constructor(props) {
-        console.log("Props",props)
         super(props);
         this.getPublishers = this.getPublishers.bind(this);
         this.getPreferences = this.getPreferences.bind(this);
@@ -53,45 +52,12 @@ class WidgetConfigurationPanel extends React.Component {
         this.handlePreferenceTextBoxEvent = this.handlePreferenceTextBoxEvent.bind(this);
         this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent.bind(this), 900);
         this.handlePreferenceSelectListEvent = this.handlePreferenceSelectListEvent.bind(this);
-        this.test = this.test.bind(this);
-        // let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
-        let options = dashboardLayout.selectedItem;
-        console.log("selectedItem", options);
 
         this.state = {
             checked: false,
             options: null,
             id: null
-            // options: dashboardLayout.selectedItem.config.content[0].props.configs.options
         }
-    }
-
-    // /**
-    //  * This method publishers the queued messages in the widget. The messages are queued when the widget tried to
-    //  * publish before initializing the dashboard.
-    //  *
-    //  */
-    // publishQueuedMessages() {
-    //     for (let messageId in this.messageQueue) {
-    //         this.publishTest(this.messageQueue[messageId])
-    //     }
-    // }
-    //
-    // /**
-    //  * This method is called by publisher widgetConfPanel to publish messages.
-    //  */
-    // publishTest(channel,message) {
-    //     if (!this.props.glContainer.layoutManager.isInitialised) {
-    //         this.messageQueue.push(message)
-    //     } else {
-    //         this.props.glEventHub.emit(channel, message);
-    //     }
-    // }
-
-
-    componentWillReceiveProps(nextProps) {
-        console.log("NEXTPROPSWDTCONF:", nextProps)
-        this.setState({user: nextProps.user})
     }
 
     handlePublisherCheckBoxEvent(event, isInputChecked) {
@@ -150,74 +116,28 @@ class WidgetConfigurationPanel extends React.Component {
         let page = getPage(dashboard, pageId);
         let widgetId = dashboardLayout.selectedItem.config.content[0].props.id;
         let widget = search(page, widgetId);
-        let flag = false;
-        if (isInputChecked) {
-            flag = true;
-        }
-        else {
-            flag = false;
-        }
-        console.log(event.target.id);
 
         let optionId = event.target.id;
         let options = widget.props.configs.options;
 
         for (let i = 0; i < options.length; i++) {
             if (options[i].id === optionId) {
-                options[i].defaultData = flag;
+                options[i].defaultData = isInputChecked;
                 let stateObject = this.state;
-
                 stateObject.options = options;
-
                 this.setState(stateObject);
-                console.log("STATE", this.state);
-                console.log("THIS", this)
+
             }
         }
 
-        console.log(options);
-        console.log(widget);
-        // var id = dashboardLayout.selectedItem.config.content[0].props.id;
-        // var WidgetId = dashboardLayout.selectedItem.config.content[0].props.widgetID;
-        // this.publishTest(id+WidgetId,"MESSAGE");
-        // //  console.log("+++++++++++++++++++++++++++++/////////////////////+++++++++++++++++++");
-        // console.log(dashboardLayout);        
-        // console.log(dashboardLayout.selectedItem);        
-        // console.log(dashboardLayout.selectedItem.config.content[0].props.id);
-        // console.log("+++++++++++++++++++++++++++++/////////////////////+++++++++++++++++++");        
-        // console.log("================================================");
-        // console.log(this.props.getDashboard());
-        // console.log("================================================");
-        // console.log("HERE");
-        // console.log(this.props.getPageId());
-        // console.log("page",page);
-        // let widget = search(page,dashboardLayout.selectedItem.config.content[0].props.id);
-        // console.log("=================WIDGET===============================");
-        // console.log(widget);
-        // widget.props.configs.options[0].defaultData ="NEW";
-        // console.log(widget);
-        // console.log("================================================");
-        // console.log("+++++++++++++++++++++++++++++ChangedWIDGET+++++++++++++++++++");
-        // let widget2 = search(page,dashboardLayout.selectedItem.config.content[0].props.id);
-        //  console.log(widget2);
-        // console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-        console.log(this.props.getDashboard())
-        // this.props.updateDashboard(this.props.getDashboard());
         this.props.updateDashboardByWidgetConfPanel(dashboard);
-        console.log("HERE", this.props.getDashboard())
-        // this.props.updatePageContent();
-
-        // console.log(this.props.getDashboard());
-        // // notify(widgetId);
 
     }
 
 
     handlePreferenceTextBoxEvent(event, newValue) {
         event.persist();
-        console.log("event", event);
-        console.log(newValue);
+
         let optionId = event.target.id;
 
         /**
@@ -266,27 +186,11 @@ class WidgetConfigurationPanel extends React.Component {
             if (options[i].id === optionId) {
                 options[i].defaultData = newValue;
                 let stateObject = this.state;
-
                 stateObject.options = options;
-
                 this.setState(stateObject);
-                console.log("STATE", this.state);
-                console.log("THIS", this)
             }
         }
-
-
-        console.log("options", options);
-        console.log("widget", widget);
-
-        // this.props.updateDashboardByWidgetConfPanel(dashboard);
-        // console.log(this.props.getDashboard(),dashboard)
-        // this.props.updateDashboard(dashboard);
-        // console.log(this.props.getDashboard(),dashboard);
         this.props.updateDashboardByWidgetConfPanel(dashboard);
-        // console.log("HERE",this.props.getDashboard())
-        // this.props.updatePageContent();
-
     }
 
     handlePreferenceSelectListEvent(event, key, payload) {
@@ -326,24 +230,8 @@ class WidgetConfigurationPanel extends React.Component {
                 }
                 return x;
             }
-
-            // var customEvent = new CustomEvent(
-            //     "newMessage",
-            //     {
-            //         detail: {
-            //             message: "Hello World!",
-            //             time: new Date(),
-            //         },
-            //         bubbles: true,
-            //         cancelable: true
-            //     }
-            // );
-            //
-            // document.getElementById(optionId).dispatchEvent(customEvent);
-            // console.log("Event Fired",customEvent);
         }
 
-        // var beforeTest = JSON.stringify(dashboardLayout.selectedItem.)
 
         let WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
         let dashboard = this.props.getDashboard();
@@ -356,26 +244,12 @@ class WidgetConfigurationPanel extends React.Component {
             if (options[i].id === optionId) {
                 options[i].defaultData = payload;
                 let stateObject = this.state;
-
                 stateObject.options = options;
-
                 this.setState(stateObject);
-                console.log("STATE", this.state);
-                console.log("THIS", key, this)
-            }
+                }
         }
-        console.log(options);
-        console.log(widget);
 
-        // console.log(JSON.stringify(dashboard)===JSON.stringify(this.props.getDashboard()))
         this.props.updateDashboardByWidgetConfPanel(dashboard);
-        this.props.updatePageContent()
-        // this.props.updateDashboardByWidgetConfPanel(dashboard);
-        // console.log("updated",dashboard);
-        // console.log("HERE",this.props.getDashboard())
-        // // this.props.changeParentState(dashboard);
-        // this.props.updateDashboard(this.props.getDashboard());
-
     }
 
     persistPubSubWiringInDashboardJSON(content, subscriberId, publisherId) {
@@ -428,27 +302,20 @@ class WidgetConfigurationPanel extends React.Component {
     getPreferences() {
         let preferences = [];
         if (!(dashboardLayout.selectedItem && dashboardLayout.selectedItem.config.content[0].props.configs)) {
-            return <div>No Options</div>; //TODO:
+            return <div>No Configurable Options</div>;
         }
 
         console.log(dashboardLayout.selectedItem.config.content[0].props.configs.options);
         let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
 
         let newId = dashboardLayout.selectedItem.config.content[0].props.id;
-        console.log("dashboardLayout",dashboardLayout)
-        console.log("received ID",newId);
 
         if (this.state.id !== newId) {
             let newState = this.state;
             newState.options =  options;
-            // this.state = newState;
             newState.id = newId;
             this.setState(newState);
-            console.log("Options", newState.options);
-            console.log("Changing ID",newId);
         }
-
-        console.log("Selected Item: ", dashboardLayout.selectedItem);
 
         if (options) {
 
@@ -507,17 +374,7 @@ class WidgetConfigurationPanel extends React.Component {
         return preferences;
     }
 
-    test(){
-        if(this.state.options && this.state.options[0].defaultData){
-            // return (this.state.options[0].defaultData)
-            return (this.state.options.id)
-
-        }
-        return "NO OPs"
-    }
-
     render() {
-            console.log("RERENDERING")
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
@@ -528,12 +385,9 @@ class WidgetConfigurationPanel extends React.Component {
                 <h2>Options</h2>
                 {this.getPreferences()}
             </div>
-            <div>
-                {this.test()}
-            </div>
+
         </Drawer>);
     }
-
 }
 
 export default WidgetConfigurationPanel;

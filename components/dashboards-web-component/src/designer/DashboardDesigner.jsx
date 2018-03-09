@@ -278,97 +278,7 @@ export default class DashboardDesigner extends Component {
                 pageId = this.state.dashboard.landingPage;
             }
 
-            function difference(object, base) {
-                function changes(object, base) {
-                    return _.transform(object, function(result, value, key) {
-                        if (!_.isEqual(value, base[key])) {
-                            result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
-                        }
-                    });
-                }
-                return changes(object, base);
-            }
-
-            var deepDiffMapper = function() {
-                return {
-                    VALUE_CREATED: 'created',
-                    VALUE_UPDATED: 'updated',
-                    VALUE_DELETED: 'deleted',
-                    VALUE_UNCHANGED: 'unchanged',
-                    map: function(obj1, obj2) {
-                        if (this.isFunction(obj1) || this.isFunction(obj2)) {
-                            throw 'Invalid argument. Function given, object expected.';
-                        }
-                        if (this.isValue(obj1) || this.isValue(obj2)) {
-                            return {
-                                type: this.compareValues(obj1, obj2),
-                                data: (obj1 === undefined) ? obj2 : obj1
-                            };
-                        }
-
-                        var diff = {};
-                        for (var key in obj1) {
-                            if (this.isFunction(obj1[key])) {
-                                continue;
-                            }
-
-                            var value2 = undefined;
-                            if ('undefined' != typeof(obj2[key])) {
-                                value2 = obj2[key];
-                            }
-
-                            diff[key] = this.map(obj1[key], value2);
-                        }
-                        for (var key in obj2) {
-                            if (this.isFunction(obj2[key]) || ('undefined' != typeof(diff[key]))) {
-                                continue;
-                            }
-
-                            diff[key] = this.map(undefined, obj2[key]);
-                        }
-
-                        return diff;
-
-                    },
-                    compareValues: function(value1, value2) {
-                        if (value1 === value2) {
-                            return this.VALUE_UNCHANGED;
-                        }
-                        if (this.isDate(value1) && this.isDate(value2) && value1.getTime() === value2.getTime()) {
-                            return this.VALUE_UNCHANGED;
-                        }
-                        if ('undefined' == typeof(value1)) {
-                            return this.VALUE_CREATED;
-                        }
-                        if ('undefined' == typeof(value2)) {
-                            return this.VALUE_DELETED;
-                        }
-
-                        return this.VALUE_UPDATED;
-                    },
-                    isFunction: function(obj) {
-                        return {}.toString.apply(obj) === '[object Function]';
-                    },
-                    isArray: function(obj) {
-                        return {}.toString.apply(obj) === '[object Array]';
-                    },
-                    isObject: function(obj) {
-                        return {}.toString.apply(obj) === '[object Object]';
-                    },
-                    isDate: function(obj) {
-                        return {}.toString.apply(obj) === '[object Date]';
-                    },
-                    isValue: function(obj) {
-                        return !this.isObject(obj) && !this.isArray(obj);
-                    }
-                }
-            }();
-
             let dashboard = this.getDashboard();
-            let  dashboardCopy = JSON.parse(JSON.stringify(dashboard))
-            console.log("####################################################")
-            console.log("dashboardToSave",dashboard)
-            console.log("####################################################")
 
             var optionsMap = new Object();
 
@@ -387,9 +297,9 @@ export default class DashboardDesigner extends Component {
                 }
                 return null;
             }
-            // alert(pageId)
+
             let page = getPage(dashboard,pageId);
-            function searchforWidgetsInAPage(page,OptionsMap){
+            function searchForWidgetsInAPage(page,OptionsMap){
                 let obj = page;
                 if(obj.type && obj.type === "component" && obj.props && obj.props.id){
                     console.log("Found :",obj.props.id);
@@ -400,11 +310,10 @@ export default class DashboardDesigner extends Component {
                 }
                 else if(obj.content){
                     for (let i = 0; i < obj.content.length ; i++) {
-                        searchforWidgetsInAPage(obj.content[i],OptionsMap);
+                        searchForWidgetsInAPage(obj.content[i],OptionsMap);
                     }
 
                 }
-                console.log(OptionsMap);
             }
 
             /**
@@ -424,38 +333,19 @@ export default class DashboardDesigner extends Component {
                     }
 
                 }
-                console.log("InSearhandreplace",OptionsMap);
             }
-            searchforWidgetsInAPage(page,optionsMap);
-            // alert("dashboardBeforeSaveBegin")
-            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
+
+            searchForWidgetsInAPage(page,optionsMap);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
-            // alert("dashboardAfterfindDashboardPageById()")
-            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
             p.content = dashboardLayout.toConfig().content;
-            // console.log("diff",difference(dashboardCopy,dashboard))
-            // var result = deepDiffMapper.map(dashboardCopy,dashboard)
-            // console.log(result);
-            // alert("dashboardAfterdashboardLayout.toConfig()")
-            console.log("Here",dashboard)
-            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
-            // dashboard = Object.assign(dashboard, dashboardCopy);
-            // alert("dashboardAfterAssignment")
-            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
             let newPage = getPage(dashboard,pageId);
-            console.log("New Page",newPage);
             searchAndReplaceOptions(newPage,optionsMap)
 
             this.cleanDashboardJSON(dashboard.pages);
-            // alert("dashboardAftercleanDashboardJSON()")
-            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
 
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
-            // alert("dashboardAfterAPICall()")
-            // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
-            // alert("theCopy")
 
             let newState = this.state;
             newState.widgetConfigPanelOpen = false
