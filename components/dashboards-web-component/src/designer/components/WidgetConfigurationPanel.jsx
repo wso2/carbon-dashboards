@@ -99,7 +99,6 @@ class WidgetConfigurationPanel extends React.Component {
         function search(page, id) {
             let obj = page;
             if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
-                console.log(obj.props.id);
                 return obj;
             }
             else if (obj.content) {
@@ -126,19 +125,14 @@ class WidgetConfigurationPanel extends React.Component {
                 let stateObject = this.state;
                 stateObject.options = options;
                 this.setState(stateObject);
-
             }
         }
-
         this.props.updateDashboardByWidgetConfPanel(dashboard);
-
     }
 
 
     handlePreferenceTextBoxEvent(event, newValue) {
         event.persist();
-
-        let optionId = event.target.id;
 
         /**
          * helper function to get the page from a given dashboard given the pageId
@@ -181,6 +175,7 @@ class WidgetConfigurationPanel extends React.Component {
         let widget = search(page, WidgetId);
 
         let options = widget.props.configs.options;
+        let optionId = event.target.id;
 
         for (let i = 0; i < options.length; i++) {
             if (options[i].id === optionId) {
@@ -194,9 +189,6 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     handlePreferenceSelectListEvent(event, key, payload) {
-        console.log("event", event);
-        console.log(payload);
-        let optionId = event.target.parentElement.parentElement.parentElement.id;
 
         /**
          * helper function to get the page from a given dashboard given the pageId
@@ -232,7 +224,6 @@ class WidgetConfigurationPanel extends React.Component {
             }
         }
 
-
         let WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
         let dashboard = this.props.getDashboard();
         let pageId = this.props.getPageId();
@@ -240,6 +231,8 @@ class WidgetConfigurationPanel extends React.Component {
         let widget = search(page, WidgetId);
 
         let options = widget.props.configs.options;
+        let optionId = event.target.parentElement.parentElement.parentElement.id;
+
         for (let i = 0; i < options.length; i++) {
             if (options[i].id === optionId) {
                 options[i].defaultData = payload;
@@ -248,7 +241,6 @@ class WidgetConfigurationPanel extends React.Component {
                 this.setState(stateObject);
                 }
         }
-
         this.props.updateDashboardByWidgetConfPanel(dashboard);
     }
 
@@ -305,9 +297,7 @@ class WidgetConfigurationPanel extends React.Component {
             return <div>No Configurable Options</div>;
         }
 
-        console.log(dashboardLayout.selectedItem.config.content[0].props.configs.options);
         let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
-
         let newId = dashboardLayout.selectedItem.config.content[0].props.id;
 
         if (this.state.id !== newId) {
@@ -318,7 +308,6 @@ class WidgetConfigurationPanel extends React.Component {
         }
 
         if (options) {
-
             for (let i = 0; i < options.length; i++) {
                 switch (options[i].type) {
                     case "TypeText":
@@ -328,11 +317,9 @@ class WidgetConfigurationPanel extends React.Component {
                                                            onChange={(event, newValue) => {
                                                                event.persist();
                                                                this.handlePreferenceTextBoxEvent(event, newValue)
-                                                           }}
+                                                           }    }
                                                            name={options[i].title}/>
                         </div>);
-                        console.log("TextField", options[i].defaultData);
-                        console.log("TextField", dashboardLayout.selectedItem.config.content[0].props.configs.options[i].defaultData)
                         break;
                     case "TypeEnum":
                         let items = [];
@@ -341,10 +328,8 @@ class WidgetConfigurationPanel extends React.Component {
                                 items.push(<MenuItem key={options[i].possibleValues[j]} id={options[i].id}
                                                      value={options[i].possibleValues[j]}
                                                      primaryText={options[i].possibleValues[j]}/>)
+                                }
                             }
-                            console.log("SelectField", options[i].defaultData)
-                            console.log("SelectField", dashboardLayout.selectedItem.config.content[0].props.configs.options[i].defaultData)
-                        }
                         preferences.push(<div>
                             {options[i].title} : <SelectField
                             onChange={this.handlePreferenceSelectListEvent}
@@ -361,12 +346,9 @@ class WidgetConfigurationPanel extends React.Component {
                                       onCheck={this.handlePreferenceCheckBoxEvent}
                                       checked={this.state.options[i].defaultData}/>
                         </div>);
-                        console.log("Checkbox", options[i].defaultData)
-                        console.log("Checkbox", dashboardLayout.selectedItem.config.content[0].props.configs.options[i].defaultData)
                         break;
                     default :
                         break;
-
                 }
             }
         }

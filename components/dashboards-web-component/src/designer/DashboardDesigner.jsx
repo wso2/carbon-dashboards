@@ -18,7 +18,6 @@
 
 import React, {Component} from 'react';
 import {Link, Redirect} from 'react-router-dom';
-import _ from 'lodash';
 // App Components
 import {Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
@@ -124,7 +123,6 @@ export default class DashboardDesigner extends Component {
         this.updatePageContent = this.updatePageContent.bind(this);
         this.getDashboard = this.getDashboard.bind(this);
         this.getPageId = this.getPageId.bind(this);
-        this.changeParentState = this.changeParentState.bind(this);
     }
 
     componentDidMount() {
@@ -172,7 +170,7 @@ export default class DashboardDesigner extends Component {
                         <Link to={window.contextPath + '/'}>
                             <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>}
                                           icon={<BackIcon/>} style={{'margin-right': '12px'}}
-                                          backgroundColor="rgb(13, 31, 39)" />
+                                          backgroundColor="rgb(13, 31, 39)"/>
                         </Link>
                         <FlatButton label={<FormattedMessage id="save.page.button" defaultMessage="Save Page"/>}
                                     primary
@@ -220,14 +218,9 @@ export default class DashboardDesigner extends Component {
                     />
 
                     <WidgetConfigurationPanel publishers={this.state.publishers}
-                                              dashboard={this.state.dashboard}
-                                              updateDashboardByWidgetConfPanel = {this.updateDashboardByWidgetConfPanel}
-                                              getDashboard = {this.getDashboard}
-                                              updateDashboard = {this.updateDashboard}
-                                              updatePageContent = {this.updatePageContent}
-                                              loadDashboard = {this.loadDashboard}
-                                              getPageId = {this.getPageId}
-                                              changeParentState = {this.changeParentState}
+                                              updateDashboardByWidgetConfPanel={this.updateDashboardByWidgetConfPanel}
+                                              getDashboard={this.getDashboard}
+                                              getPageId={this.getPageId}
                                               open={this.state.widgetConfigPanelOpen}/>
                     {/* Notifier */}
                     <Snackbar
@@ -280,17 +273,17 @@ export default class DashboardDesigner extends Component {
 
             let dashboard = this.getDashboard();
 
-            var optionsMap = new Object();
+            var optionsMap = {};
 
             /**
              * helper function to get the page from a given dashboard given the pageId
              * */
-            function getPage(dashboard,pageID){
+            function getPage(dashboard, pageID) {
                 let pages = dashboard.pages;
-                if(pages){
+                if (pages) {
                     for (let i = 0; i < pages.length; i++) {
                         let page = pages[i];
-                        if(page.id === pageID ){
+                        if (page.id === pageID) {
                             return page;
                         }
                     }
@@ -298,59 +291,63 @@ export default class DashboardDesigner extends Component {
                 return null;
             }
 
-            let page = getPage(dashboard,pageId);
-            function searchForWidgetsInAPage(page,OptionsMap){
+            let page = getPage(dashboard, pageId);
+
+            /**
+             * helper function to traverse the content of a page and find widgets to extract their options to a
+             * given map
+             * @param page : the page to be traversed
+             * @param OptionsMap : the map to extract option configurations
+             * */
+            function searchForWidgetsInAPage(page, OptionsMap) {
                 let obj = page;
-                if(obj.type && obj.type === "component" && obj.props && obj.props.id){
-                    console.log("Found :",obj.props.id);
-                    if(obj.props.configs.options){
+                if (obj.type && obj.type === "component" && obj.props && obj.props.id) {
+                    if (obj.props.configs.options) {
                         let newObj = JSON.parse(JSON.stringify(obj))
                         OptionsMap[obj.props.id] = newObj.props.configs.options;
                     }
                 }
-                else if(obj.content){
-                    for (let i = 0; i < obj.content.length ; i++) {
-                        searchForWidgetsInAPage(obj.content[i],OptionsMap);
+                else if (obj.content) {
+                    for (let i = 0; i < obj.content.length; i++) {
+                        searchForWidgetsInAPage(obj.content[i], OptionsMap);
                     }
-
                 }
             }
 
             /**
-             * helper function to replace Options
+             * helper function to traverse the content of a page and finding widgets to replace their options with
+             *their corresponding options in a given map against their id
+             * @param page : the page to be traversed
+             * @param OptionsMap : the map to with option configurations
              * */
-            function searchAndReplaceOptions(page,OptionsMap){
+            function searchAndReplaceOptions(page, OptionsMap) {
                 let obj = page;
-                if(obj.type && obj.type === "component" && obj.props && obj.props.id){
-                    console.log("Found and Replaced:",obj.props.id);
-                    if(OptionsMap[obj.props.id]){
+                if (obj.type && obj.type === "component" && obj.props && obj.props.id) {
+                    console.log("Found and Replaced:", obj.props.id);
+                    if (OptionsMap[obj.props.id]) {
                         obj.props.configs.options = OptionsMap[obj.props.id];
                     }
                 }
-                else if(obj.content){
-                    for (let i = 0; i < obj.content.length ; i++) {
-                        searchAndReplaceOptions(obj.content[i],OptionsMap);
+                else if (obj.content) {
+                    for (let i = 0; i < obj.content.length; i++) {
+                        searchAndReplaceOptions(obj.content[i], OptionsMap);
                     }
 
                 }
             }
 
-            searchForWidgetsInAPage(page,optionsMap);
+            searchForWidgetsInAPage(page, optionsMap);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
-
             p.content = dashboardLayout.toConfig().content;
-
-            let newPage = getPage(dashboard,pageId);
-            searchAndReplaceOptions(newPage,optionsMap)
-
+            let newPage = getPage(dashboard, pageId);
+            searchAndReplaceOptions(newPage, optionsMap);
             this.cleanDashboardJSON(dashboard.pages);
-
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
 
             let newState = this.state;
-            newState.widgetConfigPanelOpen = false
-            this.setState(newState)
-            this.handleDashboardContainerStyles()
+            newState.widgetConfigPanelOpen = false;
+            this.setState(newState);
+            this.handleDashboardContainerStyles();
 
             window.global.notify(this.context.intl.formatMessage({
                 id: "dashboard.update.success",
@@ -361,21 +358,10 @@ export default class DashboardDesigner extends Component {
         }
     }
 
-    changeParentState(dashboard) {
-        console.log("coming...",dashboard);
-        alert("coming");
-        // alert(dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
-        this.state.dashboard = dashboard;
-        console.log("after update...",this.state.dashboard);
-        alert("after update");
-        // alert(this.state.dashboard.pages[2].content["0"].content["0"].content["0"].props.configs.options[2].defaultData);
-
-    }
-
     cleanDashboardJSON(content) {
-        if(!Array.isArray(content)) {
+        if (!Array.isArray(content)) {
             delete content.reorderEnabled;
-            if(content.hasOwnProperty('content')) {
+            if (content.hasOwnProperty('content')) {
                 delete content.activeItemIndex;
                 this.cleanDashboardJSON(content.content);
             } else {
@@ -383,7 +369,7 @@ export default class DashboardDesigner extends Component {
                 delete content.componentState;
                 delete content.header;
             }
-            if(content.hasOwnProperty('pages')) {
+            if (content.hasOwnProperty('pages')) {
                 this.cleanDashboardJSON(content.pages);
             }
         } else {
@@ -476,17 +462,18 @@ export default class DashboardDesigner extends Component {
             id: "dashboard.update.success",
             defaultMessage: "Dashboard updated successfully!"
         }));
-        console.log('test1',dashboard);
         this.setState({
             dashboard: dashboard
         });
     }
+
     /**
      * To get the current dashboard state
      */
     getDashboard() {
         return this.state.dashboard;
     }
+
     /**
      * To get the pageID of the current page at Designer view
      */
@@ -497,8 +484,9 @@ export default class DashboardDesigner extends Component {
         }
         return pageId;
     }
+
     /**
-     * To reflect changes from WidgetConfigurationPanel on dashboard.
+     * To reflect changes from Widget Configuration Panel on dashboard.
      * @param dashboard
      */
     updateDashboardByWidgetConfPanel(dashboard) {

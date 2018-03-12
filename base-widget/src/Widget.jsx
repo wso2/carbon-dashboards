@@ -38,14 +38,6 @@ export default class Widget extends Component {
         this.setWidgetState = this.setWidgetState.bind(this);
         this.subscribe = this.subscribe.bind(this);
         this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
-        this.addOptionListner = this.addOptionListner.bind(this);
-    }
-    /**
-    *   to register a option listener
-    *
-    */
-    addOptionListner(WidgetID, callback){
-        register(WidgetID,callback);
     }
     /**
      * This method publishers the queued messages in the widget. The messages are queued when the widget tried to
