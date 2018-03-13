@@ -1,20 +1,80 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * Conversation opened. 2 messages. All messages read.
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * Skip to content
+ * Using WSO2, Inc. Mail with screen readers
+ * Click here to enable desktop notifications for WSO2, Inc. Mail.   Learn more  Hide
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
+ * Fwd: Copyright Template of WSO2 for IntelliJ
+ * Inbox
+ * 	x
+ * 1. Me
+ * 	x
+ * Dilini Muthumala <dilini@wso2.com>
  *
+ * AttachmentsJan 24
+ *
+ * to me
+ *
+ * ---------- Forwarded message ----------
+ * From: Gobinath Loganathan <gobinath@wso2.com>
+ * Date: Thu, Jul 28, 2016 at 10:55 AM
+ * Subject: Copyright Template of WSO2 for IntelliJ
+ * To: Sirojan Tharmakulasingam <sirojan@wso2.com>, Prakhash Sivakumar <prakhash@wso2.com>, Dilini Muthumala <dilini@wso2.com>, Anoukh Jayawardena <anoukh@wso2.com>
+ *
+ *
+ * Hi,
+ * According to the mail thread Issue With WSO2 License Header in Engineering group, the attached copyright template is the correct one to use.
+ *
+ * To add the template to IntelliJ:
+ * Inline image 1
+ *
+ * For more details: [1]
+ *
+ * [1] https://groups.google.com/a/wso2.com/forum/#!topic/engineering-group/Ga4YOPxMQpw/discussion
+ *
+ *
+ *
+ * Thanks & Regards,
+ * Gobinath
+ * Attachments area
+ * Irindu Nugawela <irindu@wso2.com>
+ *
+ * Jan 24
+ *
+ * to Dilini
+ * Thank you very much Akka
+ *
+ * Click here to Reply or Forward
+ * Using 23.44 GB
+ * Manage
+ * Program Policies
+ * Powered by
+ * Google
+ * Last account activity: 54 minutes ago
+ * Details
+ *
+ *
+ *
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ * Intellij Copyright Template.txt
+ * Displaying Intellij Copyright Template.txt.
  */
 
 import React from 'react';
@@ -26,12 +86,19 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
+import List, { ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
+import ActionGrade from 'material-ui/svg-icons/action/grade';
+import ContentInbox from 'material-ui/svg-icons/content/inbox';
+import ContentDrafts from 'material-ui/svg-icons/content/drafts';
+import ContentSend from 'material-ui/svg-icons/content/send';
+import Subheader from 'material-ui/Subheader';
+
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
 
 // import notify from '../../utils/DashboardOptionListener';
 
-// import {FormattedMessage} from 'react-intl';
+import {FormattedMessage} from 'react-intl';
 
 
 const styles = {
@@ -52,12 +119,18 @@ class WidgetConfigurationPanel extends React.Component {
         this.handlePreferenceTextBoxEvent = this.handlePreferenceTextBoxEvent.bind(this);
         this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent.bind(this), 900);
         this.handlePreferenceSelectListEvent = this.handlePreferenceSelectListEvent.bind(this);
+        this.handleClick = this.handleClick.bind(this);
 
         this.state = {
             checked: false,
             options: null,
-            id: null
+            id: null,
+            open: false
         }
+    }
+
+    handleClick() {
+        this.setState({ open: !this.state.open })
     }
 
     handlePublisherCheckBoxEvent(event, isInputChecked) {
@@ -76,172 +149,89 @@ class WidgetConfigurationPanel extends React.Component {
         }
     }
 
-    handlePreferenceCheckBoxEvent(event, isInputChecked) {
-        /**
-         * helper function to get the page from a given dashboard given the pageId
-         * */
-        function getPage(dashboard, pageID) {
-            let pages = dashboard.pages;
-            if (pages) {
-                for (let i = 0; i < pages.length; i++) {
-                    let page = pages[i];
-                    if (page.id === pageID) {
-                        return page;
-                    }
-                }
-            }
-            return null;
-        }
-
-        /**
-         * helper function to get the widget from a given page given the widgetId
-         * */
-        function search(page, id) {
-            let obj = page;
-            if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
-                return obj;
-            }
-            else if (obj.content) {
-                let x = null;
-                for (let i = 0; i < obj.content.length; i++) {
-                    x = x || search(obj.content[i], id);
-                }
-                return x;
-            }
-        }
-
-        let dashboard = this.props.getDashboard()
-        let pageId = this.props.getPageId()
-        let page = getPage(dashboard, pageId);
-        let widgetId = dashboardLayout.selectedItem.config.content[0].props.id;
-        let widget = search(page, widgetId);
+    handlePreferenceCheckBoxEvent(event, isInputChecked, options) {
 
         let optionId = event.target.id;
-        let options = widget.props.configs.options;
 
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].id === optionId) {
-                options[i].defaultData = isInputChecked;
-                let stateObject = this.state;
+        // for (let i = 0; i < options.length; i++) {
+        //     if (options[i].id === optionId) {
+        //         options[i].defaultData = isInputChecked;
+        //         let stateObject = this.state;
+        //         stateObject.options = options;
+        //         this.setState(stateObject);
+        //     }
+        // }
+
+        let that = this;
+
+        _.each(options, function(option) {
+            if (option.id === optionId) {
+                option.defaultData = isInputChecked;
+                let stateObject = that.state;
                 stateObject.options = options;
-                this.setState(stateObject);
+                that.setState(stateObject);
             }
-        }
-        this.props.updateDashboardByWidgetConfPanel(dashboard);
+        });
+
+        this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
     }
 
 
-    handlePreferenceTextBoxEvent(event, newValue) {
-        event.persist();
-
-        /**
-         * helper function to get the page from a given dashboard given the pageId
-         * */
-        function getPage(dashboard, pageID) {
-            let pages = dashboard.pages;
-            if (pages) {
-                for (let i = 0; i < pages.length; i++) {
-                    let page = pages[i];
-                    if (page.id === pageID) {
-                        return page;
-                    }
-                }
-            }
-            return null;
-        }
-
-        /**
-         * helper function to get the widget from a given page given the widgetId
-         * */
-        function search(page, id) {
-            let obj = page;
-            if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
-                console.log(obj.props.id);
-                return obj;
-            }
-            else if (obj.content) {
-                let x = null;
-                for (let i = 0; i < obj.content.length; i++) {
-                    x = x || search(obj.content[i], id);
-                }
-                return x;
-            }
-        }
-
-        var WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
-        let dashboard = this.props.getDashboard();
-        let pageId = this.props.getPageId();
-        let page = getPage(dashboard, pageId);
-        let widget = search(page, WidgetId);
-
-        let options = widget.props.configs.options;
+    handlePreferenceTextBoxEvent(event, newValue,options) {
         let optionId = event.target.id;
+        //
+        // for (let i = 0; i < options.length; i++) {
+        //     if (options[i].id === optionId) {
+        //         options[i].defaultData = newValue;
+        //         let stateObject = this.state;
+        //         stateObject.options = options;
+        //         this.setState(stateObject);
+        //     }
+        // }
 
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].id === optionId) {
-                options[i].defaultData = newValue;
-                let stateObject = this.state;
+        let that = this;
+
+        _.each(options, function(option) {
+            if (option.id === optionId) {
+                option.defaultData = newValue;
+                let stateObject = that.state;
                 stateObject.options = options;
-                this.setState(stateObject);
+                that.setState(stateObject);
             }
-        }
-        this.props.updateDashboardByWidgetConfPanel(dashboard);
+        });
+
+        this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
     }
 
-    handlePreferenceSelectListEvent(event, key, payload) {
+    handlePreferenceSelectListEvent(event, key, payload,options) {
 
-        /**
-         * helper function to get the page from a given dashboard given the pageId
-         * */
-        function getPage(dashboard, pageID) {
-            let pages = dashboard.pages;
-            if (pages) {
-                for (let i = 0; i < pages.length; i++) {
-                    let page = pages[i];
-                    if (page.id === pageID) {
-                        return page;
-                    }
-                }
-            }
-            return null;
-        }
+        // let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
 
-        /**
-         * helper function to get the widget from a given page given the widgetId
-         * */
-        function search(page, id) {
-            let obj = page;
-            if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
-                console.log(obj.props.id);
-                return obj;
-            }
-            else if (obj.content) {
-                let x = null;
-                for (let i = 0; i < obj.content.length; i++) {
-                    x = x || search(obj.content[i], id);
-                }
-                return x;
-            }
-        }
-
-        let WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
-        let dashboard = this.props.getDashboard();
-        let pageId = this.props.getPageId();
-        let page = getPage(dashboard, pageId);
-        let widget = search(page, WidgetId);
-
-        let options = widget.props.configs.options;
         let optionId = event.target.parentElement.parentElement.parentElement.id;
 
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].id === optionId) {
-                options[i].defaultData = payload;
-                let stateObject = this.state;
+        // for (let i = 0; i < options.length; i++) {
+        //     if (options[i].id === optionId) {
+        //         options[i].defaultData = payload;
+        //         let stateObject = this.state;
+        //         stateObject.options = options;
+        //         this.setState(stateObject);
+        //         }
+        // }
+
+        let that = this;
+
+        console.log("here",this)
+        _.each(options, function(option) {
+            if (option.id === optionId) {
+                option.defaultData = payload;
+                let stateObject = that.state;
                 stateObject.options = options;
-                this.setState(stateObject);
-                }
-        }
-        this.props.updateDashboardByWidgetConfPanel(dashboard);
+                that.setState(stateObject);
+            }
+        });
+
+
+        this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
     }
 
     persistPubSubWiringInDashboardJSON(content, subscriberId, publisherId) {
@@ -273,6 +263,7 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     getPublishers() {
+
         let publishers = [];
         if (dashboardLayout.selectedItem &&
             dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.types.indexOf("subscriber") !== -1) {
@@ -292,82 +283,150 @@ class WidgetConfigurationPanel extends React.Component {
 
 
     getPreferences() {
+
+        /**
+         * helper function to get the page from a given dashboard given the pageId
+         * */
+        function getPage(dashboard, pageID) {
+            let pages = dashboard.pages;
+            if (pages) {
+                // for (let i = 0; i < pages.length; i++) {
+                //     let page = pages[i];
+                //     if (page.id === pageID) {
+                //         return page;
+                //     }
+                // }
+                let pageResult = _.filter(pages, function(page) {
+                    return page.id === pageID;
+                })
+                return pageResult[0];
+            }
+            return null;
+        }
+
+        /**
+         * helper function to get the widget from a given page given the widgetId
+         * */
+        function search(page, id) {
+            let obj = page;
+            if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
+                return obj;
+            }
+            else if (obj.content) {
+                let widget = null;
+                for (let i = 0; i < obj.content.length; i++) {
+                    widget = widget || search(obj.content[i], id);
+                }
+                return widget;
+            }
+        }
+
         let preferences = [];
         if (!(dashboardLayout.selectedItem && dashboardLayout.selectedItem.config.content[0].props.configs)) {
             return <div>No Configurable Options</div>;
         }
 
-        let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
-        let newId = dashboardLayout.selectedItem.config.content[0].props.id;
+        let WidgetId = dashboardLayout.selectedItem.config.content[0].props.id;
+        let dashboard = this.props.getDashboard();
+        let pageId = this.props.getPageId();
+        let page = getPage(dashboard, pageId);
+        let widget = search(page, WidgetId);
 
-        if (this.state.id !== newId) {
+        let options = widget.props.configs.options;
+
+        if (this.state.id !== WidgetId) {
             let newState = this.state;
-            newState.options =  options;
-            newState.id = newId;
+            newState.options = options;
+            newState.id = WidgetId;
             this.setState(newState);
         }
 
         if (options) {
-            for (let i = 0; i < options.length; i++) {
-                switch (options[i].type) {
-                    case "TypeText":
-                        preferences.push(<div>
-                            {options[i].title} :<TextField id={options[i].id}
-                                                           defaultValue={this.state.options[i].defaultData}
-                                                           onChange={(event, newValue) => {
-                                                               event.persist();
-                                                               this.handlePreferenceTextBoxEvent(event, newValue)
-                                                           }    }
-                                                           name={options[i].title}/>
-                        </div>);
-                        break;
-                    case "TypeEnum":
-                        let items = [];
-                        if (options[i].possibleValues) {
-                            for (let j = 0; j < options[i].possibleValues.length; j++) {
-                                items.push(<MenuItem key={options[i].possibleValues[j]} id={options[i].id}
-                                                     value={options[i].possibleValues[j]}
-                                                     primaryText={options[i].possibleValues[j]}/>)
+                for (let i = 0; i < options.length; i++) {
+                    switch (options[i].type) {
+                        case "TypeText":
+                            preferences.push(<div className="options-list">
+                                {options[i].title} :<TextField id={options[i].id}
+                                                               defaultValue={this.state.options[i].defaultData}
+                                                               onChange={(event, newValue) => {
+                                                                   event.persist();
+                                                                   this.handlePreferenceTextBoxEvent(event, newValue,options)
+                                                               }    }
+                                                               name={options[i].title}/>
+                            </div>);
+                            break;
+                        case "TypeEnum":
+                            let items = [];
+                            if (options[i].possibleValues) {
+                                for (let j = 0; j < options[i].possibleValues.length; j++) {
+                                    items.push(<MenuItem key={options[i].possibleValues[j]} id={options[i].id}
+                                                         value={options[i].possibleValues[j]}
+                                                         primaryText={options[i].possibleValues[j]}/>)
+                                    }
                                 }
-                            }
-                        preferences.push(<div>
-                            {options[i].title} : <SelectField
-                            onChange={this.handlePreferenceSelectListEvent}
-                            value={this.state.options[i].defaultData}
-                            id={options[i].id}>
-                            {items}
-                        </SelectField>
-                        </div>);
-                        break;
-                    case "TypeBoolean":
-                        preferences.push(<div>
-                            <Checkbox id={options[i].id}
-                                      label={options[i].title}
-                                      onCheck={this.handlePreferenceCheckBoxEvent}
-                                      checked={this.state.options[i].defaultData}/>
-                        </div>);
-                        break;
-                    default :
-                        break;
+                            preferences.push(<div className="options-list">
+                                {options[i].title} : <SelectField
+                                onChange={(event, key, payload,)=>{this.handlePreferenceSelectListEvent(event, key, payload,options)}}
+                                value={this.state.options[i].defaultData}
+                                id={options[i].id}
+                                className="options-list">
+                                {items}
+                            </SelectField>
+                            </div>);
+                            break;
+                        case "TypeBoolean":
+                            preferences.push(<div className="options-list">
+                                <Checkbox id={options[i].id}
+                                          label={options[i].title}
+                                          onCheck={(event,isInputChecked)=>{this.handlePreferenceCheckBoxEvent(event,isInputChecked,options)}}
+                                          checked={this.state.options[i].defaultData}
+                                          className="options-list"/>
+                            </div>);
+                            break;
+                        default :
+                            break;
+                    }
                 }
             }
+
+            return preferences;
         }
 
-        return preferences;
-    }
 
     render() {
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
-            {/*<div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>*/}
-            {/*<div><FormattedMessage id="publisher.list.heading" defaultMessage="PublishersList"/></div>*/}
             <div>
-                <h1>Widget Configuration</h1>
-                <h2>Options</h2>
+            <div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>
+            <div><FormattedMessage id="publisher.list.heading" defaultMessage="PublishersList"/></div>
+                {this.getPublishers()}
+            </div>
+            <div>
+                <div><FormattedMessage id="Options.list.heading" defaultMessage="Options"/></div>
                 {this.getPreferences()}
             </div>
 
+            <div>
+                <List>
+                <Subheader>Nested List Items</Subheader>
+                <ListItem primaryText="Sent mail" leftIcon={<ContentSend />} />
+                <ListItem primaryText="Drafts" leftIcon={<ContentDrafts />} />
+                </List>
+
+            </div>
+
+                {/*<List>*/}
+                    {/*<Subheader>Nested List Items</Subheader>*/}
+                    {/*<ListItem primaryText="Sent mail" leftIcon={<ContentSend />} />*/}
+                    {/*<ListItem primaryText="Drafts" leftIcon={<ContentDrafts />} />*/}
+                    {/*<ListItem*/}
+                        {/*primaryText="Inbox"*/}
+                        {/*leftIcon={<ContentInbox />}*/}
+                        {/*initiallyOpen={true}*/}
+                        {/*primaryTogglesNestedList={true}*/}
+
+                    {/*/>*/}
         </Drawer>);
     }
 }

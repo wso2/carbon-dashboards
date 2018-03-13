@@ -1,19 +1,80 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * Conversation opened. 2 messages. All messages read.
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * Skip to content
+ * Using WSO2, Inc. Mail with screen readers
+ * Click here to enable desktop notifications for WSO2, Inc. Mail.   Learn more  Hide
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
+ * Fwd: Copyright Template of WSO2 for IntelliJ
+ * Inbox
+ * 	x
+ * 1. Me
+ * 	x
+ * Dilini Muthumala <dilini@wso2.com>
+ *
+ * AttachmentsJan 24
+ *
+ * to me
+ *
+ * ---------- Forwarded message ----------
+ * From: Gobinath Loganathan <gobinath@wso2.com>
+ * Date: Thu, Jul 28, 2016 at 10:55 AM
+ * Subject: Copyright Template of WSO2 for IntelliJ
+ * To: Sirojan Tharmakulasingam <sirojan@wso2.com>, Prakhash Sivakumar <prakhash@wso2.com>, Dilini Muthumala <dilini@wso2.com>, Anoukh Jayawardena <anoukh@wso2.com>
+ *
+ *
+ * Hi,
+ * According to the mail thread Issue With WSO2 License Header in Engineering group, the attached copyright template is the correct one to use.
+ *
+ * To add the template to IntelliJ:
+ * Inline image 1
+ *
+ * For more details: [1]
+ *
+ * [1] https://groups.google.com/a/wso2.com/forum/#!topic/engineering-group/Ga4YOPxMQpw/discussion
+ *
+ *
+ *
+ * Thanks & Regards,
+ * Gobinath
+ * Attachments area
+ * Irindu Nugawela <irindu@wso2.com>
+ *
+ * Jan 24
+ *
+ * to Dilini
+ * Thank you very much Akka
+ *
+ * Click here to Reply or Forward
+ * Using 23.44 GB
+ * Manage
+ * Program Policies
+ * Powered by
+ * Google
+ * Last account activity: 54 minutes ago
+ * Details
+ *
+ *
+ *
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ * Intellij Copyright Template.txt
+ * Displaying Intellij Copyright Template.txt.
  */
 
 import React, {Component} from 'react';
@@ -145,7 +206,6 @@ export default class DashboardDesigner extends Component {
     }
 
     render() {
-        console.log("render Invoked!");
         if (!this.state.isSessionValid) {
             return (
                 <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
@@ -273,7 +333,7 @@ export default class DashboardDesigner extends Component {
 
             let dashboard = this.getDashboard();
 
-            var optionsMap = {};
+            let optionsMap = {};
 
             /**
              * helper function to get the page from a given dashboard given the pageId
@@ -303,7 +363,7 @@ export default class DashboardDesigner extends Component {
                 let obj = page;
                 if (obj.type && obj.type === "component" && obj.props && obj.props.id) {
                     if (obj.props.configs.options) {
-                        let newObj = JSON.parse(JSON.stringify(obj))
+                        let newObj = JSON.parse(JSON.stringify(obj));
                         OptionsMap[obj.props.id] = newObj.props.configs.options;
                     }
                 }
@@ -323,7 +383,6 @@ export default class DashboardDesigner extends Component {
             function searchAndReplaceOptions(page, OptionsMap) {
                 let obj = page;
                 if (obj.type && obj.type === "component" && obj.props && obj.props.id) {
-                    console.log("Found and Replaced:", obj.props.id);
                     if (OptionsMap[obj.props.id]) {
                         obj.props.configs.options = OptionsMap[obj.props.id];
                     }
@@ -332,7 +391,6 @@ export default class DashboardDesigner extends Component {
                     for (let i = 0; i < obj.content.length; i++) {
                         searchAndReplaceOptions(obj.content[i], OptionsMap);
                     }
-
                 }
             }
 
