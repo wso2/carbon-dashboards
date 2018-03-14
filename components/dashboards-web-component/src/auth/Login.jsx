@@ -140,6 +140,7 @@ export default class Login extends Component {
                                onSubmit={this.authenticate}>
                         <TextField
                             fullWidth
+                            autoComplete="off"
                             floatingLabelText={<FormattedMessage id="login.username" defaultMessage="Username"/>}
                             value={this.state.username}
                             onChange={(e) => {
@@ -152,6 +153,7 @@ export default class Login extends Component {
                         <TextField
                             fullWidth
                             type="password"
+                            autoComplete="off"
                             floatingLabelText={<FormattedMessage id="login.password" defaultMessage="Password"/>}
                             value={this.state.password}
                             onChange={(e) => {
