@@ -10,3 +10,8 @@
 .container .app-logo{
     width: 50%;
 }
+
+.ues-signin-form a {
+    text-decoration: underline;
+    color: #337ab7;
+}
