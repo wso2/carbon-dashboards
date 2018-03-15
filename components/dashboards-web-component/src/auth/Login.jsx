@@ -192,7 +192,7 @@ export default class Login extends Component {
                                 />
                                 <a
                                     style={styles.cookiePolicyAnchor}
-                                    href="/privacy-policy/cookie-policy"
+                                    href="/policies/cookie-policy"
                                     target="_blank"
                                 >
                                     <FormattedMessage id="login.cookie.policy" defaultMessage="Cookie Policy"/>
@@ -209,10 +209,10 @@ export default class Login extends Component {
                                 />
                                 <a
                                     style={styles.cookiePolicyAnchor}
-                                    href="/privacy-policy/privacy-policy"
+                                    href="/policies/privacy-policy"
                                     target="_blank">
                                     <FormattedMessage id="login.privacy.policy" defaultMessage="Privacy Policy"/>
-                                </a>.
+                                </a>
                                 <FormattedMessage id="login.privacy.policy.after" defaultMessage="."/>
                             </div>
                         </div>
