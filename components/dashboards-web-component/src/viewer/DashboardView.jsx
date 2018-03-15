@@ -246,7 +246,7 @@ class DashboardView extends React.Component {
                                 <AppBar
                                     title=""
                                     iconClassNameRight="muidocs-icon-navigation-expand-more"
-                                    onLeftIconButtonTouchTap={this.handleToggle}
+                                    onLeftIconButtonClick={this.handleToggle}
                                     className="viewer-app-bar"
                                     iconElementRight={this.renderRightLinks()}
                                     containerStyle={{ paddingRight: 15 }}
