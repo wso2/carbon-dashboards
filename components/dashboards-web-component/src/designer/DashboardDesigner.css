@@ -161,6 +161,7 @@
 .widget-configuration-panel {
     padding-top: 125px;
     padding-left: 10px;
+    width: 270px;
 }
 
 .widget-configuration-panel-header {
@@ -170,13 +171,19 @@
 }
 
 .publishers-list {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .options-list {
-    margin-top: 10px;
+    margin-top: 0px;
     margin-bottom: 10px;
+}
+
+.options-list-header {
+    color: #24353F;
+    font-weight: bold;
+    font-size: 30px;
 }
 
 .home-page-checkbox {

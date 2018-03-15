@@ -86,19 +86,18 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-import List, { ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
-import ActionGrade from 'material-ui/svg-icons/action/grade';
-import ContentInbox from 'material-ui/svg-icons/content/inbox';
-import ContentDrafts from 'material-ui/svg-icons/content/drafts';
-import ContentSend from 'material-ui/svg-icons/content/send';
+import List, { ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
+import Divider from 'material-ui/Divider';
+
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
 
 // import notify from '../../utils/DashboardOptionListener';
 
-import {FormattedMessage} from 'react-intl';
+// import {FormattedMessage} from 'react-intl';
 
 
 const styles = {
@@ -120,12 +119,16 @@ class WidgetConfigurationPanel extends React.Component {
         this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent.bind(this), 900);
         this.handlePreferenceSelectListEvent = this.handlePreferenceSelectListEvent.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.getWidgetConfPanelContent = this.getWidgetConfPanelContent.bind(this);
+        this.getWidgetConfPanelContent2 = this.getWidgetConfPanelContent2.bind(this);
+
 
         this.state = {
             checked: false,
             options: null,
             id: null,
-            open: false
+            open: false,
+            dirty: false
         }
     }
 
@@ -220,7 +223,6 @@ class WidgetConfigurationPanel extends React.Component {
 
         let that = this;
 
-        console.log("here",this)
         _.each(options, function(option) {
             if (option.id === optionId) {
                 option.defaultData = payload;
@@ -263,7 +265,9 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     getPublishers() {
-
+        const labelStyle = {
+            fontSize: 12
+        };
         let publishers = [];
         if (dashboardLayout.selectedItem &&
             dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.types.indexOf("subscriber") !== -1) {
@@ -272,6 +276,7 @@ class WidgetConfigurationPanel extends React.Component {
                     dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers.indexOf(val) !== -1);
                 publishers.push(<Checkbox id={val}
                                           label={key.substring(0, key.length - 4)}
+                                          labelStyle={labelStyle}
                                           name={key}
                                           onCheck={this.handlePublisherCheckBoxEvent}
                                           checked={this.state.checked}
@@ -346,7 +351,8 @@ class WidgetConfigurationPanel extends React.Component {
                     switch (options[i].type) {
                         case "TypeText":
                             preferences.push(<div className="options-list">
-                                {options[i].title} :<TextField id={options[i].id}
+                                <TextField id={options[i].id}
+                                                               floatingLabelText = {options[i].title}
                                                                defaultValue={this.state.options[i].defaultData}
                                                                onChange={(event, newValue) => {
                                                                    event.persist();
@@ -365,7 +371,8 @@ class WidgetConfigurationPanel extends React.Component {
                                     }
                                 }
                             preferences.push(<div className="options-list">
-                                {options[i].title} : <SelectField
+                                <SelectField
+                                floatingLabelText={options[i].title}
                                 onChange={(event, key, payload,)=>{this.handlePreferenceSelectListEvent(event, key, payload,options)}}
                                 value={this.state.options[i].defaultData}
                                 id={options[i].id}
@@ -375,9 +382,13 @@ class WidgetConfigurationPanel extends React.Component {
                             </div>);
                             break;
                         case "TypeBoolean":
+                            const labelStyle = {
+                                fontSize: 12
+                            };
                             preferences.push(<div className="options-list">
                                 <Checkbox id={options[i].id}
                                           label={options[i].title}
+                                          labelStyle={labelStyle}
                                           onCheck={(event,isInputChecked)=>{this.handlePreferenceCheckBoxEvent(event,isInputChecked,options)}}
                                           checked={this.state.options[i].defaultData}
                                           className="options-list"/>
@@ -392,41 +403,89 @@ class WidgetConfigurationPanel extends React.Component {
             return preferences;
         }
 
+    getWidgetConfPanelContent(){
+
+        const stylePanelHeader = {
+            color: ' #d7dbdd ',
+        fontWeight: 'bold',
+        fontSize: 16
+        };
+
+        const styleListHeader = {
+            marginTop: 2,
+            marginBottom: 2,
+            backgroundColor:'#071921',
+            fontWeight: 'lighter',
+            fontSize: 14
+        };
+
+        const itemBackgroundStyle = {
+            backgroundColor: "#131a1f"
+        };
+
+        const listStyle = {
+            marginLeft: -8,
+        };
+
+        return ( <div>
+            <List style={listStyle}>
+                <Subheader style = {stylePanelHeader} className ="options-list-header" >Widget Configuration</Subheader>
+                <ListItem
+                    primaryText="Publishers"
+                    // leftIcon={<ContentSend />}
+                    initiallyOpen={true}
+                    primaryTogglesNestedList={true}
+                    nestedItems = {this.getPublishers()}
+                    nestedListStyle ={itemBackgroundStyle}
+                    className ="options-list-header"
+                    style = {styleListHeader}
+                />
+                <Divider inset={false} />
+                <ListItem
+                    primaryText="Options"
+                    // leftIcon={<ContentSend />}
+                    initiallyOpen={true}
+                    primaryTogglesNestedList={true}
+                    nestedItems = {this.getPreferences()}
+                    nestedListStyle ={itemBackgroundStyle}
+                    className ="options-list-header"
+                    style = {styleListHeader}
+                />
+            </List>
+        </div>);
+    }
+
+    getWidgetConfPanelContent2(){
+        return (
+            <Card>
+                <CardHeader
+                    title="Options"
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                />
+                <CardText expandable={true}>
+                    {this.getPreferences()}
+                </CardText>
+            </Card>
+        );
+    }
 
     render() {
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
-            <div>
-            <div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>
-            <div><FormattedMessage id="publisher.list.heading" defaultMessage="PublishersList"/></div>
-                {this.getPublishers()}
-            </div>
-            <div>
-                <div><FormattedMessage id="Options.list.heading" defaultMessage="Options"/></div>
-                {this.getPreferences()}
-            </div>
+            {/*<div>*/}
+            {/*<div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>*/}
+            {/*<div><FormattedMessage id="publisher.list.heading" defaultMessage="PublishersList"/></div>*/}
+                {/*{this.getPublishers()}*/}
+            {/*</div>*/}
+            {/*<div>*/}
+                {/*<div><FormattedMessage id="Options.list.heading" defaultMessage="Options"/></div>*/}
+                {/*{this.getPreferences()}*/}
+            {/*</div>*/}
 
-            <div>
-                <List>
-                <Subheader>Nested List Items</Subheader>
-                <ListItem primaryText="Sent mail" leftIcon={<ContentSend />} />
-                <ListItem primaryText="Drafts" leftIcon={<ContentDrafts />} />
-                </List>
+            {this.getWidgetConfPanelContent()}
 
-            </div>
-
-                {/*<List>*/}
-                    {/*<Subheader>Nested List Items</Subheader>*/}
-                    {/*<ListItem primaryText="Sent mail" leftIcon={<ContentSend />} />*/}
-                    {/*<ListItem primaryText="Drafts" leftIcon={<ContentDrafts />} />*/}
-                    {/*<ListItem*/}
-                        {/*primaryText="Inbox"*/}
-                        {/*leftIcon={<ContentInbox />}*/}
-                        {/*initiallyOpen={true}*/}
-                        {/*primaryTogglesNestedList={true}*/}
-
-                    {/*/>*/}
         </Drawer>);
     }
 }
