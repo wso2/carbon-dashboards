@@ -98,6 +98,8 @@ import {pubsubComponent} from '../../utils/PubSubComponent';
 // import notify from '../../utils/DashboardOptionListener';
 
 // import {FormattedMessage} from 'react-intl';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 
 
 const styles = {
@@ -121,7 +123,6 @@ class WidgetConfigurationPanel extends React.Component {
         this.handleClick = this.handleClick.bind(this);
         this.getWidgetConfPanelContent = this.getWidgetConfPanelContent.bind(this);
         this.getWidgetConfPanelContent2 = this.getWidgetConfPanelContent2.bind(this);
-
 
         this.state = {
             checked: false,
@@ -357,6 +358,7 @@ class WidgetConfigurationPanel extends React.Component {
                                                                onChange={(event, newValue) => {
                                                                    event.persist();
                                                                    this.handlePreferenceTextBoxEvent(event, newValue,options)
+                                                                   this.props.setWidgetConfigPanelDirty(true);
                                                                }    }
                                                                name={options[i].title}/>
                             </div>);
@@ -373,7 +375,7 @@ class WidgetConfigurationPanel extends React.Component {
                             preferences.push(<div className="options-list">
                                 <SelectField
                                 floatingLabelText={options[i].title}
-                                onChange={(event, key, payload,)=>{this.handlePreferenceSelectListEvent(event, key, payload,options)}}
+                                onChange={(event, key, payload,)=>{this.handlePreferenceSelectListEvent(event, key, payload,options),this.props.setWidgetConfigPanelDirty(true);}}
                                 value={this.state.options[i].defaultData}
                                 id={options[i].id}
                                 className="options-list">
@@ -389,7 +391,7 @@ class WidgetConfigurationPanel extends React.Component {
                                 <Checkbox id={options[i].id}
                                           label={options[i].title}
                                           labelStyle={labelStyle}
-                                          onCheck={(event,isInputChecked)=>{this.handlePreferenceCheckBoxEvent(event,isInputChecked,options)}}
+                                          onCheck={(event,isInputChecked)=>{this.handlePreferenceCheckBoxEvent(event,isInputChecked,options),this.props.setWidgetConfigPanelDirty(true);}}
                                           checked={this.state.options[i].defaultData}
                                           className="options-list"/>
                             </div>);
@@ -412,19 +414,27 @@ class WidgetConfigurationPanel extends React.Component {
         };
 
         const styleListHeader = {
-            marginTop: 2,
-            marginBottom: 2,
+            marginTop: 10,
             backgroundColor:'#071921',
             fontWeight: 'lighter',
             fontSize: 14
         };
 
         const itemBackgroundStyle = {
-            backgroundColor: "#131a1f"
+            backgroundColor: "#131a1f",
+            paddingLeft: 10
         };
 
         const listStyle = {
-            marginLeft: -8,
+            marginLeft: -10,
+            paddingLeft:10,
+            marginBottom: 10
+        };
+
+        const dividerStyle = {
+            marginLeft: -10,
+            marginTop:10,
+            marginBottom: 10
         };
 
         return ( <div>
@@ -440,7 +450,7 @@ class WidgetConfigurationPanel extends React.Component {
                     className ="options-list-header"
                     style = {styleListHeader}
                 />
-                <Divider inset={false} />
+                <Divider style={dividerStyle} inset={false} />
                 <ListItem
                     primaryText="Options"
                     // leftIcon={<ContentSend />}
@@ -470,6 +480,34 @@ class WidgetConfigurationPanel extends React.Component {
         );
     }
 
+    test(){
+        const actions = [
+            <FlatButton
+                label="No"
+                primary={true}
+                onClick={()=>{this.props.handleCloseWithNo()}}
+            />,
+            <FlatButton
+                label="Yes"
+                primary={true}
+                onClick={()=>{this.props.handleCloseWithYes()}}
+            />,
+        ];
+
+        return (
+            <div>
+                <Dialog
+                    title="You have unsaved Changes in Widget Configuration Panel"
+                    actions={actions}
+                    modal={true}
+                    open={this.props.isWidgetConfigPanelDirtyNotificationOpen}
+                >
+                    Do you want to save the changes ?
+                </Dialog>
+            </div>
+        );
+    }
+
     render() {
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
@@ -485,6 +523,7 @@ class WidgetConfigurationPanel extends React.Component {
             {/*</div>*/}
 
             {this.getWidgetConfPanelContent()}
+            {this.test()}
 
         </Drawer>);
     }

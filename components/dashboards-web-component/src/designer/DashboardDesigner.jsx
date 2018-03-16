@@ -174,7 +174,9 @@ export default class DashboardDesigner extends Component {
             publishers: [],
             hasPermission: true,
             hasDashboard: true,
-            isSessionValid: true
+            isSessionValid: true,
+            isWidgetConfigPanelDirty: false,
+            isWidgetConfigPanelDirtyNotificationOpen: false,
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
@@ -184,6 +186,10 @@ export default class DashboardDesigner extends Component {
         this.updatePageContent = this.updatePageContent.bind(this);
         this.getDashboard = this.getDashboard.bind(this);
         this.getPageId = this.getPageId.bind(this);
+        this.setWidgetConfigPanelDirty = this.setWidgetConfigPanelDirty.bind(this);
+        this.handleOpen = this.handleOpen.bind(this);
+        this.handleCloseWithNo = this.handleCloseWithNo.bind(this);
+        this.handleCloseWithYes = this.handleCloseWithYes.bind(this);
     }
 
     componentDidMount() {
@@ -281,6 +287,10 @@ export default class DashboardDesigner extends Component {
                                               updateDashboardByWidgetConfPanel={this.updateDashboardByWidgetConfPanel}
                                               getDashboard={this.getDashboard}
                                               getPageId={this.getPageId}
+                                              handleCloseWithYes={this.handleCloseWithYes}
+                                              handleCloseWithNo={this.handleCloseWithNo}
+                                              setWidgetConfigPanelDirty={this.setWidgetConfigPanelDirty}
+                                              isWidgetConfigPanelDirtyNotificationOpen={this.state.isWidgetConfigPanelDirtyNotificationOpen}
                                               open={this.state.widgetConfigPanelOpen}/>
                     {/* Notifier */}
                     <Snackbar
@@ -292,8 +302,26 @@ export default class DashboardDesigner extends Component {
         );
     }
 
+    setWidgetConfigPanelDirty(flag){
+        this.setState({isWidgetConfigPanelDirty: flag});
+    }
 
+    handleOpen(){
+        this.setState({isWidgetConfigPanelDirtyNotificationOpen: true});
+    };
+    handleCloseWithYes(){
+        this.updatePageContent();
+        this.handleCloseWithNo();
+
+    };
+    handleCloseWithNo(){
+        this.setState({isWidgetConfigPanelDirtyNotificationOpen: false});
+        this.setWidgetConfigPanelDirty(false);
+    };
     handleWidgetConfiguration(event, isSameWidgetClicked) {
+        if(this.state.isWidgetConfigPanelDirty){
+            this.handleOpen();
+        }
         this.setState({widgetConfigPanelOpen: !isSameWidgetClicked}, this.handleDashboardContainerStyles);
     }
 
@@ -406,7 +434,7 @@ export default class DashboardDesigner extends Component {
             newState.widgetConfigPanelOpen = false;
             this.setState(newState);
             this.handleDashboardContainerStyles();
-
+            this.setWidgetConfigPanelDirty(false);
             window.global.notify(this.context.intl.formatMessage({
                 id: "dashboard.update.success",
                 defaultMessage: "Dashboard updated successfully!"
