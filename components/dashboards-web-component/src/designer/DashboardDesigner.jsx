@@ -302,24 +302,27 @@ export default class DashboardDesigner extends Component {
         );
     }
 
-    setWidgetConfigPanelDirty(flag){
+    setWidgetConfigPanelDirty(flag) {
         this.setState({isWidgetConfigPanelDirty: flag});
     }
 
-    handleOpen(){
+    handleOpen() {
         this.setState({isWidgetConfigPanelDirtyNotificationOpen: true});
     };
-    handleCloseWithYes(){
+
+    handleCloseWithYes() {
         this.updatePageContent();
         this.handleCloseWithNo();
 
     };
-    handleCloseWithNo(){
+
+    handleCloseWithNo() {
         this.setState({isWidgetConfigPanelDirtyNotificationOpen: false});
         this.setWidgetConfigPanelDirty(false);
     };
+
     handleWidgetConfiguration(event, isSameWidgetClicked) {
-        if(this.state.isWidgetConfigPanelDirty){
+        if (this.state.isWidgetConfigPanelDirty) {
             this.handleOpen();
         }
         this.setState({widgetConfigPanelOpen: !isSameWidgetClicked}, this.handleDashboardContainerStyles);

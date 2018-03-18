@@ -86,16 +86,14 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-import List, { ListItem} from 'material-ui/List';
+import List, {ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
 
-// import notify from '../../utils/DashboardOptionListener';
 
 // import {FormattedMessage} from 'react-intl';
 import Dialog from 'material-ui/Dialog';
@@ -109,6 +107,40 @@ const styles = {
     }
 };
 
+const labelStyle = {
+    fontSize: 12
+};
+
+const stylePanelHeader = {
+    color: ' #d7dbdd ',
+    fontWeight: 'bold',
+    fontSize: 16
+};
+
+const styleListHeader = {
+    marginTop: 10,
+    backgroundColor: '#071921',
+    fontWeight: 'lighter',
+    fontSize: 14
+};
+
+const itemBackgroundStyle = {
+    backgroundColor: "#131a1f",
+    paddingLeft: 10
+};
+
+const listStyle = {
+    marginLeft: -10,
+    paddingLeft: 10,
+    marginBottom: 10
+};
+
+const dividerStyle = {
+    marginLeft: -10,
+    marginTop: 10,
+    marginBottom: 10
+};
+
 class WidgetConfigurationPanel extends React.Component {
 
     constructor(props) {
@@ -120,21 +152,14 @@ class WidgetConfigurationPanel extends React.Component {
         this.handlePreferenceTextBoxEvent = this.handlePreferenceTextBoxEvent.bind(this);
         this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent.bind(this), 900);
         this.handlePreferenceSelectListEvent = this.handlePreferenceSelectListEvent.bind(this);
-        this.handleClick = this.handleClick.bind(this);
         this.getWidgetConfPanelContent = this.getWidgetConfPanelContent.bind(this);
-        this.getWidgetConfPanelContent2 = this.getWidgetConfPanelContent2.bind(this);
 
         this.state = {
             checked: false,
             options: null,
             id: null,
             open: false,
-            dirty: false
         }
-    }
-
-    handleClick() {
-        this.setState({ open: !this.state.open })
     }
 
     handlePublisherCheckBoxEvent(event, isInputChecked) {
@@ -168,7 +193,7 @@ class WidgetConfigurationPanel extends React.Component {
 
         let that = this;
 
-        _.each(options, function(option) {
+        _.each(options, function (option) {
             if (option.id === optionId) {
                 option.defaultData = isInputChecked;
                 let stateObject = that.state;
@@ -181,7 +206,7 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
 
-    handlePreferenceTextBoxEvent(event, newValue,options) {
+    handlePreferenceTextBoxEvent(event, newValue, options) {
         let optionId = event.target.id;
         //
         // for (let i = 0; i < options.length; i++) {
@@ -195,7 +220,7 @@ class WidgetConfigurationPanel extends React.Component {
 
         let that = this;
 
-        _.each(options, function(option) {
+        _.each(options, function (option) {
             if (option.id === optionId) {
                 option.defaultData = newValue;
                 let stateObject = that.state;
@@ -207,9 +232,8 @@ class WidgetConfigurationPanel extends React.Component {
         this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
     }
 
-    handlePreferenceSelectListEvent(event, key, payload,options) {
+    handlePreferenceSelectListEvent(event, key, payload, options) {
 
-        // let options = dashboardLayout.selectedItem.config.content[0].props.configs.options;
 
         let optionId = event.target.parentElement.parentElement.parentElement.id;
 
@@ -224,7 +248,7 @@ class WidgetConfigurationPanel extends React.Component {
 
         let that = this;
 
-        _.each(options, function(option) {
+        _.each(options, function (option) {
             if (option.id === optionId) {
                 option.defaultData = payload;
                 let stateObject = that.state;
@@ -266,9 +290,6 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     getPublishers() {
-        const labelStyle = {
-            fontSize: 12
-        };
         let publishers = [];
         if (dashboardLayout.selectedItem &&
             dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.types.indexOf("subscriber") !== -1) {
@@ -302,7 +323,7 @@ class WidgetConfigurationPanel extends React.Component {
                 //         return page;
                 //     }
                 // }
-                let pageResult = _.filter(pages, function(page) {
+                let pageResult = _.filter(pages, function (page) {
                     return page.id === pageID;
                 })
                 return pageResult[0];
@@ -313,7 +334,7 @@ class WidgetConfigurationPanel extends React.Component {
         /**
          * helper function to get the widget from a given page given the widgetId
          * */
-        function search(page, id) {
+        function searchForWidget(page, id) {
             let obj = page;
             if (obj.type && obj.type === "component" && obj.props && obj.props.id && obj.props.id === id) {
                 return obj;
@@ -321,11 +342,12 @@ class WidgetConfigurationPanel extends React.Component {
             else if (obj.content) {
                 let widget = null;
                 for (let i = 0; i < obj.content.length; i++) {
-                    widget = widget || search(obj.content[i], id);
+                    widget = widget || searchForWidget(obj.content[i], id);
                 }
                 return widget;
             }
         }
+
 
         let preferences = [];
         if (!(dashboardLayout.selectedItem && dashboardLayout.selectedItem.config.content[0].props.configs)) {
@@ -336,7 +358,7 @@ class WidgetConfigurationPanel extends React.Component {
         let dashboard = this.props.getDashboard();
         let pageId = this.props.getPageId();
         let page = getPage(dashboard, pageId);
-        let widget = search(page, WidgetId);
+        let widget = searchForWidget(page, WidgetId);
 
         let options = widget.props.configs.options;
 
@@ -348,149 +370,106 @@ class WidgetConfigurationPanel extends React.Component {
         }
 
         if (options) {
-                for (let i = 0; i < options.length; i++) {
-                    switch (options[i].type) {
-                        case "TypeText":
-                            preferences.push(<div className="options-list">
-                                <TextField id={options[i].id}
-                                                               floatingLabelText = {options[i].title}
-                                                               defaultValue={this.state.options[i].defaultData}
-                                                               onChange={(event, newValue) => {
-                                                                   event.persist();
-                                                                   this.handlePreferenceTextBoxEvent(event, newValue,options)
-                                                                   this.props.setWidgetConfigPanelDirty(true);
-                                                               }    }
-                                                               name={options[i].title}/>
-                            </div>);
-                            break;
-                        case "TypeEnum":
-                            let items = [];
-                            if (options[i].possibleValues) {
-                                for (let j = 0; j < options[i].possibleValues.length; j++) {
-                                    items.push(<MenuItem key={options[i].possibleValues[j]} id={options[i].id}
-                                                         value={options[i].possibleValues[j]}
-                                                         primaryText={options[i].possibleValues[j]}/>)
-                                    }
-                                }
-                            preferences.push(<div className="options-list">
-                                <SelectField
+            for (let i = 0; i < options.length; i++) {
+                switch (options[i].type) {
+                    case "TypeText":
+                        preferences.push(<div className="options-list">
+                            <TextField id={options[i].id}
+                                       floatingLabelText={options[i].title}
+                                       defaultValue={this.state.options[i].defaultData}
+                                       onChange={(event, newValue) => {
+                                           event.persist();
+                                           this.handlePreferenceTextBoxEvent(event, newValue, options)
+                                           this.props.setWidgetConfigPanelDirty(true);
+                                       }}
+                                       name={options[i].title}/>
+                        </div>);
+                        break;
+                    case "TypeEnum":
+                        let items = [];
+                        if (options[i].possibleValues) {
+                            for (let j = 0; j < options[i].possibleValues.length; j++) {
+                                items.push(<MenuItem key={options[i].possibleValues[j]} id={options[i].id}
+                                                     value={options[i].possibleValues[j]}
+                                                     primaryText={options[i].possibleValues[j]}/>)
+                            }
+                        }
+                        preferences.push(<div className="options-list">
+                            <SelectField
                                 floatingLabelText={options[i].title}
-                                onChange={(event, key, payload,)=>{this.handlePreferenceSelectListEvent(event, key, payload,options),this.props.setWidgetConfigPanelDirty(true);}}
+                                onChange={(event, key, payload,) => {
+                                    this.handlePreferenceSelectListEvent(event, key, payload, options), this.props.setWidgetConfigPanelDirty(true);
+                                }}
                                 value={this.state.options[i].defaultData}
                                 id={options[i].id}
                                 className="options-list">
                                 {items}
                             </SelectField>
-                            </div>);
-                            break;
-                        case "TypeBoolean":
-                            const labelStyle = {
-                                fontSize: 12
-                            };
-                            preferences.push(<div className="options-list">
-                                <Checkbox id={options[i].id}
-                                          label={options[i].title}
-                                          labelStyle={labelStyle}
-                                          onCheck={(event,isInputChecked)=>{this.handlePreferenceCheckBoxEvent(event,isInputChecked,options),this.props.setWidgetConfigPanelDirty(true);}}
-                                          checked={this.state.options[i].defaultData}
-                                          className="options-list"/>
-                            </div>);
-                            break;
-                        default :
-                            break;
-                    }
+                        </div>);
+                        break;
+                    case "TypeBoolean":
+                        preferences.push(<div className="options-list">
+                            <Checkbox id={options[i].id}
+                                      label={options[i].title}
+                                      labelStyle={labelStyle}
+                                      onCheck={(event, isInputChecked) => {
+                                          this.handlePreferenceCheckBoxEvent(event, isInputChecked, options), this.props.setWidgetConfigPanelDirty(true);
+                                      }}
+                                      checked={this.state.options[i].defaultData}
+                                      className="options-list"/>
+                        </div>);
+                        break;
+                    default :
+                        break;
                 }
             }
-
-            return preferences;
         }
 
-    getWidgetConfPanelContent(){
+        return preferences;
+    }
 
-        const stylePanelHeader = {
-            color: ' #d7dbdd ',
-        fontWeight: 'bold',
-        fontSize: 16
-        };
-
-        const styleListHeader = {
-            marginTop: 10,
-            backgroundColor:'#071921',
-            fontWeight: 'lighter',
-            fontSize: 14
-        };
-
-        const itemBackgroundStyle = {
-            backgroundColor: "#131a1f",
-            paddingLeft: 10
-        };
-
-        const listStyle = {
-            marginLeft: -10,
-            paddingLeft:10,
-            marginBottom: 10
-        };
-
-        const dividerStyle = {
-            marginLeft: -10,
-            marginTop:10,
-            marginBottom: 10
-        };
-
-        return ( <div>
+    getWidgetConfPanelContent() {
+        return (<div>
             <List style={listStyle}>
-                <Subheader style = {stylePanelHeader} className ="options-list-header" >Widget Configuration</Subheader>
+                <Subheader style={stylePanelHeader} className="options-list-header">Widget Configuration</Subheader>
                 <ListItem
                     primaryText="Publishers"
-                    // leftIcon={<ContentSend />}
                     initiallyOpen={true}
                     primaryTogglesNestedList={true}
-                    nestedItems = {this.getPublishers()}
-                    nestedListStyle ={itemBackgroundStyle}
-                    className ="options-list-header"
-                    style = {styleListHeader}
+                    nestedItems={this.getPublishers()}
+                    nestedListStyle={itemBackgroundStyle}
+                    className="options-list-header"
+                    style={styleListHeader}
                 />
-                <Divider style={dividerStyle} inset={false} />
+                <Divider style={dividerStyle} inset={false}/>
                 <ListItem
                     primaryText="Options"
-                    // leftIcon={<ContentSend />}
                     initiallyOpen={true}
                     primaryTogglesNestedList={true}
-                    nestedItems = {this.getPreferences()}
-                    nestedListStyle ={itemBackgroundStyle}
-                    className ="options-list-header"
-                    style = {styleListHeader}
+                    nestedItems={this.getPreferences()}
+                    nestedListStyle={itemBackgroundStyle}
+                    className="options-list-header"
+                    style={styleListHeader}
                 />
             </List>
         </div>);
     }
 
-    getWidgetConfPanelContent2(){
-        return (
-            <Card>
-                <CardHeader
-                    title="Options"
-                    actAsExpander={true}
-                    showExpandableButton={true}
-                />
-                <CardText expandable={true}>
-                    {this.getPreferences()}
-                </CardText>
-            </Card>
-        );
-    }
-
-    test(){
+    WidgetConfDirtyNotifier() {
         const actions = [
             <FlatButton
                 label="No"
                 primary={true}
-                onClick={()=>{this.props.handleCloseWithNo()}}
+                onClick={() => {
+                    this.props.handleCloseWithNo()
+                }}
             />,
             <FlatButton
                 label="Yes"
                 primary={true}
-                onClick={()=>{this.props.handleCloseWithYes()}}
+                onClick={() => {
+                    this.props.handleCloseWithYes()
+                }}
             />,
         ];
 
@@ -515,16 +494,14 @@ class WidgetConfigurationPanel extends React.Component {
             {/*<div>*/}
             {/*<div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>*/}
             {/*<div><FormattedMessage id="publisher.list.heading" defaultMessage="PublishersList"/></div>*/}
-                {/*{this.getPublishers()}*/}
+            {/*{this.getPublishers()}*/}
             {/*</div>*/}
             {/*<div>*/}
-                {/*<div><FormattedMessage id="Options.list.heading" defaultMessage="Options"/></div>*/}
-                {/*{this.getPreferences()}*/}
+            {/*<div><FormattedMessage id="Options.list.heading" defaultMessage="Options"/></div>*/}
+            {/*{this.getPreferences()}*/}
             {/*</div>*/}
-
             {this.getWidgetConfPanelContent()}
-            {this.test()}
-
+            {this.WidgetConfDirtyNotifier()}
         </Drawer>);
     }
 }

@@ -14,14 +14,14 @@
                 "id": "xLabel",
                 "title": "X Label",
                 "type" : "TypeEnum",
-                "possibleValues" : ["Country", "Country Code", "Region", "Product", "Revenue", "Downloads", "Customers"],
+                "possibleValues" : ["Country", "Country Code", "Region", "Product"],
                 "defaultData" : "Product"
             },
             {
                 "id": "yLabel",
                 "title": "Y Label",
                 "type" : "TypeEnum",
-                "possibleValues" : ["Country", "Country Code", "Region", "Product", "Revenue", "Downloads", "Customers"],
+                "possibleValues" : ["Revenue", "Downloads", "Customers"],
                 "defaultData" : "Revenue"
             },
             {
