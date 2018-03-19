@@ -25,6 +25,7 @@
     "css-loader": "^0.28.4",
     "golden-layout": "^1.5.9",
     "html-loader": "^0.5.0",
+    "lodash": "^4.17.5",
     "material-ui": "^0.20.0",
     "material-ui-icons": "^1.0.0-beta.36",
     "prop-types": "^15.6.0",

@@ -18,7 +18,6 @@
  */
 
 import React, {Component} from 'react';
-import register from '../../Components/dashboards-web-component/src/utils/DashboardOptionListener.jsx';
 
 const SESSION_USER = 'DASHBOARD_USER';
 
