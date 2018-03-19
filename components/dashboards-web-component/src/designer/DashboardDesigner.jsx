@@ -1,62 +1,4 @@
 /*
- *
- * Conversation opened. 2 messages. All messages read.
- *
- * Skip to content
- * Using WSO2, Inc. Mail with screen readers
- * Click here to enable desktop notifications for WSO2, Inc. Mail.   Learn more  Hide
- *
- * Fwd: Copyright Template of WSO2 for IntelliJ
- * Inbox
- * 	x
- * 1. Me
- * 	x
- * Dilini Muthumala <dilini@wso2.com>
- *
- * AttachmentsJan 24
- *
- * to me
- *
- * ---------- Forwarded message ----------
- * From: Gobinath Loganathan <gobinath@wso2.com>
- * Date: Thu, Jul 28, 2016 at 10:55 AM
- * Subject: Copyright Template of WSO2 for IntelliJ
- * To: Sirojan Tharmakulasingam <sirojan@wso2.com>, Prakhash Sivakumar <prakhash@wso2.com>, Dilini Muthumala <dilini@wso2.com>, Anoukh Jayawardena <anoukh@wso2.com>
- *
- *
- * Hi,
- * According to the mail thread Issue With WSO2 License Header in Engineering group, the attached copyright template is the correct one to use.
- *
- * To add the template to IntelliJ:
- * Inline image 1
- *
- * For more details: [1]
- *
- * [1] https://groups.google.com/a/wso2.com/forum/#!topic/engineering-group/Ga4YOPxMQpw/discussion
- *
- *
- *
- * Thanks & Regards,
- * Gobinath
- * Attachments area
- * Irindu Nugawela <irindu@wso2.com>
- *
- * Jan 24
- *
- * to Dilini
- * Thank you very much Akka
- *
- * Click here to Reply or Forward
- * Using 23.44 GB
- * Manage
- * Program Policies
- * Powered by
- * Google
- * Last account activity: 54 minutes ago
- * Details
- *
- *
- *
  * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
@@ -188,8 +130,8 @@ export default class DashboardDesigner extends Component {
         this.getPageId = this.getPageId.bind(this);
         this.setWidgetConfigPanelDirty = this.setWidgetConfigPanelDirty.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
-        this.handleCloseWithNo = this.handleCloseWithNo.bind(this);
-        this.handleCloseWithYes = this.handleCloseWithYes.bind(this);
+        this.handleDialogCloseWithNo = this.handleDialogCloseWithNo.bind(this);
+        this.handleDialogCloseWithYes = this.handleDialogCloseWithYes.bind(this);
     }
 
     componentDidMount() {
@@ -310,13 +252,13 @@ export default class DashboardDesigner extends Component {
         this.setState({isWidgetConfigPanelDirtyNotificationOpen: true});
     };
 
-    handleCloseWithYes() {
+    handleDialogCloseWithYes() {
         this.updatePageContent();
-        this.handleCloseWithNo();
+        this.handleDialogCloseWithNo();
 
     };
 
-    handleCloseWithNo() {
+    handleDialogCloseWithNo() {
         this.setState({isWidgetConfigPanelDirtyNotificationOpen: false});
         this.setWidgetConfigPanelDirty(false);
     };

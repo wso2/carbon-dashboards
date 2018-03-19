@@ -1,62 +1,4 @@
 /*
- *
- * Conversation opened. 2 messages. All messages read.
- *
- * Skip to content
- * Using WSO2, Inc. Mail with screen readers
- * Click here to enable desktop notifications for WSO2, Inc. Mail.   Learn more  Hide
- *
- * Fwd: Copyright Template of WSO2 for IntelliJ
- * Inbox
- * 	x
- * 1. Me
- * 	x
- * Dilini Muthumala <dilini@wso2.com>
- *
- * AttachmentsJan 24
- *
- * to me
- *
- * ---------- Forwarded message ----------
- * From: Gobinath Loganathan <gobinath@wso2.com>
- * Date: Thu, Jul 28, 2016 at 10:55 AM
- * Subject: Copyright Template of WSO2 for IntelliJ
- * To: Sirojan Tharmakulasingam <sirojan@wso2.com>, Prakhash Sivakumar <prakhash@wso2.com>, Dilini Muthumala <dilini@wso2.com>, Anoukh Jayawardena <anoukh@wso2.com>
- *
- *
- * Hi,
- * According to the mail thread Issue With WSO2 License Header in Engineering group, the attached copyright template is the correct one to use.
- *
- * To add the template to IntelliJ:
- * Inline image 1
- *
- * For more details: [1]
- *
- * [1] https://groups.google.com/a/wso2.com/forum/#!topic/engineering-group/Ga4YOPxMQpw/discussion
- *
- *
- *
- * Thanks & Regards,
- * Gobinath
- * Attachments area
- * Irindu Nugawela <irindu@wso2.com>
- *
- * Jan 24
- *
- * to Dilini
- * Thank you very much Akka
- *
- * Click here to Reply or Forward
- * Using 23.44 GB
- * Manage
- * Program Policies
- * Powered by
- * Google
- * Last account activity: 54 minutes ago
- * Details
- *
- *
- *
  * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
@@ -182,15 +124,6 @@ class WidgetConfigurationPanel extends React.Component {
 
         let optionId = event.target.id;
 
-        // for (let i = 0; i < options.length; i++) {
-        //     if (options[i].id === optionId) {
-        //         options[i].defaultData = isInputChecked;
-        //         let stateObject = this.state;
-        //         stateObject.options = options;
-        //         this.setState(stateObject);
-        //     }
-        // }
-
         let that = this;
 
         _.each(options, function (option) {
@@ -208,15 +141,6 @@ class WidgetConfigurationPanel extends React.Component {
 
     handlePreferenceTextBoxEvent(event, newValue, options) {
         let optionId = event.target.id;
-        //
-        // for (let i = 0; i < options.length; i++) {
-        //     if (options[i].id === optionId) {
-        //         options[i].defaultData = newValue;
-        //         let stateObject = this.state;
-        //         stateObject.options = options;
-        //         this.setState(stateObject);
-        //     }
-        // }
 
         let that = this;
 
@@ -236,15 +160,6 @@ class WidgetConfigurationPanel extends React.Component {
 
 
         let optionId = event.target.parentElement.parentElement.parentElement.id;
-
-        // for (let i = 0; i < options.length; i++) {
-        //     if (options[i].id === optionId) {
-        //         options[i].defaultData = payload;
-        //         let stateObject = this.state;
-        //         stateObject.options = options;
-        //         this.setState(stateObject);
-        //         }
-        // }
 
         let that = this;
 
@@ -317,12 +232,6 @@ class WidgetConfigurationPanel extends React.Component {
         function getPage(dashboard, pageID) {
             let pages = dashboard.pages;
             if (pages) {
-                // for (let i = 0; i < pages.length; i++) {
-                //     let page = pages[i];
-                //     if (page.id === pageID) {
-                //         return page;
-                //     }
-                // }
                 let pageResult = _.filter(pages, function (page) {
                     return page.id === pageID;
                 })
