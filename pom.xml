@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.0.12-SNAPSHOT</version>
+    <version>4.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
@@ -36,6 +36,7 @@
         <module>components/dashboards/org.wso2.carbon.dashboards.core</module>
         <module>components/dashboards/org.wso2.carbon.dashboards.api</module>
         <module>components/dashboards-web-component</module>
+        <module>components/universal-widget</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
         <module>features/org.wso2.carbon.dashboards.portal.feature</module>
         <module>samples</module>
@@ -57,6 +58,13 @@
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>dashboards-web-component</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+
+            <!--Universal Widget-->
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>universal-widget</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
 
@@ -336,12 +344,6 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-                <artifactId>org.wso2.carbon.dashboards.samples.widgets.universal-widget</artifactId>
-                <version>${carbon.dashboards.version}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
                 <artifactId>org.wso2.carbon.dashboards.samples.widgets.user-info</artifactId>
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
@@ -378,7 +380,7 @@
     </dependencyManagement>
 
     <properties>
-        <carbon.dashboards.version>4.0.12-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.0.16-SNAPSHOT</carbon.dashboards.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>

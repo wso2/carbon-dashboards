@@ -37,6 +37,9 @@ const muiTheme = getMuiTheme(darkBaseTheme);
 const styles = {
     messageBox: {textAlign: 'center', color: 'white'},
     errorMessage: {backgroundColor: '#17262e', color: 'white', border: '2px solid #e74c3c'},
+    cookiePolicy: {padding: '10px', backgroundColor: '#fcf8e3', fontFamily: muiTheme.fontFamily,
+        border: '1px solid #faebcc', color: '#8a6d3b'},
+    cookiePolicyAnchor: {fontWeight: 'bold', color: '#8a6d3b'}
 };
 
 /**
@@ -137,6 +140,7 @@ export default class Login extends Component {
                                onSubmit={this.authenticate}>
                         <TextField
                             fullWidth
+                            autoComplete="off"
                             floatingLabelText={<FormattedMessage id="login.username" defaultMessage="Username"/>}
                             value={this.state.username}
                             onChange={(e) => {
@@ -149,6 +153,7 @@ export default class Login extends Component {
                         <TextField
                             fullWidth
                             type="password"
+                            autoComplete="off"
                             floatingLabelText={<FormattedMessage id="login.password" defaultMessage="Password"/>}
                             value={this.state.password}
                             onChange={(e) => {
@@ -176,6 +181,41 @@ export default class Login extends Component {
                             label={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                             disabledBackgroundColor="rgb(27, 40, 47)"
                         />
+                        <br />
+                        <br />
+                        <div style={styles.cookiePolicy}>
+                            <div>
+                                <FormattedMessage
+                                    id="login.cookie.policy.before"
+                                    defaultMessage="After a successful sign in, we use a cookie in your browser to
+                                    track your session. You can refer our "
+                                />
+                                <a
+                                    style={styles.cookiePolicyAnchor}
+                                    href="/policies/cookie-policy"
+                                    target="_blank"
+                                >
+                                    <FormattedMessage id="login.cookie.policy" defaultMessage="Cookie Policy"/>
+                                </a>
+                                <FormattedMessage id="login.cookie.policy.after" defaultMessage=" for more details."/>
+                            </div>
+                        </div>
+                        <br />
+                        <div style={styles.cookiePolicy}>
+                            <div>
+                                <FormattedMessage
+                                    id="login.privacy.policy.before"
+                                    defaultMessage="By signing in, you agree to our "
+                                />
+                                <a
+                                    style={styles.cookiePolicyAnchor}
+                                    href="/policies/privacy-policy"
+                                    target="_blank">
+                                    <FormattedMessage id="login.privacy.policy" defaultMessage="Privacy Policy"/>
+                                </a>
+                                <FormattedMessage id="login.privacy.policy.after" defaultMessage="."/>
+                            </div>
+                        </div>
                     </FormPanel>
                     <Snackbar
                         message={this.state.error}

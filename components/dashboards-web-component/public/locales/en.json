@@ -58,6 +58,11 @@
   "dashboard.unauthorized.message" : "You do not have sufficient privileges to access this page",
   "viewer.back.tooltip" : "Back to Home",
   "dashboard.notFound.title": "404 Page Not Found.",
-  "dashboard.notFound.message": "The Page you are trying to access may have been renamed, removed or might never existed."
-
+  "dashboard.notFound.message": "The Page you are trying to access may have been renamed, removed or might never existed.",
+  "login.cookie.policy.before": "After a successful sign in, we use a cookie in your browser to track your session. You can refer our ",
+  "login.cookie.policy": "Cookie Policy",
+  "login.cookie.policy.after": " for more details.",
+  "login.privacy.policy.before": "By signing in, you agree to our ",
+  "login.privacy.policy": "Privacy Policy",
+  "login.privacy.policy.after": "."
 }
