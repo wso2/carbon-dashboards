@@ -95,13 +95,11 @@ class RevenueByProduct extends Widget {
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
-
     }
 
     handleResize() {
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
-
 
     componentWillMount() {
         super.subscribe(this.setReceivedMsg);

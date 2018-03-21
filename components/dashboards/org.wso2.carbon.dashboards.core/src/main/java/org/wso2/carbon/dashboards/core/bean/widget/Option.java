@@ -14,9 +14,6 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
- * Intellij Copyright Template.txt
- * Displaying Intellij Copyright Template.txt.
  */
 package org.wso2.carbon.dashboards.core.bean.widget;
 
@@ -75,7 +72,4 @@ public class Option {
     public List<String> getPossibleValues() {
         return this.possibleValues;
     }
-
-
 }
-

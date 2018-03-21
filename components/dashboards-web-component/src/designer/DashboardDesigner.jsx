@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -14,9 +14,6 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
- * Intellij Copyright Template.txt
- * Displaying Intellij Copyright Template.txt.
  */
 
 import React, {Component} from 'react';
@@ -255,7 +252,6 @@ export default class DashboardDesigner extends Component {
     handleDialogCloseWithYes() {
         this.updatePageContent();
         this.handleDialogCloseWithNo();
-
     };
 
     handleDialogCloseWithNo() {
@@ -303,11 +299,8 @@ export default class DashboardDesigner extends Component {
             if (!pageId || pageId === '') {
                 pageId = this.state.dashboard.landingPage;
             }
-
             let dashboard = this.getDashboard();
-
             let optionsMap = {};
-
             /**
              * helper function to get the page from a given dashboard given the pageId
              * */
@@ -323,9 +316,7 @@ export default class DashboardDesigner extends Component {
                 }
                 return null;
             }
-
-            let page = getPage(dashboard, pageId);
-
+            let page = DashboardUtils.getPage(dashboard, pageId);
             /**
              * helper function to traverse the content of a page and find widgets to extract their options to a
              * given map
@@ -334,7 +325,7 @@ export default class DashboardDesigner extends Component {
              * */
             function searchForWidgetsInAPage(page, OptionsMap) {
                 let obj = page;
-                if (obj.type && obj.type === "component" && obj.props && obj.props.id) {
+                if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
                     if (obj.props.configs.options) {
                         let newObj = JSON.parse(JSON.stringify(obj));
                         OptionsMap[obj.props.id] = newObj.props.configs.options;
@@ -346,7 +337,6 @@ export default class DashboardDesigner extends Component {
                     }
                 }
             }
-
             /**
              * helper function to traverse the content of a page and finding widgets to replace their options with
              *their corresponding options in a given map against their id
@@ -355,7 +345,7 @@ export default class DashboardDesigner extends Component {
              * */
             function searchAndReplaceOptions(page, OptionsMap) {
                 let obj = page;
-                if (obj.type && obj.type === "component" && obj.props && obj.props.id) {
+                if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
                     if (OptionsMap[obj.props.id]) {
                         obj.props.configs.options = OptionsMap[obj.props.id];
                     }
@@ -366,15 +356,13 @@ export default class DashboardDesigner extends Component {
                     }
                 }
             }
-
-            searchForWidgetsInAPage(page, optionsMap);
+            DashboardUtils.searchForWidgetsInAPage(page, optionsMap);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
-            let newPage = getPage(dashboard, pageId);
-            searchAndReplaceOptions(newPage, optionsMap);
+            let newPage = DashboardUtils.getPage(dashboard, pageId);
+            DashboardUtils.searchAndReplaceOptions(newPage, optionsMap);
             this.cleanDashboardJSON(dashboard.pages);
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
-
             let newState = this.state;
             newState.widgetConfigPanelOpen = false;
             this.setState(newState);

@@ -8,7 +8,6 @@
                 "subscriber"
             ]
         },
-
         "options" : [
             {
                 "id": "xLabel",
@@ -29,7 +28,7 @@
                 "title": "Chart Colour",
                 "type" : "TypeEnum",
                 "possibleValues" : ["Red","Green","Yellow","Blue"],
-                "defaultData" : "green"
+                "defaultData" : "Green"
             }
         ]
     }

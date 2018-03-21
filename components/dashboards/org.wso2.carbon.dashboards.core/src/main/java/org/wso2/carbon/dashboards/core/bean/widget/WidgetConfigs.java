@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -14,16 +14,11 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
- * Intellij Copyright Template.txt
- * Displaying Intellij Copyright Template.txt.
  */
 package org.wso2.carbon.dashboards.core.bean.widget;
 
 import com.google.gson.JsonElement;
-
 import java.util.List;
-
 
 /**
  * Bean class for configs in widget configuration file.

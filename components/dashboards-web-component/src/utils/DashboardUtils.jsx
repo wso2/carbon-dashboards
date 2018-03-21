@@ -17,6 +17,7 @@
  *
  */
 
+import _ from 'lodash';
 export default class DashboardUtils {
     getDashboardByPageId(pageId, dashboardContent, landingPage) {
         let dashboardPageContent = [];
@@ -100,4 +101,76 @@ export default class DashboardUtils {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     };
+
+    /**
+     * helper function to traverse the content of a page and find widgets to extract their options to a
+     * given map
+     * @param page : the page to be traversed
+     * @param OptionsMap : the map to extract option configurations
+     * */
+    static searchForWidgetsInAPage(page, OptionsMap) {
+        let obj = page;
+        if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
+            if (obj.props.configs.options) {
+                let newObj = JSON.parse(JSON.stringify(obj));
+                OptionsMap[obj.props.id] = newObj.props.configs.options;
+            }
+        }
+        else if (obj.content) {
+            for (let i = 0; i < obj.content.length; i++) {
+                searchForWidgetsInAPage(obj.content[i], OptionsMap);
+            }
+        }
+    }
+
+    /**
+     * helper function to traverse the content of a page and finding widgets to replace their options with
+     *their corresponding options in a given map against their id
+     * @param page : the page to be traversed
+     * @param OptionsMap : the map to with option configurations
+     * */
+    static searchAndReplaceOptions(page, OptionsMap) {
+        let obj = page;
+        if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
+            if (OptionsMap[obj.props.id]) {
+                obj.props.configs.options = OptionsMap[obj.props.id];
+            }
+        }
+        else if (obj.content) {
+            for (let i = 0; i < obj.content.length; i++) {
+                searchAndReplaceOptions(obj.content[i], OptionsMap);
+            }
+        }
+    }
+
+    /**
+     * helper function to get the page from a given dashboard given the pageId
+     * */
+    static getPage(dashboard, pageID) {
+        let pages = dashboard.pages;
+        if (pages) {
+            let pageResult = _.filter(pages, function (page) {
+                return page.id === pageID;
+            })
+            return pageResult[0];
+        }
+        return null;
+    }
+
+    /**
+     * helper function to get the widget from a given page given the widgetId
+     * */
+    static searchForWidget(page, id) {
+        let obj = page;
+        if (obj.type && obj.type === 'component' && obj.props && obj.props.id && obj.props.id === id) {
+            return obj;
+        }
+        else if (obj.content) {
+            let widget = null;
+            for (let i = 0; i < obj.content.length; i++) {
+                widget = widget || searchForWidget(obj.content[i], id);
+            }
+            return widget;
+        }
+    }
 }

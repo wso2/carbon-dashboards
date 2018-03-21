@@ -38,6 +38,7 @@ export default class Widget extends Component {
         this.subscribe = this.subscribe.bind(this);
         this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
     }
+
     /**
      * This method publishers the queued messages in the widget. The messages are queued when the widget tried to
      * publish before initializing the dashboard.
