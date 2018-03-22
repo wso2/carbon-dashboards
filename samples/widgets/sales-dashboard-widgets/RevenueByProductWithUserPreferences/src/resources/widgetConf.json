@@ -28,7 +28,7 @@
                 "title": "Chart Colour",
                 "type" : "TypeEnum",
                 "possibleValues" : ["Red","Green","Yellow","Blue"],
-                "defaultData" : "Monaco"
+                "defaultData" : "Green"
             }
         ]
     }
