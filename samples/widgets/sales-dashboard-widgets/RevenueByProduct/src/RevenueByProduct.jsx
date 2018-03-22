@@ -1,22 +1,20 @@
 /*
- * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
- * You may obtain a copy of the License at
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  *
- * Intellij Copyright Template.txt
- * Displaying Intellij Copyright Template.txt.
  */
 
 import React, {Component} from 'react';
@@ -75,22 +73,23 @@ class RevenueByProduct extends Widget {
         this.state = {
             data: this.overallProductData,
             width: props.glContainer.width,
-            height: props.glContainer.height,
-            options: this.props.configs.options
+            height: props.glContainer.height
+
+        };
+
+        this.metadata = {
+            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Downloads', 'Customers'],
+            types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
 
         this.barChartConfig = {
-            x: this.state.options[0].defaultData,
-            charts: [{type: 'bar', y: this.state.options[1].defaultData, fill: this.state.options[2].defaultData}],
+            x: 'Product',
+            charts: [{type: 'bar', y: 'Revenue', fill: '#10c469'}],
             maxLength: 5,
             width: props.glContainer.width,
             height: props.glContainer.height,
             animate: true
         };
-        this.metadata = {
-            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Downloads', 'Customers'],
-            types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
-        };       
 
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
         this.handleResize = this.handleResize.bind(this);

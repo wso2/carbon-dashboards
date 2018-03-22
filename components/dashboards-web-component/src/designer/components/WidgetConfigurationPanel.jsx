@@ -30,6 +30,7 @@ import List, {ListItem} from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import Subheader from 'material-ui/Subheader';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
@@ -203,37 +204,6 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     getPreferences() {
-        /**
-         * helper function to get the page from a given dashboard given the pageId
-         * */
-        function getPage(dashboard, pageID) {
-            let pages = dashboard.pages;
-            if (pages) {
-                let pageResult = _.filter(pages, function (page) {
-                    return page.id === pageID;
-                })
-                return pageResult[0];
-            }
-            return null;
-        }
-
-        /**
-         * helper function to get the widget from a given page given the widgetId
-         * */
-        function searchForWidget(page, id) {
-            let obj = page;
-            if (obj.type && obj.type === 'component' && obj.props && obj.props.id && obj.props.id === id) {
-                return obj;
-            }
-            else if (obj.content) {
-                let widget = null;
-                for (let i = 0; i < obj.content.length; i++) {
-                    widget = widget || searchForWidget(obj.content[i], id);
-                }
-                return widget;
-            }
-        }
-
         let preferences = [];
         if (!(dashboardLayout.selectedItem && dashboardLayout.selectedItem.config.content[0].props.configs)) {
             return <div>No Configurable Options</div>;
@@ -243,7 +213,6 @@ class WidgetConfigurationPanel extends React.Component {
         let pageId = this.props.getPageId();
         let page = DashboardUtils.getPage(dashboard, pageId);
         let widget = DashboardUtils.searchForWidget(page, widgetId);
-
         let options = widget.props.configs.options;
 
         if (this.state.id !== widgetId) {
@@ -366,14 +335,14 @@ class WidgetConfigurationPanel extends React.Component {
         ];
 
         return (
-                <Dialog
-                    title="You have unsaved Changes in Widget Configuration Panel"
-                    actions={actions}
-                    modal={true}
-                    open={this.props.isWidgetConfigPanelDirtyNotificationOpen}
-                >
-                    Do you want to save the changes ?
-                </Dialog>
+            <Dialog
+                title="You have unsaved Changes in Widget Configuration Panel"
+                actions={actions}
+                modal={true}
+                open={this.props.isWidgetConfigPanelDirtyNotificationOpen}
+            >
+                Do you want to save the changes ?
+            </Dialog>
         );
     }
 

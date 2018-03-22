@@ -226,8 +226,8 @@ export default class DashboardDesigner extends Component {
                                               updateDashboardByWidgetConfPanel={this.updateDashboardByWidgetConfPanel}
                                               getDashboard={this.getDashboard}
                                               getPageId={this.getPageId}
-                                              handleCloseWithYes={this.handleCloseWithYes}
-                                              handleCloseWithNo={this.handleCloseWithNo}
+                                              handleDialogCloseWithYes={this.handleDialogCloseWithYes}
+                                              handleDialogCloseWithNo={this.handleDialogCloseWithNo}
                                               setWidgetConfigPanelDirty={this.setWidgetConfigPanelDirty}
                                               isWidgetConfigPanelDirtyNotificationOpen={this.state.isWidgetConfigPanelDirtyNotificationOpen}
                                               open={this.state.widgetConfigPanelOpen}/>
@@ -247,17 +247,17 @@ export default class DashboardDesigner extends Component {
 
     handleOpen() {
         this.setState({isWidgetConfigPanelDirtyNotificationOpen: true});
-    };
+    }
 
     handleDialogCloseWithYes() {
         this.updatePageContent();
         this.handleDialogCloseWithNo();
-    };
+    }
 
     handleDialogCloseWithNo() {
         this.setState({isWidgetConfigPanelDirtyNotificationOpen: false});
         this.setWidgetConfigPanelDirty(false);
-    };
+    }
 
     handleWidgetConfiguration(event, isSameWidgetClicked) {
         if (this.state.isWidgetConfigPanelDirty) {
@@ -301,61 +301,7 @@ export default class DashboardDesigner extends Component {
             }
             let dashboard = this.getDashboard();
             let optionsMap = {};
-            /**
-             * helper function to get the page from a given dashboard given the pageId
-             * */
-            function getPage(dashboard, pageID) {
-                let pages = dashboard.pages;
-                if (pages) {
-                    for (let i = 0; i < pages.length; i++) {
-                        let page = pages[i];
-                        if (page.id === pageID) {
-                            return page;
-                        }
-                    }
-                }
-                return null;
-            }
             let page = DashboardUtils.getPage(dashboard, pageId);
-            /**
-             * helper function to traverse the content of a page and find widgets to extract their options to a
-             * given map
-             * @param page : the page to be traversed
-             * @param OptionsMap : the map to extract option configurations
-             * */
-            function searchForWidgetsInAPage(page, OptionsMap) {
-                let obj = page;
-                if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
-                    if (obj.props.configs.options) {
-                        let newObj = JSON.parse(JSON.stringify(obj));
-                        OptionsMap[obj.props.id] = newObj.props.configs.options;
-                    }
-                }
-                else if (obj.content) {
-                    for (let i = 0; i < obj.content.length; i++) {
-                        searchForWidgetsInAPage(obj.content[i], OptionsMap);
-                    }
-                }
-            }
-            /**
-             * helper function to traverse the content of a page and finding widgets to replace their options with
-             *their corresponding options in a given map against their id
-             * @param page : the page to be traversed
-             * @param OptionsMap : the map to with option configurations
-             * */
-            function searchAndReplaceOptions(page, OptionsMap) {
-                let obj = page;
-                if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
-                    if (OptionsMap[obj.props.id]) {
-                        obj.props.configs.options = OptionsMap[obj.props.id];
-                    }
-                }
-                else if (obj.content) {
-                    for (let i = 0; i < obj.content.length; i++) {
-                        searchAndReplaceOptions(obj.content[i], OptionsMap);
-                    }
-                }
-            }
             DashboardUtils.searchForWidgetsInAPage(page, optionsMap);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;

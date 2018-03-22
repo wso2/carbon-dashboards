@@ -118,7 +118,7 @@ export default class DashboardUtils {
         }
         else if (obj.content) {
             for (let i = 0; i < obj.content.length; i++) {
-                searchForWidgetsInAPage(obj.content[i], OptionsMap);
+                this.searchForWidgetsInAPage(obj.content[i], OptionsMap);
             }
         }
     }
@@ -138,7 +138,7 @@ export default class DashboardUtils {
         }
         else if (obj.content) {
             for (let i = 0; i < obj.content.length; i++) {
-                searchAndReplaceOptions(obj.content[i], OptionsMap);
+                this.searchAndReplaceOptions(obj.content[i], OptionsMap);
             }
         }
     }
@@ -168,7 +168,7 @@ export default class DashboardUtils {
         else if (obj.content) {
             let widget = null;
             for (let i = 0; i < obj.content.length; i++) {
-                widget = widget || searchForWidget(obj.content[i], id);
+                widget = widget || this.searchForWidget(obj.content[i], id);
             }
             return widget;
         }
