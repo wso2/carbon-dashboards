@@ -48,7 +48,7 @@ const labelStyle = {
 };
 
 const stylePanelHeader = {
-    color: ' #d7dbdd ',
+    color: '#d7dbdd',
     fontWeight: 'bold',
     fontSize: 16
 };
