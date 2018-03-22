@@ -34,7 +34,6 @@ import Subheader from 'material-ui/Subheader';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
-// import {FormattedMessage} from 'react-intl';
 
 const styles = {
     widgetDrawer: {
@@ -350,15 +349,6 @@ class WidgetConfigurationPanel extends React.Component {
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
-            {/*<div>*/}
-            {/*<div className="widget-configuration-panel-header"><FormattedMessage id="widget.configuration" defaultMessage="Widget Configuration"/></div>*/}
-            {/*<div><FormattedMessage id="publisher.list.heading" defaultMessage="PublishersList"/></div>*/}
-            {/*{this.getPublishers()}*/}
-            {/*</div>*/}
-            {/*<div>*/}
-            {/*<div><FormattedMessage id="Options.list.heading" defaultMessage="Options"/></div>*/}
-            {/*{this.getPreferences()}*/}
-            {/*</div>*/}
             {this.getWidgetConfPanelContent()}
             {this.WidgetConfDirtyNotifier()}
         </Drawer>);
