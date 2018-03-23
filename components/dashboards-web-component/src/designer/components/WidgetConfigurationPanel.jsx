@@ -1,19 +1,20 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
- * You may obtain a copy of the License at
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
  */
 
 import React from 'react';
@@ -81,12 +82,12 @@ class WidgetConfigurationPanel extends React.Component {
     constructor(props) {
         super(props);
         this.getPublishers = this.getPublishers.bind(this);
-        this.getPreferences = this.getPreferences.bind(this);
+        this.getCurrentWidgetOptionsInputs = this.getCurrentWidgetOptionsInputs.bind(this);
         this.handlePublisherCheckBoxEvent = this.handlePublisherCheckBoxEvent.bind(this);
-        this.handlePreferenceCheckBoxEvent = this.handlePreferenceCheckBoxEvent.bind(this);
-        this.handlePreferenceTextBoxEvent = this.handlePreferenceTextBoxEvent.bind(this);
-        this.handlePreferenceTextBoxEvent = _.debounce(this.handlePreferenceTextBoxEvent.bind(this), 900);
-        this.handlePreferenceSelectListEvent = this.handlePreferenceSelectListEvent.bind(this);
+        this.handleWidgetOptionCheckBoxEvent = this.handleWidgetOptionCheckBoxEvent.bind(this);
+        this.handleWidgetOptionTextFieldEvent = this.handleWidgetOptionTextFieldEvent.bind(this);
+        this.handleWidgetOptionTextFieldEvent = _.debounce(this.handleWidgetOptionTextFieldEvent.bind(this), 900);
+        this.handleWidgetOptionSelectFieldEvent = this.handleWidgetOptionSelectFieldEvent.bind(this);
         this.getWidgetConfPanelContent = this.getWidgetConfPanelContent.bind(this);
 
         this.state = {
@@ -113,7 +114,7 @@ class WidgetConfigurationPanel extends React.Component {
         }
     }
 
-    handlePreferenceCheckBoxEvent(event, isInputChecked, options) {
+    handleWidgetOptionCheckBoxEvent(event, isInputChecked, options) {
         let optionId = event.target.id;
         let that = this;
         _.each(options, function (option) {
@@ -127,7 +128,7 @@ class WidgetConfigurationPanel extends React.Component {
         this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
     }
 
-    handlePreferenceTextBoxEvent(event, newValue, options) {
+    handleWidgetOptionTextFieldEvent(event, newValue, options) {
         let optionId = event.target.id;
         let that = this;
         _.each(options, function (option) {
@@ -141,7 +142,7 @@ class WidgetConfigurationPanel extends React.Component {
         this.props.updateDashboardByWidgetConfPanel(this.props.getDashboard());
     }
 
-    handlePreferenceSelectListEvent(event, key, payload, options) {
+    handleWidgetOptionSelectFieldEvent(event, key, payload, options) {
         let optionId = event.target.parentElement.parentElement.parentElement.id;
         let that = this;
         _.each(options, function (option) {
@@ -202,8 +203,8 @@ class WidgetConfigurationPanel extends React.Component {
         return publishers;
     }
 
-    getPreferences() {
-        let preferences = [];
+    getCurrentWidgetOptionsInputs() {
+        let CurrentWidgetOptionsInputs = [];
         if (!(dashboardLayout.selectedItem && dashboardLayout.selectedItem.config.content[0].props.configs)) {
             return <div>No Configurable Options</div>;
         }
@@ -224,21 +225,21 @@ class WidgetConfigurationPanel extends React.Component {
         if (options) {
             for (let i = 0; i < options.length; i++) {
                 switch (options[i].type) {
-                    case "TypeText":
-                        preferences.push(
+                    case "TEXT":
+                        CurrentWidgetOptionsInputs.push(
                             <div className="options-list">
                                 <TextField id={options[i].id}
                                            floatingLabelText={options[i].title}
                                            defaultValue={this.state.options[i].defaultData}
                                            onChange={(event, newValue) => {
                                                event.persist();
-                                               this.handlePreferenceTextBoxEvent(event, newValue, options)
+                                               this.handleWidgetOptionTextFieldEvent(event, newValue, options)
                                                this.props.setWidgetConfigPanelDirty(true);
                                            }}
                                            name={options[i].title}/>
                             </div>);
                         break;
-                    case "TypeEnum":
+                    case "ENUM":
                         let items = [];
                         if (options[i].possibleValues) {
                             for (let j = 0; j < options[i].possibleValues.length; j++) {
@@ -250,12 +251,12 @@ class WidgetConfigurationPanel extends React.Component {
                                     />)
                             }
                         }
-                        preferences.push(
+                        CurrentWidgetOptionsInputs.push(
                             <div className="options-list">
                                 <SelectField
                                     floatingLabelText={options[i].title}
                                     onChange={(event, key, payload,) => {
-                                        this.handlePreferenceSelectListEvent(event, key, payload, options), this.props.setWidgetConfigPanelDirty(true);
+                                        this.handleWidgetOptionSelectFieldEvent(event, key, payload, options), this.props.setWidgetConfigPanelDirty(true);
                                     }}
                                     value={this.state.options[i].defaultData}
                                     id={options[i].id}
@@ -264,15 +265,15 @@ class WidgetConfigurationPanel extends React.Component {
                                 </SelectField>
                             </div>);
                         break;
-                    case "TypeBoolean":
-                        preferences.push(
+                    case "BOOLEAN":
+                        CurrentWidgetOptionsInputs.push(
                             <div className="options-list">
                                 <Checkbox
                                     id={options[i].id}
                                     label={options[i].title}
                                     labelStyle={labelStyle}
                                     onCheck={(event, isInputChecked) => {
-                                        this.handlePreferenceCheckBoxEvent(event, isInputChecked, options), this.props.setWidgetConfigPanelDirty(true);
+                                        this.handleWidgetOptionCheckBoxEvent(event, isInputChecked, options), this.props.setWidgetConfigPanelDirty(true);
                                     }}
                                     checked={this.state.options[i].defaultData}
                                     className="options-list"
@@ -285,7 +286,7 @@ class WidgetConfigurationPanel extends React.Component {
             }
         }
 
-        return preferences;
+        return CurrentWidgetOptionsInputs;
     }
 
     getWidgetConfPanelContent() {
@@ -306,7 +307,7 @@ class WidgetConfigurationPanel extends React.Component {
                     primaryText="Options"
                     initiallyOpen={true}
                     primaryTogglesNestedList={true}
-                    nestedItems={this.getPreferences()}
+                    nestedItems={this.getCurrentWidgetOptionsInputs()}
                     nestedListStyle={itemBackgroundStyle}
                     className="options-list-header"
                     style={styleListHeader}

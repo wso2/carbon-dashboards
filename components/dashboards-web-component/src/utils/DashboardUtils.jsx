@@ -109,16 +109,15 @@ export default class DashboardUtils {
      * @param OptionsMap : the map to extract option configurations
      * */
     static searchForWidgetsInAPage(page, OptionsMap) {
-        let obj = page;
-        if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
-            if (obj.props.configs.options) {
-                let newObj = JSON.parse(JSON.stringify(obj));
-                OptionsMap[obj.props.id] = newObj.props.configs.options;
+        let objectToBeTraversed = page;
+        if (objectToBeTraversed.type === 'component' && objectToBeTraversed.props && objectToBeTraversed.props.id) {
+            if (objectToBeTraversed.props.configs.options) {
+                OptionsMap[objectToBeTraversed.props.id] = JSON.parse(JSON.stringify(objectToBeTraversedectTobeTraversed.props.configs.options));
             }
         }
-        else if (obj.content) {
-            for (let i = 0; i < obj.content.length; i++) {
-                this.searchForWidgetsInAPage(obj.content[i], OptionsMap);
+        else if (objectToBeTraversed.content) {
+            for (let i = 0; i < objectToBeTraversed.content.length; i++) {
+                this.searchForWidgetsInAPage(objectToBeTraversed.content[i], OptionsMap);
             }
         }
     }
@@ -130,15 +129,15 @@ export default class DashboardUtils {
      * @param OptionsMap : the map to with option configurations
      * */
     static searchAndReplaceOptions(page, OptionsMap) {
-        let obj = page;
-        if (obj.type && obj.type === 'component' && obj.props && obj.props.id) {
-            if (OptionsMap[obj.props.id]) {
-                obj.props.configs.options = OptionsMap[obj.props.id];
+        let objectToBeTraversed = page;
+        if (objectToBeTraversed.type === 'component' && objectToBeTraversed.props && objectToBeTraversed.props.id) {
+            if (OptionsMap[objectToBeTraversed.props.id]) {
+                objectToBeTraversed.props.configs.options = OptionsMap[objectToBeTraversed.props.id];
             }
         }
-        else if (obj.content) {
-            for (let i = 0; i < obj.content.length; i++) {
-                this.searchAndReplaceOptions(obj.content[i], OptionsMap);
+        else if (objectToBeTraversed.content) {
+            for (let i = 0; i < objectToBeTraversed.content.length; i++) {
+                this.searchAndReplaceOptions(objectToBeTraversed.content[i], OptionsMap);
             }
         }
     }
@@ -161,14 +160,14 @@ export default class DashboardUtils {
      * helper function to get the widget from a given page given the widgetId
      * */
     static searchForWidget(page, id) {
-        let obj = page;
-        if (obj.type && obj.type === 'component' && obj.props && obj.props.id && obj.props.id === id) {
-            return obj;
+        let objectToBeTraversed = page;
+        if (objectToBeTraversed.type === 'component' && objectToBeTraversed.props && objectToBeTraversed.props.id && objectToBeTraversed.props.id === id) {
+            return objectToBeTraversed;
         }
-        else if (obj.content) {
+        else if (objectToBeTraversed.content) {
             let widget = null;
-            for (let i = 0; i < obj.content.length; i++) {
-                widget = widget || this.searchForWidget(obj.content[i], id);
+            for (let i = 0; i < objectToBeTraversed.content.length; i++) {
+                widget = widget || this.searchForWidget(objectToBeTraversed.content[i], id);
             }
             return widget;
         }

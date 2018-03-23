@@ -25,7 +25,7 @@ import java.util.List;
 public class Option {
 
     enum Types {
-        TypeText, TypeEnum, TypeBoolean
+        TEXT, ENUM, BOOLEAN
     }
 
     private String id;
