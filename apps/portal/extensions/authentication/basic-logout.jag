@@ -20,10 +20,10 @@
 (function () {
 
     var sanitizeDestination = function (destination) {
-        if (!destination) {
-            return "/portal/";
+        if (destination && (destination.lastIndexOf("/portal", 0) === 0)) {
+            return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
         }
-        return destination.replace(/[^a-zA-Z0-9-_/&?=. ]/g, "");
+        return "/portal/";
     };
 
     var usr = require('/modules/user.js');
