@@ -105,7 +105,7 @@ class RevenueByProduct extends Widget {
     }
 
     setReceivedMsg(receivedMsg) {
-        if (receivedMsg.selectedRegion === "ALL") {
+        if (receivedMsg.selectedRegion === 'ALL') {
             this.setState({data: this.overallProductData})
         } else {
             let array = [];
