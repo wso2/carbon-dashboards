@@ -32,6 +32,7 @@ import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Subheader from 'material-ui/Subheader';
+import {FormattedMessage} from 'react-intl';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
@@ -341,7 +342,11 @@ class WidgetConfigurationPanel extends React.Component {
                 modal={true}
                 open={this.props.isWidgetConfigPanelDirtyNotificationOpen}
             >
-                Do you want to save the changes ?
+                <div>
+                    <FormattedMessage
+                        id="Widget.Configuration.panel.dirty.message"
+                        defaultMessage="Do you want to save the changes ?"/>
+                </div>
             </Dialog>
         );
     }
