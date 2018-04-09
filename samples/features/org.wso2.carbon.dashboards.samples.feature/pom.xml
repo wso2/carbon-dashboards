@@ -113,6 +113,11 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
+            <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-product-with-user-preferences</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.revenue-by-region</artifactId>
             <type>zip</type>
         </dependency>

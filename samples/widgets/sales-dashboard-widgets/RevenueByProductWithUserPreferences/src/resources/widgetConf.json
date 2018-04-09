@@ -1,6 +1,6 @@
 {
-    "name": "Revenue By Product",
-    "id": "RevenueByProduct",
+    "name": "Revenue By Product With User Preferences",
+    "id": "RevenueByProductWithUserPreferences",
     "thumbnailURL": "",
     "configs": {
         "pubsub": {
@@ -13,14 +13,14 @@
                 "id": "xLabel",
                 "title": "X Label",
                 "type" : "ENUM",
-                "possibleValues" : ["Country", "Country Code", "Region", "Product"],
+                "possibleValues" : ["Country", "Country Code", "Region", "Product", "Revenue", "Downloads", "Customers"],
                 "defaultData" : "Product"
             },
             {
                 "id": "yLabel",
                 "title": "Y Label",
                 "type" : "ENUM",
-                "possibleValues" : ["Revenue", "Downloads", "Customers"],
+                "possibleValues" : ["Country", "Country Code", "Region", "Product", "Revenue", "Downloads", "Customers"],
                 "defaultData" : "Revenue"
             },
             {

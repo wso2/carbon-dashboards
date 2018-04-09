@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -23,11 +23,11 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     context: path.resolve(__dirname, './src'),
     entry: {
-        index: './RevenueByProduct.jsx'
+        index: './RevenueByProductWithUserPreferences.jsx'
     },
     output: {
-        path: path.resolve(__dirname, './dist/RevenueByProduct/'),
-        filename: 'RevenueByProduct.js'
+        path: path.resolve(__dirname, './dist/RevenueByProductWithUserPreferences/'),
+        filename: 'RevenueByProductWithUserPreferences.js'
     },
     module: {
         loaders: [

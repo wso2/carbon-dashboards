@@ -14,18 +14,18 @@
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
  *  under the License.
+ *
  */
 
 import React, {Component} from 'react';
-import {Redirect, Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 // App Components
 import {Header} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
-import {widgetLoadingComponent, dashboardLayout} from '../utils/WidgetLoadingComponent';
+import {dashboardLayout, widgetLoadingComponent} from '../utils/WidgetLoadingComponent';
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
 import Error403 from '../error-pages/Error403';
-import Error404 from '../error-pages/Error404';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
 import WidgetConfigurationPanel from './components/WidgetConfigurationPanel';
@@ -114,13 +114,22 @@ export default class DashboardDesigner extends Component {
             publishers: [],
             hasPermission: true,
             hasDashboard: true,
-            isSessionValid: true
+            isSessionValid: true,
+            isWidgetConfigPanelDirty: false,
+            isWidgetConfigPanelDirtyNotificationOpen: false,
         };
         this.loadDashboard = this.loadDashboard.bind(this);
         this.registerNotifier = this.registerNotifier.bind(this);
         this.updateDashboard = this.updateDashboard.bind(this);
         this.handleWidgetConfiguration = this.handleWidgetConfiguration.bind(this);
+        this.updateDashboardByWidgetConfPanel = this.updateDashboardByWidgetConfPanel.bind(this);
         this.updatePageContent = this.updatePageContent.bind(this);
+        this.getDashboard = this.getDashboard.bind(this);
+        this.getPageId = this.getPageId.bind(this);
+        this.setWidgetConfigPanelDirty = this.setWidgetConfigPanelDirty.bind(this);
+        this.handleOpen = this.handleOpen.bind(this);
+        this.handleDialogCloseWithNo = this.handleDialogCloseWithNo.bind(this);
+        this.handleDialogCloseWithYes = this.handleDialogCloseWithYes.bind(this);
     }
 
     componentDidMount() {
@@ -167,7 +176,7 @@ export default class DashboardDesigner extends Component {
                         <Link to={window.contextPath + '/'}>
                             <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>}
                                           icon={<BackIcon/>} style={{'margin-right': '12px'}}
-                                          backgroundColor="rgb(13, 31, 39)" />
+                                          backgroundColor="rgb(13, 31, 39)"/>
                         </Link>
                         <FlatButton label={<FormattedMessage id="save.page.button" defaultMessage="Save Page"/>}
                                     primary
@@ -215,6 +224,13 @@ export default class DashboardDesigner extends Component {
                     />
 
                     <WidgetConfigurationPanel publishers={this.state.publishers}
+                                              updateDashboardByWidgetConfPanel={this.updateDashboardByWidgetConfPanel}
+                                              getDashboard={this.getDashboard}
+                                              getPageId={this.getPageId}
+                                              handleDialogCloseWithYes={this.handleDialogCloseWithYes}
+                                              handleDialogCloseWithNo={this.handleDialogCloseWithNo}
+                                              setWidgetConfigPanelDirty={this.setWidgetConfigPanelDirty}
+                                              isWidgetConfigPanelDirtyNotificationOpen={this.state.isWidgetConfigPanelDirtyNotificationOpen}
                                               open={this.state.widgetConfigPanelOpen}/>
                     {/* Notifier */}
                     <Snackbar
@@ -226,8 +242,28 @@ export default class DashboardDesigner extends Component {
         );
     }
 
+    setWidgetConfigPanelDirty(flag) {
+        this.setState({isWidgetConfigPanelDirty: flag});
+    }
+
+    handleOpen() {
+        this.setState({isWidgetConfigPanelDirtyNotificationOpen: true});
+    }
+
+    handleDialogCloseWithYes() {
+        this.updatePageContent();
+        this.handleDialogCloseWithNo();
+    }
+
+    handleDialogCloseWithNo() {
+        this.setState({isWidgetConfigPanelDirtyNotificationOpen: false});
+        this.setWidgetConfigPanelDirty(false);
+    }
 
     handleWidgetConfiguration(event, isSameWidgetClicked) {
+        if (this.state.isWidgetConfigPanelDirty) {
+            this.handleOpen();
+        }
         this.setState({widgetConfigPanelOpen: !isSameWidgetClicked}, this.handleDashboardContainerStyles);
     }
 
@@ -264,12 +300,21 @@ export default class DashboardDesigner extends Component {
             if (!pageId || pageId === '') {
                 pageId = this.state.dashboard.landingPage;
             }
-
-            let dashboard = this.state.dashboard;
+            let dashboard = this.getDashboard();
+            let optionsMap = {};
+            let page = DashboardUtils.getPage(dashboard, pageId);
+            DashboardUtils.searchForWidgetsInAPage(page, optionsMap);
             let p = DashboardUtils.findDashboardPageById(dashboard, pageId);
             p.content = dashboardLayout.toConfig().content;
+            let newPage = DashboardUtils.getPage(dashboard, pageId);
+            DashboardUtils.searchAndReplaceOptions(newPage, optionsMap);
             this.cleanDashboardJSON(dashboard.pages);
             new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
+            let newState = this.state;
+            newState.widgetConfigPanelOpen = false;
+            this.setState(newState);
+            this.handleDashboardContainerStyles();
+            this.setWidgetConfigPanelDirty(false);
             window.global.notify(this.context.intl.formatMessage({
                 id: "dashboard.update.success",
                 defaultMessage: "Dashboard updated successfully!"
@@ -280,9 +325,9 @@ export default class DashboardDesigner extends Component {
     }
 
     cleanDashboardJSON(content) {
-        if(!Array.isArray(content)) {
+        if (!Array.isArray(content)) {
             delete content.reorderEnabled;
-            if(content.hasOwnProperty('content')) {
+            if (content.hasOwnProperty('content')) {
                 delete content.activeItemIndex;
                 this.cleanDashboardJSON(content.content);
             } else {
@@ -290,7 +335,7 @@ export default class DashboardDesigner extends Component {
                 delete content.componentState;
                 delete content.header;
             }
-            if(content.hasOwnProperty('pages')) {
+            if (content.hasOwnProperty('pages')) {
                 this.cleanDashboardJSON(content.pages);
             }
         } else {
@@ -386,6 +431,34 @@ export default class DashboardDesigner extends Component {
         this.setState({
             dashboard: dashboard
         });
+    }
+
+    /**
+     * To get the current dashboard state
+     */
+    getDashboard() {
+        return this.state.dashboard;
+    }
+
+    /**
+     * To get the pageID of the current page at Designer view
+     */
+    getPageId() {
+        let pageId = this.props.match.params[1];
+        if (!pageId || pageId === '') {
+            pageId = this.state.dashboard.landingPage;
+        }
+        return pageId;
+    }
+
+    /**
+     * To reflect changes from Widget Configuration Panel on dashboard.
+     * @param dashboard
+     */
+    updateDashboardByWidgetConfPanel(dashboard) {
+        let state = this.state;
+        state.dashboard = dashboard;
+        this.setState(state);
     }
 
     /**

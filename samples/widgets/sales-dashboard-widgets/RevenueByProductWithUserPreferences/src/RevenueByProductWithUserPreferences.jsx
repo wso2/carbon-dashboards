@@ -1,27 +1,26 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- *  WSO2 Inc. licenses this file to you under the Apache License,
- *  Version 2.0 (the "License"); you may not use this file except
- *  in compliance with the License.
- *  You may obtain a copy of the License at
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import React, {Component} from 'react';
 import VizG from 'react-vizgrammar';
 import Widget from '@wso2-dashboards/widget';
 
-class RevenueByProduct extends Widget {
+class RevenueByProductWithUserPreferences extends Widget {
     constructor(props) {
         super(props);
         this.overallProductData = [
@@ -73,22 +72,21 @@ class RevenueByProduct extends Widget {
         this.state = {
             data: this.overallProductData,
             width: props.glContainer.width,
-            height: props.glContainer.height
-
-        };
-
-        this.metadata = {
-            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Downloads', 'Customers'],
-            types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
+            height: props.glContainer.height,
+            options: this.props.configs.options
         };
 
         this.barChartConfig = {
-            x: 'Product',
-            charts: [{type: 'bar', y: 'Revenue', fill: '#10c469'}],
+            x: this.state.options[0].defaultData,
+            charts: [{type: 'bar', y: this.state.options[1].defaultData, fill: this.state.options[2].defaultData}],
             maxLength: 5,
             width: props.glContainer.width,
             height: props.glContainer.height,
             animate: true
+        };
+        this.metadata = {
+            names: ['Country', 'Country Code', 'Region', 'Product', 'Revenue', 'Downloads', 'Customers'],
+            types: ['ordinal', 'ordinal', 'ordinal', 'ordinal', 'linear', 'linear', 'linear']
         };
 
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
@@ -135,4 +133,4 @@ class RevenueByProduct extends Widget {
     }
 }
 
-global.dashboard.registerWidget("RevenueByProduct", RevenueByProduct);
+global.dashboard.registerWidget("RevenueByProductWithUserPreferences", RevenueByProductWithUserPreferences);
