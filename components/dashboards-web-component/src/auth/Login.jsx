@@ -139,6 +139,7 @@ export default class Login extends Component {
                     <FormPanel title={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                                onSubmit={this.authenticate}>
                         <TextField
+                            autoFocus
                             fullWidth
                             autoComplete="off"
                             floatingLabelText={<FormattedMessage id="login.username" defaultMessage="Username"/>}
