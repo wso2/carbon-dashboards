@@ -20,7 +20,7 @@
 import { AppBar, FlatButton, IconButton, IconMenu, MenuItem } from 'material-ui';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
@@ -40,14 +40,18 @@ const styles = {
     title: {
         color: '#f5f5f5',
         lineHeight: '48px',
-        fontSize: '19px'
+        fontSize: '19px',
+        cursor: 'pointer'
+    },
+    icon : {
+        margin: '12px 8px 0 -11px'
     }
 };
 
 /**
  * Header component.
  */
-export default class Header extends Component {
+class Header extends Component {
     /**
      * Render right side header links.
      *
@@ -95,11 +99,12 @@ export default class Header extends Component {
         return (
             <AppBar
                 title={this.props.title}
-                iconElementLeft={<img height='24' src={Logo}/>}
-                iconStyleLeft={{margin:'12px 8px 0 -11px'}}
+                iconElementLeft={<Link to={`${window.contextPath}/`}><img height='24' src={Logo} /></Link>}
+                iconStyleLeft={styles.icon}
                 iconElementRight={this.renderRightLinks()}
                 style={styles.header}
                 titleStyle={styles.title}
+                onTitleClick={(e)=> this.props.history.push(`${window.contextPath}/`)}
             />
         );
     }
@@ -114,3 +119,5 @@ Header.defaultProps = {
     title: 'Portal',
     hideUserSettings: false,
 };
+
+export default withRouter(Header);
