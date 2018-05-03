@@ -97,11 +97,11 @@ class App extends Component {
     render() {
         return (
             <IntlProvider locale={language} messages={this.state.messages}>
-                <BrowserRouter history>
+                <BrowserRouter basename={appContext}>
                     <Switch>
                         {/* Authentication */}
-                        <Route path={`${appContext}/login`} component={Login} />
-                        <Route path={`${appContext}/logout`} component={Logout} />
+                        <Route path='/login' component={Login} />
+                        <Route path='/logout' component={Logout} />
                         {/* Secured routes */}
                         <Route component={SecuredRouter} />
                     </Switch>

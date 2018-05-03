@@ -61,7 +61,7 @@ class PageMenu extends Component {
                 nestedItems={subpages}
                 style={listItemStyleObject}
                 onClick={() => {
-                    this.props.history.push(`${window.contextPath}/dashboards/${this.props.dashboard.url}/${url}`);
+                    this.props.history.push(`/dashboards/${this.props.dashboard.url}/${url}`);
                 }}
             />
         );

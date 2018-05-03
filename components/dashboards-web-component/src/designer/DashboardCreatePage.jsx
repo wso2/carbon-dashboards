@@ -151,7 +151,7 @@ class DashboardCreatePage extends Component {
                                 defaultMessage: "Dashboard {name} is created successfully!"
                             }, {name: this.state.dashboard.name}), styles.successMessage);
                         setTimeout(() => {
-                            this.props.history.push(`${window.contextPath}/designer/${this.state.dashboard.url}`)
+                            this.props.history.push(`/designer/${this.state.dashboard.url}`)
                         }, 1000);
                         break;
                     }
@@ -268,7 +268,7 @@ class DashboardCreatePage extends Component {
                             label={<FormattedMessage id="cancel.button" defaultMessage="Cancel" />}
                             style={{'margin':'30px 10px'}}
                             backgroundColor="rgb(13, 31, 39)"
-                            containerElement={<Link to={`${window.contextPath}/`} />}
+                            containerElement={<Link to={'/'} />}
                         />
                     </FormPanel>
                     <Snackbar
