@@ -135,64 +135,6 @@ a {
     padding-left: 256px;
 }
 
-/* dashboard listing grid */
-.dashboard-listing-container {
-    position: fixed;
-    top: 130px;
-    right: 10px;
-    bottom: 10px;
-    left: 10px;
-}
-
-.dashboard-thumbnail {
-    width: 25%;
-    min-width: 350px;
-    float: left;
-    box-sizing: border-box;
-    font-family: Roboto, sans-serif;
-    position: relative;
-    display: block;
-}
-
-.dashboard-thumbnail .content {
-    background: #444;
-    padding: 15px;
-    margin: 6px;
-}
-
-.dashboard-thumbnail h4, .dashboard-thumbnail p {
-    margin: 0;
-    padding: 0;
-}
-
-.dashboard-thumbnail h4 {
-    font-size: 24px;
-    font-weight: normal;
-    margin-bottom: 5px;
-}
-
-.dashboard-thumbnail p {
-    font-size: 14px;
-}
-
-.dashboard-thumbnail .actions {
-    padding-top: 15px
-}
-
-.dashboard-thumbnail .actions a {
-    color: #eee;
-}
-
-.dashboard-thumbnail .actions .icon {
-    margin-right: 5px;
-}
-
-.dashboard-thumbnail .actions a.disabled {
-    opacity: .6;
-    pointer-events: none;
-    margin-left: 10px;
-}
-
 .widget-list-thumbnail {
     padding: 20px;
     margin: 25px;

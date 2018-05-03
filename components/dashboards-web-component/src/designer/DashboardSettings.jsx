@@ -113,7 +113,7 @@ class DashboardSettings extends Component {
                         defaultMessage: "Dashboard updated successfully!"
                     }));
                     setTimeout(() => {
-                        this.props.history.push(window.contextPath);
+                        this.props.history.push('/');
                     }, 1000);
                 }
             })
@@ -165,7 +165,7 @@ class DashboardSettings extends Component {
     render() {
         if (!this.state.isSessionValid) {
             return (
-                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
+                <Redirect to={{pathname: '/logout'}}/>
             );
         } else if (!this.state.hasPermission) {
             return <Error403/>;
@@ -250,7 +250,7 @@ class DashboardSettings extends Component {
                             label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>}
                             style={{'margin': '30px 10px'}}
                             backgroundColor="rgb(13, 31, 39)"
-                            containerElement={<Link to={`${window.contextPath}/`}/>}
+                            containerElement={<Link to={'/'}/>}
                         />
 
                     </FormPanel>

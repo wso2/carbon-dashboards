@@ -154,7 +154,7 @@ export default class DashboardDesigner extends Component {
     render() {
         if (!this.state.isSessionValid) {
             return (
-                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
+                <Redirect to={{pathname: '/logout'}}/>
             );
         }
         DashboardDesigner.loadTheme();
@@ -173,7 +173,7 @@ export default class DashboardDesigner extends Component {
 
                     {/* Portal navigation bar */}
                     <div className="navigation-bar">
-                        <Link to={window.contextPath + '/'}>
+                        <Link to={'/'}>
                             <RaisedButton label={<FormattedMessage id="back.button" defaultMessage="Back"/>}
                                           icon={<BackIcon/>} style={{'margin-right': '12px'}}
                                           backgroundColor="rgb(13, 31, 39)"/>
@@ -488,7 +488,7 @@ export default class DashboardDesigner extends Component {
 
     pageNavigated(id, url) {
         this.setState({
-            redirectUrl: window.contextPath + '/designer/' + this.state.dashboardId + '/' + url,
+            redirectUrl: `/designer/${this.state.dashboardId}/${url}`,
             redirect: true
         });
     }

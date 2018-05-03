@@ -34,7 +34,7 @@ export default class Logout extends Component {
     render() {
         AuthManager.logout();
         return (
-            <Redirect to={{ pathname: `${window.contextPath}/login` }} />
+            <Redirect to={{ pathname: '/login' }} />
         );
     }
 }

@@ -20,6 +20,8 @@
 import Axios from 'axios';
 import AuthManager from '../../auth/utils/AuthManager';
 
+const baseURL = `${window.location.origin}${window.contextPath}/apis/dashboards`;
+
 /**
  * Dashboard API.
  */
@@ -35,11 +37,21 @@ export default class DashboardAPI {
      */
     getHTTPClient() {
         let httpClient = Axios.create({
-            baseURL: window.location.origin + '' + contextPath + '/apis/dashboards',
+            baseURL: baseURL,
             timeout: 2000,
             headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID}
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
+        httpClient.interceptors.response.use(function (response) {
+            return response;
+        }, function (error) {
+            if (401 === error.response.status) {
+                AuthManager.discardSession();
+                window.handleSessionInvalid();
+            }
+            return Promise.reject(error);
+        });
+
         return httpClient;
     }
 

@@ -217,7 +217,7 @@ class GadgetsGenerationWizard extends Component {
                     this.displaySnackbar(`Widget ${this.state.gadgetDetails.name} was created successfully!`,
                         'successMessage');
                     setTimeout(() => {
-                        this.props.history.push(appContext);
+                        this.props.history.push('/');
                     }, 1000);
                 } else {
                     this.displaySnackbar('Failed to save the widget', 'errorMessage');

@@ -173,7 +173,7 @@ class DashboardView extends React.Component {
         return (
             <div className="viewer-header-right-btn-group">
                 <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
-                    <Link to={`${window.contextPath}/`}>
+                    <Link to={'/'}>
                         <IconButton
                             tooltip={<FormattedMessage id="viewer.back.tooltip" defaultMessage="Back to Home" />}>
                             <ActionHome />
@@ -187,7 +187,7 @@ class DashboardView extends React.Component {
                     >
                         <MenuItem
                             primaryText={<FormattedMessage id="logout" defaultMessage="Logout" />}
-                            containerElement={<Link to={`${window.contextPath}/logout`} />}
+                            containerElement={<Link to={'/logout'} />}
                         />
                     </IconMenu>
                 </MuiThemeProvider>
@@ -199,7 +199,7 @@ class DashboardView extends React.Component {
 
         if (!this.state.isSessionValid) {
             return (
-                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
+                <Redirect to={{pathname: '/logout'}}/>
             );
         }
 

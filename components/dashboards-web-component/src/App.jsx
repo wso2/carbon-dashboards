@@ -27,6 +27,8 @@ import Login from './auth/Login';
 import Logout from './auth/Logout';
 import SecuredRouter from './auth/SecuredRouter';
 
+import '../public/css/dashboard.css';
+
 /**
  * App context.
  */
@@ -97,11 +99,11 @@ class App extends Component {
     render() {
         return (
             <IntlProvider locale={language} messages={this.state.messages}>
-                <BrowserRouter history>
+                <BrowserRouter basename={appContext}>
                     <Switch>
                         {/* Authentication */}
-                        <Route path={`${appContext}/login`} component={Login} />
-                        <Route path={`${appContext}/logout`} component={Logout} />
+                        <Route path='/login' component={Login} />
+                        <Route path='/logout' component={Logout} />
                         {/* Secured routes */}
                         <Route component={SecuredRouter} />
                     </Switch>
@@ -110,5 +112,9 @@ class App extends Component {
         );
     }
 }
+
+// Following is exposed to the global space as widgets needs them as external/peer dependencies.
+global.React = React;
+global.ReactDOM = ReactDOM;
 
 ReactDOM.render(<App />, document.getElementById('content'));

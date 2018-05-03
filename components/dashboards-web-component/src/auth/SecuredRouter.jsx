@@ -24,15 +24,10 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import DashboardCreatePage from '../designer/DashboardCreatePage';
 import DashboardDesigner from '../designer/DashboardDesigner';
 import DashboardSettings from '../designer/DashboardSettings';
-import DashboardListing from '../listing/DashboardListing';
+import DashboardListingPage from '../listing/DashboardListingPage';
 import DashboardView from '../viewer/DashboardView';
 import AuthManager from './utils/AuthManager';
 import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
-
-/**
- * App context.
- */
-const appContext = window.contextPath;
 
 /**
  * Session skew.
@@ -43,6 +38,16 @@ const sessionSkew = 100;
  * Secured router (protects secured pages).
  */
 export default class SecuredRouter extends Component {
+
+    constructor() {
+        super();
+        this.handleSessionInvalid = this.handleSessionInvalid.bind(this);
+        window.handleSessionInvalid = this.handleSessionInvalid;
+    }
+
+    handleSessionInvalid() {
+        this.forceUpdate();
+    }
 
     /**
      * Refreshes the access token by validating the expiration timee.
@@ -57,6 +62,7 @@ export default class SecuredRouter extends Component {
             }
         }, 60000);
     }
+
     /**
      * Render routing.
      *
@@ -73,31 +79,31 @@ export default class SecuredRouter extends Component {
 
             const params = Qs.stringify({ referrer });
             return (
-                <Redirect to={{ pathname: `${appContext}/login`, search: params }} />
+                <Redirect to={{pathname: '/login', search: params}} />
             );
         }
 
         return (
             <Switch>
                 {/* Dashboard listing a.k.a. landing page */}
-                <Route exact path={appContext} component={DashboardListing} />
+                <Route exact path={'/'} component={DashboardListingPage} />
 
                 {/* Create dashboard */}
-                <Route exact path={`${appContext}/create`} component={DashboardCreatePage} />
+                <Route exact path={'/create'} component={DashboardCreatePage} />
 
                 {/* Create gadget */}
-                <Route exact path={`${appContext}/createGadget`} component={GadgetsGenerationWizard} />
+                <Route exact path={'/createGadget'} component={GadgetsGenerationWizard} />
 
                 {/* Dashboard settings */}
-                <Route exact path={`${appContext}/settings/:id`} component={DashboardSettings} />
+                <Route exact path={'/settings/:id'} component={DashboardSettings} />
 
                 {/* Dashboard designer */}
-                <Route exact path='*/designer/:dashboardId' component={DashboardDesigner} />
-                <Route path='*/designer/:dashboardId/*' component={DashboardDesigner} />
+                <Route exact path='/designer/:dashboardId' component={DashboardDesigner} />
+                <Route path='/designer/:dashboardId/*' component={DashboardDesigner} />
 
                 {/* Dashboard view */}
-                <Route exact path='*/dashboards/:id' component={DashboardView} />
-                <Route path='*/dashboards/:id/*' component={DashboardView} />
+                <Route exact path='/dashboards/:id' component={DashboardView} />
+                <Route path='/dashboards/:id/*' component={DashboardView} />
             </Switch>
         );
     }

@@ -68,7 +68,7 @@ class Header extends Component {
             return (
                 <FlatButton
                     label="Login"
-                    containerElement={<Link to={`${window.contextPath}/login?referrer=${window.location.pathname}`} />}
+                    containerElement={<Link to={`/login?referrer=${window.location.pathname}`} />}
                 />
             );
         }
@@ -83,7 +83,7 @@ class Header extends Component {
                 >
                     <MenuItem
                         primaryText={<FormattedMessage id="logout" defaultMessage="Logout" />}
-                        containerElement={<Link to={`${window.contextPath}/logout`} />}
+                        containerElement={<Link to={'/logout'} />}
                     />
                 </IconMenu>
             </div>
@@ -99,12 +99,12 @@ class Header extends Component {
         return (
             <AppBar
                 title={this.props.title}
-                iconElementLeft={<Link to={`${window.contextPath}/`}><img height='24' src={Logo} /></Link>}
+                iconElementLeft={<Link to={'/'}><img height='24' src={Logo} /></Link>}
                 iconStyleLeft={styles.icon}
                 iconElementRight={this.renderRightLinks()}
                 style={styles.header}
                 titleStyle={styles.title}
-                onTitleClick={(e)=> this.props.history.push(`${window.contextPath}/`)}
+                onTitleClick={(e)=> this.props.history.push('/')}
             />
         );
     }

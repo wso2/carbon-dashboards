@@ -19,140 +19,178 @@
 
 import React from 'react';
 import {Link} from 'react-router-dom';
-
-import DashboardAPI from '../utils/apis/DashboardAPI';
-
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-
+import Snackbar from 'material-ui/Snackbar';
 import {FormattedMessage} from 'react-intl';
+import DashboardAPI from '../utils/apis/DashboardAPI';
+import PropTypes from 'prop-types';
+import './dashboard-thumbnail-styles.css';
 
-class DashboardThumbnail extends React.Component {
+const styles = {
+    card: {backgroundColor: '#5d6e77'},
+    title: {color: '#eee'},
+    subtitle: {color: '#ccc', height: 17},
+    errorMessage: {backgroundColor: '#FF5722', color: 'white'},
+    successMessage: {backgroundColor: '#4CAF50', color: 'white'}
+};
 
-    constructor() {
+export default class DashboardThumbnail extends React.Component {
+
+    constructor(props) {
         super();
-        this.deleteDashboard = this.deleteDashboard.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleOpen = this.handleOpen.bind(this);
-        this.generateDashboardThumbnail = this.generateDashboardThumbnail.bind(this);
         this.state = {
-            deleteDashboardDialog: false
+            isDashboardDeleteConfirmDialogOpen: false,
+            dashboardDeleteActionResult: null
         };
+        this.dashboard = props.dashboard;
+
+        this.handleDashboardDeleteConfirmDialogOpen = this.handleDashboardDeleteConfirmDialogOpen.bind(this);
+        this.handleDashboardDeletionConfirm = this.handleDashboardDeletionConfirm.bind(this);
+        this.handleDashboardDeletionCancel = this.handleDashboardDeletionCancel.bind(this);
+
+        this.renderActionButtons = this.renderActionButtons.bind(this);
+        this.renderDashboardDeleteConfirmDialog = this.renderDashboardDeleteConfirmDialog.bind(this);
+        this.renderDashboardDeletionResultMessage = this.renderDashboardDeletionResultMessage.bind(this);
     }
 
-    handleOpen() {
-        this.setState({deleteDashboardDialog: true});
+    handleDashboardDeleteConfirmDialogOpen() {
+        this.setState({isDashboardDeleteConfirmDialogOpen: true});
     }
 
-    handleClose() {
-        this.setState({deleteDashboardDialog: false});
+    handleDashboardDeletionCancel() {
+        this.setState({isDashboardDeleteConfirmDialogOpen: false});
     }
 
-    deleteDashboard() {
-        let dashboardAPI = new DashboardAPI();
-        dashboardAPI.deleteDashboardByID(this.props.dashboard.url);
-        this.props.handleDelete();
-        this.setState({deleteDashboardDialog: false});
+    handleDashboardDeletionConfirm() {
+        new DashboardAPI().deleteDashboardByID(this.dashboard.url)
+            .then((response) => {
+                this.setState({dashboardDeleteActionResult: 'success'});
+            }).catch(function (error) {
+                this.setState({dashboardDeleteActionResult: 'fail'});
+            }
+        );
     }
 
     render() {
-        let styles = {
-            card: {
-                "background-color": "#5d6e77"
-            },
-            title: {
-                "color": "#eee"
-            },
-            subtitle: {
-                "color": "#ccc",
-                height: 17
-            }
-        };
+        if (this.state.dashboardDeleteActionResult) {
+            return (
+                <div>
+                    {this.renderDashboardDeletionResultMessage()}
+                </div>
+            );
+        }
 
-        let actionsButtons = [
-            <FlatButton
-                label={<FormattedMessage id="confirmation.yes" defaultMessage="Yes"/>}
-                primary={true}
-                onClick={this.deleteDashboard}
-            />,
-            <FlatButton
-                label={<FormattedMessage id="confirmation.no" defaultMessage="No"/>}
-                primary={true}
-                onClick={this.handleClose}
-            />,
-        ];
-
-        let dashboardThumbnail = this.generateDashboardThumbnail();
-
+        const actionButtons = this.renderActionButtons();
         return (
             <div>
-                <Dialog
-                    title={"Do you want to delete '" + this.props.dashboard.name + "' ?"}
-                    actions={actionsButtons}
-                    modal={true}
-                    open={this.state.deleteDashboardDialog}
-                ></Dialog>
-                <div className="dashboard-thumbnail">
-                    {dashboardThumbnail.deleteButton}
-                    <div style={styles.card} className="content">
-                        <h4 style={styles.title}>{this.props.dashboard.name}</h4>
-                        <p style={styles.subtitle}>{this.props.dashboard.description}</p>
-                        <div className="actions">
-                            <Link to={"dashboards/" + this.props.dashboard.url}>
-                                <span className="fw-stack icon">
-                                    <i className="fw fw-circle-outline fw-stack-2x"></i>
-                                    <i className="fw fw-view fw-stack-1x"></i>
-                                </span>
-                                <FormattedMessage id="view.button" defaultMessage="View"/>
-                            </Link>
-                            {dashboardThumbnail.designerButton}
-                            {dashboardThumbnail.settingsButton}
+                {this.renderDashboardDeleteConfirmDialog()}
+                <div className='dashboard-thumbnail'>
+                    {actionButtons.deleteButton}
+                    <div style={styles.card} className='content'>
+                        <h4 style={styles.title}>{this.dashboard.name}</h4>
+                        <p style={styles.subtitle}>{this.dashboard.description}</p>
+                        <div className='actions'>
+                            {actionButtons.viewButton}
+                            {actionButtons.designButton}
+                            {actionButtons.settingsButton}
                         </div>
                     </div>
                 </div>
+                {this.renderDashboardDeletionResultMessage()}
             </div>
         );
     }
 
-    generateDashboardThumbnail() {
+    renderActionButtons() {
+        let viewButton = (
+            <Link to={`/dashboards/${this.dashboard.url}`}>
+                <span className='fw-stack icon'>
+                    <i className='fw fw-circle-outline fw-stack-2x'></i><i className='fw fw-view fw-stack-1x'></i>
+                </span>
+                <FormattedMessage id='view.button' defaultMessage='View' />
+            </Link>
+        );
 
-        let deleteBtn = (
-            <div className="trash-button-div" onClick={this.handleOpen}>
-                <a href="#">
-                    <i className="fw fw-delete trash-button-icon" title="Delete Dashboard"></i>
+        let deleteButton = this.dashboard.hasOwnerPermission ? (
+            <div className='trash-button-div' onClick={this.handleDashboardDeleteConfirmDialogOpen}>
+                <a href='#'>
+                    <i className='fw fw-delete trash-button-icon' title='Delete Dashboard'></i>
                 </a>
             </div>
-        );
+        ) : null;
 
-        let designerBtn = (
-            <Link to={"designer/" + this.props.dashboard.url}>
-                <span className="fw-stack icon edit-dashboard-icon">
-                    <i className="fw fw-circle-outline fw-stack-2x"></i>
-                    <i className="fw fw-edit fw-stack-1x"></i>
+        let designButton = this.dashboard.hasDesignerPermission ? (
+            <Link to={`/designer/${this.dashboard.url}`}>
+                <span className='fw-stack icon edit-dashboard-icon'>
+                    <i className='fw fw-circle-outline fw-stack-2x'></i><i className='fw fw-edit fw-stack-1x'></i>
                 </span>
-                <FormattedMessage id="design.button" defaultMessage="Design"/>
+                <FormattedMessage id='design.button' defaultMessage='Design' />
             </Link>
-        );
+        ) : null;
 
-        let settingsBtn = (
-            <Link to={"settings/" + this.props.dashboard.url}>
-                <span className="fw-stack icon edit-dashboard-icon">
-                    <i className="fw fw-circle-outline fw-stack-2x"></i>
-                    <i className="fw fw-settings fw-stack-1x"></i>
+        let settingsButton = this.dashboard.hasOwnerPermission ? (
+            <Link to={`/settings/${this.dashboard.url}`}>
+                <span className='fw-stack icon edit-dashboard-icon'>
+                    <i className='fw fw-circle-outline fw-stack-2x'></i><i className='fw fw-settings fw-stack-1x'></i>
                 </span>
-                <FormattedMessage id="settings.button" defaultMessage="Settings"/>
+                <FormattedMessage id='settings.button' defaultMessage='Settings' />
             </Link>
-        );
+        ) : null;
 
-        if (!this.props.dashboard.hasOwnerPermission) {
-            deleteBtn = null;
-            settingsBtn = null;
+        return {deleteButton, viewButton, designButton, settingsButton};
+    }
+
+    renderDashboardDeleteConfirmDialog() {
+        let actionsButtons = [
+            <FlatButton
+                label={<FormattedMessage id='dialog-box.confirmation.no' defaultMessage='No' />}
+                primary={true}
+                onClick={this.handleDashboardDeletionCancel}
+            />,
+            <FlatButton
+                label={<FormattedMessage id='dialog-box.confirmation.yes' defaultMessage='Yes' />}
+                primary={true}
+                onClick={this.handleDashboardDeletionConfirm}
+            />
+        ];
+
+        return (
+            <Dialog
+                title={`Do you want to delete dashboard '${this.dashboard.name}'?`}
+                actions={actionsButtons}
+                modal={false}
+                open={this.state.isDashboardDeleteConfirmDialogOpen}>
+                This action cannot be undone
+            </Dialog>
+        );
+    }
+
+    renderDashboardDeletionResultMessage() {
+        switch (this.state.dashboardDeleteActionResult) {
+            case 'success':
+                return <Snackbar
+                    open={true}
+                    message={`Dashboard '${this.dashboard.name}' deleted successfully`}
+                    autoHideDuration={4000} />;
+            case 'fail':
+                return <Snackbar
+                    open={true}
+                    bodyStyle={styles.errorMessage}
+                    message={`Cannot delete dashboard '${this.dashboard.name}'`}
+                    autoHideDuration={4000} />;
         }
-        if (!this.props.dashboard.hasDesignerPermission) {
-            designerBtn = null;
-        }
-        return {deleteButton: deleteBtn, designerButton: designerBtn, settingsButton: settingsBtn};
     }
 }
 
-export default DashboardThumbnail;
+DashboardThumbnail.propTypes = {
+    dashboard: PropTypes.shape(
+        {
+            name: PropTypes.string,
+            description: PropTypes.string,
+            url: PropTypes.string,
+            hasOwnerPermission: PropTypes.bool,
+            hasDesignerPermission: PropTypes.bool
+        }
+    )
+};
