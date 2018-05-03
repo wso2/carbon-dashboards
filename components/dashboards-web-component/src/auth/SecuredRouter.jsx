@@ -39,6 +39,16 @@ const sessionSkew = 100;
  */
 export default class SecuredRouter extends Component {
 
+    constructor() {
+        super();
+        this.handleSessionInvalid = this.handleSessionInvalid.bind(this);
+        window.handleSessionInvalid = this.handleSessionInvalid;
+    }
+
+    handleSessionInvalid() {
+        this.forceUpdate();
+    }
+
     /**
      * Refreshes the access token by validating the expiration timee.
      */
