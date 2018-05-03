@@ -27,6 +27,8 @@ import Login from './auth/Login';
 import Logout from './auth/Logout';
 import SecuredRouter from './auth/SecuredRouter';
 
+import '../public/css/dashboard.css';
+
 /**
  * App context.
  */
