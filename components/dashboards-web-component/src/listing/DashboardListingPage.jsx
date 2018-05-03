@@ -47,7 +47,7 @@ class DashboardListingPage extends React.Component {
     constructor() {
         super();
         this.state = {
-            isDashboardsFetchSuccess: false,
+            isDashboardsFetchSuccess: true,
             dashboards: []
         };
         this.retrieveDashboards = this.retrieveDashboards.bind(this);
