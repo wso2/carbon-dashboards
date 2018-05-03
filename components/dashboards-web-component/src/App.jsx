@@ -113,4 +113,8 @@ class App extends Component {
     }
 }
 
+// Following is exposed to the global space as widgets needs them as external/peer dependencies.
+global.React = React;
+global.ReactDOM = ReactDOM;
+
 ReactDOM.render(<App />, document.getElementById('content'));
