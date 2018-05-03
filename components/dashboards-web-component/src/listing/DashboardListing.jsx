@@ -18,32 +18,40 @@
  */
 
 import React from 'react';
-
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {withRouter} from 'react-router-dom';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import FlatButton from 'material-ui/FlatButton';
+import Snackbar from 'material-ui/Snackbar';
 import {FormattedMessage} from 'react-intl';
-import {Header} from '../common';
 import DashboardThumbnail from './DashboardThumbnail';
 import DashboardAPI from '../utils/apis/DashboardAPI';
-import '../../public/css/dashboard.css';
-import '../common/Global.css';
-import { Redirect } from 'react-router-dom';
-import {HttpStatus} from "../utils/Constants";
+import DefaultLayout from '../layouts/DefaultLayout';
 
-const muiTheme = getMuiTheme(darkBaseTheme);
+const styles = {
+    thumbnailsWrapper: {
+        position: 'fixed',
+        top: '130px',
+        right: '10px',
+        bottom: '10px',
+        left: '10px',
+        overflow: 'auto'
+    },
+    noDashboardsMessage: {
+        color: 'white',
+        fontSize: '30px'
+    }
+};
 
 class DashboardListing extends React.Component {
+
     constructor() {
         super();
         this.state = {
-            dashboards: "",
-            open: true,
-            isSessionValid: true,
+            isDashboardsFetchSuccess: false,
+            dashboards: []
         };
         this.retrieveDashboards = this.retrieveDashboards.bind(this);
+        this.renderDashboardThumbnails = this.renderDashboardThumbnails.bind(this);
     }
 
     componentDidMount() {
@@ -51,71 +59,77 @@ class DashboardListing extends React.Component {
     }
 
     render() {
-        if (!this.state.isSessionValid) {
-            return (
-                <Redirect to={{pathname: `${window.contextPath}/logout`}}/>
-            );
-        }
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
-                <div>
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
-
-                    {/* Portal navigation bar */}
-                    <div className="navigation-bar">
+            <DefaultLayout
+                navigationBar={
+                    <span>
                         <FlatButton
-                            label={<FormattedMessage id="create.dashboard" defaultMessage="Create Dashboard"/>}
-                            icon={<ContentAdd/>} primary
-                            style={{'margin-right': '12px'}}
-                            labelStyle={{'paddingLeft': '2px' }}
+                            label={<FormattedMessage id='create.dashboard' defaultMessage='Create Dashboard' />}
+                            icon={<ContentAdd />} primary
+                            style={{marginRight: '12px'}}
+                            labelStyle={{paddingLeft: '2px' }}
                             onClick={() => {
-                                window.location.href = window.contextPath + '/create/';
-                            }}/>
+                                this.props.history.push('/create');
+                            }} />
                         <FlatButton
-                            label={<FormattedMessage id="create.widget" defaultMessage="Create Widget"/>}
-                            icon={<ContentAdd/>} primary
-                            style={{'margin-right': '12px'}}
-                            labelStyle={{'paddingLeft': '2px' }}
+                            label={<FormattedMessage id='create.widget' defaultMessage='Create Widget' />}
+                            icon={<ContentAdd />} primary
+                            style={{marginRight: '12px'}}
+                            labelStyle={{paddingLeft: '2px' }}
                             onClick={() => {
-                                window.location.href = window.contextPath + '/createGadget/';
-                            }}/>
-                    </div>
-                    <div className="dashboard-listing-container" style={{overflow:"auto"}}>
-                        {this.state.dashboards}
-                    </div>
+                                this.props.history.push('/createGadget');
+                            }} />
+                    </span>
+                }>
+                <div style={styles.thumbnailsWrapper}>
+                    {this.renderDashboardThumbnails()}
                 </div>
-            </MuiThemeProvider>
+            </DefaultLayout>
         );
     }
 
     retrieveDashboards() {
-        let dashboardAPI = new DashboardAPI();
-        let promised_dashboard_list = dashboardAPI.getDashboardList();
-        let that = this;
-        promised_dashboard_list.then((response) => {
-            let dashboardList = [];
-            let dashboardArray = response.data;
-            dashboardArray.sort(function (dashboardA, dashboardB) {
-                return dashboardA.url > dashboardB.url;
-            });
-            dashboardList = dashboardArray.map(dashboard => {
-                return <DashboardThumbnail dashboard={dashboard} handleDelete={that.retrieveDashboards}
-                                           muiTheme={muiTheme}/>;
-            });
-            if (dashboardList.length === 0) {
-                dashboardList.push(<div className="no-dashboard-label">
-                    <FormattedMessage id="listing.no.dashboards.available" defaultMessage="No Dashboards Available"/>
-                </div>);
-            }
-            that.setState({dashboards: dashboardList});
-        }).catch(function (error) {
-                if (error.response.status === HttpStatus.UNAUTHORIZED) {
-                    that.setState({isSessionValid: false});
-                }
-                //TODO Need to use proper notification library to show the error
+        new DashboardAPI().getDashboardList()
+            .then((response) => {
+                let dashboards = response.data;
+                dashboards.sort(function (dashboardA, dashboardB) {
+                    return dashboardA.url > dashboardB.url;
+                });
+                this.setState({
+                    isDashboardsFetchSuccess: true,
+                    dashboards: dashboards
+                });
+            }).catch(function (error) {
+                this.setState({
+                    isDashboardsFetchSuccess: false,
+                    dashboards: []
+                });
             }
         );
     }
+
+    renderDashboardThumbnails() {
+        if (!this.state.isDashboardsFetchSuccess) {
+            return (
+                <Snackbar
+                    open={!this.state.isDashboardsFetchSuccess}
+                    message={<FormattedMessage id='listing.error.cannot-list'
+                                               defaultMessage='Cannot list available dashboards' />}
+                    autoHideDuration={4000} />
+            );
+        }
+        if (this.state.dashboards.length === 0) {
+            return (
+                <div style={styles.noDashboardsMessage}>
+                    <FormattedMessage id='listing.error.no-dashboards' defaultMessage='No Dashboards Available' />
+                </div>
+            );
+        } else {
+            return this.state.dashboards.map(dashboard => {
+                return <DashboardThumbnail dashboard={dashboard} />;
+            });
+        }
+    }
 }
 
-export default DashboardListing;
+export default withRouter(DashboardListing);
