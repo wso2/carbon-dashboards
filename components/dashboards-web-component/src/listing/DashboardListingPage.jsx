@@ -42,7 +42,7 @@ const styles = {
     }
 };
 
-class DashboardListing extends React.Component {
+class DashboardListingPage extends React.Component {
 
     constructor() {
         super();
@@ -132,4 +132,4 @@ class DashboardListing extends React.Component {
     }
 }
 
-export default withRouter(DashboardListing);
+export default withRouter(DashboardListingPage);

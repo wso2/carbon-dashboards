@@ -24,7 +24,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import DashboardCreatePage from '../designer/DashboardCreatePage';
 import DashboardDesigner from '../designer/DashboardDesigner';
 import DashboardSettings from '../designer/DashboardSettings';
-import DashboardListing from '../listing/DashboardListing';
+import DashboardListingPage from '../listing/DashboardListingPage';
 import DashboardView from '../viewer/DashboardView';
 import AuthManager from './utils/AuthManager';
 import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
@@ -86,7 +86,7 @@ export default class SecuredRouter extends Component {
         return (
             <Switch>
                 {/* Dashboard listing a.k.a. landing page */}
-                <Route exact path={'/'} component={DashboardListing} />
+                <Route exact path={'/'} component={DashboardListingPage} />
 
                 {/* Create dashboard */}
                 <Route exact path={'/create'} component={DashboardCreatePage} />
