@@ -65,8 +65,9 @@ public class DashboardMetadataDao {
 
     /**
      * Create dashboard resource table.
+     * @throws DashboardException when faild to execute the table create queries.
      */
-    public void createDashboardResourceTable() throws DashboardException {
+    private void createDashboardResourceTable() throws DashboardException {
         Connection connection = null;
         PreparedStatement ps = null;
         String query = null;

@@ -309,7 +309,7 @@ export default class DashboardDesigner extends Component {
             let newPage = DashboardUtils.getPage(dashboard, pageId);
             DashboardUtils.searchAndReplaceOptions(newPage, optionsMap);
             this.cleanDashboardJSON(dashboard.pages);
-            new DashboardAPI().updateDashboardByID(this.state.dashboard.id, dashboard);
+            new DashboardAPI().updateDashboardByID(this.state.dashboardId, dashboard);
             let newState = this.state;
             newState.widgetConfigPanelOpen = false;
             this.setState(newState);
