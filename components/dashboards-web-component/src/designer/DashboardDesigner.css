@@ -70,8 +70,10 @@
 .dashboard-designer-expanded-all {
     width: calc(100% - 600px);
     padding: 8px 10px 0 325px;
+    position: fixed;
+    top: 130px;
+    bottom: 10px;
     color: white;
-    height: 89vh;
     z-index: 0;
 }
 

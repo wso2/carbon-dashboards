@@ -20,4 +20,6 @@
 .navigation-bar {
     background-color: #17262e;
     padding: 10px;
+    z-index: 10;
+    position: relative;
 }
