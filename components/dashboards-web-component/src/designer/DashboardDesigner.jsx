@@ -202,7 +202,8 @@ export default class DashboardDesigner extends Component {
                                     top: '106px',
                                     height: 'auto',
                                     bottom: '0',
-                                    backgroundColor: '#24353f'
+                                    backgroundColor: '#24353f',
+                                    overflow: 'hidden'
                                 }}>
                             <PagesPanel dashboard={this.state.dashboard}
                                         onDashboardUpdated={(d) => this.updateDashboard(d)}
