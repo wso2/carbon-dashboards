@@ -26,6 +26,7 @@ import {dashboardLayout, widgetLoadingComponent} from '../utils/WidgetLoadingCom
 import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
 import DashboardUtils from '../utils/DashboardUtils';
 import Error403 from '../error-pages/Error403';
+import Error404 from '../error-pages/Error404';
 import WidgetsList from './components/WidgetsList';
 import PagesPanel from './components/PagesPanel';
 import WidgetConfigurationPanel from './components/WidgetConfigurationPanel';
@@ -162,6 +163,8 @@ export default class DashboardDesigner extends Component {
             this.state.dashboard)[0];
         if (!this.state.hasPermission) {
             return <Error403/>;
+        } else if (!this.state.hasDashboard) {
+            return <Error404/>;
         }
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
