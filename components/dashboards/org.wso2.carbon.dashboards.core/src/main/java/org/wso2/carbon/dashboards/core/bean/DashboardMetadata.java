@@ -29,7 +29,6 @@ public class DashboardMetadata {
 
     private static final Logger log = LoggerFactory.getLogger(DashboardMetadata.class);
 
-    protected String id;
     protected String url;
     protected String owner;
     protected String name;
@@ -201,24 +200,6 @@ public class DashboardMetadata {
      */
     public void setParentId(String parentId) {
         this.parentId = parentId;
-    }
-
-    /**
-     * This method is used to get the DB level dashboard id
-     *
-     * @return String returns the id of dashboard
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * This method is used to set the DB level dashboard id
-     *
-     * @param id id of core/dashboard
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**

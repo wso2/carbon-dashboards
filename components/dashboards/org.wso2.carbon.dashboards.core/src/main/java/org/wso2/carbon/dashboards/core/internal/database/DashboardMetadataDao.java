@@ -42,7 +42,6 @@ public class DashboardMetadataDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataDao.class);
     private static final Gson GSON = new Gson();
     private static final String COLUMN_DASHBOARD_LANDING_PAGE = "LANDING_PAGE";
-    private static final String COLUMN_DASHBOARD_ID = "ID";
     private static final String COLUMN_DASHBOARD_PARENT_ID = "PARENT_ID";
     private static final String COLUMN_DASHBOARD_CONTENT = "CONTENT";
     private static final String COLUMN_DASHBOARD_DESCRIPTION = "DESCRIPTION";
@@ -56,6 +55,62 @@ public class DashboardMetadataDao {
     public DashboardMetadataDao(DataSource dataSource, QueryManager queryManager) {
         this.dataSource = dataSource;
         this.queryManager = queryManager;
+    }
+
+    public void initDashboardTable() throws DashboardException {
+        if (!tableExists(QueryManager.DASHBOARD_RESOURCE_TABLE)) {
+            this.createDashboardResourceTable();
+        }
+    }
+
+    /**
+     * Create dashboard resource table.
+     * @throws DashboardException when faild to execute the table create queries.
+     */
+    private void createDashboardResourceTable() throws DashboardException {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        String query = null;
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+            query = queryManager.getQuery(connection, QueryManager.CREATE_DASHBOARD_RESOURCE_TABLE);
+            ps = connection.prepareStatement(query);
+            ps.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            rollbackQuietly(connection);
+            LOGGER.debug("Failed to execute SQL query {}", query);
+            throw new DashboardException("Unable to create the '" + QueryManager.DASHBOARD_RESOURCE_TABLE +
+                    "' table.", e);
+        } finally {
+            closeQuietly(connection, ps, null);
+        }
+    }
+
+    /**
+     * Method for checking whether or not the given table (which reflects the current event table instance) exists.
+     *
+     * @return true/false based on the table existence.
+     */
+    public boolean tableExists(String tableName) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        String query = null;
+        try {
+            connection = getConnection();
+            query = queryManager.getQuery(connection, QueryManager.TABLE_CHECK);
+            ps = connection.prepareStatement(query.replace(QueryManager.TABLE_NAME_PLACEHOLDER, tableName));
+            ps.execute();
+            return true;
+        } catch (SQLException e) {
+            rollbackQuietly(connection);
+            LOGGER.debug("Table '{}' assumed to not exist since its existence check query {} resulted "
+                    + "in exception {}.", tableName, query, e.getMessage());
+            return false;
+        } finally {
+            closeQuietly(connection, ps, null);
+        }
     }
 
     public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
@@ -81,7 +136,7 @@ public class DashboardMetadataDao {
             rollbackQuietly(connection);
             LOGGER.debug("Failed to execute SQL query {}", query);
             throw new DashboardException(
-                    "Cannot update dashboard '" + dashboardMetadata.getId() + "' with " + dashboardMetadata + ".", e);
+                    "Cannot update dashboard " + dashboardMetadata + ".", e);
         } finally {
             closeQuietly(connection, ps, null);
         }
@@ -202,7 +257,6 @@ public class DashboardMetadataDao {
 
     private static DashboardMetadata toDashboardMetadata(ResultSet result) throws SQLException {
         DashboardMetadata dashboardMetadata = new DashboardMetadata();
-        dashboardMetadata.setId(result.getString(COLUMN_DASHBOARD_ID));
         dashboardMetadata.setName(result.getString(COLUMN_DASHBOARD_NAME));
         dashboardMetadata.setOwner(result.getString(COLUMN_DASHBOARD_OWNER));
         dashboardMetadata.setUrl(result.getString(COLUMN_DASHBOARD_URL));

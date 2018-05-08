@@ -40,6 +40,12 @@ import java.util.Map;
  * @since 4.0.0
  */
 public class QueryManager {
+    public static final String DASHBOARD_RESOURCE_TABLE = "DASHBOARD_RESOURCE";
+    public static final String WIDGET_RESOURCE_TABLE = "WIDGET_RESOURCE";
+    public static final String TABLE_CHECK = "table_check";
+    public static final String CREATE_DASHBOARD_RESOURCE_TABLE = "create_dashboard_resource_table";
+    public static final String CREATE_WIDGET_RESOURCE_TABLE = "create_widget_resource_table";
+    public static final String TABLE_NAME_PLACEHOLDER = "{{TABLE_NAME}}";
     public static final String ADD_DASHBOARD_CONTENT_QUERY = "add_dashboard";
     public static final String ADD_WIDGET_CONFIG_QUERY = "add_widget_config";
     public static final String GET_WIDGET_CONFIG_QUERY = "get_widget_config";

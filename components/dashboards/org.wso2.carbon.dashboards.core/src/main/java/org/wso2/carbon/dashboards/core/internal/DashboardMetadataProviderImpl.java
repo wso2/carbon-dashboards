@@ -94,6 +94,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     protected void activate(BundleContext bundleContext) {
         try {
             this.dao = DashboardMetadataDaoFactory.createDao(dataSourceService, configProvider);
+            this.dao.initDashboardTable();
         } catch (DashboardException e) {
             throw new DashboardRuntimeException("Cannot create DAO for DB access.", e);
         }
