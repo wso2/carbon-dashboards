@@ -40,8 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import javax.sql.DataSource;
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -194,23 +192,5 @@ public class DashboardMetadataProviderImplTest {
 
         Assertions.assertThrows(DashboardRuntimeException.class, () -> dashboardMetadataProvider.
                 activate(null));
-    }
-
-    @Test
-    void testActivate() throws Exception {
-        DataSourceService dataSourceService = mock(DataSourceService.class);
-        when(dataSourceService.getDataSource(anyString())).thenReturn(mock(DataSource.class));
-        ConfigProvider configProvider = mock(ConfigProvider.class);
-        when(configProvider.getConfigurationObject(eq(DashboardConfigurations.class)))
-                .thenReturn(new DashboardConfigurations());
-        DashboardMetadataProviderImpl dashboardMetadataProvider = new DashboardMetadataProviderImpl();
-        dashboardMetadataProvider.setDataSourceService(dataSourceService);
-        dashboardMetadataProvider.setConfigProvider(configProvider);
-
-        try {
-            dashboardMetadataProvider.activate(null);
-        } catch (DashboardRuntimeException e) {
-            Assertions.fail("Dashboard data provider activation failed.", e);
-        }
     }
 }

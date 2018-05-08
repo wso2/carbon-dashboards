@@ -400,8 +400,8 @@
         <carbon.utils.version>2.0.2</carbon.utils.version>
 
         <!--UI Server-->
-        <carbon.uiserver.version>0.19.2</carbon.uiserver.version>
-        <carbon.uiserver.version.range>[0.19.2, 1.0.0]</carbon.uiserver.version.range>
+        <carbon.uiserver.version>0.19.5</carbon.uiserver.version>
+        <carbon.uiserver.version.range>[0.19.5, 1.0.0]</carbon.uiserver.version.range>
 
         <!--MSF4J-->
         <msf4j-core.version>2.5.2</msf4j-core.version>
