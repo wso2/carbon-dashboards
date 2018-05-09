@@ -16,53 +16,28 @@
  *  under the License.
  */
 
-import React, {Component} from 'react';
-import {Header} from '../common';
+import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
+import ErrorPage from './ErrorPage';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+export default class Error403 extends Component {
 
-import PropTypes from 'prop-types';
-import {FormattedMessage} from 'react-intl';
-
-const muiTheme = getMuiTheme(darkBaseTheme);
-
-const errorTitleStyles = {
-    color: "white",
-    fontSize: 45
-};
-
-const errorMessageStyles = {
-    color: "white",
-    fontSize: 40
-};
-
-const errorContainerStyles = {
-    textAlign: "center"
-};
-
-/**
- *  This component provide a basic 401 error page.
- */
-class Error403 extends Component {
-    //TODO We need to remove this after finalizing the WSO2 theme. Because we need to get Error pages from it
     render() {
-        return <MuiThemeProvider muiTheme={muiTheme}>
-            <Header/>
-            <div style={errorContainerStyles}>
-                <h1 style={errorTitleStyles}><FormattedMessage id="dashboard.unauthorized.title"
-                                                               defaultMessage="403 Forbidden"/></h1>
-                <h1 style={errorMessageStyles}><FormattedMessage id="dashboard.unauthorized.message"
-                                           defaultMessage="You do not have sufficient privileges to access this page"/>
-                </h1>
-            </div>
-        </MuiThemeProvider>;
+        return (
+            <ErrorPage
+                title={
+                    <FormattedMessage
+                        id='error-page.403.title'
+                        defaultMessage='Forbidden'
+                    />
+                }
+                message={
+                    <FormattedMessage
+                        id='error-page.403.message'
+                        defaultMessage='You do not have sufficient privileges to access this page.'
+                    />
+                }
+            />
+        );
     }
 }
-
-Error403.contextTypes = {
-    intl: PropTypes.object.isRequired
-};
-
-export default Error403;
