@@ -102,8 +102,8 @@ export default class SecuredRouter extends Component {
                 <Route path='/designer/:dashboardId/*' component={DashboardDesigner} />
 
                 {/* Dashboard view */}
-                <Route exact path='/dashboards/:id' component={DashboardView} />
-                <Route path='/dashboards/:id/*' component={DashboardView} />
+                <Route exact path='/dashboards/:dashboardId/:pageId?/:subPageId?' component={DashboardView} />
+                {/*<Route path='/dashboards/:id/*' component={DashboardView} />*/}
             </Switch>
         );
     }
