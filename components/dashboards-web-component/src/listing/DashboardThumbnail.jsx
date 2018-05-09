@@ -18,11 +18,11 @@
  */
 
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Snackbar from 'material-ui/Snackbar';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import PropTypes from 'prop-types';
 import './dashboard-thumbnail-styles.css';
@@ -184,13 +184,11 @@ export default class DashboardThumbnail extends React.Component {
 }
 
 DashboardThumbnail.propTypes = {
-    dashboard: PropTypes.shape(
-        {
-            name: PropTypes.string,
-            description: PropTypes.string,
-            url: PropTypes.string,
-            hasOwnerPermission: PropTypes.bool,
-            hasDesignerPermission: PropTypes.bool
-        }
-    )
+    dashboard: PropTypes.shape({
+        name: PropTypes.string,
+        description: PropTypes.string,
+        url: PropTypes.string,
+        hasOwnerPermission: PropTypes.bool,
+        hasDesignerPermission: PropTypes.bool
+    })
 };
