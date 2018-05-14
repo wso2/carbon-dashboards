@@ -209,7 +209,11 @@ export default class WidgetRenderer extends Component {
     }
 
     renderReloadButton() {
-        return <RaisedButton label='Retry' primary={true} icon={<NavigationRefresh />} buttonStyle={{width: 'auto'}}
-                             onClick={() => this.loadWidgetClass()} />;
+        return (
+            <div>
+                <RaisedButton label='Retry' primary={true} icon={<NavigationRefresh />}
+                              onClick={() => this.loadWidgetClass()} />
+            </div>
+        );
     }
 }
