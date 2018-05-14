@@ -37,9 +37,11 @@ export default class GoldenLayoutContentUtils {
      */
     static getReferredWidgetNames(goldenLayoutContents) {
         let widgetNames = new Set();
-        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents,
-                                                         widgetContent => widgetNames.add(widgetContent.component));
-        return widgetNames;
+        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
+            widgetNames.add(widgetContent.component);
+            return false;
+        });
+        return Array.from(widgetNames.values());
     }
 
     static _traverseWidgetContents(goldenLayoutContents, consumer) {
@@ -52,9 +54,10 @@ export default class GoldenLayoutContentUtils {
             if (!content) {
                 continue;
             }
-            if ((content.type === 'component') && (content.componentName === 'lm-react-component') &&
-                consumer.consume(content)) {
-                return content;
+            if ((content.type === 'component') && (content.componentName === 'lm-react-component')) {
+                if (consumer(content)) {
+                    return content;
+                }
             } else {
                 content = GoldenLayoutContentUtils._traverseWidgetContents(content.content, consumer);
                 if (content) {
