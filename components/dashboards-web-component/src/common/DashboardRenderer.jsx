@@ -19,35 +19,82 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoldenLayout from 'golden-layout';
-import GoldenLayoutContentUtils from "../utils/GoldenLayoutContentUtils";
-import WidgetRenderer from "./WidgetRenderer";
+import GoldenLayoutContentUtils from '../utils/GoldenLayoutContentUtils';
+import WidgetRenderer from './WidgetRenderer';
+
+import '../common/styles/dashboard-renderer-styles.css';
+import '../common/styles/custom-goldenlayout-dark-theme.css';
+import glDarkTheme from '!!css-loader!../common/styles/custom-goldenlayout-dark-theme.css';
+import '../common/styles/custom-goldenlayout-light-theme.css';
+import glLightTheme from '!!css-loader!../common/styles/custom-goldenlayout-light-theme.css';
+
+const glDarkThemeCss = glDarkTheme.toString();
+const glLightThemeCss = glLightTheme.toString();
+const dashboardContainerId = 'dashboard-container';
 
 export default class DashboardRenderer extends Component {
 
     constructor(props) {
         super(props);
         this.goldenLayout = null;
-        this.loadingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(props.goldenLayoutContents);
 
+        this.handleWindowResize = this.handleWindowResize.bind(this);
         this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
+        this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
+        this.triggerThemeChangeEvent = this.triggerThemeChangeEvent.bind(this);
     }
 
-    render(){
+    handleWindowResize() {
+        if (this.goldenLayout) {
+            this.goldenLayout.updateSize();
+        }
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.handleWindowResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleWindowResize);
+        this.destroyGoldenLayout();
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.props.goldenLayoutContents !== nextProps.goldenLayoutContents) {
+            // Receiving a new dashboard to render.
+            this.destroyGoldenLayout();
+            return true;
+        } else if (this.props.theme !== nextProps.theme) {
+            // Receiving a new theme.
+            this.triggerThemeChangeEvent(nextProps.theme);
+            return true;
+        }
+        return false;
+    }
+
+    render() {
         return (
-            <div id="dashboard-view"
-                 className={styles.dashboardViewCSS}
-                 style={{ color: this.state.muiTheme.palette.textColor }}
-                 ref={element => this.renderGoldenLayout(element)}>
-            </div>
+            <span>
+                <style>{this.props.theme.name === 'dark' ? glDarkThemeCss : glLightThemeCss}</style>
+                <div id={dashboardContainerId}
+                     className='dashboard-container'
+                     style={{
+                         color: this.props.theme.palette.textColor,
+                         backgroundColor: this.props.theme.palette.canvasColor,
+                         fontFamily: this.props.theme.fontFamily
+                     }}
+                     ref={() => this.renderGoldenLayout()}>
+                </div>
+            </span>
         );
     }
 
-    renderGoldenLayout(container) {
+    renderGoldenLayout() {
         if (this.goldenLayout) {
             return;
         }
 
-        const config = {
+        let config = {
             settings: {
                 hasHeaders: true,
                 constrainDragToContainer: false,
@@ -69,17 +116,32 @@ export default class DashboardRenderer extends Component {
             isClosable: false,
             content: this.props.goldenLayoutContents || []
         };
-        this.goldenLayout = new GoldenLayout(config, container);
-        this.loadingWidgetNames.forEach(widgetName => this.goldenLayout.registerComponent(widgetName, WidgetRenderer));
-        window.onresize = () => this.goldenLayout.updateSize();
+        let goldenLayout = new GoldenLayout(config, document.getElementById(dashboardContainerId));
+        let loadingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(this.props.goldenLayoutContents);
+        loadingWidgetNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
+        // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
+        setTimeout(() => {
+            goldenLayout.init();
+        }, 0);
+        this.goldenLayout = goldenLayout;
     }
 
-    componentWillUnmount(){
-        this.goldenLayout.destroy();
+    destroyGoldenLayout() {
+        if (this.goldenLayout) {
+            this.goldenLayout.destroy();
+            delete this.goldenLayout;
+        }
         this.goldenLayout = null;
+    }
+
+    triggerThemeChangeEvent(newTheme) {
+        if (this.goldenLayout) {
+            this.goldenLayout.eventHub.trigger('__mui-theme-change', newTheme);
+        }
     }
 }
 
 DashboardRenderer.propTypes = {
-    goldenLayoutContents: PropTypes.array
+    goldenLayoutContents: PropTypes.array,
+    theme: PropTypes.object
 };
