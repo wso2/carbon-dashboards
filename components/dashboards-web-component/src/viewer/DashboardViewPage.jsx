@@ -17,196 +17,119 @@
  *
  */
 
-import React from 'react';
-
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
-import CircularProgress from 'material-ui/CircularProgress';
-import { AppBar, Drawer, IconButton, IconMenu, MenuItem } from 'material-ui';
-import ActionHome from 'material-ui/svg-icons/action/home';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import { Link, Redirect } from 'react-router-dom';
+import React, { Component } from 'react';
+import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
-import DashboardRenderingComponent from '../utils/DashboardRenderingComponent';
-import Sidebar from './components/Sidebar';
+import { AppBar, Divider, Drawer, FlatButton, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
+import { darkBaseTheme, getMuiTheme, lightBaseTheme, MuiThemeProvider } from 'material-ui/styles';
+import { ActionHome, ActionViewModule } from 'material-ui/svg-icons';
+
 import DashboardAPI from '../utils/apis/DashboardAPI';
-import AuthManager from '../auth/utils/AuthManager';
 import Error403 from '../error-pages/Error403';
 import Error404 from '../error-pages/Error404';
-import './Dashboard.css';
-import { HttpStatus } from '../utils/Constants';
 import Error500 from '../error-pages/Error500';
+import PageLoadingIndicator from '../common/PageLoadingIndicator';
+import { HttpStatus } from '../utils/Constants';
+import DashboardRenderer from '../common/DashboardRenderer';
+import UserMenu from '../common/UserMenu';
 
-const darkMuiTheme = getMuiTheme({
-    'palette': {
-        'primary1Color': '#24353f',
-        'textColor': '#bbb',
-        'alternateTextColor': '#bbb'
+const darkTheme = getMuiTheme({
+    name: 'dark',
+    palette: {
+        primary1Color: '#24353f',
+        textColor: '#bbb',
+        alternateTextColor: '#bbb'
     },
-    'drawer': {
-        'color': '#17262e',
+    drawer: {
+        color: '#17262e',
     }
-});
-
-const lightMuiTheme = getMuiTheme({
-    'palette': {
-        'primary1Color': '#f1f1f1',
-        'textColor': '#1d3644',
-        'alternateTextColor': '#1d3644'
+}, darkBaseTheme);
+const lightTheme = getMuiTheme({
+    name: 'light',
+    palette: {
+        primary1Color: '#f1f1f1',
+        textColor: '#1d3644',
+        alternateTextColor: '#1d3644'
     },
-    'drawer': {
-        'color': '#d4d4d4',
+    drawer: {
+        color: '#d4d4d4',
     }
-});
+}, lightBaseTheme);
+const SelectableList = makeSelectable(List);
 
-let config = {
-    settings: {
-        hasHeaders: true,
-        constrainDragToContainer: false,
-        reorderEnabled: false,
-        selectionEnabled: false,
-        popoutWholeStack: false,
-        blockedPopoutsThrowError: true,
-        closePopoutsOnUnload: true,
-        showPopoutIcon: false,
-        showMaximiseIcon: true,
-        responsive: true,
-        isClosable: false,
-        responsiveMode: 'always',
-        showCloseIcon: false,
-    },
-    dimensions: {
-        headerHeight: 37
-    },
-    isClosable: false,
-    content: []
-};
-
-export default class DashboardViewPage extends React.Component {
+class DashboardViewPage extends Component {
 
     constructor(props) {
         super(props);
-        this.uriParams = {
-            dashboardId: this.props.match.params.dashboardId,
-            pageId: this.props.match.params.pageId,
-            subPageId: this.props.match.params.subPageId,
-        };
-
+        this.dashboard = null;
+        this.isInitilialLoading = true;
         this.state = {
             dashboardFetchStatus: HttpStatus.OK,
-            dashboard: null
+            isSidePaneOpen: true,
+            isCurrentThemeDark: true
         };
 
-        this.state = {
-            pageId: this.props.match.params.pageId,
-            toggled: 'toggled',
-            dashboardViewCSS: 'dashboard-view',
-            dashboardContent: [],
-            open: true,
-            contentClass: 'content-drawer-opened',
-            isDark: false,
-            muiTheme: darkMuiTheme,
-            requestHideLoading: false,
-            hasPermission: true,
-            hasDashboard: true,
-            isSessionValid: true
-        };
-        this.togglePagesNavPanel = this.togglePagesNavPanel.bind(this);
-        this.setDashboardProperties = this.setDashboardProperties.bind(this);
-        this.handleToggle = this.handleToggle.bind(this);
-        this.handleTheme = this.handleTheme.bind(this);
+        this.fetchDashboard = this.fetchDashboard.bind(this);
+        this.handleSidePaneToggle = this.handleSidePaneToggle.bind(this);
+        this.handleThemeToggle = this.handleThemeToggle.bind(this);
+        this.getNavigationToPage = this.getNavigationToPage.bind(this);
+        this.renderHeader = this.renderHeader.bind(this);
+        this.renderSidePane = this.renderSidePane.bind(this);
+        this.renderPagesList = this.renderPagesList.bind(this);
+        this.renderDashboard = this.renderDashboard.bind(this);
     }
 
     componentDidMount() {
-        new DashboardAPI().getDashboardByID(this.uriParams.dashboardId)
+        if (!this.dashboard) {
+            this.fetchDashboard();
+        }
+    }
+
+    fetchDashboard() {
+        new DashboardAPI().getDashboardByID(this.props.match.params.dashboardId)
             .then(response => {
-                this.setState({
-                    dashboardFetchStatus: HttpStatus.OK,
-                    dashboard: response.data
-                });
-            }).catch(error => {
-            this.setState({
-                dashboardFetchStatus: error.response.status,
-                dashboard: null
+                this.dashboard = response.data;
+                this.dashboard.pages = JSON.parse(this.dashboard.pages);
+                this.setState({dashboardFetchStatus: HttpStatus.OK});
+            })
+            .catch(error => {
+                this.dashboard = null;
+                this.setState({dashboardFetchStatus: error.response.status});
             });
-        });
     }
 
-    handleToggle() {
+    handleSidePaneToggle() {
         this.setState({
-            open: !this.state.open,
-            contentClass: this.state.open ? 'content-drawer-closed' : 'content-drawer-opened'
+            isSidePaneOpen: !this.state.isSidePaneOpen
         });
-        var that = this;
-        setTimeout(function () {
-            that.dashboardRenderingComponent.updateLayout();
-        }, 100);
     }
 
-    setDashboardProperties(response) {
-        const dashboard = response.data;
-        dashboard.pages = JSON.parse(dashboard.pages);
+    handleThemeToggle() {
         this.setState({
-            dashboard,
-            dashboardName: dashboard.name,
-            dashboardContent: dashboard.pages,
-            landingPage: dashboard.landingPage,
+            isCurrentThemeDark: !this.state.isCurrentThemeDark
         });
     }
 
-    togglePagesNavPanel(toggled) {
-        if (toggled) {
-            this.setState({toggled: 'toggled', dashboardViewCSS: 'dashboard-view'});
-        } else {
-            this.setState({toggled: '', dashboardViewCSS: 'dashboard-view-full-width'});
-        }
-    }
-
-    handleTheme(isDark) {
-        this.setState({
-            muiTheme: isDark ? getMuiTheme(darkMuiTheme) : getMuiTheme(lightMuiTheme),
-            isDark,
-        });
-    }
-
-    /**
-     * Render right side header links.
-     *
-     * @returns {XML} HTML content
-     */
-    renderRightLinks() {
-        // If the user is not set show the login button. Else show account information.
-        const user = AuthManager.getUser();
-        if (!user) {
-            return <span />;
-        }
-
-        return (
-            <div className="viewer-header-right-btn-group">
-                <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
-                    <Link to={'/'}>
-                        <IconButton
-                            tooltip={<FormattedMessage id="viewer.back.tooltip" defaultMessage="Back to Home" />}>
-                            <ActionHome />
-                        </IconButton>
-                    </Link>
-                    <span>{user.username}</span>
-                    <IconMenu
-                        iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
-                        targetOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-                    >
-                        <MenuItem
-                            primaryText={<FormattedMessage id="logout" defaultMessage="Logout" />}
-                            containerElement={<Link to={'/logout'} />}
-                        />
-                    </IconMenu>
-                </MuiThemeProvider>
-            </div>
-        );
+    getNavigationToPage(pageId) {
+        return {
+            pathname: `/dashboards/${this.dashboard.url}/${pageId}`
+        };
     }
 
     render() {
+        const currentTheme = this.state.isCurrentThemeDark ? darkTheme : lightTheme;
+
+        // Still fetching the dashboard.
+        if (!this.dashboard) {
+            return (
+                <MuiThemeProvider muiTheme={currentTheme}>
+                    {this.renderHeader(currentTheme)}
+                    <PageLoadingIndicator />
+                </MuiThemeProvider>
+            );
+        }
+        // Something went wrong in dashboard fetching process.
         switch (this.state.dashboardFetchStatus) {
             case HttpStatus.NOTFOUND:
                 return <Error404 />;
@@ -215,61 +138,119 @@ export default class DashboardViewPage extends React.Component {
             case HttpStatus.SERVE_ERROR:
                 return <Error500 />;
         }
-
-        if (!this.uriParams.pageId) {
-            return <Redirect
-                to={{pathname: `/dashboards/${this.state.dashboard.url}/${this.state.dashboard.landingPage}`}} />;
+        // No page is mentioned in the URl. Let's redirect to the landing page so that we have a page to render.
+        if (!this.props.match.params.pageId) {
+            return <Redirect to={this.getNavigationToPage(this.dashboard.landingPage)} />;
+        }
+        // If this is the very first display of this page, then show the side pane briefly and close it.
+        if (this.isInitilialLoading) {
+            this.isInitilialLoading = false;
+            setTimeout(() => this.handleSidePaneToggle(), 1000);
         }
 
         return (
-            <MuiThemeProvider muiTheme={this.state.muiTheme}>
-                <div>
-                    <Drawer open={this.state.open} className="viewer-drawer">
-                        <Sidebar
-                            dashboard={dashboard}
-                            dashboardId={this.props.match.params.id}
-                            dashboardContent={this.state.dashboardContent}
-                            dashboardName={this.state.dashboardName}
-                            selectedPage={selectedPage}
-                            toggled={this.state.toggled}
-                            match={this.props.match}
-                            handleThemeSwitch={this.handleTheme}
-                        />
-                    </Drawer>;
-                    <div className={`content-box ${this.state.contentClass} ${themeClass}`}>
-                        <AppBar
-                            title=""
-                            iconClassNameRight="muidocs-icon-navigation-expand-more"
-                            onLeftIconButtonClick={this.handleToggle}
-                            className="viewer-app-bar"
-                            iconElementRight={this.renderRightLinks()}
-                            containerStyle={{paddingRight: 15}}
-                        />
-                        <div id="dashboard-view" className={this.state.dashboardViewCSS}
-                             style={{color: this.state.muiTheme.palette.textColor}}>
-                            <div
-                                className="dashboard-spinner"
-                                style={showLoading ? {} : {display: 'none'}}
-                            >
-                                <CircularProgress size={150} thickness={10} />
-                                <div
-                                    className="loading-label"
-                                    style={{color: this.state.muiTheme.palette.textColor}}>
-                                    Loading...
-                                </div>
-                            </div>
-                        </div>
-                        <DashboardRenderingComponent
-                            config={config}
-                            ref={(c) => {
-                                this.dashboardRenderingComponent = c;
-                            }}
-                            dashboardContent={dashboardPageContent}
-                            onInitialized={() => this.setState({requestHideLoading: true})}
-                        />
-                    </div>
-                </div>
+            <MuiThemeProvider muiTheme={currentTheme}>
+                {this.renderHeader(currentTheme)}
+                {this.renderSidePane(currentTheme)}
+                {this.renderDashboard(currentTheme)}
             </MuiThemeProvider>
         );
     }
+
+    renderHeader(theme) {
+        const rightIcons = (
+            <span>
+                <FlatButton
+                    style={{minWidth: '48px'}}
+                    label='Overview'
+                    icon={<ActionViewModule />}
+                    onClick={() => this.props.history.push('/')} />
+                <UserMenu />
+            </span>
+        );
+        return <AppBar
+            style={{zIndex: theme.zIndex.drawerOverlay + 1}}
+            onLeftIconButtonClick={this.handleSidePaneToggle}
+            title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
+            iconElementRight={rightIcons}
+            zDepth={2}
+        />;
+    }
+
+    renderSidePane(theme) {
+        const pageId = this.props.match.params.pageId, subPageId = this.props.match.params.subPageId;
+        return (
+            <Drawer
+                docked={false}
+                open={this.state.isSidePaneOpen}
+                onRequestChange={isOpen => this.setState({isSidePaneOpen: isOpen})}
+                containerStyle={{top: theme.appBar.height}}
+                overlayStyle={{opacity: 0}}
+            >
+                <Subheader>
+                    <FormattedMessage id='side-pane.pages' defaultMessage='Pages' />
+                </Subheader>
+                <SelectableList value={subPageId ? `${pageId}/${subPageId}` : pageId}>
+                    {this.renderPagesList()}
+                </SelectableList>
+                <Divider />
+                <Subheader>
+                    <FormattedMessage id='theme.change-theme' defaultMessage='Theme' />
+                </Subheader>
+                <div style={{display: 'flex', marginLeft: 72}}>
+                    <span style={{marginTop: 2, marginRight: 10}}>
+                        <FormattedMessage id='theme.name.light' defaultMessage='Light' />
+                    </span>
+                    <Toggle
+                        toggled={this.state.isCurrentThemeDark}
+                        label={<FormattedMessage id='theme.name.dark' defaultMessage='Dark' />}
+                        labelPosition='right'
+                        onToggle={this.handleThemeToggle}
+                    />
+                </div>
+            </Drawer>
+        );
+    }
+
+    renderPagesList() {
+        const landingPage = this.dashboard.landingPage;
+        const history = this.props.history;
+        return this.dashboard.pages.map(page => {
+            let isLandingPage = (page.id === landingPage);
+            let nestedItems = [];
+            if (page.pages) {
+                nestedItems = page.pages.map(subPage => {
+                    let subPageId = `${page.id}/${subPage.id}`;
+                    return <ListItem value={subPageId}
+                                     primaryText={subPage.name}
+                                     insetChildren={true}
+                                     onClick={() => history.push(this.getNavigationToPage(subPageId))} />;
+                });
+            }
+            return <ListItem value={page.id}
+                             primaryText={page.name}
+                             leftIcon={isLandingPage ? <ActionHome /> : null}
+                             insetChildren={!isLandingPage}
+                             nestedItems={nestedItems}
+                             open={!!nestedItems}
+                             onClick={() => history.push(this.getNavigationToPage(page.id))} />;
+        });
+    }
+
+    renderDashboard(theme) {
+        const pageId = this.props.match.params.pageId, subPageId = this.props.match.params.subPageId;
+        let page = this.dashboard.pages.find(page => (page.id === pageId));
+
+        if (page) {
+            if (page.pages && subPageId) {
+                page = page.pages.find(page => (page.id === subPageId));
+            }
+            return <DashboardRenderer goldenLayoutContents={page.content} theme={theme} />;
+        } else {
+            // Non-existing page ID found in the URL. Redirect to the landing page so that we have a page to render.
+            return <Redirect to={this.getNavigationToPage(this.dashboard.landingPage)} />;
+        }
+    }
 }
+
+export default withRouter(DashboardViewPage);
