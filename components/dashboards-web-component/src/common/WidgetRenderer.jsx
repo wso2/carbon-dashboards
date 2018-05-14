@@ -79,7 +79,7 @@ export default class WidgetRenderer extends Component {
         this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING);
         Axios.create({
             baseURL: widgetScriptUrlPrefix,
-            timeout: 4000,
+            timeout: 10000,
             onDownloadProgress: (progressEvent) => {
                 let progress = progressEvent.lengthComputable ?
                                ((progressEvent.loaded / progressEvent.total) * 100) : -1;
