@@ -18,11 +18,16 @@
 
 import React, { Component } from 'react';
 import Axios from 'axios';
+
+import { LinearProgress, Paper, RaisedButton } from 'material-ui';
+import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import { NavigationRefresh } from 'material-ui/svg-icons';
+
 import WidgetClassRegistry from '../utils/WidgetClassRegistry';
 import GoldenLayoutContentUtils from '../utils/GoldenLayoutContentUtils';
 
 const widgetScriptUrlPrefix = `${window.location.origin}${window.contextPath}/public/extensions/widgets`;
-const WidgetLoadingPhase = {
+const WidgetLoadingStatus = {
     INIT: 'init',
     FETCHING: 'fetching',
     FETCHING_FAIL: 'fetching-fail',
@@ -40,15 +45,19 @@ export default class WidgetRenderer extends Component {
         let config = GoldenLayoutContentUtils.getWidgetContent(this.widgetUUID, goldenLayout.config.content);
         this.widgetName = config.component;
         this.widgetClass = null;
+
         this.state = {
-            widgetLoadingState: {phase: WidgetLoadingPhase.INIT, progress: -1}
+            currentTheme: getMuiTheme(darkBaseTheme),
+            widgetLoadingStatus: WidgetLoadingStatus.INIT,
+            widgetFetchingProgress: -1
         };
+        props.glEventHub.on('__mui-theme-change', (newTheme) => this.setState({currentTheme: newTheme}));
 
         this.getWidgetClass = this.getWidgetClass.bind(this);
+        this.loadWidgetClass = this.loadWidgetClass.bind(this);
         this.fetchWidget = this.fetchWidget.bind(this);
-        this.updateWidgetLoadingState = this.updateWidgetLoadingState.bind(this);
-        this.onGoldenLayoutInitialised = this.onGoldenLayoutInitialised.bind(this);
-        goldenLayout.on('initialised', () => this.onGoldenLayoutInitialised());
+        this.updateWidgetLoadingStatus = this.updateWidgetLoadingStatus.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     getWidgetClass() {
@@ -58,63 +67,149 @@ export default class WidgetRenderer extends Component {
         return this.widgetClass;
     }
 
-    onGoldenLayoutInitialised() {
+    loadWidgetClass() {
         if (this.getWidgetClass()) {
-            this.updateWidgetLoadingState(WidgetLoadingPhase.LOADED);
+            this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADED);
         } else {
             this.fetchWidget();
         }
     }
 
     fetchWidget() {
-        this.updateWidgetLoadingState(WidgetLoadingPhase.FETCHING);
+        this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING);
         Axios.create({
             baseURL: widgetScriptUrlPrefix,
             timeout: 4000,
             onDownloadProgress: (progressEvent) => {
                 let progress = progressEvent.lengthComputable ?
-                               (progressEvent.loaded / progressEvent.total) : -1;
-                this.updateWidgetLoadingState(WidgetLoadingPhase.FETCHING, progress);
+                               ((progressEvent.loaded / progressEvent.total) * 100) : -1;
+                this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING, progress);
             }
         })
             .get(`/${this.widgetName}/${this.widgetName}.js`)
             .then(response => {
-                this.updateWidgetLoadingState(WidgetLoadingPhase.LOADING);
+                this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADING);
                 window.eval(response.data);
                 if (this.getWidgetClass()) {
                     // TODO: 5/5/18 Wire pub/sub
-                    this.updateWidgetLoadingState(WidgetLoadingPhase.LOADED);
+                    this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADED);
                 } else {
-                    this.updateWidgetLoadingState(WidgetLoadingPhase.FETCHING_FAIL);
+                    this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING_FAIL);
                 }
             })
             .catch(error => {
-                this.updateWidgetLoadingState(WidgetLoadingPhase.FETCHING_FAIL);
+                console.warn(`Fetching widget '${this.widgetName}' failed.` + error.message);
+                this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING_FAIL);
             });
     }
 
-    updateWidgetLoadingState(state, progress = -1) {
-        this.setState({widgetLoadingState: {phase: state, progress: progress}});
+    updateWidgetLoadingStatus(state, progress = -1) {
+        this.setState({
+            widgetLoadingStatus: state,
+            widgetFetchingProgress: progress
+        });
+    }
+
+    componentDidMount() {
+        const goldenLayout = this.props.glContainer.layoutManager;
+        if (goldenLayout.isInitialised) {
+            this.loadWidgetClass();
+        } else {
+            goldenLayout.on('initialised', () => this.loadWidgetClass());
+        }
     }
 
     render() {
-        if (this.state.widgetLoadingState.phase === WidgetLoadingPhase.LOADED) {
-            return React.createElement(this.widgetClass, this.props);
+        if (this.state.widgetLoadingStatus === WidgetLoadingStatus.LOADED) {
+            const widgetProps = {
+                ...this.props,
+                width: this.props.glContainer.width,
+                height: this.props.glContainer.height,
+                muiTheme: this.state.currentTheme
+            };
+            return React.createElement(this.widgetClass, widgetProps);
         } else {
-            // TODO: 5/9/18 render proper UI for following
-            switch (this.state.widgetLoadingState.phase) {
-                case WidgetLoadingPhase.INIT:
-                    return <div>Initializing loading {this.widgetName}</div>;
-                case WidgetLoadingPhase.FETCHING:
-                    return <div>Fetching {this.widgetName}</div>;
-                case WidgetLoadingPhase.FETCHING_FAIL:
-                    return <div>Fetching {this.widgetName} failed</div>;
-                case WidgetLoadingPhase.LOADING:
-                    return <div>Loading {this.widgetName} ... {this.state.widgetLoadingState.progress}%</div>;
-                case WidgetLoadingPhase.LOADING_FAIL:
-                    return <div>Loading {this.widgetName} failed</div>;
+            let message = null, isErrorMessage = false;
+            switch (this.state.widgetLoadingStatus) {
+                case WidgetLoadingStatus.INIT:
+                    message = 'Initializing ...';
+                    break;
+                case WidgetLoadingStatus.FETCHING:
+                    message = 'Fetching ...';
+                    break;
+                case WidgetLoadingStatus.FETCHING_FAIL:
+                    message = 'Fetching failed!';
+                    isErrorMessage = true;
+                    break;
+                case WidgetLoadingStatus.LOADING:
+                    message = 'Loading ...';
+                    break;
+                case WidgetLoadingStatus.LOADING_FAIL:
+                    message = 'Loading failed!';
+                    isErrorMessage = true;
+                    break;
             }
+            return this.renderWidgetLoadingStatus(message, isErrorMessage);
         }
     }
-}
 
+    renderWidgetLoadingStatus(message, isErrorMessage = false) {
+        const theme = this.state.currentTheme;
+        const paperStyles = {
+            margin: 0,
+            padding: 0,
+            border: 0,
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            width: this.props.glContainer.width,
+            height: this.props.glContainer.height,
+        };
+        const titleStyles = {
+            fontWeight: 500,
+            fontSize: '18px',
+            color: theme.palette.textColor,
+            backgroundColor: theme.palette.canvasColor,
+            fontFamily: theme.fontFamily
+        };
+        const messageStyles = {
+            marginTop: 20,
+            marginBottom: 10,
+            color: (isErrorMessage ? theme.textField.errorColor : theme.palette.textColor)
+        };
+
+        return (
+            <MuiThemeProvider muiTheme={theme}>
+                <Paper style={paperStyles} zDepth={0}>
+                    <div style={titleStyles}>{this.widgetName}</div>
+                    <div style={messageStyles}>{message}</div>
+                    {isErrorMessage ? this.renderReloadButton() : this.renderProgressBar()}
+                </Paper>
+            </MuiThemeProvider>
+        );
+    }
+
+    renderProgressBar() {
+        const progressBarStyles = {
+            marginLeft: 20,
+            marginRight: 20
+        };
+        const progress = this.state.widgetFetchingProgress;
+
+        if (progress === -1) {
+            return <div style={progressBarStyles}><LinearProgress mode='indeterminate' /></div>;
+        } else {
+            return (
+                <div style={progressBarStyles}>
+                    <LinearProgress mode='determinate' min={0} max={100} value={progress} />
+                </div>
+            );
+        }
+    }
+
+    renderReloadButton() {
+        return <RaisedButton label='Retry' primary={true} icon={<NavigationRefresh />} buttonStyle={{width: 'auto'}}
+                             onClick={() => this.loadWidgetClass()} />;
+    }
+}
