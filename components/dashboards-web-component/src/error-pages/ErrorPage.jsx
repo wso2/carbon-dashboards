@@ -17,41 +17,21 @@
  */
 
 import React, { Component } from 'react';
-import { Header } from '../common';
-
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-
 import PropTypes from 'prop-types';
-
-const muiTheme = getMuiTheme(darkBaseTheme);
-
-const errorTitleStyles = {
-    color: 'white',
-    fontSize: 45
-};
-
-const errorMessageStyles = {
-    color: 'white',
-    fontSize: 40
-};
-
-const errorContainerStyles = {
-    textAlign: 'center'
-};
+import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import { Header } from '../common';
 
 export default class ErrorPage extends Component {
 
     render() {
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={this.props.theme}>
                 <Header />
-                <div style={errorContainerStyles}>
-                    <h1 style={errorTitleStyles}>
+                <div style={{textAlign: 'center'}}>
+                    <h1 style={{color: this.props.theme.textColor, fontSize: 45}}>
                         {this.props.title}
                     </h1>
-                    <h1 style={errorMessageStyles}>
+                    <h1 style={{color: this.props.theme.textColor, fontSize: 40}}>
                         {this.props.message}
                     </h1>
                 </div>
@@ -60,7 +40,14 @@ export default class ErrorPage extends Component {
     }
 }
 
-ErrorPage.contextTypes = {
+ErrorPage.propTypes = {
     title: PropTypes.string,
-    message: PropTypes.string
+    message: PropTypes.string,
+    theme: PropTypes.object
+};
+
+ErrorPage.defaultProps = {
+    title: 'Error',
+    message: 'Unexpected error occurred',
+    theme: getMuiTheme(darkBaseTheme)
 };
