@@ -103,7 +103,6 @@ export default class SecuredRouter extends Component {
 
                 {/* Dashboard view */}
                 <Route exact path='/dashboards/:dashboardId/:pageId?/:subPageId?' component={DashboardViewPage} />
-                {/*<Route path='/dashboards/:id/*' component={DashboardView} />*/}
             </Switch>
         );
     }
