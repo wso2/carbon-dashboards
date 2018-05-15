@@ -65,5 +65,25 @@ global.dashboard = {};
 global.dashboard.registerWidget = function (widgetId, widgetObj) {
     console.warn('[DEPRICATED] \'window.dashboard.registerWidget(widgetId, widgetObj)\' function is depricated. '
                  + 'Instead please use \'Widget.registerWidgetClass(widgetName, widgetClass)\' function.');
+    if (_extendsFromDepricatedWidgetClassVersion(widgetId, widgetObj)) {
+        console.warn('[DEPRICATED] \'@wso2-dashboards/widget@1.0.0\' is depricated. Please user a newer version.');
+        _patchWidgetClass(widgetObj);
+    }
     instance.registerWidgetClass(widgetId, widgetObj);
 };
+
+function _extendsFromDepricatedWidgetClassVersion(widgetName, widgetClass) {
+    return !(widgetClass.prototype.__proto__).version;
+}
+
+function _patchWidgetClass(widgetClass) {
+    let superWidgetClassPrototype = widgetClass.prototype.__proto__;
+    superWidgetClassPrototype.subscribe = function (listenerCallback) {
+        const self = this;
+        let publisherIds = self.props.configs.pubsub.publishers;
+        if (publisherIds && Array.isArray(publisherIds)) {
+            publisherIds.forEach(publisherId => self.props.glEventHub.on(publisherId, listenerCallback));
+        }
+    };
+
+}

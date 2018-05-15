@@ -91,7 +91,6 @@ export default class WidgetRenderer extends Component {
                 this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADING);
                 window.eval(response.data);
                 if (this.getWidgetClass()) {
-                    // TODO: 5/5/18 Wire pub/sub
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADED);
                 } else {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING_FAIL);
