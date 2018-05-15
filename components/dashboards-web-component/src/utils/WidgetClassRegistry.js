@@ -63,21 +63,36 @@ export default instance;
 // Following is to maintain backward compatibility with SP-4.0.0, SP-4.1.0
 global.dashboard = {};
 global.dashboard.registerWidget = function (widgetId, widgetObj) {
-    console.warn('[DEPRICATED] \'window.dashboard.registerWidget(widgetId, widgetObj)\' function is depricated. '
+    console.warn(`[DEPRICATED] Widget '${widgetId}' uses depricated function `
+                 + '\'window.dashboard.registerWidget(widgetId, widgetObj)\'. '
                  + 'Instead please use \'Widget.registerWidgetClass(widgetName, widgetClass)\' function.');
-    if (_extendsFromDepricatedWidgetClassVersion(widgetId, widgetObj)) {
-        console.warn('[DEPRICATED] \'@wso2-dashboards/widget@1.0.0\' is depricated. Please user a newer version.');
+    if (_extendsFromDepricatedWidgetClassVersion(widgetObj)) {
+        console.warn(`[DEPRICATED] Widget '${widgetId}' extends from a depricated version of the Widget `
+                     + '(@wso2-dashboards/widget) class. Please use the newest version.');
         _patchWidgetClass(widgetObj);
     }
     instance.registerWidgetClass(widgetId, widgetObj);
 };
 
-function _extendsFromDepricatedWidgetClassVersion(widgetName, widgetClass) {
+/**
+ * Checks whether given widget class extends from a depricated version of @wso2-dashboards/widget class.
+ * @param widgetClass class to be checked
+ * @returns {boolean} true if extend from a depricated version of the Widget class, otherwise false
+ * @private
+ */
+function _extendsFromDepricatedWidgetClassVersion(widgetClass) {
     return !(widgetClass.prototype.__proto__).version;
 }
 
+/**
+ * Patches given widget class which extends from a depricated version of @wso2-dashboards/widget class, to be
+ * compatible with newer versions.
+ * @param widgetClass widget class to be patched
+ * @private
+ */
 function _patchWidgetClass(widgetClass) {
     let superWidgetClassPrototype = widgetClass.prototype.__proto__;
+    // Patch subscribe method.
     superWidgetClassPrototype.subscribe = function (listenerCallback) {
         const self = this;
         let publisherIds = self.props.configs.pubsub.publishers;
@@ -85,5 +100,4 @@ function _patchWidgetClass(widgetClass) {
             publisherIds.forEach(publisherId => self.props.glEventHub.on(publisherId, listenerCallback));
         }
     };
-
 }
