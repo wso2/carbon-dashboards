@@ -65,5 +65,7 @@
   "login.cookie.policy.after": " for more details.",
   "login.privacy.policy.before": "By signing in, you agree to our ",
   "login.privacy.policy": "Privacy Policy",
-  "login.privacy.policy.after": "."
+  "login.privacy.policy.after": ".",
+  "error-page.500.title": "Internal Server Error",
+  "error-page.500.message": "This page cannot be displayed due to a server error.",
 }

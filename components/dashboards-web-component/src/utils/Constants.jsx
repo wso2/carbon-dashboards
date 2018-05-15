@@ -26,7 +26,8 @@ const HttpStatus = {
     CONFLICT: 409,
     FORBIDDEN: 403,
     NOTFOUND: 404,
-    UNAUTHORIZED: 401
+    UNAUTHORIZED: 401,
+    SERVE_ERROR: 500
 };
 
 /**

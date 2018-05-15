@@ -20,21 +20,21 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import ErrorPage from './ErrorPage';
 
-export default class Error403 extends Component {
+export default class Error401 extends Component {
 
     render() {
         return (
             <ErrorPage
                 title={
                     <FormattedMessage
-                        id='error-page.403.title'
-                        defaultMessage='Forbidden'
+                        id='error-page.401.title'
+                        defaultMessage='Access Denied'
                     />
                 }
                 message={
                     <FormattedMessage
-                        id='error-page.403.message'
-                        defaultMessage='You do not have sufficient privileges to access this page.'
+                        id='error-page.401.message'
+                        defaultMessage='You are not authorized to access this page.'
                     />
                 }
             />

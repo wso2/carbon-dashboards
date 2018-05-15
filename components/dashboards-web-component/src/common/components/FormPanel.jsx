@@ -18,9 +18,7 @@
  */
 
 import React, {Component} from "react";
-// Material-UI
 import {darkBaseTheme, getMuiTheme} from 'material-ui/styles';
-
 import PropTypes from 'prop-types';
 
 const muiTheme = getMuiTheme(darkBaseTheme);
@@ -30,6 +28,7 @@ const titleStyles = {
 };
 
 export default class FormPanel extends Component {
+
     render() {
         let wrapperStyles = {
             margin: '0 auto',

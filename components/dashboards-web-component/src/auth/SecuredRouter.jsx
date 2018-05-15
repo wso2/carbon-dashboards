@@ -21,12 +21,12 @@ import Qs from 'qs';
 import React, { Component } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
+import AuthManager from './utils/AuthManager';
 import DashboardCreatePage from '../designer/DashboardCreatePage';
 import DashboardDesigner from '../designer/DashboardDesigner';
 import DashboardSettings from '../designer/DashboardSettings';
 import DashboardListingPage from '../listing/DashboardListingPage';
-import DashboardView from '../viewer/DashboardView';
-import AuthManager from './utils/AuthManager';
+import DashboardViewPage from '../viewer/DashboardViewPage';
 import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
 
 /**
@@ -53,7 +53,7 @@ export default class SecuredRouter extends Component {
      * Refreshes the access token by validating the expiration timee.
      */
     componentWillMount() {
-        setInterval(function() {
+        setInterval(function () {
             if (AuthManager.getUser()) {
                 const expiresOn = new Date(AuthManager.getUser().expires);
                 if ((expiresOn - new Date()) / 1000 < sessionSkew) {
@@ -77,7 +77,7 @@ export default class SecuredRouter extends Component {
                 referrer += '/';
             }
 
-            const params = Qs.stringify({ referrer });
+            const params = Qs.stringify({referrer});
             return (
                 <Redirect to={{pathname: '/login', search: params}} />
             );
@@ -102,8 +102,7 @@ export default class SecuredRouter extends Component {
                 <Route path='/designer/:dashboardId/*' component={DashboardDesigner} />
 
                 {/* Dashboard view */}
-                <Route exact path='/dashboards/:id' component={DashboardView} />
-                <Route path='/dashboards/:id/*' component={DashboardView} />
+                <Route exact path='/dashboards/:dashboardId/:pageId?/:subPageId?' component={DashboardViewPage} />
             </Switch>
         );
     }
