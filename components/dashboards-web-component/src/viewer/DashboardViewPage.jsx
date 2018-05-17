@@ -24,6 +24,7 @@ import { FormattedMessage } from 'react-intl';
 import { AppBar, Divider, Drawer, FlatButton, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
 import { darkBaseTheme, getMuiTheme, lightBaseTheme, MuiThemeProvider } from 'material-ui/styles';
 import { ActionHome, ActionViewModule } from 'material-ui/svg-icons';
+import * as Colors from 'material-ui/styles/colors';
 
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import Error403 from '../error-pages/Error403';
@@ -37,29 +38,38 @@ import UserMenu from '../common/UserMenu';
 const darkTheme = getMuiTheme({
     name: 'dark',
     palette: {
-        primary1Color: '#24353f',
-        textColor: '#bbb',
-        alternateTextColor: '#bbb'
+        primary1Color: Colors.teal500,
+        accent1Color: Colors.orange800,
     },
     drawer: {
-        color: '#17262e',
-    }
+        color: Colors.blueGrey900,
+    },
+    appBar: {
+        textColor: Colors.white,
+        color: Colors.blueGrey800,
+    },
 }, darkBaseTheme);
 const lightTheme = getMuiTheme({
     name: 'light',
     palette: {
-        primary1Color: '#f1f1f1',
-        textColor: '#1d3644',
-        alternateTextColor: '#1d3644'
+        primary1Color: Colors.teal500,
+        accent1Color: Colors.orange800,
     },
     drawer: {
-        color: '#d4d4d4',
-    }
+        color: Colors.grey400,
+    },
+    appBar: {
+        textColor: Colors.black,
+        color: Colors.grey200,
+    },
+    toggle: {
+        trackOffColor: Colors.grey500,
+        thumbOffColor: Colors.grey700,
+    },
 }, lightBaseTheme);
 const SelectableList = makeSelectable(List);
 
 class DashboardViewPage extends Component {
-
     constructor(props) {
         super(props);
         this.dashboard = null;
@@ -67,7 +77,7 @@ class DashboardViewPage extends Component {
         this.state = {
             dashboardFetchStatus: HttpStatus.OK,
             isSidePaneOpen: true,
-            isCurrentThemeDark: true
+            isCurrentThemeDark: true,
         };
 
         this.fetchDashboard = this.fetchDashboard.bind(this);
@@ -88,32 +98,32 @@ class DashboardViewPage extends Component {
 
     fetchDashboard() {
         new DashboardAPI().getDashboardByID(this.props.match.params.dashboardId)
-            .then(response => {
+            .then((response) => {
                 this.dashboard = response.data;
                 this.dashboard.pages = JSON.parse(this.dashboard.pages);
-                this.setState({dashboardFetchStatus: HttpStatus.OK});
+                this.setState({ dashboardFetchStatus: HttpStatus.OK });
             })
-            .catch(error => {
+            .catch((error) => {
                 this.dashboard = null;
-                this.setState({dashboardFetchStatus: error.response.status});
+                this.setState({ dashboardFetchStatus: error.response.status });
             });
     }
 
     handleSidePaneToggle() {
         this.setState({
-            isSidePaneOpen: !this.state.isSidePaneOpen
+            isSidePaneOpen: !this.state.isSidePaneOpen,
         });
     }
 
     handleThemeToggle() {
         this.setState({
-            isCurrentThemeDark: !this.state.isCurrentThemeDark
+            isCurrentThemeDark: !this.state.isCurrentThemeDark,
         });
     }
 
     getNavigationToPage(pageId) {
         return {
-            pathname: `/dashboards/${this.dashboard.url}/${pageId}`
+            pathname: `/dashboards/${this.dashboard.url}/${pageId}`,
         };
     }
 
@@ -161,31 +171,33 @@ class DashboardViewPage extends Component {
         const rightIcons = (
             <span>
                 <FlatButton
-                    style={{minWidth: '48px'}}
+                    style={{ minWidth: '48px' }}
                     label='Overview'
                     icon={<ActionViewModule />}
-                    onClick={() => this.props.history.push('/')} />
+                    onClick={() => this.props.history.push('/')}
+                />
                 <UserMenu />
             </span>
         );
-        return <AppBar
-            style={{zIndex: theme.zIndex.drawerOverlay + 1}}
+        return (<AppBar
+            style={{ zIndex: theme.zIndex.drawerOverlay + 1 }}
             onLeftIconButtonClick={this.handleSidePaneToggle}
             title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
             iconElementRight={rightIcons}
             zDepth={2}
-        />;
+        />);
     }
 
     renderSidePane(theme) {
-        const pageId = this.props.match.params.pageId, subPageId = this.props.match.params.subPageId;
+        const pageId = this.props.match.params.pageId,
+            subPageId = this.props.match.params.subPageId;
         return (
             <Drawer
                 docked={false}
                 open={this.state.isSidePaneOpen}
-                onRequestChange={isOpen => this.setState({isSidePaneOpen: isOpen})}
-                containerStyle={{top: theme.appBar.height}}
-                overlayStyle={{opacity: 0}}
+                onRequestChange={isOpen => this.setState({ isSidePaneOpen: isOpen })}
+                containerStyle={{ top: theme.appBar.height }}
+                overlayStyle={{ opacity: 0 }}
             >
                 <Subheader>
                     <FormattedMessage id='side-pane.pages' defaultMessage='Pages' />
@@ -197,8 +209,8 @@ class DashboardViewPage extends Component {
                 <Subheader>
                     <FormattedMessage id='theme.change-theme' defaultMessage='Theme' />
                 </Subheader>
-                <div style={{display: 'flex', marginLeft: 72}}>
-                    <span style={{marginTop: 2, marginRight: 10}}>
+                <div style={{ display: 'flex', marginLeft: 72 }}>
+                    <span style={{ marginTop: 2, marginRight: 10 }}>
                         <FormattedMessage id='theme.name.light' defaultMessage='Light' />
                     </span>
                     <Toggle
@@ -215,30 +227,35 @@ class DashboardViewPage extends Component {
     renderPagesList() {
         const landingPage = this.dashboard.landingPage;
         const history = this.props.history;
-        return this.dashboard.pages.map(page => {
-            let isLandingPage = (page.id === landingPage);
+        return this.dashboard.pages.map((page) => {
+            const isLandingPage = (page.id === landingPage);
             let nestedItems = [];
             if (page.pages) {
-                nestedItems = page.pages.map(subPage => {
-                    let subPageId = `${page.id}/${subPage.id}`;
-                    return <ListItem value={subPageId}
-                                     primaryText={subPage.name}
-                                     insetChildren={true}
-                                     onClick={() => history.push(this.getNavigationToPage(subPageId))} />;
+                nestedItems = page.pages.map((subPage) => {
+                    const subPageId = `${page.id}/${subPage.id}`;
+                    return (<ListItem
+                        value={subPageId}
+                        primaryText={subPage.name}
+                        insetChildren
+                        onClick={() => history.push(this.getNavigationToPage(subPageId))}
+                    />);
                 });
             }
-            return <ListItem value={page.id}
-                             primaryText={page.name}
-                             leftIcon={isLandingPage ? <ActionHome /> : null}
-                             insetChildren={!isLandingPage}
-                             nestedItems={nestedItems}
-                             open={!!nestedItems}
-                             onClick={() => history.push(this.getNavigationToPage(page.id))} />;
+            return (<ListItem
+                value={page.id}
+                primaryText={page.name}
+                leftIcon={isLandingPage ? <ActionHome /> : null}
+                insetChildren={!isLandingPage}
+                nestedItems={nestedItems}
+                open={!!nestedItems}
+                onClick={() => history.push(this.getNavigationToPage(page.id))}
+            />);
         });
     }
 
     renderDashboard(theme) {
-        const pageId = this.props.match.params.pageId, subPageId = this.props.match.params.subPageId;
+        const pageId = this.props.match.params.pageId,
+            subPageId = this.props.match.params.subPageId;
         let page = this.dashboard.pages.find(page => (page.id === pageId));
 
         if (page) {
