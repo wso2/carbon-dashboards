@@ -29,6 +29,15 @@ public class WidgetConfigs {
     private JsonElement providerConfig;
     private boolean isGenerated;
     private List<Option> options;
+    private String version;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * This method is get pubsub configuration of the widget.

@@ -17,7 +17,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 // Material UI Components
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -29,6 +29,7 @@ import CodeProperty from './inputTypes/CodeProperty';
 import UtilFunctions from '../utils/UtilFunctions';
 // App Constants
 import Types from '../utils/Types';
+import DynamicQueryComponent from './DynamicQueryComponent';
 
 /**
  * Displays data provider selection, and the properties related to the selected provider type
@@ -65,6 +66,10 @@ class ProviderConfigurator extends Component {
         ));
     }
 
+    handleDynamicQueryGeneration() {
+
+    }
+
     /**
      * Returns input fields according to the value provided
      * @param value
@@ -75,14 +80,14 @@ class ProviderConfigurator extends Component {
             case (Types.inputFields.SWITCH):
                 return (
                     <div>
-                        <br />
+                        <br/>
                         <SwitchProperty
                             id={value}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
-                        <br />
+                        <br/>
                     </div>
                 );
             case (Types.inputFields.SQL_CODE):
@@ -96,8 +101,13 @@ class ProviderConfigurator extends Component {
                             mode={(type === Types.inputFields.SQL_CODE) ? 'sql' : 'text'}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
-                        <br />
+                        <br/>
                     </div>
+                );
+            case (Types.inputFields.DYNAMIC_SQL_CODE):
+            case (Types.inputFields.DYNAMIC_SIDDHI_CODE):
+                return (
+                    <DynamicQueryComponent handleDynamicQuery={this.props.handleDynamicQuery}/>
                 );
             default:
                 return (
@@ -111,7 +121,7 @@ class ProviderConfigurator extends Component {
                             multiLine={type === Types.inputFields.TEXT_AREA}
                             fullWidth
                         />
-                        <br />
+                        <br/>
                     </div>
                 );
         }
@@ -119,7 +129,7 @@ class ProviderConfigurator extends Component {
 
     render() {
         return (
-            <div style={{ margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white' }}>
+            <div style={{margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white'}}>
                 <SelectField
                     floatingLabelText='Select a data provider type & configure its properties'
                     value={this.props.providerType}
@@ -130,10 +140,10 @@ class ProviderConfigurator extends Component {
                         <MenuItem
                             key={provider}
                             value={provider}
-                            primaryText={UtilFunctions.toSentenceCase(provider)} />
+                            primaryText={UtilFunctions.toSentenceCase(provider)}/>
                     ))}
                 </SelectField>
-                <br />
+                <br/>
                 {this.renderProperties()}
             </div>
         );

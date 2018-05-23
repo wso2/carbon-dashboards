@@ -42,7 +42,12 @@ export default class UniversalWidget extends ExtendedWidget {
         this.getHTTPClient()
             .get(`apis/widgets/${this.props.widgetID}`)
             .then((message) => {
-                let providerConfiguration = message.data.configs.providerConfig;
+                if (message.data.configs.version !== "1.0.0") {
+                    let providerConfiguration = message.data.configs.providerConfig;
+                    providerConfiguration.configs.config.queryData = {};
+                    providerConfiguration.configs.config.queryData.query = providerConfiguration.configs.config.query;
+                    delete providerConfiguration.configs.config.query;
+                }
                 super.getWidgetChannelManager().subscribeWidget(this.props.widgetID, this.handleWidgetData, providerConfiguration);
                 this.setState({config: message.data.configs.chartConfig});
             })
@@ -64,7 +69,7 @@ export default class UniversalWidget extends ExtendedWidget {
 
     render() {
         return (
-            <div style={{width: this.props.glContainer.width, height: this.props.glContainer.height }}>
+            <div style={{width: this.props.glContainer.width, height: this.props.glContainer.height}}>
                 <VizG
                     config={this.state.config}
                     metadata={this.state.metadata}

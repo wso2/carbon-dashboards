@@ -62,7 +62,7 @@ class UtilFunctions {
     static getDefaultH2Config() {
         return {
             "datasourceName": "SAMPLE_DB",
-            "query": "select * from TRANSACTIONS_TABLE",
+            "query": "return \"select * from TRANSACTIONS_TABLE;\"",
             "tableName": "TRANSACTIONS_TABLE",
             "incrementalColumn": "CREDITCARDNO",
             "timeColumns": "",
@@ -81,7 +81,7 @@ class UtilFunctions {
     static getDefaultH2RenderTypes() {
         return {
             "datasourceName": "TEXT_FIELD",
-            "query": "SQL_CODE",
+            "query": "DYNAMIC_SQL_CODE",
             "tableName": "TEXT_FIELD",
             "incrementalColumn": "TEXT_FIELD",
             "timeColumns": "TEXT_FIELD",

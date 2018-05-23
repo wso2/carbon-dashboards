@@ -62,7 +62,9 @@ const Types = {
         NUMBER: 'NUMBER',
         SWITCH: 'SWITCH',
         SQL_CODE: 'SQL_CODE',
-        SIDDHI_CODE: 'SIDDHI_CODE'
+        DYNAMIC_SQL_CODE: 'DYNAMIC_SQL_CODE',
+        SIDDHI_CODE: 'SIDDHI_CODE',
+        DYNAMIC_SIDDHI_CODE: 'DYNAMIC_SIDDHI_CODE',
     }
 };
 

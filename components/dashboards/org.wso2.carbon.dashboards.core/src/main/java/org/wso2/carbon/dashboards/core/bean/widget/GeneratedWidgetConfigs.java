@@ -27,6 +27,15 @@ public class GeneratedWidgetConfigs {
     private String id;
     private JsonElement chartConfig;
     private JsonElement providerConfig;
+    private String version;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public JsonElement getChartConfig() {
         return chartConfig;

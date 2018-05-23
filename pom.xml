@@ -25,7 +25,6 @@
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
-
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>

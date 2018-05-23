@@ -93,6 +93,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
             widgetConfigs.setChartConfig(generatedWidgetConfigs.getChartConfig());
             widgetConfigs.setProviderConfig(generatedWidgetConfigs.getProviderConfig());
             widgetConfigs.setGenerated(true);
+            widgetConfigs.setVersion(generatedWidgetConfigs.getVersion());
             widgetMetaInfo.setId(generatedWidgetConfigs.getId());
             widgetMetaInfo.setName(generatedWidgetConfigs.getName());
             widgetMetaInfo.setConfigs(widgetConfigs);
@@ -135,6 +136,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
                 widgetConfigs.setChartConfig(generatedWidgetConfigs.getChartConfig());
                 widgetConfigs.setProviderConfig(generatedWidgetConfigs.getProviderConfig());
                 widgetConfigs.setGenerated(true);
+                widgetConfigs.setVersion(generatedWidgetConfigs.getVersion());
                 widgetMetaInfo.setConfigs(widgetConfigs);
                 widgetMetaInfoSet.add(widgetMetaInfo);
             }
