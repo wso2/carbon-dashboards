@@ -91,7 +91,7 @@ class DynamicQueryComponent extends Component {
 
     handleQueryEditor(id, value) {
         this.props.handleDynamicQuery(value, this.state.customWidgetInputs, this.state.systemWidgetInputs,
-            this.generateFunctionParameters(),this.generateFunctionDefaultValues());
+            this.generateFunctionParameters(), this.generateFunctionDefaultValues());
         this.setState({queryValue: value});
     }
 

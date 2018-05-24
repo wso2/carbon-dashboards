@@ -27,9 +27,11 @@ class PubSubComponent {
 
     wire(subscriberId, publisherId) {
         let pubsubCallback = function (message) {
+            console.log("CALLL BACK")
             dashboardLayout.eventHub.emit(subscriberId, message)
         };
         dashboardLayout.eventHub.on(publisherId, pubsubCallback);
+        console.log("PPP        "+publisherId+"     SUB     "+subscriberId)
         this.pubsubCallbackMap.set(subscriberId + "_" + publisherId, pubsubCallback);
     }
 

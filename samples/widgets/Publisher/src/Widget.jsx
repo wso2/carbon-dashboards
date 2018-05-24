@@ -55,26 +55,40 @@ export default class Widget extends Component {
      * This method is called by subscriber widget to set the listener callback.
      * @param listnerCallback
      */
-    subscribe(listenerCallback) {
-        this.props.glEventHub.on(this.props.id, listenerCallback)
+    subscribe(listenerCallback, subscriberTopic, context) {
+        console.log("SSS SSS")
+        console.log(listenerCallback)
+        console.log(subscriberTopic)
+        console.log(context)
+        if (subscriberTopic) {
+            this.props.glEventHub.on(subscriberTopic, listenerCallback, context);
+        } else {
+            this.props.glEventHub.on(this.props.id, listenerCallback, context);
+        }
     }
 
     /**
      * This method is called by publisher widget to publish messages.
      * @param listnerCallback
      */
-    publish(message) {
-        let publishedChannel = this.props.id;
+    publish(message, publisherTopic) {
+        console.log("SSS PPPP")
+        console.log(message)
+        console.log(publisherTopic)
+        let publishedChannel = publisherTopic ? publisherTopic : this.props.id;
         if (!this.props.glContainer.layoutManager.isInitialised) {
+            console.log("IFFF")
             this.messageQueue.push(message)
         } else {
+            console.log("ELSE")
+            console.log(publishedChannel+"          PUBLISHED CHANNEL")
             this.props.glEventHub.emit(publishedChannel, message);
         }
     }
 
     /**
      * Build state object from the browser hash.
-     * 
+     *
      * @return {{}} State
      */
     static _getStateObject() {
@@ -85,7 +99,7 @@ export default class Widget extends Component {
 
     /**
      * Set state object in the browser hash.
-     * 
+     *
      * @param {{}} state State
      */
     static _setStateObject(state) {
@@ -116,7 +130,7 @@ export default class Widget extends Component {
 
     /**
      * Get local widget state.
-     * 
+     *
      * @return {{}} State
      */
     _getLocalState() {
@@ -126,7 +140,7 @@ export default class Widget extends Component {
 
     /**
      * Set local widget state.
-     * 
+     *
      * @param {{}} state State
      */
     _setLocalState(state) {
@@ -137,7 +151,7 @@ export default class Widget extends Component {
 
     /**
      * Get widget state.
-     * 
+     *
      * @param {string} key Key
      * @return {{}} State
      */
@@ -148,7 +162,7 @@ export default class Widget extends Component {
 
     /**
      * Set widget state.
-     * 
+     *
      * @param {string} key State key
      * @param {{}} value State value
      */
@@ -160,7 +174,7 @@ export default class Widget extends Component {
 
     /**
      * Get current user.
-     * 
+     *
      * @return {{}} User object
      */
     getCurrentUser() {

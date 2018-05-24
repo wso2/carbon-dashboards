@@ -119,33 +119,45 @@ class DashboardRenderingComponent extends React.Component {
     isSubscriber(widgetInfo) {
         let widgetConfig = widgetInfo.props.configs;
         return (widgetConfig && widgetConfig.pubsub && widgetConfig.pubsub.types &&
-        widgetConfig.pubsub.types.indexOf("subscriber") != -1);
+            widgetConfig.pubsub.types.indexOf("subscriber") != -1);
     }
 
 
     wirePubSubWidgets(content) {
+        console.log("wirePubSubWidgets")
         content.forEach(contentItem => {
+            console.log("forEach")
             if (!(contentItem.type === 'component')) {
                 this.wirePubSubWidgets(contentItem.content)
             } else {
                 let widgetConfigs = contentItem.props.configs;
                 if (widgetConfigs) {
+                    console.log("widgetConfigs")
                     let pubsubTypes = widgetConfigs.pubsub ? widgetConfigs.pubsub.types : [];
                     pubsubTypes = pubsubTypes ? pubsubTypes : [];
                     pubsubTypes.map(type => {
+                        console.log("map")
                         if (type === "publisher") {
                             pubsubComponent.addPublisherToMap(contentItem.component + "_"
                                 + contentItem.props.id.substring(0, 3), contentItem.props.id);
-                        } else if (type === "subscriber" && widgetConfigs.pubsub && widgetConfigs.pubsub.publishers) {
-                            widgetConfigs.pubsub.publishers.map(publisher => {
-                                pubsubComponent.wire(contentItem.props.id, publisher);
+                        } else if (type === "subscriber" && widgetConfigs.pubsub && widgetConfigs.pubsub.subscribedTopics) {
+                            console.log("WIRING")
+                            widgetConfigs.pubsub.subscribedTopics.map(subscribedTopic => {
+                                console.log("PUB    "+subscribedTopic.publisherTopic + "_" + subscribedTopic.publisherId)
+                                console.log("SUB    "+subscribedTopic.subsbriberTopic + "_" + contentItem.props.id)
+                                pubsubComponent.wire(subscribedTopic.subsbriberTopic + "_" + contentItem.props.id,
+                                    subscribedTopic.publisherTopic + "_" + subscribedTopic.publisherId)
                             });
+                            // widgetConfigs.pubsub.publishers.map(publisher => {
+                            //     pubsubComponent.wire(contentItem.props.id, publisher);
+                            // });
                         }
                     });
                 }
             }
         });
     }
+
 
     findWidget(content, widgets) {
         content.forEach(contentItem => {

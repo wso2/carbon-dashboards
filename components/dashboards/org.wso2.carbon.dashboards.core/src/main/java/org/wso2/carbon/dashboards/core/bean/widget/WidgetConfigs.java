@@ -24,27 +24,18 @@ import java.util.List;
  * Bean class for configs in widget configuration file.
  */
 public class WidgetConfigs {
-    private PubSub pubsub;
+    private JsonElement pubsub;
     private JsonElement chartConfig;
     private JsonElement providerConfig;
     private boolean isGenerated;
     private List<Option> options;
-    private String version;
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
 
     /**
      * This method is get pubsub configuration of the widget.
      *
      * @return pubsub configuration
      */
-    public PubSub getPubsub() {
+    public JsonElement getPubsub() {
         return pubsub;
     }
 
@@ -53,7 +44,7 @@ public class WidgetConfigs {
      *
      * @param pubsub pubsub configuration of the widget
      */
-    public void setPubsub(PubSub pubsub) {
+    public void setPubsub(JsonElement pubsub) {
         this.pubsub = pubsub;
     }
 

@@ -50,7 +50,7 @@ class DataPublishingComponent extends Component {
         this.state = {
             selectedKey: 0,
             selectedValue: this.props.outputAttributes[0],
-            publishedAttributes: [],
+            publishingAttributes: [],
             selectedRow: [],
             errorTextField: ""
         }
@@ -66,7 +66,7 @@ class DataPublishingComponent extends Component {
 
     validatePublishingValues() {
         let isExists = false;
-        this.state.publishedAttributes.map(outputAttribute => {
+        this.state.publishingAttributes.map(outputAttribute => {
             if (outputAttribute.publishedAsValue == this.state.publishedAsValue) {
                 isExists = true;
             }
@@ -76,20 +76,20 @@ class DataPublishingComponent extends Component {
 
     addWidgetInput(event) {
         if (this.validatePublishingValues()) {
-            this.state.publishedAttributes.push({
+            this.state.publishingAttributes.push({
                 publishingValue: this.state.selectedValue,
                 publishedAsValue: this.state.publishedAsValue
             });
-            this.props.onConfigurationChange(this.state.publishedAttributes);
-            this.setState({publishedAttributes: this.state.publishedAttributes});
+            this.props.onConfigurationChange(this.state.publishingAttributes);
+            this.setState({publishingAttributes: this.state.publishingAttributes});
         } else {
             this.setState({errorTextField: 'The value \'' + this.state.publishedAsValue + '\' already exists'})
         }
     }
 
     handleDelete(event) {
-        this.state.publishedAttributes.splice(this.state.selectedRow[0], 1);
-        this.setState({publishedAttributes: this.state.publishedAttributes, selectedRow: []});
+        this.state.publishingAttributes.splice(this.state.selectedRow[0], 1);
+        this.setState({publishingAttributes: this.state.publishingAttributes, selectedRow: []});
     }
 
     handlePublishedAs(event, value) {
@@ -154,7 +154,7 @@ class DataPublishingComponent extends Component {
                         >
                             <ContentAdd/>
                         </FloatingActionButton>
-                        {this.state.publishedAttributes.length != 0 ?
+                        {this.state.publishingAttributes.length != 0 ?
                             <Paper zDepth={5} style={{marginTop: 10, backgroundColor: '#282a36'}}>
                                 <Table onRowSelection={this.handleRowSelection}
                                        style={{backgroundColor: '#282a36'}}>
@@ -166,7 +166,7 @@ class DataPublishingComponent extends Component {
                                     </TableHeader>
                                     <TableBody displayRowCheckbox={false} deselectOnClickaway={false}>
                                         {
-                                            this.state.publishedAttributes.map(function (outputAttribute, index) {
+                                            this.state.publishingAttributes.map(function (outputAttribute, index) {
                                                 return (
                                                     <TableRow
                                                         selected={that.state.selectedRow[0] == index ? true : false}>

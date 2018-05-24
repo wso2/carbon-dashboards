@@ -28,6 +28,7 @@ public class GeneratedWidgetConfigs {
     private JsonElement chartConfig;
     private JsonElement providerConfig;
     private String version;
+    private JsonElement pubsub;
 
     public String getVersion() {
         return version;
@@ -68,6 +69,15 @@ public class GeneratedWidgetConfigs {
     public void setId(String id) {
         this.id = id;
     }
+
+    public JsonElement getPubsub() {
+        return pubsub;
+    }
+
+    public void setPubsub(JsonElement pubsub) {
+        this.pubsub = pubsub;
+    }
+
 
     @Override
     public String toString() {

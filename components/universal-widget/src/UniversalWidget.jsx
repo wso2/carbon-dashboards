@@ -35,6 +35,9 @@ export default class UniversalWidget extends ExtendedWidget {
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
         this.handleWidgetData = this.handleWidgetData.bind(this);
+        this.handleCustomWidgetInputs = this.handleCustomWidgetInputs.bind(this);
+        //this.subscribeCallback = this.subscribeCallback.bind(this);
+        this.publish = this.publish.bind(this);
     }
 
     componentDidMount() {
@@ -42,18 +45,37 @@ export default class UniversalWidget extends ExtendedWidget {
         this.getHTTPClient()
             .get(`apis/widgets/${this.props.widgetID}`)
             .then((message) => {
-                if (message.data.configs.version !== "1.0.0") {
-                    let providerConfiguration = message.data.configs.providerConfig;
+                let providerConfiguration = message.data.configs.providerConfig;
+                console.log(message.data.configs)
+                console.log("AAAAAAAAAA")
+                if (message.data.version !== "1.0.0") {
                     providerConfiguration.configs.config.queryData = {};
                     providerConfiguration.configs.config.queryData.query = providerConfiguration.configs.config.query;
                     delete providerConfiguration.configs.config.query;
                 }
+                this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData);
                 super.getWidgetChannelManager().subscribeWidget(this.props.widgetID, this.handleWidgetData, providerConfiguration);
                 this.setState({config: message.data.configs.chartConfig});
             })
             .catch((error) => {
                 // TODO: Handle error
             });
+    }
+
+    handleCustomWidgetInputs(queryData) {
+        console.log("handleCustomWidgetInputs")
+        queryData.customWidgetInputs.map(customInput => {
+            console.log("!!!!!!!!!!!!!!!            sub" + "_" + this.props.id)
+            console.log(customInput)
+            super.subscribe(this.subscribeCallback, "sub" + "_" + this.props.id, customInput);
+        })
+    }
+
+    subscribeCallback(receivedData) {
+        console.log("AAAA")
+        console.log(receivedData)
+        console.log(this)
+        console.log("BBBB")
     }
 
     componentWillUnmount() {
@@ -82,6 +104,8 @@ export default class UniversalWidget extends ExtendedWidget {
     }
 
     handleResize() {
+        console.log("HADNLE")
+        super.publish({name:"LLLLLLLLLLLLAAAAAA",id:"sss"}, "pub_" + this.props.id);
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 

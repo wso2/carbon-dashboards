@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class PubSub {
     private List<String> types;
+    private List<String> publisherTopics;
+    private List<String> subscriberTopics;
 
     /**
      * This method is to get types of the pubsub configuration.
@@ -42,5 +44,22 @@ public class PubSub {
      */
     public void setTypes(List<String> types) {
         this.types = types;
+    }
+
+
+    public List<String> getPublisherTopics() {
+        return publisherTopics;
+    }
+
+    public void setPublisherTopics(List<String> publisherTopics) {
+        this.publisherTopics = publisherTopics;
+    }
+
+    public List<String> getSubscriberTopics() {
+        return subscriberTopics;
+    }
+
+    public void setSubscriberTopics(List<String> subscriberTopics) {
+        this.subscriberTopics = subscriberTopics;
     }
 }

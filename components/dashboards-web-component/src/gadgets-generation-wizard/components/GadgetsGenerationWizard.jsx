@@ -75,6 +75,7 @@ class GadgetsGenerationWizard extends Component {
             providerConfiguration: {},
             providerConfigRenderTypes: {},
             chartConfiguration: {},
+            pubsub: {},
             metadata: {
                 names: ['rpm', 'torque', 'horsepower', 'EngineType'],
                 types: ['LINEAR', 'LINEAR', 'LINEAR', 'ORDINAL'],
@@ -100,6 +101,7 @@ class GadgetsGenerationWizard extends Component {
         this.handleNext = this.handleNext.bind(this);
         this.handlePrev = this.handlePrev.bind(this);
         this.handleDynamicQuery = this.handleDynamicQuery.bind(this);
+        this.getPubSubConfiguration = this.getPubSubConfiguration.bind(this);
     }
 
     componentDidMount() {
@@ -164,7 +166,7 @@ class GadgetsGenerationWizard extends Component {
      * @param chartConfiguration
      */
     updateChartConfiguration(chartConfiguration) {
-        this.setState({ chartConfiguration });
+        this.setState({chartConfiguration});
     }
 
     /**
@@ -206,6 +208,8 @@ class GadgetsGenerationWizard extends Component {
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
                 version: "1.0.0",
                 chartConfig: validatedConfiguration,
+                pubsub: this.getPubSubConfiguration(validatedConfiguration.publishingAttributes,
+                    this.state.providerConfiguration.queryData.customWidgetInputs),
                 providerConfig: {
                     configs: {
                         type: this.state.providerType,
@@ -254,6 +258,25 @@ class GadgetsGenerationWizard extends Component {
             systemWidgetInputs: systemWidgetInputs
         });
     }
+
+    getPubSubConfiguration(publishingAttributes, customWidgetInputs) {
+        let pubsub = {};
+        pubsub.types = [];
+        if (customWidgetInputs.length !== 0) {
+            pubsub.types.push("subscriber");
+            pubsub.subscriberTopics = customWidgetInputs.map(widgetInput => {
+                return widgetInput.name;
+            });
+        }
+        if (publishingAttributes && publishingAttributes.length !== 0) {
+            pubsub.types.push("publisher");
+            pubsub.publisherTopics = publishingAttributes.map(outputAttribute => {
+                return outputAttribute.publishedAsValue;
+            });
+        }
+        return pubsub;
+    }
+
 
     /**
      * Handles onClick of Next button, including validations

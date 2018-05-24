@@ -79,8 +79,8 @@ class ChartConfigurator extends Component {
         this.props.onConfigurationChange(state.chartConfiguration);
     }
 
-    handlePublisherConfigs(publisherAttributes) {
-        this.state.chartConfiguration.publishingAttributes = publisherAttributes;
+    handlePublisherConfigs(publishingAttributes) {
+        this.state.chartConfiguration.publishingAttributes = publishingAttributes;
     }
 
     /**
