@@ -30,22 +30,21 @@ const styles = {
         textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     title: {
         fontWeight: 500,
         fontSize: '18px',
         marginTop: 20,
-        marginBottom: 10
+        marginBottom: 10,
     },
     progressBar: {
         marginLeft: 20,
-        marginRight: 20
-    }
+        marginRight: 20,
+    },
 };
 
 export default class PageLoadingIndicator extends Component {
-
     render() {
         return (
             <Paper style={styles.paper} zDepth={0}>
@@ -61,9 +60,9 @@ export default class PageLoadingIndicator extends Component {
 }
 
 PageLoadingIndicator.propTypes = {
-    title: PropTypes.string
+    title: PropTypes.string,
 };
 
 PageLoadingIndicator.defaultProps = {
-    title: 'Loading ..'
+    title: 'Loading ..',
 };
