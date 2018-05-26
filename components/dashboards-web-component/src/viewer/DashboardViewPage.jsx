@@ -31,7 +31,7 @@ import Error404 from '../error-pages/Error404';
 import Error500 from '../error-pages/Error500';
 import PageLoadingIndicator from '../common/PageLoadingIndicator';
 import { HttpStatus } from '../utils/Constants';
-import DashboardRenderer from '../common/DashboardRenderer';
+import DashboardRenderer from './components/DashboardRenderer';
 import UserMenu from '../common/UserMenu';
 import { darkTheme, lightTheme } from '../utils/Theme';
 
@@ -231,7 +231,13 @@ class DashboardViewPage extends Component {
             if (page.pages && subPageId) {
                 page = page.pages.find(page => (page.id === subPageId));
             }
-            return <DashboardRenderer goldenLayoutContents={page.content} theme={theme} />;
+            return (
+                <DashboardRenderer
+                    dashboardId={this.dashboard.url}
+                    goldenLayoutContents={page.content}
+                    theme={theme}
+                />
+            );
         } else {
             // Non-existing page ID found in the URL. Redirect to the landing page so that we have a page to render.
             return <Redirect to={this.getNavigationToPage(this.dashboard.landingPage)} />;
