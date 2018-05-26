@@ -22,9 +22,8 @@ import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
 import { AppBar, Divider, Drawer, FlatButton, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
-import { darkBaseTheme, getMuiTheme, lightBaseTheme, MuiThemeProvider } from 'material-ui/styles';
+import { MuiThemeProvider } from 'material-ui/styles';
 import { ActionHome, ActionViewModule } from 'material-ui/svg-icons';
-import * as Colors from 'material-ui/styles/colors';
 
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import Error403 from '../error-pages/Error403';
@@ -34,42 +33,12 @@ import PageLoadingIndicator from '../common/PageLoadingIndicator';
 import { HttpStatus } from '../utils/Constants';
 import DashboardRenderer from '../common/DashboardRenderer';
 import UserMenu from '../common/UserMenu';
+import { darkTheme, lightTheme } from '../utils/Theme';
 
-const darkTheme = getMuiTheme({
-    name: 'dark',
-    palette: {
-        primary1Color: Colors.teal500,
-        accent1Color: Colors.orange800,
-    },
-    drawer: {
-        color: Colors.blueGrey900,
-    },
-    appBar: {
-        textColor: Colors.white,
-        color: Colors.blueGrey800,
-    },
-}, darkBaseTheme);
-const lightTheme = getMuiTheme({
-    name: 'light',
-    palette: {
-        primary1Color: Colors.teal500,
-        accent1Color: Colors.orange800,
-    },
-    drawer: {
-        color: Colors.grey400,
-    },
-    appBar: {
-        textColor: Colors.black,
-        color: Colors.grey200,
-    },
-    toggle: {
-        trackOffColor: Colors.grey500,
-        thumbOffColor: Colors.grey700,
-    },
-}, lightBaseTheme);
 const SelectableList = makeSelectable(List);
 
 class DashboardViewPage extends Component {
+
     constructor(props) {
         super(props);
         this.dashboard = null;
@@ -172,7 +141,7 @@ class DashboardViewPage extends Component {
             <span>
                 <FlatButton
                     style={{ minWidth: '48px' }}
-                    label='Overview'
+                    label={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
                     icon={<ActionViewModule />}
                     onClick={() => this.props.history.push('/')}
                 />
