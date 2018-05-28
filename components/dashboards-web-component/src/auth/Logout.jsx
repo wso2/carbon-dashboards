@@ -20,6 +20,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
+import DashboardThumbnail from '../utils/DashboardThumbnail';
 import AuthManager from './utils/AuthManager';
 
 /**
@@ -28,10 +29,10 @@ import AuthManager from './utils/AuthManager';
 export default class Logout extends Component {
     /**
      * Renders logout component.
-     *
      * @returns {XML} HTML content
      */
     render() {
+        DashboardThumbnail.deleteDashboardThumbnails();
         AuthManager.logout();
         return (
             <Redirect to={{ pathname: '/login' }} />

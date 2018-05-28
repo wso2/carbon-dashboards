@@ -50,6 +50,7 @@ const styles = {
 
 /**
  * Header component.
+ * @deprecated
  */
 class Header extends Component {
     /**

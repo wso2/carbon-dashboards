@@ -25,6 +25,7 @@ import { NavigationRefresh } from 'material-ui/svg-icons';
 
 import WidgetClassRegistry from '../utils/WidgetClassRegistry';
 import GoldenLayoutContentUtils from '../utils/GoldenLayoutContentUtils';
+import { Event } from '../utils/Constants';
 
 const widgetScriptUrlPrefix = `${window.location.origin}${window.contextPath}/public/extensions/widgets`;
 const WidgetLoadingStatus = {
@@ -51,7 +52,7 @@ export default class WidgetRenderer extends Component {
             widgetLoadingStatus: WidgetLoadingStatus.INIT,
             widgetFetchingProgress: -1
         };
-        props.glEventHub.on('__mui-theme-change', (newTheme) => this.setState({currentTheme: newTheme}));
+        props.glEventHub.on(Event.DASHBOARD_VIEW_THEME_CHANGE, newTheme => this.setState({ currentTheme: newTheme }));
 
         this.getWidgetClass = this.getWidgetClass.bind(this);
         this.loadWidgetClass = this.loadWidgetClass.bind(this);
@@ -92,6 +93,8 @@ export default class WidgetRenderer extends Component {
                 window.eval(response.data);
                 if (this.getWidgetClass()) {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADED);
+                    this.props.glContainer.layoutManager.eventHub.trigger(Event.DASHBOARD_VIEW_WIDGET_LOADED,
+                        this.widgetName);
                 } else {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING_FAIL);
                 }
