@@ -31,13 +31,16 @@ export default class UniversalWidget extends ExtendedWidget {
             metadata: null,
             data: null,
             config: null,
+            widgetInputs: [],
+            systemInputs:[],
+            providerConfigs: {},
         };
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
         this.handleWidgetData = this.handleWidgetData.bind(this);
         this.handleCustomWidgetInputs = this.handleCustomWidgetInputs.bind(this);
-        //this.subscribeCallback = this.subscribeCallback.bind(this);
         this.publish = this.publish.bind(this);
+        this.state.systemInputs = this.props.systemInputs ?this.props.systemInputs  : ["admin"];
     }
 
     componentDidMount() {
@@ -46,14 +49,18 @@ export default class UniversalWidget extends ExtendedWidget {
             .get(`apis/widgets/${this.props.widgetID}`)
             .then((message) => {
                 let providerConfiguration = message.data.configs.providerConfig;
-                console.log(message.data.configs)
-                console.log("AAAAAAAAAA")
                 if (message.data.version !== "1.0.0") {
                     providerConfiguration.configs.config.queryData = {};
                     providerConfiguration.configs.config.queryData.query = providerConfiguration.configs.config.query;
                     delete providerConfiguration.configs.config.query;
                 }
-                this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData);
+                if (this.props.configs.pubsub.types.includes("subscriber")) {
+                    this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData)
+                }
+                if (this.props.configs.pubsub.types.includes("publisher")) {
+                    this.publishEvents = this.publishEvents.bind(this);
+                }
+                this.state.providerConfigs = providerConfiguration;
                 super.getWidgetChannelManager().subscribeWidget(this.props.widgetID, this.handleWidgetData, providerConfiguration);
                 this.setState({config: message.data.configs.chartConfig});
             })
@@ -62,20 +69,46 @@ export default class UniversalWidget extends ExtendedWidget {
             });
     }
 
+    publishEvents(selectedData) {
+        let data = {};
+        this.state.config.publishingAttributes.map(publishingAttribute => {
+            data[publishingAttribute.publishedAsValue] = selectedData[publishingAttribute.publishingValue]
+        });
+        super.publish(data);
+    }
+
     handleCustomWidgetInputs(queryData) {
-        console.log("handleCustomWidgetInputs")
         queryData.customWidgetInputs.map(customInput => {
-            console.log("!!!!!!!!!!!!!!!            sub" + "_" + this.props.id)
-            console.log(customInput)
-            super.subscribe(this.subscribeCallback, "sub" + "_" + this.props.id, customInput);
+            if (this.props.configs.pubsub.publishers) {
+                this.props.configs.pubsub.publishers.map(publisherId => {
+                    this.state.queryData = queryData;
+                    this.subscriberTopics = this.props.configs.pubsub.subscribedTopics.filter(function (subscriberTopics) {
+                        return subscriberTopics.publisherId === publisherId
+                    });
+                    console.log(this.props.id + "_" + publisherId)
+                    super.subscribe(this.subscribeCallback, this.props.id + "_" + publisherId, this);
+                });
+            }
         })
     }
 
     subscribeCallback(receivedData) {
-        console.log("AAAA")
-        console.log(receivedData)
-        console.log(this)
-        console.log("BBBB")
+        let receivedKeys = new Set(Object.keys(receivedData));
+        this.state.widgetInputs = [];
+        this.state.systemInputs.map(systemInput => {
+           this.state.widgetInputs.push(systemInput)
+        });
+        this.subscriberTopics.map(customTopics => {
+            if (receivedKeys.has(customTopics.publisherTopic)) {
+                this.state.widgetInputs.push(receivedData[customTopics.publisherTopic]);
+            }
+        });
+        eval(this.state.queryData.queryFunction)
+        this.state.providerConfigs.configs.config.queryData.query = this.getQuery.apply(this, this.state.widgetInputs);
+        super.getWidgetChannelManager().unsubscribeWidget(this.props.id);
+        super.getWidgetChannelManager().subscribeWidget(this.props.widgetID, this.handleWidgetData, this.state.providerConfigs);
+        this.setState({config: this.state.config});
+
     }
 
     componentWillUnmount() {
@@ -98,14 +131,13 @@ export default class UniversalWidget extends ExtendedWidget {
                     data={this.state.data}
                     height={this.props.glContainer.height}
                     width={this.props.glContainer.width}
+                    onClick={this.publishEvents}
                 />
             </div>
         )
     }
 
     handleResize() {
-        console.log("HADNLE")
-        super.publish({name:"LLLLLLLLLLLLAAAAAA",id:"sss"}, "pub_" + this.props.id);
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 

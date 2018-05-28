@@ -30,8 +30,6 @@ export default class Widget extends Component {
 
         this.messageQueue = [];
         this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
-        console.log(props)
-        console.log("AAAAAAAAAAAAAAAAAAAAAA")
         this._getLocalState = this._getLocalState.bind(this);
         this._setLocalState = this._setLocalState.bind(this);
         this.getWidgetState = this.getWidgetState.bind(this);
@@ -56,10 +54,6 @@ export default class Widget extends Component {
      * @param listnerCallback
      */
     subscribe(listenerCallback, subscriberTopic, context) {
-        console.log("SSS SSS")
-        console.log(listenerCallback)
-        console.log(subscriberTopic)
-        console.log(context)
         if (subscriberTopic) {
             this.props.glEventHub.on(subscriberTopic, listenerCallback, context);
         } else {
@@ -72,16 +66,10 @@ export default class Widget extends Component {
      * @param listnerCallback
      */
     publish(message, publisherTopic) {
-        console.log("SSS PPPP")
-        console.log(message)
-        console.log(publisherTopic)
         let publishedChannel = publisherTopic ? publisherTopic : this.props.id;
         if (!this.props.glContainer.layoutManager.isInitialised) {
-            console.log("IFFF")
             this.messageQueue.push(message)
         } else {
-            console.log("ELSE")
-            console.log(publishedChannel+"          PUBLISHED CHANNEL")
             this.props.glEventHub.emit(publishedChannel, message);
         }
     }

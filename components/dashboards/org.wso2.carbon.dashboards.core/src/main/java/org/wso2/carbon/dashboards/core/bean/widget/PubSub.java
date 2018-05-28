@@ -25,8 +25,8 @@ import java.util.List;
  */
 public class PubSub {
     private List<String> types;
-    private List<String> publisherTopics;
-    private List<String> subscriberTopics;
+    private List<String> publisherWidgetOutputs;
+    private List<String> subscriberWidgetInputs;
 
     /**
      * This method is to get types of the pubsub configuration.
@@ -46,20 +46,19 @@ public class PubSub {
         this.types = types;
     }
 
-
-    public List<String> getPublisherTopics() {
-        return publisherTopics;
+    public List<String> getPublisherWidgetOutputs() {
+        return publisherWidgetOutputs;
     }
 
-    public void setPublisherTopics(List<String> publisherTopics) {
-        this.publisherTopics = publisherTopics;
+    public void setPublisherWidgetOutputs(List<String> publisherWidgetOutputs) {
+        this.publisherWidgetOutputs = publisherWidgetOutputs;
     }
 
-    public List<String> getSubscriberTopics() {
-        return subscriberTopics;
+    public List<String> getSubscriberWidgetInputs() {
+        return subscriberWidgetInputs;
     }
 
-    public void setSubscriberTopics(List<String> subscriberTopics) {
-        this.subscriberTopics = subscriberTopics;
+    public void setSubscriberWidgetInputs(List<String> subscriberWidgetInputs) {
+        this.subscriberWidgetInputs = subscriberWidgetInputs;
     }
 }

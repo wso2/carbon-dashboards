@@ -264,13 +264,13 @@ class GadgetsGenerationWizard extends Component {
         pubsub.types = [];
         if (customWidgetInputs.length !== 0) {
             pubsub.types.push("subscriber");
-            pubsub.subscriberTopics = customWidgetInputs.map(widgetInput => {
+            pubsub.subscriberWidgetInputs = customWidgetInputs.map(widgetInput => {
                 return widgetInput.name;
             });
         }
         if (publishingAttributes && publishingAttributes.length !== 0) {
             pubsub.types.push("publisher");
-            pubsub.publisherTopics = publishingAttributes.map(outputAttribute => {
+            pubsub.publisherWidgetOutputs = publishingAttributes.map(outputAttribute => {
                 return outputAttribute.publishedAsValue;
             });
         }
