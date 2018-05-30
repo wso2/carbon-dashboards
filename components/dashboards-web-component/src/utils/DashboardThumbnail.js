@@ -17,6 +17,7 @@
  */
 
 import html2canvas from 'html2canvas';
+import _ from 'lodash';
 import AuthManager from '../auth/utils/AuthManager';
 
 export default class DashboardThumbnail {
@@ -63,7 +64,7 @@ export default class DashboardThumbnail {
     static deleteDashboardThumbnails() {
         const keyPrefix = DashboardThumbnail.getDashboardThumbnailKey('');
         Object.keys(localStorage).forEach((key) => {
-            if (key.lastIndexOf(keyPrefix, 0) === 0) {
+            if (_.startsWith(key, keyPrefix)) {
                 localStorage.removeItem(key);
             }
         });
