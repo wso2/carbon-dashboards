@@ -33,6 +33,7 @@ import Error500 from '../error-pages/Error500';
 import defaultTheme from '../utils/Theme';
 import { HttpStatus } from '../utils/Constants';
 import DashboardAPI from '../utils/apis/DashboardAPI';
+import DashboardRenderer from './components/DashboardRenderer';
 
 export default class DashboardDesignerPage extends Component {
     constructor(props) {
@@ -91,6 +92,14 @@ export default class DashboardDesignerPage extends Component {
         );
     }
 
+    renderDashboard(theme) {
+        const pageId = this.props.match.params.pageId;
+        const page = this.dashboard.pages.find(page => (page.id === pageId));
+        return (
+            <DashboardRenderer goldenLayoutContents={page.content} theme={theme} />
+        );
+    }
+
     render() {
         switch (this.state.dashboardFetchStatus) {
             case HttpStatus.NOTFOUND:
@@ -126,6 +135,7 @@ export default class DashboardDesignerPage extends Component {
                             dashboard={this.dashboard}
                             updateDashboard={this.handleDashboardUpdate}
                         />
+                        {this.renderDashboard(defaultTheme)}
                     </div>
                     <Snackbar
                         open={this.state.dashboardUpdateResultMessage != null}
