@@ -121,7 +121,6 @@ export default class DashboardDesignerPage extends Component {
         }
         // No page is mentioned in the URl. Let's redirect to the landing page so that we have a page to render.
         if (!this.props.match.params.pageId) {
-            console.log(`Redirecting to landing page as pageId=${this.props.match.params.pageId}`);
             return <Redirect to={`/designer/${this.dashboard.url}/${this.dashboard.landingPage}`} />;
         }
 

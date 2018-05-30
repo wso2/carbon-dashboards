@@ -99,7 +99,6 @@ class PagesSidePane extends Component {
                 updatingPage.id = newUrl;
                 this.props.updateDashboard()
                     .then(() => {
-                        console.log('redirecting to ' + this.getPageUrl(updatingPage.id));
                         this.props.history.push(this.getPageUrl(updatingPage.id));
                         resolve();
                     })

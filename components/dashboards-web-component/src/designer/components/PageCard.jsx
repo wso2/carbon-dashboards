@@ -54,7 +54,6 @@ class PageCard extends Component {
 
     handleCardClick(expand) {
         if (expand) {
-            console.log('Since card expand, redirecting to ' + `/designer/${this.props.match.params.dashboardId}/${this.props.page.id}`)
             this.props.history.push(`/designer/${this.props.match.params.dashboardId}/${this.props.page.id}`);
         }
     }
