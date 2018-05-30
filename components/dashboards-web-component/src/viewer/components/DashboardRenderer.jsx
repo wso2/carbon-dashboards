@@ -16,39 +16,21 @@
  * under the License.
  */
 
-/*
- * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoldenLayout from 'golden-layout';
+import 'golden-layout/src/css/goldenlayout-base.css';
 
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
 import WidgetRenderer from '../../common/WidgetRenderer';
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import { Event } from '../../utils/Constants';
 
-import 'golden-layout/src/css/goldenlayout-base.css';
-import './dashboard-renderer-styles.css';
 import '../../common/styles/custom-goldenlayout-dark-theme.css';
 import glDarkTheme from '!!css-loader!../../common/styles/custom-goldenlayout-dark-theme.css';
 import '../../common/styles/custom-goldenlayout-light-theme.css';
 import glLightTheme from '!!css-loader!../../common/styles/custom-goldenlayout-light-theme.css';
+import '../../common/styles/dashboard-container-styles.css';
 
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
