@@ -46,7 +46,7 @@ class Header extends Component {
     render() {
         return (
             <AppBar
-                style={{ zIndex: this.props.theme.zIndex.drawerOverlay + 1 }}
+                style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}
                 title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
                 zDepth={2}
                 iconElementLeft={
