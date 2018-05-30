@@ -30,7 +30,7 @@ import '../../common/styles/custom-goldenlayout-dark-theme.css';
 import glDarkTheme from '!!css-loader!../../common/styles/custom-goldenlayout-dark-theme.css';
 import '../../common/styles/custom-goldenlayout-light-theme.css';
 import glLightTheme from '!!css-loader!../../common/styles/custom-goldenlayout-light-theme.css';
-import '../../common/styles/dashboard-container-styles.css';
+import './dashboard-container-styles.css';
 
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
@@ -84,7 +84,7 @@ export default class DashboardRenderer extends Component {
                 <style>{this.props.theme.name === 'dark' ? glDarkThemeCss : glLightThemeCss}</style>
                 <div
                     id={dashboardContainerId}
-                    className='dashboard-container'
+                    className='dashboard-view-container'
                     style={{
                         color: this.props.theme.palette.textColor,
                         backgroundColor: this.props.theme.palette.canvasColor,
@@ -103,24 +103,21 @@ export default class DashboardRenderer extends Component {
 
         const config = {
             settings: {
-                hasHeaders: true,
                 constrainDragToContainer: false,
                 reorderEnabled: false,
                 selectionEnabled: false,
                 popoutWholeStack: false,
                 blockedPopoutsThrowError: true,
                 closePopoutsOnUnload: true,
+                responsiveMode: 'always',
+                hasHeaders: true,
                 showPopoutIcon: false,
                 showMaximiseIcon: true,
-                responsive: true,
-                isClosable: false,
-                responsiveMode: 'always',
                 showCloseIcon: false,
             },
             dimensions: {
                 headerHeight: 37,
             },
-            isClosable: false,
             content: this.props.goldenLayoutContents || [],
         };
         const dashboardContainer = document.getElementById(dashboardContainerId);
