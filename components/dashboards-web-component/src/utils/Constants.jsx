@@ -20,6 +20,7 @@
  * HTTP status codes.
  */
 const HttpStatus = {
+    UNKNOWN: -1,
     OK: 200,
     CREATED: 201,
     CONFLICT: 409,
