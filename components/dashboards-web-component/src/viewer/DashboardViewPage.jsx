@@ -34,6 +34,7 @@ import { HttpStatus } from '../utils/Constants';
 import DashboardRenderer from './components/DashboardRenderer';
 import UserMenu from '../common/UserMenu';
 import { darkTheme, lightTheme } from '../utils/Theme';
+import _ from 'lodash';
 
 const SelectableList = makeSelectable(List);
 
@@ -44,7 +45,7 @@ class DashboardViewPage extends Component {
         this.dashboard = null;
         this.isInitilialLoading = true;
         this.state = {
-            dashboardFetchStatus: HttpStatus.OK,
+            dashboardFetchStatus: HttpStatus.UNKNOWN,
             isSidePaneOpen: true,
             isCurrentThemeDark: true,
         };
@@ -69,7 +70,9 @@ class DashboardViewPage extends Component {
         new DashboardAPI().getDashboardByID(this.props.match.params.dashboardId)
             .then((response) => {
                 this.dashboard = response.data;
-                this.dashboard.pages = JSON.parse(this.dashboard.pages);
+                if (_.isString(this.dashboard.pages)) {
+                    this.dashboard.pages = JSON.parse(this.dashboard.pages);
+                }
                 this.setState({ dashboardFetchStatus: HttpStatus.OK });
             })
             .catch((error) => {
@@ -99,16 +102,6 @@ class DashboardViewPage extends Component {
     render() {
         const currentTheme = this.state.isCurrentThemeDark ? darkTheme : lightTheme;
 
-        // Still fetching the dashboard.
-        if (!this.dashboard) {
-            return (
-                <MuiThemeProvider muiTheme={currentTheme}>
-                    {this.renderHeader(currentTheme)}
-                    <PageLoadingIndicator />
-                </MuiThemeProvider>
-            );
-        }
-        // Something went wrong in dashboard fetching process.
         switch (this.state.dashboardFetchStatus) {
             case HttpStatus.NOTFOUND:
                 return <Error404 />;
@@ -116,6 +109,16 @@ class DashboardViewPage extends Component {
                 return <Error403 />;
             case HttpStatus.SERVE_ERROR:
                 return <Error500 />;
+            case HttpStatus.UNKNOWN:
+                // Still fetching the dashboard.
+                return (
+                    <MuiThemeProvider muiTheme={currentTheme}>
+                        {this.renderHeader(currentTheme)}
+                        <PageLoadingIndicator />
+                    </MuiThemeProvider>
+                );
+            default:
+            // Fetched the dashboard successfully.
         }
         // No page is mentioned in the URl. Let's redirect to the landing page so that we have a page to render.
         if (!this.props.match.params.pageId) {
@@ -149,7 +152,7 @@ class DashboardViewPage extends Component {
             </span>
         );
         return (<AppBar
-            style={{ zIndex: theme.zIndex.drawerOverlay + 1 }}
+            style={{ zIndex: theme.zIndex.drawer + 100 }}
             onLeftIconButtonClick={this.handleSidePaneToggle}
             title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
             iconElementRight={rightIcons}
@@ -202,23 +205,29 @@ class DashboardViewPage extends Component {
             if (page.pages) {
                 nestedItems = page.pages.map((subPage) => {
                     const subPageId = `${page.id}/${subPage.id}`;
-                    return (<ListItem
-                        value={subPageId}
-                        primaryText={subPage.name}
-                        insetChildren
-                        onClick={() => history.push(this.getNavigationToPage(subPageId))}
-                    />);
+                    return (
+                        <ListItem
+                            key={subPageId}
+                            value={subPageId}
+                            primaryText={subPage.name}
+                            insetChildren
+                            onClick={() => history.push(this.getNavigationToPage(subPageId))}
+                        />
+                    );
                 });
             }
-            return (<ListItem
-                value={page.id}
-                primaryText={page.name}
-                leftIcon={isLandingPage ? <ActionHome /> : null}
-                insetChildren={!isLandingPage}
-                nestedItems={nestedItems}
-                open={!!nestedItems}
-                onClick={() => history.push(this.getNavigationToPage(page.id))}
-            />);
+            return (
+                <ListItem
+                    key={page.id}
+                    value={page.id}
+                    primaryText={page.name}
+                    leftIcon={isLandingPage ? <ActionHome /> : null}
+                    insetChildren={!isLandingPage}
+                    nestedItems={nestedItems}
+                    open={!!nestedItems}
+                    onClick={() => history.push(this.getNavigationToPage(page.id))}
+                />
+            );
         });
     }
 
