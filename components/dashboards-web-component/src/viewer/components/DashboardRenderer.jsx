@@ -43,6 +43,7 @@ import WidgetRenderer from '../../common/WidgetRenderer';
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import { Event } from '../../utils/Constants';
 
+import 'golden-layout/src/css/goldenlayout-base.css';
 import './dashboard-renderer-styles.css';
 import '../../common/styles/custom-goldenlayout-dark-theme.css';
 import glDarkTheme from '!!css-loader!../../common/styles/custom-goldenlayout-dark-theme.css';
