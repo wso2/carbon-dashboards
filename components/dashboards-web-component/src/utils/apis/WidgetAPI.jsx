@@ -19,26 +19,45 @@
 
 import Axios from 'axios';
 import AuthManager from '../../auth/utils/AuthManager';
+import { HttpStatus } from '../Constants';
 
 export default class WidgetAPI {
     /**
-     * This method will return the AXIOS http client.
-     * @returns httpClient
+     * Returns an axios HTTP client
+     * @private
+     * @returns {AxiosInstance} axios instance
      */
-    getHTTPClient() {
-        let httpClient = Axios.create({
-            baseURL: window.location.origin + '' + contextPath + '/apis/widgets',
+    static getHTTPClient() {
+        const httpClient = Axios.create({
+            baseURL: `${window.location.origin}${window.contextPath}/apis/widgets`,
             timeout: 2000,
-            headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID}
+            headers: { Authorization: 'Bearer ' + AuthManager.getUser().SDID },
         });
+        httpClient.interceptors.response.use(response => response, (error) => {
+            if (error.response.status === HttpStatus.UNAUTHORIZED) {
+                AuthManager.discardSession();
+                window.handleSessionInvalid();
+            }
+            return Promise.reject(error);
+        });
+
         return httpClient;
     }
 
     /**
+     * Returns all widgets.
+     * @returns {AxiosPromise} a promise
+     */
+    static getWidgets() {
+        return WidgetAPI.getHTTPClient().get();
+    }
+
+    /**
      * This method will get a list of widgets available in the server.
+     * @deprecated
      * @returns {*}
      */
     getWidgetsInfo() {
-        return this.getHTTPClient().get();
+        return WidgetAPI.getHTTPClient().get();
     }
 }
