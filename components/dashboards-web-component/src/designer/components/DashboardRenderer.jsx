@@ -125,6 +125,10 @@ export default class DashboardRenderer extends Component {
     }
 
     onGoldenLayoutComponentCreatedEvent(component) {
+        if (!component.parent || !component.parent.header) {
+            return;
+        }
+
         const settingsButton = document.createElement('i');
         settingsButton.title = 'settings';
         settingsButton.className = 'fw fw-configarations widget-configuration-button';
