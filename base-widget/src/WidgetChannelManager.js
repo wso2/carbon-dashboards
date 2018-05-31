@@ -120,10 +120,6 @@ class WidgetChannelManager {
     }
 }
 
-let widgetChannelManager = null;
-
-if(!widgetChannelManager) {
-    widgetChannelManager = new WidgetChannelManager();
-}
+const widgetChannelManager = new WidgetChannelManager();
 
 export default widgetChannelManager;
