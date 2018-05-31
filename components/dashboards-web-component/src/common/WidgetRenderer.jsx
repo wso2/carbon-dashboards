@@ -42,23 +42,37 @@ export default class WidgetRenderer extends Component {
     constructor(props) {
         super(props);
         this.widgetUUID = props.id;
-        let goldenLayout = props.glContainer.layoutManager;
-        let config = GoldenLayoutContentUtils.getWidgetContent(this.widgetUUID, goldenLayout.config.content);
-        this.widgetName = config.component;
+        this.widgetName = props.widgetID;
+        if (!this.widgetName) {
+            const goldenLayout = props.glContainer.layoutManager;
+            const config = GoldenLayoutContentUtils.getWidgetContent(this.widgetUUID, goldenLayout.config.content);
+            this.widgetName = config.component;
+        }
         this.widgetClass = null;
-
         this.state = {
             currentTheme: getMuiTheme(darkBaseTheme),
             widgetLoadingStatus: WidgetLoadingStatus.INIT,
             widgetFetchingProgress: -1
         };
-        props.glEventHub.on(Event.DASHBOARD_VIEW_THEME_CHANGE, newTheme => this.setState({ currentTheme: newTheme }));
 
         this.getWidgetClass = this.getWidgetClass.bind(this);
         this.loadWidgetClass = this.loadWidgetClass.bind(this);
         this.fetchWidget = this.fetchWidget.bind(this);
         this.updateWidgetLoadingStatus = this.updateWidgetLoadingStatus.bind(this);
-        this.componentDidMount = this.componentDidMount.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        this.triggerEvent = this.triggerEvent.bind(this);
+
+        props.glContainer.on('resize', this.handleResize);
+        props.glEventHub.on(Event.DASHBOARD_VIEW_THEME_CHANGE, newTheme => this.setState({ currentTheme: newTheme }));
+    }
+
+    componentDidMount() {
+        const goldenLayout = this.props.glContainer.layoutManager;
+        if (goldenLayout.isInitialised) {
+            this.loadWidgetClass();
+        } else {
+            goldenLayout.on('initialised', () => this.loadWidgetClass());
+        }
     }
 
     getWidgetClass() {
@@ -83,7 +97,7 @@ export default class WidgetRenderer extends Component {
             timeout: 10000,
             onDownloadProgress: (progressEvent) => {
                 let progress = progressEvent.lengthComputable ?
-                               ((progressEvent.loaded / progressEvent.total) * 100) : -1;
+                    ((progressEvent.loaded / progressEvent.total) * 100) : -1;
                 this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING, progress);
             }
         })
@@ -93,8 +107,7 @@ export default class WidgetRenderer extends Component {
                 window.eval(response.data);
                 if (this.getWidgetClass()) {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADED);
-                    this.props.glContainer.layoutManager.eventHub.trigger(Event.DASHBOARD_VIEW_WIDGET_LOADED,
-                        this.widgetName);
+                    this.triggerEvent(Event.DASHBOARD_VIEW_WIDGET_LOADED, this.widgetName);
                 } else {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING_FAIL);
                 }
@@ -112,47 +125,12 @@ export default class WidgetRenderer extends Component {
         });
     }
 
-    componentDidMount() {
-        const goldenLayout = this.props.glContainer.layoutManager;
-        if (goldenLayout.isInitialised) {
-            this.loadWidgetClass();
-        } else {
-            goldenLayout.on('initialised', () => this.loadWidgetClass());
-        }
+    handleResize() {
+        this.triggerEvent(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.widgetName);
     }
 
-    render() {
-        if (this.state.widgetLoadingStatus === WidgetLoadingStatus.LOADED) {
-            const widgetProps = {
-                ...this.props,
-                width: this.props.glContainer.width,
-                height: this.props.glContainer.height,
-                muiTheme: this.state.currentTheme
-            };
-            return React.createElement(this.widgetClass, widgetProps);
-        } else {
-            let message = null, isErrorMessage = false;
-            switch (this.state.widgetLoadingStatus) {
-                case WidgetLoadingStatus.INIT:
-                    message = 'Initializing ...';
-                    break;
-                case WidgetLoadingStatus.FETCHING:
-                    message = 'Fetching ...';
-                    break;
-                case WidgetLoadingStatus.FETCHING_FAIL:
-                    message = 'Fetching failed!';
-                    isErrorMessage = true;
-                    break;
-                case WidgetLoadingStatus.LOADING:
-                    message = 'Loading ...';
-                    break;
-                case WidgetLoadingStatus.LOADING_FAIL:
-                    message = 'Loading failed!';
-                    isErrorMessage = true;
-                    break;
-            }
-            return this.renderWidgetLoadingStatus(message, isErrorMessage);
-        }
+    triggerEvent(name, parameter) {
+        this.props.glContainer.layoutManager.eventHub.trigger(name, parameter);
     }
 
     renderWidgetLoadingStatus(message, isErrorMessage = false) {
@@ -217,5 +195,39 @@ export default class WidgetRenderer extends Component {
                               onClick={() => this.loadWidgetClass()} />
             </div>
         );
+    }
+
+    render() {
+        if (this.state.widgetLoadingStatus === WidgetLoadingStatus.LOADED) {
+            const widgetProps = {
+                ...this.props,
+                width: this.props.glContainer.width,
+                height: this.props.glContainer.height,
+                muiTheme: this.state.currentTheme
+            };
+            return React.createElement(this.widgetClass, widgetProps);
+        } else {
+            let message = null, isErrorMessage = false;
+            switch (this.state.widgetLoadingStatus) {
+                case WidgetLoadingStatus.INIT:
+                    message = 'Initializing ...';
+                    break;
+                case WidgetLoadingStatus.FETCHING:
+                    message = 'Fetching ...';
+                    break;
+                case WidgetLoadingStatus.FETCHING_FAIL:
+                    message = 'Fetching failed!';
+                    isErrorMessage = true;
+                    break;
+                case WidgetLoadingStatus.LOADING:
+                    message = 'Loading ...';
+                    break;
+                case WidgetLoadingStatus.LOADING_FAIL:
+                    message = 'Loading failed!';
+                    isErrorMessage = true;
+                    break;
+            }
+            return this.renderWidgetLoadingStatus(message, isErrorMessage);
+        }
     }
 }
