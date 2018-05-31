@@ -104,7 +104,7 @@ export default class DashboardRenderer extends Component {
     }
 
     onGoldenLayoutInitializedEvent() {
-        this.props.widgets.forEach((widget) => {
+        this.props.widgetsConfigurations.forEach((widget) => {
             const dragSourceElement = document.getElementById(widget.id);
             const itemConfig = {
                 title: widget.name,
@@ -263,7 +263,7 @@ export default class DashboardRenderer extends Component {
                         theme={this.props.theme}
                         isOpen={this.state.isWidgetConfigurationPaneOpen}
                         widgetGoldenLayoutContent={this.selectedWidgetGoldenLayoutContent}
-                        widgetsConfigurations={this.props.widgets}
+                        widgetsConfigurations={this.props.widgetsConfigurations}
                         paneCloseEventListener={this.onWidgetConfigurationPaneClose}
                     />
                 </div>
@@ -282,7 +282,7 @@ DashboardRenderer.propTypes = {
             content: PropTypes.arrayOf({}).isRequired,
         }).isRequired,
     }).isRequired,
-    widgets: PropTypes.arrayOf({
+    widgetsConfigurations: PropTypes.arrayOf({
         name: PropTypes.string.isRequired,
         id: PropTypes.string.isRequired,
         configs: PropTypes.shape({}).isRequired,

@@ -28,25 +28,26 @@ export default class WidgetConfigurationPane extends Component {
         };
 
         this.getPublisherWidgetsConfigurations = this.getPublisherWidgetsConfigurations.bind(this);
-        this.getSubscriberWidgetsConfigurations = this.getSubscriberWidgetsConfigurations.bind(this);
+        this.getSelectedWidgetConfiguration = this.getSelectedWidgetConfiguration.bind(this);
         this.triggerEvent = this.triggerEvent.bind(this);
         this.handlePaneClose = this.handlePaneClose.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
     }
 
-    getPublisherWidgetsConfigurations(){
+    getPublisherWidgetsConfigurations() {
         return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
             return (widgetConfiguration.configs.pubsub.types.indexOf('publisher') !== -1);
         });
     }
 
-    getSubscriberWidgetsConfigurations(){
+    getSelectedWidgetConfiguration() {
+        const selectedWidgetName = this.props.widgetGoldenLayoutContent.config.component;
         return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
-            return (widgetConfiguration.configs.pubsub.types.indexOf('subscriber') !== -1);
+            return (widgetConfiguration.id === selectedWidgetName);
         });
     }
 
-    triggerEvent(eventName, parameter){
+    triggerEvent(eventName, parameter) {
         this.props.widgetGoldenLayoutContent.layoutManager.eventHub.trigger(eventName, parameter);
     }
 
@@ -55,7 +56,7 @@ export default class WidgetConfigurationPane extends Component {
         this.props.paneCloseEventListener();
     }
 
-    updateWidget(){
+    updateWidget() {
         const newConfig = this.props.widgetGoldenLayoutContent.config;
     }
 
@@ -102,7 +103,9 @@ export default class WidgetConfigurationPane extends Component {
                         zIndex: theme.zIndex.drawer,
                     }}
                 >
-                    {this.props.widgetGoldenLayoutContent ? this.props.widgetGoldenLayoutContent.config.component : null}
+                    {this.props.widgetGoldenLayoutContent ?
+                        this.props.widgetGoldenLayoutContent.config.component :
+                        null}
                 </Paper>
                 {isOpen ? this.renderBackdrop(theme) : null}
             </span>

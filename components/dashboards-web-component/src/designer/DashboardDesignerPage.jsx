@@ -116,7 +116,7 @@ export default class DashboardDesignerPage extends Component {
             <span>
                 <DashboardRenderer
                     dashboard={this.dashboard}
-                    widgets={this.widgets}
+                    widgetsConfigurations={this.widgets}
                     pageId={this.props.match.params.pageId}
                     updateDashboard={this.handleDashboardUpdate}
                     theme={theme}
