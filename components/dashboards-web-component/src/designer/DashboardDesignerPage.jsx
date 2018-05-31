@@ -21,11 +21,12 @@ import { Redirect } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 
-import { Snackbar } from 'material-ui';
+import { Paper, Snackbar } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 
 import Header from './components/Header';
 import LeftSideActions from './components/LeftSideActions';
+
 import PageLoadingIndicator from '../common/PageLoadingIndicator';
 import Error404 from '../error-pages/Error404';
 import Error403 from '../error-pages/Error403';
@@ -39,13 +40,16 @@ export default class DashboardDesignerPage extends Component {
     constructor(props) {
         super(props);
         this.dashboard = null;
+        this.widgets = [];
         this.state = {
             dashboardUpdateResultMessage: null,
             dashboardFetchStatus: HttpStatus.UNKNOWN,
+            hasWidgetsLoaded: false,
         };
 
         this.fetchDashboard = this.fetchDashboard.bind(this);
         this.handleDashboardUpdate = this.handleDashboardUpdate.bind(this);
+        this.handleSetWidgets = this.handleSetWidgets.bind(this);
     }
 
     componentDidMount() {
@@ -83,6 +87,11 @@ export default class DashboardDesignerPage extends Component {
         });
     }
 
+    handleSetWidgets(widgets) {
+        this.widgets = widgets;
+        this.setState({ hasWidgetsLoaded: true });
+    }
+
     renderHeader(theme) {
         return (
             <Header
@@ -93,10 +102,26 @@ export default class DashboardDesignerPage extends Component {
     }
 
     renderDashboard(theme) {
-        const pageId = this.props.match.params.pageId;
-        const page = this.dashboard.pages.find(page => (page.id === pageId));
+        if (!this.state.hasWidgetsLoaded) {
+            return (
+                <Paper
+                    style={{ fontSize: 20, textAlign: 'center', width: '100%', height: '100%', paddingTop: '10%' }}
+                >
+                    <FormattedMessage id="widgets.loading.dashboard" defaultMessage="Widget are still loading..." />
+                </Paper>
+            );
+        }
+
         return (
-            <DashboardRenderer goldenLayoutContents={page.content} theme={theme} />
+            <span>
+                <DashboardRenderer
+                    dashboard={this.dashboard}
+                    widgets={this.widgets}
+                    pageId={this.props.match.params.pageId}
+                    updateDashboard={this.handleDashboardUpdate}
+                    theme={theme}
+                />
+            </span>
         );
     }
 
@@ -133,6 +158,7 @@ export default class DashboardDesignerPage extends Component {
                             theme={defaultTheme}
                             dashboard={this.dashboard}
                             updateDashboard={this.handleDashboardUpdate}
+                            setWidgets={this.handleSetWidgets}
                         />
                         {this.renderDashboard(defaultTheme)}
                     </div>

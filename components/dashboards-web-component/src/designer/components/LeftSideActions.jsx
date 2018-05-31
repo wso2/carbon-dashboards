@@ -93,19 +93,23 @@ export default class LeftSideActions extends Component {
             dashboard: this.props.dashboard,
             updateDashboard: this.props.updateDashboard,
         };
+        const widgetsSidePaneProps = {
+            theme,
+            setWidgets: this.props.setWidgets,
+        };
 
         if (isPagesPaneOpen && !isWidgetsPaneOpen) {
             return (
                 <span>
                     <PagesSidePane isOpen {...pagesSidePaneProps} />
-                    <WidgetsSidePane theme={theme} isHidden />
+                    <WidgetsSidePane isHidden {...widgetsSidePaneProps} />
                 </span>
             );
         } else if (!isPagesPaneOpen && isWidgetsPaneOpen) {
             return (
                 <span>
                     <PagesSidePane isHidden {...pagesSidePaneProps} />
-                    <WidgetsSidePane theme={theme} isOpen />
+                    <WidgetsSidePane isOpen {...widgetsSidePaneProps} />
                 </span>
             );
         } else if (!isPagesPaneOpen && !isWidgetsPaneOpen) {
@@ -114,14 +118,14 @@ export default class LeftSideActions extends Component {
                 return (
                     <span>
                         <PagesSidePane isOpen={false} {...pagesSidePaneProps} />
-                        <WidgetsSidePane theme={theme} isHidden />
+                        <WidgetsSidePane isHidden {...widgetsSidePaneProps} />
                     </span>
                 );
             } else if (clickedPaneName === 'widgets') {
                 return (
                     <span>
                         <PagesSidePane isHidden {...pagesSidePaneProps} />
-                        <WidgetsSidePane theme={theme} isOpen={false} />
+                        <WidgetsSidePane isOpen={false} {...widgetsSidePaneProps} />
                     </span>
                 );
             }
@@ -144,4 +148,5 @@ LeftSideActions.propTypes = {
     dashboard: PropTypes.shape({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
     updateDashboard: PropTypes.func.isRequired,
+    setWidgets: PropTypes.func.isRequired,
 };

@@ -16,10 +16,10 @@
  * under the License.
  */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { TextField } from 'material-ui';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import LeftSidePane from './LeftSidePane';
@@ -43,11 +43,18 @@ export default class WidgetsSidePane extends Component {
     componentDidMount() {
         WidgetAPI.getWidgets()
             .then((response) => {
-                this.widgets = response.data;
-                _.remove(this.widgets, widget => widget.id === 'UniversalWidget');
+                this.widgets = response.data || [];
+                _.remove(this.widgets, widget => (widget.id === 'UniversalWidget'));
+                this.widgets.sort((widgetA, widgetB) => {
+                    return (widgetA.name.toLowerCase() < widgetB.name.toLowerCase()) ? -1 : 1;
+                });
+                this.props.setWidgets(this.widgets);
                 this.setState({ widgetsLoadingStatus: 'success' });
             })
-            .catch(() => this.setState({ widgetsLoadingStatus: 'fail' }));
+            .catch(() => {
+                this.props.setWidgets([]);
+                this.setState({ widgetsLoadingStatus: 'fail' });
+            });
     }
 
     renderWidgetCard(widget) {
@@ -105,6 +112,7 @@ WidgetsSidePane.propTypes = {
     isHidden: PropTypes.bool,
     isOpen: PropTypes.bool,
     theme: PropTypes.shape({}).isRequired,
+    setWidgets: PropTypes.func.isRequired,
 };
 
 WidgetsSidePane.defaultProps = {
