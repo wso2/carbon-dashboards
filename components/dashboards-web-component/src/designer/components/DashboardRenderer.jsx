@@ -133,6 +133,7 @@ export default class DashboardRenderer extends Component {
         settingsButton.title = 'settings';
         settingsButton.className = 'fw fw-configarations widget-configuration-button';
         settingsButton.addEventListener('click', () => {
+            console.log(component);
             if (this.selectedWidgetGoldenLayoutContent) {
                 this.selectedWidgetGoldenLayoutContent = null;
             }
@@ -262,6 +263,7 @@ export default class DashboardRenderer extends Component {
                         theme={this.props.theme}
                         isOpen={this.state.isWidgetConfigurationPaneOpen}
                         widgetGoldenLayoutContent={this.selectedWidgetGoldenLayoutContent}
+                        widgetsConfigurations={this.props.widgets}
                         paneCloseEventListener={this.onWidgetConfigurationPaneClose}
                     />
                 </div>

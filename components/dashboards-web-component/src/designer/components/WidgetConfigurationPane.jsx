@@ -27,13 +27,36 @@ export default class WidgetConfigurationPane extends Component {
             clickedOnBackdrop: false,
         };
 
-        this.handleBackdropOnClick = this.handleBackdropOnClick.bind(this);
+        this.getPublisherWidgetsConfigurations = this.getPublisherWidgetsConfigurations.bind(this);
+        this.getSubscriberWidgetsConfigurations = this.getSubscriberWidgetsConfigurations.bind(this);
+        this.triggerEvent = this.triggerEvent.bind(this);
+        this.handlePaneClose = this.handlePaneClose.bind(this);
+        this.updateWidget = this.updateWidget.bind(this);
     }
 
-    handleBackdropOnClick() {
-        console.log('---- backdrop on click');
+    getPublisherWidgetsConfigurations(){
+        return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
+            return (widgetConfiguration.configs.pubsub.types.indexOf('publisher') !== -1);
+        });
+    }
+
+    getSubscriberWidgetsConfigurations(){
+        return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
+            return (widgetConfiguration.configs.pubsub.types.indexOf('subscriber') !== -1);
+        });
+    }
+
+    triggerEvent(eventName, parameter){
+        this.props.widgetGoldenLayoutContent.layoutManager.eventHub.trigger(eventName, parameter);
+    }
+
+    handlePaneClose() {
         this.setState({ clickedOnBackdrop: true });
         this.props.paneCloseEventListener();
+    }
+
+    updateWidget(){
+        const newConfig = this.props.widgetGoldenLayoutContent.config;
     }
 
     renderBackdrop(theme) {
@@ -54,7 +77,7 @@ export default class WidgetConfigurationPane extends Component {
                     zIndex: 1200,
                     pointerEvents: 'auto',
                 }}
-                onClick={this.handleBackdropOnClick}
+                onClick={this.handlePaneClose}
             />
         );
     }
@@ -90,6 +113,11 @@ export default class WidgetConfigurationPane extends Component {
 WidgetConfigurationPane.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     widgetGoldenLayoutContent: PropTypes.shape({}).isRequired,
+    widgetsConfigurations: PropTypes.arrayOf({
+        name: PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
+        configs: PropTypes.shape({}).isRequired,
+    }).isRequired,
     theme: PropTypes.shape({}).isRequired,
     paneCloseEventListener: PropTypes.func.isRequired,
 };
