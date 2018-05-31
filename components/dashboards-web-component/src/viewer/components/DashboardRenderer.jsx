@@ -101,6 +101,7 @@ export default class DashboardRenderer extends Component {
             return;
         }
 
+        const goldenLayoutContents = this.props.goldenLayoutContents || [];
         const config = {
             settings: {
                 constrainDragToContainer: false,
@@ -118,11 +119,11 @@ export default class DashboardRenderer extends Component {
             dimensions: {
                 headerHeight: 37,
             },
-            content: this.props.goldenLayoutContents || [],
+            content: goldenLayoutContents,
         };
         const dashboardContainer = document.getElementById(dashboardContainerId);
         const goldenLayout = new GoldenLayout(config, dashboardContainer);
-        const loadingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(this.props.goldenLayoutContents);
+        const loadingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(goldenLayoutContents);
         loadingWidgetNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
         goldenLayout.eventHub.on(Event.DASHBOARD_VIEW_WIDGET_LOADED,
             () => this.onWidgetLoadedEvent(loadingWidgetNames.length, this.props.dashboardId));
