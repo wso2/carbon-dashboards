@@ -45,6 +45,7 @@ const MediaType = {
 const Event = {
     DASHBOARD_VIEW_THEME_CHANGE: 'dashboard-view-theme-change',
     DASHBOARD_VIEW_WIDGET_LOADED: 'dashboard-view-widget-loaded',
+    DASHBOARD_DESIGNER_WIDGET_RESIZE: 'dashboard-designer-widget-resize',
 };
 
 export { HttpStatus, MediaType, Event };
