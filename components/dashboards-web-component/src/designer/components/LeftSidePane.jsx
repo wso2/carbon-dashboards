@@ -22,14 +22,12 @@ import { Drawer } from 'material-ui';
 
 export default class LeftSidePane extends Component {
     render() {
-        const theme = this.props.theme;
-
         return (
             <Drawer
                 open={this.props.isOpen}
                 containerStyle={{
                     position: 'fixed',
-                    top: theme.appBar.height,
+                    top: this.props.theme.appBar.height,
                     left: this.props.isOpen ? 55 : 0,
                     width: 300,
                     height: '100%',
