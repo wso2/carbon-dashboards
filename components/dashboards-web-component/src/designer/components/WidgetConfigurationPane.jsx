@@ -18,7 +18,9 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Paper } from 'material-ui';
+import { IconButton, Paper } from 'material-ui';
+import { NavigationArrowForward } from 'material-ui/svg-icons';
+import { Event } from '../../utils/Constants';
 
 export default class WidgetConfigurationPane extends Component {
     constructor(props) {
@@ -58,6 +60,7 @@ export default class WidgetConfigurationPane extends Component {
 
     updateWidget() {
         const newConfig = this.props.widgetGoldenLayoutContent.config;
+        this.triggerEvent(Event.DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE, newConfig);
     }
 
     renderBackdrop(theme) {
@@ -75,7 +78,7 @@ export default class WidgetConfigurationPane extends Component {
                     willChange: 'opacity',
                     transform: 'translateZ(0px)',
                     transition: 'left 0ms cubic-bezier(0.23, 1, 0.32, 1) 0ms, opacity 400ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
-                    zIndex: 1200,
+                    zIndex: theme.zIndex.drawerOverlay,
                     pointerEvents: 'auto',
                 }}
                 onClick={this.handlePaneClose}
@@ -84,6 +87,10 @@ export default class WidgetConfigurationPane extends Component {
     }
 
     render() {
+        if (!this.props.widgetGoldenLayoutContent) {
+            return null;
+        }
+
         const theme = this.props.theme;
         const isOpen = this.state.clickedOnBackdrop ? false : this.props.isOpen;
         this.state.clickedOnBackdrop = false;
@@ -103,9 +110,14 @@ export default class WidgetConfigurationPane extends Component {
                         zIndex: theme.zIndex.drawer,
                     }}
                 >
-                    {this.props.widgetGoldenLayoutContent ?
-                        this.props.widgetGoldenLayoutContent.config.component :
-                        null}
+                    <div>
+                        <IconButton tooltip="Back" onClick={this.handlePaneClose}>
+                            <NavigationArrowForward />
+                        </IconButton>
+                        <div>{this.props.widgetGoldenLayoutContent.config.component}</div>
+                        <div>widget pub-sub configuration goes here</div>
+                        <div>widget other configuration goes here</div>
+                    </div>
                 </Paper>
                 {isOpen ? this.renderBackdrop(theme) : null}
             </span>
