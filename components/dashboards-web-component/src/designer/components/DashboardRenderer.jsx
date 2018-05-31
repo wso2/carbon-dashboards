@@ -247,8 +247,9 @@ export default class DashboardRenderer extends Component {
         };
         const dashboardContainer = document.getElementById(dashboardContainerId);
         const goldenLayout = new GoldenLayout(config, dashboardContainer);
+        const renderingWidgetClassNames = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents);
+        renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
         const renderingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(goldenLayoutContents);
-        renderingWidgetNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
         this.renderedWidgetsConfigurations = renderingWidgetNames.map((widgetName) => {
             return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
                 return (widgetConfiguration.id === widgetName);

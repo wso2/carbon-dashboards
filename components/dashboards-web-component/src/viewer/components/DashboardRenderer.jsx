@@ -123,10 +123,10 @@ export default class DashboardRenderer extends Component {
         };
         const dashboardContainer = document.getElementById(dashboardContainerId);
         const goldenLayout = new GoldenLayout(config, dashboardContainer);
-        const loadingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(goldenLayoutContents);
-        loadingWidgetNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
+        const renderingWidgetClassNames = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents);
+        renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
         goldenLayout.eventHub.on(Event.DASHBOARD_VIEW_WIDGET_LOADED,
-            () => this.onWidgetLoadedEvent(loadingWidgetNames.length, this.props.dashboardId));
+            () => this.onWidgetLoadedEvent(renderingWidgetClassNames.length, this.props.dashboardId));
 
         // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
         setTimeout(() => goldenLayout.init(), 0);
