@@ -28,4 +28,17 @@
 
 .lm_close {
     display: list-item !important;
+    opacity: 0.6 !important;
+}
+
+.widget-configuration-button {
+    float: left;
+    color: #929292;
+    margin-right: 5px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.widget-configuration-button:hover {
+    opacity: 1;
 }
