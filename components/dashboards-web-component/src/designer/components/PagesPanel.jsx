@@ -31,6 +31,9 @@ import {FormattedMessage} from 'react-intl';
 
 let _pages = [];
 
+/**
+ * @deprecated
+ */
 class PagesPanel extends Component {
     constructor(props) {
         super(props);

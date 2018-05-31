@@ -78,6 +78,9 @@ const dividerStyle = {
     marginBottom: 10
 };
 
+/**
+ * @deprecated
+ */
 class WidgetConfigurationPanel extends React.Component {
 
     constructor(props) {

@@ -19,6 +19,9 @@
 
 import React from 'react';
 
+/**
+ * @deprecated
+ */
 class WidgetListThumbnail extends React.Component {
     render() {
         return <div id={this.props.widgetID} className="widget-list-thumbnail" style={{display:this.props.isDisplayed}}>

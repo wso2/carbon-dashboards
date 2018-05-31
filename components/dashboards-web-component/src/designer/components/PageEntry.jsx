@@ -33,6 +33,9 @@ const styles = {
     },
 };
 
+/**
+ * @deprecated
+ */
 export default class PageEntry extends Component {
     constructor(props) {
         super(props);
