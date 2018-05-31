@@ -70,13 +70,11 @@ export default class WidgetCard extends Component {
         const widgetCardStyle = styles.widgetCard;
         widgetCardStyle.display = this.props.isHidden ? 'none' : 'inline-block';
         return (
-            <Paper style={widgetCardStyle}>
+            <Paper id={widget.id} style={widgetCardStyle}>
                 {widget.thumbnailURL ?
                     this.renderWidgetCardThumbnailImage(widget) :
                     this.renderWidgetCardDefaultThumbnail()}
-                <div style={styles.widgetCardTitle}>
-                    {widget.name}
-                </div>
+                <div style={styles.widgetCardTitle}>{widget.name}</div>
             </Paper>
         );
     }
