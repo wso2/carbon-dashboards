@@ -32,7 +32,7 @@ export default class UniversalWidget extends ExtendedWidget {
             data: null,
             config: null,
             widgetInputs: [],
-            systemInputs:[],
+            systemInputs: [],
             providerConfigs: {},
         };
         this.handleResize = this.handleResize.bind(this);
@@ -40,7 +40,8 @@ export default class UniversalWidget extends ExtendedWidget {
         this.handleWidgetData = this.handleWidgetData.bind(this);
         this.handleCustomWidgetInputs = this.handleCustomWidgetInputs.bind(this);
         this.publish = this.publish.bind(this);
-        this.state.systemInputs = this.props.systemInputs ?this.props.systemInputs  : ["admin"];
+        this.publishEvents = this.publishEvents.bind(this);
+        this.state.systemInputs = this.props.systemInputs ? this.props.systemInputs : ["admin"];
     }
 
     componentDidMount() {
@@ -57,9 +58,6 @@ export default class UniversalWidget extends ExtendedWidget {
                 if (this.props.configs.pubsub.types.includes("subscriber")) {
                     this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData)
                 }
-                if (this.props.configs.pubsub.types.includes("publisher")) {
-                    this.publishEvents = this.publishEvents.bind(this);
-                }
                 this.state.providerConfigs = providerConfiguration;
                 super.getWidgetChannelManager().subscribeWidget(this.props.widgetID, this.handleWidgetData, providerConfiguration);
                 this.setState({config: message.data.configs.chartConfig});
@@ -71,36 +69,34 @@ export default class UniversalWidget extends ExtendedWidget {
 
     publishEvents(selectedData) {
         let data = {};
-        this.state.config.publishingAttributes.map(publishingAttribute => {
+        this.state.config.widgetOutputConfigs.map(publishingAttribute => {
             data[publishingAttribute.publishedAsValue] = selectedData[publishingAttribute.publishingValue]
         });
         super.publish(data);
     }
 
     handleCustomWidgetInputs(queryData) {
-        queryData.customWidgetInputs.map(customInput => {
             if (this.props.configs.pubsub.publishers) {
                 this.props.configs.pubsub.publishers.map(publisherId => {
                     this.state.queryData = queryData;
-                    this.subscriberTopics = this.props.configs.pubsub.subscribedTopics.filter(function (subscriberTopics) {
-                        return subscriberTopics.publisherId === publisherId
-                    });
-                    console.log(this.props.id + "_" + publisherId)
+                    this.filteredWidgetInputOutputMapping =
+                        this.props.configs.pubsub.widgetInputOutputMapping.filter(function (widgetInputOutputMapping) {
+                            return widgetInputOutputMapping.publisherId === publisherId
+                        });
                     super.subscribe(this.subscribeCallback, this.props.id + "_" + publisherId, this);
                 });
             }
-        })
     }
 
     subscribeCallback(receivedData) {
         let receivedKeys = new Set(Object.keys(receivedData));
         this.state.widgetInputs = [];
         this.state.systemInputs.map(systemInput => {
-           this.state.widgetInputs.push(systemInput)
+            this.state.widgetInputs.push(systemInput)
         });
-        this.subscriberTopics.map(customTopics => {
-            if (receivedKeys.has(customTopics.publisherTopic)) {
-                this.state.widgetInputs.push(receivedData[customTopics.publisherTopic]);
+        this.filteredWidgetInputOutputMapping.map(widgetInputOutputMapping => {
+            if (receivedKeys.has(widgetInputOutputMapping.publisherWidgetOutput)) {
+                this.state.widgetInputs.push(receivedData[widgetInputOutputMapping.publisherWidgetOutput]);
             }
         });
         eval(this.state.queryData.queryFunction)
@@ -131,7 +127,7 @@ export default class UniversalWidget extends ExtendedWidget {
                     data={this.state.data}
                     height={this.props.glContainer.height}
                     width={this.props.glContainer.width}
-                    onClick={this.publishEvents}
+                    onClick={this.state.config && this.state.config.widgetOutputConfigs ? this.publishEvents : ""}
                 />
             </div>
         )

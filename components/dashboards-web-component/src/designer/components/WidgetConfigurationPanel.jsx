@@ -33,6 +33,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Subheader from 'material-ui/Subheader';
 import {FormattedMessage} from 'react-intl';
+import DropDownMenu from 'material-ui/DropDownMenu';
 
 import {dashboardLayout} from '../../utils/WidgetLoadingComponent';
 import {pubsubComponent} from '../../utils/PubSubComponent';
@@ -93,12 +94,20 @@ class WidgetConfigurationPanel extends React.Component {
         this.handleWidgetOptionTextFieldEvent = _.debounce(this.handleWidgetOptionTextFieldEvent.bind(this), 900);
         this.handleWidgetOptionSelectFieldEvent = this.handleWidgetOptionSelectFieldEvent.bind(this);
         this.getWidgetConfPanelContent = this.getWidgetConfPanelContent.bind(this);
-
+        this.test = this.test.bind(this);
+        this.handlePublisherDropDown = this.handlePublisherDropDown.bind(this);
+        this.getWidgetOutputDropDown = this.getWidgetOutputDropDown.bind(this);
+        this.getPubsubWiringUI = this.getPubsubWiringUI.bind(this);
+        this.persistWiringConfigsInDashboardJSON = this.persistWiringConfigsInDashboardJSON.bind(this);
+        this.unpersistWiringConfigsInDashboardJSON = this.unpersistWiringConfigsInDashboardJSON.bind(this);
         this.state = {
             checked: false,
             options: null,
             id: null,
             open: false,
+            widgetDropDownMenuMap: new Map(),
+            pubsubWiringUI: null,
+            dropDownValues: new Map()
         }
     }
 
@@ -116,6 +125,76 @@ class WidgetConfigurationPanel extends React.Component {
                 this.setState({checked: false});
             }
         }
+    }
+
+    test(event, isChecked) {
+        let publisherWidgetId = event.currentTarget.id;
+        let widgetKey = event.currentTarget.name;
+        let selectedWidget = dashboardLayout.selectedItem;
+        let widgetDropDownMenuMap = this.state.widgetDropDownMenuMap;
+        if (isChecked) {
+            !widgetDropDownMenuMap.get(publisherWidgetId) ? widgetDropDownMenuMap.set(publisherWidgetId,
+                pubsubComponent.getPublishersMap().get(widgetKey).widgetOutputs) : "";
+            pubsubComponent.wire(selectedWidget.config.content[0].props.id + "_" + publisherWidgetId, publisherWidgetId);
+            this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content, selectedWidget.config.content[0].props.id,
+                publisherWidgetId);
+        } else {
+            if (pubsubComponent.unwire(selectedWidget.config.content[0].props.id + "_" + publisherWidgetId, publisherWidgetId)) {
+                widgetDropDownMenuMap.delete(publisherWidgetId);
+                this.unpersistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content,
+                    selectedWidget.config.content[0].props.id, publisherWidgetId);
+                this.setState({checked: false});
+            }
+        }
+
+        this.setState({widgetDropDownMenuMap: widgetDropDownMenuMap, checked: isChecked});
+    }
+
+    getPubsubWiringUI() {
+        if (this.state.widgetDropDownMenuMap.size !== 0) {
+            let pubsubWiringUI =
+                dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.subscriberWidgetInputs.map((subscriberInput, index) => {
+                    return <div>
+                        <div style={{
+                            display: 'inline-block',
+                            float: 'left',
+                            marginLeft: 10,
+                            marginTop: 30
+                        }}>{subscriberInput}</div>
+                        <SelectField
+                            onChange={this.handlePublisherDropDown}
+                            value={this.state.dropDownValues.get(subscriberInput) ?
+                                this.state.dropDownValues.get(subscriberInput).value : ""}
+                            style={{
+                                display: 'inline-block',
+                                margin: 10,
+                                marginLeft: 30,
+                                width: '50%'
+                            }}>{this.getWidgetOutputDropDown(this.state.widgetDropDownMenuMap, subscriberInput)}</SelectField>
+                    </div>
+                });
+            return pubsubWiringUI;
+        }
+    }
+
+    getWidgetOutputDropDown(widgetDropDownMenuMap, subscriberInput) {
+        let widgetOutputDropdown = [];
+        for (let [key, widgetOutputs] of widgetDropDownMenuMap.entries()) {
+            widgetOutputs.map((widgetOutput, index) => {
+                widgetOutputDropdown.push(<MenuItem key={key} subscriberInput={subscriberInput}
+                                                    publisherId={key} value={widgetOutput}
+                                                    primaryText={widgetOutput}/>);
+            });
+        }
+        return widgetOutputDropdown;
+    }
+
+    handlePublisherDropDown(event, key, payload) {
+        let subscriberInput = event.target.parentElement.parentElement.parentElement.getAttribute("subscriberInput");
+        let publisherId = event.target.parentElement.parentElement.parentElement.getAttribute("publisherId");
+        let subscriberID = dashboardLayout.selectedItem.config.content[0].props.id;
+        this.state.dropDownValues.set(subscriberInput, {value: payload, publisherID: publisherId});
+        this.setState({dropDownValues: this.state.dropDownValues}, this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content, subscriberID, publisherId));
     }
 
     handleWidgetOptionCheckBoxEvent(event, isInputChecked, options) {
@@ -169,6 +248,7 @@ class WidgetConfigurationPanel extends React.Component {
                     if (!contentItem.props.configs.pubsub.publishers) {
                         contentItem.props.configs.pubsub.publishers = [];
                     }
+                    this.persistWiringConfigsInDashboardJSON(contentItem.props.configs.pubsub);
                     contentItem.props.configs.pubsub.publishers.push(publisherId.toString())
                 }
             }
@@ -182,10 +262,30 @@ class WidgetConfigurationPanel extends React.Component {
             } else {
                 if (subscriberId === contentItem.props.id) {
                     let position = contentItem.props.configs.pubsub.publishers.indexOf(publisherId);
+                    this.unpersistWiringConfigsInDashboardJSON(contentItem.props.configs.pubsub, publisherId);
                     contentItem.props.configs.pubsub.publishers.splice(position, 1);
                 }
             }
         });
+    }
+
+    persistWiringConfigsInDashboardJSON(pubsubConfigs) {
+        pubsubConfigs.widgetInputOutputMapping = [];
+        for (let [subscriberInput, widgetPubsubMapping] of this.state.dropDownValues.entries()) {
+            pubsubConfigs.widgetInputOutputMapping.push({
+                subscriberWidgetInput: subscriberInput,
+                publisherWidgetOutput: widgetPubsubMapping.value,
+                publisherId: widgetPubsubMapping.publisherID
+            })
+        }
+
+    }
+
+    unpersistWiringConfigsInDashboardJSON(pubsubConfigs, publisherID) {
+        pubsubConfigs.widgetInputOutputMapping = pubsubConfigs.widgetInputOutputMapping.filter(widgetInputOutputMapping => {
+            return widgetInputOutputMapping.publisherWidgetOutput !== publisherID;
+        });
+        return pubsubConfigs.widgetInputOutputMapping;
     }
 
     getPublishers() {
@@ -194,12 +294,12 @@ class WidgetConfigurationPanel extends React.Component {
             dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.types.indexOf("subscriber") !== -1) {
             for (let [key, val] of pubsubComponent.getPublishersMap().entries()) {
                 this.state.checked = !!(dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers &&
-                    dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers.indexOf(val) !== -1);
-                publishers.push(<Checkbox id={val}
+                    dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers.indexOf(val.id) !== -1);
+                publishers.push(<Checkbox id={val.id}
                                           label={key.substring(0, key.length - 4)}
                                           labelStyle={labelStyle}
                                           name={key}
-                                          onCheck={this.handlePublisherCheckBoxEvent}
+                                          onCheck={this.test}
                                           checked={this.state.checked}
                                           className="publishers-list"/>)
             }
@@ -294,6 +394,7 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     getWidgetConfPanelContent() {
+        console.log("getWidgetConfPanelContent")
         return (<div>
             <List style={listStyle}>
                 <Subheader style={stylePanelHeader} className="options-list-header">Widget Configuration</Subheader>
@@ -306,6 +407,7 @@ class WidgetConfigurationPanel extends React.Component {
                     className="options-list-header"
                     style={styleListHeader}
                 />
+                {this.getPubsubWiringUI()}
                 <Divider style={dividerStyle} inset={false}/>
                 <ListItem
                     primaryText="Options"
@@ -355,10 +457,12 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     render() {
+        console.log(this.state)
+        console.log("STATE")
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
-            {this.getWidgetConfPanelContent()}
+            {this.getWidgetConfPanelContent(this.state.checked)}
             {this.WidgetConfDirtyNotifier()}
         </Drawer>);
     }

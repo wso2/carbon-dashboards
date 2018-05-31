@@ -107,7 +107,8 @@ class ProviderConfigurator extends Component {
             case (Types.inputFields.DYNAMIC_SQL_CODE):
             case (Types.inputFields.DYNAMIC_SIDDHI_CODE):
                 return (
-                    <DynamicQueryComponent handleDynamicQuery={this.props.handleDynamicQuery}/>
+                    <DynamicQueryComponent value={this.props.configuration[value].queryFunction}
+                                           handleDynamicQuery={this.props.handleDynamicQuery}/>
                 );
             default:
                 return (

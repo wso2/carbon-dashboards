@@ -208,7 +208,7 @@ class GadgetsGenerationWizard extends Component {
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
                 version: "1.0.0",
                 chartConfig: validatedConfiguration,
-                pubsub: this.getPubSubConfiguration(validatedConfiguration.publishingAttributes,
+                pubsub: this.getPubSubConfiguration(validatedConfiguration.widgetOutputConfigs,
                     this.state.providerConfiguration.queryData.customWidgetInputs),
                 providerConfig: {
                     configs: {
@@ -250,6 +250,8 @@ class GadgetsGenerationWizard extends Component {
     }
 
     handleDynamicQuery(queryFunctionImpl, customWidgetInputs, systemWidgetInputs, parameters, defaultValues) {
+        console.log("DYNAMIC QURY")
+        console.log(queryFunctionImpl, customWidgetInputs, systemWidgetInputs, parameters, defaultValues)
         this.widgetInputsDefaultValues = defaultValues.split(",");
         let queryFunction = "this.getQuery = function (" + parameters + "){" + queryFunctionImpl + "}";
         this.handleProviderConfigPropertyChange("queryData", {
@@ -259,7 +261,7 @@ class GadgetsGenerationWizard extends Component {
         });
     }
 
-    getPubSubConfiguration(publishingAttributes, customWidgetInputs) {
+    getPubSubConfiguration(widgetOutputConfigs, customWidgetInputs) {
         let pubsub = {};
         pubsub.types = [];
         if (customWidgetInputs.length !== 0) {
@@ -268,9 +270,9 @@ class GadgetsGenerationWizard extends Component {
                 return widgetInput.name;
             });
         }
-        if (publishingAttributes && publishingAttributes.length !== 0) {
+        if (widgetOutputConfigs && widgetOutputConfigs.length !== 0) {
             pubsub.types.push("publisher");
-            pubsub.publisherWidgetOutputs = publishingAttributes.map(outputAttribute => {
+            pubsub.publisherWidgetOutputs = widgetOutputConfigs.map(outputAttribute => {
                 return outputAttribute.publishedAsValue;
             });
         }

@@ -79,8 +79,8 @@ class ChartConfigurator extends Component {
         this.props.onConfigurationChange(state.chartConfiguration);
     }
 
-    handlePublisherConfigs(publishingAttributes) {
-        this.state.chartConfiguration.publishingAttributes = publishingAttributes;
+    handlePublisherConfigs(widgetOutputConfigs) {
+        this.state.chartConfiguration.widgetOutputConfigs = widgetOutputConfigs;
     }
 
     /**
@@ -248,8 +248,8 @@ class ChartConfigurator extends Component {
                         />
                     </SelectField>
                     {this.displayChartProperties()}
-                    <DataPublishingComponent outputAttributes={this.state.metadata.names}
-                                             onConfigurationChange={this.handlePublisherConfigs}/>
+                    {this.state.chartType !== '' ? <DataPublishingComponent outputAttributes={this.state.metadata.names}
+                                                             onConfigurationChange={this.handlePublisherConfigs}/> : ""}
                     <br/>
                     {(this.state.chartType !== '') ?
                         (<RaisedButton

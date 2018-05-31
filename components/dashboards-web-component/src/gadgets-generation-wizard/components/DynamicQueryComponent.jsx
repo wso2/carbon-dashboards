@@ -63,12 +63,23 @@ class DynamicQueryComponent extends Component {
             widgetInputs: [],
             selectedRow: [],
             systemWidgetInputs: [{name: "username", defaultValue: "admin"}],
-            customWidgetInputs: []
+            customWidgetInputs: [],
+            queryValue: props.value
         }
+    }
+
+    componentDidMount() {
+        console.log("CDM")
+        this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
+            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
+            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
     }
 
     addWidgetInput(event) {
         this.customWidgetInputs.push({name: this.inputValue, defaultValue: this.defaultValue});
+        this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
+            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
+            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
         this.setState({customWidgetInputs: this.customWidgetInputs});
     }
 
@@ -81,8 +92,15 @@ class DynamicQueryComponent extends Component {
     }
 
     handleDelete(event) {
+        console.log("HD")
         this.customWidgetInputs.splice(this.state.selectedRow[0], 1);
-        this.setState({customWidgetInputs: this.customWidgetInputs, selectedRow: []});
+        this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
+            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
+            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
+        this.setState({
+            customWidgetInputs: this.customWidgetInputs,
+            selectedRow: []
+        });
     }
 
     handleRowSelection(selectedRow) {
@@ -91,28 +109,29 @@ class DynamicQueryComponent extends Component {
 
     handleQueryEditor(id, value) {
         this.props.handleDynamicQuery(value, this.state.customWidgetInputs, this.state.systemWidgetInputs,
-            this.generateFunctionParameters(), this.generateFunctionDefaultValues());
+            this.generateFunctionParameters(this.state.systemWidgetInputs, this.state.customWidgetInputs),
+            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.state.customWidgetInputs));
         this.setState({queryValue: value});
     }
 
-    generateFunctionParameters() {
-        let parameters = this.state.systemWidgetInputs[0].name;
-        for (let i = 1; i < this.state.systemWidgetInputs.length; i++) {
-            parameters = parameters + "," + this.state.systemWidgetInputs[i].name;
+    generateFunctionParameters(systemWidgetInputs, customWidgetInputs) {
+        let parameters = systemWidgetInputs[0].name;
+        for (let i = 1; i < systemWidgetInputs.length; i++) {
+            parameters = parameters + "," + systemWidgetInputs[i].name;
         }
-        for (let i = 0; i < this.state.customWidgetInputs.length; i++) {
-            parameters = parameters + "," + this.state.customWidgetInputs[i].name;
+        for (let i = 0; i < customWidgetInputs.length; i++) {
+            parameters = parameters + "," + customWidgetInputs[i].name;
         }
         return parameters;
     }
 
-    generateFunctionDefaultValues() {
-        let defaultValues = this.state.systemWidgetInputs[0].defaultValue;
-        for (let i = 1; i < this.state.systemWidgetInputs.length; i++) {
-            defaultValues = defaultValues + "," + this.state.systemWidgetInputs[i].defaultValue;
+    generateFunctionDefaultValues(systemWidgetInputs, customWidgetInputs) {
+        let defaultValues = systemWidgetInputs[0].defaultValue;
+        for (let i = 1; i < systemWidgetInputs.length; i++) {
+            defaultValues = defaultValues + "," + systemWidgetInputs[i].defaultValue;
         }
-        for (let i = 0; i < this.state.customWidgetInputs.length; i++) {
-            defaultValues = defaultValues + "," + this.state.customWidgetInputs[i].defaultValue;
+        for (let i = 0; i < customWidgetInputs.length; i++) {
+            defaultValues = defaultValues + "," + customWidgetInputs[i].defaultValue;
         }
         return defaultValues;
     }
@@ -120,7 +139,8 @@ class DynamicQueryComponent extends Component {
 
     render() {
         let that = this;
-        let t = "function generateQuery (" + this.generateFunctionParameters() + ") {";
+        let t = "function generateQuery (" +
+            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs) + ") {";
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <Card
