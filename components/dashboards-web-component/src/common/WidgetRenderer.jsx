@@ -48,12 +48,12 @@ export default class WidgetRenderer extends Component {
             const config = GoldenLayoutContentUtils.getWidgetContent(this.widgetUUID, goldenLayout.config.content);
             this.widgetName = config.component;
         }
-        this.widgetClassName = props.configs.isGenerated ? 'UniversalWidget' : this.widgetName;
+        this.widgetClassName = (props.configs && props.configs.isGenerated) ? 'UniversalWidget' : this.widgetName;
         this.widgetClass = null;
         this.state = {
             currentTheme: getMuiTheme(darkBaseTheme),
             widgetLoadingStatus: WidgetLoadingStatus.INIT,
-            widgetFetchingProgress: -1
+            widgetFetchingProgress: -1,
         };
 
         this.getWidgetClass = this.getWidgetClass.bind(this);
