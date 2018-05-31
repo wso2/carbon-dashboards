@@ -48,6 +48,7 @@ export default class WidgetRenderer extends Component {
             const config = GoldenLayoutContentUtils.getWidgetContent(this.widgetUUID, goldenLayout.config.content);
             this.widgetName = config.component;
         }
+        this.widgetClassName = props.configs.isGenerated ? 'UniversalWidget' : this.widgetName;
         this.widgetClass = null;
         this.state = {
             currentTheme: getMuiTheme(darkBaseTheme),
@@ -77,7 +78,7 @@ export default class WidgetRenderer extends Component {
 
     getWidgetClass() {
         if (!this.widgetClass) {
-            this.widgetClass = WidgetClassRegistry.getWidgetClass(this.widgetName);
+            this.widgetClass = WidgetClassRegistry.getWidgetClass(this.widgetClassName);
         }
         return this.widgetClass;
     }
@@ -101,7 +102,7 @@ export default class WidgetRenderer extends Component {
                 this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING, progress);
             }
         })
-            .get(`/${this.widgetName}/${this.widgetName}.js`)
+            .get(`/${this.widgetClassName}/${this.widgetClassName}.js`)
             .then(response => {
                 this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADING);
                 window.eval(response.data);

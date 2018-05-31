@@ -44,11 +44,11 @@ export default class WidgetsSidePane extends Component {
         WidgetAPI.getWidgets()
             .then((response) => {
                 this.widgets = response.data || [];
-                _.remove(this.widgets, widget => (widget.id === 'UniversalWidget'));
                 this.widgets.sort((widgetA, widgetB) => {
                     return (widgetA.name.toLowerCase() < widgetB.name.toLowerCase()) ? -1 : 1;
                 });
                 this.props.setWidgets(this.widgets);
+                _.remove(this.widgets, widget => (widget.id === 'UniversalWidget'));
                 this.setState({ widgetsLoadingStatus: 'success' });
             })
             .catch(() => {

@@ -33,7 +33,7 @@ class WidgetClassRegistry {
      */
     registerWidgetClass(widgetName, widgetClass) {
         if (this.registry.get(widgetName)) {
-            throw new Error(`Widget '${widgetName} is already registered.`);
+            return;
         }
         this.registry.set(widgetName, widgetClass);
     }
