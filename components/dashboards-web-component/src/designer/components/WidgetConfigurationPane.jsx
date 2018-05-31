@@ -22,6 +22,21 @@ import { IconButton, Paper } from 'material-ui';
 import { NavigationArrowForward } from 'material-ui/svg-icons';
 import { Event } from '../../utils/Constants';
 
+const styles = {
+    backdrop: {
+        position: 'fixed',
+        height: '100%',
+        width: '100%',
+        top: '0px',
+        left: '0px',
+        opacity: 1,
+        willChange: 'opacity',
+        transform: 'translateZ(0px)',
+        transition: 'left 0ms cubic-bezier(0.23, 1, 0.32, 1) 0ms, opacity 400ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
+        pointerEvents: 'auto',
+    },
+};
+
 export default class WidgetConfigurationPane extends Component {
     constructor(props) {
         super(props);
@@ -43,8 +58,8 @@ export default class WidgetConfigurationPane extends Component {
     }
 
     getSelectedWidgetConfiguration() {
-        const selectedWidgetName = this.props.widgetGoldenLayoutContent.config.component;
-        return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
+        const selectedWidgetName = this.props.widgetGoldenLayoutContent.config.title;
+        return this.props.widgetsConfigurations.find((widgetConfiguration) => {
             return (widgetConfiguration.id === selectedWidgetName);
         });
     }
@@ -67,19 +82,9 @@ export default class WidgetConfigurationPane extends Component {
         return (
             <div
                 style={{
-                    position: 'fixed',
-                    height: '100%',
-                    width: '100%',
-                    top: '0px',
-                    left: '0px',
-                    opacity: 1,
+                    ...styles.backdrop,
                     backgroundColor: theme.overlay.backgroundColor,
-                    '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)',
-                    willChange: 'opacity',
-                    transform: 'translateZ(0px)',
-                    transition: 'left 0ms cubic-bezier(0.23, 1, 0.32, 1) 0ms, opacity 400ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
                     zIndex: theme.zIndex.drawerOverlay,
-                    pointerEvents: 'auto',
                 }}
                 onClick={this.handlePaneClose}
             />
@@ -114,7 +119,9 @@ export default class WidgetConfigurationPane extends Component {
                         <IconButton tooltip="Back" onClick={this.handlePaneClose}>
                             <NavigationArrowForward />
                         </IconButton>
-                        <div>{this.props.widgetGoldenLayoutContent.config.component}</div>
+                        <div style={{ display: 'inline-block' }}>
+                            {this.props.widgetGoldenLayoutContent.config.component}
+                        </div>
                         <div>widget pub-sub configuration goes here</div>
                         <div>widget other configuration goes here</div>
                     </div>

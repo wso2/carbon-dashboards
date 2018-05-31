@@ -251,9 +251,7 @@ export default class DashboardRenderer extends Component {
         renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
         const renderingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(goldenLayoutContents);
         this.renderedWidgetsConfigurations = renderingWidgetNames.map((widgetName) => {
-            return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
-                return (widgetConfiguration.id === widgetName);
-            });
+            return this.props.widgetsConfigurations.find(widgetConfig => (widgetConfig.id === widgetName));
         });
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
