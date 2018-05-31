@@ -117,7 +117,7 @@ export default class DashboardRenderer extends Component {
             };
             this.goldenLayout.createDragSource(dragSourceElement, itemConfig);
             try {
-                this.goldenLayout.registerComponent(widget.id, WidgetRenderer);
+                this.goldenLayout.registerComponent(itemConfig.component, WidgetRenderer);
             } catch (e) {
                 // Seems like this widget is already registered, hence ignoring.
             }
