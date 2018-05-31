@@ -140,6 +140,7 @@ WidgetConfigurationPane.propTypes = {
         id: PropTypes.string.isRequired,
         configs: PropTypes.shape({}).isRequired,
     }).isRequired,
+    publisherWidgetsContents: PropTypes.arrayOf({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
     paneCloseEventListener: PropTypes.func.isRequired,
 };

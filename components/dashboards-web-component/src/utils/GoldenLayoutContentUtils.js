@@ -44,6 +44,17 @@ export default class GoldenLayoutContentUtils {
         return Array.from(widgetNames.values());
     }
 
+    static getPublisherWidgetsContents(goldenLayoutContents) {
+        const publisherWidgetsContent = [];
+        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
+            if (widgetContent.props.configs.pubsub.types.indexOf('publisher') !== -1) {
+                publisherWidgetsContent.push(widgetContent);
+            }
+            return false;
+        });
+        return publisherWidgetsContent;
+    }
+
     /**
      * Returns names of all widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
