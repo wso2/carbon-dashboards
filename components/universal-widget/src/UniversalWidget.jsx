@@ -15,12 +15,12 @@
 */
 
 import React from 'react';
-import ExtendedWidget from "./ExtendedWidget";
+import Widget from "@wso2-dashboards/widget";
 import VizG from 'react-vizgrammar';
 import Axios from 'axios';
 import AuthManager from '../../dashboards-web-component/src/auth/utils/AuthManager';
 
-export default class UniversalWidget extends ExtendedWidget {
+export default class UniversalWidget extends Widget {
 
     constructor(props) {
         super(props);
@@ -43,7 +43,7 @@ export default class UniversalWidget extends ExtendedWidget {
             .get(`apis/widgets/${this.props.widgetID}`)
             .then((message) => {
                 let providerConfiguration = message.data.configs.providerConfig;
-                super.getWidgetChannelManager().subscribeWidget(this.props.widgetID, this.handleWidgetData, providerConfiguration);
+                super.getWidgetChannelManager().subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
                 this.setState({config: message.data.configs.chartConfig});
             })
             .catch((error) => {
