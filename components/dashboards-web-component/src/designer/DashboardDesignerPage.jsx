@@ -40,7 +40,7 @@ export default class DashboardDesignerPage extends Component {
     constructor(props) {
         super(props);
         this.dashboard = null;
-        this.widgets = [];
+        this.widgetsConfigurations = [];
         this.state = {
             dashboardUpdateResultMessage: null,
             dashboardFetchStatus: HttpStatus.UNKNOWN,
@@ -49,7 +49,7 @@ export default class DashboardDesignerPage extends Component {
 
         this.fetchDashboard = this.fetchDashboard.bind(this);
         this.handleDashboardUpdate = this.handleDashboardUpdate.bind(this);
-        this.handleSetWidgets = this.handleSetWidgets.bind(this);
+        this.handleSetWidgetsConfigurations = this.handleSetWidgetsConfigurations.bind(this);
     }
 
     componentDidMount() {
@@ -87,8 +87,8 @@ export default class DashboardDesignerPage extends Component {
         });
     }
 
-    handleSetWidgets(widgets) {
-        this.widgets = widgets;
+    handleSetWidgetsConfigurations(widgetsConfigurations) {
+        this.widgetsConfigurations = widgetsConfigurations;
         this.setState({ hasWidgetsLoaded: true });
     }
 
@@ -116,7 +116,7 @@ export default class DashboardDesignerPage extends Component {
             <span>
                 <DashboardRenderer
                     dashboard={this.dashboard}
-                    widgetsConfigurations={this.widgets}
+                    widgetsConfigurations={this.widgetsConfigurations}
                     pageId={this.props.match.params.pageId}
                     updateDashboard={this.handleDashboardUpdate}
                     theme={theme}
@@ -158,7 +158,7 @@ export default class DashboardDesignerPage extends Component {
                             theme={defaultTheme}
                             dashboard={this.dashboard}
                             updateDashboard={this.handleDashboardUpdate}
-                            setWidgets={this.handleSetWidgets}
+                            setWidgetsConfigurations={this.handleSetWidgetsConfigurations}
                         />
                         {this.renderDashboard(defaultTheme)}
                     </div>

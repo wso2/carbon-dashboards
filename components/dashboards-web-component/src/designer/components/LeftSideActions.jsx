@@ -95,7 +95,7 @@ export default class LeftSideActions extends Component {
         };
         const widgetsSidePaneProps = {
             theme,
-            setWidgets: this.props.setWidgets,
+            setWidgetsConfigurations: this.props.setWidgetsConfigurations,
         };
 
         if (isPagesPaneOpen && !isWidgetsPaneOpen) {
@@ -148,5 +148,5 @@ LeftSideActions.propTypes = {
     dashboard: PropTypes.shape({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
     updateDashboard: PropTypes.func.isRequired,
-    setWidgets: PropTypes.func.isRequired,
+    setWidgetsConfigurations: PropTypes.func.isRequired,
 };

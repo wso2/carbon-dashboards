@@ -47,12 +47,12 @@ export default class WidgetsSidePane extends Component {
                 this.widgets.sort((widgetA, widgetB) => {
                     return (widgetA.name.toLowerCase() < widgetB.name.toLowerCase()) ? -1 : 1;
                 });
-                this.props.setWidgets(this.widgets);
+                this.props.setWidgetsConfigurations(this.widgets);
                 _.remove(this.widgets, widget => (widget.id === 'UniversalWidget'));
                 this.setState({ widgetsLoadingStatus: 'success' });
             })
             .catch(() => {
-                this.props.setWidgets([]);
+                this.props.setWidgetsConfigurations([]);
                 this.setState({ widgetsLoadingStatus: 'fail' });
             });
     }
@@ -112,7 +112,7 @@ WidgetsSidePane.propTypes = {
     isHidden: PropTypes.bool,
     isOpen: PropTypes.bool,
     theme: PropTypes.shape({}).isRequired,
-    setWidgets: PropTypes.func.isRequired,
+    setWidgetsConfigurations: PropTypes.func.isRequired,
 };
 
 WidgetsSidePane.defaultProps = {
