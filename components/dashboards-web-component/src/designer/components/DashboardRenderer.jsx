@@ -73,7 +73,7 @@ export default class DashboardRenderer extends Component {
         };
 
         this.onGoldenLayoutInitializedEvent = this.onGoldenLayoutInitializedEvent.bind(this);
-        this.onGoldenLayoutComponentCreatedEvent = this.onGoldenLayoutComponentCreatedEvent.bind(this);
+        this.onGoldenLayoutComponentAddEvent = this.onGoldenLayoutComponentAddEvent.bind(this);
         this.hideWidgetConfigurationPane = this.hideWidgetConfigurationPane.bind(this);
         this.onWidgetConfigurationPaneClose = this.onWidgetConfigurationPaneClose.bind(this);
         this.getRenderingPage = this.getRenderingPage.bind(this);
@@ -127,7 +127,7 @@ export default class DashboardRenderer extends Component {
         });
     }
 
-    onGoldenLayoutComponentCreatedEvent(component) {
+    onGoldenLayoutComponentAddEvent(component) {
         if (!component.parent || !component.parent.header) {
             return;
         }
@@ -252,7 +252,8 @@ export default class DashboardRenderer extends Component {
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
         goldenLayout.on('itemDropped', this.updateDashboard);
-        goldenLayout.on('componentCreated', this.onGoldenLayoutComponentCreatedEvent);
+        goldenLayout.on('itemDropped', this.onGoldenLayoutComponentAddEvent);
+        goldenLayout.on('componentCreated', this.onGoldenLayoutComponentAddEvent);
         goldenLayout.on('itemDestroyed', this.hideWidgetConfigurationPane);
         goldenLayout.eventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.updateDashboard);
 
