@@ -68,6 +68,7 @@ export default class DashboardRenderer extends Component {
         super(props);
         this.goldenLayout = null;
         this.selectedWidgetGoldenLayoutContent = null;
+        this.renderedWidgetsConfigurations = [];
         this.state = {
             isWidgetConfigurationPaneOpen: false,
         };
@@ -246,8 +247,13 @@ export default class DashboardRenderer extends Component {
         };
         const dashboardContainer = document.getElementById(dashboardContainerId);
         const goldenLayout = new GoldenLayout(config, dashboardContainer);
-        const loadingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(goldenLayoutContents);
-        loadingWidgetNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
+        const renderingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(goldenLayoutContents);
+        renderingWidgetNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
+        this.renderedWidgetsConfigurations = renderingWidgetNames.map((widgetName) => {
+            return this.props.widgetsConfigurations.filter((widgetConfiguration) => {
+                return (widgetConfiguration.id === widgetName);
+            });
+        });
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
@@ -289,7 +295,7 @@ export default class DashboardRenderer extends Component {
                         theme={this.props.theme}
                         isOpen={this.state.isWidgetConfigurationPaneOpen}
                         widgetGoldenLayoutContent={this.selectedWidgetGoldenLayoutContent}
-                        widgetsConfigurations={this.props.widgetsConfigurations}
+                        widgetsConfigurations={this.renderedWidgetsConfigurations}
                         paneCloseEventListener={this.onWidgetConfigurationPaneClose}
                     />
                 </div>
