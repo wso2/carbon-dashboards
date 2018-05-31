@@ -79,7 +79,7 @@ export default class WidgetConfigurationPane extends Component {
                         zIndex: theme.zIndex.drawer,
                     }}
                 >
-                    {this.props.widgetConfig ? this.props.widgetConfig.component : null}
+                    {this.props.widgetGoldenLayoutContent ? this.props.widgetGoldenLayoutContent.config.component : null}
                 </Paper>
                 {isOpen ? this.renderBackdrop(theme) : null}
             </span>
@@ -89,7 +89,7 @@ export default class WidgetConfigurationPane extends Component {
 
 WidgetConfigurationPane.propTypes = {
     isOpen: PropTypes.bool.isRequired,
-    widgetConfig: PropTypes.shape({}).isRequired,
+    widgetGoldenLayoutContent: PropTypes.shape({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
     paneCloseEventListener: PropTypes.func.isRequired,
 };

@@ -67,7 +67,7 @@ export default class DashboardRenderer extends Component {
     constructor(props) {
         super(props);
         this.goldenLayout = null;
-        this.selectedWidgetConfig = null;
+        this.selectedWidgetGoldenLayoutContent = null;
         this.state = {
             isWidgetConfigurationPaneOpen: false,
         };
@@ -129,17 +129,17 @@ export default class DashboardRenderer extends Component {
         settingsButton.title = 'settings';
         settingsButton.className = 'fw fw-configarations widget-configuration-button';
         settingsButton.addEventListener('click', () => {
-            if (this.selectedWidgetConfig) {
-                this.selectedWidgetConfig = null;
+            if (this.selectedWidgetGoldenLayoutContent) {
+                this.selectedWidgetGoldenLayoutContent = null;
             }
-            this.selectedWidgetConfig = component.config;
+            this.selectedWidgetGoldenLayoutContent = component;
             this.setState({ isWidgetConfigurationPaneOpen: true });
         });
         component.parent.header.controlsContainer.prepend(settingsButton);
     }
 
     onWidgetConfigurationPaneClose() {
-        this.selectedWidgetConfig = null;
+        this.selectedWidgetGoldenLayoutContent = null;
         this.state.isWidgetConfigurationPaneOpen = false;
         this.updateDashboard();
     }
@@ -257,7 +257,7 @@ export default class DashboardRenderer extends Component {
                     <WidgetConfigurationPane
                         theme={this.props.theme}
                         isOpen={this.state.isWidgetConfigurationPaneOpen}
-                        widgetConfig={this.selectedWidgetConfig}
+                        widgetGoldenLayoutContent={this.selectedWidgetGoldenLayoutContent}
                         paneCloseEventListener={this.onWidgetConfigurationPaneClose}
                     />
                 </div>
