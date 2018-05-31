@@ -74,8 +74,11 @@ export default class DashboardRenderer extends Component {
 
         this.onGoldenLayoutInitializedEvent = this.onGoldenLayoutInitializedEvent.bind(this);
         this.onGoldenLayoutComponentCreatedEvent = this.onGoldenLayoutComponentCreatedEvent.bind(this);
+        this.hideWidgetConfigurationPane = this.hideWidgetConfigurationPane.bind(this);
         this.onWidgetConfigurationPaneClose = this.onWidgetConfigurationPaneClose.bind(this);
         this.getRenderingPage = this.getRenderingPage.bind(this);
+        this.highlightSelectedWidgetContainer = this.highlightSelectedWidgetContainer.bind(this);
+        this.unhighlightSelectedWidgetContainer = this.unhighlightSelectedWidgetContainer.bind(this);
         this.cleanDashboardJSON = this.cleanDashboardJSON.bind(this);
         this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -133,24 +136,45 @@ export default class DashboardRenderer extends Component {
         settingsButton.title = 'settings';
         settingsButton.className = 'fw fw-configarations widget-configuration-button';
         settingsButton.addEventListener('click', () => {
-            console.log(component);
-            if (this.selectedWidgetGoldenLayoutContent) {
-                this.selectedWidgetGoldenLayoutContent = null;
-            }
+            this.unhighlightSelectedWidgetContainer();
             this.selectedWidgetGoldenLayoutContent = component;
+            this.highlightSelectedWidgetContainer();
             this.setState({ isWidgetConfigurationPaneOpen: true });
         });
         component.parent.header.controlsContainer.prepend(settingsButton);
     }
 
     onWidgetConfigurationPaneClose() {
-        this.selectedWidgetGoldenLayoutContent = null;
-        this.state.isWidgetConfigurationPaneOpen = false;
+        this.unhighlightSelectedWidgetContainer();
         this.updateDashboard();
     }
 
     getRenderingPage() {
         return this.props.dashboard.pages.find(page => (page.id === this.props.pageId));
+    }
+
+    hideWidgetConfigurationPane() {
+        this.unhighlightSelectedWidgetContainer();
+        this.setState({ isWidgetConfigurationPaneOpen: false });
+    }
+
+    highlightSelectedWidgetContainer() {
+        const content = this.selectedWidgetGoldenLayoutContent;
+        if (content) {
+            const zIndex = this.props.theme.zIndex.drawerOverlay + 10;
+            content.parent.header.element.css('z-index', zIndex);
+            content.container._contentElement.css('z-index', zIndex);
+        }
+    }
+
+    unhighlightSelectedWidgetContainer() {
+        const content = this.selectedWidgetGoldenLayoutContent;
+        if (content) {
+            content.parent.header.element.css('z-index', 1);
+            content.container._contentElement.css('z-index', 'auto');
+            this.selectedWidgetGoldenLayoutContent = null;
+            this.state.isWidgetConfigurationPaneOpen = false;
+        }
     }
 
     cleanDashboardJSON(content) {
@@ -229,6 +253,7 @@ export default class DashboardRenderer extends Component {
         goldenLayout.on('stackCreated', blockDropOnStack);
         goldenLayout.on('itemDropped', this.updateDashboard);
         goldenLayout.on('componentCreated', this.onGoldenLayoutComponentCreatedEvent);
+        goldenLayout.on('itemDestroyed', this.hideWidgetConfigurationPane);
         goldenLayout.eventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.updateDashboard);
 
         // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
