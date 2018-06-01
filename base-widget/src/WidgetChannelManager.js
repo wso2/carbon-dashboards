@@ -14,7 +14,7 @@
 *  limitations under the License.
 */
 
-export default class WidgetChannelManager {
+class WidgetChannelManager {
 
     constructor() {
         this.webSocket = null;
@@ -27,7 +27,6 @@ export default class WidgetChannelManager {
         this._wsOnMessage = this._wsOnMessage.bind(this);
         this._initializeWebSocket();
         this.waitForConn = this.waitForConn.bind(this);
-
     }
 
     /**
@@ -120,3 +119,7 @@ export default class WidgetChannelManager {
     }, 1000)
     }
 }
+
+const widgetChannelManager = new WidgetChannelManager();
+
+export default widgetChannelManager;

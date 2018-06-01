@@ -18,6 +18,7 @@
  */
 
 import React, {Component} from 'react';
+import WidgetChannelManager from './WidgetChannelManager';
 
 const SESSION_USER = 'DASHBOARD_USER';
 
@@ -166,5 +167,9 @@ export default class Widget extends Component {
         return {
             username: (user && user.username) ? user.username : null,
         };
+    }
+
+    getWidgetChannelManager() {
+        return WidgetChannelManager;
     }
 }
