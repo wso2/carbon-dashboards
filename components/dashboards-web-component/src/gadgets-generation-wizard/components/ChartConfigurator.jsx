@@ -248,8 +248,9 @@ class ChartConfigurator extends Component {
                         />
                     </SelectField>
                     {this.displayChartProperties()}
-                    {this.state.chartType !== '' ? <DataPublishingComponent outputAttributes={this.state.metadata.names}
-                                                             onConfigurationChange={this.handlePublisherConfigs}/> : ""}
+                    {this.state.chartType !== '' ?
+                        <DataPublishingComponent outputAttributes={this.state.metadata.names}
+                                                 onConfigurationChange={this.handlePublisherConfigs}/> : ""}
                     <br/>
                     {(this.state.chartType !== '') ?
                         (<RaisedButton

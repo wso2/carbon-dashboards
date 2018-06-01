@@ -18,8 +18,7 @@
  */
 
 import React, {Component} from 'react';
-//import Widget from '@wso2-dashboards/widget';
-import Widget from './Widget'
+import Widget from '@wso2-dashboards/widget';
 import {MuiThemeProvider} from 'material-ui/styles';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
@@ -36,9 +35,6 @@ class Publisher extends Widget {
         this.getPublishedMsgsOutput = this.getPublishedMsgsOutput.bind(this);
         this.clearMsgs = this.clearMsgs.bind(this);
         this.input={};
-        console.log("THIS")
-        console.log(this)
-        console.log("THIS")
     }
 
     publishMsg() {

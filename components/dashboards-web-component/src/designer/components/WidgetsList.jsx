@@ -108,8 +108,6 @@ export default class WidgetsList extends React.Component {
 
             dashboardLayout.on("itemDropped", function (item) {
                 if (item.isComponent && isItemCreated) {
-                    console.log(item)
-                    console.log("ITEM")
                     isItemCreated = false;
                     newItemConfig = {
                         title: item.config.component,

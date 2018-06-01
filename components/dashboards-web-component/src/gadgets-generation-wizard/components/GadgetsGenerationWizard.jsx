@@ -250,8 +250,6 @@ class GadgetsGenerationWizard extends Component {
     }
 
     handleDynamicQuery(queryFunctionImpl, customWidgetInputs, systemWidgetInputs, parameters, defaultValues) {
-        console.log("DYNAMIC QURY")
-        console.log(queryFunctionImpl, customWidgetInputs, systemWidgetInputs, parameters, defaultValues)
         this.widgetInputsDefaultValues = defaultValues.split(",");
         let queryFunction = "this.getQuery = function (" + parameters + "){" + queryFunctionImpl + "}";
         this.handleProviderConfigPropertyChange("queryData", {

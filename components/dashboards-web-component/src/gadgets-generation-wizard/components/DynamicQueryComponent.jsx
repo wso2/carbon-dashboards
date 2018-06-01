@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -69,7 +69,6 @@ class DynamicQueryComponent extends Component {
     }
 
     componentDidMount() {
-        console.log("CDM")
         this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
             this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
             this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
@@ -92,7 +91,6 @@ class DynamicQueryComponent extends Component {
     }
 
     handleDelete(event) {
-        console.log("HD")
         this.customWidgetInputs.splice(this.state.selectedRow[0], 1);
         this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
             this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
@@ -196,8 +194,12 @@ class DynamicQueryComponent extends Component {
                                                     return (
                                                         <TableRow
                                                             selected={that.state.selectedRow[0] == index ? true : false}>
-                                                            <TableRowColumn>{widgetInput.name}</TableRowColumn>
-                                                            <TableRowColumn>{widgetInput.defaultValue}</TableRowColumn>
+                                                            <TableRowColumn>
+                                                                {widgetInput.name}
+                                                            </TableRowColumn>
+                                                            <TableRowColumn>
+                                                                {widgetInput.defaultValue}
+                                                            </TableRowColumn>
                                                         </TableRow>
                                                     );
                                                 })
@@ -215,9 +217,10 @@ class DynamicQueryComponent extends Component {
                             }
 
                         </div>
-                        <div style={{verticalAlign: 'middle', marginTop: 15, marginRight: 10, marginBottom: 15}}>Enter
-                            your JS function to
-                            create the query
+                        <div style={
+                            {verticalAlign: 'middle', marginTop: 15, marginRight: 10, marginBottom: 15}
+                        }>
+                            Enter your JS function to create the query
                         </div>
                         <div>{t}</div>
                         <CodeProperty

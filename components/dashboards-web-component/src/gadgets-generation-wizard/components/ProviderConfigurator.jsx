@@ -66,10 +66,6 @@ class ProviderConfigurator extends Component {
         ));
     }
 
-    handleDynamicQueryGeneration() {
-
-    }
-
     /**
      * Returns input fields according to the value provided
      * @param value

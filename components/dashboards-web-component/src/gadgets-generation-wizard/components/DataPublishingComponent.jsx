@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *  Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *  WSO2 Inc. licenses this file to you under the Apache License,
  *  Version 2.0 (the "License"); you may not use this file except
@@ -53,7 +53,7 @@ class DataPublishingComponent extends Component {
             widgetOutputConfigs: [],
             selectedRow: [],
             errorTextField: "",
-            expandAdvanced:false
+            expandAdvanced: false
         }
     }
 
@@ -108,7 +108,7 @@ class DataPublishingComponent extends Component {
                     backgroundColor: '#25353f'
                 }}
                 expanded={this.state.expandAdvanced}
-                onExpandChange={e => this.setState({ expandAdvanced: e })}
+                onExpandChange={e => this.setState({expandAdvanced: e})}
             >
                 <CardHeader
                     title="Data Publishing Configuration"
@@ -174,8 +174,12 @@ class DataPublishingComponent extends Component {
                                                 return (
                                                     <TableRow
                                                         selected={that.state.selectedRow[0] == index ? true : false}>
-                                                        <TableRowColumn>{outputAttribute.publishingValue}</TableRowColumn>
-                                                        <TableRowColumn>{outputAttribute.publishedAsValue}</TableRowColumn>
+                                                        <TableRowColumn>
+                                                            {outputAttribute.publishingValue}
+                                                        </TableRowColumn>
+                                                        <TableRowColumn>
+                                                            {outputAttribute.publishedAsValue}
+                                                        </TableRowColumn>
                                                     </TableRow>
                                                 );
                                             })

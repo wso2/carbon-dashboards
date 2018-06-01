@@ -93,11 +93,15 @@ function _extendsFromDepricatedWidgetClassVersion(widgetClass) {
 function _patchWidgetClass(widgetClass) {
     let superWidgetClassPrototype = widgetClass.prototype.__proto__;
     // Patch subscribe method.
-    superWidgetClassPrototype.subscribe = function (listenerCallback) {
+    superWidgetClassPrototype.subscribe = function (listenerCallback, publisherID, context) {
         const self = this;
-        let publisherIds = self.props.configs.pubsub.publishers;
-        if (publisherIds && Array.isArray(publisherIds)) {
-            publisherIds.forEach(publisherId => self.props.glEventHub.on(publisherId, listenerCallback));
+        if (!publisherID) {
+            let publisherIds = self.props.configs.pubsub.publishers;
+            if (publisherIds && Array.isArray(publisherIds)) {
+                publisherIds.forEach(publisherId => self.props.glEventHub.on(publisherId, listenerCallback));
+            }
+        } else {
+            self.props.glEventHub.on(publisherID, listenerCallback, context);
         }
     };
 }

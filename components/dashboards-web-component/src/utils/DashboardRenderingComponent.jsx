@@ -134,19 +134,11 @@ class DashboardRenderingComponent extends React.Component {
                     pubsubTypes = pubsubTypes ? pubsubTypes : [];
                     pubsubTypes.map(type => {
                         if (type === "publisher") {
-                            console.log("PPPP")
-                            console.log(contentItem)
-                            console.log("BBBBB")
                             pubsubComponent.addPublisherToMap(contentItem.component + "_"
                                 + contentItem.props.id.substring(0, 3), {
                                 id: contentItem.props.id, widgetOutputs: widgetConfigs.pubsub.publisherWidgetOutputs});
-                        } else if (type === "subscriber" && widgetConfigs.pubsub && widgetConfigs.pubsub.widgetInputOutputMapping) {
-                            // widgetConfigs.pubsub.subscribedTopics.map(subscribedTopic => {
-                            //     console.log("PUB    "+subscribedTopic.publisherTopic + "_" + subscribedTopic.publisherId)
-                            //     console.log("SUB    "+subscribedTopic.subsbriberTopic + "_" + contentItem.props.id)
-                            //     pubsubComponent.wire(subscribedTopic.subsbriberTopic + "_" + contentItem.props.id,
-                            //         subscribedTopic.publisherTopic + "_" + subscribedTopic.publisherId)
-                            // });
+                        } else if (type === "subscriber" &&
+                            widgetConfigs.pubsub && widgetConfigs.pubsub.widgetInputOutputMapping) {
                             widgetConfigs.pubsub.publishers.map(publisher => {
                                 pubsubComponent.wire(contentItem.props.id + "_" + publisher, publisher);
                             });

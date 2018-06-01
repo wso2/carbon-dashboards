@@ -17,8 +17,7 @@
  */
 
 import React from 'react';
-//import Widget from '@wso2-dashboards/widget';
-import Widget from '../../../samples/widgets/Publisher/src/Widget'
+import Widget from '@wso2-dashboards/widget';
 import WidgetChannelManager from '../../dashboards-web-component/src/utils/dashboard-channel/WidgetChannelManager';
 
 let widgetChannelManager = null;

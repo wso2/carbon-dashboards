@@ -94,7 +94,7 @@ class WidgetConfigurationPanel extends React.Component {
         this.handleWidgetOptionTextFieldEvent = _.debounce(this.handleWidgetOptionTextFieldEvent.bind(this), 900);
         this.handleWidgetOptionSelectFieldEvent = this.handleWidgetOptionSelectFieldEvent.bind(this);
         this.getWidgetConfPanelContent = this.getWidgetConfPanelContent.bind(this);
-        this.test = this.test.bind(this);
+        this.handleCheckBox = this.handleCheckBox.bind(this);
         this.handlePublisherDropDown = this.handlePublisherDropDown.bind(this);
         this.getWidgetOutputDropDown = this.getWidgetOutputDropDown.bind(this);
         this.getPubsubWiringUI = this.getPubsubWiringUI.bind(this);
@@ -115,7 +115,8 @@ class WidgetConfigurationPanel extends React.Component {
         let selectedWidget = dashboardLayout.selectedItem;
         if (isInputChecked) {
             pubsubComponent.wire(selectedWidget.config.content[0].props.id, event.currentTarget.id);
-            this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content, selectedWidget.config.content[0].props.id,
+            this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content,
+                selectedWidget.config.content[0].props.id,
                 event.currentTarget.id);
             this.setState({checked: true});
         } else {
@@ -127,7 +128,7 @@ class WidgetConfigurationPanel extends React.Component {
         }
     }
 
-    test(event, isChecked) {
+    handleCheckBox(event, isChecked) {
         let publisherWidgetId = event.currentTarget.id;
         let widgetKey = event.currentTarget.name;
         let selectedWidget = dashboardLayout.selectedItem;
@@ -136,10 +137,12 @@ class WidgetConfigurationPanel extends React.Component {
             !widgetDropDownMenuMap.get(publisherWidgetId) ? widgetDropDownMenuMap.set(publisherWidgetId,
                 pubsubComponent.getPublishersMap().get(widgetKey).widgetOutputs) : "";
             pubsubComponent.wire(selectedWidget.config.content[0].props.id + "_" + publisherWidgetId, publisherWidgetId);
-            this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content, selectedWidget.config.content[0].props.id,
+            this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content,
+                selectedWidget.config.content[0].props.id,
                 publisherWidgetId);
         } else {
-            if (pubsubComponent.unwire(selectedWidget.config.content[0].props.id + "_" + publisherWidgetId, publisherWidgetId)) {
+            if (pubsubComponent.unwire(selectedWidget.config.content[0].props.id + "_" + publisherWidgetId,
+                    publisherWidgetId)) {
                 widgetDropDownMenuMap.delete(publisherWidgetId);
                 this.unpersistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content,
                     selectedWidget.config.content[0].props.id, publisherWidgetId);
@@ -153,7 +156,8 @@ class WidgetConfigurationPanel extends React.Component {
     getPubsubWiringUI() {
         if (this.state.widgetDropDownMenuMap.size !== 0) {
             let pubsubWiringUI =
-                dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.subscriberWidgetInputs.map((subscriberInput, index) => {
+                dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.subscriberWidgetInputs.
+                map((subscriberInput, index) => {
                     return <div>
                         <div style={{
                             display: 'inline-block',
@@ -170,7 +174,9 @@ class WidgetConfigurationPanel extends React.Component {
                                 margin: 10,
                                 marginLeft: 30,
                                 width: '50%'
-                            }}>{this.getWidgetOutputDropDown(this.state.widgetDropDownMenuMap, subscriberInput)}</SelectField>
+                            }}>{
+                            this.getWidgetOutputDropDown(this.state.widgetDropDownMenuMap, subscriberInput)}
+                        </SelectField>
                     </div>
                 });
             return pubsubWiringUI;
@@ -194,7 +200,8 @@ class WidgetConfigurationPanel extends React.Component {
         let publisherId = event.target.parentElement.parentElement.parentElement.getAttribute("publisherId");
         let subscriberID = dashboardLayout.selectedItem.config.content[0].props.id;
         this.state.dropDownValues.set(subscriberInput, {value: payload, publisherID: publisherId});
-        this.setState({dropDownValues: this.state.dropDownValues}, this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content, subscriberID, publisherId));
+        this.setState({dropDownValues: this.state.dropDownValues},
+            this.persistPubSubWiringInDashboardJSON(dashboardLayout.toConfig().content, subscriberID, publisherId));
     }
 
     handleWidgetOptionCheckBoxEvent(event, isInputChecked, options) {
@@ -282,7 +289,8 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     unpersistWiringConfigsInDashboardJSON(pubsubConfigs, publisherID) {
-        pubsubConfigs.widgetInputOutputMapping = pubsubConfigs.widgetInputOutputMapping.filter(widgetInputOutputMapping => {
+        pubsubConfigs.widgetInputOutputMapping = pubsubConfigs.widgetInputOutputMapping.
+        filter(widgetInputOutputMapping => {
             return widgetInputOutputMapping.publisherWidgetOutput !== publisherID;
         });
         return pubsubConfigs.widgetInputOutputMapping;
@@ -293,13 +301,13 @@ class WidgetConfigurationPanel extends React.Component {
         if (dashboardLayout.selectedItem &&
             dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.types.indexOf("subscriber") !== -1) {
             for (let [key, val] of pubsubComponent.getPublishersMap().entries()) {
-                this.state.checked = !!(dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers &&
-                    dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers.indexOf(val.id) !== -1);
+                this.state.checked = !!(dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers
+                    && dashboardLayout.selectedItem.config.content[0].props.configs.pubsub.publishers.indexOf(val.id) !== -1);
                 publishers.push(<Checkbox id={val.id}
                                           label={key.substring(0, key.length - 4)}
                                           labelStyle={labelStyle}
                                           name={key}
-                                          onCheck={this.test}
+                                          onCheck={this.handleCheckBox}
                                           checked={this.state.checked}
                                           className="publishers-list"/>)
             }
@@ -360,7 +368,8 @@ class WidgetConfigurationPanel extends React.Component {
                                 <SelectField
                                     floatingLabelText={options[i].title}
                                     onChange={(event, key, payload,) => {
-                                        this.handleWidgetOptionSelectFieldEvent(event, key, payload, options), this.props.setWidgetConfigPanelDirty(true);
+                                        this.handleWidgetOptionSelectFieldEvent(event, key, payload, options),
+                                            this.props.setWidgetConfigPanelDirty(true);
                                     }}
                                     value={this.state.options[i].defaultData}
                                     id={options[i].id}
@@ -377,7 +386,8 @@ class WidgetConfigurationPanel extends React.Component {
                                     label={options[i].title}
                                     labelStyle={labelStyle}
                                     onCheck={(event, isInputChecked) => {
-                                        this.handleWidgetOptionCheckBoxEvent(event, isInputChecked, options), this.props.setWidgetConfigPanelDirty(true);
+                                        this.handleWidgetOptionCheckBoxEvent(event, isInputChecked, options),
+                                            this.props.setWidgetConfigPanelDirty(true);
                                     }}
                                     checked={this.state.options[i].defaultData}
                                     className="options-list"
@@ -394,7 +404,6 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     getWidgetConfPanelContent() {
-        console.log("getWidgetConfPanelContent")
         return (<div>
             <List style={listStyle}>
                 <Subheader style={stylePanelHeader} className="options-list-header">Widget Configuration</Subheader>
@@ -457,8 +466,6 @@ class WidgetConfigurationPanel extends React.Component {
     }
 
     render() {
-        console.log(this.state)
-        console.log("STATE")
         return (<Drawer open={this.props.open} openSecondary={true}
                         containerStyle={styles.widgetDrawer}
                         containerClassName="widget-configuration-panel">
