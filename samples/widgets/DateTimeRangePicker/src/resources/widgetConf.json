@@ -1,0 +1,12 @@
+{
+    "id": "DateRangePicker",
+    "name": "Date Time Range",
+    "thumbnailURL": "",
+    "configs": {
+        "pubsub": {
+            "types": [
+                "publisher"
+            ]
+        }
+    }
+}
