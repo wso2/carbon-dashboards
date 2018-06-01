@@ -24,6 +24,7 @@
     padding: 0;
     margin: 0 0 0 55px;
     border: 0;
+    overflow: hidden !important;
 }
 
 .lm_close {
