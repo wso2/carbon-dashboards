@@ -55,6 +55,7 @@
         <module>sales-dashboard-widgets/RevenuePercentage</module>
         <module>sales-dashboard-widgets/RevenuePerYear</module>
         <module>sales-dashboard-widgets/RevenueByProductWithUserPreferences</module>
+        <module>DateTimeRangePicker</module>
     </modules>
 
 </project>
