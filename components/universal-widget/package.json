@@ -7,7 +7,7 @@
     "axios": "^0.17.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-vizgrammar": "^0.6.9",
+    "react-vizgrammar": "^0.7.8",
     "rimraf": "^2.6.2"
   },
   "scripts": {

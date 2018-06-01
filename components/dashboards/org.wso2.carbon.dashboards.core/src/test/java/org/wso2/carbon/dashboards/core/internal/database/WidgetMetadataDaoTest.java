@@ -201,7 +201,8 @@ public class WidgetMetadataDaoTest {
                 .getBytes(StandardCharsets.UTF_8));
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.next()).thenReturn(true, false);
-        when(resultSet.getString(anyString())).thenReturn("foo");
+        //when(resultSet.getString(anyString())).thenReturn("foo");
+        when(resultSet.getBlob(anyString())).thenReturn(blob);
         PreparedStatement preparedStatement = mock(PreparedStatement.class);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         Connection connection = createConnection(preparedStatement);

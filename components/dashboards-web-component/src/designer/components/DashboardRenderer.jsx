@@ -296,9 +296,9 @@ export default class DashboardRenderer extends Component {
                     <WidgetConfigurationPane
                         theme={this.props.theme}
                         isOpen={this.state.isWidgetConfigurationPaneOpen}
-                        widgetGoldenLayoutContent={this.selectedWidgetGoldenLayoutContent}
-                        widgetsConfigurations={this.renderedWidgetsConfigurations}
-                        publisherWidgetsContents={this.publisherWidgetsContents}
+                        selectedWidgetGoldenLayoutContent={this.selectedWidgetGoldenLayoutContent}
+                        selectedPageGoldenLayoutContent={renderingPage.content}
+                        allWidgetsConfigurations={this.props.widgetsConfigurations}
                         paneCloseEventListener={this.onWidgetConfigurationPaneClose}
                     />
                 </div>

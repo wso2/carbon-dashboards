@@ -119,7 +119,7 @@ class DashboardRenderingComponent extends React.Component {
     isSubscriber(widgetInfo) {
         let widgetConfig = widgetInfo.props.configs;
         return (widgetConfig && widgetConfig.pubsub && widgetConfig.pubsub.types &&
-        widgetConfig.pubsub.types.indexOf("subscriber") != -1);
+            widgetConfig.pubsub.types.indexOf("subscriber") != -1);
     }
 
 
@@ -135,10 +135,12 @@ class DashboardRenderingComponent extends React.Component {
                     pubsubTypes.map(type => {
                         if (type === "publisher") {
                             pubsubComponent.addPublisherToMap(contentItem.component + "_"
-                                + contentItem.props.id.substring(0, 3), contentItem.props.id);
-                        } else if (type === "subscriber" && widgetConfigs.pubsub && widgetConfigs.pubsub.publishers) {
+                                + contentItem.props.id.substring(0, 3), {
+                                id: contentItem.props.id, widgetOutputs: widgetConfigs.pubsub.publisherWidgetOutputs});
+                        } else if (type === "subscriber" &&
+                            widgetConfigs.pubsub && widgetConfigs.pubsub.widgetInputOutputMapping) {
                             widgetConfigs.pubsub.publishers.map(publisher => {
-                                pubsubComponent.wire(contentItem.props.id, publisher);
+                                pubsubComponent.wire(contentItem.props.id + "_" + publisher, publisher);
                             });
                         }
                     });
@@ -146,6 +148,7 @@ class DashboardRenderingComponent extends React.Component {
             }
         });
     }
+
 
     findWidget(content, widgets) {
         content.forEach(contentItem => {

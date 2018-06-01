@@ -17,19 +17,19 @@
  *
  */
 
-import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { withRouter } from 'react-router-dom';
+import React, {Component} from 'react';
+import {FormattedMessage} from 'react-intl';
+import {withRouter} from 'react-router-dom';
 // Material UI Components
-import { Step, StepLabel, Stepper } from 'material-ui/Stepper';
+import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import ExpandTransition from 'material-ui/internal/ExpandTransition';
 import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 // App Components
-import { FormPanel, Header } from '../../common';
+import {FormPanel, Header} from '../../common';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';
@@ -49,12 +49,12 @@ const muiTheme = getMuiTheme(darkBaseTheme);
  * Style constants
  */
 const styles = {
-    messageBox: { textAlign: 'center', color: 'white' },
-    errorMessage: { backgroundColor: '#FF5722', color: 'white' },
-    successMessage: { backgroundColor: '#4CAF50', color: 'white' },
+    messageBox: {textAlign: 'center', color: 'white'},
+    errorMessage: {backgroundColor: '#FF5722', color: 'white'},
+    successMessage: {backgroundColor: '#4CAF50', color: 'white'},
     completedStepperText: {color: 'white'},
-    activeStepperText: { color: '#0097A7' },
-    inactiveStepperText: { color: '#FFFFFF', opacity: 0.3 },
+    activeStepperText: {color: '#0097A7'},
+    inactiveStepperText: {color: '#FFFFFF', opacity: 0.3},
 };
 
 /**
@@ -75,6 +75,7 @@ class GadgetsGenerationWizard extends Component {
             providerConfiguration: {},
             providerConfigRenderTypes: {},
             chartConfiguration: {},
+            pubsub: {},
             metadata: {
                 names: ['rpm', 'torque', 'horsepower', 'EngineType'],
                 types: ['LINEAR', 'LINEAR', 'LINEAR', 'ORDINAL'],
@@ -99,6 +100,8 @@ class GadgetsGenerationWizard extends Component {
         this.dummyAsync = this.dummyAsync.bind(this);
         this.handleNext = this.handleNext.bind(this);
         this.handlePrev = this.handlePrev.bind(this);
+        this.handleDynamicQuery = this.handleDynamicQuery.bind(this);
+        this.getPubSubConfiguration = this.getPubSubConfiguration.bind(this);
     }
 
     componentDidMount() {
@@ -163,7 +166,7 @@ class GadgetsGenerationWizard extends Component {
      * @param chartConfiguration
      */
     updateChartConfiguration(chartConfiguration) {
-        this.setState({ chartConfiguration });
+        this.setState({chartConfiguration});
     }
 
     /**
@@ -203,7 +206,10 @@ class GadgetsGenerationWizard extends Component {
             const submittableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
+                version: "1.0.0",
                 chartConfig: validatedConfiguration,
+                pubsub: this.getPubSubConfiguration(validatedConfiguration.widgetOutputConfigs,
+                    this.state.providerConfiguration.queryData.customWidgetInputs),
                 providerConfig: {
                     configs: {
                         type: this.state.providerType,
@@ -238,16 +244,45 @@ class GadgetsGenerationWizard extends Component {
     }
 
     dummyAsync(cb) {
-        this.setState({ loading: true }, () => {
+        this.setState({loading: true}, () => {
             this.asyncTimer = setTimeout(cb, 500);
         });
     }
+
+    handleDynamicQuery(queryFunctionImpl, customWidgetInputs, systemWidgetInputs, parameters, defaultValues) {
+        this.widgetInputsDefaultValues = defaultValues.split(",");
+        let queryFunction = "this.getQuery = function (" + parameters + "){" + queryFunctionImpl + "}";
+        this.handleProviderConfigPropertyChange("queryData", {
+            queryFunction: queryFunction,
+            customWidgetInputs: customWidgetInputs,
+            systemWidgetInputs: systemWidgetInputs
+        });
+    }
+
+    getPubSubConfiguration(widgetOutputConfigs, customWidgetInputs) {
+        let pubsub = {};
+        pubsub.types = [];
+        if (customWidgetInputs.length !== 0) {
+            pubsub.types.push("subscriber");
+            pubsub.subscriberWidgetInputs = customWidgetInputs.map(widgetInput => {
+                return widgetInput.name;
+            });
+        }
+        if (widgetOutputConfigs && widgetOutputConfigs.length !== 0) {
+            pubsub.types.push("publisher");
+            pubsub.publisherWidgetOutputs = widgetOutputConfigs.map(outputAttribute => {
+                return outputAttribute.publishedAsValue;
+            });
+        }
+        return pubsub;
+    }
+
 
     /**
      * Handles onClick of Next button, including validations
      */
     handleNext() {
-        const { stepIndex } = this.state;
+        const {stepIndex} = this.state;
         const apis = new GadgetsGenerationAPI();
         switch (stepIndex) {
             case (0):
@@ -283,6 +318,8 @@ class GadgetsGenerationWizard extends Component {
                 // Validate provider configuration and get metadata
                 let isProviderConfigurationValid = true;
                 if (!UtilFunctions.isEmpty(this.state.providerConfiguration)) {
+                    eval(this.state.providerConfiguration.queryData.queryFunction);
+                    this.state.providerConfiguration.queryData["query"] = this.getQuery.apply(this, this.widgetInputsDefaultValues);
                     apis.getProviderMetadata(this.state.providerType,
                         this.state.providerConfiguration).then((response) => {
                         if (!this.state.loading) {
@@ -310,7 +347,7 @@ class GadgetsGenerationWizard extends Component {
     }
 
     handlePrev() {
-        const { stepIndex } = this.state;
+        const {stepIndex} = this.state;
         if (!this.state.loading) {
             this.dummyAsync(() => this.setState({
                 loading: false,
@@ -337,6 +374,7 @@ class GadgetsGenerationWizard extends Component {
                         configRenderTypes={this.state.providerConfigRenderTypes}
                         handleProviderTypeChange={this.handleProviderTypeChange}
                         handleProviderConfigPropertyChange={this.handleProviderConfigPropertyChange}
+                        handleDynamicQuery={this.handleDynamicQuery}
                     />
                 );
             case 2:
@@ -360,7 +398,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Next"
                         primary
-                        style={{ marginRight: 12 }}
+                        style={{marginRight: 12}}
                         onClick={this.handleNext}
                     />
                 );
@@ -369,7 +407,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Next"
                         primary
-                        style={{ marginRight: 12 }}
+                        style={{marginRight: 12}}
                         onClick={this.handleNext}
                     />
                 );
@@ -378,7 +416,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Create"
                         primary
-                        style={{ marginRight: 12 }}
+                        style={{marginRight: 12}}
                         onClick={() => this.submitGadgetConfig()}
                     />
                 );
@@ -388,8 +426,8 @@ class GadgetsGenerationWizard extends Component {
     }
 
     renderContent() {
-        const { finished, stepIndex } = this.state;
-        const contentStyle = { margin: '0 16px', overflow: 'hidden' };
+        const {finished, stepIndex} = this.state;
+        const contentStyle = {margin: '0 16px', overflow: 'hidden'};
 
         if (finished) {
             return (
@@ -399,7 +437,7 @@ class GadgetsGenerationWizard extends Component {
                             href={appContext}
                             onClick={(event) => {
                                 event.preventDefault();
-                                this.setState({ stepIndex: 0, finished: false });
+                                this.setState({stepIndex: 0, finished: false});
                             }}
                         >
                             Reset
@@ -412,12 +450,12 @@ class GadgetsGenerationWizard extends Component {
         return (
             <div style={contentStyle}>
                 <div>{this.getStepContent(stepIndex)}</div>
-                <div style={{ marginTop: 24, marginBottom: 12 }}>
+                <div style={{marginTop: 24, marginBottom: 12}}>
                     <FlatButton
                         label="Back"
                         disabled={stepIndex === 0}
                         onClick={this.handlePrev}
-                        style={{ marginRight: 12 }}
+                        style={{marginRight: 12}}
                     />
                     {this.renderNextButton(stepIndex)}
                     <FlatButton
@@ -425,7 +463,7 @@ class GadgetsGenerationWizard extends Component {
                         onClick={() => {
                             window.location.href = window.contextPath
                         }}
-                        style={{ marginRight: 12 }}
+                        style={{marginRight: 12}}
                     />
                 </div>
             </div>
@@ -463,16 +501,16 @@ class GadgetsGenerationWizard extends Component {
     }
 
     render() {
-        const { loading, stepIndex } = this.state;
+        const {loading, stepIndex} = this.state;
 
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
+                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
                     <Dialog
                         modal={false}
                         open={this.state.previewGadget}
-                        onRequestClose={() => this.setState({ previewGadget: false })}
+                        onRequestClose={() => this.setState({previewGadget: false})}
                         repositionOnUpdate
                     >
                         <ChartPreviewer
@@ -480,11 +518,11 @@ class GadgetsGenerationWizard extends Component {
                         />
                     </Dialog>
                     <FormPanel
-                        title={<FormattedMessage id="create.widget" defaultMessage="Create Widget" />}
+                        title={<FormattedMessage id="create.widget" defaultMessage="Create Widget"/>}
                         width="800"
                         onSubmit={this.handleFormSubmit}
                     >
-                        <div style={{ align: 'center' }}>
+                        <div style={{align: 'center'}}>
                             <Stepper activeStep={stepIndex}>
                                 <Step>
                                     <StepLabel
@@ -503,6 +541,13 @@ class GadgetsGenerationWizard extends Component {
                                 <Step>
                                     <StepLabel
                                         style={this.getStepperTextStyle(stepIndex, 2)}
+                                    >
+                                        PubSub Configurations
+                                    </StepLabel>
+                                </Step>
+                                <Step>
+                                    <StepLabel
+                                        style={this.getStepperTextStyle(stepIndex, 3)}
                                     >
                                         Configure chart
                                     </StepLabel>

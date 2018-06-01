@@ -66,9 +66,6 @@ export default class WidgetRenderer extends Component {
         props.glContainer.on('resize', this.handleResize);
         props.glEventHub.on(Event.DASHBOARD_VIEW_THEME_CHANGE, newTheme => this.setState({ currentTheme: newTheme }));
         props.glEventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE, (newConfig)=>{
-            console.log(`----- widget ${this.widgetName} config updated `);
-            console.log(newConfig);
-            console.log('----- hence force update');
             this.forceUpdate();
         });
     }

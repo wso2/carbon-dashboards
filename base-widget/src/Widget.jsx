@@ -30,7 +30,6 @@ export default class Widget extends Component {
 
         this.messageQueue = [];
         this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
-
         this._getLocalState = this._getLocalState.bind(this);
         this._setLocalState = this._setLocalState.bind(this);
         this.getWidgetState = this.getWidgetState.bind(this);

@@ -18,7 +18,8 @@
  */
 
 import React, {Component} from 'react';
-import Widget from '@wso2-dashboards/widget';
+//import Widget from '@wso2-dashboards/widget';
+import Widget from '../../Publisher/src/Widget';
 import FlatButton from 'material-ui/FlatButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
