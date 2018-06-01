@@ -220,6 +220,7 @@ export default class WidgetConfigurationPane extends Component {
         let publisherId = event.target.parentElement.parentElement.parentElement.getAttribute("publisherId");
         this.state.dropDownValues.set(subscriberInput, {value: payload, publisherID: publisherId});
         this.persistWiringConfigsInDashboardJSON(this.props.selectedWidgetGoldenLayoutContent.config.props.configs.pubsub);
+        this.updateWidget();
         this.setState({dropDownValues: this.state.dropDownValues});
     }
 
