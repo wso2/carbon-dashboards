@@ -15,7 +15,7 @@
 */
 import React from 'react';
 import VizG from 'react-vizgrammar';
-import WidgetChannelManager from '../../../../../../base-widget/src/WidgetChannelManager';
+import WidgetChannelManager from './WidgetChannelManager';
 
 export default class PreviewerWidget extends React.Component {
 
