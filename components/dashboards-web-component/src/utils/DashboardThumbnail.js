@@ -19,6 +19,7 @@
 import html2canvas from 'html2canvas';
 import _ from 'lodash';
 import AuthManager from '../auth/utils/AuthManager';
+import dashboardDefaultThumbnail from '../listing/components/dashboard-default-thumbnail.png';
 
 export default class DashboardThumbnail {
     /**
@@ -54,8 +55,7 @@ export default class DashboardThumbnail {
      */
     static getDashboardThumbnail(dashboardId) {
         const thumbnail = localStorage.getItem(DashboardThumbnail.getDashboardThumbnailKey(dashboardId));
-        // TODO 18/05/26 Add a default thumbnail for dashboards
-        return thumbnail || 'https://snag.gy/NFycsj.jpg';
+        return thumbnail || dashboardDefaultThumbnail;
     }
 
     /**
