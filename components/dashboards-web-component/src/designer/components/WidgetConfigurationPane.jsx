@@ -185,9 +185,10 @@ export default class WidgetConfigurationPane extends Component {
     }
 
     getPublisherWiringUI() {
-        let pubsubWiringUI = []
-        if (this.getSelectedWidgetConfiguration().configs.pubsub.types.indexOf('subscriber') !== -1) {
-            pubsubWiringUI = this.getSelectedWidgetConfiguration().configs.pubsub.subscriberWidgetInputs.map(
+        let pubsubWiringUI = [];
+        const pubsub = this.getSelectedWidgetConfiguration().configs.pubsub;
+        if (pubsub && (pubsub.types.indexOf('subscriber') !== -1) && pubsub.subscriberWidgetInputs) {
+            pubsubWiringUI = pubsub.subscriberWidgetInputs.map(
                 subscriberInput => {
                     return (<div>
                         <div style={{
