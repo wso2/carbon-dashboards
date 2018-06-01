@@ -33,7 +33,7 @@ export default class GoldenLayoutContentUtils {
     /**
      * Returns names of all widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Set} mentioned widget names
+     * @returns {Set} included widget names
      */
     static getReferredWidgetNames(goldenLayoutContents) {
         const widgetNames = new Set();
@@ -44,21 +44,10 @@ export default class GoldenLayoutContentUtils {
         return Array.from(widgetNames.values());
     }
 
-    static getPublisherWidgetsContents(goldenLayoutContents) {
-        const publisherWidgetsContent = [];
-        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
-            if (widgetContent.props.configs.pubsub.types.indexOf('publisher') !== -1) {
-                publisherWidgetsContent.push(widgetContent);
-            }
-            return false;
-        });
-        return publisherWidgetsContent;
-    }
-
     /**
-     * Returns names of all widgets referred in the given GoldenLayout contents.
+     * Returns class names of all widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Set} mentioned widget names
+     * @returns {Set} class names of included widget
      */
     static getReferredWidgetClassNames(goldenLayoutContents) {
         const widgetClassNames = new Set();
@@ -67,6 +56,23 @@ export default class GoldenLayoutContentUtils {
             return false;
         });
         return Array.from(widgetClassNames.values());
+    }
+
+    /**
+     * Returns contents of publisher widgets in the given GoldenLayout contents.
+     * @param {array} goldenLayoutContents GoldenLayout content
+     * @returns {Array} publisher widgets contents
+     */
+    static getPublisherWidgetsContents(goldenLayoutContents) {
+        const publisherWidgetsContent = [];
+        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
+            const configs = widgetContent.props.configs;
+            if (configs && configs.pubsub.types.indexOf('publisher') !== -1) {
+                publisherWidgetsContent.push(widgetContent);
+            }
+            return false;
+        });
+        return publisherWidgetsContent;
     }
 
     static _traverseWidgetContents(goldenLayoutContents, consumer) {
