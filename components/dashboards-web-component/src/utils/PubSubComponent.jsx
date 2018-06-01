@@ -30,12 +30,12 @@ class PubSubComponent {
             dashboardLayout.eventHub.emit(subscriberId, message)
         };
         dashboardLayout.eventHub.on(publisherId, pubsubCallback);
-        this.pubsubCallbackMap.set(subscriberId + "_" + publisherId, pubsubCallback);
+        this.pubsubCallbackMap.set(subscriberId, pubsubCallback);
     }
 
     unwire(subscriberId, publisherId) {
-        if (this.pubsubCallbackMap.get(subscriberId + "_" + publisherId)) {
-            dashboardLayout.eventHub.off(publisherId, this.pubsubCallbackMap.get(subscriberId + "_" + publisherId));
+        if (this.pubsubCallbackMap.get(subscriberId)) {
+            dashboardLayout.eventHub.off(publisherId, this.pubsubCallbackMap.get(subscriberId));
             return true;
         }
         return false;

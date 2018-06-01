@@ -93,7 +93,7 @@ class DashboardListingPage extends Component {
             );
         } else {
             return this.state.dashboards.map((dashboard) => {
-                return <DashboardCard dashboard={dashboard} />;
+                return <DashboardCard key={dashboard.url} dashboard={dashboard} />;
             });
         }
     }

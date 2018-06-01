@@ -100,6 +100,9 @@ const sidebarPanels = {
     WIDGETS: 'WIDGETS'
 };
 
+/**
+ * @deprecated
+ */
 export default class DashboardDesigner extends Component {
     constructor(props) {
         super(props);

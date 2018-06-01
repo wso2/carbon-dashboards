@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class PubSub {
     private List<String> types;
+    private List<String> publisherWidgetOutputs;
+    private List<String> subscriberWidgetInputs;
 
     /**
      * This method is to get types of the pubsub configuration.
@@ -42,5 +44,21 @@ public class PubSub {
      */
     public void setTypes(List<String> types) {
         this.types = types;
+    }
+
+    public List<String> getPublisherWidgetOutputs() {
+        return publisherWidgetOutputs;
+    }
+
+    public void setPublisherWidgetOutputs(List<String> publisherWidgetOutputs) {
+        this.publisherWidgetOutputs = publisherWidgetOutputs;
+    }
+
+    public List<String> getSubscriberWidgetInputs() {
+        return subscriberWidgetInputs;
+    }
+
+    public void setSubscriberWidgetInputs(List<String> subscriberWidgetInputs) {
+        this.subscriberWidgetInputs = subscriberWidgetInputs;
     }
 }

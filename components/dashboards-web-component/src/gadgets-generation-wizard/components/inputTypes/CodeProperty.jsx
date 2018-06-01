@@ -59,8 +59,7 @@ class CodeProperty extends React.Component {
     render() {
         return (
             <div>
-                <br />
-                <div style={{ marginBottom: 10 }}>
+                <div style={{marginBottom: 10}}>
                     <a style={this.getLabelStyle()}>
                         {(this.props.fieldName) ? (this.props.fieldName) : (null)}
                     </a>
@@ -68,12 +67,12 @@ class CodeProperty extends React.Component {
                 <AceEditor
                     mode={this.props.mode}
                     name={this.props.id}
-                    theme={styles.aceEditor.theme}
+                    theme={this.props.theme ? this.props.theme : styles.aceEditor.theme}
                     fontSize={styles.aceEditor.fontSize}
                     wrapEnabled={false}
                     onChange={content => this.props.onChange(this.props.id, content)}
-                    onFocus={() => this.setState({ isFocused: true })}
-                    onBlur={() => this.setState({ isFocused: false })}
+                    onFocus={() => this.setState({isFocused: true})}
+                    onBlur={() => this.setState({isFocused: false})}
                     value={this.props.value}
                     showPrintMargin={false}
                     highlightActiveLine={this.state.isFocused}

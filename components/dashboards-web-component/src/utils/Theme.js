@@ -28,11 +28,14 @@ export const darkTheme = getMuiTheme(darkBaseTheme,
             textColor: Colors.white,
             alternateTextColor: Colors.white,
         },
+        appBar: {
+            color: Colors.blueGrey800,
+        },
         drawer: {
             color: Colors.blueGrey900,
         },
-        appBar: {
-            color: Colors.blueGrey800,
+        snackbar: {
+            textColor: Colors.black,
         },
     }
 );
@@ -46,11 +49,14 @@ export const lightTheme = getMuiTheme(lightBaseTheme,
             textColor: Colors.black,
             alternateTextColor: Colors.black,
         },
+        appBar: {
+            color: Colors.grey200,
+        },
         drawer: {
             color: Colors.grey400,
         },
-        appBar: {
-            color: Colors.grey200,
+        snackbar: {
+            textColor: Colors.white,
         },
         toggle: {
             trackOffColor: Colors.grey500,

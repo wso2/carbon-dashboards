@@ -35,6 +35,9 @@ let widgetListDragSources = new Map();
 let isPreviouslyInitialized = false;
 let universalWidgetList = global.dashboard.universalWidgetList = [];
 
+/**
+ * @deprecated
+ */
 export default class WidgetsList extends React.Component {
     constructor(props) {
         super(props);

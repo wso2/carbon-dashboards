@@ -26,7 +26,7 @@ export default class Error404 extends Component {
                 title={
                     <FormattedMessage
                         id='error-page.404.title'
-                        defaultMessage='Page Not Fund'
+                        defaultMessage='Page Not Found'
                     />
                 }
                 message={

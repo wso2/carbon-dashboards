@@ -182,9 +182,8 @@ public class WidgetMetadataDao {
             resultSet = ps.executeQuery();
             Set<GeneratedWidgetConfigs> widgetNameSet = new HashSet<>();
             while (resultSet.next()) {
-                GeneratedWidgetConfigs generatedWidgetConfigs = new GeneratedWidgetConfigs();
-                generatedWidgetConfigs.setId(resultSet.getString(COLUMN_WIDGET_ID));
-                generatedWidgetConfigs.setName(resultSet.getString(COLUMN_WIDGET_NAME));
+                GeneratedWidgetConfigs generatedWidgetConfigs =
+                        fromJsonBytes(resultSet.getBlob(COLUMN_WIDGET_CONFIGS));
                 widgetNameSet.add(generatedWidgetConfigs);
             }
             return widgetNameSet;

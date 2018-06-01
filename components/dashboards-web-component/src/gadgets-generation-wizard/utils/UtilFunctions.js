@@ -62,7 +62,7 @@ class UtilFunctions {
     static getDefaultH2Config() {
         return {
             "datasourceName": "SAMPLE_DB",
-            "query": "select * from TRANSACTIONS_TABLE",
+            "queryData": {"queryFunction": "return \"select * from TRANSACTIONS_TABLE\";"},
             "tableName": "TRANSACTIONS_TABLE",
             "incrementalColumn": "CREDITCARDNO",
             "timeColumns": "",
@@ -81,7 +81,7 @@ class UtilFunctions {
     static getDefaultH2RenderTypes() {
         return {
             "datasourceName": "TEXT_FIELD",
-            "query": "SQL_CODE",
+            "queryData": "DYNAMIC_SQL_CODE",
             "tableName": "TEXT_FIELD",
             "incrementalColumn": "TEXT_FIELD",
             "timeColumns": "TEXT_FIELD",
@@ -365,7 +365,7 @@ class UtilFunctions {
                 configuration.charts[0].colorScale = configuration.colorScale;
                 configuration.legend = false;
                 configuration.percentage = true;
-                configuration.tooltip = { enabled: false };
+                configuration.tooltip = {enabled: false};
                 break;
             default :
                 configuration.charts[0].mode = Types.chart.pie;

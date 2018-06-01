@@ -18,8 +18,11 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import { Paper } from 'material-ui';
+import { MuiThemeProvider } from 'material-ui/styles';
+
 import { Header } from '../common';
+import defaultTheme from '../utils/Theme';
 
 export default class ErrorPage extends Component {
 
@@ -27,14 +30,14 @@ export default class ErrorPage extends Component {
         return (
             <MuiThemeProvider muiTheme={this.props.theme}>
                 <Header />
-                <div style={{textAlign: 'center'}}>
-                    <h1 style={{color: this.props.theme.textColor, fontSize: 45}}>
+                <Paper style={{ textAlign: 'center', width: '100%', height: '100%' }}>
+                    <h1 style={{ fontSize: 40 }}>
                         {this.props.title}
                     </h1>
-                    <h1 style={{color: this.props.theme.textColor, fontSize: 40}}>
+                    <span style={{fontSize: 20 }}>
                         {this.props.message}
-                    </h1>
-                </div>
+                    </span>
+                </Paper>
             </MuiThemeProvider>
         );
     }
@@ -43,11 +46,11 @@ export default class ErrorPage extends Component {
 ErrorPage.propTypes = {
     title: PropTypes.string,
     message: PropTypes.string,
-    theme: PropTypes.object
+    theme: PropTypes.shape({}),
 };
 
 ErrorPage.defaultProps = {
     title: 'Error',
     message: 'Unexpected error occurred',
-    theme: getMuiTheme(darkBaseTheme)
+    theme: defaultTheme,
 };

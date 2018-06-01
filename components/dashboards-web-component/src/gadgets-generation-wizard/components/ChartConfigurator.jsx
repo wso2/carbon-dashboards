@@ -17,7 +17,7 @@
  *
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 // Material UI Components
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -37,6 +37,7 @@ import GeographicalChart from './chartPropertyGenerators/main/GeographicalChart'
 import TableChart from './chartPropertyGenerators/main/TableChart';
 // App Utils
 import UtilFunctions from '../utils/UtilFunctions';
+import DataPublishingComponent from './DataPublishingComponent';
 
 /**
  * Displays chart type selection, and the properties related to the selected chart type
@@ -44,6 +45,7 @@ import UtilFunctions from '../utils/UtilFunctions';
 class ChartConfigurator extends Component {
     constructor(props) {
         super(props);
+        this.handlePublisherConfigs = this.handlePublisherConfigs.bind(this);
         this.state = {
             // Data related
             chartType: '',
@@ -75,6 +77,10 @@ class ChartConfigurator extends Component {
         state.chartConfiguration = JSON.parse(JSON.stringify(Configurations.charts[mainChartType]));
         this.setState(state);
         this.props.onConfigurationChange(state.chartConfiguration);
+    }
+
+    handlePublisherConfigs(widgetOutputConfigs) {
+        this.state.chartConfiguration.widgetOutputConfigs = widgetOutputConfigs;
     }
 
     /**
@@ -133,10 +139,10 @@ class ChartConfigurator extends Component {
                         />
                     );
                 default:
-                    return (<div />);
+                    return (<div/>);
             }
         }
-        return (<div />);
+        return (<div/>);
     }
 
     /**
@@ -209,7 +215,7 @@ class ChartConfigurator extends Component {
     render() {
         return (
             <div>
-                <div style={{ margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white' }}>
+                <div style={{margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white'}}>
                     <SelectField
                         floatingLabelText='Select a chart type & configure its properties'
                         value={this.state.chartType}
@@ -242,13 +248,16 @@ class ChartConfigurator extends Component {
                         />
                     </SelectField>
                     {this.displayChartProperties()}
-                    <br />
+                    {this.state.chartType !== '' ?
+                        <DataPublishingComponent outputAttributes={this.state.metadata.names}
+                                                 onConfigurationChange={this.handlePublisherConfigs}/> : ""}
+                    <br/>
                     {(this.state.chartType !== '') ?
                         (<RaisedButton
                             label="Preview"
                             labelPosition="before"
                             primary
-                            icon={<PollIcon />}
+                            icon={<PollIcon/>}
                             onClick={() => this.props.onPreview()}
                         />) :
                         (null)}

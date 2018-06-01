@@ -16,7 +16,7 @@
  * under the License.
  */
 
-.dashboard-container {
+.dashboard-view-container {
     position: relative;
     width: 100%;
     height: calc(100vh - 64px);

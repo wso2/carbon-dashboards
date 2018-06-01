@@ -26,6 +26,7 @@ public class WidgetMetaInfo {
     private String id;
     private String thumbnailURL;
     private WidgetConfigs configs;
+    private String version;
 
     /**
      * This method is to get the name of the widget.
@@ -97,5 +98,13 @@ public class WidgetMetaInfo {
      */
     public void setConfigs(WidgetConfigs configs) {
         this.configs = configs;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }
