@@ -93,7 +93,7 @@ export default class WidgetConfigurationPane extends Component {
         const renderingWidgetNames =
             GoldenLayoutContentUtils.getReferredWidgetNames(this.props.selectedPageGoldenLayoutContent);
         return renderingWidgetNames.map((widgetName) => {
-            return this.props.allWidgetsConfigurations.find(widgetConfig => (widgetConfig.id === widgetName));
+            return this.props.allWidgetsConfigurations.find(widgetConfig => (widgetConfig.name === widgetName));
         });
     }
 
@@ -110,7 +110,7 @@ export default class WidgetConfigurationPane extends Component {
     getSelectedWidgetConfiguration() {
         const selectedWidgetName = this.props.selectedWidgetGoldenLayoutContent.config.title;
         return this.getSelectedPageAllWidgetsConfigurations().find((widgetConfiguration) => {
-            return (widgetConfiguration.id === selectedWidgetName);
+            return (widgetConfiguration.name === selectedWidgetName);
         });
     }
 
