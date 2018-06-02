@@ -68,8 +68,6 @@ export default class DashboardRenderer extends Component {
         super(props);
         this.goldenLayout = null;
         this.selectedWidgetGoldenLayoutContent = null;
-        this.renderedWidgetsConfigurations = [];
-        this.publisherWidgetsContents = [];
         this.state = {
             isWidgetConfigurationPaneOpen: false,
         };
@@ -250,12 +248,6 @@ export default class DashboardRenderer extends Component {
         const goldenLayout = new GoldenLayout(config, dashboardContainer);
         const renderingWidgetClassNames = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents);
         renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
-
-        const renderingWidgetNames = GoldenLayoutContentUtils.getReferredWidgetNames(goldenLayoutContents);
-        this.renderedWidgetsConfigurations = renderingWidgetNames.map((widgetName) => {
-            return this.props.widgetsConfigurations.find(widgetConfig => (widgetConfig.id === widgetName));
-        });
-        this.publisherWidgetsContents = GoldenLayoutContentUtils.getPublisherWidgetsContents(goldenLayoutContents);
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
