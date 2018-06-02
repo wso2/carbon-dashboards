@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {IconButton, Paper} from 'material-ui';
 import {NavigationArrowForward} from 'material-ui/svg-icons';
