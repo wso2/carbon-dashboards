@@ -28,9 +28,13 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 class Publisher extends Widget {
     constructor(props) {
         super(props);
-        this.publishMsg = this.publishMsg.bind(this);
         this.publishedMsgSet = [];
-        this.state = {publishedMsg: ''};
+        this.state = {
+            currentMessage: '',
+            publishedMessages: [],
+        };
+
+        this.publishMsg = this.publishMsg.bind(this);
         this.onChangeHandle = this.onChangeHandle.bind(this);
         this.getPublishedMsgsOutput = this.getPublishedMsgsOutput.bind(this);
         this.clearMsgs = this.clearMsgs.bind(this);
@@ -38,11 +42,13 @@ class Publisher extends Widget {
     }
 
     publishMsg() {
-        if (this.input.value) {
-            this.state.inputVal = '';
-            this.publishedMsgSet.push({time: new Date(), value: this.input.value});
-            super.publish(this.input.value);
-            this.setState({publishedMsg: this.input.value});
+        const currentMessage = this.state.currentMessage;
+        console.log(`publishing ${currentMessage}`)
+        if (currentMessage && (currentMessage.length > 0)) {
+            super.publish(currentMessage);
+            const newPublishedMessages = this.state.publishedMessages;
+            newPublishedMessages.push({time: new Date(), value: currentMessage});
+            this.setState({ publishedMessages: newPublishedMessages });
         }
     }
 
@@ -51,11 +57,14 @@ class Publisher extends Widget {
     }
 
     getPublishedMsgsOutput() {
-        const output = [];
-        this.publishedMsgSet.forEach((d, i) => {
-            output.push(<div>[Sent] {d.time.toTimeString()} [Message] - {d.value}</div>)
-        });
-        return output;
+        const messages = this.state.publishedMessages;
+        if (messages.length > 0) {
+            return messages.map(message => {
+                return <div>[Sent] {message.time.toTimeString()} [Message] - {message.value}</div>;
+            });
+        } else {
+            return <div>No messages!</div>;
+        }
     }
 
     clearMsgs() {
@@ -72,7 +81,7 @@ class Publisher extends Widget {
     render() {
         return (
             <MuiThemeProvider
-                muiTheme={getMuiTheme(darkBaseTheme)}
+                muiTheme={this.props.muiTheme}
             >
                 <section style={{marginTop: 25, padding: 10}}>
                     <div style={{overflow: 'hidden'}}>
@@ -80,12 +89,8 @@ class Publisher extends Widget {
                             <TextField
                                 hintText="Hint Text"
                                 fullWidth
-                                value={this.state.inputVal}
-                                onChange={(event, newValue) => {
-                                    this.setState({inputVal: newValue});
-                                    this.input = {};
-                                    this.input.value = newValue;
-                                }}
+                                value={this.state.currentMessage}
+                                onChange={event => this.setState({currentMessage: event.target.value})}
                             />
                         </div>
                         <div style={{paddingLeft:10}}>
