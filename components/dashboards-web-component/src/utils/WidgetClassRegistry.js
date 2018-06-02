@@ -27,8 +27,8 @@ class WidgetClassRegistry {
 
     /**
      * Registers a widget class.
-     * @param widgetName {string} widget name
-     * @param widgetClass {class} widget class
+     * @param {string} widgetName  widget name
+     * @param {class} widgetClass widget class
      * @throws {Error} if a class is already registered for the specified widget name
      */
     registerWidgetClass(widgetName, widgetClass) {
@@ -61,47 +61,47 @@ const instance = new WidgetClassRegistry();
 export default instance;
 
 // Following is to maintain backward compatibility with SP-4.0.0, SP-4.1.0
-global.dashboard = {};
-global.dashboard.registerWidget = function (widgetId, widgetObj) {
-    console.warn(`[DEPRICATED] Widget '${widgetId}' uses depricated function `
-                 + '\'window.dashboard.registerWidget(widgetId, widgetObj)\'. '
-                 + 'Instead please use \'Widget.registerWidgetClass(widgetName, widgetClass)\' function.');
-    if (_extendsFromDepricatedWidgetClassVersion(widgetObj)) {
-        console.warn(`[DEPRICATED] Widget '${widgetId}' extends from a depricated version of the Widget `
-                     + '(@wso2-dashboards/widget) class. Please use the newest version.');
-        _patchWidgetClass(widgetObj);
-    }
-    instance.registerWidgetClass(widgetId, widgetObj);
-};
-
 /**
- * Checks whether given widget class extends from a depricated version of @wso2-dashboards/widget class.
- * @param widgetClass class to be checked
- * @returns {boolean} true if extend from a depricated version of the Widget class, otherwise false
+ * Checks whether given widget class extends from a deprecated version of @wso2-dashboards/widget class.
+ * @param {class} widgetClass class to be checked
+ * @returns {boolean} true if extend from a deprecated version of the Widget class, otherwise false
  * @private
  */
-function _extendsFromDepricatedWidgetClassVersion(widgetClass) {
-    return !(widgetClass.prototype.__proto__).version;
+function extendsFromDeprecatedWidgetClassVersion(widgetClass) {
+    return !Object.getPrototypeOf(widgetClass.prototype).version;
 }
 
 /**
- * Patches given widget class which extends from a depricated version of @wso2-dashboards/widget class, to be
+ * Patches given widget class which extends from a deprecated version of @wso2-dashboards/widget class, to be
  * compatible with newer versions.
- * @param widgetClass widget class to be patched
+ * @param {class} widgetClass widget class to be patched
  * @private
  */
-function _patchWidgetClass(widgetClass) {
-    let superWidgetClassPrototype = widgetClass.prototype.__proto__;
+function patchWidgetClass(widgetClass) {
+    const superWidgetClassPrototype = Object.getPrototypeOf(widgetClass.prototype);
     // Patch subscribe method.
-    superWidgetClassPrototype.subscribe = function (listenerCallback, publisherID, context) {
+    superWidgetClassPrototype.subscribe = function (listenerCallback, publisherId, context) {
         const self = this;
-        if (!publisherID) {
-            let publisherIds = self.props.configs.pubsub.publishers;
+        if (!publisherId) {
+            const publisherIds = self.props.configs.pubsub.publishers;
             if (publisherIds && Array.isArray(publisherIds)) {
-                publisherIds.forEach(publisherId => self.props.glEventHub.on(publisherId, listenerCallback));
+                publisherIds.forEach(id => self.props.glEventHub.on(id, listenerCallback));
             }
         } else {
-            self.props.glEventHub.on(publisherID, listenerCallback, context);
+            self.props.glEventHub.on(publisherId, listenerCallback, context);
         }
     };
 }
+
+global.dashboard = {};
+global.dashboard.registerWidget = function (widgetId, widgetObj) {
+    console.warn(`[DEPRECATED] Widget '${widgetId}' uses deprecated function `
+        + '\'window.dashboard.registerWidget(widgetId, widgetObj)\'. '
+        + 'Instead please use \'Widget.registerWidgetClass(widgetName, widgetClass)\' function.');
+    if (extendsFromDeprecatedWidgetClassVersion(widgetObj)) {
+        console.warn(`[DEPRECATED] Widget '${widgetId}' extends from a deprecated version of the Widget `
+            + '(@wso2-dashboards/widget) class. Please use the newest version.');
+        patchWidgetClass(widgetObj);
+    }
+    instance.registerWidgetClass(widgetId, widgetObj);
+};
