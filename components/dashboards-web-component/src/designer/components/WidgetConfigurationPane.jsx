@@ -103,7 +103,9 @@ export default class WidgetConfigurationPane extends Component {
 
     getPublisherWidgetsConfigurations() {
         return this.getSelectedPageAllWidgetsConfigurations().filter((widgetConfiguration) => {
-            return (widgetConfiguration.configs.pubsub.types.indexOf('publisher') !== -1);
+            const configs = widgetConfiguration.configs;
+            return (configs && configs.pubsub && Array.isArray(configs.pubsub.types) &&
+                (configs.pubsub.types.indexOf('publisher') !== -1));
         });
     }
 
@@ -201,8 +203,10 @@ export default class WidgetConfigurationPane extends Component {
 
     getPublisherWiringUI() {
         let pubsubWiringUI = [];
-        const pubsub = this.getSelectedWidgetConfiguration().configs.pubsub;
-        if (pubsub && (pubsub.types.indexOf('subscriber') !== -1) && pubsub.subscriberWidgetInputs) {
+        const selectedWidgetConfigs = this.getSelectedWidgetConfiguration().configs;
+        const pubsub = selectedWidgetConfigs ? selectedWidgetConfigs.pubsub : null;
+        if (pubsub && Array.isArray(pubsub.types) && (pubsub.types.indexOf('subscriber') !== -1) &&
+            pubsub.subscriberWidgetInputs) {
             pubsubWiringUI = pubsub.subscriberWidgetInputs.map(
                 subscriberInput => {
                     return (<div>
@@ -253,7 +257,10 @@ export default class WidgetConfigurationPane extends Component {
 
     getPublishers() {
         let publishers = [];
-        if (this.getSelectedWidgetConfiguration().configs.pubsub.types.indexOf('subscriber') !== -1) {
+        const selectedWidgetConfigs = this.getSelectedWidgetConfiguration().configs;
+        if (selectedWidgetConfigs && selectedWidgetConfigs.pubsub &&
+            Array.isArray(selectedWidgetConfigs.pubsub.types) &&
+            (selectedWidgetConfigs.pubsub.types.indexOf('subscriber') !== -1)) {
             this.getSelectedPagePublisherWidgetsContents().map(pubsubConfig => {
                 publishers.push(<Checkbox id={pubsubConfig.props.id}
                                           label={pubsubConfig.title}

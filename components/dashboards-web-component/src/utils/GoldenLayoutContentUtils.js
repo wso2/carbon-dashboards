@@ -72,7 +72,8 @@ export default class GoldenLayoutContentUtils {
         const publisherWidgetsContent = [];
         GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
             const configs = widgetContent.props.configs;
-            if (configs && configs.pubsub.types.indexOf('publisher') !== -1) {
+            if (configs && configs.pubsub && Array.isArray(configs.pubsub.types) &&
+                (configs.pubsub.types.indexOf('publisher') !== -1)) {
                 publisherWidgetsContent.push(widgetContent);
             }
             return false;
