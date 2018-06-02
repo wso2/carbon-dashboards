@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {IconButton, Paper} from 'material-ui';
 import {NavigationArrowForward} from 'material-ui/svg-icons';
@@ -78,6 +78,7 @@ export default class WidgetConfigurationPane extends Component {
         this.getSelectedPageAllWidgetsConfigurations = this.getSelectedPageAllWidgetsConfigurations.bind(this);
         this.getSelectedPagePublisherWidgetsContents = this.getSelectedPagePublisherWidgetsContents.bind(this);
         this.getPublisherWidgetsConfigurations = this.getPublisherWidgetsConfigurations.bind(this);
+        this.getSelectedWidget = this.getSelectedWidget.bind(this);
         this.getSelectedWidgetConfiguration = this.getSelectedWidgetConfiguration.bind(this);
         this.triggerEvent = this.triggerEvent.bind(this);
         this.handlePaneClose = this.handlePaneClose.bind(this);
@@ -90,10 +91,9 @@ export default class WidgetConfigurationPane extends Component {
     }
 
     getSelectedPageAllWidgetsConfigurations() {
-        const renderingWidgetNames =
-            GoldenLayoutContentUtils.getReferredWidgetNames(this.props.selectedPageGoldenLayoutContent);
-        return renderingWidgetNames.map((widgetName) => {
-            return this.props.allWidgetsConfigurations.find(widgetConfig => (widgetConfig.name === widgetName));
+        const referredWidgets = GoldenLayoutContentUtils.getReferredWidgets(this.props.selectedPageGoldenLayoutContent);
+        return this.props.allWidgetsConfigurations.filter((widgetConfiguration) => {
+            return (referredWidgets.find(widget => (widgetConfiguration.id === widget.id)) != null);
         });
     }
 
@@ -107,10 +107,25 @@ export default class WidgetConfigurationPane extends Component {
         });
     }
 
+    getSelectedWidget() {
+        const widgetContent = this.props.selectedWidgetGoldenLayoutContent.config;
+        let widgetId = widgetContent.props.configs.widgetID;
+        if (!widgetId) {
+            widgetId = widgetContent.component;
+            widgetContent.props.configs.widgetID = widgetId; // Sets the widgetID so it will be added to the DB.
+        }
+        return {
+            id: widgetId,
+            name: widgetContent.title,
+            className: widgetContent.component,
+            props: widgetContent.props,
+        };
+    }
+
     getSelectedWidgetConfiguration() {
-        const selectedWidgetName = this.props.selectedWidgetGoldenLayoutContent.config.title;
+        const selectedWidgetId = this.getSelectedWidget().id;
         return this.getSelectedPageAllWidgetsConfigurations().find((widgetConfiguration) => {
-            return (widgetConfiguration.name === selectedWidgetName);
+            return (widgetConfiguration.id === selectedWidgetId);
         });
     }
 
@@ -147,7 +162,7 @@ export default class WidgetConfigurationPane extends Component {
         let publisher = this.getSelectedPagePublisherWidgetsContents().find(publisher => {
             return event.currentTarget.id === publisher.props.id
         });
-        let subscriberConfig = this.props.selectedWidgetGoldenLayoutContent.config.props;
+        let subscriberConfig = this.getSelectedWidget().props;
         if (isChecked) {
             widgetDropDownMenuMap.set(publisher.props.id, publisher.props.configs.pubsub.publisherWidgetOutputs)
             if (!subscriberConfig.configs.pubsub.publishers) {
@@ -219,7 +234,7 @@ export default class WidgetConfigurationPane extends Component {
         let subscriberInput = event.target.parentElement.parentElement.parentElement.getAttribute("subscriberInput");
         let publisherId = event.target.parentElement.parentElement.parentElement.getAttribute("publisherId");
         this.state.dropDownValues.set(subscriberInput, {value: payload, publisherID: publisherId});
-        this.persistWiringConfigsInDashboardJSON(this.props.selectedWidgetGoldenLayoutContent.config.props.configs.pubsub);
+        this.persistWiringConfigsInDashboardJSON(this.getSelectedWidget().props.configs.pubsub);
         this.updateWidget();
         this.setState({dropDownValues: this.state.dropDownValues});
     }
@@ -282,7 +297,7 @@ export default class WidgetConfigurationPane extends Component {
                             <NavigationArrowForward/>
                         </IconButton>
                         <div style={{display: 'inline-block'}}>
-                            {this.props.selectedWidgetGoldenLayoutContent.config.component}
+                            {this.getSelectedWidget().name}
                         </div>
                         <div>
                             <Subheader style={stylePanelHeader}
@@ -310,7 +325,11 @@ WidgetConfigurationPane.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     selectedWidgetGoldenLayoutContent: PropTypes.shape({}).isRequired,
     selectedPageGoldenLayoutContent: PropTypes.shape({}).isRequired,
-    allWidgetsConfigurations: PropTypes.shape({}).isRequired,
+    allWidgetsConfigurations: PropTypes.arrayOf({
+        name: PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
+        configs: PropTypes.shape({}).isRequired,
+    }).isRequired,
     theme: PropTypes.shape({}).isRequired,
     paneCloseEventListener: PropTypes.func.isRequired,
 };
