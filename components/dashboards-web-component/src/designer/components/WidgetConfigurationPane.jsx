@@ -325,7 +325,11 @@ WidgetConfigurationPane.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     selectedWidgetGoldenLayoutContent: PropTypes.shape({}).isRequired,
     selectedPageGoldenLayoutContent: PropTypes.shape({}).isRequired,
-    allWidgetsConfigurations: PropTypes.shape({}).isRequired,
+    allWidgetsConfigurations: PropTypes.arrayOf({
+        name: PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
+        configs: PropTypes.shape({}).isRequired,
+    }).isRequired,
     theme: PropTypes.shape({}).isRequired,
     paneCloseEventListener: PropTypes.func.isRequired,
 };
