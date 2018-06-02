@@ -33,7 +33,8 @@ export default class GoldenLayoutContentUtils {
     /**
      * Returns names of all widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Set} included widget names
+     * @returns {string[]} included widget names
+     * @deprecated
      */
     static getReferredWidgetNames(goldenLayoutContents) {
         const widgetNames = new Set();
@@ -42,6 +43,25 @@ export default class GoldenLayoutContentUtils {
             return false;
         });
         return Array.from(widgetNames.values());
+    }
+
+    /**
+     * Returns widgets referred in the given GoldenLayout contents.
+     * @param {array} goldenLayoutContents GoldenLayout content
+     * @returns {{id: string, name: string, className: string}[]} referred widgets
+     */
+    static getReferredWidgets(goldenLayoutContents) {
+        const widgets = new Map();
+        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
+            const widget = {
+                id: widgetContent.props.configs.widgetID || widgetContent.component,
+                name: widgetContent.title,
+                className: widgetContent.component,
+            };
+            widgets.set(widget.id, widget);
+            return false;
+        });
+        return Array.from(widgets.values());
     }
 
     /**
