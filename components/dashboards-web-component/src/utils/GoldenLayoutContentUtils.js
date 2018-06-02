@@ -31,21 +31,6 @@ export default class GoldenLayoutContentUtils {
     }
 
     /**
-     * Returns names of all widgets referred in the given GoldenLayout contents.
-     * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {string[]} included widget names
-     * @deprecated
-     */
-    static getReferredWidgetNames(goldenLayoutContents) {
-        const widgetNames = new Set();
-        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
-            widgetNames.add(widgetContent.title);
-            return false;
-        });
-        return Array.from(widgetNames.values());
-    }
-
-    /**
      * Returns widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
      * @returns {{id: string, name: string, className: string}[]} referred widgets
