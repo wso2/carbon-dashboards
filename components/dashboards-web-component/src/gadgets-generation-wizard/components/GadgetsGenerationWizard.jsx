@@ -19,7 +19,7 @@
 
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
-import {withRouter} from 'react-router-dom';
+import defaultTheme from '../../utils/Theme';
 // Material UI Components
 import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -101,7 +101,7 @@ class GadgetsGenerationWizard extends Component {
         this.handleNext = this.handleNext.bind(this);
         this.handlePrev = this.handlePrev.bind(this);
         this.handleDynamicQuery = this.handleDynamicQuery.bind(this);
-        this.getPubSubConfiguration = this.getPubSubConfiguration.bind(this);
+        GadgetsGenerationWizard.getPubSubConfiguration = GadgetsGenerationWizard.getPubSubConfiguration.bind(this);
     }
 
     componentDidMount() {
@@ -208,7 +208,7 @@ class GadgetsGenerationWizard extends Component {
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
                 version: "1.0.0",
                 chartConfig: validatedConfiguration,
-                pubsub: this.getPubSubConfiguration(validatedConfiguration.widgetOutputConfigs,
+                pubsub: GadgetsGenerationWizard.getPubSubConfiguration(validatedConfiguration.widgetOutputConfigs,
                     this.state.providerConfiguration.queryData.customWidgetInputs),
                 providerConfig: {
                     configs: {
@@ -259,7 +259,7 @@ class GadgetsGenerationWizard extends Component {
         });
     }
 
-    getPubSubConfiguration(widgetOutputConfigs, customWidgetInputs) {
+    static getPubSubConfiguration(widgetOutputConfigs, customWidgetInputs) {
         let pubsub = {};
         pubsub.types = [];
         if (customWidgetInputs.length !== 0) {
@@ -504,7 +504,7 @@ class GadgetsGenerationWizard extends Component {
         const {loading, stepIndex} = this.state;
 
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
                     <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
                     <Dialog
