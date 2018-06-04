@@ -54,6 +54,7 @@ export default class WidgetRenderer extends Component {
             currentTheme: getMuiTheme(darkBaseTheme),
             widgetLoadingStatus: WidgetLoadingStatus.INIT,
             widgetFetchingProgress: -1,
+            reRenderWidget: false,
         };
 
         this.getWidgetClass = this.getWidgetClass.bind(this);
@@ -61,13 +62,13 @@ export default class WidgetRenderer extends Component {
         this.fetchWidget = this.fetchWidget.bind(this);
         this.updateWidgetLoadingStatus = this.updateWidgetLoadingStatus.bind(this);
         this.handleResize = this.handleResize.bind(this);
+        this.handleThemeUpdate = this.handleThemeUpdate.bind(this);
+        this.handleWidgetConfigUpdate = this.handleWidgetConfigUpdate.bind(this);
         this.triggerEvent = this.triggerEvent.bind(this);
 
         props.glContainer.on('resize', this.handleResize);
-        props.glEventHub.on(Event.DASHBOARD_VIEW_THEME_CHANGE, newTheme => this.setState({ currentTheme: newTheme }));
-        props.glEventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE, (newConfig)=>{
-            this.forceUpdate();
-        });
+        props.glEventHub.on(Event.DASHBOARD_VIEW_THEME_CHANGE, this.handleThemeUpdate);
+        props.glEventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE, this.handleWidgetConfigUpdate);
     }
 
     componentDidMount() {
@@ -127,6 +128,16 @@ export default class WidgetRenderer extends Component {
             widgetLoadingStatus: state,
             widgetFetchingProgress: progress
         });
+    }
+
+    handleThemeUpdate(newTheme) {
+        this.setState({ currentTheme: newTheme });
+    }
+
+    handleWidgetConfigUpdate(newConfig) {
+        if (this.props.id === newConfig.props.id) {
+            this.setState({ reRenderWidget: true });
+        }
     }
 
     handleResize() {
@@ -203,13 +214,18 @@ export default class WidgetRenderer extends Component {
 
     render() {
         if (this.state.widgetLoadingStatus === WidgetLoadingStatus.LOADED) {
-            const widgetProps = {
-                ...this.props,
-                width: this.props.glContainer.width,
-                height: this.props.glContainer.height,
-                muiTheme: this.state.currentTheme
-            };
-            return React.createElement(this.widgetClass, widgetProps);
+            if (this.state.reRenderWidget) {
+                setTimeout(() => this.setState({ reRenderWidget: false }), 50);
+                return null;
+            } else {
+                const widgetProps = {
+                    ...this.props,
+                    width: this.props.glContainer.width,
+                    height: this.props.glContainer.height,
+                    muiTheme: this.state.currentTheme,
+                };
+                return React.createElement(this.widgetClass, widgetProps);
+            }
         } else {
             let message = null, isErrorMessage = false;
             switch (this.state.widgetLoadingStatus) {
