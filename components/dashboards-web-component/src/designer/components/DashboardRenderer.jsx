@@ -228,7 +228,7 @@ export default class DashboardRenderer extends Component {
         const config = {
             settings: {
                 constrainDragToContainer: false,
-                reorderEnabled: false,
+                reorderEnabled: true,
                 selectionEnabled: false,
                 popoutWholeStack: false,
                 blockedPopoutsThrowError: true,
