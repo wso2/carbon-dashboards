@@ -18,9 +18,10 @@
  */
 
 import React, {Component} from 'react';
+import {FormattedMessage} from 'react-intl';
+
 import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
-import Checkbox from 'material-ui/Checkbox';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardMedia} from 'material-ui/Card';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentDelete from 'material-ui/svg-icons/action/delete';
@@ -28,7 +29,9 @@ import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
+
 import CodeProperty from './inputTypes/CodeProperty';
+
 import 'brace/mode/javascript';
 import 'brace/theme/dracula';
 
@@ -46,6 +49,39 @@ import {
  */
 const muiTheme = getMuiTheme(darkBaseTheme);
 
+const dynamicQueryCardStyle = {
+    paddingTop: 1,
+    paddingLeft: 25,
+    paddingRight: 25,
+    paddingBottom: 25,
+    marginTop: 10
+};
+
+const addWidgetInputBtnStyle = {
+    marginRight: 20,
+    minWidth: 0,
+    width: 0,
+    verticalAlign: 'middle'
+};
+
+const textFieldStyle = {
+    verticalAlign: 'middle',
+    marginRight: 10,
+    width: '20%'
+};
+
+const deleteBtnStyle = {
+    color: ' #e74c3c'
+};
+
+const queryEditorPaneStyle = {
+    verticalAlign: 'middle',
+    marginTop: 30,
+    marginRight: 10,
+    marginBottom: 15
+};
+
+
 class DynamicQueryComponent extends Component {
 
     constructor(props) {
@@ -56,45 +92,88 @@ class DynamicQueryComponent extends Component {
         this.handleDelete = this.handleDelete.bind(this);
         this.handleRowSelection = this.handleRowSelection.bind(this);
         this.handleQueryEditor = this.handleQueryEditor.bind(this);
-        this.generateFunctionParameters = this.generateFunctionParameters.bind(this);
-        this.generateFunctionDefaultValues = this.generateFunctionDefaultValues.bind(this);
+        DynamicQueryComponent.generateFunctionParameters = DynamicQueryComponent.generateFunctionParameters.bind(this);
+        DynamicQueryComponent.generateFunctionDefaultValues =
+            DynamicQueryComponent.generateFunctionDefaultValues.bind(this);
         this.customWidgetInputs = [];
         this.state = {
             widgetInputs: [],
             selectedRow: [],
             systemWidgetInputs: [{name: "username", defaultValue: "admin"}],
             customWidgetInputs: [],
-            queryValue: props.value
+            queryValue: props.value,
+            inputValue: "",
+            defaultValue: "",
+            errorInputValue: "",
+            errorDefaultValue: ""
         }
     }
 
     componentDidMount() {
         this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
-            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
-            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
+            DynamicQueryComponent.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
+            DynamicQueryComponent
+                .generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
     }
 
     addWidgetInput(event) {
-        this.customWidgetInputs.push({name: this.inputValue, defaultValue: this.defaultValue});
-        this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
-            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
-            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
-        this.setState({customWidgetInputs: this.customWidgetInputs});
+        if (this.validateWidgetInputs()) {
+            this.validateWidgetInputs();
+            this.customWidgetInputs.push({name: this.state.inputValue, defaultValue: this.state.defaultValue});
+            this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
+                DynamicQueryComponent
+                    .generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
+                DynamicQueryComponent
+                    .generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
+            this.setState({customWidgetInputs: this.customWidgetInputs, defaultValue: "", inputValue: ""});
+        }
+    }
+
+    validateWidgetInputs() {
+        let isWidgetInputsValid = true;
+        if (!this.state.inputValue || this.state.inputValue === "") {
+            isWidgetInputsValid = false;
+            this.setState({
+                errorInputValue: <FormattedMessage id="widget.input.errorMsg"
+                                                   defaultMessage="The input value cannot be empty"/>
+            });
+        } else if (!this.state.defaultValue || this.state.defaultValue === "") {
+            isWidgetInputsValid = false;
+            this.setState({
+                errorDefaultValue: <FormattedMessage id="widget.defaultValue.errorMsg"
+                                                     defaultMessage="The default value cannot be empty"/>
+            });
+        } else {
+            this.customWidgetInputs.map(inputValue => {
+                if (inputValue.name === this.state.inputValue) {
+                    isWidgetInputsValid = false;
+                    this.setState({
+                        errorInputValue:
+                            <FormattedMessage id="widget.input.exists.errorMsg"
+                                              defaultMessage={"The value " + this.state.inputValue + "already exists"}/>
+                    });
+                }
+            });
+        }
+        return isWidgetInputsValid;
     }
 
     handleDefaultValue(event, value) {
-        this.defaultValue = value;
+        this.state.errorDefaultValue = "";
+        this.setState({defaultValue: value});
     }
 
     handleInputValue(event, value) {
-        this.inputValue = value;
+        this.state.errorInputValue = "";
+        this.setState({inputValue: value})
     }
 
     handleDelete(event) {
         this.customWidgetInputs.splice(this.state.selectedRow[0], 1);
         this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
-            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
-            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
+            DynamicQueryComponent.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
+            DynamicQueryComponent
+                .generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
         this.setState({
             customWidgetInputs: this.customWidgetInputs,
             selectedRow: []
@@ -107,23 +186,26 @@ class DynamicQueryComponent extends Component {
 
     handleQueryEditor(id, value) {
         this.props.handleDynamicQuery(value, this.state.customWidgetInputs, this.state.systemWidgetInputs,
-            this.generateFunctionParameters(this.state.systemWidgetInputs, this.state.customWidgetInputs),
-            this.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.state.customWidgetInputs));
+            DynamicQueryComponent
+                .generateFunctionParameters(this.state.systemWidgetInputs, this.state.customWidgetInputs),
+            DynamicQueryComponent
+                .generateFunctionDefaultValues(this.state.systemWidgetInputs, this.state.customWidgetInputs));
         this.setState({queryValue: value});
     }
 
-    generateFunctionParameters(systemWidgetInputs, customWidgetInputs) {
+    static generateFunctionParameters(systemWidgetInputs, customWidgetInputs) {
         let parameters = systemWidgetInputs[0].name;
         for (let i = 1; i < systemWidgetInputs.length; i++) {
             parameters = parameters + "," + systemWidgetInputs[i].name;
         }
-        for (let i = 0; i < customWidgetInputs.length; i++) {
+        for (let i = 0; i
+        < customWidgetInputs.length; i++) {
             parameters = parameters + "," + customWidgetInputs[i].name;
         }
         return parameters;
     }
 
-    generateFunctionDefaultValues(systemWidgetInputs, customWidgetInputs) {
+    static generateFunctionDefaultValues(systemWidgetInputs, customWidgetInputs) {
         let defaultValues = systemWidgetInputs[0].defaultValue;
         for (let i = 1; i < systemWidgetInputs.length; i++) {
             defaultValues = defaultValues + "," + systemWidgetInputs[i].defaultValue;
@@ -137,51 +219,42 @@ class DynamicQueryComponent extends Component {
 
     render() {
         let that = this;
-        let t = "function generateQuery (" +
-            this.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs) + ") {";
+        let queryFunction = "function generateQuery (" + DynamicQueryComponent
+            .generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs) + ") {";
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
-                <Card
-                    style={{
-                        paddingTop: 1,
-                        paddingLeft: 25,
-                        paddingRight: 25,
-                        paddingBottom: 25,
-                        marginTop: 10,
-                        backgroundColor: '#25353f'
-                    }}
-                >
+                <Card style={dynamicQueryCardStyle}>
                     <h3>Dynamic Query Generation Configuration</h3>
                     <Divider/>
                     <CardMedia>
                         <div style={{marginTop: 15}}>
                             <div style={{verticalAlign: 'middle', marginRight: 10}}>Add widget inputs</div>
                             <TextField
-                                style={{verticalAlign: 'middle', marginRight: 10, width: '20%'}}
-                                floatingLabelText="Input Name"
+                                style={textFieldStyle}
+                                floatingLabelText={<FormattedMessage id="widget.input.value"
+                                                                     defaultMessage="Input Value"/>}
+                                value={this.state.inputValue}
+                                errorText={this.state.errorInputValue}
                                 onChange={this.handleInputValue}
                             />
                             <TextField
-                                style={{verticalAlign: 'middle', marginRight: 10, width: '20%'}}
-                                floatingLabelText="Default Value"
+                                style={textFieldStyle}
+                                floatingLabelText={<FormattedMessage id="widget.input.defaultValue"
+                                                                     defaultMessage="Default Value"/>}
+                                value={this.state.defaultValue}
+                                errorText={this.state.errorDefaultValue}
                                 onChange={this.handleDefaultValue}
                             />
                             <FloatingActionButton
                                 mini={true}
-                                style={{
-                                    marginRight: 20,
-                                    minWidth: 0,
-                                    width: 0,
-                                    verticalAlign: 'middle'
-                                }}
+                                style={addWidgetInputBtnStyle}
                                 onClick={this.addWidgetInput}
                             >
                                 <ContentAdd/>
                             </FloatingActionButton>
-                            {this.state.customWidgetInputs.length != 0 ?
-                                <Paper zDepth={5} style={{marginTop: 10, backgroundColor: '#282a36'}}>
-                                    <Table onRowSelection={this.handleRowSelection}
-                                           style={{backgroundColor: '#282a36'}}>
+                            {this.state.customWidgetInputs.length !== 0 ?
+                                <Paper style={{marginTop: 30}}>
+                                    <Table onRowSelection={this.handleRowSelection}>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                             <TableRow>
                                                 <TableHeaderColumn>Input Name</TableHeaderColumn>
@@ -193,7 +266,7 @@ class DynamicQueryComponent extends Component {
                                                 this.state.customWidgetInputs.map(function (widgetInput, index) {
                                                     return (
                                                         <TableRow
-                                                            selected={that.state.selectedRow[0] == index ? true : false}>
+                                                            selected={that.state.selectedRow[0] === index}>
                                                             <TableRowColumn>
                                                                 {widgetInput.name}
                                                             </TableRowColumn>
@@ -206,10 +279,11 @@ class DynamicQueryComponent extends Component {
                                             }
                                         </TableBody>
                                     </Table>
-                                    {this.state.selectedRow.length != 0 ?
-                                        <FlatButton label='Delete Selected Row'
+                                    {this.state.selectedRow.length !== 0 ?
+                                        <FlatButton label={<FormattedMessage id="delete.selected.row"
+                                                                             defaultMessage="Delete Selected Row"/>}
                                                     primary
-                                                    style={{color: ' #e74c3c'}}
+                                                    style={deleteBtnStyle}
                                                     icon={<ContentDelete/>}
                                                     onClick={this.handleDelete}/> : ""
                                     }
@@ -217,12 +291,10 @@ class DynamicQueryComponent extends Component {
                             }
 
                         </div>
-                        <div style={
-                            {verticalAlign: 'middle', marginTop: 15, marginRight: 10, marginBottom: 15}
-                        }>
+                        <div style={queryEditorPaneStyle}>
                             Enter your JS function to create the query
                         </div>
-                        <div>{t}</div>
+                        <div>{queryFunction}</div>
                         <CodeProperty
                             id='queryEditor'
                             mode='javascript'

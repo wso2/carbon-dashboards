@@ -18,10 +18,11 @@
  */
 
 import React, {Component} from 'react';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {FormattedMessage} from 'react-intl';
+
+import {Card, CardHeader, CardMedia} from 'material-ui/Card';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import Divider from 'material-ui/Divider';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentDelete from 'material-ui/svg-icons/action/delete';
@@ -36,6 +37,45 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table';
+
+const deleteBtnStyle = {
+    color: ' #e74c3c'
+};
+
+const addBtnStyle = {
+    display: 'inline-block',
+    marginRight: 20,
+    minWidth: 0,
+    width: 0,
+    verticalAlign: 'top',
+    marginLeft: '30%'
+};
+
+const publishedAsValueStyle = {
+    verticalAlign: 'middle',
+    position: 'absolute',
+    marginLeft: 10,
+    marginRight: 10,
+    width: '25%'
+};
+
+const h3Style = {
+    marginLeft: 20,
+    marginRight: 10,
+    verticalAlign: 'top',
+    display: 'inline-block'
+};
+
+const widgetInputsPaneStyle = {
+    verticalAlign: 'middle',
+    marginRight: 10,
+    marginBottom: 15
+};
+
+const widgetInputsCardStyle = {
+    padding: 10,
+    marginTop: 10
+};
 
 class DataPublishingComponent extends Component {
 
@@ -66,13 +106,26 @@ class DataPublishingComponent extends Component {
     }
 
     validatePublishingValues() {
-        let isExists = false;
-        this.state.widgetOutputConfigs.map(outputAttribute => {
-            if (outputAttribute.publishedAsValue == this.state.publishedAsValue) {
-                isExists = true;
-            }
-        });
-        return !isExists;
+        let isPublishingValuesValid = true;
+        if (!this.state.publishedAsValue || this.state.publishedAsValue === "") {
+            isPublishingValuesValid = false;
+            this.setState({
+                errorTextField: <FormattedMessage id="data.publishingAsValue.error"
+                                                  defaultMessage="The publishedAsValue cannot be empty"/>
+            });
+        } else {
+            this.state.widgetOutputConfigs.map(outputAttribute => {
+                if (outputAttribute.publishedAsValue === this.state.publishedAsValue) {
+                    isPublishingValuesValid = false;
+                    this.setState({
+                        errorTextField: <FormattedMessage id="data.publishingAsValue.exists.error"
+                                                          defaultMessage={'The value \'' +
+                                                          this.state.publishedAsValue + '\' already exists'}/>
+                    });
+                }
+            });
+        }
+        return isPublishingValuesValid;
     }
 
     addWidgetInput(event) {
@@ -83,8 +136,6 @@ class DataPublishingComponent extends Component {
             });
             this.props.onConfigurationChange(this.state.widgetOutputConfigs);
             this.setState({widgetOutputConfigs: this.state.widgetOutputConfigs});
-        } else {
-            this.setState({errorTextField: 'The value \'' + this.state.publishedAsValue + '\' already exists'})
         }
     }
 
@@ -102,23 +153,18 @@ class DataPublishingComponent extends Component {
         let that = this;
         return (
             <Card
-                style={{
-                    padding: 10,
-                    marginTop: 10,
-                    backgroundColor: '#25353f'
-                }}
+                style={widgetInputsCardStyle}
                 expanded={this.state.expandAdvanced}
                 onExpandChange={e => this.setState({expandAdvanced: e})}
             >
-                <CardHeader
-                    title="Data Publishing Configuration"
-                    actAsExpander
-                    showExpandableButton
+                <CardHeader title={<FormattedMessage id="data.publishingUI.title"
+                                                     defaultMessage="Data Publishing Configuration"/>}
+                            actAsExpander
+                            showExpandableButton
                 />
                 <CardMedia expandable style={{paddingLeft: 15}}>
                     <div style={{marginTop: 15}}>
-                        <div style={{verticalAlign: 'middle', marginRight: 10, marginBottom: 15}}>Add widget outputs
-                        </div>
+                        <div style={widgetInputsPaneStyle}>Add widget outputs</div>
                         <SelectField style={{width: '30%'}} key={this.state.selectedKey}
                                      value={this.state.selectedValue}
                                      onChange={this.handleDropDown}>
@@ -126,42 +172,24 @@ class DataPublishingComponent extends Component {
                                 return <MenuItem key={key} value={outputAttribute} primaryText={outputAttribute}/>
                             })}
                         </SelectField>
-                        <h3 style={{
-                            marginLeft: 20,
-                            marginRight: 10,
-                            verticalAlign: 'top',
-                            display: 'inline-block'
-                        }}>As</h3>
+                        <h3 style={h3Style}>As</h3>
                         <TextField
-                            style={{
-                                verticalAlign: 'middle',
-                                position: 'absolute',
-                                marginLeft: 10,
-                                marginRight: 10,
-                                width: '25%'
-                            }}
+                            style={publishedAsValueStyle}
                             errorText={this.state.errorTextField}
                             onChange={this.handlePublishedAs}
                         />
                         <FloatingActionButton
                             mini={true}
-                            style={{
-                                display: 'inline-block',
-                                marginRight: 20,
-                                minWidth: 0,
-                                width: 0,
-                                verticalAlign: 'top',
-                                marginLeft: '30%'
-
-                            }}
+                            style={addBtnStyle}
                             onClick={this.addWidgetInput}
                         >
                             <ContentAdd/>
                         </FloatingActionButton>
-                        {this.state.widgetOutputConfigs.length != 0 ?
-                            <Paper zDepth={5} style={{marginTop: 10, backgroundColor: '#282a36'}}>
-                                <Table onRowSelection={this.handleRowSelection}
-                                       style={{backgroundColor: '#282a36'}}>
+                        {this.state.widgetOutputConfigs.length !== 0 ?
+                            <Paper style={{
+                                marginTop: 10, marginBottom: 10
+                            }}>
+                                <Table onRowSelection={this.handleRowSelection}>
                                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                         <TableRow>
                                             <TableHeaderColumn>Publishing Value</TableHeaderColumn>
@@ -173,7 +201,7 @@ class DataPublishingComponent extends Component {
                                             this.state.widgetOutputConfigs.map(function (outputAttribute, index) {
                                                 return (
                                                     <TableRow
-                                                        selected={that.state.selectedRow[0] == index ? true : false}>
+                                                        selected={that.state.selectedRow[0] === index}>
                                                         <TableRowColumn>
                                                             {outputAttribute.publishingValue}
                                                         </TableRowColumn>
@@ -186,10 +214,11 @@ class DataPublishingComponent extends Component {
                                         }
                                     </TableBody>
                                 </Table>
-                                {this.state.selectedRow.length != 0 ?
-                                    <FlatButton label='Delete Selected Row'
+                                {this.state.selectedRow.length !== 0 ?
+                                    <FlatButton label={<FormattedMessage id="delete.selected.row"
+                                                                         defaultMessage="Delete Selected Row"/>}
                                                 primary
-                                                style={{color: ' #e74c3c'}}
+                                                style={deleteBtnStyle}
                                                 icon={<ContentDelete/>}
                                                 onClick={this.handleDelete}/> : ""
                                 }
@@ -197,7 +226,8 @@ class DataPublishingComponent extends Component {
                         }
                     </div>
                 </CardMedia>
-            </Card>);
+            </Card>
+        );
     }
 
 }
