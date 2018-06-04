@@ -60,7 +60,7 @@ export default class UniversalWidget extends Widget {
                 }
                 this.state.providerConfigs = providerConfiguration;
                 super.getWidgetChannelManager().
-                subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
+                    subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
                 this.setState({config: message.data.configs.chartConfig});
             })
             .catch((error) => {
@@ -104,7 +104,7 @@ export default class UniversalWidget extends Widget {
         this.state.providerConfigs.configs.config.queryData.query = this.getQuery.apply(this, this.state.widgetInputs);
         super.getWidgetChannelManager().unsubscribeWidget(this.props.id);
         super.getWidgetChannelManager().
-        subscribeWidget(this.props.widgetID, this.handleWidgetData, this.state.providerConfigs);
+            subscribeWidget(this.props.widgetID, this.handleWidgetData, this.state.providerConfigs);
         this.setState({config: this.state.config});
 
     }

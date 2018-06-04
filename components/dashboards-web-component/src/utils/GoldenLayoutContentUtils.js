@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import _ from 'lodash';
+
 export default class GoldenLayoutContentUtils {
 
     /**
@@ -43,7 +45,7 @@ export default class GoldenLayoutContentUtils {
                 name: widgetContent.title,
                 className: widgetContent.component,
             };
-            widgets.set(widget.id, widget);
+            widgets.set(widget.name, widget);
             return false;
         });
         return Array.from(widgets.values());
@@ -52,7 +54,7 @@ export default class GoldenLayoutContentUtils {
     /**
      * Returns class names of all widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Set} class names of included widget
+     * @returns {string[]} class names of included widget
      */
     static getReferredWidgetClassNames(goldenLayoutContents) {
         const widgetClassNames = new Set();
@@ -66,14 +68,13 @@ export default class GoldenLayoutContentUtils {
     /**
      * Returns contents of publisher widgets in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Array} publisher widgets contents
+     * @returns {array} publisher widgets contents
      */
     static getPublisherWidgetsContents(goldenLayoutContents) {
         const publisherWidgetsContent = [];
         GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
-            const configs = widgetContent.props.configs;
-            if (configs && configs.pubsub && Array.isArray(configs.pubsub.types) &&
-                (configs.pubsub.types.indexOf('publisher') !== -1)) {
+            const types = _.get(widgetContent, 'props.configs.pubsub.types');
+            if (Array.isArray(types) && types.includes('publisher')) {
                 publisherWidgetsContent.push(widgetContent);
             }
             return false;
