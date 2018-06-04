@@ -25,8 +25,11 @@ import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
 import TextProperty from '../../inputTypes/TextProperty';
 import SwitchProperty from '../../inputTypes/SwitchProperty';
 import UtilFunctions from '../../../utils/UtilFunctions';
+import ColorProperty from "../../inputTypes/ColorProperty";
 
-// App Utilities
+// Constants
+const SELECT_ALL = "SELECT_ALL";
+const SELECT_NONE = "SELECT_NONE";
 
 /**
  * Represents a Table chart
@@ -72,6 +75,31 @@ class TableChart extends Component {
     }
 
     /**
+     * Assigns value for the property with the given key, that belongs to the column with the given index
+     * @param columnIndex
+     * @param key
+     * @param value
+     */
+    handleColumnPropertyChange(columnIndex, key, value) {
+        const state = this.state;
+        state.configuration.charts[0].columns[columnIndex][key] = value;
+        this.setState(state);
+        this.props.onConfigurationChange(state.configuration);
+    }
+
+    /**
+     * Sets the selection of a column that has the given index, based on the given status
+     * @param columnIndex
+     * @param isSelected
+     */
+    selectColumn(columnIndex, isSelected) {
+        const state = this.state;
+        state.configuration.charts[0].columns[columnIndex].isSelected = isSelected;
+        this.setState(state);
+        this.props.onConfigurationChange(state.configuration);
+    }
+
+    /**
      * Adds an empty column
      */
     addColumn() {
@@ -99,46 +127,78 @@ class TableChart extends Component {
     }
 
     /**
-     * Returns 'none' when all columns are selected already, otherwise 'all'
-     * @returns {*}
+     * Selects All or No columns, based on columns selected until now
      */
     toggleSelectAll() {
-        if (this.state.configuration.charts[0].filterColumn.indexOf(true) > -1) {
-            return 'none';
-        } else {
-            return 'all';
+        const state = this.state;
+        let eachSelection = true;
+        if (this.getSelectionType() === SELECT_NONE) {
+            eachSelection = false;
+        }
+        for (let column of state.configuration.charts[0].columns) {
+            column.isSelected = eachSelection;
         }
     }
 
     /**
-     * Selects rows of the table
-     * @param selectedRows
+     * Gets the selection type, either 'all' or 'none'
+     * @returns {string}
      */
-    selectRows(selectedRows) {
-        const state = this.state;
-        if (selectedRows === 'all') {
-            for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
-                state.configuration.charts[0].filterColumn[i] = true;
-            }
-        } else if (selectedRows === 'none') {
-            for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
-                state.configuration.charts[0].filterColumn[i] = false;
-            }
-        } else if (selectedRows.length === 0) {
-            for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
-                state.configuration.charts[0].filterColumn[i] = false;
-            }
-        } else {
-            for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
-                state.configuration.charts[0].filterColumn[i] = false;
-            }
-            for (let i = 0; i < selectedRows.length; i++) {
-                state.configuration.charts[0].filterColumn[selectedRows[i]] = true;
+    getSelectionType() {
+        let isAtLeastOneSelected = false;
+        for (let column of this.state.configuration.charts[0].columns) {
+            if (column.isSelected) {
+                isAtLeastOneSelected = true;
+                break;
             }
         }
-        this.setState(state);
-        this.props.onConfigurationChange(state.configuration);
+        if (isAtLeastOneSelected) {
+            return SELECT_NONE;
+        }
+        return SELECT_ALL;
     }
+
+    // /**
+    //  * Returns 'none' when all columns are selected already, otherwise 'all'
+    //  * @returns {*}
+    //  */
+    // toggleSelectAll() {
+    //     if (this.state.configuration.charts[0].filterColumn.indexOf(true) > -1) {
+    //         return 'none';
+    //     } else {
+    //         return 'all';
+    //     }
+    // }
+    //
+    // /**
+    //  * Selects rows of the table
+    //  * @param selectedRows
+    //  */
+    // selectRows(selectedRows) {
+    //     const state = this.state;
+    //     if (selectedRows === 'all') {
+    //         for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
+    //             state.configuration.charts[0].filterColumn[i] = true;
+    //         }
+    //     } else if (selectedRows === 'none') {
+    //         for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
+    //             state.configuration.charts[0].filterColumn[i] = false;
+    //         }
+    //     } else if (selectedRows.length === 0) {
+    //         for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
+    //             state.configuration.charts[0].filterColumn[i] = false;
+    //         }
+    //     } else {
+    //         for (let i = 0; i < state.configuration.charts[0].filterColumn.length; i++) {
+    //             state.configuration.charts[0].filterColumn[i] = false;
+    //         }
+    //         for (let i = 0; i < selectedRows.length; i++) {
+    //             state.configuration.charts[0].filterColumn[selectedRows[i]] = true;
+    //         }
+    //     }
+    //     this.setState(state);
+    //     this.props.onConfigurationChange(state.configuration);
+    // }
 
     render() {
         return (
@@ -147,14 +207,117 @@ class TableChart extends Component {
                 <br />
                 <a>Columns and titles to be displayed*</a>
                 <FlatButton
-                    label={(this.state.configuration.charts[0].filterColumn.indexOf(true) > -1) ?
-                        ('Deselect All') : ('Select All')}
+                    label="Select All/None"
                     style={{ marginLeft: 10, paddingLeft: 10, paddingRight: 10 }}
-                    onClick={() => this.selectRows(this.toggleSelectAll())}
-                    primary={(this.state.configuration.charts[0].filterColumn.indexOf(true) > -1)}
+                    onClick={() => this.toggleSelectAll()}
+                    primary
                 />
+                <br />
+
                 <div>
                     <div style={{ margin: 20 }}>
+                        {this.state.configuration.charts[0].columns.map((column, index) => (
+                            <Card>
+                                <CardHeader
+                                    title={column.name}
+                                />
+                                <CardText>
+                                    <Toggle
+                                        label="Select Column"
+                                        onToggle={(e, checked) => this.selectColumn(index, checked)}
+                                        toggled={this.state.configuration.charts[0].filterColumn[index]}
+                                    />
+                                </CardText>
+                                <CardMedia>
+                                    <TextProperty
+                                        id="title"
+                                        value={column.title}
+                                        fieldName="Title of the Column"
+                                        onChange={(id, value) => this.handleColumnPropertyChange(index, id, value)}
+                                        fullWidth
+                                    />
+                                    <br />
+
+                                    <a>Color set to use in the charts</a>
+                                    {(this.props.configuration.colorScale.length === 0) ?
+                                        (
+                                            <a>
+                                                &nbsp; &nbsp;
+                                                <FlatButton
+                                                    primary
+                                                    label="Default"
+                                                    onClick={() => this.props.addColorMember('colorScale')}
+                                                />
+                                            </a>
+                                        ) : (null)}
+                                    <br/>
+                                    <br/>
+
+                                    <a>If certain categories are required to be grouped in a certain color</a>
+                                    <Table>
+                                        <TableBody displayRowCheckbox={false}>
+                                            {this.props.configuration.colorDomain.map((colorDomainMember, index) =>
+                                                (<TableRow key={index}>
+                                                    <TableRowColumn>
+                                                        <TextProperty
+                                                            id={'colorDomain' + index}
+                                                            value={colorDomainMember}
+                                                            onChange={(id, value) =>
+                                                                this.props.handleSubChartColorMemberChange(
+                                                                    'colorDomain', index, value)}
+                                                        />
+                                                        <br/>
+                                                    </TableRowColumn>
+                                                    <TableRowColumn>
+                                                        <IconButton onClick={() =>
+                                                            this.props.removeSubChartColorMember('colorDomain', index)}
+                                                        >
+                                                            <ClearButton/>
+                                                        </IconButton>
+                                                    </TableRowColumn>
+                                                </TableRow>))}
+                                        </TableBody>
+                                    </Table>
+                                    <IconButton onClick={() => this.props.addColorMember('colorDomain')}>
+                                        <AddButton/>
+                                    </IconButton>
+                                    <br />
+
+                                    <TextProperty
+                                        id="timeFormat"
+                                        value={column.timeFormat}
+                                        fieldName="Time formatting regex of any time series reference"
+                                        onChange={(id, value) => this.handleColumnPropertyChange(index, id, value)}
+                                        fullWidth
+                                    />
+                                    <a>
+                                        {`(Refer : ` +
+                                        `https://github.com/d3/d3-time-format/blob/master/README.md#locale_format)`}
+                                    </a>
+                                    <br />
+
+                                    <ColorProperty
+                                        id="textColor"
+                                        value={column.textColor}
+                                        fieldName="Color of the text in the cell"
+                                        onChange={(id, value) => this.handleColumnPropertyChange(index, id, value)}
+                                        fullWidth
+                                    />
+                                    <br />
+
+                                    <SwitchProperty
+                                        id="colorBasedStyle"
+                                        value={column.colorBasedStyle}
+                                        fieldName="Color the column data according to the type of data in the columns"
+                                        onChange={(id, value) => this.handleColumnPropertyChange(index, id, value)}
+                                    />
+                                </CardMedia>
+                            </Card>
+                        ))}
+
+
+
+
                         <Table
                             height={this.state.tableHeight}
                             fixedHeader={this.state.fixedHeader}
@@ -188,6 +351,7 @@ class TableChart extends Component {
                         </Table>
                     </div>
                 </div>
+
                 <TextProperty
                     id="maxLength"
                     value={this.state.configuration.maxLength}
@@ -195,15 +359,6 @@ class TableChart extends Component {
                     onChange={(id, value) => this.handlePropertyChange(id, value)}
                     number
                     fullWidth
-                />
-                <br />
-                <br />
-                <br />
-                <SwitchProperty
-                    id="colorBasedStyle"
-                    value={this.state.configuration.colorBasedStyle}
-                    fieldName="Color the columns based on the data type"
-                    onChange={(id, value) => this.handlePropertyChange(id, value)}
                 />
                 <br />
             </div>
