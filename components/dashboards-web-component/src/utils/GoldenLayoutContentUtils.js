@@ -54,7 +54,7 @@ export default class GoldenLayoutContentUtils {
     /**
      * Returns class names of all widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Set} class names of included widget
+     * @returns {string[]} class names of included widget
      */
     static getReferredWidgetClassNames(goldenLayoutContents) {
         const widgetClassNames = new Set();
@@ -68,7 +68,7 @@ export default class GoldenLayoutContentUtils {
     /**
      * Returns contents of publisher widgets in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Array} publisher widgets contents
+     * @returns {array} publisher widgets contents
      */
     static getPublisherWidgetsContents(goldenLayoutContents) {
         const publisherWidgetsContent = [];
