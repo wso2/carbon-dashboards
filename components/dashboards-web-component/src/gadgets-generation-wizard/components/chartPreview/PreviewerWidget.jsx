@@ -15,13 +15,12 @@
 */
 import React from 'react';
 import VizG from 'react-vizgrammar';
-import WidgetChannelManager from './WidgetChannelManager';
+import widgetChannelManager from './WidgetChannelManager';
 
 export default class PreviewerWidget extends React.Component {
 
     constructor(props) {
         super(props);
-        this.channelManager = new WidgetChannelManager();
         this.state = {
             data: [],
             metadata: null,
@@ -31,11 +30,11 @@ export default class PreviewerWidget extends React.Component {
 
     componentDidMount() {
         let { config } = this.props;
-        this.channelManager.subscribeWidget(config.id, this._handleDataReceived, config.configs.providerConfig);
+        widgetChannelManager.subscribeWidget(config.id, this._handleDataReceived, config.configs.providerConfig);
     }
 
     componentWillUnmount() {
-        this.channelManager.unsubscribeWidget(this.props.config.id);
+        widgetChannelManager.unsubscribeWidget(this.props.config.id);
     }
 
     _handleDataReceived(data) {
