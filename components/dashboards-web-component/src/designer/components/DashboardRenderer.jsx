@@ -132,6 +132,7 @@ export default class DashboardRenderer extends Component {
             return;
         }
 
+        console.log(component);
         const settingsButton = document.createElement('i');
         settingsButton.title = 'settings';
         settingsButton.className = 'fw fw-configarations widget-configuration-button';
@@ -146,7 +147,7 @@ export default class DashboardRenderer extends Component {
 
     onWidgetConfigurationPaneClose() {
         this.unhighlightSelectedWidgetContainer();
-        this.updateDashboard();
+        this.updateDashboard(true);
     }
 
     getRenderingPage() {
@@ -209,10 +210,10 @@ export default class DashboardRenderer extends Component {
         }
     }
 
-    updateDashboard() {
+    updateDashboard(force) {
         const updatingPage = this.getRenderingPage();
         const newPageContent = this.cleanDashboardJSON(this.goldenLayout.toConfig().content);
-        if (!_.isEqual(updatingPage.content, newPageContent)) {
+        if (force || !_.isEqual(updatingPage.content, newPageContent)) {
             updatingPage.content = newPageContent;
             this.props.updateDashboard();
         }
