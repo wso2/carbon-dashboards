@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import _ from 'lodash';
+
 export default class GoldenLayoutContentUtils {
 
     /**
@@ -71,9 +73,8 @@ export default class GoldenLayoutContentUtils {
     static getPublisherWidgetsContents(goldenLayoutContents) {
         const publisherWidgetsContent = [];
         GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
-            const configs = widgetContent.props.configs;
-            if (configs && configs.pubsub && Array.isArray(configs.pubsub.types) &&
-                (configs.pubsub.types.indexOf('publisher') !== -1)) {
+            const types = _.get(widgetContent, 'props.configs.pubsub.types');
+            if (Array.isArray(types) && types.includes('publisher')) {
                 publisherWidgetsContent.push(widgetContent);
             }
             return false;
