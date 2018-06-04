@@ -45,7 +45,7 @@ export default class GoldenLayoutContentUtils {
                 name: widgetContent.title,
                 className: widgetContent.component,
             };
-            widgets.set(widget.id, widget);
+            widgets.set(widget.name, widget);
             return false;
         });
         return Array.from(widgets.values());
