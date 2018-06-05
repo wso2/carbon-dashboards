@@ -17,14 +17,9 @@
  */
 
 import React from 'react';
-import Tabs, {Tab} from 'material-ui/Tabs';
-import { IconButton } from 'material-ui';
+import { Button, IconButton } from '@material-ui/core';
 import HighGranularityMode from '@material-ui/icons/KeyboardArrowRight';
 import LowGranularityMode from '@material-ui/icons/KeyboardArrowLeft';
-
-const blocks = {
-    display: 'inline-flex'
-};
 
 export default class GranularityModeSelector extends React.Component {
     constructor(props) {
@@ -39,19 +34,19 @@ export default class GranularityModeSelector extends React.Component {
             {
                 label: '1 Day',
                 value: '1 Day',
-            },{
+            }, {
                 label: '7 Days',
                 value: '7 Days',
-            },{
+            }, {
                 label: '1 Month',
                 value: '1 Month',
-            },{
+            }, {
                 label: '3 Months',
                 value: '3 Months',
-            },{
+            }, {
                 label: '6 Months',
                 value: '6 Months',
-            },{
+            }, {
                 label: '1 Year',
                 value: '1 Year',
             },
@@ -61,13 +56,13 @@ export default class GranularityModeSelector extends React.Component {
             {
                 label: '1 Min',
                 value: '1 Min',
-            },{
+            }, {
                 label: '15 Min',
                 value: '15 Min',
-            },{
+            }, {
                 label: '1 Hour',
                 value: '1 Hour',
-            },{
+            }, {
                 label: '1 Day',
                 value: '1 Day',
             }
@@ -79,20 +74,14 @@ export default class GranularityModeSelector extends React.Component {
     }
 
     render() {
-
-        let { granularityMode, granularityModeValue } = this.state;
-
+        let { granularityMode } = this.state;
         return (
             <div>
-                <div style={blocks}>
+                <div>
                     Last :
                 </div>
-                <div style={blocks}>
-                    <Tabs value={granularityModeValue} onChange={this.onGranularityModeChange}>
-                        {
-                            this.generateTabs(granularityMode)
-                        }
-                    </Tabs>
+                <div>
+                    {this.generateTabs(granularityMode)}
                     <IconButton aria-label="Delete" style={{ marginRight: 5 }} onClick={this.switchGranularity}>
                         {
                             granularityMode === 'low' ?
@@ -100,11 +89,7 @@ export default class GranularityModeSelector extends React.Component {
                                 <LowGranularityMode />
                         }
                     </IconButton>
-                </div>
-                <div style={blocks}>
-                    <Tabs value={granularityModeValue} onChange={this.onGranularityModeChange}>
-                        <Tab value={'custom'} label={'Custom'} style={{minWidth: 20}} />
-                    </Tabs>
+                    <Button onClick={() => this.onGranularityModeChange('custom')}>Custom</Button>
                 </div>
             </div>
         );
@@ -116,17 +101,15 @@ export default class GranularityModeSelector extends React.Component {
 
     generateTabs(granularityMode) {
         let options = granularityMode==='high' ? this.highGranularityOptions : this.lowGranularityOptions;
-
-        return options.map((option) => <Tab {...option} style={{minWidth: 18}} />);
+        return  options.map((option) =>
+            <Button onClick={() => this.onGranularityModeChange(option.value)}>
+                {option.label}</Button>
+        );
     }
 
-    onGranularityModeChange(evt, value) {
+    onGranularityModeChange(value) {
         let { onChange } = this.props;
-
         this.setState({ granularityModeValue: value });
-
         return onChange && onChange(value);
-
     }
 }
- 

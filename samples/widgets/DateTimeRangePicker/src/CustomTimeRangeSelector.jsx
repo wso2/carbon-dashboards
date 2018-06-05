@@ -17,9 +17,7 @@
  */
 
 import React from 'react';
-import {MenuItem} from 'material-ui/Menu';
-import Select from 'material-ui/Select';
-import { Button } from 'material-ui';
+import { MenuItem, Select, Button } from '@material-ui/core';
 import DateTimePicker from "./DateTimePicker";
 
 export default class CustomTimeRangeSelector extends React.Component {
