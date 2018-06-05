@@ -16,10 +16,9 @@
  * under the License.
  */
 import React from 'react';
-import { MenuItem, Typography } from 'material-ui';
-import Select from 'material-ui/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import moment from 'moment';
-// import './styles/main.css';
 
 export default class DateTimePicker extends React.Component {
     constructor(props) {

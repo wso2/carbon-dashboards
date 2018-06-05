@@ -17,9 +17,9 @@
  */
 
 import React from 'react';
-import {MenuItem} from 'material-ui/Menu';
-import Select from 'material-ui/Select';
-import { Button } from 'material-ui';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
 import DateTimePicker from "./DateTimePicker";
 
 export default class CustomTimeRangeSelector extends React.Component {
@@ -28,6 +28,7 @@ export default class CustomTimeRangeSelector extends React.Component {
 
         this.state = {
             inputType: 'milliseconds',
+            clickedApply: false
         };
 
         this.startTime= new Date();

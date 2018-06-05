@@ -17,14 +17,10 @@
  */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import {IconButton} from 'material-ui';
+import Button from '@material-ui/core/Button';
+import {IconButton} from '@material-ui/core';
 import HighGranularityMode from '@material-ui/icons/KeyboardArrowRight';
 import LowGranularityMode from '@material-ui/icons/KeyboardArrowLeft';
-
-const blocks = {
-    display: 'inline-flex'
-};
 
 export default class GranularityModeSelector extends React.Component {
     constructor(props) {
@@ -82,10 +78,10 @@ export default class GranularityModeSelector extends React.Component {
         let { granularityMode } = this.state;
         return (
             <div>
-                <div style={blocks}>
+                <div>
                     Last :
                 </div>
-                <div style={blocks}>
+                <div>
                     {this.generateTabs(granularityMode)}
                     <IconButton aria-label="Delete" style={{ marginRight: 5 }} onClick={this.switchGranularity}>
                         {
@@ -94,8 +90,6 @@ export default class GranularityModeSelector extends React.Component {
                                 <LowGranularityMode />
                         }
                     </IconButton>
-                </div>
-                <div style={blocks}>
                     <Button onClick={() => this.onGranularityModeChange('custom')}>Custom</Button>
                 </div>
             </div>

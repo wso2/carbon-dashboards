@@ -18,14 +18,13 @@
 
 import React from 'react';
 import Widget from '@wso2-dashboards/widget';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {createMuiTheme} from 'material-ui';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import GranularityModeSelector from "./GranularityModeSelector";
 import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
 import Moment from 'moment';
 import { Scrollbars } from 'react-custom-scrollbars';
-import {MenuItem} from 'material-ui/Menu';
-import Select from 'material-ui/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import './styles/main.css';
 
 const theme = createMuiTheme({
@@ -122,7 +121,6 @@ export default class DateRangePicker extends Widget {
 
     render() {
         let { granularityMode, width, height } = this.state;
-
         return (
             <MuiThemeProvider theme={theme}>
                 <Scrollbars style={{ width, height }} >
