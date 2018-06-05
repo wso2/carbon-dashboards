@@ -57,7 +57,7 @@ export default class WidgetPubSubConfig extends Component {
     getSelectedPageAllWidgetsConfigurations() {
         const referredWidgets = GoldenLayoutContentUtils.getReferredWidgets(this.props.selectedPageGoldenLayoutContent);
         return this.props.allWidgetsConfigurations.filter((widgetConfiguration) => {
-            return (referredWidgets.find(widget => (widgetConfiguration.name === widget.name)) != null);
+            return (referredWidgets.find(widget => (widgetConfiguration.id === widget.id)) != null);
         });
     }
 
@@ -74,29 +74,15 @@ export default class WidgetPubSubConfig extends Component {
     }
 
     getSelectedWidget() {
-        const widgetContent = this.props.selectedWidgetGoldenLayoutContent.config;
-        let widgetId = widgetContent.props.configs.widgetID;
-        if (!widgetId) {
-            widgetId = widgetContent.component;
-            widgetContent.props.configs.widgetID = widgetId; // Sets the widgetID so it will be added to the DB.
-        }
-        return {
-            id: widgetId,
-            name: widgetContent.title,
-            className: widgetContent.component,
-            props: widgetContent.props,
-        };
+        return this.props.selectedWidget;
     }
 
     getSelectedWidgetConfiguration() {
-        const selectedWidgetName = this.getSelectedWidget().name;
-        return this.getSelectedPageAllWidgetsConfigurations().find((widgetConfiguration) => {
-            return (widgetConfiguration.name === selectedWidgetName);
-        });
+        return this.props.selectedWidgetConfiguration;
     }
 
     isSelectedWidgetASubscriber() {
-        const contentTypes = _.get(this.getSelectedWidget(), 'props.configs.pubsub.types', []);
+        const contentTypes = _.get(this.getSelectedWidget().props, 'configs.pubsub.types', []);
         const configurationTypes = _.get(this.getSelectedWidgetConfiguration(), 'configs.pubsub.types', []);
         return contentTypes.includes('subscriber') && configurationTypes.includes('subscriber');
     }
@@ -310,7 +296,7 @@ export default class WidgetPubSubConfig extends Component {
 
     render() {
         if (!this.isSelectedWidgetASubscriber()) {
-            return <div>Widgets does not have any Pub-Sub configurations</div>;
+            return <div style={{ marginLeft: 10 }}>Widget does not have any Pub-Sub configurations</div>;
         }
 
         return (
@@ -330,8 +316,16 @@ export default class WidgetPubSubConfig extends Component {
 }
 
 WidgetPubSubConfig.propTypes = {
-    selectedWidgetGoldenLayoutContent: PropTypes.shape({
-        config: PropTypes.shape({}),
+    selectedWidget: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        className: PropTypes.string.isRequired,
+        props: PropTypes.shape({}).isRequired,
+    }).isRequired,
+    selectedWidgetConfiguration: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        configs: PropTypes.shape({}).isRequired,
     }).isRequired,
     selectedPageGoldenLayoutContent: PropTypes.shape({}).isRequired,
     allWidgetsConfigurations: PropTypes.arrayOf({

@@ -57,6 +57,7 @@ export default class WidgetConfigurationPane extends Component {
         };
 
         this.getSelectedWidget = this.getSelectedWidget.bind(this);
+        this.getSelectedWidgetConfiguration = this.getSelectedWidgetConfiguration.bind(this);
         this.triggerEvent = this.triggerEvent.bind(this);
         this.handlePaneClose = this.handlePaneClose.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
@@ -64,17 +65,18 @@ export default class WidgetConfigurationPane extends Component {
 
     getSelectedWidget() {
         const widgetContent = this.props.selectedWidgetGoldenLayoutContent.config;
-        let widgetId = widgetContent.props.configs.widgetID;
-        if (!widgetId) {
-            widgetId = widgetContent.component;
-            widgetContent.props.configs.widgetID = widgetId; // Sets the widgetID so it will be added to the DB.
-        }
         return {
-            id: widgetId,
+            id: widgetContent.props.widgetID || widgetContent.component,
             name: widgetContent.title,
             className: widgetContent.component,
             props: widgetContent.props,
         };
+    }
+
+    getSelectedWidgetConfiguration(selectedWidget) {
+        return this.props.allWidgetsConfigurations.find((widgetConfiguration) => {
+            return (widgetConfiguration.id === selectedWidget.id);
+        });
     }
 
     triggerEvent(eventName, parameter) {
@@ -105,7 +107,7 @@ export default class WidgetConfigurationPane extends Component {
         );
     }
 
-    renderHeader() {
+    renderHeader(selectedWidget) {
         return (
             <div style={{ display: 'flex' }}>
                 <IconButton tooltip="Save and close" onClick={this.handlePaneClose}>
@@ -115,7 +117,7 @@ export default class WidgetConfigurationPane extends Component {
                     <FormattedMessage
                         id='widget-configuration.title'
                         defaultMessage='{name} Configurations'
-                        values={{ name: this.getSelectedWidget().name }}
+                        values={{ name: selectedWidget.name }}
                     />
                 </div>
             </div>
@@ -130,6 +132,7 @@ export default class WidgetConfigurationPane extends Component {
         const theme = this.props.theme;
         const isOpen = this.state.clickedOnBackdrop ? false : this.props.isOpen;
         this.state.clickedOnBackdrop = false;
+        const selectedWidget = this.getSelectedWidget();
         return (
             <span>
                 <Paper
@@ -147,9 +150,10 @@ export default class WidgetConfigurationPane extends Component {
                     }}
                 >
                     <div>
-                        {this.renderHeader()}
+                        {this.renderHeader(selectedWidget)}
                         <WidgetPubSubConfig
-                            selectedWidgetGoldenLayoutContent={this.props.selectedWidgetGoldenLayoutContent}
+                            selectedWidget={selectedWidget}
+                            selectedWidgetConfiguration={this.getSelectedWidgetConfiguration(selectedWidget)}
                             selectedPageGoldenLayoutContent={this.props.selectedPageGoldenLayoutContent}
                             allWidgetsConfigurations={this.props.allWidgetsConfigurations}
                         />

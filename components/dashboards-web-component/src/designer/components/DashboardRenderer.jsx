@@ -132,7 +132,6 @@ export default class DashboardRenderer extends Component {
             return;
         }
 
-        console.log(component);
         const settingsButton = document.createElement('i');
         settingsButton.title = 'settings';
         settingsButton.className = 'fw fw-configarations widget-configuration-button';
