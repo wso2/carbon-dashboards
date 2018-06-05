@@ -17,13 +17,10 @@
  */
 
 import React, {Component} from 'react';
+import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-
-import Checkbox from 'material-ui/Checkbox';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import { Card, CardHeader, CardText, Checkbox, MenuItem, SelectField, TextField } from 'material-ui';
 
 const labelStyle = {
     fontSize: 12
@@ -56,10 +53,10 @@ export default class WidgetOptionsConfiguration extends Component {
                             <div className="options-list">
                                 <TextField id={options[i].id}
                                            floatingLabelText={options[i].title}
-                                           defaultValue={this.state.options[i].defaultData}
+                                           defaultValue={this.state.defaultValue}
                                            onChange={(event, newValue) => {
                                                event.persist();
-                                               this.handleWidgetOptionTextFieldEvent(event, newValue, options)
+                                               this.handleWidgetOptionTextFieldEvent(event, newValue, options);
                                                this.props.setWidgetConfigPanelDirty(true);
                                            }}
                                            name={options[i].title}/>
@@ -82,10 +79,10 @@ export default class WidgetOptionsConfiguration extends Component {
                                 <SelectField
                                     floatingLabelText={options[i].title}
                                     onChange={(event, key, payload,) => {
-                                        this.handleWidgetOptionSelectFieldEvent(event, key, payload, options),
-                                            this.props.setWidgetConfigPanelDirty(true);
+                                        this.handleWidgetOptionSelectFieldEvent(event, key, payload, options);
+                                        this.props.setWidgetConfigPanelDirty(true);
                                     }}
-                                    value={this.state.defaultData}
+                                    value={this.state.defaultValue}
                                     id={options[i].id}
                                     className="options-list">
                                     {items}
@@ -100,10 +97,10 @@ export default class WidgetOptionsConfiguration extends Component {
                                     label={options[i].title}
                                     labelStyle={labelStyle}
                                     onCheck={(event, isInputChecked) => {
-                                        this.handleWidgetOptionCheckBoxEvent(event, isInputChecked, options),
-                                            this.props.setWidgetConfigPanelDirty(true);
+                                        this.handleWidgetOptionCheckBoxEvent(event, isInputChecked, options);
+                                        this.props.setWidgetConfigPanelDirty(true);
                                     }}
-                                    checked={this.state.defaultData}
+                                    checked={this.state.defaultValue}
                                     className="options-list"
                                 />
                             </div>);
@@ -121,7 +118,18 @@ export default class WidgetOptionsConfiguration extends Component {
         if (!this.doesSelectedWidgetHasOptions()) {
             return null;
         }
-        return <span>{this.getCurrentWidgetOptionsInputs()}</span>;
+
+        return <Card style={{ margin: 10 }} initiallyExpanded>
+            <CardHeader
+                title={<FormattedMessage id='widget-configuration.options.title' defaultMessage='Options' />}
+                style={{ paddingBottom: 0 }}
+                actAsExpander={false}
+                showExpandableButton={false}
+            />
+            <CardText expandable>
+                {this.getCurrentWidgetOptionsInputs()}
+            </CardText>
+        </Card>
     }
 }
 
