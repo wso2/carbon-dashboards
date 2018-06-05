@@ -129,7 +129,11 @@ export default class DashboardRenderer extends Component {
 
     onGoldenLayoutComponentAddEvent(component) {
         if (!component.parent || !component.parent.header) {
-            return;
+            return; // Added component is not a widget.
+        }
+        if (_.isEmpty(_.get(component, 'config.props.configs.options')) &&
+            !_.get(component, 'config.props.configs.pubsub.types', []).includes('subscriber')) {
+            return; // Added widget does not have and configurations.
         }
 
         const settingsButton = document.createElement('i');
