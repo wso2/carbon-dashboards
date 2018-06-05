@@ -26,7 +26,6 @@ export default class CustomTimeRangeSelector extends React.Component {
 
         this.state = {
             inputType: 'milliseconds',
-            clickedApply: false
         };
 
         this.startTime= new Date();
