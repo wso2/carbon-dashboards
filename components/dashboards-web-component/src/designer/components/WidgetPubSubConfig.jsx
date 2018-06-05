@@ -305,7 +305,7 @@ export default class WidgetPubSubConfig extends Component {
 
     render() {
         if (!this.isSelectedWidgetASubscriber()) {
-            return <div>Widgets does not have any Pub-Sub configurations</div>;
+            return <div style={{ marginLeft: 10 }}>Widget does not have any Pub-Sub configurations</div>;
         }
 
         return (
