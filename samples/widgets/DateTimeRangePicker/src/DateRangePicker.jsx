@@ -18,13 +18,12 @@
 
 import React from 'react';
 import Widget from '@wso2-dashboards/widget';
-import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MenuItem, Select } from '@material-ui/core';
 import GranularityModeSelector from "./GranularityModeSelector";
 import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
 import Moment from 'moment';
 import { Scrollbars } from 'react-custom-scrollbars';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import './styles/main.css';
 
 const theme = createMuiTheme({
