@@ -17,7 +17,7 @@
  *
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 // Material UI Components
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -139,10 +139,10 @@ class ChartConfigurator extends Component {
                         />
                     );
                 default:
-                    return (<div/>);
+                    return (<div />);
             }
         }
-        return (<div/>);
+        return (<div />);
     }
 
     /**
@@ -215,7 +215,7 @@ class ChartConfigurator extends Component {
     render() {
         return (
             <div>
-                <div style={{margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white'}}>
+                <div style={{ margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white' }}>
                     <SelectField
                         floatingLabelText='Select a chart type & configure its properties'
                         value={this.state.chartType}
@@ -249,15 +249,17 @@ class ChartConfigurator extends Component {
                     </SelectField>
                     {this.displayChartProperties()}
                     {this.state.chartType !== '' ?
-                        <DataPublishingComponent outputAttributes={this.state.metadata.names}
-                                                 onConfigurationChange={this.handlePublisherConfigs}/> : ""}
-                    <br/>
+                        <DataPublishingComponent
+                            outputAttributes={this.state.metadata.names}
+                            onConfigurationChange={this.handlePublisherConfigs}
+                        /> : ''}
+                    <br />
                     {(this.state.chartType !== '') ?
                         (<RaisedButton
                             label="Preview"
                             labelPosition="before"
                             primary
-                            icon={<PollIcon/>}
+                            icon={<PollIcon />}
                             onClick={() => this.props.onPreview()}
                         />) :
                         (null)}

@@ -144,37 +144,19 @@ const Configurations = {
                 },
             ],
         },
-        // tableChart: {
-        //     charts: [
-        //         {
-        //             type: 'table',
-        //             columns: [],
-        //             columnTitles: [],
-        //             filterColumn: [],
-        //         },
-        //     ],
-        //     maxLength: '',
-        //     colorBasedStyle: false,
-        // },
         tableChart: {
             charts: [
                 {
                     type: 'table',
                     columns: [
-                        {
-                            name: '',
-                            title: '',
-                            colorScale: '',
-                            colorDomain: '',
-                            timeFormat: '',
-                            textColor: '',
-                            colorBasedStyle: false,
-                            isSelected: false,
-                        }
+
                     ],
                 },
             ],
             maxLength: '',
+            filterable: false,
+            pagination: false,
+            append: false,
         },
     },
 };

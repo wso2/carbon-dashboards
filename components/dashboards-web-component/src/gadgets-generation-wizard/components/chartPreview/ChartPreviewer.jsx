@@ -26,7 +26,7 @@ import PreviewerWidget from './PreviewerWidget';
 class ChartPreviewer extends Component {
     render() {
         return (
-            <div>
+            <div style={{ height: (window.innerHeight * 50 / 100) }}>
                 <PreviewerWidget config={this.props.config} />
             </div>
         );
