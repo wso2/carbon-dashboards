@@ -57,7 +57,7 @@ export default class WidgetPubSubConfig extends Component {
     getSelectedPageAllWidgetsConfigurations() {
         const referredWidgets = GoldenLayoutContentUtils.getReferredWidgets(this.props.selectedPageGoldenLayoutContent);
         return this.props.allWidgetsConfigurations.filter((widgetConfiguration) => {
-            return (referredWidgets.find(widget => (widgetConfiguration.name === widget.name)) != null);
+            return (referredWidgets.find(widget => (widgetConfiguration.id === widget.id)) != null);
         });
     }
 
@@ -84,9 +84,9 @@ export default class WidgetPubSubConfig extends Component {
     }
 
     getSelectedWidgetConfiguration() {
-        const selectedWidgetName = this.getSelectedWidget().name;
+        const selectedWidgetName = this.getSelectedWidget().id;
         return this.getSelectedPageAllWidgetsConfigurations().find((widgetConfiguration) => {
-            return (widgetConfiguration.name === selectedWidgetName);
+            return (widgetConfiguration.id === selectedWidgetName);
         });
     }
 
