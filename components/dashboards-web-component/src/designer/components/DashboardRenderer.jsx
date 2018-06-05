@@ -109,11 +109,21 @@ export default class DashboardRenderer extends Component {
     onGoldenLayoutInitializedEvent() {
         this.props.widgetsConfigurations.forEach((widget) => {
             const dragSourceElement = document.getElementById(widget.id);
+            const options = {};
+            if (widget.configs && widget.configs.options) {
+                widget.configs.options.map((option) => {
+                    options[option.id] = option.defaultValue;
+                });
+            }
             const itemConfig = {
                 title: widget.name,
                 type: 'react-component',
                 component: widget.configs.isGenerated ? 'UniversalWidget' : widget.id,
-                props: { id: DashboardUtils.generateguid(), configs: widget.configs, widgetID: widget.id },
+                props: {
+                    id: DashboardUtils.generateguid(),
+                    configs: { pubsub: widget.configs.pubsub, isGenerated: widget.configs.isGenerated, options },
+                    widgetID: widget.id,
+                },
                 isClosable: false,
                 reorderEnabled: true,
                 header: { show: true },

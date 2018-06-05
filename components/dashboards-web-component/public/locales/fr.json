@@ -74,5 +74,6 @@
   "widget.input.exists.errorMsg": "La valeur d'entrée existe déjà",
   "data.publishingUI.title": "Configuration de la publication de données",
   "data.publishingAsValue.error": "Le publishedAsValue ne peut pas être vide",
-  "data.publishingAsValue.exists.error": "Le publishingAsValue existe déjà"
+  "data.publishingAsValue.exists.error": "Le publishingAsValue existe déjà",
+  "widget-configuration.options.title": "Options"
 }
