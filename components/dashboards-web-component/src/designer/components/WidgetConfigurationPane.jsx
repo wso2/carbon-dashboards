@@ -23,7 +23,7 @@ import { IconButton, Paper } from 'material-ui';
 import { NavigationArrowForward } from 'material-ui/svg-icons';
 
 import { Event } from '../../utils/Constants';
-import WidgetPubSubConfig from './WidgetPubSubConfig';
+import WidgetPubSubConfiguration from './WidgetPubSubConfiguration';
 import WidgetOptionsConfiguration from './WidgetOptionsConfiguration';
 
 const styles = {
@@ -154,7 +154,7 @@ export default class WidgetConfigurationPane extends Component {
                 >
                     <div>
                         {this.renderHeader(selectedWidget)}
-                        <WidgetPubSubConfig
+                        <WidgetPubSubConfiguration
                             selectedWidget={selectedWidget}
                             selectedWidgetConfiguration={selectedWidgetConfiguration}
                             selectedPageGoldenLayoutContent={this.props.selectedPageGoldenLayoutContent}

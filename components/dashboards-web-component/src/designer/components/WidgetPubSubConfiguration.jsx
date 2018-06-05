@@ -27,7 +27,7 @@ const styles = {
     fadedText: { paddingTop: 10, opacity: 0.4 },
 };
 
-export default class WidgetPubSubConfig extends Component {
+export default class WidgetPubSubConfiguration extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -315,7 +315,7 @@ export default class WidgetPubSubConfig extends Component {
     }
 }
 
-WidgetPubSubConfig.propTypes = {
+WidgetPubSubConfiguration.propTypes = {
     selectedWidget: PropTypes.shape({
         id: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
