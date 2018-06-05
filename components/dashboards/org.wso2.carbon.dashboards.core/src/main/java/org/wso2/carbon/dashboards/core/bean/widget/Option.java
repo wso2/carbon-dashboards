@@ -17,6 +17,8 @@
  */
 package org.wso2.carbon.dashboards.core.bean.widget;
 
+import com.google.gson.JsonElement;
+
 import java.util.List;
 
 /**
@@ -30,9 +32,9 @@ public class Option {
 
     private String id;
     private String title;
-    private Types type;
+    private JsonElement type;
     private List<String> possibleValues;
-    private Object defaultData;
+    private Object defaultValue;
 
     public String getId() {
         return id;
@@ -42,12 +44,12 @@ public class Option {
         return title;
     }
 
-    public Types getType() {
+    public JsonElement getType() {
         return type;
     }
 
-    public Object getDefaultData() {
-        return defaultData;
+    public Object getDefaultValue() {
+        return defaultValue;
     }
 
     public void setId(String id) {
@@ -58,11 +60,11 @@ public class Option {
         this.title = title;
     }
 
-    public void setType(Types type) {
+    public void setType(JsonElement type) {
         this.type = type;
     }
-    public void setDefaultData(Object defaultData) {
-        this.defaultData = defaultData;
+    public void setDefaultValue(Object defaultData) {
+        this.defaultValue = defaultData;
     }
 
     public void setPossibleValues(List<String> possibleValues) {

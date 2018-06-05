@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "dev": "webpack-dev-server --hot --inline --progress --history-api-fallback",
     "lint": "eslint . --ext .jsx --ext .js",
-    "build": "webpack -p",
+    "build": "webpack",
     "deploy": "cp ./dist/bundle.js $DS_HOME/wso2/dashboard/deployment/web-ui-apps/portal/public/js/"
   },
   "repository": {

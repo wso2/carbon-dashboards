@@ -16,15 +16,26 @@
  * under the License.
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+
+import Checkbox from 'material-ui/Checkbox';
+import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+
+const labelStyle = {
+    fontSize: 12
+};
 
 export default class WidgetOptionsConfiguration extends Component {
     constructor(props) {
         super(props);
 
         this.doesSelectedWidgetHasOptions = this.doesSelectedWidgetHasOptions.bind(this);
+        this.getCurrentWidgetOptionsInputs = this.getCurrentWidgetOptionsInputs.bind(this);
+        this.state = {};
     }
 
     doesSelectedWidgetHasOptions() {
@@ -33,12 +44,84 @@ export default class WidgetOptionsConfiguration extends Component {
         return (!_.isEmpty(contentOptions) && !_.isEmpty(configurationOptions));
     }
 
+    getCurrentWidgetOptionsInputs() {
+        let CurrentWidgetOptionsInputs = [];
+        let options = this.props.selectedWidget.props.configs.options;
+        if (options) {
+            for (let i = 0; i < options.length; i++) {
+                this.state.defaultValue = options[i].defaultValue;
+                switch (options[i].type.name.toUpperCase()) {
+                    case "TEXT":
+                        CurrentWidgetOptionsInputs.push(
+                            <div className="options-list">
+                                <TextField id={options[i].id}
+                                           floatingLabelText={options[i].title}
+                                           defaultValue={this.state.options[i].defaultData}
+                                           onChange={(event, newValue) => {
+                                               event.persist();
+                                               this.handleWidgetOptionTextFieldEvent(event, newValue, options)
+                                               this.props.setWidgetConfigPanelDirty(true);
+                                           }}
+                                           name={options[i].title}/>
+                            </div>);
+                        break;
+                    case "ENUM":
+                        let items = [];
+                        if (options[i].type.possibleValues) {
+                            for (let j = 0; j < options[i].type.possibleValues.length; j++) {
+                                items.push(
+                                    <MenuItem
+                                        key={options[i].type.possibleValues[j]} id={options[i].id}
+                                        value={options[i].type.possibleValues[j]}
+                                        primaryText={options[i].type.possibleValues[j]}
+                                    />)
+                            }
+                        }
+                        CurrentWidgetOptionsInputs.push(
+                            <div className="options-list">
+                                <SelectField
+                                    floatingLabelText={options[i].title}
+                                    onChange={(event, key, payload,) => {
+                                        this.handleWidgetOptionSelectFieldEvent(event, key, payload, options),
+                                            this.props.setWidgetConfigPanelDirty(true);
+                                    }}
+                                    value={this.state.defaultData}
+                                    id={options[i].id}
+                                    className="options-list">
+                                    {items}
+                                </SelectField>
+                            </div>);
+                        break;
+                    case "BOOLEAN":
+                        CurrentWidgetOptionsInputs.push(
+                            <div className="options-list">
+                                <Checkbox
+                                    id={options[i].id}
+                                    label={options[i].title}
+                                    labelStyle={labelStyle}
+                                    onCheck={(event, isInputChecked) => {
+                                        this.handleWidgetOptionCheckBoxEvent(event, isInputChecked, options),
+                                            this.props.setWidgetConfigPanelDirty(true);
+                                    }}
+                                    checked={this.state.defaultData}
+                                    className="options-list"
+                                />
+                            </div>);
+                        break;
+                    default :
+                        break;
+                }
+            }
+        }
+
+        return CurrentWidgetOptionsInputs;
+    }
+
     render() {
         if (!this.doesSelectedWidgetHasOptions()) {
             return null;
         }
-        // TODO: 05/07/18 Render widget options
-        return <span>widget options UI goes here</span>;
+        return <span>{this.getCurrentWidgetOptionsInputs()}</span>;
     }
 }
 
