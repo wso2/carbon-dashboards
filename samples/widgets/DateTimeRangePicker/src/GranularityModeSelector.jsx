@@ -16,11 +16,11 @@
  * under the License.
  */
 
-import React from "react";
-import Button from "material-ui/Button";
-import {IconButton} from "material-ui";
-import HighGranularityMode from "@material-ui/icons/KeyboardArrowRight";
-import LowGranularityMode from "@material-ui/icons/KeyboardArrowLeft";
+import React from 'react';
+import Button from 'material-ui/Button';
+import {IconButton} from 'material-ui';
+import HighGranularityMode from '@material-ui/icons/KeyboardArrowRight';
+import LowGranularityMode from '@material-ui/icons/KeyboardArrowLeft';
 
 const blocks = {
     display: 'inline-flex'
@@ -86,9 +86,7 @@ export default class GranularityModeSelector extends React.Component {
                     Last :
                 </div>
                 <div style={blocks}>
-                    {
-                    this.generateTabs(granularityMode)
-                    }
+                    {this.generateTabs(granularityMode)}
                     <IconButton aria-label="Delete" style={{ marginRight: 5 }} onClick={this.switchGranularity}>
                         {
                             granularityMode === 'low' ?
