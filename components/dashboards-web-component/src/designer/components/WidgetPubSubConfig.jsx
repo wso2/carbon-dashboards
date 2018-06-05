@@ -75,13 +75,8 @@ export default class WidgetPubSubConfig extends Component {
 
     getSelectedWidget() {
         const widgetContent = this.props.selectedWidgetGoldenLayoutContent.config;
-        let widgetId = widgetContent.props.configs.widgetID;
-        if (!widgetId) {
-            widgetId = widgetContent.component;
-            widgetContent.props.configs.widgetID = widgetId; // Sets the widgetID so it will be added to the DB.
-        }
         return {
-            id: widgetId,
+            id: widgetContent.props.widgetID || widgetContent.component,
             name: widgetContent.title,
             className: widgetContent.component,
             props: widgetContent.props,

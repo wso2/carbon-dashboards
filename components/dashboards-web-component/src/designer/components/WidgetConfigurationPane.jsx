@@ -64,10 +64,10 @@ export default class WidgetConfigurationPane extends Component {
 
     getSelectedWidget() {
         const widgetContent = this.props.selectedWidgetGoldenLayoutContent.config;
-        let widgetId = widgetContent.props.configs.widgetID;
+        let widgetId = widgetContent.props.widgetID;
         if (!widgetId) {
             widgetId = widgetContent.component;
-            widgetContent.props.configs.widgetID = widgetId; // Sets the widgetID so it will be added to the DB.
+            widgetContent.props.widgetID = widgetId; // Sets the widgetID so it will be added to the DB.
         }
         return {
             id: widgetId,

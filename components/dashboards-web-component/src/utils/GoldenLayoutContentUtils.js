@@ -41,7 +41,7 @@ export default class GoldenLayoutContentUtils {
         const widgets = new Map();
         GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             const widget = {
-                id: widgetContent.props.configs.widgetID || widgetContent.component,
+                id: widgetContent.props.widgetID || widgetContent.component,
                 name: widgetContent.title,
                 className: widgetContent.component,
             };
