@@ -100,7 +100,7 @@ export default class WidgetConfigurationPane extends Component {
         );
     }
 
-    renderHeader() {
+    renderHeader(selectedWidget) {
         return (
             <div style={{ display: 'flex' }}>
                 <IconButton tooltip="Save and close" onClick={this.handlePaneClose}>
@@ -110,7 +110,7 @@ export default class WidgetConfigurationPane extends Component {
                     <FormattedMessage
                         id='widget-configuration.title'
                         defaultMessage='{name} Configurations'
-                        values={{ name: this.getSelectedWidget().name }}
+                        values={{ name: selectedWidget.name }}
                     />
                 </div>
             </div>
@@ -125,6 +125,7 @@ export default class WidgetConfigurationPane extends Component {
         const theme = this.props.theme;
         const isOpen = this.state.clickedOnBackdrop ? false : this.props.isOpen;
         this.state.clickedOnBackdrop = false;
+        const selectedWidget = this.getSelectedWidget();
         return (
             <span>
                 <Paper
@@ -142,9 +143,9 @@ export default class WidgetConfigurationPane extends Component {
                     }}
                 >
                     <div>
-                        {this.renderHeader()}
+                        {this.renderHeader(selectedWidget)}
                         <WidgetPubSubConfig
-                            selectedWidgetGoldenLayoutContent={this.props.selectedWidgetGoldenLayoutContent}
+                            selectedWidget={selectedWidget}
                             selectedPageGoldenLayoutContent={this.props.selectedPageGoldenLayoutContent}
                             allWidgetsConfigurations={this.props.allWidgetsConfigurations}
                         />

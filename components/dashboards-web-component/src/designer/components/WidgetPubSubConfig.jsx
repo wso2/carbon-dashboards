@@ -74,13 +74,7 @@ export default class WidgetPubSubConfig extends Component {
     }
 
     getSelectedWidget() {
-        const widgetContent = this.props.selectedWidgetGoldenLayoutContent.config;
-        return {
-            id: widgetContent.props.widgetID || widgetContent.component,
-            name: widgetContent.title,
-            className: widgetContent.component,
-            props: widgetContent.props,
-        };
+        return this.props.selectedWidget;
     }
 
     getSelectedWidgetConfiguration() {
@@ -91,7 +85,7 @@ export default class WidgetPubSubConfig extends Component {
     }
 
     isSelectedWidgetASubscriber() {
-        const contentTypes = _.get(this.getSelectedWidget(), 'props.configs.pubsub.types', []);
+        const contentTypes = _.get(this.getSelectedWidget().props, 'configs.pubsub.types', []);
         const configurationTypes = _.get(this.getSelectedWidgetConfiguration(), 'configs.pubsub.types', []);
         return contentTypes.includes('subscriber') && configurationTypes.includes('subscriber');
     }
@@ -325,8 +319,11 @@ export default class WidgetPubSubConfig extends Component {
 }
 
 WidgetPubSubConfig.propTypes = {
-    selectedWidgetGoldenLayoutContent: PropTypes.shape({
-        config: PropTypes.shape({}),
+    selectedWidget: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        className: PropTypes.string.isRequired,
+        props: PropTypes.shape({}).isRequired,
     }).isRequired,
     selectedPageGoldenLayoutContent: PropTypes.shape({}).isRequired,
     allWidgetsConfigurations: PropTypes.arrayOf({
