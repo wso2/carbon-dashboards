@@ -78,10 +78,7 @@ export default class WidgetPubSubConfig extends Component {
     }
 
     getSelectedWidgetConfiguration() {
-        const selectedWidgetName = this.getSelectedWidget().id;
-        return this.getSelectedPageAllWidgetsConfigurations().find((widgetConfiguration) => {
-            return (widgetConfiguration.id === selectedWidgetName);
-        });
+        return this.props.selectedWidgetConfiguration;
     }
 
     isSelectedWidgetASubscriber() {
@@ -324,6 +321,11 @@ WidgetPubSubConfig.propTypes = {
         name: PropTypes.string.isRequired,
         className: PropTypes.string.isRequired,
         props: PropTypes.shape({}).isRequired,
+    }).isRequired,
+    selectedWidgetConfiguration: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        configs: PropTypes.shape({}).isRequired,
     }).isRequired,
     selectedPageGoldenLayoutContent: PropTypes.shape({}).isRequired,
     allWidgetsConfigurations: PropTypes.arrayOf({

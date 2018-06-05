@@ -57,6 +57,7 @@ export default class WidgetConfigurationPane extends Component {
         };
 
         this.getSelectedWidget = this.getSelectedWidget.bind(this);
+        this.getSelectedWidgetConfiguration = this.getSelectedWidgetConfiguration.bind(this);
         this.triggerEvent = this.triggerEvent.bind(this);
         this.handlePaneClose = this.handlePaneClose.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
@@ -70,6 +71,12 @@ export default class WidgetConfigurationPane extends Component {
             className: widgetContent.component,
             props: widgetContent.props,
         };
+    }
+
+    getSelectedWidgetConfiguration(selectedWidget) {
+        return this.props.allWidgetsConfigurations.find((widgetConfiguration) => {
+            return (widgetConfiguration.id === selectedWidget.id);
+        });
     }
 
     triggerEvent(eventName, parameter) {
@@ -146,6 +153,7 @@ export default class WidgetConfigurationPane extends Component {
                         {this.renderHeader(selectedWidget)}
                         <WidgetPubSubConfig
                             selectedWidget={selectedWidget}
+                            selectedWidgetConfiguration={this.getSelectedWidgetConfiguration(selectedWidget)}
                             selectedPageGoldenLayoutContent={this.props.selectedPageGoldenLayoutContent}
                             allWidgetsConfigurations={this.props.allWidgetsConfigurations}
                         />
