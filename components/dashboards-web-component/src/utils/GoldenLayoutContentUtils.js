@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import _ from 'lodash';
+
 export default class GoldenLayoutContentUtils {
 
     /**
@@ -31,23 +33,28 @@ export default class GoldenLayoutContentUtils {
     }
 
     /**
-     * Returns names of all widgets referred in the given GoldenLayout contents.
+     * Returns widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Set} included widget names
+     * @returns {{id: string, name: string, className: string}[]} referred widgets
      */
-    static getReferredWidgetNames(goldenLayoutContents) {
-        const widgetNames = new Set();
-        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
-            widgetNames.add(widgetContent.title);
+    static getReferredWidgets(goldenLayoutContents) {
+        const widgets = new Map();
+        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
+            const widget = {
+                id: widgetContent.props.widgetID || widgetContent.component,
+                name: widgetContent.title,
+                className: widgetContent.component,
+            };
+            widgets.set(widget.id, widget);
             return false;
         });
-        return Array.from(widgetNames.values());
+        return Array.from(widgets.values());
     }
 
     /**
      * Returns class names of all widgets referred in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Set} class names of included widget
+     * @returns {string[]} class names of included widget
      */
     static getReferredWidgetClassNames(goldenLayoutContents) {
         const widgetClassNames = new Set();
@@ -61,13 +68,13 @@ export default class GoldenLayoutContentUtils {
     /**
      * Returns contents of publisher widgets in the given GoldenLayout contents.
      * @param {array} goldenLayoutContents GoldenLayout content
-     * @returns {Array} publisher widgets contents
+     * @returns {array} publisher widgets contents
      */
     static getPublisherWidgetsContents(goldenLayoutContents) {
         const publisherWidgetsContent = [];
         GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
-            const configs = widgetContent.props.configs;
-            if (configs && configs.pubsub.types.indexOf('publisher') !== -1) {
+            const types = _.get(widgetContent, 'props.configs.pubsub.types');
+            if (Array.isArray(types) && types.includes('publisher')) {
                 publisherWidgetsContent.push(widgetContent);
             }
             return false;

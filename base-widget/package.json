@@ -1,6 +1,6 @@
 {
   "name": "@wso2-dashboards/widget",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "This is the base(parent) widget for dashboard component. Users can extend this react component and write their own widgets",
   "main": "lib/Widget.js",
   "scripts": {

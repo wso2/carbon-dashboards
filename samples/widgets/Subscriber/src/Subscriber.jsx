@@ -27,8 +27,7 @@ import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 class Subscriber extends Widget {
     constructor(props) {
         super(props);
-        this.state = {receivedMsg: ''};
-        this.set = [];
+        this.state = {messages: []};
         this.clearMsgs = this.clearMsgs.bind(this);
         this.setReceivedMsg = this.setReceivedMsg.bind(this);
     }
@@ -37,27 +36,26 @@ class Subscriber extends Widget {
         super.subscribe(this.setReceivedMsg);
     }
 
-    setReceivedMsg(receivedMsg) {
-        this.set.push({time: new Date(), value: receivedMsg});
-        this.setState({receivedMsg});
+    setReceivedMsg(receivedMessage) {
+        console.log(`new message ${receivedMessage} came`)
+        const newMessages = this.state.messages;
+        newMessages.push({time: new Date(), value: receivedMessage});
+        this.setState({messages: newMessages});
     }
 
     generateOutput() {
-        if (this.state.receivedMsg) {
-            const output = [];
-            this.set.forEach(d => {
-                output.push(<div>[Received] {d.time.toTimeString()} [Message] - {d.value}</div>);
+        const messages = this.state.messages;
+        if (messages.length > 0) {
+            return messages.map(message => {
+                return <div>[Received] {message.time.toTimeString()} [Message] - {message.value}</div>;
             });
-
-            return output;
         } else {
-            return '';
+            return <div>No messages!</div>;
         }
     }
 
     clearMsgs() {
-        this.setState({receivedMsg: ''});
-        this.set = [];
+        this.setState({message: []});
     }
 
     render() {
@@ -75,7 +73,7 @@ class Subscriber extends Widget {
                             marginLeft: 5
                         }}
                     />
-                    <div style={{marginTop: 10}}>{this.generateOutput()}</div>
+                    <div style={{marginTop: 10, color: 'white'}}>{this.generateOutput()}</div>
                 </section>
             </MuiThemeProvider>
         );

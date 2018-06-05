@@ -16,41 +16,27 @@
  * under the License.
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
-import {IconButton, Paper} from 'material-ui';
-import {NavigationArrowForward} from 'material-ui/svg-icons';
-import {Event} from '../../utils/Constants';
-import Subheader from 'material-ui/Subheader';
-import List, {ListItem} from 'material-ui/List';
-import Checkbox from 'material-ui/Checkbox';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
+import { IconButton, Paper } from 'material-ui';
+import { NavigationArrowForward } from 'material-ui/svg-icons';
 
-const labelStyle = {
-    fontSize: 12
-};
-
-const stylePanelHeader = {
-    color: '#d7dbdd',
-    fontWeight: 'bold',
-    fontSize: 16
-};
-
-const styleListHeader = {
-    marginTop: 10,
-    backgroundColor: '#071921',
-    fontWeight: 'lighter',
-    fontSize: 14
-};
-
-const itemBackgroundStyle = {
-    backgroundColor: '#131a1f',
-    paddingLeft: 10
-};
+import { Event } from '../../utils/Constants';
+import WidgetPubSubConfiguration from './WidgetPubSubConfiguration';
+import WidgetOptionsConfiguration from './WidgetOptionsConfiguration';
 
 const styles = {
+    header: {
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingLeft: 0,
+        paddingRight: 5,
+        display: 'inline-block',
+        lineHeight: '24px',
+        fontSize: 18,
+        opacity: 0.8,
+    },
     backdrop: {
         position: 'fixed',
         height: '100%',
@@ -70,47 +56,28 @@ export default class WidgetConfigurationPane extends Component {
         super(props);
         this.state = {
             clickedOnBackdrop: false,
-            checked: new Map(),
-            widgetDropDownMenuMap: new Map(),
-            dropDownValues: new Map()
         };
 
-        this.getSelectedPageAllWidgetsConfigurations = this.getSelectedPageAllWidgetsConfigurations.bind(this);
-        this.getSelectedPagePublisherWidgetsContents = this.getSelectedPagePublisherWidgetsContents.bind(this);
-        this.getPublisherWidgetsConfigurations = this.getPublisherWidgetsConfigurations.bind(this);
+        this.getSelectedWidget = this.getSelectedWidget.bind(this);
         this.getSelectedWidgetConfiguration = this.getSelectedWidgetConfiguration.bind(this);
         this.triggerEvent = this.triggerEvent.bind(this);
         this.handlePaneClose = this.handlePaneClose.bind(this);
         this.updateWidget = this.updateWidget.bind(this);
-        this.handleCheckBox = this.handleCheckBox.bind(this);
-        this.getPublisherWiringUI = this.getPublisherWiringUI.bind(this);
-        this.persistWiringConfigsInDashboardJSON = this.persistWiringConfigsInDashboardJSON.bind(this);
-        this.unpersistWiringConfigsInDashboardJSON = this.unpersistWiringConfigsInDashboardJSON.bind(this);
-        this.handlePublisherDropDown = this.handlePublisherDropDown.bind(this)
     }
 
-    getSelectedPageAllWidgetsConfigurations() {
-        const renderingWidgetNames =
-            GoldenLayoutContentUtils.getReferredWidgetNames(this.props.selectedPageGoldenLayoutContent);
-        return renderingWidgetNames.map((widgetName) => {
-            return this.props.allWidgetsConfigurations.find(widgetConfig => (widgetConfig.name === widgetName));
-        });
+    getSelectedWidget() {
+        const widgetContent = this.props.selectedWidgetGoldenLayoutContent.config;
+        return {
+            id: widgetContent.props.widgetID || widgetContent.component,
+            name: widgetContent.title,
+            className: widgetContent.component,
+            props: widgetContent.props,
+        };
     }
 
-    getSelectedPagePublisherWidgetsContents() {
-        return GoldenLayoutContentUtils.getPublisherWidgetsContents(this.props.selectedPageGoldenLayoutContent);
-    }
-
-    getPublisherWidgetsConfigurations() {
-        return this.getSelectedPageAllWidgetsConfigurations().filter((widgetConfiguration) => {
-            return (widgetConfiguration.configs.pubsub.types.indexOf('publisher') !== -1);
-        });
-    }
-
-    getSelectedWidgetConfiguration() {
-        const selectedWidgetName = this.props.selectedWidgetGoldenLayoutContent.config.title;
-        return this.getSelectedPageAllWidgetsConfigurations().find((widgetConfiguration) => {
-            return (widgetConfiguration.name === selectedWidgetName);
+    getSelectedWidgetConfiguration(selectedWidget) {
+        return this.props.allWidgetsConfigurations.find((widgetConfiguration) => {
+            return (widgetConfiguration.id === selectedWidget.id);
         });
     }
 
@@ -119,7 +86,8 @@ export default class WidgetConfigurationPane extends Component {
     }
 
     handlePaneClose() {
-        this.setState({clickedOnBackdrop: true});
+        this.setState({ clickedOnBackdrop: true });
+        this.updateWidget();
         this.props.paneCloseEventListener();
     }
 
@@ -141,116 +109,21 @@ export default class WidgetConfigurationPane extends Component {
         );
     }
 
-    handleCheckBox(event, isChecked) {
-        let widgetDropDownMenuMap = this.state.widgetDropDownMenuMap;
-        this.state.checked.set(event.currentTarget.id, isChecked);
-        let publisher = this.getSelectedPagePublisherWidgetsContents().find(publisher => {
-            return event.currentTarget.id === publisher.props.id
-        });
-        let subscriberConfig = this.props.selectedWidgetGoldenLayoutContent.config.props;
-        if (isChecked) {
-            widgetDropDownMenuMap.set(publisher.props.id, publisher.props.configs.pubsub.publisherWidgetOutputs)
-            if (!subscriberConfig.configs.pubsub.publishers) {
-                subscriberConfig.configs.pubsub.publishers = [];
-            }
-            subscriberConfig.configs.pubsub.publishers.push(event.currentTarget.id)
-        } else {
-            widgetDropDownMenuMap.delete(publisher.props.id);
-            let position = subscriberConfig.configs.pubsub.publishers.indexOf(event.currentTarget.id);
-            this.unpersistWiringConfigsInDashboardJSON(subscriberConfig.configs.pubsub, event.currentTarget.id);
-            subscriberConfig.configs.pubsub.publishers.splice(position, 1);
-        }
-        this.updateWidget();
-        this.setState({checked: this.state.checked});
-    }
-
-    persistWiringConfigsInDashboardJSON(pubsubConfigs) {
-        pubsubConfigs.widgetInputOutputMapping = [];
-        for (let [subscriberInput, widgetPubsubMapping] of this.state.dropDownValues.entries()) {
-            pubsubConfigs.widgetInputOutputMapping.push({
-                subscriberWidgetInput: subscriberInput,
-                publisherWidgetOutput: widgetPubsubMapping.value,
-                publisherId: widgetPubsubMapping.publisherID
-            })
-        }
-        this.updateWidget();
-    }
-
-    unpersistWiringConfigsInDashboardJSON(pubsubConfigs, publisherID) {
-        pubsubConfigs.widgetInputOutputMapping = pubsubConfigs.widgetInputOutputMapping.filter(
-            widgetInputOutputMapping => {
-                return widgetInputOutputMapping.publisherWidgetOutput !== publisherID;
-            });
-        return pubsubConfigs.widgetInputOutputMapping;
-    }
-
-    getPublisherWiringUI() {
-        let pubsubWiringUI = [];
-        const pubsub = this.getSelectedWidgetConfiguration().configs.pubsub;
-        if (pubsub && (pubsub.types.indexOf('subscriber') !== -1) && pubsub.subscriberWidgetInputs) {
-            pubsubWiringUI = pubsub.subscriberWidgetInputs.map(
-                subscriberInput => {
-                    return (<div>
-                        <div style={{
-                            display: 'inline-block',
-                            float: 'left',
-                            marginLeft: 10,
-                            marginTop: 30
-                        }}>{subscriberInput}</div>
-                        <SelectField
-                            onChange={this.handlePublisherDropDown}
-                            value={this.state.dropDownValues.get(subscriberInput) ?
-                                this.state.dropDownValues.get(subscriberInput).value : ""}
-                            style={{
-                                display: 'inline-block',
-                                margin: 10,
-                                marginLeft: 30,
-                                width: '50%'
-                            }}>{
-                            this.getWidgetOutputDropDown(this.state.widgetDropDownMenuMap, subscriberInput)
-                        }</SelectField>
-                    </div>);
-                });
-        }
-        return pubsubWiringUI;
-    }
-
-    handlePublisherDropDown(event, key, payload) {
-        let subscriberInput = event.target.parentElement.parentElement.parentElement.getAttribute("subscriberInput");
-        let publisherId = event.target.parentElement.parentElement.parentElement.getAttribute("publisherId");
-        this.state.dropDownValues.set(subscriberInput, {value: payload, publisherID: publisherId});
-        this.persistWiringConfigsInDashboardJSON(this.props.selectedWidgetGoldenLayoutContent.config.props.configs.pubsub);
-        this.updateWidget();
-        this.setState({dropDownValues: this.state.dropDownValues});
-    }
-
-    getWidgetOutputDropDown(widgetDropDownMenuMap, subscriberInput) {
-        let widgetOutputDropdown = [];
-        for (let [key, widgetOutputs] of widgetDropDownMenuMap.entries()) {
-            widgetOutputs.map((widgetOutput, index) => {
-                widgetOutputDropdown.push(<MenuItem key={key} subscriberInput={subscriberInput}
-                                                    publisherId={key} value={widgetOutput}
-                                                    primaryText={widgetOutput}/>);
-            });
-        }
-        return widgetOutputDropdown;
-    }
-
-    getPublishers() {
-        let publishers = [];
-        if (this.getSelectedWidgetConfiguration().configs.pubsub.types.indexOf('subscriber') !== -1) {
-            this.getSelectedPagePublisherWidgetsContents().map(pubsubConfig => {
-                publishers.push(<Checkbox id={pubsubConfig.props.id}
-                                          label={pubsubConfig.title}
-                                          labelStyle={labelStyle}
-                                          name={pubsubConfig.title}
-                                          onCheck={this.handleCheckBox}
-                                          checked={this.state.checked.get(pubsubConfig.props.id)}
-                                          className="publishers-list"/>)
-
-            });
-        }
-        return publishers;
+    renderHeader(selectedWidget) {
+        return (
+            <div style={{ display: 'flex' }}>
+                <IconButton tooltip="Save and close" onClick={this.handlePaneClose}>
+                    <NavigationArrowForward />
+                </IconButton>
+                <div style={styles.header}>
+                    <FormattedMessage
+                        id='widget-configuration.title'
+                        defaultMessage='{name} Configurations'
+                        values={{ name: selectedWidget.name }}
+                    />
+                </div>
+            </div>
+        );
     }
 
     render() {
@@ -261,6 +134,8 @@ export default class WidgetConfigurationPane extends Component {
         const theme = this.props.theme;
         const isOpen = this.state.clickedOnBackdrop ? false : this.props.isOpen;
         this.state.clickedOnBackdrop = false;
+        const selectedWidget = this.getSelectedWidget();
+        const selectedWidgetConfiguration = this.getSelectedWidgetConfiguration(selectedWidget);
         return (
             <span>
                 <Paper
@@ -278,26 +153,17 @@ export default class WidgetConfigurationPane extends Component {
                     }}
                 >
                     <div>
-                        <IconButton tooltip="Back" onClick={this.handlePaneClose}>
-                            <NavigationArrowForward/>
-                        </IconButton>
-                        <div style={{display: 'inline-block'}}>
-                            {this.props.selectedWidgetGoldenLayoutContent.config.component}
-                        </div>
-                        <div>
-                            <Subheader style={stylePanelHeader}
-                                       className="options-list-header">Widget Configuration</Subheader>
-                                <ListItem
-                                    primaryText="Publishers"
-                                    initiallyOpen={true}
-                                    primaryTogglesNestedList={true}
-                                    nestedItems={this.getPublishers()}
-                                    nestedListStyle={itemBackgroundStyle}
-                                    className="options-list-header"
-                                    style={styleListHeader}
-                                />
-                            {this.getPublisherWiringUI()}
-                        </div>
+                        {this.renderHeader(selectedWidget)}
+                        <WidgetPubSubConfiguration
+                            selectedWidget={selectedWidget}
+                            selectedWidgetConfiguration={selectedWidgetConfiguration}
+                            selectedPageGoldenLayoutContent={this.props.selectedPageGoldenLayoutContent}
+                            allWidgetsConfigurations={this.props.allWidgetsConfigurations}
+                        />
+                        <WidgetOptionsConfiguration
+                            selectedWidget={selectedWidget}
+                            selectedWidgetConfiguration={selectedWidgetConfiguration}
+                        />
                     </div>
                 </Paper>
                 {isOpen ? this.renderBackdrop(theme) : null}
@@ -310,7 +176,11 @@ WidgetConfigurationPane.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     selectedWidgetGoldenLayoutContent: PropTypes.shape({}).isRequired,
     selectedPageGoldenLayoutContent: PropTypes.shape({}).isRequired,
-    allWidgetsConfigurations: PropTypes.shape({}).isRequired,
+    allWidgetsConfigurations: PropTypes.arrayOf({
+        name: PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
+        configs: PropTypes.shape({}).isRequired,
+    }).isRequired,
     theme: PropTypes.shape({}).isRequired,
     paneCloseEventListener: PropTypes.func.isRequired,
 };
