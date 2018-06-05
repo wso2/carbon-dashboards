@@ -5,7 +5,7 @@
     "dependencies": {
         "@material-ui/core": "^1.1.0",
         "@material-ui/icons": "^1.1.0",
-        "@wso2-dashboards/widget": "1.0.0",
+        "@wso2-dashboards/widget": "^1.1.2",
         "lodash": "^4.17.10",
         "moment": "^2.22.1",
         "react": "^16.1.1",
