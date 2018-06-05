@@ -37,6 +37,7 @@ export default class WidgetOptionsConfiguration extends Component {
         if (!this.doesSelectedWidgetHasOptions()) {
             return null;
         }
+        // TODO: 05/07/18 Render widget options
         return <span>widget options UI goes here</span>;
     }
 }
