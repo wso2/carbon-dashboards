@@ -21,8 +21,10 @@ import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import { IconButton, Paper } from 'material-ui';
 import { NavigationArrowForward } from 'material-ui/svg-icons';
+
 import { Event } from '../../utils/Constants';
-import WidgetPubSubConfig from './WidgetPubSubConfig';
+import WidgetPubSubConfiguration from './WidgetPubSubConfiguration';
+import WidgetOptionsConfiguration from './WidgetOptionsConfiguration';
 
 const styles = {
     header: {
@@ -133,6 +135,7 @@ export default class WidgetConfigurationPane extends Component {
         const isOpen = this.state.clickedOnBackdrop ? false : this.props.isOpen;
         this.state.clickedOnBackdrop = false;
         const selectedWidget = this.getSelectedWidget();
+        const selectedWidgetConfiguration = this.getSelectedWidgetConfiguration(selectedWidget);
         return (
             <span>
                 <Paper
@@ -151,11 +154,15 @@ export default class WidgetConfigurationPane extends Component {
                 >
                     <div>
                         {this.renderHeader(selectedWidget)}
-                        <WidgetPubSubConfig
+                        <WidgetPubSubConfiguration
                             selectedWidget={selectedWidget}
-                            selectedWidgetConfiguration={this.getSelectedWidgetConfiguration(selectedWidget)}
+                            selectedWidgetConfiguration={selectedWidgetConfiguration}
                             selectedPageGoldenLayoutContent={this.props.selectedPageGoldenLayoutContent}
                             allWidgetsConfigurations={this.props.allWidgetsConfigurations}
+                        />
+                        <WidgetOptionsConfiguration
+                            selectedWidget={selectedWidget}
+                            selectedWidgetConfiguration={selectedWidgetConfiguration}
                         />
                     </div>
                 </Paper>
