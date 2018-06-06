@@ -62,7 +62,7 @@ export const lightTheme = getMuiTheme(lightBaseTheme,
             trackOffColor: Colors.grey500,
             thumbOffColor: Colors.grey700,
         },
-    },
+    }
 );
 
 export default darkTheme;
