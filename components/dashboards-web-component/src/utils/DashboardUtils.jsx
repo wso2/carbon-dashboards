@@ -17,8 +17,8 @@
  */
 
 export default class DashboardUtils {
-    sanitizeInput(input) {
-        return input.replace(/[^a-z0-9-\s]/gim, "");
+    static sanitizeInput(input) {
+        return input.replace(/[^a-z0-9-\s]/gim, '');
     }
 
     static generateguid() {
