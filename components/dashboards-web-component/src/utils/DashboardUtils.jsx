@@ -21,7 +21,7 @@ export default class DashboardUtils {
         return input.replace(/[^a-z0-9-\s]/gim, '');
     }
 
-    static generateguid() {
+    static generateUuid() {
         /* eslint-disable no-bitwise, no-mixed-operators */
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             const r = Math.random() * 16 | 0;

@@ -72,7 +72,7 @@ export default class AuthenticationAPI {
                 password,
                 grantType: passwordGrantType,
                 rememberMe,
-                appId: 'dash-' + DashboardUtils.generateguid(),
+                appId: 'dash-' + DashboardUtils.generateUuid(),
             }), {
                 headers: {
                     'Content-Type': MediaType.APPLICATION_WWW_FORM_URLENCODED,
