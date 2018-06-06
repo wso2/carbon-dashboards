@@ -51,7 +51,7 @@ export default class PageLoadingIndicator extends Component {
                 <span>
                     <div style={styles.title}>{this.props.title}</div>
                     <div style={styles.progressBar}>
-                        <LinearProgress mode="indeterminate" />
+                        <LinearProgress mode='indeterminate' />
                     </div>
                 </span>
             </Paper>
