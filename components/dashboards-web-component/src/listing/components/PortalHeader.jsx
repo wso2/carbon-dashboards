@@ -41,7 +41,7 @@ import { AppBar } from 'material-ui';
 import PropTypes from 'prop-types';
 import UserMenu from '../../common/UserMenu';
 
-class Header extends Component {
+class PortalHeader extends Component {
 
     render() {
         return (
@@ -65,8 +65,8 @@ class Header extends Component {
     }
 }
 
-Header.propTypes = {
+PortalHeader.propTypes = {
     theme: PropTypes.shape({}).isRequired,
 };
 
-export default Header;
+export default PortalHeader;
