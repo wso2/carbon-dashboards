@@ -465,7 +465,6 @@ class UtilFunctions {
         for (let i = 0; i < configuration.charts[0].filterColumn.length; i++) {
             if (configuration.charts[0].filterColumn[i]) {
                 filteredColumns.push(configuration.charts[0].columns[i]);
-                filteredColumnTitles.push(configuration.charts[0].columnTitles[i]);
             }
         }
         delete configuration.charts[0].columns;

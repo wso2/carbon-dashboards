@@ -42,6 +42,7 @@ export default class PreviewerWidget extends React.Component {
             metadata: data.metadata,
             data: data.data,
         });
+        widgetChannelManager.unsubscribeWidget(this.props.config.id);
         window.dispatchEvent(new Event('resize'));
     }
 

@@ -148,13 +148,15 @@ const Configurations = {
             charts: [
                 {
                     type: 'table',
-                    columns: [],
-                    columnTitles: [],
-                    filterColumn: [],
+                    columns: [
+
+                    ],
                 },
             ],
             maxLength: '',
-            colorBasedStyle: false,
+            filterable: false,
+            pagination: false,
+            append: false,
         },
     },
 };
