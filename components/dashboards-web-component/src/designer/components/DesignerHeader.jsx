@@ -26,7 +26,7 @@ import { ActionViewModule } from 'material-ui/svg-icons';
 
 import UserMenu from '../../common/UserMenu';
 
-class Header extends Component {
+class DesignerHeader extends Component {
     render() {
         const theme = this.props.theme;
 
@@ -62,9 +62,9 @@ class Header extends Component {
     }
 }
 
-export default withRouter(Header);
+export default withRouter(DesignerHeader);
 
-Header.propTypes = {
+DesignerHeader.propTypes = {
     history: PropTypes.shape({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
     title: PropTypes.string.isRequired,

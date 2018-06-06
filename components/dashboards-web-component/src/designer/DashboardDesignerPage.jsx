@@ -24,7 +24,7 @@ import _ from 'lodash';
 import { Paper, Snackbar } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 
-import Header from './components/Header';
+import DesignerHeader from './components/DesignerHeader';
 import LeftSideActions from './components/LeftSideActions';
 
 import PageLoadingIndicator from '../common/PageLoadingIndicator';
@@ -94,7 +94,7 @@ export default class DashboardDesignerPage extends Component {
 
     renderHeader(theme) {
         return (
-            <Header
+            <DesignerHeader
                 theme={theme}
                 title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer" />}
             />
