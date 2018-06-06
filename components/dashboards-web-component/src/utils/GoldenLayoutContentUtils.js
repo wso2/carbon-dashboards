@@ -19,7 +19,6 @@
 import _ from 'lodash';
 
 export default class GoldenLayoutContentUtils {
-
     /**
      * Extract and returns content for the specified widget from the given GoldenLayout contents.
      * @param {string} widgetUuid widget UUID
@@ -27,7 +26,7 @@ export default class GoldenLayoutContentUtils {
      * @returns {{title: string, component: string, props: {id: string, config: object}} | null} widget content config
      */
     static getWidgetContent(widgetUuid, goldenLayoutContents) {
-        return GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, function (widgetContent) {
+        return GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             return widgetContent.props && (widgetContent.props.id === widgetUuid);
         });
     }
@@ -39,7 +38,7 @@ export default class GoldenLayoutContentUtils {
      */
     static getReferredWidgets(goldenLayoutContents) {
         const widgets = new Map();
-        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
+        GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             const widget = {
                 id: widgetContent.props.widgetID || widgetContent.component,
                 name: widgetContent.title,
@@ -58,7 +57,7 @@ export default class GoldenLayoutContentUtils {
      */
     static getReferredWidgetClassNames(goldenLayoutContents) {
         const widgetClassNames = new Set();
-        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
+        GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             widgetClassNames.add(widgetContent.component);
             return false;
         });
@@ -72,7 +71,7 @@ export default class GoldenLayoutContentUtils {
      */
     static getPublisherWidgetsContents(goldenLayoutContents) {
         const publisherWidgetsContent = [];
-        GoldenLayoutContentUtils._traverseWidgetContents(goldenLayoutContents, widgetContent => {
+        GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             const types = _.get(widgetContent, 'props.configs.pubsub.types');
             if (Array.isArray(types) && types.includes('publisher')) {
                 publisherWidgetsContent.push(widgetContent);
@@ -82,7 +81,15 @@ export default class GoldenLayoutContentUtils {
         return publisherWidgetsContent;
     }
 
-    static _traverseWidgetContents(goldenLayoutContents, consumer) {
+    /**
+     * Traverse through the GoldenLayout contents and consumes widget contents. If the <code>consumer</code> function
+     * returns <code>true</code>, then traversal stops.
+     * @param {array} goldenLayoutContents GoldenLayout content
+     * @param {function(widgetContent: object)} consumer consumer function
+     * @returns {null} always returns null
+     * @private
+     */
+    static traverseWidgetContents(goldenLayoutContents, consumer) {
         if (!Array.isArray(goldenLayoutContents)) {
             return null;
         }
@@ -90,14 +97,14 @@ export default class GoldenLayoutContentUtils {
         for (let i = 0; i < goldenLayoutContents.length; i++) {
             let content = goldenLayoutContents[i];
             if (!content) {
-                continue;
+                continue; // eslint-disable-line no-continue
             }
             if ((content.type === 'component') && (content.componentName === 'lm-react-component')) {
                 if (consumer(content)) {
                     return content;
                 }
             } else {
-                content = GoldenLayoutContentUtils._traverseWidgetContents(content.content, consumer);
+                content = GoldenLayoutContentUtils.traverseWidgetContents(content.content, consumer);
                 if (content) {
                     return content;
                 }
