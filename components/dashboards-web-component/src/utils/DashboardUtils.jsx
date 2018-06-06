@@ -21,7 +21,12 @@ export default class DashboardUtils {
         return input.replace(/[^a-z0-9-\s]/gim, '');
     }
 
+    /**
+     * Generates a {@link https://www.ietf.org/rfc/rfc4122.txt RFC4122} version 4 compliant UUID.
+     * @returns {string} UUID
+     */
     static generateUuid() {
+        // Adopted from: https://stackoverflow.com/a/2117523/1577286
         /* eslint-disable no-bitwise, no-mixed-operators */
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             const r = Math.random() * 16 | 0;
