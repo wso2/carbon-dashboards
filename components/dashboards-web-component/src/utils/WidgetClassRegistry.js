@@ -20,7 +20,6 @@
  * Registry that maintains widget classes against their names.
  */
 class WidgetClassRegistry {
-
     constructor() {
         this.registry = new Map();
     }
