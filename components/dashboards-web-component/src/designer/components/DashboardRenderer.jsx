@@ -120,7 +120,7 @@ export default class DashboardRenderer extends Component {
                 type: 'react-component',
                 component: widget.configs.isGenerated ? 'UniversalWidget' : widget.id,
                 props: {
-                    id: DashboardUtils.generateguid(),
+                    id: DashboardUtils.generateUuid(),
                     configs: { pubsub: widget.configs.pubsub, isGenerated: widget.configs.isGenerated, options },
                     widgetID: widget.id,
                 },

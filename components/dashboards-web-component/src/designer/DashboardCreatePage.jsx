@@ -208,7 +208,7 @@ class DashboardCreatePage extends Component {
                             onChange={(e, value) => {
                                 this.state.fieldErrors.name = { error: '', style: '' };
                                 this.state.dashboard.name = value;
-                                this.state.dashboard.url = new DashboardUtils().sanitizeInput(value.toLowerCase()
+                                this.state.dashboard.url = DashboardUtils.sanitizeInput(value.toLowerCase()
                                     .replace(/\s+/g, ''));
                                 this.setState({
                                     fieldErrors: this.state.fieldErrors,
@@ -228,7 +228,7 @@ class DashboardCreatePage extends Component {
                             errorStyle={this.state.fieldErrors.url.style}
                             onChange={(e, value) => {
                                 this.state.fieldErrors.url = { error: '', style: '' };
-                                this.state.dashboard.url = new DashboardUtils().sanitizeInput(value.toLowerCase()
+                                this.state.dashboard.url = DashboardUtils.sanitizeInput(value.toLowerCase()
                                     .replace(/\s+/g, ''));
                                 this.setState({
                                     fieldErrors: this.state.fieldErrors,
