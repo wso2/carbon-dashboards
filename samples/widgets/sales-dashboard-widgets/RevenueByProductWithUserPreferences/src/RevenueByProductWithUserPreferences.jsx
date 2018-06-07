@@ -28,7 +28,7 @@ class RevenueByProductWithUserPreferences extends Widget {
             ['ALL', 'ALL', 'ALL', 'APIManager', 5928778.57, 564, 321],
             ['ALL', 'ALL', 'ALL', 'ESB', 5914330.13, 412, 243],
             ['ALL', 'ALL', 'ALL', 'IdentityServer', 2536874.28, 234, 136],
-            ['ALL', 'ALL', 'ALL', 'IOTServer', 497122.41, 60, 30]
+            ['ALL', 'ALL', 'ALL', 'IOTServer', 497122.41, 60, 30],
         ];
 
         this.rowData = [
@@ -66,19 +66,23 @@ class RevenueByProductWithUserPreferences extends Widget {
             ['ALL', 'ALL', 'ROW', 'APIManager', 214522.14, 19, 10],
             ['ALL', 'ALL', 'ROW', 'ESB', 174522.14, 15, 7],
             ['ALL', 'ALL', 'ROW', 'IdentityServer', 224522.14, 25, 17],
-            ['ALL', 'ALL', 'ROW', 'IOTServer', 0, 0, 0]
+            ['ALL', 'ALL', 'ROW', 'IOTServer', 0, 0, 0],
         ];
 
         this.state = {
             data: this.overallProductData,
             width: props.glContainer.width,
             height: props.glContainer.height,
-            options: this.props.configs.options
+            options: this.props.configs.options,
         };
 
         this.barChartConfig = {
-            x: this.state.options[0].defaultData,
-            charts: [{type: 'bar', y: this.state.options[1].defaultData, fill: this.state.options[2].defaultData}],
+            x: this.state.options.xLabel,
+            charts: [{
+                type: 'bar',
+                y: this.state.options.yLabel,
+                fill: this.state.options.chartColour,
+            }],
             maxLength: 5,
             width: props.glContainer.width,
             height: props.glContainer.height,
@@ -133,4 +137,4 @@ class RevenueByProductWithUserPreferences extends Widget {
     }
 }
 
-global.dashboard.registerWidget("RevenueByProductWithUserPreferences", RevenueByProductWithUserPreferences);
+global.dashboard.registerWidget('RevenueByProductWithUserPreferences', RevenueByProductWithUserPreferences);
