@@ -25,7 +25,8 @@ import { MuiThemeProvider, darkBaseTheme, getMuiTheme } from 'material-ui/styles
 import { RaisedButton, TextField, Snackbar } from 'material-ui';
 import { withRouter } from 'react-router-dom';
 
-import { FormPanel, Header } from '../common';
+import DesignerHeader from './components/DesignerHeader';
+import { FormPanel } from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 import { HttpStatus } from '../utils/Constants';
@@ -76,7 +77,7 @@ class DashboardCreatePage extends Component {
 
     /**
      * Show error message.
-     * 
+     *
      * @param {string} message Error message
      */
     showError(message) {
@@ -85,7 +86,7 @@ class DashboardCreatePage extends Component {
 
     /**
      * Show info message.
-     * 
+     *
      * @param {string} message Message
      * @param {string} style Message style
      */
@@ -99,7 +100,7 @@ class DashboardCreatePage extends Component {
 
     /**
      * Validate form fields.
-     * 
+     *
      * @returns {boolean} Validation status
      */
     validateFields() {
@@ -181,14 +182,14 @@ class DashboardCreatePage extends Component {
 
     /**
      * Render dashboard create page.
-     * 
+     *
      * @returns {XML} HTML content
      */
     render() {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal" />} />
+                    <DesignerHeader />
 
                     <FormPanel
                         title={<FormattedMessage id="create.dashboard" defaultMessage="Create Dashboard" />}
