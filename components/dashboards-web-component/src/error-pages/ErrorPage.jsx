@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import { Paper } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 
-import { Header } from '../common';
+import Header from '../common/Header';
 import defaultTheme from '../utils/Theme';
 
 export default class ErrorPage extends Component {
@@ -29,7 +29,7 @@ export default class ErrorPage extends Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={this.props.theme}>
-                <Header />
+                <Header title={this.props.title} theme={this.props.theme} />
                 <Paper style={{ textAlign: 'center', width: '100%', height: '100%' }}>
                     <h1 style={{ fontSize: 40 }}>
                         {this.props.title}
