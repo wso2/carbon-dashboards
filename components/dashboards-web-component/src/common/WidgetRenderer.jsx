@@ -26,6 +26,7 @@ import { NavigationRefresh } from 'material-ui/svg-icons';
 import WidgetClassRegistry from '../utils/WidgetClassRegistry';
 import GoldenLayoutContentUtils from '../utils/GoldenLayoutContentUtils';
 import { Event } from '../utils/Constants';
+import DashboardUtils from '../utils/DashboardUtils';
 
 const widgetScriptUrlPrefix = `${window.location.origin}${window.contextPath}/public/extensions/widgets`;
 const WidgetLoadingStatus = {
@@ -45,7 +46,8 @@ export default class WidgetRenderer extends Component {
         this.widgetName = props.widgetID;
         if (!this.widgetName) {
             const goldenLayout = props.glContainer.layoutManager;
-            const content = GoldenLayoutContentUtils.getWidgetContent(this.widgetUUID, goldenLayout.config.content);
+            const content = GoldenLayoutContentUtils.getWidgetContent(props.id, goldenLayout.config.content);
+            props.widgetID = content.component;
             this.widgetName = content.component;
         }
         this.widgetClassName = (props.configs && props.configs.isGenerated) ? 'UniversalWidget' : this.widgetName;
