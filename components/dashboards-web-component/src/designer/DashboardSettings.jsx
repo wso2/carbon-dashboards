@@ -18,8 +18,7 @@
  */
 
 import {RaisedButton, Snackbar, TextField} from 'material-ui';
-import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
-import ClearIcon from 'material-ui/svg-icons/content/clear';
+import { MuiThemeProvider } from 'material-ui/styles';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
@@ -28,6 +27,7 @@ import { Redirect } from 'react-router-dom';
 
 import DesignerHeader from './components/DesignerHeader';
 import {FormPanel} from '../common';
+import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardSettingsRoles from './DashboardSettingsRoles';
 import {HttpStatus} from '../utils/Constants';
@@ -35,17 +35,12 @@ import Error403 from '../error-pages/Error403';
 import Error404 from '../error-pages/Error404';
 
 /**
- * Material UI theme.
- */
-const muiTheme = getMuiTheme(darkBaseTheme);
-
-/**
  * Style constants.
  */
 const styles = {
-    messageBox: { textAlign: 'center', color: 'white' },
-    errorMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #e74c3c'},
-    successMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #2ecc71'},
+    messageBox: { textAlign: 'center' },
+    errorMessage: {},
+    successMessage: {},
 };
 
 /**
@@ -174,7 +169,7 @@ class DashboardSettings extends Component {
             return <Error404/>;
         }
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
                     <DesignerHeader />
 
@@ -258,7 +253,6 @@ class DashboardSettings extends Component {
                     {/* Snackbar */}
                     <Snackbar
                         contentStyle={styles.messageBox}
-                        bodyStyle={this.state.messageStyle}
                         open={this.state.showMessage}
                         message={this.state.message}
                         autoHideDuration={4000}
