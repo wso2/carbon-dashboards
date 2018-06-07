@@ -185,7 +185,6 @@ class DashboardSettingsPage extends Component {
                             fullWidth
                             value={'/' + this.props.match.params.id}
                         />
-                        <br />
                         <TextField
                             floatingLabelText={
                                 <FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard"/>
@@ -203,7 +202,6 @@ class DashboardSettingsPage extends Component {
                                 this.setState({dashboard: this.state.dashboard});
                             }}
                         />
-                        <br />
                         <TextField
                             floatingLabelText={
                                 <FormattedMessage id="dashboard.description" defaultMessage="Description"/>
@@ -222,8 +220,6 @@ class DashboardSettingsPage extends Component {
                                 this.setState({dashboard: this.state.dashboard});
                             }}
                         />
-                        <br />
-                        <br />
                         {/* Dashboard roles */}
                         <DashboardSettingsRoles
                             dashboard={this.state.dashboard}
@@ -232,8 +228,6 @@ class DashboardSettingsPage extends Component {
                                 this.rolesComponent = component;
                             }}
                         />
-                        <br />
-                        <br />
                         <RaisedButton
                             onClick={this.updateDashboard}
                             label={<FormattedMessage id="save.button" defaultMessage="Save"/>}
