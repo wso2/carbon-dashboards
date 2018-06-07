@@ -26,7 +26,8 @@ import { FormattedMessage } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 
-import {FormPanel, Header} from '../common';
+import DesignerHeader from './components/DesignerHeader';
+import {FormPanel} from '../common';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardSettingsRoles from './DashboardSettingsRoles';
 import {HttpStatus} from '../utils/Constants';
@@ -175,8 +176,7 @@ class DashboardSettings extends Component {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <div>
-                    {/* Header */}
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
+                    <DesignerHeader />
 
                     {/* Settings form */}
                     <FormPanel
