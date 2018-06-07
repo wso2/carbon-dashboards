@@ -20,13 +20,13 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 
 import { LinearProgress, Paper, RaisedButton } from 'material-ui';
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import { MuiThemeProvider } from 'material-ui/styles';
 import { NavigationRefresh } from 'material-ui/svg-icons';
 
 import WidgetClassRegistry from '../utils/WidgetClassRegistry';
 import GoldenLayoutContentUtils from '../utils/GoldenLayoutContentUtils';
 import { Event } from '../utils/Constants';
-import DashboardUtils from '../utils/DashboardUtils';
+import defaultTheme from '../utils/Theme';
 
 const widgetScriptUrlPrefix = `${window.location.origin}${window.contextPath}/public/extensions/widgets`;
 const WidgetLoadingStatus = {
@@ -42,7 +42,6 @@ export default class WidgetRenderer extends Component {
 
     constructor(props) {
         super(props);
-        this.widgetUUID = props.id;
         this.widgetName = props.widgetID;
         if (!this.widgetName) {
             const goldenLayout = props.glContainer.layoutManager;
@@ -53,7 +52,7 @@ export default class WidgetRenderer extends Component {
         this.widgetClassName = (props.configs && props.configs.isGenerated) ? 'UniversalWidget' : this.widgetName;
         this.widgetClass = null;
         this.state = {
-            currentTheme: getMuiTheme(darkBaseTheme),
+            currentTheme: defaultTheme,
             widgetLoadingStatus: WidgetLoadingStatus.INIT,
             widgetFetchingProgress: -1,
             reRenderWidget: false,
