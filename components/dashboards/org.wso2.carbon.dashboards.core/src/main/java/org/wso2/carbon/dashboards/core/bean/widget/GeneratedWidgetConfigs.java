@@ -27,8 +27,17 @@ public class GeneratedWidgetConfigs {
     private String id;
     private JsonElement chartConfig;
     private JsonElement providerConfig;
+    private JsonElement metadata;
     private String version;
     private JsonElement pubsub;
+
+    public JsonElement getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(JsonElement metadata) {
+        this.metadata = metadata;
+    }
 
     public String getVersion() {
         return version;
@@ -86,6 +95,7 @@ public class GeneratedWidgetConfigs {
                ", id='" + id + '\'' +
                ", chartConfig='" + chartConfig + '\'' +
                ", providerConfig='" + providerConfig + '\'' +
+               ", metadata='" + metadata + '\'' +
                '}';
     }
 }

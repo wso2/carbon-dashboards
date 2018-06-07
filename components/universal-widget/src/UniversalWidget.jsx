@@ -29,7 +29,7 @@ export default class UniversalWidget extends Widget {
             width: props.glContainer.width,
             height: props.glContainer.height,
             metadata: null,
-            data: null,
+            data: [],
             config: null,
             widgetInputs: [],
             systemInputs: [],
@@ -61,7 +61,7 @@ export default class UniversalWidget extends Widget {
                 this.state.providerConfigs = providerConfiguration;
                 super.getWidgetChannelManager().
                     subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
-                this.setState({config: message.data.configs.chartConfig});
+                this.setState({ config: message.data.configs.chartConfig, metadata: message.data.configs.metadata });
             })
             .catch((error) => {
                 // TODO: Handle error
@@ -114,12 +114,10 @@ export default class UniversalWidget extends Widget {
     }
 
     handleWidgetData(data) {
-        if (data.topic === this.props.id) {
-            this.setState({
-                metadata: data.metadata,
-                data: data.data,
-            });
-        }
+        this.setState({
+            metadata: data.metadata ? data.metadata : this.state.metadata,
+            data: data.data
+        })
     }
 
     render() {
