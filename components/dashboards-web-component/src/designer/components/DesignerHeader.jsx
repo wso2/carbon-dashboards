@@ -17,55 +17,20 @@
  */
 
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import PropTypes from 'prop-types';
 
-import { AppBar, FlatButton } from 'material-ui';
-import { ActionViewModule } from 'material-ui/svg-icons';
-
+import Header from '../../common/Header';
 import UserMenu from '../../common/UserMenu';
+import PortalButton from '../../common/PortalButton';
 
-class DesignerHeader extends Component {
+export default class DesignerHeader extends Component {
     render() {
-        const theme = this.props.theme;
-
-        const rightIcons = (
-            <span>
-                <FlatButton
-                    style={{ minWidth: '48px' }}
-                    label={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
-                    icon={<ActionViewModule />}
-                    onClick={() => this.props.history.push('/')}
-                />
-                <UserMenu />
-            </span>
-        );
         return (
-            <AppBar
-                style={{ zIndex: theme.zIndex.drawer + 100 }}
-                title={this.props.title}
-                iconElementRight={rightIcons}
-                iconElementLeft={
-                    <Link to={'/'}>
-                        <img
-                            height='28'
-                            style={{ marginTop: 10 }}
-                            src={`${window.contextPath}/public/app/images/logo.svg`}
-                            alt='logo'
-                        />
-                    </Link>
-                }
-                zDepth={2}
+            <Header
+                title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer" />}
+                rightElement={<span><PortalButton /><UserMenu /></span>}
             />
         );
     }
 }
 
-export default withRouter(DesignerHeader);
-
-DesignerHeader.propTypes = {
-    history: PropTypes.shape({}).isRequired,
-    theme: PropTypes.shape({}).isRequired,
-    title: PropTypes.string.isRequired,
-};

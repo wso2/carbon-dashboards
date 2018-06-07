@@ -92,15 +92,6 @@ export default class DashboardDesignerPage extends Component {
         this.setState({ hasWidgetsLoaded: true });
     }
 
-    renderHeader(theme) {
-        return (
-            <DesignerHeader
-                theme={theme}
-                title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer" />}
-            />
-        );
-    }
-
     renderDashboard(theme) {
         if (!this.state.hasWidgetsLoaded) {
             return (
@@ -137,7 +128,7 @@ export default class DashboardDesignerPage extends Component {
                 // Still fetching the dashboard.
                 return (
                     <MuiThemeProvider muiTheme={defaultTheme}>
-                        {this.renderHeader(defaultTheme)}
+                        <DesignerHeader />
                         <PageLoadingIndicator />
                     </MuiThemeProvider>
                 );
@@ -152,7 +143,7 @@ export default class DashboardDesignerPage extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <span>
-                    {this.renderHeader(defaultTheme)}
+                    <DesignerHeader />
                     <div style={{ width: '100%', height: '100%' }}>
                         <LeftSideActions
                             theme={defaultTheme}
