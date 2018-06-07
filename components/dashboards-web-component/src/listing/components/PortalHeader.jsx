@@ -35,38 +35,15 @@
  */
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { AppBar } from 'material-ui';
-import PropTypes from 'prop-types';
-import UserMenu from '../../common/UserMenu';
 
-class PortalHeader extends Component {
+import Header from '../../common/Header';
+
+export default class PortalHeader extends Component {
 
     render() {
         return (
-            <AppBar
-                style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}
-                title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
-                zDepth={2}
-                iconElementLeft={
-                    <Link to={'/'}>
-                        <img
-                            height='28'
-                            style={{ marginTop: 10 }}
-                            src={`${window.contextPath}/public/app/images/logo.svg`}
-                            alt='logo'
-                        />
-                    </Link>
-                }
-                iconElementRight={<UserMenu />}
-            />
+            <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />} />
         );
     }
 }
-
-PortalHeader.propTypes = {
-    theme: PropTypes.shape({}).isRequired,
-};
-
-export default PortalHeader;
