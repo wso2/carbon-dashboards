@@ -18,11 +18,11 @@
 
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-
 import { MuiThemeProvider, Snackbar } from 'material-ui';
+
 import DashboardCard from './components/DashboardCard';
 import FabSpeedDial from './components/FabSpeedDial';
-import Header from './components/Header';
+import Header from '../common/Header';
 import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 
@@ -101,7 +101,7 @@ class DashboardListingPage extends Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
-                <Header theme={defaultTheme} />
+                <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />} />
                 <div style={styles.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
                 </div>

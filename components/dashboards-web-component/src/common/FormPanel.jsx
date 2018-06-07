@@ -58,5 +58,5 @@ FormPanel.propTypes = {
 FormPanel.defaultProps = {
     title: '',
     width: 400,
-    paddingTop: 60
+    paddingTop: 30
 };

@@ -17,7 +17,7 @@
  */
 
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 
 import { FlatButton, Menu, MenuItem, Popover } from 'material-ui';
@@ -25,13 +25,12 @@ import { ActionAccountCircle } from 'material-ui/svg-icons';
 
 import AuthManager from '../auth/utils/AuthManager';
 
-class UserMenu extends Component {
-
+export default class UserMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isMenuOpen: false,
-            anchorElement: null
+            anchorElement: null,
         };
         this.handleUserIconClick = this.handleUserIconClick.bind(this);
         this.handleMenuCloseRequest = this.handleMenuCloseRequest.bind(this);
@@ -41,13 +40,13 @@ class UserMenu extends Component {
         event.preventDefault();
         this.setState({
             isMenuOpen: !this.state.isMenuOpen,
-            anchorElement: event.currentTarget
+            anchorElement: event.currentTarget,
         });
     }
 
     handleMenuCloseRequest() {
         this.setState({
-            isMenuOpen: false
+            isMenuOpen: false,
         });
     }
 
@@ -57,20 +56,23 @@ class UserMenu extends Component {
             return (
                 <span>
                     <FlatButton
-                        style={{marginTop: '6px'}}
+                        style={{ marginTop: '6px' }}
                         label={user.username}
                         onClick={this.handleUserIconClick}
-                        icon={<ActionAccountCircle />} />
+                        icon={<ActionAccountCircle />}
+                    />
                     <Popover
                         open={this.state.isMenuOpen}
                         anchorEl={this.state.anchorElement}
-                        anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                        targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                        onRequestClose={this.handleMenuCloseRequest}>
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        onRequestClose={this.handleMenuCloseRequest}
+                    >
                         <Menu>
                             <MenuItem
                                 primaryText={<FormattedMessage id='logout' defaultMessage='Logout' />}
-                                containerElement={<Link to={'/logout'} />} />
+                                containerElement={<Link to={'/logout'} />}
+                            />
                         </Menu>
                     </Popover>
                 </span>
@@ -78,12 +80,11 @@ class UserMenu extends Component {
         } else {
             return (
                 <FlatButton
-                    style={{marginTop: '6px'}}
+                    style={{ marginTop: '6px' }}
                     label={<FormattedMessage id='login' defaultMessage='Login' />}
-                    containerElement={<Link to={`/login?referrer=${window.location.pathname}`} />} />
+                    containerElement={<Link to={`/login?referrer=${window.location.pathname}`} />}
+                />
             );
         }
     }
 }
-
-export default withRouter(UserMenu);

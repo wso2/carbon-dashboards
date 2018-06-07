@@ -24,7 +24,7 @@ import _ from 'lodash';
 import { Paper, Snackbar } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 
-import Header from './components/Header';
+import DesignerHeader from './components/DesignerHeader';
 import LeftSideActions from './components/LeftSideActions';
 
 import PageLoadingIndicator from '../common/PageLoadingIndicator';
@@ -92,15 +92,6 @@ export default class DashboardDesignerPage extends Component {
         this.setState({ hasWidgetsLoaded: true });
     }
 
-    renderHeader(theme) {
-        return (
-            <Header
-                theme={theme}
-                title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer" />}
-            />
-        );
-    }
-
     renderDashboard(theme) {
         if (!this.state.hasWidgetsLoaded) {
             return (
@@ -137,7 +128,7 @@ export default class DashboardDesignerPage extends Component {
                 // Still fetching the dashboard.
                 return (
                     <MuiThemeProvider muiTheme={defaultTheme}>
-                        {this.renderHeader(defaultTheme)}
+                        <DesignerHeader showPortalButton />
                         <PageLoadingIndicator />
                     </MuiThemeProvider>
                 );
@@ -152,7 +143,7 @@ export default class DashboardDesignerPage extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <span>
-                    {this.renderHeader(defaultTheme)}
+                    <DesignerHeader showPortalButton />
                     <div style={{ width: '100%', height: '100%' }}>
                         <LeftSideActions
                             theme={defaultTheme}

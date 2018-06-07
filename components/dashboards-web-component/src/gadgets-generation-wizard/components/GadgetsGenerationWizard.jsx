@@ -19,7 +19,7 @@
 
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
-import defaultTheme from '../../utils/Theme';
+import { withRouter } from 'react-router-dom';
 // Material UI Components
 import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -29,7 +29,9 @@ import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
 import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 // App Components
-import {FormPanel, Header} from '../../common';
+import FormPanel from '../../common/FormPanel';
+import Header from '../../common/Header';
+import defaultTheme from '../../utils/Theme';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';
@@ -41,17 +43,12 @@ import GadgetsGenerationAPI from '../../utils/apis/GadgetsGenerationAPI';
 const appContext = window.contextPath;
 
 /**
- * Material UI theme
- */
-const muiTheme = getMuiTheme(darkBaseTheme);
-
-/**
  * Style constants
  */
 const styles = {
-    messageBox: {textAlign: 'center', color: 'white'},
-    errorMessage: {backgroundColor: '#FF5722', color: 'white'},
-    successMessage: {backgroundColor: '#4CAF50', color: 'white'},
+    messageBox: {textAlign: 'center'},
+    errorMessage: {},
+    successMessage: {},
     completedStepperText: {color: 'white'},
     activeStepperText: {color: '#0097A7'},
     inactiveStepperText: {color: '#FFFFFF', opacity: 0.3},
@@ -460,9 +457,7 @@ class GadgetsGenerationWizard extends Component {
                     {this.renderNextButton(stepIndex)}
                     <FlatButton
                         label="Cancel"
-                        onClick={() => {
-                            window.location.href = window.contextPath
-                        }}
+                        onClick={() => this.props.history.push('/')}
                         style={{marginRight: 12}}
                     />
                 </div>
@@ -506,7 +501,9 @@ class GadgetsGenerationWizard extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
+                    <Header
+                        title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />}
+                    />
                     <Dialog
                         modal={false}
                         open={this.state.previewGadget}
@@ -569,7 +566,6 @@ class GadgetsGenerationWizard extends Component {
                             });
                         }}
                         contentStyle={styles.messageBox}
-                        bodyStyle={styles[this.state.snackbarMessageType]}
                     />
                 </div>
             </MuiThemeProvider>
@@ -577,4 +573,4 @@ class GadgetsGenerationWizard extends Component {
     }
 }
 
-export default GadgetsGenerationWizard;
+export default withRouter(GadgetsGenerationWizard);

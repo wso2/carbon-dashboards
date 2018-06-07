@@ -24,7 +24,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import AuthManager from './utils/AuthManager';
 import DashboardCreatePage from '../designer/DashboardCreatePage';
 import DashboardDesignerPage from '../designer/DashboardDesignerPage';
-import DashboardSettings from '../designer/DashboardSettings';
+import DashboardSettingsPage from '../designer/DashboardSettingsPage';
 import DashboardListingPage from '../listing/DashboardListingPage';
 import DashboardViewPage from '../viewer/DashboardViewPage';
 import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
@@ -95,7 +95,7 @@ export default class SecuredRouter extends Component {
                 <Route exact path={'/createGadget'} component={GadgetsGenerationWizard} />
 
                 {/* Dashboard settings */}
-                <Route exact path={'/settings/:id'} component={DashboardSettings} />
+                <Route exact path={'/settings/:id'} component={DashboardSettingsPage} />
 
                 {/* Dashboard designer */}
                 <Route exact path='/designer/:dashboardId/:pageId?/:subPageId?' component={DashboardDesignerPage} />

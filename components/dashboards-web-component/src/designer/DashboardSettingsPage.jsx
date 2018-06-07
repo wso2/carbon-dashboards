@@ -17,16 +17,17 @@
  *
  */
 
-import {RaisedButton, Snackbar, TextField} from 'material-ui';
-import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
-import ClearIcon from 'material-ui/svg-icons/content/clear';
+import {RaisedButton, Snackbar, TextField, FlatButton} from 'material-ui';
+import { MuiThemeProvider } from 'material-ui/styles';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 
-import {FormPanel, Header} from '../common';
+import DesignerHeader from './components/DesignerHeader';
+import FormPanel from '../common/FormPanel';
+import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardSettingsRoles from './DashboardSettingsRoles';
 import {HttpStatus} from '../utils/Constants';
@@ -34,23 +35,18 @@ import Error403 from '../error-pages/Error403';
 import Error404 from '../error-pages/Error404';
 
 /**
- * Material UI theme.
- */
-const muiTheme = getMuiTheme(darkBaseTheme);
-
-/**
  * Style constants.
  */
 const styles = {
-    messageBox: { textAlign: 'center', color: 'white' },
-    errorMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #e74c3c'},
-    successMessage: { backgroundColor: '#17262e', color: 'white', border: '2px solid #2ecc71'},
+    messageBox: { textAlign: 'center' },
+    errorMessage: {},
+    successMessage: {},
 };
 
 /**
  * Dashboard settings.
  */
-class DashboardSettings extends Component {
+class DashboardSettingsPage extends Component {
     /**
      * Constructor.
      * Initilaizes the component state.
@@ -173,10 +169,9 @@ class DashboardSettings extends Component {
             return <Error404/>;
         }
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
-                    {/* Header */}
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
+                    <DesignerHeader />
 
                     {/* Settings form */}
                     <FormPanel
@@ -190,7 +185,6 @@ class DashboardSettings extends Component {
                             fullWidth
                             value={'/' + this.props.match.params.id}
                         />
-                        <br />
                         <TextField
                             floatingLabelText={
                                 <FormattedMessage id="dashboard.name" defaultMessage="Name of your Dashboard"/>
@@ -208,7 +202,6 @@ class DashboardSettings extends Component {
                                 this.setState({dashboard: this.state.dashboard});
                             }}
                         />
-                        <br />
                         <TextField
                             floatingLabelText={
                                 <FormattedMessage id="dashboard.description" defaultMessage="Description"/>
@@ -227,18 +220,14 @@ class DashboardSettings extends Component {
                                 this.setState({dashboard: this.state.dashboard});
                             }}
                         />
-                        <br />
-                        <br />
                         {/* Dashboard roles */}
                         <DashboardSettingsRoles
                             dashboard={this.state.dashboard}
-                            muiTheme={muiTheme}
+                            muiTheme={defaultTheme}
                             ref={(component) => {
                                 this.rolesComponent = component;
                             }}
                         />
-                        <br />
-                        <br />
                         <RaisedButton
                             onClick={this.updateDashboard}
                             label={<FormattedMessage id="save.button" defaultMessage="Save"/>}
@@ -246,11 +235,10 @@ class DashboardSettings extends Component {
                             disabled={this.state.dashboard.name === ''}
                         />
 
-                        <RaisedButton
+                        <FlatButton
                             label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>}
-                            style={{'margin': '30px 10px'}}
-                            backgroundColor="rgb(13, 31, 39)"
-                            containerElement={<Link to={'/'}/>}
+                            style={{'margin': '30px 20px'}}
+                            onClick={() => this.props.history.push('/')}
                         />
 
                     </FormPanel>
@@ -258,7 +246,6 @@ class DashboardSettings extends Component {
                     {/* Snackbar */}
                     <Snackbar
                         contentStyle={styles.messageBox}
-                        bodyStyle={this.state.messageStyle}
                         open={this.state.showMessage}
                         message={this.state.message}
                         autoHideDuration={4000}
@@ -272,8 +259,8 @@ class DashboardSettings extends Component {
     }
 }
 
-DashboardSettings.contextTypes ={
+DashboardSettingsPage.contextTypes ={
     intl: PropTypes.object.isRequired
 };
 
-export default withRouter(DashboardSettings);
+export default withRouter(DashboardSettingsPage);
