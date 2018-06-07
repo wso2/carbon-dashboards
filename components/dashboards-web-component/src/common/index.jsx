@@ -18,6 +18,5 @@
  */
 
 import FormPanel from './components/FormPanel';
-import Header from './components/Header';
 
-export {FormPanel, Header};
+export {FormPanel};
