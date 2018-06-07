@@ -20,7 +20,6 @@
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
 import { withRouter } from 'react-router-dom';
-import defaultTheme from '../../utils/Theme';
 // Material UI Components
 import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -32,6 +31,7 @@ import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 // App Components
 import { FormPanel } from '../../common';
 import Header from '../../common/Header';
+import defaultTheme from '../../utils/Theme';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';
@@ -43,17 +43,12 @@ import GadgetsGenerationAPI from '../../utils/apis/GadgetsGenerationAPI';
 const appContext = window.contextPath;
 
 /**
- * Material UI theme
- */
-const muiTheme = getMuiTheme(darkBaseTheme);
-
-/**
  * Style constants
  */
 const styles = {
-    messageBox: {textAlign: 'center', color: 'white'},
-    errorMessage: {backgroundColor: '#FF5722', color: 'white'},
-    successMessage: {backgroundColor: '#4CAF50', color: 'white'},
+    messageBox: {textAlign: 'center'},
+    errorMessage: {},
+    successMessage: {},
     completedStepperText: {color: 'white'},
     activeStepperText: {color: '#0097A7'},
     inactiveStepperText: {color: '#FFFFFF', opacity: 0.3},
@@ -571,7 +566,6 @@ class GadgetsGenerationWizard extends Component {
                             });
                         }}
                         contentStyle={styles.messageBox}
-                        bodyStyle={styles[this.state.snackbarMessageType]}
                     />
                 </div>
             </MuiThemeProvider>
