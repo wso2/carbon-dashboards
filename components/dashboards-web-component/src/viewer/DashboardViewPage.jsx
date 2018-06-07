@@ -22,9 +22,9 @@ import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 
-import { Divider, Drawer, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
+import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
-import { ActionHome } from 'material-ui/svg-icons';
+import { ActionHome, NavigationMenu } from 'material-ui/svg-icons';
 
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import Error403 from '../error-pages/Error403';
@@ -145,6 +145,8 @@ class DashboardViewPage extends Component {
         return (
             <Header
                 title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
+                logo={<IconButton><NavigationMenu /></IconButton>}
+                onLogoClick={this.handleSidePaneToggle}
                 rightElement={<span><PortalButton /><UserMenu /></span>}
                 theme={theme}
             />
