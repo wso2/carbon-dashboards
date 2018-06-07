@@ -20,10 +20,11 @@
 import React, { Component } from 'react';
 import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import _ from 'lodash';
 
-import { AppBar, Divider, Drawer, FlatButton, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
+import { Divider, Drawer, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
-import { ActionHome, ActionViewModule } from 'material-ui/svg-icons';
+import { ActionHome } from 'material-ui/svg-icons';
 
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import Error403 from '../error-pages/Error403';
@@ -32,9 +33,10 @@ import Error500 from '../error-pages/Error500';
 import PageLoadingIndicator from '../common/PageLoadingIndicator';
 import { HttpStatus } from '../utils/Constants';
 import DashboardRenderer from './components/DashboardRenderer';
+import Header from '../common/Header';
 import UserMenu from '../common/UserMenu';
+import PortalButton from '../common/PortalButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
-import _ from 'lodash';
 
 const SelectableList = makeSelectable(List);
 
@@ -140,24 +142,13 @@ class DashboardViewPage extends Component {
     }
 
     renderHeader(theme) {
-        const rightIcons = (
-            <span>
-                <FlatButton
-                    style={{ minWidth: '48px' }}
-                    label={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
-                    icon={<ActionViewModule />}
-                    onClick={() => this.props.history.push('/')}
-                />
-                <UserMenu />
-            </span>
+        return (
+            <Header
+                title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
+                rightElement={<span><PortalButton /><UserMenu /></span>}
+                theme={theme}
+            />
         );
-        return (<AppBar
-            style={{ zIndex: theme.zIndex.drawer + 100 }}
-            onLeftIconButtonClick={this.handleSidePaneToggle}
-            title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
-            iconElementRight={rightIcons}
-            zDepth={2}
-        />);
     }
 
     renderSidePane(theme) {
