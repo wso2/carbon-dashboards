@@ -39,12 +39,16 @@ export default class WidgetOptionsConfiguration extends Component {
         };
     }
 
+    componentWillReceiveProps(props) {
+        this.state.options = props.selectedWidget.props.configs.options;
+    }
+
     getCurrentWidgetOptionsInputs() {
         const CurrentWidgetOptionsInputs = [];
         const options = this.props.selectedWidgetConfiguration.configs.options;
         if (options) {
             for (let i = 0; i < options.length; i++) {
-                const value = this.state.options[options[i].id];
+                const value = this.state.options[options[i].id] || '';
                 const currentOption = options[i].type.name.toUpperCase();
                 switch (currentOption) {
                     case 'TEXT':
@@ -53,7 +57,7 @@ export default class WidgetOptionsConfiguration extends Component {
                                 <TextField
                                     id={options[i].id}
                                     floatingLabelText={options[i].title}
-                                    defaultValue={value}
+                                    value={value}
                                     onChange={(event, newValue) => {
                                         this.handleWidgetOutput(options[i].id, newValue, options[i].defaultValue);
                                     }}
@@ -118,7 +122,7 @@ export default class WidgetOptionsConfiguration extends Component {
 
     handleWidgetOutput(optionId, optionValue, defaultValue) {
         const options = this.props.selectedWidget.props.configs.options;
-        options[optionId] = optionValue || defaultValue;
+        options[optionId] = optionValue == null ? defaultValue : optionValue;
         this.setState({ options });
     }
 

@@ -141,21 +141,26 @@ export default class DashboardRenderer extends Component {
         if (!component.parent || !component.parent.header) {
             return; // Added component is not a widget.
         }
-        if (_.isEmpty(_.get(component, 'config.props.configs.options')) &&
-            !_.get(component, 'config.props.configs.pubsub.types', []).includes('subscriber')) {
-            return; // Added widget does not have and configurations.
-        }
 
-        const settingsButton = document.createElement('i');
-        settingsButton.title = 'settings';
-        settingsButton.className = 'fw fw-configarations widget-configuration-button';
-        settingsButton.addEventListener('click', () => {
-            this.unhighlightSelectedWidgetContainer();
-            this.selectedWidgetGoldenLayoutContent = component;
-            this.highlightSelectedWidgetContainer();
-            this.setState({ isWidgetConfigurationPaneOpen: true });
+        this.goldenLayout._dragSources.forEach((dragSource) => {
+            if (dragSource._itemConfig.props.id === component.config.props.id) {
+                dragSource._itemConfig.props.id = DashboardUtils.generateUuid();
+            }
         });
-        component.parent.header.controlsContainer.prepend(settingsButton);
+
+        if (!(_.isEmpty(_.get(component, 'config.props.configs.options')) &&
+                !_.get(component, 'config.props.configs.pubsub.types', []).includes('subscriber'))) {
+            const settingsButton = document.createElement('i');
+            settingsButton.title = 'settings';
+            settingsButton.className = 'fw fw-configarations widget-configuration-button';
+            settingsButton.addEventListener('click', () => {
+                this.unhighlightSelectedWidgetContainer();
+                this.selectedWidgetGoldenLayoutContent = component;
+                this.highlightSelectedWidgetContainer();
+                this.setState({ isWidgetConfigurationPaneOpen: true });
+            });
+            component.parent.header.controlsContainer.prepend(settingsButton);
+        }
     }
 
     onWidgetConfigurationPaneClose() {
