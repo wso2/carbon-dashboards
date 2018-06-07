@@ -20,9 +20,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { Link } from 'react-router-dom';
 import { MuiThemeProvider } from 'material-ui/styles';
-import { RaisedButton, TextField, Snackbar } from 'material-ui';
+import { RaisedButton, TextField, Snackbar, FlatButton } from 'material-ui';
 import { withRouter } from 'react-router-dom';
 
 import DesignerHeader from './components/DesignerHeader';
@@ -261,11 +260,10 @@ class DashboardCreatePage extends Component {
                             primary
                             style={{'margin-top':'30px'}}
                         />
-                        <RaisedButton
-                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel" />}
-                            style={{'margin':'30px 10px'}}
-                            backgroundColor="rgb(13, 31, 39)"
-                            containerElement={<Link to={'/'} />}
+                        <FlatButton
+                            label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>}
+                            style={{'margin': '30px 20px'}}
+                            onClick={() => this.props.history.push('/')}
                         />
                     </FormPanel>
                     <Snackbar
