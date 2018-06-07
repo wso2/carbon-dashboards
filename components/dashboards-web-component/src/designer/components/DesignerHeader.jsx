@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
+import PropTypes from 'prop-types';
 
 import Header from '../../common/Header';
 import UserMenu from '../../common/UserMenu';
@@ -28,9 +29,16 @@ export default class DesignerHeader extends Component {
         return (
             <Header
                 title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer" />}
-                rightElement={<span><PortalButton /><UserMenu /></span>}
+                rightElement={this.props.showPortalButton ? <span><PortalButton /><UserMenu /></span> : <UserMenu />}
             />
         );
     }
 }
 
+DesignerHeader.propTypes = {
+    showPortalButton: PropTypes.bool,
+};
+
+DesignerHeader.defaultProps = {
+    showPortalButton: false,
+};

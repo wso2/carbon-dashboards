@@ -128,7 +128,7 @@ export default class DashboardDesignerPage extends Component {
                 // Still fetching the dashboard.
                 return (
                     <MuiThemeProvider muiTheme={defaultTheme}>
-                        <DesignerHeader />
+                        <DesignerHeader showPortalButton />
                         <PageLoadingIndicator />
                     </MuiThemeProvider>
                 );
@@ -143,7 +143,7 @@ export default class DashboardDesignerPage extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <span>
-                    <DesignerHeader />
+                    <DesignerHeader showPortalButton />
                     <div style={{ width: '100%', height: '100%' }}>
                         <LeftSideActions
                             theme={defaultTheme}
