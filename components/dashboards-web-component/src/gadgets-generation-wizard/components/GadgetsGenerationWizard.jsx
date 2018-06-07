@@ -29,7 +29,8 @@ import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
 import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 // App Components
-import {FormPanel, Header} from '../../common';
+import { FormPanel } from '../../common';
+import Header from '../../common/Header';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';
@@ -506,7 +507,9 @@ class GadgetsGenerationWizard extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
-                    <Header title={<FormattedMessage id="portal" defaultMessage="Portal"/>}/>
+                    <Header
+                        title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />}
+                    />
                     <Dialog
                         modal={false}
                         open={this.state.previewGadget}
