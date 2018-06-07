@@ -104,7 +104,7 @@ export default class UniversalWidget extends Widget {
         this.state.providerConfigs.configs.config.queryData.query = this.getQuery.apply(this, this.state.widgetInputs);
         super.getWidgetChannelManager().unsubscribeWidget(this.props.id);
         super.getWidgetChannelManager().
-            subscribeWidget(this.props.widgetID, this.handleWidgetData, this.state.providerConfigs);
+            subscribeWidget(this.props.id, this.handleWidgetData, this.state.providerConfigs);
         this.setState({config: this.state.config});
 
     }
@@ -114,10 +114,12 @@ export default class UniversalWidget extends Widget {
     }
 
     handleWidgetData(data) {
-        this.setState({
-            metadata: data.metadata,
-            data: data.data
-        })
+        if (data.topic === this.props.id) {
+            this.setState({
+                metadata: data.metadata,
+                data: data.data,
+            });
+        }
     }
 
     render() {

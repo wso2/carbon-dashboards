@@ -36,13 +36,8 @@
     </parent>
 
     <modules>
-        <module>CpuUsage</module>
-        <module>LoadAverage</module>
-        <module>MemoryUsage</module>
         <module>Publisher</module>
-        <module>ServerStatus</module>
         <module>Subscriber</module>
-        <module>TotalUpdates</module>
         <module>WidgetState</module>
         <module>UserInfo</module>
         <module>sales-dashboard-widgets/CustomersByProduct</module>
