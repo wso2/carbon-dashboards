@@ -23,7 +23,7 @@ import Qs from 'qs';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { FormPanel } from '../common';
+import FormPanel from '../common/FormPanel';
 
 import { FormattedMessage } from 'react-intl';
 

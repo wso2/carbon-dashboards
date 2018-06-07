@@ -25,7 +25,7 @@ import { RaisedButton, TextField, Snackbar, FlatButton } from 'material-ui';
 import { withRouter } from 'react-router-dom';
 
 import DesignerHeader from './components/DesignerHeader';
-import { FormPanel } from '../common';
+import FormPanel from '../common/FormPanel';
 import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';

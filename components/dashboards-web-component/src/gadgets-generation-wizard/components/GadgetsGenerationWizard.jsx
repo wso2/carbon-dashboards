@@ -29,7 +29,7 @@ import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
 import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
 // App Components
-import { FormPanel } from '../../common';
+import FormPanel from '../../common/FormPanel';
 import Header from '../../common/Header';
 import defaultTheme from '../../utils/Theme';
 import ChartConfigurator from './ChartConfigurator';
