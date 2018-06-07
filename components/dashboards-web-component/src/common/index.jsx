@@ -17,6 +17,6 @@
  *
  */
 
-import FormPanel from './components/FormPanel';
+import FormPanel from './FormPanel';
 
 export {FormPanel};
