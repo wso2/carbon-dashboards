@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { Button, IconButton } from '@material-ui/core';
+import { Button, IconButton } from 'material-ui';
 import HighGranularityMode from '@material-ui/icons/KeyboardArrowRight';
 import LowGranularityMode from '@material-ui/icons/KeyboardArrowLeft';
 
