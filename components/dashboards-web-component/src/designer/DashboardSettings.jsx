@@ -46,7 +46,7 @@ const styles = {
 /**
  * Dashboard settings.
  */
-class DashboardSettings extends Component {
+class DashboardSettingsPage extends Component {
     /**
      * Constructor.
      * Initilaizes the component state.
@@ -266,8 +266,8 @@ class DashboardSettings extends Component {
     }
 }
 
-DashboardSettings.contextTypes ={
+DashboardSettingsPage.contextTypes ={
     intl: PropTypes.object.isRequired
 };
 
-export default withRouter(DashboardSettings);
+export default withRouter(DashboardSettingsPage);
