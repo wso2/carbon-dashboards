@@ -94,6 +94,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
             widgetConfigs.setProviderConfig(generatedWidgetConfigs.getProviderConfig());
             widgetConfigs.setPubsub(generatedWidgetConfigs.getPubsub());
             widgetConfigs.setGenerated(true);
+            widgetConfigs.setMetadata(generatedWidgetConfigs.getMetadata());
             widgetMetaInfo.setVersion(generatedWidgetConfigs.getVersion());
             widgetMetaInfo.setId(generatedWidgetConfigs.getId());
             widgetMetaInfo.setName(generatedWidgetConfigs.getName());
@@ -135,6 +136,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
                 widgetMetaInfo.setId(generatedWidgetConfigs.getId());
                 widgetMetaInfo.setName(generatedWidgetConfigs.getName());
                 widgetConfigs.setPubsub(generatedWidgetConfigs.getPubsub());
+                widgetConfigs.setMetadata(generatedWidgetConfigs.getMetadata());
                 widgetConfigs.setGenerated(true);
                 widgetMetaInfo.setVersion(generatedWidgetConfigs.getVersion());
                 widgetMetaInfo.setConfigs(widgetConfigs);

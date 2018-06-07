@@ -17,7 +17,7 @@
  *
  */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 // Material UI Components
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -30,6 +30,7 @@ import UtilFunctions from '../utils/UtilFunctions';
 // App Constants
 import Types from '../utils/Types';
 import DynamicQueryComponent from './DynamicQueryComponent';
+import MetaDataCollector from './ProviderConfiguratorComponents/MetaDataCollector';
 
 /**
  * Displays data provider selection, and the properties related to the selected provider type
@@ -60,10 +61,11 @@ class ProviderConfigurator extends Component {
                 propertyKeys.push(key);
             }
         }
-
-        return propertyKeys.map(key => (
-            this.renderAsInputField(key, this.state.configRenderTypes[key])
-        ));
+        return propertyKeys.map((key) => {
+            return (
+                this.renderAsInputField(key, this.state.configRenderTypes[key])
+            );
+        });
     }
 
     /**
@@ -76,14 +78,27 @@ class ProviderConfigurator extends Component {
             case (Types.inputFields.SWITCH):
                 return (
                     <div>
-                        <br/>
+                        <br />
                         <SwitchProperty
                             id={value}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
-                        <br/>
+                        <br />
+                    </div>
+                );
+            case (Types.inputFields):
+                return (
+                    <div>
+                        <br />
+                        <SwitchProperty
+                            id={value}
+                            value={this.props.configuration[value]}
+                            fieldName={UtilFunctions.toSentenceCase(value)}
+                            onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
+                        />
+                        <br />
                     </div>
                 );
             case (Types.inputFields.SQL_CODE):
@@ -97,14 +112,16 @@ class ProviderConfigurator extends Component {
                             mode={(type === Types.inputFields.SQL_CODE) ? 'sql' : 'text'}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
-                        <br/>
+                        <br />
                     </div>
                 );
             case (Types.inputFields.DYNAMIC_SQL_CODE):
             case (Types.inputFields.DYNAMIC_SIDDHI_CODE):
                 return (
-                    <DynamicQueryComponent value={this.props.configuration[value].queryFunction}
-                                           handleDynamicQuery={this.props.handleDynamicQuery}/>
+                    <DynamicQueryComponent
+                        value={this.props.configuration[value].queryFunction}
+                        handleDynamicQuery={this.props.handleDynamicQuery}
+                    />
                 );
             default:
                 return (
@@ -118,7 +135,7 @@ class ProviderConfigurator extends Component {
                             multiLine={type === Types.inputFields.TEXT_AREA}
                             fullWidth
                         />
-                        <br/>
+                        <br />
                     </div>
                 );
         }
@@ -126,7 +143,7 @@ class ProviderConfigurator extends Component {
 
     render() {
         return (
-            <div style={{margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white'}}>
+            <div style={{ margin: 10, fontFamily: 'Roboto, sans-serif', color: 'white' }}>
                 <SelectField
                     floatingLabelText='Select a data provider type & configure its properties'
                     value={this.props.providerType}
@@ -137,13 +154,33 @@ class ProviderConfigurator extends Component {
                         <MenuItem
                             key={provider}
                             value={provider}
-                            primaryText={UtilFunctions.toSentenceCase(provider)}/>
+                            primaryText={UtilFunctions.toSentenceCase(provider)}
+                        />
                     ))}
                 </SelectField>
-                <br/>
+                <br />
                 {this.renderProperties()}
+                {
+                    this.props.providerType && this.props.providerType === 'WebSocketProvider' ?
+                        <MetaDataCollector
+                            metadata={this.props.providerMetadata}
+                            handleMetadataChange={this.props.handleMetadataInput}
+                        /> :
+                        null
+                }
             </div>
         );
+    }
+
+    static validateWebSocketConfig(config) {
+        return config.mapType && ['xml', 'json', 'text'].indexOf(config.mapType.toLowerCase()) > -1 &&
+            config.topic && config.topic.length > 0;
+    }
+
+    static validateMetadata(metadata) {
+        return metadata.names &&
+            metadata.names.length > 0 &&
+            !(metadata.names.filter(name => name === null || name.length === 0).length > 0);
     }
 }
 

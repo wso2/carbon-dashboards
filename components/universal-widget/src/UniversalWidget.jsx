@@ -29,7 +29,7 @@ export default class UniversalWidget extends Widget {
             width: props.glContainer.width,
             height: props.glContainer.height,
             metadata: null,
-            data: null,
+            data: [],
             config: null,
             widgetInputs: [],
             systemInputs: [],
@@ -49,7 +49,10 @@ export default class UniversalWidget extends Widget {
         this.getHTTPClient()
             .get(`apis/widgets/${this.props.widgetID}`)
             .then((message) => {
+                console.info(message);
                 let providerConfiguration = message.data.configs.providerConfig;
+
+                console.info(providerConfiguration);
                 if (message.data.version !== "1.0.0") {
                     providerConfiguration.configs.config.queryData = {};
                     providerConfiguration.configs.config.queryData.query = providerConfiguration.configs.config.query;
@@ -61,7 +64,7 @@ export default class UniversalWidget extends Widget {
                 this.state.providerConfigs = providerConfiguration;
                 super.getWidgetChannelManager().
                     subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
-                this.setState({config: message.data.configs.chartConfig});
+                this.setState({ config: message.data.configs.chartConfig, metadata: message.data.configs.metadata });
             })
             .catch((error) => {
                 // TODO: Handle error
@@ -115,7 +118,7 @@ export default class UniversalWidget extends Widget {
 
     handleWidgetData(data) {
         this.setState({
-            metadata: data.metadata,
+            metadata: data.metadata ? data.metadata : this.state.metadata,
             data: data.data
         })
     }
