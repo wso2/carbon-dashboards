@@ -17,7 +17,7 @@
  *
  */
 
-import {RaisedButton, Snackbar, TextField} from 'material-ui';
+import {RaisedButton, Snackbar, TextField, FlatButton} from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -241,11 +241,10 @@ class DashboardSettingsPage extends Component {
                             disabled={this.state.dashboard.name === ''}
                         />
 
-                        <RaisedButton
+                        <FlatButton
                             label={<FormattedMessage id="cancel.button" defaultMessage="Cancel"/>}
-                            style={{'margin': '30px 10px'}}
-                            backgroundColor="rgb(13, 31, 39)"
-                            containerElement={<Link to={'/'}/>}
+                            style={{'margin': '30px 20px'}}
+                            onClick={() => this.props.history.push('/')}
                         />
 
                     </FormPanel>
