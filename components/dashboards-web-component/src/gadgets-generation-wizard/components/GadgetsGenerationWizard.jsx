@@ -19,6 +19,7 @@
 
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
+import { withRouter } from 'react-router-dom';
 import defaultTheme from '../../utils/Theme';
 // Material UI Components
 import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
@@ -461,9 +462,7 @@ class GadgetsGenerationWizard extends Component {
                     {this.renderNextButton(stepIndex)}
                     <FlatButton
                         label="Cancel"
-                        onClick={() => {
-                            window.location.href = window.contextPath
-                        }}
+                        onClick={() => this.props.history.push('/')}
                         style={{marginRight: 12}}
                     />
                 </div>
@@ -580,4 +579,4 @@ class GadgetsGenerationWizard extends Component {
     }
 }
 
-export default GadgetsGenerationWizard;
+export default withRouter(GadgetsGenerationWizard);
