@@ -227,7 +227,7 @@ class DashboardSettingsPage extends Component {
                         {/* Dashboard roles */}
                         <DashboardSettingsRoles
                             dashboard={this.state.dashboard}
-                            muiTheme={muiTheme}
+                            muiTheme={defaultTheme}
                             ref={(component) => {
                                 this.rolesComponent = component;
                             }}
