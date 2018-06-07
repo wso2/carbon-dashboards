@@ -21,30 +21,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
-import { MuiThemeProvider, darkBaseTheme, getMuiTheme } from 'material-ui/styles';
+import { MuiThemeProvider } from 'material-ui/styles';
 import { RaisedButton, TextField, Snackbar } from 'material-ui';
 import { withRouter } from 'react-router-dom';
 
 import DesignerHeader from './components/DesignerHeader';
 import { FormPanel } from '../common';
+import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import DashboardUtils from '../utils/DashboardUtils';
 import { HttpStatus } from '../utils/Constants';
 import AuthManager from '../auth/utils/AuthManager';
 
 /**
- * Material UI theme.
- */
-const muiTheme = getMuiTheme(darkBaseTheme);
-
-/**
  * Style constants.
  */
 const styles = {
-    fieldError: { color: '#FF5722' },
-    messageBox: { textAlign: 'center', color: 'white' },
-    errorMessage: { backgroundColor: '#FF5722', color: 'white' },
-    successMessage: { backgroundColor: '#4CAF50', color: 'white' },
+    fieldError: {},
+    messageBox: { textAlign: 'center' },
+    errorMessage: {},
+    successMessage: {},
 };
 
 /**
@@ -187,7 +183,7 @@ class DashboardCreatePage extends Component {
      */
     render() {
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
+            <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
                     <DesignerHeader />
 
@@ -274,7 +270,6 @@ class DashboardCreatePage extends Component {
                     </FormPanel>
                     <Snackbar
                         contentStyle={styles.messageBox}
-                        bodyStyle={this.state.messageStyle}
                         open={this.state.showMessage}
                         message={this.state.message}
                         autoHideDuration={4000}
