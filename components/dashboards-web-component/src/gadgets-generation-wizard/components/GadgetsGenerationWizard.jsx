@@ -20,6 +20,7 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import defaultTheme from '../../utils/Theme';
+import { withRouter } from 'react-router-dom';
 // Material UI Components
 import { Step, StepLabel, Stepper } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -29,7 +30,8 @@ import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
 import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
 // App Components
-import { FormPanel, Header } from '../../common';
+import FormPanel from '../../common/FormPanel';
+import Header from '../../common/Header';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';
