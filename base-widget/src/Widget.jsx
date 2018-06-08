@@ -179,3 +179,5 @@ export default class Widget extends Component {
         return WidgetChannelManager;
     }
 }
+
+Widget.version = '1.2.0';
