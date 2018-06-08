@@ -22,7 +22,6 @@ import AddButton from 'material-ui/svg-icons/content/add';
 import TextInput from '../inputTypes/TextProperty';
 import SelectProperty from '../inputTypes/SelectProperty';
 
-
 export default class MetaDataCollector extends React.Component {
     constructor(props) {
         super(props);

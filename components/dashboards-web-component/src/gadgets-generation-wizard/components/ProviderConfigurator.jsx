@@ -78,27 +78,23 @@ class ProviderConfigurator extends Component {
             case (Types.inputFields.SWITCH):
                 return (
                     <div>
-                        <br />
                         <SwitchProperty
                             id={value}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
-                        <br />
                     </div>
                 );
             case (Types.inputFields):
                 return (
                     <div>
-                        <br />
                         <SwitchProperty
                             id={value}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
-                        <br />
                     </div>
                 );
             case (Types.inputFields.SQL_CODE):
@@ -112,7 +108,6 @@ class ProviderConfigurator extends Component {
                             mode={(type === Types.inputFields.SQL_CODE) ? 'sql' : 'text'}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
                         />
-                        <br />
                     </div>
                 );
             case (Types.inputFields.DYNAMIC_SQL_CODE):
@@ -135,7 +130,6 @@ class ProviderConfigurator extends Component {
                             multiLine={type === Types.inputFields.TEXT_AREA}
                             fullWidth
                         />
-                        <br />
                     </div>
                 );
         }
@@ -158,7 +152,6 @@ class ProviderConfigurator extends Component {
                         />
                     ))}
                 </SelectField>
-                <br />
                 {this.renderProperties()}
                 {
                     this.props.providerType && this.props.providerType === 'WebSocketProvider' ?
