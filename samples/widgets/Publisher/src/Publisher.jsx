@@ -43,7 +43,6 @@ class Publisher extends Widget {
 
     publishMsg() {
         const currentMessage = this.state.currentMessage;
-        console.log(`publishing ${currentMessage}`)
         if (currentMessage && (currentMessage.length > 0)) {
             super.publish(currentMessage);
             const newPublishedMessages = this.state.publishedMessages;
