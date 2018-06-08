@@ -53,8 +53,15 @@ export default class Widget extends Component {
      * This method is called by subscriber widget to set the listener callback.
      * @param listnerCallback
      */
-    subscribe(listenerCallback) {
-        this.props.glEventHub.on(this.props.id, listenerCallback)
+    subscribe(listenerCallback, publisherId, context) {
+        if (!publisherId) {
+            const publisherIds = this.props.configs.pubsub.publishers;
+            if (publisherIds && Array.isArray(publisherIds)) {
+                publisherIds.forEach(id => this.props.glEventHub.on(id, listenerCallback));
+            }
+        } else {
+            this.props.glEventHub.on(publisherId, listenerCallback, context);
+        }
     }
 
     /**
