@@ -130,6 +130,7 @@ export default class UniversalWidget extends Widget {
                     height={this.props.glContainer.height}
                     width={this.props.glContainer.width}
                     onClick={this.state.config && this.state.config.widgetOutputConfigs ? this.publishEvents : ""}
+                    theme={this.props.muiTheme.name}
                 />
             </div>
         )
