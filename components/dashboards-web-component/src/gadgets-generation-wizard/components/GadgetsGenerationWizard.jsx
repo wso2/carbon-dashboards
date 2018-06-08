@@ -17,21 +17,21 @@
  *
  */
 
-import React, {Component} from 'react';
-import {FormattedMessage} from 'react-intl';
+import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
+import defaultTheme from '../../utils/Theme';
 import { withRouter } from 'react-router-dom';
 // Material UI Components
-import {Step, StepLabel, Stepper} from 'material-ui/Stepper';
+import { Step, StepLabel, Stepper } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import ExpandTransition from 'material-ui/internal/ExpandTransition';
 import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
-import {darkBaseTheme, getMuiTheme, MuiThemeProvider} from 'material-ui/styles';
+import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
 // App Components
 import FormPanel from '../../common/FormPanel';
 import Header from '../../common/Header';
-import defaultTheme from '../../utils/Theme';
 import ChartConfigurator from './ChartConfigurator';
 import ProviderConfigurator from './ProviderConfigurator';
 import UtilFunctions from '../utils/UtilFunctions';
@@ -46,16 +46,16 @@ const appContext = window.contextPath;
  * Style constants
  */
 const styles = {
-    messageBox: {textAlign: 'center'},
-    errorMessage: {},
-    successMessage: {},
-    completedStepperText: {color: 'white'},
-    activeStepperText: {color: '#0097A7'},
-    inactiveStepperText: {color: '#FFFFFF', opacity: 0.3},
+    messageBox: { textAlign: 'center', color: 'white' },
+    errorMessage: { backgroundColor: '#FF5722', color: 'white' },
+    successMessage: { backgroundColor: '#4CAF50', color: 'white' },
+    completedStepperText: { color: 'white' },
+    activeStepperText: { color: '#0097A7' },
+    inactiveStepperText: { color: '#FFFFFF', opacity: 0.3 },
 };
 
 /**
- * Represents a main chart, that can have Line / Bar / Area as sub charts
+ * Represents a main chart, that can have Line / Bar / Area assub charts
  */
 class GadgetsGenerationWizard extends Component {
     constructor() {
@@ -74,8 +74,8 @@ class GadgetsGenerationWizard extends Component {
             chartConfiguration: {},
             pubsub: {},
             metadata: {
-                names: ['rpm', 'torque', 'horsepower', 'EngineType'],
-                types: ['LINEAR', 'LINEAR', 'LINEAR', 'ORDINAL'],
+                names: [],
+                types: [],
             },
             data: [],
             // UI related
@@ -98,6 +98,7 @@ class GadgetsGenerationWizard extends Component {
         this.handleNext = this.handleNext.bind(this);
         this.handlePrev = this.handlePrev.bind(this);
         this.handleDynamicQuery = this.handleDynamicQuery.bind(this);
+        this.handleMetadataInput = this.handleMetadataInput.bind(this);
         GadgetsGenerationWizard.getPubSubConfiguration = GadgetsGenerationWizard.getPubSubConfiguration.bind(this);
     }
 
@@ -119,6 +120,10 @@ class GadgetsGenerationWizard extends Component {
         const state = this.state;
         state.gadgetDetails[key] = value;
         this.setState(state);
+    }
+
+    handleMetadataInput(metadata) {
+        this.setState({ metadata });
     }
 
     /**
@@ -163,7 +168,7 @@ class GadgetsGenerationWizard extends Component {
      * @param chartConfiguration
      */
     updateChartConfiguration(chartConfiguration) {
-        this.setState({chartConfiguration});
+        this.setState({ chartConfiguration });
     }
 
     /**
@@ -203,16 +208,17 @@ class GadgetsGenerationWizard extends Component {
             const submittableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
-                version: "1.0.0",
+                version: '1.0.0',
                 chartConfig: validatedConfiguration,
                 pubsub: GadgetsGenerationWizard.getPubSubConfiguration(validatedConfiguration.widgetOutputConfigs,
                     this.state.providerConfiguration.queryData.customWidgetInputs),
                 providerConfig: {
                     configs: {
                         type: this.state.providerType,
-                        config: this.state.providerConfiguration
-                    }
-                }
+                        config: this.state.providerConfiguration,
+                    },
+                },
+                metadata: this.state.metadata,
             };
             const apis = new GadgetsGenerationAPI();
             apis.addGadgetConfiguration(JSON.stringify(submittableConfig)).then((response) => {
@@ -241,33 +247,33 @@ class GadgetsGenerationWizard extends Component {
     }
 
     dummyAsync(cb) {
-        this.setState({loading: true}, () => {
+        this.setState({ loading: true }, () => {
             this.asyncTimer = setTimeout(cb, 500);
         });
     }
 
     handleDynamicQuery(queryFunctionImpl, customWidgetInputs, systemWidgetInputs, parameters, defaultValues) {
-        this.widgetInputsDefaultValues = defaultValues.split(",");
-        let queryFunction = "this.getQuery = function (" + parameters + "){" + queryFunctionImpl + "}";
-        this.handleProviderConfigPropertyChange("queryData", {
-            queryFunction: queryFunction,
-            customWidgetInputs: customWidgetInputs,
-            systemWidgetInputs: systemWidgetInputs
+        this.widgetInputsDefaultValues = defaultValues.split(',');
+        const queryFunction = 'this.getQuery = function (' + parameters + '){' + queryFunctionImpl + '}';
+        this.handleProviderConfigPropertyChange('queryData', {
+            queryFunction,
+            customWidgetInputs,
+            systemWidgetInputs,
         });
     }
 
     static getPubSubConfiguration(widgetOutputConfigs, customWidgetInputs) {
-        let pubsub = {};
+        const pubsub = {};
         pubsub.types = [];
         if (customWidgetInputs.length !== 0) {
-            pubsub.types.push("subscriber");
-            pubsub.subscriberWidgetInputs = customWidgetInputs.map(widgetInput => {
+            pubsub.types.push('subscriber');
+            pubsub.subscriberWidgetInputs = customWidgetInputs.map((widgetInput) => {
                 return widgetInput.name;
             });
         }
         if (widgetOutputConfigs && widgetOutputConfigs.length !== 0) {
-            pubsub.types.push("publisher");
-            pubsub.publisherWidgetOutputs = widgetOutputConfigs.map(outputAttribute => {
+            pubsub.types.push('publisher');
+            pubsub.publisherWidgetOutputs = widgetOutputConfigs.map((outputAttribute) => {
                 return outputAttribute.publishedAsValue;
             });
         }
@@ -279,7 +285,7 @@ class GadgetsGenerationWizard extends Component {
      * Handles onClick of Next button, including validations
      */
     handleNext() {
-        const {stepIndex} = this.state;
+        const { stepIndex } = this.state;
         const apis = new GadgetsGenerationAPI();
         switch (stepIndex) {
             case (0):
@@ -313,24 +319,39 @@ class GadgetsGenerationWizard extends Component {
                 break;
             case (1):
                 // Validate provider configuration and get metadata
-                let isProviderConfigurationValid = true;
+                const isProviderConfigurationValid = true;
                 if (!UtilFunctions.isEmpty(this.state.providerConfiguration)) {
-                    eval(this.state.providerConfiguration.queryData.queryFunction);
-                    this.state.providerConfiguration.queryData["query"] = this.getQuery.apply(this, this.widgetInputsDefaultValues);
-                    apis.getProviderMetadata(this.state.providerType,
-                        this.state.providerConfiguration).then((response) => {
-                        if (!this.state.loading) {
-                            this.dummyAsync(() => this.setState({
-                                loading: false,
-                                isGadgetDetailsValid: true,
-                                stepIndex: stepIndex + 1,
-                                finished: stepIndex >= 2,
-                                metadata: response.data,
-                            }));
-                        }
-                    }).catch(() => {
-                        this.displaySnackbar('Unable to process your request', 'errorMessage');
-                    });
+                    if (this.state.providerType !== 'WebSocketProvider') {
+                        eval(this.state.providerConfiguration.queryData.queryFunction);
+                        this.state.providerConfiguration.queryData.query = this.getQuery.apply(this, this.widgetInputsDefaultValues);
+                        apis.getProviderMetadata(this.state.providerType,
+                            this.state.providerConfiguration).then((response) => {
+                            if (!this.state.loading) {
+                                this.dummyAsync(() => this.setState({
+                                    loading: false,
+                                    isGadgetDetailsValid: true,
+                                    stepIndex: stepIndex + 1,
+                                    finished: stepIndex >= 2,
+                                    metadata: response.data,
+                                }));
+                            }
+                        }).catch(() => {
+                            this.displaySnackbar('Unable to process your request', 'errorMessage');
+                        });
+                    } else if (ProviderConfigurator.validateWebSocketConfig(this.state.providerConfiguration) &&
+                            ProviderConfigurator.validateMetadata(this.state.metadata)) {
+                        this.state.providerConfiguration.queryData = {
+                            customWidgetInputs: [],
+                        };
+                        this.setState({
+                            loading: false,
+                            isGadgetDetailsValid: true,
+                            stepIndex: stepIndex + 1,
+                            finished: stepIndex >= 2,
+                        });
+                    } else {
+                        this.displaySnackbar('Please provide a valid configuration', 'errorMessage');
+                    }
                 } else {
                     this.displaySnackbar('Please select a data provider and configure details', 'errorMessage');
                 }
@@ -344,7 +365,7 @@ class GadgetsGenerationWizard extends Component {
     }
 
     handlePrev() {
-        const {stepIndex} = this.state;
+        const { stepIndex } = this.state;
         if (!this.state.loading) {
             this.dummyAsync(() => this.setState({
                 loading: false,
@@ -369,8 +390,10 @@ class GadgetsGenerationWizard extends Component {
                         providerType={this.state.providerType}
                         configuration={this.state.providerConfiguration}
                         configRenderTypes={this.state.providerConfigRenderTypes}
+                        providerMetadata={this.state.metadata}
                         handleProviderTypeChange={this.handleProviderTypeChange}
                         handleProviderConfigPropertyChange={this.handleProviderConfigPropertyChange}
+                        handleMetadataInput={this.handleMetadataInput}
                         handleDynamicQuery={this.handleDynamicQuery}
                     />
                 );
@@ -395,7 +418,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Next"
                         primary
-                        style={{marginRight: 12}}
+                        style={{ marginRight: 12 }}
                         onClick={this.handleNext}
                     />
                 );
@@ -404,7 +427,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Next"
                         primary
-                        style={{marginRight: 12}}
+                        style={{ marginRight: 12 }}
                         onClick={this.handleNext}
                     />
                 );
@@ -413,7 +436,7 @@ class GadgetsGenerationWizard extends Component {
                     <RaisedButton
                         label="Create"
                         primary
-                        style={{marginRight: 12}}
+                        style={{ marginRight: 12 }}
                         onClick={() => this.submitGadgetConfig()}
                     />
                 );
@@ -423,8 +446,8 @@ class GadgetsGenerationWizard extends Component {
     }
 
     renderContent() {
-        const {finished, stepIndex} = this.state;
-        const contentStyle = {margin: '0 16px', overflow: 'hidden'};
+        const { finished, stepIndex } = this.state;
+        const contentStyle = { margin: '0 16px', overflow: 'hidden' };
 
         if (finished) {
             return (
@@ -434,7 +457,7 @@ class GadgetsGenerationWizard extends Component {
                             href={appContext}
                             onClick={(event) => {
                                 event.preventDefault();
-                                this.setState({stepIndex: 0, finished: false});
+                                this.setState({ stepIndex: 0, finished: false });
                             }}
                         >
                             Reset
@@ -447,12 +470,12 @@ class GadgetsGenerationWizard extends Component {
         return (
             <div style={contentStyle}>
                 <div>{this.getStepContent(stepIndex)}</div>
-                <div style={{marginTop: 24, marginBottom: 12}}>
+                <div style={{ marginTop: 24, marginBottom: 12 }}>
                     <FlatButton
                         label="Back"
                         disabled={stepIndex === 0}
                         onClick={this.handlePrev}
-                        style={{marginRight: 12}}
+                        style={{ marginRight: 12 }}
                     />
                     {this.renderNextButton(stepIndex)}
                     <FlatButton
@@ -496,18 +519,16 @@ class GadgetsGenerationWizard extends Component {
     }
 
     render() {
-        const {loading, stepIndex} = this.state;
+        const { loading, stepIndex } = this.state;
 
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
-                    <Header
-                        title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />}
-                    />
+                    <Header title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />}/>
                     <Dialog
                         modal={false}
                         open={this.state.previewGadget}
-                        onRequestClose={() => this.setState({previewGadget: false})}
+                        onRequestClose={() => this.setState({ previewGadget: false })}
                         repositionOnUpdate
                     >
                         <ChartPreviewer
@@ -515,11 +536,11 @@ class GadgetsGenerationWizard extends Component {
                         />
                     </Dialog>
                     <FormPanel
-                        title={<FormattedMessage id="create.widget" defaultMessage="Create Widget"/>}
+                        title={<FormattedMessage id="create.widget" defaultMessage="Create Widget" />}
                         width="800"
                         onSubmit={this.handleFormSubmit}
                     >
-                        <div style={{align: 'center'}}>
+                        <div style={{ align: 'center' }}>
                             <Stepper activeStep={stepIndex}>
                                 <Step>
                                     <StepLabel
@@ -566,6 +587,7 @@ class GadgetsGenerationWizard extends Component {
                             });
                         }}
                         contentStyle={styles.messageBox}
+                        bodyStyle={styles[this.state.snackbarMessageType]}
                     />
                 </div>
             </MuiThemeProvider>

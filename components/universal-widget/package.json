@@ -7,12 +7,13 @@
     "axios": "^0.17.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-vizgrammar": "^0.7.8",
+    "react-vizgrammar": "^0.7.12",
     "rimraf": "^2.6.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "webpack -p",
+    "dev": "webpack -d",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "clean": "rimraf dist"

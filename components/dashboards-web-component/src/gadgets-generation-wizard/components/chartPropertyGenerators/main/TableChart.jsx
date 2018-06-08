@@ -192,8 +192,6 @@ class TableChart extends Component {
     }
 
     render() {
-        console.info('TableChart state at Render :', this.state.configuration);
-
         return (
             <div>
                 <br />
@@ -210,7 +208,6 @@ class TableChart extends Component {
                 <div>
                     <div style={{ margin: 20 }}>
                         {this.state.configuration.charts[0].columns.map((column, index) => {
-                            console.info(`Column${index} :`, column);
                             return (
                                 <Card style={{ marginBottom: 10 }}>
                                     <CardHeader

@@ -27,6 +27,7 @@ public class WidgetConfigs {
     private JsonElement pubsub;
     private JsonElement chartConfig;
     private JsonElement providerConfig;
+    private JsonElement metadata;
     private boolean isGenerated;
     private List<Option> options;
 
@@ -88,5 +89,13 @@ public class WidgetConfigs {
 
     public void setGenerated(boolean generated) {
         isGenerated = generated;
+    }
+
+    public JsonElement getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(JsonElement metadata) {
+        this.metadata = metadata;
     }
 }
