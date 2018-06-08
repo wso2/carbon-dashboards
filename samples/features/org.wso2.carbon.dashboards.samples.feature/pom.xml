@@ -43,37 +43,12 @@
         <!--Samples - Widgets-->
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-            <artifactId>org.wso2.carbon.dashboards.samples.widgets.cpu-usage</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-            <artifactId>org.wso2.carbon.dashboards.samples.widgets.load-average</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-            <artifactId>org.wso2.carbon.dashboards.samples.widgets.memory-usage</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.publisher</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-            <artifactId>org.wso2.carbon.dashboards.samples.widgets.server-status</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.subscriber</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-            <artifactId>org.wso2.carbon.dashboards.samples.widgets.total-updates</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
