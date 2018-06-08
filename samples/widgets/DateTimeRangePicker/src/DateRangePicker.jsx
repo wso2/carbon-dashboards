@@ -24,12 +24,17 @@ import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
 import Moment from 'moment';
 import { Scrollbars } from 'react-custom-scrollbars';
 
-const theme = createMuiTheme({
+const darkTheme = createMuiTheme({
     palette: {
         type: 'dark',
     },
 });
 
+const lightTheme = createMuiTheme({
+    palette: {
+        type: 'light',
+    },
+});
 
 export default class DateRangePicker extends Widget {
 
@@ -119,7 +124,7 @@ export default class DateRangePicker extends Widget {
     render() {
         let { granularityMode, width, height } = this.state;
         return (
-            <MuiThemeProvider theme={theme}>
+            <MuiThemeProvider theme={this.props.muiTheme.name === 'dark' ? darkTheme : lightTheme}>
                 <Scrollbars style={{ width, height }} >
                     <div style={{ margin: '2%', maxWidth: 840 }}>
                         <GranularityModeSelector onChange={this.handleGranularityChange} />
