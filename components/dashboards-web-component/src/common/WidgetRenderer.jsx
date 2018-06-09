@@ -46,7 +46,7 @@ export default class WidgetRenderer extends Component {
         if (!this.widgetName) {
             const goldenLayout = props.glContainer.layoutManager;
             const content = GoldenLayoutContentUtils.getWidgetContent(props.id, goldenLayout.config.content);
-            props.widgetID = content.component;
+            // props.widgetID = content.component;
             this.widgetName = content.component;
         }
         this.widgetClassName = (props.configs && props.configs.isGenerated) ? 'UniversalWidget' : this.widgetName;
