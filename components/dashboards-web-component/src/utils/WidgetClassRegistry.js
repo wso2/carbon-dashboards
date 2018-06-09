@@ -86,9 +86,6 @@ function patchWidgetClass(widgetClass) {
 
 global.dashboard = {};
 global.dashboard.registerWidget = function (widgetId, widgetObj) {
-    console.warn(`[DEPRECATED] Widget '${widgetId}' uses deprecated function `
-        + '\'window.dashboard.registerWidget(widgetId, widgetObj)\'. '
-        + 'Instead please use \'Widget.registerWidgetClass(widgetName, widgetClass)\' function.');
     if (extendsFromDeprecatedWidgetClassVersion(widgetObj)) {
         console.warn(`[DEPRECATED] Widget '${widgetId}' extends from a deprecated version of the Widget `
             + '(@wso2-dashboards/widget) class. Please use the newest version.');
