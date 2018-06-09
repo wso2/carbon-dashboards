@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import Widget from '@wso2-dashboards/widget';
+
 /**
  * Registry that maintains widget classes against their names.
  */
@@ -67,7 +69,7 @@ export default instance;
  * @private
  */
 function extendsFromDeprecatedWidgetClassVersion(widgetClass) {
-    return !Object.getPrototypeOf(widgetClass.prototype).version;
+    return Object.getPrototypeOf(widgetClass.prototype).constructor.version !== Widget.version;
 }
 
 /**
@@ -79,17 +81,7 @@ function extendsFromDeprecatedWidgetClassVersion(widgetClass) {
 function patchWidgetClass(widgetClass) {
     const superWidgetClassPrototype = Object.getPrototypeOf(widgetClass.prototype);
     // Patch subscribe method.
-    superWidgetClassPrototype.subscribe = function (listenerCallback, publisherId, context) {
-        const self = this;
-        if (!publisherId) {
-            const publisherIds = self.props.configs.pubsub.publishers;
-            if (publisherIds && Array.isArray(publisherIds)) {
-                publisherIds.forEach(id => self.props.glEventHub.on(id, listenerCallback));
-            }
-        } else {
-            self.props.glEventHub.on(publisherId, listenerCallback, context);
-        }
-    };
+    superWidgetClassPrototype.subscribe = Widget.prototype.subscribe;
 }
 
 global.dashboard = {};
