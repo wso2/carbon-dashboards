@@ -18,6 +18,7 @@
 
 import React, {Component} from 'react';
 import WidgetChannelManager from './WidgetChannelManager';
+import Axios from 'axios';
 
 const SESSION_USER = 'DASHBOARD_USER';
 
@@ -177,6 +178,16 @@ export default class Widget extends Component {
 
     getWidgetChannelManager() {
         return WidgetChannelManager;
+    }
+
+    getWidgetConfiguration(widgetId) {
+        let httpClient = Axios.create({
+            baseURL: window.location.origin + window.contextPath,
+            timeout: 2000,
+            headers: {"Authorization": "Bearer " + JSON.parse(Widget._getSessionCookie(SESSION_USER)).SDID},
+        });
+        httpClient.defaults.headers.post['Content-Type'] = 'application/json';
+        return httpClient.get(`/apis/widgets/${widgetId}`);
     }
 }
 

@@ -25,5 +25,7 @@
   "bugs": {
     "url": "https://github.com/npm/npm/issues"
   },
-  "dependencies": {}
+  "dependencies": {
+    "axios": "^0.17.1"
+  }
 }
