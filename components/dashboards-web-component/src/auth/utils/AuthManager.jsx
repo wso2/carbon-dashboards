@@ -27,7 +27,7 @@ const SESSION_USER_COOKIE = 'DASHBOARD_USER';
 /**
  * Name of the refresh token cookie.
  */
-const REFRESH_TOKEN_COOKIE = 'REFRESH_TOKEN';
+const REFRESH_TOKEN_COOKIE = 'PRT';
 
 /**
  * Refresh token validity period.
