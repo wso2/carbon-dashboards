@@ -84,6 +84,7 @@ export default class DashboardRenderer extends Component {
         this.handleWindowResize = this.handleWindowResize.bind(this);
         this.updateDashboard = this.updateDashboard.bind(this);
         this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
+        this.unmounted = false;
     }
 
     componentDidMount() {
@@ -240,7 +241,7 @@ export default class DashboardRenderer extends Component {
 
     renderGoldenLayout() {
         // This is necessary as this method is called via a ref in render(). Also we cannot pass arguments to here.
-        if (this.goldenLayout || this.unmounted) {
+        if (this.goldenLayout) {
             return;
         }
 
@@ -303,7 +304,11 @@ export default class DashboardRenderer extends Component {
                     <div
                         id={dashboardContainerId}
                         className='dashboard-design-container'
-                        ref={() => this.renderGoldenLayout()}
+                        ref={() => {
+                            if(!this.unmounted){
+                                this.renderGoldenLayout();
+                            }
+                        }}
                     />
                     <WidgetConfigurationPane
                         theme={this.props.theme}
