@@ -62,6 +62,7 @@ export default class DashboardRenderer extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleWindowResize);
+        this.unmounted = true;
         this.destroyGoldenLayout();
     }
 
@@ -97,7 +98,7 @@ export default class DashboardRenderer extends Component {
     }
 
     renderGoldenLayout() {
-        if (this.goldenLayout) {
+        if (this.goldenLayout || this.unmounted) {
             return;
         }
 

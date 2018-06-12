@@ -17,7 +17,6 @@
  */
 
 import React, {Component} from 'react';
-import WidgetChannelManager from './WidgetChannelManager';
 import Axios from 'axios';
 
 const SESSION_USER = 'DASHBOARD_USER';
@@ -37,6 +36,7 @@ export default class Widget extends Component {
         this.setWidgetState = this.setWidgetState.bind(this);
         this.subscribe = this.subscribe.bind(this);
         this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
+        this.channelManager = props.channelManager;
     }
 
     /**
@@ -177,7 +177,7 @@ export default class Widget extends Component {
     }
 
     getWidgetChannelManager() {
-        return WidgetChannelManager;
+        return this.channelManager;
     }
 
     getWidgetConfiguration(widgetId) {

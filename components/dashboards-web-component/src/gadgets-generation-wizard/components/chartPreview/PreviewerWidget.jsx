@@ -15,7 +15,7 @@
 */
 import React from 'react';
 import VizG from 'react-vizgrammar';
-import widgetChannelManager from './WidgetChannelManager';
+import { getWidgetChannelManager } from '../../../utils/WidgetChannelManager';
 
 export default class PreviewerWidget extends React.Component {
 
@@ -24,17 +24,17 @@ export default class PreviewerWidget extends React.Component {
         this.state = {
             data: [],
             metadata: null,
-        }
+        };
         this._handleDataReceived = this._handleDataReceived.bind(this);
     }
 
     componentDidMount() {
         let { config } = this.props;
-        widgetChannelManager.subscribeWidget(config.id, this._handleDataReceived, config.configs.providerConfig);
+        getWidgetChannelManager().subscribeWidget(config.id, this._handleDataReceived, config.configs.providerConfig);
     }
 
     componentWillUnmount() {
-        widgetChannelManager.unsubscribeWidget(this.props.config.id);
+        getWidgetChannelManager().unsubscribeWidget(this.props.config.id);
     }
 
     _handleDataReceived(data) {
@@ -42,7 +42,7 @@ export default class PreviewerWidget extends React.Component {
             metadata: data.metadata,
             data: data.data,
         });
-        widgetChannelManager.unsubscribeWidget(this.props.config.id);
+        getWidgetChannelManager().unsubscribeWidget(this.props.config.id);
         window.dispatchEvent(new Event('resize'));
     }
 

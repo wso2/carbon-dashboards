@@ -14,6 +14,8 @@
 *  limitations under the License.
 */
 
+let channelManager = null;
+
 class WidgetChannelManager {
 
     constructor() {
@@ -120,6 +122,12 @@ class WidgetChannelManager {
     }
 }
 
-const widgetChannelManager = new WidgetChannelManager();
 
-export default widgetChannelManager;
+
+export const getWidgetChannelManager = () => {
+    if(!channelManager) {
+        channelManager = new WidgetChannelManager();
+    }
+
+    return channelManager;
+};

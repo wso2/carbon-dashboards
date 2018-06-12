@@ -27,6 +27,7 @@ import WidgetClassRegistry from '../utils/WidgetClassRegistry';
 import GoldenLayoutContentUtils from '../utils/GoldenLayoutContentUtils';
 import { Event } from '../utils/Constants';
 import defaultTheme from '../utils/Theme';
+import { getWidgetChannelManager } from '../utils/WidgetChannelManager';
 
 const widgetScriptUrlPrefix = `${window.location.origin}${window.contextPath}/public/extensions/widgets`;
 const WidgetLoadingStatus = {
@@ -224,6 +225,7 @@ export default class WidgetRenderer extends Component {
                     width: this.props.glContainer.width,
                     height: this.props.glContainer.height,
                     muiTheme: this.state.currentTheme,
+                    channelManager: getWidgetChannelManager(),
                 };
                 return React.createElement(this.widgetClass, widgetProps);
             }

@@ -166,7 +166,8 @@ class OverallRevenueInfo extends Widget {
             }],
             width:515,
             animate: true,
-            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"}
+            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"},
+            append: false,
         };
 
 

@@ -104,6 +104,7 @@ export default class DashboardRenderer extends Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.destroyGoldenLayout();
+        this.unmounted = true;
     }
 
     onGoldenLayoutInitializedEvent() {
@@ -239,7 +240,7 @@ export default class DashboardRenderer extends Component {
 
     renderGoldenLayout() {
         // This is necessary as this method is called via a ref in render(). Also we cannot pass arguments to here.
-        if (this.goldenLayout) {
+        if (this.goldenLayout || this.unmounted) {
             return;
         }
 
