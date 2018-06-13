@@ -43,7 +43,6 @@ export default class DashboardRenderer extends Component {
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
 
-
         this.handleWindowResize = this.handleWindowResize.bind(this);
         this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
         this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
@@ -94,7 +93,7 @@ export default class DashboardRenderer extends Component {
                         fontFamily: this.props.theme.fontFamily,
                     }}
                     ref={() => {
-                        if(!this.unmounted){
+                        if (!this.unmounted) {
                             this.renderGoldenLayout();
                         }
                     }}
@@ -134,6 +133,7 @@ export default class DashboardRenderer extends Component {
         renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
         goldenLayout.eventHub.on(Event.DASHBOARD_VIEW_WIDGET_LOADED,
             () => this.onWidgetLoadedEvent(renderingWidgetClassNames.length, this.props.dashboardId));
+
         // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
         setTimeout(() => goldenLayout.init(), 0);
         this.goldenLayout = goldenLayout;

@@ -305,7 +305,7 @@ export default class DashboardRenderer extends Component {
                         id={dashboardContainerId}
                         className='dashboard-design-container'
                         ref={() => {
-                            if(!this.unmounted){
+                            if (!this.unmounted) {
                                 this.renderGoldenLayout();
                             }
                         }}
