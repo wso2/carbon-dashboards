@@ -191,4 +191,4 @@ export default class Widget extends Component {
     }
 }
 
-Widget.version = '1.2.0';
+Widget.version = '1.2.2';
