@@ -44,7 +44,8 @@ class CustomersPerYear extends Widget {
                 legendTitleColor: "#5d6e77",
                 legendTextColor: "#5d6e77",
                 tickLabelColor: "#5d6e77",
-                axisLabelColor: "#5d6e77"
+                axisLabelColor: "#5d6e77",
+                legendTextSize: 14,
             },
             gridColor: "#5d6e77"
         };
