@@ -86,8 +86,9 @@ class RevenueByCountry extends Widget {
     }
 
     setSelectedCountry(selected) {
-        super.publish({"CountryName": selected.givenName, "CountryCode": selected.x, "revenue": selected.y});
-        this.setState({selectedCountry: selected.givenName, selectedRev: selected.y});
+        let key = Object.keys(selected)[0];
+        super.publish({"CountryCode": key, "revenue": selected[key]});
+        this.setState({selectedCountry: key, selectedRev: selected[key]});
     }
 
     handleResize() {
