@@ -44,8 +44,10 @@ export default class DateRangePicker extends Widget {
             id: props.widgetID,
             width: props.glContainer.width,
             height: props.glContainer.height,
-            granularityMode: null,
-            granularityValue: '',
+            granularityMode: '1 Day',
+            granularityValue: 'hour',
+            startTime:Moment().subtract(1, 'days').toDate(),
+            endTime: new Date()
         };
 
         this.handleResize = this.handleResize.bind(this);
@@ -54,7 +56,11 @@ export default class DateRangePicker extends Widget {
         this.publishTimeRange = this.publishTimeRange.bind(this);
         this.getTimeIntervalDescriptor = this.getTimeIntervalDescriptor.bind(this);
         this.generateGranularitySelector = this.generateGranularitySelector.bind(this);
-
+        this.publishTimeRange({
+            granularity: 'hour',
+            from: this.state.startTime.getTime(),
+            to: this.state.endTime.getTime()
+        })
     }
 
     handleResize() {
