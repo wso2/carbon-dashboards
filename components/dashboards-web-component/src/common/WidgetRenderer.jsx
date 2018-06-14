@@ -215,7 +215,6 @@ export default class WidgetRenderer extends Component {
     }
 
     render() {
-        console.info('WidgetRenderer', getWidgetChannelManager());
         if (this.state.widgetLoadingStatus === WidgetLoadingStatus.LOADED) {
             if (this.state.reRenderWidget) {
                 setTimeout(() => this.setState({ reRenderWidget: false }), 50);
