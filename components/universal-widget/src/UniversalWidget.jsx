@@ -15,13 +15,12 @@
 */
 
 import React from 'react';
-import Widget from "@wso2-dashboards/widget";
+import Widget from '@wso2-dashboards/widget';
 import VizG from 'react-vizgrammar';
 import Axios from 'axios';
 import AuthManager from '../../dashboards-web-component/src/auth/utils/AuthManager';
 
 export default class UniversalWidget extends Widget {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -77,36 +76,57 @@ export default class UniversalWidget extends Widget {
     }
 
     handleCustomWidgetInputs(queryData) {
-            if (this.props.configs.pubsub.publishers) {
-                this.props.configs.pubsub.publishers.map(publisherId => {
-                    this.state.queryData = queryData;
-                    this.filteredWidgetInputOutputMapping =
-                        this.props.configs.pubsub.widgetInputOutputMapping.filter(function (widgetInputOutputMapping) {
-                            return widgetInputOutputMapping.publisherId === publisherId
-                        });
-                    super.subscribe(this.subscribeCallback, publisherId, this);
-                });
-            }
+        if (this.props.configs.pubsub.publishers) {
+            this.props.configs.pubsub.publishers.map((publisherId) => {
+                this.state.queryData = queryData;
+                const subscriberWidgetInputMapping = this.props.configs.pubsub.widgetInputOutputMapping
+                    .filter((widgetInputOutputMapping) => {
+                        return widgetInputOutputMapping.publisherId === publisherId;
+                    });
+                let filteredWidgetInputOutputMapping;
+                filteredWidgetInputOutputMapping = subscriberWidgetInputMapping.map((widgetInputOutputMapping) => {
+                    const widgetInputOutput = {};
+                    widgetInputOutput[widgetInputOutputMapping.subscriberWidgetInput]
+                        = widgetInputOutputMapping.publisherWidgetOutput;
+                    return widgetInputOutput;
+                })[0];
+                const subscriberCallbackContext = {};
+                subscriberCallbackContext.widgetContext = this;
+                subscriberCallbackContext.filteredWidgetInputOutputMapping = filteredWidgetInputOutputMapping;
+                subscriberCallbackContext.getWidgetChannelManager = super.getWidgetChannelManager;
+                super.subscribe(this.subscribeCallback, publisherId, subscriberCallbackContext);
+            });
+        }
     }
 
     subscribeCallback(receivedData) {
-        let receivedKeys = new Set(Object.keys(receivedData));
-        this.state.widgetInputs = [];
-        this.state.systemInputs.map(systemInput => {
-            this.state.widgetInputs.push(systemInput)
+        const receivedKeys = new Set(Object.keys(receivedData));
+        const widgetInputs = [];
+        this.widgetContext.state.systemInputs.map((systemInput) => {
+            widgetInputs.push(systemInput);
         });
-        this.filteredWidgetInputOutputMapping.map(widgetInputOutputMapping => {
-            if (receivedKeys.has(widgetInputOutputMapping.publisherWidgetOutput)) {
-                this.state.widgetInputs.push(receivedData[widgetInputOutputMapping.publisherWidgetOutput]);
+        this.widgetContext.props.configs.pubsub.subscriberWidgetInputs.map((widgetInput) => {
+            if (this.filteredWidgetInputOutputMapping[widgetInput]) {
+                if (receivedKeys.has(this.filteredWidgetInputOutputMapping[widgetInput])) {
+                    this.widgetContext[widgetInput] = receivedData[this.filteredWidgetInputOutputMapping[widgetInput]];
+                    widgetInputs.push(receivedData[this.filteredWidgetInputOutputMapping[widgetInput]]);
+                }
+            } else {
+                widgetInputs.push(this.widgetContext[widgetInput] || this.widgetContext.state.queryData.customWidgetInputs
+                    .filter((customInput) => {
+                        return customInput.name === widgetInput;
+                    })[0].defaultValue);
             }
         });
-        eval(this.state.queryData.queryFunction);
-        this.state.providerConfigs.configs.config.queryData.query = this.getQuery.apply(this, this.state.widgetInputs);
-        super.getWidgetChannelManager().unsubscribeWidget(this.props.id);
-        super.getWidgetChannelManager().
-            subscribeWidget(this.props.id, this.handleWidgetData, this.state.providerConfigs);
-        this.setState({config: this.state.config});
-
+        eval(this.widgetContext.state.queryData.queryFunction);
+        this.widgetContext.state.providerConfigs.configs.config.queryData.query =
+            this.getQuery.apply(this, widgetInputs);
+        console.log(this.widgetContext.state.providerConfigs.configs.config.queryData.query);
+        this.widgetContext.channelManager.unsubscribeWidget(this.widgetContext.props.id);
+        this.widgetContext.channelManager.subscribeWidget(this.widgetContext.props.id,
+            this.widgetContext.handleWidgetData, this.widgetContext.state.providerConfigs);
+        console.log(this.widgetContext.state.providerConfigs)
+        this.widgetContext.setState({ config: this.widgetContext.state.config });
     }
 
     componentWillUnmount() {
@@ -151,4 +171,4 @@ export default class UniversalWidget extends Widget {
     }
 }
 
-global.dashboard.registerWidget("UniversalWidget", UniversalWidget);
+global.dashboard.registerWidget('UniversalWidget', UniversalWidget);
