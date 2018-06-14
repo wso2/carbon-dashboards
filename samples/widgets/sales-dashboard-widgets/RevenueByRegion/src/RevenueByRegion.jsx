@@ -17,13 +17,14 @@
  *
  */
 
-import React, {Component} from 'react';
+import React from 'react';
 import VizG from 'react-vizgrammar';
 import Widget from '@wso2-dashboards/widget';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RevertIcon from 'material-ui/svg-icons/action/cached';
 import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
 
 class RevenueByRegion extends Widget {
     constructor(props) {
@@ -160,7 +161,7 @@ class RevenueByRegion extends Widget {
             width: props.glContainer.width,
             height: props.glContainer.height,
             animate: true,
-            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"}
+            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77", legendTextSize: 14}
         };
 
         this.configPieProduct = {
@@ -174,7 +175,7 @@ class RevenueByRegion extends Widget {
             width: props.glContainer.width,
             height: props.glContainer.height,
             animate: true,
-            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"}
+            style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77", legendTextSize: 14}
         };
 
         this.aggregatedData = [
@@ -208,14 +209,15 @@ class RevenueByRegion extends Widget {
     }
 
     handleClickEvent(event) {
+        let key = Object.keys(event)[0];
         if (!this.state.isDrillDowned) {
             let array = [];
             this.rowdata.map(data => {
-                if (data[2] === event.datum.x) {
+                if (data[2] === key) {
                     array.push(data)
                 }
             });
-            super.publish({selectedRegion: event.datum.x});
+            super.publish({selectedRegion: key});
             this.setState({config: this.configPieProduct, data: array, isDrillDowned: true});
         } else {
             super.publish({selectedRegion: "ALL"});
@@ -226,14 +228,17 @@ class RevenueByRegion extends Widget {
     render() {
         return (
             <MuiThemeProvider>
-                <FlatButton
-                    backgroundColor="steelblue"
-                    hoverColor="#536DFE"
-                    icon={<RevertIcon style={{margin: "10px"}}/>}
-                    style={{marginLeft: "10px", minWidth: 0}}
+                <IconButton
                     onClick={this.handleClickEvent}
                     disabled={!this.state.isDrillDowned}
-                />
+                    iconStyle={{
+                        color: '#fff',
+                        cursor: 'default',
+                        fill: '#fff',
+                    }}
+                >
+                    <RevertIcon />
+                </IconButton>
                 <div
                     style={{
                         width: this.props.glContainer.width,

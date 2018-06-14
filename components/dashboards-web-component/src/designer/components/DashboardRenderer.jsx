@@ -84,6 +84,7 @@ export default class DashboardRenderer extends Component {
         this.handleWindowResize = this.handleWindowResize.bind(this);
         this.updateDashboard = this.updateDashboard.bind(this);
         this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
+        this.unmounted = false;
     }
 
     componentDidMount() {
@@ -104,6 +105,7 @@ export default class DashboardRenderer extends Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.destroyGoldenLayout();
+        this.unmounted = true;
     }
 
     onGoldenLayoutInitializedEvent() {
@@ -302,7 +304,11 @@ export default class DashboardRenderer extends Component {
                     <div
                         id={dashboardContainerId}
                         className='dashboard-design-container'
-                        ref={() => this.renderGoldenLayout()}
+                        ref={() => {
+                            if (!this.unmounted) {
+                                this.renderGoldenLayout();
+                            }
+                        }}
                     />
                     <WidgetConfigurationPane
                         theme={this.props.theme}

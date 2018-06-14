@@ -48,6 +48,7 @@ export default class DashboardRenderer extends Component {
         this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
         this.triggerThemeChangeEvent = this.triggerThemeChangeEvent.bind(this);
         this.onWidgetLoadedEvent = this.onWidgetLoadedEvent.bind(this);
+        this.unmounted = false;
     }
 
     handleWindowResize() {
@@ -62,6 +63,7 @@ export default class DashboardRenderer extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleWindowResize);
+        this.unmounted = true;
         this.destroyGoldenLayout();
     }
 
@@ -90,7 +92,11 @@ export default class DashboardRenderer extends Component {
                         backgroundColor: this.props.theme.palette.canvasColor,
                         fontFamily: this.props.theme.fontFamily,
                     }}
-                    ref={() => this.renderGoldenLayout()}
+                    ref={() => {
+                        if (!this.unmounted) {
+                            this.renderGoldenLayout();
+                        }
+                    }}
                 />
             </span>
         );

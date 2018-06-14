@@ -26,13 +26,11 @@ class RevenuePercentage extends Widget {
         super(props);
         this.config = {
             charts: [{type: 'arc', x: 'Percentage', color: 'Percentage', colorScale: ['#c15832', '#dc8d48']}],
-            tooltip: {enabled: false},
-            legend: false,
             percentage: true,
             animate: true,
             labelColor:'#5d6e77',
-            width:this.props.glContainer.width,
-            height:this.props.glContainer.height
+            innerRadius: 20,
+            labelFontSize: 90,
         };
 
         this.state = {
@@ -91,8 +89,6 @@ class RevenuePercentage extends Widget {
                     data={this.state.data}
                     append={false}
                     onClick={this.handleClickEvent}
-                    height={this.props.glContainer.height}
-                    width={this.props.glContainer.width}
                 />
             </div>
         );
