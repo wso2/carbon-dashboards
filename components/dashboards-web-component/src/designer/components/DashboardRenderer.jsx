@@ -261,7 +261,7 @@ export default class DashboardRenderer extends Component {
                 showCloseIcon: true,
             },
             dimensions: {
-                headerHeight: 37,
+                headerHeight: 25,
             },
             content: goldenLayoutContents,
         };

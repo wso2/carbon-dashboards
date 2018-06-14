@@ -34,6 +34,8 @@ export default class Header extends Component {
                 iconElementRight={this.props.rightElement}
                 iconElementLeft={this.props.logo}
                 onLeftIconButtonClick={this.props.onLogoClick}
+                iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }}
+                titleStyle={{ fontSize: 16 }}
                 zDepth={2}
             />
         );
@@ -54,10 +56,9 @@ Header.propTypes = {
 
 Header.defaultProps = {
     logo: (
-        <Link to={'/'}>
+        <Link style={{ height: '17px' }} to={'/'}>
             <img
-                height='28'
-                style={{ marginTop: 10 }}
+                height='17'
                 src={`${window.contextPath}/public/app/images/logo.svg`}
                 alt='logo'
             />
