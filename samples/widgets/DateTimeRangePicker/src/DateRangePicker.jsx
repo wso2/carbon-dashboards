@@ -202,7 +202,7 @@ export default class DateRangePicker extends Widget {
             return (
                 <div
                     style={{
-                        marginTop: 15
+                        marginTop: 5
                     }}
                 >
                     {`${startTime}  to  ${endTime}  per  `}{this.generateGranularitySelector()}
