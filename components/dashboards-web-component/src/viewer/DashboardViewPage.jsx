@@ -46,12 +46,13 @@ class DashboardViewPage extends Component {
 
     constructor(props) {
         super(props);
+        let isDarkTheme = window.localStorage.getItem('isDarkTheme');
         this.dashboard = null;
         this.isInitilialLoading = true;
         this.state = {
             dashboardFetchStatus: HttpStatus.UNKNOWN,
             isSidePaneOpen: true,
-            isCurrentThemeDark: true,
+            isCurrentThemeDark: isDarkTheme ? isDarkTheme === 'true' : true,
         };
 
         this.fetchDashboard = this.fetchDashboard.bind(this);
@@ -92,6 +93,7 @@ class DashboardViewPage extends Component {
     }
 
     handleThemeToggle() {
+        window.localStorage.setItem('isDarkTheme', !this.state.isCurrentThemeDark);
         this.setState({
             isCurrentThemeDark: !this.state.isCurrentThemeDark,
         });
