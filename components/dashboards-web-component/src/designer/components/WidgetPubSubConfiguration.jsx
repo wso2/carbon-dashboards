@@ -52,6 +52,13 @@ export default class WidgetPubSubConfiguration extends Component {
         this.handlePublisherCheckboxClick = this.handlePublisherCheckboxClick.bind(this);
         this.handlePubSubWiringSelectFieldChange = this.handlePubSubWiringSelectFieldChange.bind(this);
         this.updateSelectedWidgetInputOutputMapping = this.updateSelectedWidgetInputOutputMapping.bind(this);
+        this.initializePublisherDropDowns = this.initializePublisherDropDowns.bind(this);
+        this.initializeWidgetInputOutputMappings = this.initializeWidgetInputOutputMappings.bind(this);
+    }
+
+    componentWillReceiveProps(props) {
+        this.initializeWidgetInputOutputMappings(props.selectedWidget);
+        this.initializePublisherDropDowns(props.selectedWidget);
     }
 
     getSelectedPageAllWidgetsConfigurations() {
@@ -79,6 +86,51 @@ export default class WidgetPubSubConfiguration extends Component {
 
     getSelectedWidgetConfiguration() {
         return this.props.selectedWidgetConfiguration;
+    }
+
+    initializeWidgetInputOutputMappings(selectedWidget) {
+        const widgetInputs = _.get(this.getSelectedWidgetConfiguration(), 'configs.pubsub.subscriberWidgetInputs');
+        const widgetInputsOutputsMappings = new Map();
+        const selectedWidgetPubSub = selectedWidget.props.configs.pubsub;
+        if (selectedWidgetPubSub.widgetInputOutputMapping) {
+            selectedWidgetPubSub.widgetInputOutputMapping.forEach((mapping) => {
+                widgetInputsOutputsMappings.set(mapping.subscriberWidgetInput, mapping);
+            });
+        } else {
+            selectedWidgetPubSub.widgetInputOutputMapping = [];
+        }
+        widgetInputs.forEach((inputName) => {
+            if (!widgetInputsOutputsMappings.has(inputName)) {
+                widgetInputsOutputsMappings.set(inputName, {
+                    subscriberWidgetInput: inputName,
+                    publisherId: null,
+                    publisherWidgetOutput: null,
+                });
+            }
+        });
+        this.state.widgetInputsOutputsMappings = widgetInputsOutputsMappings;
+    }
+
+    initializePublisherDropDowns(selectedWidget) {
+        const availablePublishersContents = this.getSelectedPagePublisherWidgetsContents();
+        const selectedWidgetPubSub = selectedWidget.props.configs.pubsub;
+        const subscribedPublishers = new Map();
+        if (!selectedWidgetPubSub.publishers) {
+            // Somehow this subscriber widget doesn't have a publishers array. Let's fix that.
+            selectedWidgetPubSub.publishers = [];
+        }
+
+        selectedWidgetPubSub.publishers.forEach((publisherId) => {
+            const publisherContents = availablePublishersContents.find((publisher) => {
+                return publisherId === publisher.props.id;
+            });
+            if (publisherContents) {
+                const publisherOutputs = _.get(publisherContents, 'props.configs.pubsub.publisherWidgetOutputs',
+                    []);
+                subscribedPublishers.set(publisherId, publisherOutputs);
+            }
+        });
+        this.state.subscribedPublishers = subscribedPublishers;
     }
 
     isSelectedWidgetASubscriber() {
@@ -156,18 +208,7 @@ export default class WidgetPubSubConfiguration extends Component {
 
         if (!this.state.subscribedPublishers) {
             // Initialize state.
-            const subscribedPublishers = new Map();
-            selectedWidgetPubSub.publishers.forEach((publisherId) => {
-                const publisherContents = availablePublishersContents.find((publisher) => {
-                    return publisherId === publisher.props.id;
-                });
-                if (publisherContents) {
-                    const publisherOutputs = _.get(publisherContents, 'props.configs.pubsub.publisherWidgetOutputs',
-                        []);
-                    subscribedPublishers.set(publisherId, publisherOutputs);
-                }
-            });
-            this.state.subscribedPublishers = subscribedPublishers;
+            this.initializePublisherDropDowns(this.getSelectedWidget());
         }
 
         return availablePublishersContents.map((publisherContent) => {
@@ -225,27 +266,8 @@ export default class WidgetPubSubConfiguration extends Component {
 
         if (!this.state.widgetInputsOutputsMappings) {
             // Initialize state.
-            const widgetInputsOutputsMappings = new Map();
-            const selectedWidgetPubSub = this.getSelectedWidget().props.configs.pubsub;
-            if (selectedWidgetPubSub.widgetInputOutputMapping) {
-                selectedWidgetPubSub.widgetInputOutputMapping.forEach((mapping) => {
-                    widgetInputsOutputsMappings.set(mapping.subscriberWidgetInput, mapping);
-                });
-            } else {
-                selectedWidgetPubSub.widgetInputOutputMapping = [];
-            }
-            widgetInputs.forEach((inputName) => {
-                if (!widgetInputsOutputsMappings.has(inputName)) {
-                    widgetInputsOutputsMappings.set(inputName, {
-                        subscriberWidgetInput: inputName,
-                        publisherId: null,
-                        publisherWidgetOutput: null,
-                    });
-                }
-            });
-            this.state.widgetInputsOutputsMappings = widgetInputsOutputsMappings;
+            this.initializeWidgetInputOutputMappings(this.getSelectedWidget());
         }
-
         const elements = [];
         this.state.widgetInputsOutputsMappings.forEach((mapping) => {
             const subscriberInputName = mapping.subscriberWidgetInput;
