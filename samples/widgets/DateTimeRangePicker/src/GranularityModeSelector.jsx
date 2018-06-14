@@ -79,8 +79,6 @@ export default class GranularityModeSelector extends React.Component {
             <div>
                 <div>
                     Last :
-                </div>
-                <div>
                     {this.generateTabs(granularityMode)}
                     <IconButton aria-label="Delete" style={{ marginRight: 5 }} onClick={this.switchGranularity}>
                         {
