@@ -560,13 +560,6 @@ class GadgetsGenerationWizard extends Component {
                                     <StepLabel
                                         style={this.getStepperTextStyle(stepIndex, 2)}
                                     >
-                                        PubSub Configurations
-                                    </StepLabel>
-                                </Step>
-                                <Step>
-                                    <StepLabel
-                                        style={this.getStepperTextStyle(stepIndex, 3)}
-                                    >
                                         Configure chart
                                     </StepLabel>
                                 </Step>
