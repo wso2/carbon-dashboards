@@ -40,6 +40,8 @@ import { darkTheme, lightTheme } from '../utils/Theme';
 
 const SelectableList = makeSelectable(List);
 
+const navIcon = { margin: 0, width: 'initial', height: 40, padding: 0 };
+
 class DashboardViewPage extends Component {
 
     constructor(props) {
@@ -145,7 +147,7 @@ class DashboardViewPage extends Component {
         return (
             <Header
                 title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
-                logo={<IconButton><NavigationMenu /></IconButton>}
+                logo={<IconButton style={navIcon}><NavigationMenu /></IconButton>}
                 onLogoClick={this.handleSidePaneToggle}
                 rightElement={<span><PortalButton /><UserMenu /></span>}
                 theme={theme}
