@@ -59,7 +59,6 @@ export default class UniversalWidget extends Widget {
                     this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData)
                 }
                 this.state.providerConfigs = providerConfiguration;
-                console.info(super.getWidgetChannelManager());
                 super.getWidgetChannelManager().
                     subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
                 this.setState({ config: message.data.configs.chartConfig, metadata: message.data.configs.metadata });
