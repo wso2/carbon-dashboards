@@ -35,7 +35,7 @@ export default class Header extends Component {
                 iconElementLeft={this.props.logo}
                 onLeftIconButtonClick={this.props.onLogoClick}
                 iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }}
-                titleStyle={{ fontSize: 16, color: '#EEEEEE' }}
+                titleStyle={{ fontSize: 16 }}
                 zDepth={2}
             />
         );

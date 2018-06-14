@@ -160,6 +160,7 @@ export default class WidgetRenderer extends Component {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
+            backgroundColor: theme.appBar.color,
             width: this.props.glContainer.width,
             height: this.props.glContainer.height,
         };
@@ -167,7 +168,6 @@ export default class WidgetRenderer extends Component {
             fontWeight: 500,
             fontSize: '18px',
             color: theme.palette.textColor,
-            backgroundColor: theme.palette.canvasColor,
             fontFamily: theme.fontFamily
         };
         const messageStyles = {
