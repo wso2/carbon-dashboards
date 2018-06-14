@@ -90,6 +90,9 @@ export default class WidgetPubSubConfiguration extends Component {
 
     initializeWidgetInputOutputMappings(selectedWidget) {
         const widgetInputs = _.get(this.getSelectedWidgetConfiguration(), 'configs.pubsub.subscriberWidgetInputs');
+        if (!Array.isArray(widgetInputs)) {
+            return null; // This widget doesn't have any inputs.
+        }
         const widgetInputsOutputsMappings = new Map();
         const selectedWidgetPubSub = selectedWidget.props.configs.pubsub;
         if (selectedWidgetPubSub.widgetInputOutputMapping) {
