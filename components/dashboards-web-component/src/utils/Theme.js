@@ -30,6 +30,7 @@ export const darkTheme = getMuiTheme(darkBaseTheme,
         },
         appBar: {
             color: Colors.blueGrey900,
+            textColor: Colors.grey200,
             height: 40,
         },
         drawer: {
@@ -45,13 +46,14 @@ export const lightTheme = getMuiTheme(lightBaseTheme,
     {
         name: 'light',
         palette: {
-            primary1Color: Colors.teal500,
-            accent1Color: Colors.orange800,
+            primary1Color: Colors.orange800,
+            accent1Color: Colors.teal500,
             textColor: Colors.black,
             alternateTextColor: Colors.black,
         },
         appBar: {
             color: Colors.grey200,
+            textColor: Colors.grey900,
             height: 40,
         },
         drawer: {
