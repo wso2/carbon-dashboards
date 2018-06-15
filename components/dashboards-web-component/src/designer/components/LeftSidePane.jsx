@@ -33,7 +33,7 @@ export default class LeftSidePane extends Component {
                     height: '100%',
                     paddingBottom: 80,
                     overflowX: 'hidden',
-                    overflowY: 'auto',
+                    overflowY: 'hidden',
                     display: this.props.isHidden ? 'none' : 'block',
                 }}
             >
