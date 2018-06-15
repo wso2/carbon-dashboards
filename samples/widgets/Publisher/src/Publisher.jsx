@@ -67,7 +67,7 @@ class Publisher extends Widget {
     }
 
     clearMsgs() {
-        this.setState({publishedMsg: ''});
+        this.setState({publishedMessages: []});
         this.publishedMsgSet = [];
     }
 

@@ -55,7 +55,7 @@ class Subscriber extends Widget {
     }
 
     clearMsgs() {
-        this.setState({message: []});
+        this.setState({messages: []});
     }
 
     render() {
