@@ -77,5 +77,7 @@
   "data.publishingUI.title": "Data Publishing Configuration",
   "data.publishingAsValue.error": "The publishedAsValue cannot be empty",
   "data.publishingAsValue.exists.error": "The publishingAsValue already exists",
-  "widget-configuration.options.title": "Options"
+  "widget-configuration.options.title": "Options",
+  "pages.config.title": "Pages",
+  "widgets.list.title": "Widgets"
 }

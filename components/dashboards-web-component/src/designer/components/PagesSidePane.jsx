@@ -197,16 +197,29 @@ class PagesSidePane extends Component {
                     <Redirect to={this.getPageUrl(landingPageId)} /> :
                     null}
                 <LeftSidePane isHidden={this.props.isHidden} isOpen={this.props.isOpen} theme={this.props.theme}>
-                    <div style={{ paddingTop: 10 }}>
-                        {pages.map(page => this.renderPageCard(page, landingPageId))}
+                    <div style={{
+                        textAlign: 'center',
+                        paddingLeft: 12,
+                        paddingRight: 12,
+                        paddingTop: 15,
+                        fontSize: 20,
+                        opacity: 0.5,
+                    }}
+                    >
+                        <FormattedMessage id="pages.config.title" defaultMessage="Pages" />
                     </div>
-                    <div style={{ textAlign: 'center', paddingTop: 15 }}>
-                        <FlatButton
-                            primary
-                            label={<FormattedMessage id="create.page" defaultMessage="Add Page" />}
-                            icon={<ActionNoteAdd />}
-                            onClick={this.handlePageAdd}
-                        />
+                    <div style={{ height: '100%', overflowY: 'scroll' }}>
+                        <div style={{ paddingTop: 10 }}>
+                            {pages.map(page => this.renderPageCard(page, landingPageId))}
+                        </div>
+                        <div style={{ textAlign: 'center', paddingTop: 15 }}>
+                            <FlatButton
+                                primary
+                                label={<FormattedMessage id="create.page" defaultMessage="Add Page" />}
+                                icon={<ActionNoteAdd />}
+                                onClick={this.handlePageAdd}
+                            />
+                        </div>
                     </div>
                 </LeftSidePane>
                 <Snackbar

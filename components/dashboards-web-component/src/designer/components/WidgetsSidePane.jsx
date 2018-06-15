@@ -88,14 +88,28 @@ export default class WidgetsSidePane extends Component {
             } else {
                 innerContent = (
                     <span>
-                        <div style={styles.message}>
-                            <TextField
-                                hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search widgets" />}
-                                value={this.state.filter}
-                                onChange={event => this.setState({ filter: event.target.value })}
-                            />
-                        </div>
-                        <div>{this.widgets.map(widget => this.renderWidgetCard(widget))}</div>
+                        <span>
+                            <div style={{
+                                textAlign: 'center',
+                                paddingLeft: 12,
+                                paddingRight: 12,
+                                paddingTop: 15,
+                                fontSize: 20,
+                                opacity: 0.5,
+                            }}
+                            >
+                                <FormattedMessage id="widgets.list.title" defaultMessage="Widgets" />
+                            </div>
+                            <div style={styles.message}>
+                                <TextField
+                                    hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search widgets" />}
+                                    value={this.state.filter}
+                                    onChange={event => this.setState({ filter: event.target.value })}
+                                />
+                            </div>
+                        </span>
+                        <div style={{ height: '100%', overflowY: 'scroll' }}>{this.widgets.map(
+                            widget => this.renderWidgetCard(widget))}</div>
                     </span>
                 );
             }
