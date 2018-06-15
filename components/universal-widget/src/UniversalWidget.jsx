@@ -140,7 +140,7 @@ export default class UniversalWidget extends Widget {
 
     render() {
         return (
-            <div style={{width: this.props.glContainer.width, height: this.props.glContainer.height}}>
+            <div style={{ margin: 10, boxSizing: 'border-box' }}>
                 <VizG
                     config={this.state.config}
                     metadata={this.state.metadata}
