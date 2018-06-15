@@ -159,6 +159,9 @@ class ProviderConfigurator extends Component {
                         />
                     ))}
                 </SelectField>
+                <div  style={{ fontSize: 'medium', color: 'rgb(255,255,255,0.3)' }} >
+                    {this.props.configProviderDescription}
+                </div>
                 {this.renderProperties()}
                 {
                     this.props.providerType && this.props.providerType === 'WebSocketProvider' ?

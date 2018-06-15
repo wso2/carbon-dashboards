@@ -72,6 +72,7 @@ class GadgetsGenerationWizard extends Component {
             providerConfiguration: {},
             providerConfigRenderTypes: {},
             providerConfigRenderHints:{},
+            providerDescription: '',
             chartConfiguration: {},
             pubsub: {},
             metadata: {
@@ -141,6 +142,7 @@ class GadgetsGenerationWizard extends Component {
                     providerConfigRenderTypes: UtilFunctions.getDefaultH2RenderTypes(),
                     providerConfiguration: UtilFunctions.getDefaultH2Config(),
                     providerConfigRenderHints: response.data[2],
+                    providerDescription: response.data[3] || '',
                 });
             } else {
                 this.setState({
@@ -148,6 +150,7 @@ class GadgetsGenerationWizard extends Component {
                     providerConfigRenderTypes: response.data[0],
                     providerConfiguration: response.data[1],
                     providerConfigRenderHints: response.data[2],
+                    providerDescription: response.data[3] || '',
                 });
             }
         }).catch(() => {
@@ -394,6 +397,7 @@ class GadgetsGenerationWizard extends Component {
                         configuration={this.state.providerConfiguration}
                         configRenderTypes={this.state.providerConfigRenderTypes}
                         configRenderHints={this.state.providerConfigRenderHints}
+                        configProviderDescription={this.state.providerDescription}
                         providerMetadata={this.state.metadata}
                         handleProviderTypeChange={this.handleProviderTypeChange}
                         handleProviderConfigPropertyChange={this.handleProviderConfigPropertyChange}
