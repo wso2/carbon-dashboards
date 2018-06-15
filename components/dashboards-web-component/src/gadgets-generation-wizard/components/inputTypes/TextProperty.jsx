@@ -45,6 +45,9 @@ class TextProperty extends React.Component {
             <TextField
                 id={this.props.id}
                 name={this.props.id}
+                errorText={this.props.inputHint}
+                errorStyle={{ color: '#757575' }}
+                floatingLabelFocusStyle={{ color: '#0097a7' }}
                 floatingLabelText={(this.props.fieldName) ? (this.props.fieldName) : (null)}
                 type={this.props.number ? 'number' : 'text'}
                 value={this.props.value}

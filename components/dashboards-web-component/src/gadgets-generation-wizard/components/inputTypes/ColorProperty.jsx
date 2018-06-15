@@ -76,6 +76,9 @@ class ColorProperty extends Component {
                 <TextField
                     id={this.props.id}
                     name={this.props.id}
+                    errorText={this.props.inputHint}
+                    floatingLabelFocusStyle={{ color: '#0097a7' }}
+                    errorStyle={{ color: '#757575' }}
                     floatingLabelText={(this.props.fieldName) ? (this.props.fieldName) : (null)}
                     value={this.props.value}
                     onChange={e => this.props.onChange(this.props.id, e.target.value)}

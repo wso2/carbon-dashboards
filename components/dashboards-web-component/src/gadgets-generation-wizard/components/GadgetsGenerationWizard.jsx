@@ -71,6 +71,7 @@ class GadgetsGenerationWizard extends Component {
             providersList: [],
             providerConfiguration: {},
             providerConfigRenderTypes: {},
+            providerConfigRenderHints:{},
             chartConfiguration: {},
             pubsub: {},
             metadata: {
@@ -139,12 +140,14 @@ class GadgetsGenerationWizard extends Component {
                     providerType,
                     providerConfigRenderTypes: UtilFunctions.getDefaultH2RenderTypes(),
                     providerConfiguration: UtilFunctions.getDefaultH2Config(),
+                    providerConfigRenderHints: response.data[2],
                 });
             } else {
                 this.setState({
                     providerType,
                     providerConfigRenderTypes: response.data[0],
                     providerConfiguration: response.data[1],
+                    providerConfigRenderHints: response.data[2],
                 });
             }
         }).catch(() => {
@@ -390,6 +393,7 @@ class GadgetsGenerationWizard extends Component {
                         providerType={this.state.providerType}
                         configuration={this.state.providerConfiguration}
                         configRenderTypes={this.state.providerConfigRenderTypes}
+                        configRenderHints={this.state.providerConfigRenderHints}
                         providerMetadata={this.state.metadata}
                         handleProviderTypeChange={this.handleProviderTypeChange}
                         handleProviderConfigPropertyChange={this.handleProviderConfigPropertyChange}

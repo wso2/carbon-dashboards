@@ -41,6 +41,7 @@ class ProviderConfigurator extends Component {
         this.state = {
             configuration: props.configuration,
             configRenderTypes: props.configRenderTypes,
+            configRenderHints: props.configRenderHints || {},
         };
     }
 
@@ -48,6 +49,7 @@ class ProviderConfigurator extends Component {
         this.setState({
             configuration: props.configuration,
             configRenderTypes: props.configRenderTypes,
+            configRenderHints: props.configRenderHints || {},
         });
     }
 
@@ -63,7 +65,7 @@ class ProviderConfigurator extends Component {
         }
         return propertyKeys.map((key) => {
             return (
-                this.renderAsInputField(key, this.state.configRenderTypes[key])
+                this.renderAsInputField(key, this.state.configRenderTypes[key], this.state.configRenderHints[key])
             );
         });
     }
@@ -73,13 +75,14 @@ class ProviderConfigurator extends Component {
      * @param value
      * @param type
      */
-    renderAsInputField(value, type) {
+    renderAsInputField(value, type, inputHint) {
         switch (type) {
             case (Types.inputFields.SWITCH):
                 return (
                     <div>
                         <SwitchProperty
                             id={value}
+                            inputHint={inputHint}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
@@ -91,6 +94,7 @@ class ProviderConfigurator extends Component {
                     <div>
                         <SwitchProperty
                             id={value}
+                            inputHint={inputHint}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
@@ -103,6 +107,7 @@ class ProviderConfigurator extends Component {
                     <div>
                         <CodeProperty
                             id={value}
+                            inputHint={inputHint}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             mode={(type === Types.inputFields.SQL_CODE) ? 'sql' : 'text'}
@@ -116,6 +121,7 @@ class ProviderConfigurator extends Component {
                     <DynamicQueryComponent
                         value={this.props.configuration[value].queryFunction}
                         handleDynamicQuery={this.props.handleDynamicQuery}
+                        inputHint={inputHint}
                     />
                 );
             default:
@@ -123,6 +129,7 @@ class ProviderConfigurator extends Component {
                     <div>
                         <TextProperty
                             id={value}
+                            inputHint={inputHint}
                             value={this.props.configuration[value]}
                             fieldName={UtilFunctions.toSentenceCase(value)}
                             onChange={(id, value) => this.props.handleProviderConfigPropertyChange(id, value)}
