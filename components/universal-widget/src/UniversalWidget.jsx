@@ -121,11 +121,9 @@ export default class UniversalWidget extends Widget {
         eval(this.widgetContext.state.queryData.queryFunction);
         this.widgetContext.state.providerConfigs.configs.config.queryData.query =
             this.getQuery.apply(this, widgetInputs);
-        console.log(this.widgetContext.state.providerConfigs.configs.config.queryData.query);
         this.widgetContext.channelManager.unsubscribeWidget(this.widgetContext.props.id);
         this.widgetContext.channelManager.subscribeWidget(this.widgetContext.props.id,
             this.widgetContext.handleWidgetData, this.widgetContext.state.providerConfigs);
-        console.log(this.widgetContext.state.providerConfigs)
         this.widgetContext.setState({ config: this.widgetContext.state.config });
     }
 
