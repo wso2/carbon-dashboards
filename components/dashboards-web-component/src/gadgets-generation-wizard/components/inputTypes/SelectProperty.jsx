@@ -31,6 +31,8 @@ class SelectProperty extends React.Component {
             <SelectField
                 floatingLabelText={(this.props.fieldName) ? (this.props.fieldName) : (null)}
                 value={this.props.value}
+                errorText={this.props.inputHint}
+                errorStyle={{ color: '#757575' }}
                 onChange={(event, index, value) => this.props.onChange(this.props.id, value)}
                 fullWidth={(this.props.fullWidth)}
                 style={(this.props.fullWidth) ? (null) : ({ width: this.props.width })}
