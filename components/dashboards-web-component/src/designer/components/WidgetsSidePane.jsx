@@ -108,7 +108,7 @@ export default class WidgetsSidePane extends Component {
                                 />
                             </div>
                         </span>
-                        <div style={{ height: '100%', overflowY: 'scroll' }}>{this.widgets.map(
+                        <div style={{ height: '100%', overflowY: 'auto' }}>{this.widgets.map(
                             widget => this.renderWidgetCard(widget))}</div>
                     </span>
                 );

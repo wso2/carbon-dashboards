@@ -208,7 +208,7 @@ class PagesSidePane extends Component {
                     >
                         <FormattedMessage id="pages.config.title" defaultMessage="Pages" />
                     </div>
-                    <div style={{ height: '100%', overflowY: 'scroll' }}>
+                    <div style={{ height: '100%', overflowY: 'auto' }}>
                         <div style={{ paddingTop: 10 }}>
                             {pages.map(page => this.renderPageCard(page, landingPageId))}
                         </div>
