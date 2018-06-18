@@ -38,6 +38,13 @@ const styles = {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
+        fontSize: '1.125em',
+    },
+    cardSubtitleText: {
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+        fontSize: '0.8em',
     },
     cardActions: {
         float: 'right',
@@ -220,7 +227,7 @@ class DashboardCard extends Component {
                         title={title}
                         titleStyle={styles.cardTitleText}
                         subtitle={subtitle ? <span title={subtitle}>{subtitle}</span> : <span>&nbsp;</span>}
-                        subtitleStyle={styles.cardTitleText}
+                        subtitleStyle={styles.cardSubtitleText}
                     />
                 </Card>
                 {this.renderMenu(dashboard)}
