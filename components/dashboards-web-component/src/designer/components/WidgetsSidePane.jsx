@@ -88,34 +88,26 @@ export default class WidgetsSidePane extends Component {
             } else {
                 innerContent = (
                     <span>
-                        <span>
-                            <div style={{
-                                textAlign: 'center',
-                                paddingLeft: 12,
-                                paddingRight: 12,
-                                paddingTop: 15,
-                                fontSize: 20,
-                                opacity: 0.5,
-                            }}
-                            >
-                                <FormattedMessage id="widgets.list.title" defaultMessage="Widgets" />
-                            </div>
-                            <div style={styles.message}>
-                                <TextField
-                                    hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search widgets" />}
-                                    value={this.state.filter}
-                                    onChange={event => this.setState({ filter: event.target.value })}
-                                />
-                            </div>
-                        </span>
-                        <div style={{ height: '100%', overflowY: 'scroll' }}>{this.widgets.map(
+                        <div style={styles.message}>
+                            <TextField
+                                hintText={<FormattedMessage id="search.hint.text" defaultMessage="Search widgets" />}
+                                value={this.state.filter}
+                                onChange={event => this.setState({ filter: event.target.value })}
+                            />
+                        </div>
+                        <div style={{ height: '100%', overflowY: 'auto' }}>{this.widgets.map(
                             widget => this.renderWidgetCard(widget))}</div>
                     </span>
                 );
             }
         }
         return (
-            <LeftSidePane isHidden={this.props.isHidden} isOpen={this.props.isOpen} theme={this.props.theme}>
+            <LeftSidePane
+                isHidden={this.props.isHidden}
+                isOpen={this.props.isOpen}
+                theme={this.props.theme}
+                title={<FormattedMessage id="widgets.list.title" defaultMessage="Widgets" />}
+            >
                 {innerContent}
             </LeftSidePane>
         );

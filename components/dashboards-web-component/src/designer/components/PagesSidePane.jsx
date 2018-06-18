@@ -196,20 +196,15 @@ class PagesSidePane extends Component {
                 {(this.getPageById(this.props.match.params.pageId) == null) ?
                     <Redirect to={this.getPageUrl(landingPageId)} /> :
                     null}
-                <LeftSidePane isHidden={this.props.isHidden} isOpen={this.props.isOpen} theme={this.props.theme}>
-                    <div style={{
-                        textAlign: 'center',
-                        paddingLeft: 12,
-                        paddingRight: 12,
-                        paddingTop: 15,
-                        fontSize: 20,
-                        opacity: 0.5,
-                    }}
-                    >
-                        <FormattedMessage id="pages.config.title" defaultMessage="Pages" />
-                    </div>
-                    <div style={{ height: '100%', overflowY: 'scroll' }}>
-                        <div style={{ paddingTop: 10 }}>
+
+                <LeftSidePane
+                    isHidden={this.props.isHidden}
+                    isOpen={this.props.isOpen}
+                    theme={this.props.theme}
+                    title={<FormattedMessage id="pages.config.title" defaultMessage="Pages" />}
+                >
+                    <div style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
+                        <div>
                             {pages.map(page => this.renderPageCard(page, landingPageId))}
                         </div>
                         <div style={{ textAlign: 'center', paddingTop: 15 }}>
