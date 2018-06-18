@@ -37,6 +37,9 @@ export default class LeftSidePane extends Component {
                     display: this.props.isHidden ? 'none' : 'block',
                 }}
             >
+                <div style={{ textAlign: 'center', paddingTop: 15, paddingBottom: 5, fontSize: 20, opacity: 0.5 }}>
+                    {this.props.title}
+                </div>
                 {this.props.children}
             </Drawer>
         );
@@ -44,6 +47,7 @@ export default class LeftSidePane extends Component {
 }
 
 LeftSidePane.propTypes = {
+    title: PropTypes.element.isRequired,
     children: PropTypes.element.isRequired,
     isHidden: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
