@@ -31,50 +31,79 @@ const styles = {
         width: '100%',
         height: '100%',
     },
-    noDashboardsMessage: {
-        color: 'white',
-        fontSize: '30px',
+    dashboardMessage: {
+        textAlign: 'center',
+        fontSize: '2.5em',
+        fontFamily: defaultTheme.fontFamily,
+        fontWeight: 'bold',
+        paddingTop: '10%',
+        color: defaultTheme.appBar.color,
     },
 };
 
-class DashboardListingPage extends Component {
+/**
+ * Dashboards listing page a.k.a landing page.
+ */
+export default class DashboardListingPage extends Component {
+    /**
+     * Constructor.
+     */
     constructor() {
         super();
         this.state = {
-            isDashboardsFetchSuccess: true,
-            dashboards: [],
+            dashboards: undefined,
+            error: false,
         };
         this.retrieveDashboards = this.retrieveDashboards.bind(this);
         this.renderDashboardThumbnails = this.renderDashboardThumbnails.bind(this);
     }
 
+    /**
+     * Retrieve dashboards from the dashboard repository.
+     */
     componentDidMount() {
         this.retrieveDashboards();
     }
 
+    /**
+     * Retrieve dashboards from the dashboard repository.
+     */
     retrieveDashboards() {
         new DashboardAPI().getDashboardList()
             .then((response) => {
                 const dashboards = response.data;
                 dashboards.sort((dashboardA, dashboardB) => dashboardA.url > dashboardB.url);
-                this.setState({
-                    isDashboardsFetchSuccess: true,
-                    dashboards,
-                });
+                this.setState({ dashboards });
             })
             .catch(function () {
                 this.setState({
-                    isDashboardsFetchSuccess: false,
                     dashboards: [],
+                    error: true,
                 });
             });
     }
 
+    /**
+     * Render dashboard thumbnails.
+     * @return {XML} dashboard thumbnails
+     */
     renderDashboardThumbnails() {
-        if (!this.state.isDashboardsFetchSuccess) {
+        const { dashboards, error } = this.state;
+
+        if (!dashboards) {
+            // Dashboards are loading.
+            return (
+                <div style={styles.dashboardMessage}>
+                    <FormattedMessage id='listing.loading' defaultMessage='Loading Dashboards...' />
+                </div>
+            );
+        }
+
+        if (error) {
+            // Error while loading dashboards.
             return (
                 <Snackbar
-                    open={!this.state.isDashboardsFetchSuccess}
+                    open={this.state.error}
                     message={
                         <FormattedMessage
                             id='listing.error.cannot-list'
@@ -85,19 +114,26 @@ class DashboardListingPage extends Component {
                 />
             );
         }
-        if (this.state.dashboards.length === 0) {
+
+        if (dashboards.length === 0) {
+            // No dashboards available.
             return (
-                <div style={styles.noDashboardsMessage}>
+                <div style={styles.dashboardMessage}>
                     <FormattedMessage id='listing.error.no-dashboards' defaultMessage='No Dashboards Available' />
                 </div>
             );
-        } else {
-            return this.state.dashboards.map((dashboard) => {
-                return <DashboardCard key={dashboard.url} dashboard={dashboard} />;
-            });
         }
+
+        // Render dashboards.
+        return this.state.dashboards.map((dashboard) => {
+            return <DashboardCard key={dashboard.url} dashboard={dashboard} />;
+        });
     }
 
+    /**
+     * Render dashboard listing page.
+     * @returns {XML} HTML content
+     */
     render() {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
@@ -110,5 +146,3 @@ class DashboardListingPage extends Component {
         );
     }
 }
-
-export default DashboardListingPage;

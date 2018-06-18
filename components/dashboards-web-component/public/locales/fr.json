@@ -77,5 +77,6 @@
   "data.publishingAsValue.exists.error": "Le publishingAsValue existe déjà",
   "widget-configuration.options.title": "Options",
   "pages.config.title": "Pages",
-  "widgets.list.title": "Widgets"
+  "widgets.list.title": "Widgets",
+  "listing.loading": "Chargement des tableaux de bord..."
 }
