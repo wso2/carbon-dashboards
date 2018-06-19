@@ -4,7 +4,8 @@
     "thumbnailURL": "",
     "configs": {
         "pubsub": {
-            "types": ["publisher"]
+            "types": ["publisher"],
+            "publisherWidgetOutputs":["currentMessage"]
         },
         "userPrefs": true
     }
