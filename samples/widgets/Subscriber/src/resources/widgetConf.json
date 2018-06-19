@@ -6,6 +6,9 @@
         "pubsub": {
             "types": [
                 "subscriber"
+            ],
+            "subscriberWidgetInputs": [
+                "receivedMessage"
             ]
         }
     }
