@@ -6,6 +6,11 @@
         "pubsub": {
             "types": [
                 "publisher"
+            ],
+            "publisherWidgetOutputs":[
+                "granularity",
+                "from",
+                "to"
             ]
         }
     }
