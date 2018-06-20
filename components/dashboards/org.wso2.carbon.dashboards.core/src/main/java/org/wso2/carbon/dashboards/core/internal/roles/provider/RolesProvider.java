@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class RolesProvider {
 
-    private static final String ROLE_ID = "admin";
+    private static final String ROLE_ID = "1";
 
     private List<String> creatorRoleIds = new ArrayList<>();
 
