@@ -37,6 +37,7 @@ import Header from '../common/Header';
 import UserMenu from '../common/UserMenu';
 import PortalButton from '../common/PortalButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
+import '../utils/GoldenLayoutOverrides.css';
 
 const SelectableList = makeSelectable(List);
 
