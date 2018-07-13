@@ -50,6 +50,13 @@ const styles = {
         float: 'right',
         paddingRight: 0,
     },
+    moreButton: {
+        float: 'right',
+        padding: '4px'
+    },
+    cardTitle: {
+        float: 'left',
+    },
 };
 
 class DashboardCard extends Component {
@@ -221,10 +228,13 @@ class DashboardCard extends Component {
                     </CardMedia>
                     <CardTitle
                         actAsExpander={false}
-                        showExpandableButton={dashboard.hasOwnerPermission && dashboard.hasDesignerPermission}
-                        openIcon={<NavigationMoreVert onClick={this.handleMenuIconClick} />}
-                        closeIcon={<NavigationMoreVert onClick={this.handleMenuIconClick} />}
-                        title={title}
+                        showExpandableButton={false}
+                        title={
+                            <div>
+                                <span style={styles.cardTitle}>{title}</span>
+                                <NavigationMoreVert onClick={this.handleMenuIconClick} style={styles.moreButton} />
+                            </div>
+                        }
                         titleStyle={styles.cardTitleText}
                         subtitle={subtitle ? <span title={subtitle}>{subtitle}</span> : <span>&nbsp;</span>}
                         subtitleStyle={styles.cardSubtitleText}
