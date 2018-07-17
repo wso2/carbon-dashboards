@@ -25,7 +25,7 @@ export default class CustomTimeRangeSelector extends React.Component {
         super(props);
 
         this.state = {
-            inputType: 'milliseconds',
+            inputType: 'millisecond',
         };
 
         this.startTime= new Date();
@@ -71,8 +71,8 @@ export default class CustomTimeRangeSelector extends React.Component {
                         <MenuItem value={'day'}>Day</MenuItem>
                         <MenuItem value={'hour'}>Hour</MenuItem>
                         <MenuItem value={'minute'}>Minute</MenuItem>
-                        <MenuItem value={'seconds'}>Seconds</MenuItem>
-                        <MenuItem value={'milliseconds'}>Milliseconds</MenuItem>
+                        <MenuItem value={'second'}>Second</MenuItem>
+                        <MenuItem value={'millisecond'}>Millisecond</MenuItem>
                     </Select>
                 </div>
                 <div

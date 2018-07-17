@@ -55,7 +55,7 @@ export default class DateTimePicker extends React.Component {
                 date.setMinutes(0);
             case 'minute':
                 date.setSeconds(0);
-            case 'seconds':
+            case 'second':
                 date.setMilliseconds(0);
         }
 
@@ -76,7 +76,7 @@ export default class DateTimePicker extends React.Component {
             case 'minute':
                 time = moment(time, 'HH:mm').format('HH:mm:00.000');
                 break;
-            case 'seconds':
+            case 'second':
                 time = moment(time, 'HH:mm:ss').format('HH:mm:ss.000');
                 break;
         }
@@ -89,7 +89,7 @@ export default class DateTimePicker extends React.Component {
                     }}
                 >
                     {
-                        ['year','milliseconds','month','day', 'hour', 'minute', 'seconds'].indexOf(inputType) > -1 ?
+                        ['year','millisecond','month','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <Select
                                 value={year}
                                 onChange={event => {
@@ -103,7 +103,7 @@ export default class DateTimePicker extends React.Component {
                             null
                     }
                     {
-                        ['month','milliseconds','day', 'hour', 'minute', 'seconds'].indexOf(inputType) > -1 ?
+                        ['month','millisecond','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <Select
                                 value={month}
                                 onChange={event => {
@@ -118,7 +118,7 @@ export default class DateTimePicker extends React.Component {
                             null
                     }
                     {
-                        ['day','milliseconds', 'hour', 'minute', 'seconds'].indexOf(inputType) > -1 ?
+                        ['day','millisecond', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <Select
                                 value={days}
                                 onChange={event => {
@@ -134,7 +134,7 @@ export default class DateTimePicker extends React.Component {
                     }
                 </div>
                 {
-                    ['milliseconds', 'hour', 'minute', 'seconds'].indexOf(inputType) > -1 ?
+                    ['millisecond', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                         <div>
                             <br/>Time<br/>
                             <div className={'MuiFormControl-root-69'}>
@@ -214,9 +214,9 @@ export default class DateTimePicker extends React.Component {
                 return 3600;
             case 'minute':
                 return 60;
-            case 'seconds':
+            case 'second':
                 return 1;
-            case 'milliseconds':
+            case 'millisecond':
                 return 0.001;
         }
     }
@@ -227,9 +227,9 @@ export default class DateTimePicker extends React.Component {
                 return moment().format('HH:00:00.000');
             case 'minute':
                 return moment().format('HH:mm:00.000');
-            case 'seconds':
+            case 'second':
                 return moment().format('HH:mm:ss.000');
-            case 'milliseconds':
+            case 'millisecond':
                 return moment().format('HH:mm:ss.SSS');
         }
     }
