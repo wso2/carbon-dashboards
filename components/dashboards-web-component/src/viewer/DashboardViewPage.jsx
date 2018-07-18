@@ -197,16 +197,28 @@ class DashboardViewPage extends Component {
         );
     }
 
+    /**
+     * Render pages menu.
+     *
+     * @returns {XML} Html content
+     */
     renderPagesList() {
         const landingPage = this.dashboard.landingPage;
         const history = this.props.history;
-        return this.dashboard.pages.map((page) => {
+        let pagesList = [];
+        this.dashboard.pages.forEach((page) => {
+            if (page.hidden) {
+                return;
+            }
             const isLandingPage = (page.id === landingPage);
-            let nestedItems = [];
+            let subPagesList = [];
             if (page.pages) {
-                nestedItems = page.pages.map((subPage) => {
+                page.pages.forEach((subPage) => {
+                    if (subPage.hidden) {
+                        return;
+                    }
                     const subPageId = `${page.id}/${subPage.id}`;
-                    return (
+                    subPagesList.push(
                         <ListItem
                             key={subPageId}
                             value={subPageId}
@@ -217,19 +229,20 @@ class DashboardViewPage extends Component {
                     );
                 });
             }
-            return (
+            pagesList.push(
                 <ListItem
                     key={page.id}
                     value={page.id}
                     primaryText={page.name}
                     leftIcon={isLandingPage ? <ActionHome /> : null}
                     insetChildren={!isLandingPage}
-                    nestedItems={nestedItems}
-                    open={!!nestedItems}
+                    nestedItems={subPagesList}
+                    open={!!subPagesList}
                     onClick={() => history.push(this.getNavigationToPage(page.id))}
                 />
             );
         });
+        return pagesList;
     }
 
     renderDashboard(theme) {
