@@ -46,6 +46,7 @@ export default class DateRangePicker extends Widget {
             height: props.glContainer.height,
             granularityMode: null,
             granularityValue: '',
+            options: this.props.configs.options,
         };
 
         this.handleResize = this.handleResize.bind(this);
@@ -119,6 +120,10 @@ export default class DateRangePicker extends Widget {
         }
 
         this.setState({ granularityMode: mode, granularityValue: granularity, startTime: startTime, endTime: new Date() });
+    }
+
+    componentDidMount() {
+        this.handleGranularityChange(this.state.options.defaultValue)
     }
 
     render() {
