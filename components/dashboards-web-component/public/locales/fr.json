@@ -78,5 +78,6 @@
   "widget-configuration.options.title": "Options",
   "pages.config.title": "Pages",
   "widgets.list.title": "Widgets",
-  "listing.loading": "Chargement des tableaux de bord..."
+  "listing.loading": "Chargement des tableaux de bord...",
+  "designer.hide.page": "Masquer la page"
 }

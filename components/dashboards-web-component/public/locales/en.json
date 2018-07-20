@@ -80,5 +80,6 @@
   "widget-configuration.options.title": "Options",
   "pages.config.title": "Pages",
   "widgets.list.title": "Widgets",
-  "listing.loading": "Loading Dashboards..."
+  "listing.loading": "Loading Dashboards...",
+  "designer.hide.page": "Hide Page"
 }

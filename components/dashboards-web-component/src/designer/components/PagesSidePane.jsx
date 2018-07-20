@@ -43,6 +43,7 @@ class PagesSidePane extends Component {
         this.handleLandingPageUpdate = this.handleLandingPageUpdate.bind(this);
         this.handlePageAdd = this.handlePageAdd.bind(this);
         this.handlePageDelete = this.handlePageDelete.bind(this);
+        this.handlePageVisibility = this.handlePageVisibility.bind(this);
     }
 
     getPageById(pageId) {
@@ -111,6 +112,11 @@ class PagesSidePane extends Component {
         });
     }
 
+    /**
+     * Update landing page.
+     *
+     * @param {string} newLandingPageId Landing page ID
+     */
     handleLandingPageUpdate(newLandingPageId) {
         return new Promise((resolve, reject) => {
             if (!this.getPageById(newLandingPageId)) {
@@ -119,6 +125,8 @@ class PagesSidePane extends Component {
             }
             const currentLandingPage = this.props.dashboard.landingPage;
             this.props.dashboard.landingPage = newLandingPageId;
+            const page = this.getPageById(newLandingPageId);
+            page.hidden = false;
             this.props.updateDashboard()
                 .then(() => resolve())
                 .catch(() => {
@@ -170,6 +178,34 @@ class PagesSidePane extends Component {
         });
     }
 
+    /**
+     * Update dashboard page visibility.
+     *
+     * @param {string} pageId Page ID
+     * @param {boolean} hidden Is hidden
+     * @returns {Promise}
+     */
+    handlePageVisibility(pageId, hidden) {
+        return new Promise((resolve, reject) => {
+            const page = this.getPageById(pageId);
+            const currentHiddenState = page.hidden;
+            page.hidden = hidden;
+            this.props.updateDashboard()
+                .then(() => resolve())
+                .catch(() => {
+                    page.hidden = currentHiddenState;
+                    reject();
+                });
+        });
+    }
+
+    /**
+     * Render page entry in pages side panel.
+     *
+     * @param {{*}} page Page object
+     * @param {string} landingPageId Landing page ID
+     * @returns {XML} HTML content
+     */
     renderPageCard(page, landingPageId) {
         return (
             <span>
@@ -181,6 +217,7 @@ class PagesSidePane extends Component {
                     updatePageUrl={this.handlePageUrlUpdate}
                     updateLandingPage={this.handleLandingPageUpdate}
                     deletePage={this.handlePageDelete}
+                    updatePageVisibility={this.handlePageVisibility}
                 />
                 {page.pages ? page.pages.map(subPage => this.renderPageCard(subPage, landingPageId)) : null}
             </span>

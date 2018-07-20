@@ -151,6 +151,15 @@ class PageCard extends Component {
                                 disabled={page.id === this.props.landingPageId}
                                 onCheck={() => this.props.updateLandingPage(this.props.page.id)}
                             />
+                            <Checkbox
+                                label={<FormattedMessage id="designer.hide.page" defaultMessage="Hide Page" />}
+                                defaultChecked={page.hidden}
+                                disabled={page.id === this.props.landingPageId}
+                                onCheck={(e, checked) => {
+                                    this.props.updatePageVisibility(page.id, checked);
+                                }}
+                                style={{marginTop: 5}}
+                            />
                         </div>
                         <div style={{ marginRight: 0 }}>
                             <IconButton
