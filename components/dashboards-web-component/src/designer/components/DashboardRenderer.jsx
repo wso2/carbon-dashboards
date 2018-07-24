@@ -297,6 +297,7 @@ export default class DashboardRenderer extends Component {
 
     render() {
         const renderingPage = this.getRenderingPage();
+        const { theme } = this.props;
         if (renderingPage) {
             return (
                 <div>
@@ -304,6 +305,11 @@ export default class DashboardRenderer extends Component {
                     <div
                         id={dashboardContainerId}
                         className='dashboard-design-container'
+                        style={{
+                            color: theme.palette.textColor,
+                            backgroundColor: theme.palette.canvasColor,
+                            fontFamily: theme.fontFamily,
+                        }}
                         ref={() => {
                             if (!this.unmounted) {
                                 this.renderGoldenLayout();
