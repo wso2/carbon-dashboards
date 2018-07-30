@@ -44,6 +44,7 @@ class PagesSidePane extends Component {
         this.handlePageAdd = this.handlePageAdd.bind(this);
         this.handlePageDelete = this.handlePageDelete.bind(this);
         this.handlePageVisibility = this.handlePageVisibility.bind(this);
+        this.handlePageHeightUpdate = this.handlePageHeightUpdate.bind(this);
     }
 
     getPageById(pageId) {
@@ -200,6 +201,30 @@ class PagesSidePane extends Component {
     }
 
     /**
+     * Update page height.
+     *
+     * @param {string} pageId Page ID
+     * @param {number} height Page height
+     * @returns {Promise}
+     */
+    handlePageHeightUpdate(pageId, height) {
+        return new Promise((resolve, reject) => {
+            const page = this.getPageById(pageId);
+            const currentHeight = page.height;
+            page.height = height;
+            this.props.updateDashboard()
+                .then(() => {
+                    this.props.onDashboardUpdate(this.props.dashboard);
+                    resolve();
+                })
+                .catch(() => {
+                    page.height = currentHeight;
+                    reject();
+                });
+        });
+    }
+
+    /**
      * Render page entry in pages side panel.
      *
      * @param {{*}} page Page object
@@ -218,6 +243,7 @@ class PagesSidePane extends Component {
                     updateLandingPage={this.handleLandingPageUpdate}
                     deletePage={this.handlePageDelete}
                     updatePageVisibility={this.handlePageVisibility}
+                    updatePageHeight={this.handlePageHeightUpdate}
                 />
                 {page.pages ? page.pages.map(subPage => this.renderPageCard(subPage, landingPageId)) : null}
             </span>

@@ -81,5 +81,8 @@
   "pages.config.title": "Pages",
   "widgets.list.title": "Widgets",
   "listing.loading": "Loading Dashboards...",
-  "designer.hide.page": "Hide Page"
+  "designer.hide.page": "Hide Page",
+  "page.height": "Height (px)",
+  "page.height.reset": "Reset height",
+  "page.height.overlay": "Height"
 }
