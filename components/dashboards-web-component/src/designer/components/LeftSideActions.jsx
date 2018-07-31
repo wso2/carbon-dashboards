@@ -92,6 +92,7 @@ export default class LeftSideActions extends Component {
             theme,
             dashboard: this.props.dashboard,
             updateDashboard: this.props.updateDashboard,
+            onDashboardUpdate: this.props.onDashboardUpdate
         };
         const widgetsSidePaneProps = {
             theme,

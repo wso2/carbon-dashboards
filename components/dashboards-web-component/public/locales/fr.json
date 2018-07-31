@@ -79,5 +79,8 @@
   "pages.config.title": "Pages",
   "widgets.list.title": "Widgets",
   "listing.loading": "Chargement des tableaux de bord...",
-  "designer.hide.page": "Masquer la page"
+  "designer.hide.page": "Masquer la page",
+  "page.height": "Hauteur (px)",
+  "page.height.reset": "Réinitialiser hauteur",
+  "page.height.overlay": "Hauteur"
 }

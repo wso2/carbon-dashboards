@@ -25,6 +25,7 @@ import GoldenLayout from 'golden-layout';
 import 'golden-layout/src/css/goldenlayout-base.css';
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
 import WidgetRenderer from '../../common/WidgetRenderer';
+import { ResizableBox } from 'react-resizable';
 
 import '../../common/styles/custom-goldenlayout-dark-theme.css';
 import glDarkTheme from '!!css-loader!../../common/styles/custom-goldenlayout-dark-theme.css';
@@ -33,6 +34,7 @@ import './dashboard-container-styles.css';
 import WidgetConfigurationPane from './WidgetConfigurationPane';
 import DashboardUtils from '../../utils/DashboardUtils';
 import { Event } from '../../utils/Constants';
+import './../../utils/GLResizable.css';
 
 const glDarkThemeCss = glDarkTheme.toString();
 const dashboardContainerId = 'dashboard-design-container';
@@ -93,10 +95,21 @@ export default class DashboardRenderer extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.props.pageId !== nextProps.pageId) {
-            // Receiving a new page to render.
+            // Receiving new page to render.
+            this.pageHeight = nextProps.dashboard.pages.find(p => p.id == nextProps.pageId).height;
             this.destroyGoldenLayout();
             return true;
-        } else if (this.state !== nextState) {
+        }
+        if (this.props.pageId === nextProps.pageId) {
+            // Check whether the page height is difference for the same page.
+            let newHeight = nextProps.dashboard.pages.find(p => p.id === nextProps.pageId).height;
+            if (this.pageHeight !== newHeight) {
+                this.pageHeight = newHeight;
+                this.destroyGoldenLayout();
+                return true;
+            }
+        }
+        if (this.state !== nextState) {
             return true;
         }
         return false;
@@ -298,24 +311,70 @@ export default class DashboardRenderer extends Component {
     render() {
         const renderingPage = this.getRenderingPage();
         const { theme } = this.props;
+        // Calculate optimal page height for the current screen.
+        const pageHeight = renderingPage.height ? parseInt(renderingPage.height) : undefined;
+        const containerHeight =  window.innerHeight - 90;
+        const height = pageHeight && pageHeight > containerHeight ? pageHeight : containerHeight;
+
         if (renderingPage) {
             return (
-                <div>
+                <div style={{
+                    color: theme.palette.textColor,
+                    backgroundColor: theme.palette.canvasColor,
+                    fontFamily: theme.fontFamily,
+                }}>
                     <style>{glDarkThemeCss}</style>
-                    <div
-                        id={dashboardContainerId}
-                        className='dashboard-design-container'
-                        style={{
-                            color: theme.palette.textColor,
-                            backgroundColor: theme.palette.canvasColor,
-                            fontFamily: theme.fontFamily,
+                    <ResizableBox
+                        height={height}
+                        minConstraints={['100%', containerHeight]}
+                        onResizeStart={() => {
+                            this.setState({resizeStarted: true});
                         }}
-                        ref={() => {
-                            if (!this.unmounted) {
-                                this.renderGoldenLayout();
+                        onResize={(e, data) => {
+                            this.setState({resizingHeight: data.size.height});
+                        }}
+                        onResizeStop={(e, data) => {
+                            this.setState({resizeStarted: false});
+                            if (this.goldenLayout) {
+                                this.goldenLayout.updateSize();
                             }
+                            renderingPage.height = data.size.height;
+                            this.props.updateDashboard();
                         }}
-                    />
+                        axis="y"
+                    >
+                        <div
+                            id={dashboardContainerId}
+                            style={{
+                                height: '100%',
+                            }}
+                            ref={() => {
+                                if (!this.unmounted) {
+                                    this.renderGoldenLayout();
+                                }
+                            }}
+                        />
+                        {
+                            this.state.resizeStarted &&
+                            <div style={{height: '100%'}}>
+                                <div
+                                    style={{
+                                        position: 'fixed',
+                                        top: 55,
+                                        right: 15,
+                                        fontSize: 18,
+                                        fontWeight: 'bold',
+                                        padding: 10,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    }}
+                                >
+                                    <FormattedMessage id="page.height.overlay" defaultMessage="Reset height" />:
+                                    {this.state.resizingHeight}px
+                                </div>
+                            </div>
+
+                        }
+                    </ResizableBox>
                     <WidgetConfigurationPane
                         theme={this.props.theme}
                         isOpen={this.state.isWidgetConfigurationPaneOpen}
