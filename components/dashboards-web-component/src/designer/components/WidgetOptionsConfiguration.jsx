@@ -86,6 +86,7 @@ export default class WidgetOptionsConfiguration extends Component {
                                         this.handleWidgetOutput(options[i].id, payload, options[i].defaultValue);
                                     }}
                                     value={value}
+                                    multiple={!!options[i].type.multiple}
                                     id={options[i].id}
                                 >
                                     {items}
