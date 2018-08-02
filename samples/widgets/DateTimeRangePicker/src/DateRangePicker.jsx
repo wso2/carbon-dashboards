@@ -256,27 +256,33 @@ export default class DateRangePicker extends Widget {
     }
 
     getSelectedViewsForGranularityMode(granularityMode){
-        let views = [];
         let granularity = granularityMode.replace(/\s/g,'');
-        if(this.state.options[granularity + 'SecondView']) {
-            views.push('Second');
+        let views = this.state.options[granularity + 'Views'];
+        let sortedViews = [];
+
+        if(!this.state.options[granularity + 'Views'].some(item => this.state.options[granularity + 'DefaultView'] === item)) {
+            views.push(this.state.options[granularity + 'DefaultView']);
         }
-        if(this.state.options[granularity + 'MinuteView']) {
-            views.push('Minute');
+
+        if(views.includes('Second')){
+            sortedViews.push('Second');
         }
-        if(this.state.options[granularity + 'HourView']) {
-            views.push('Hour');
+        if(views.includes('Minute')){
+            sortedViews.push('Minute');
         }
-        if(this.state.options[granularity + 'DayView']) {
-            views.push('Day');
+        if(views.includes('Hour')){
+            sortedViews.push('Hour');
         }
-        if(this.state.options[granularity + 'MonthView']) {
-            views.push('Month');
+        if(views.includes('Day')){
+            sortedViews.push('Day');
         }
-        if(this.state.options[granularity + 'YearView']) {
-            views.push('Year');
+        if(views.includes('Month')){
+            sortedViews.push('Month');
         }
-        return views;
+        if(views.includes('Year')){
+            sortedViews.push('Year');
+        }
+        return sortedViews;
     }
 
 }

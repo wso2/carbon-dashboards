@@ -50,52 +50,21 @@
                 "defaultValue": "Minute"
             },
             {
-                "id": "1MinSecondView",
-                "title": "1 Min - Second View",
+                "id": "1MinViews",
+                "title": "1 Min - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MinMinuteView",
-                "title": "1 Min - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MinHourView",
-                "title": "1 Min - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MinDayView",
-                "title": "1 Min - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MinMonthView",
-                "title": "1 Min - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MinYearView",
-                "title": "1 Min - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "15MinDefaultView",
@@ -114,52 +83,21 @@
                 "defaultValue": "Minute"
             },
             {
-                "id": "15MinSecondView",
-                "title": "15 Min - Second View",
+                "id": "15MinViews",
+                "title": "15 Min - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "15MinMinuteView",
-                "title": "15 Min - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "15MinHourView",
-                "title": "15 Min - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "15MinDayView",
-                "title": "15 Min - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "15MinMonthView",
-                "title": "15 Min - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "15MinYearView",
-                "title": "15 Min - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "1HourDefaultView",
@@ -178,52 +116,21 @@
                 "defaultValue": "Minute"
             },
             {
-                "id": "1HourSecondView",
-                "title": "1 Hour - Second View",
+                "id": "1HourViews",
+                "title": "1 Hour - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1HourMinuteView",
-                "title": "1 Hour - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1HourHourView",
-                "title": "1 Hour - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1HourDayView",
-                "title": "1 Hour - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1HourMonthView",
-                "title": "1 Hour - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1HourYearView",
-                "title": "1 Hour - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "1DayDefaultView",
@@ -242,52 +149,21 @@
                 "defaultValue": "Hour"
             },
             {
-                "id": "1DaySecondView",
-                "title": "1 Day - Second View",
+                "id": "1DayViews",
+                "title": "1 Day - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1DayMinuteView",
-                "title": "1 Day - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1DayHourView",
-                "title": "1 Day - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1DayDayView",
-                "title": "1 Day - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1DayMonthView",
-                "title": "1 Day - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1DayYearView",
-                "title": "1 Day - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "7DaysDefaultView",
@@ -306,52 +182,21 @@
                 "defaultValue": "Day"
             },
             {
-                "id": "7DaysSecondView",
-                "title": "7 Days - Second View",
+                "id": "7DaysViews",
+                "title": "7 Days - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "7DaysMinuteView",
-                "title": "7 Days - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "7DaysHourView",
-                "title": "7 Days - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "7DaysDayView",
-                "title": "7 Days - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "7DaysMonthView",
-                "title": "7 Days - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "7DaysYearView",
-                "title": "7 Days - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "1MonthDefaultView",
@@ -370,52 +215,21 @@
                 "defaultValue": "Month"
             },
             {
-                "id": "1MonthSecondView",
-                "title": "1 Month - Second View",
+                "id": "1MonthViews",
+                "title": "1 Month - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MonthMinuteView",
-                "title": "1 Month - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MonthHourView",
-                "title": "1 Month - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MonthDayView",
-                "title": "1 Month - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MonthMonthView",
-                "title": "1 Month - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1MonthYearView",
-                "title": "1 Month - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "3MonthsDefaultView",
@@ -434,52 +248,21 @@
                 "defaultValue": "Month"
             },
             {
-                "id": "3MonthsSecondView",
-                "title": "3 Months - Second View",
+                "id": "3MonthsViews",
+                "title": "3 Months - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "3MonthsMinuteView",
-                "title": "3 Months - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "3MonthsHourView",
-                "title": "3 Months - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "3MonthsDayView",
-                "title": "3 Months - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "3MonthsMonthView",
-                "title": "3 Months - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "3MonthsYearView",
-                "title": "3 Months - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "6MonthsDefaultView",
@@ -498,52 +281,21 @@
                 "defaultValue": "Month"
             },
             {
-                "id": "6MonthsSecondView",
-                "title": "6 Months - Second View",
+                "id": "6MonthsViews",
+                "title": "6 Months - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "6MonthsMinuteView",
-                "title": "6 Months - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "6MonthsHourView",
-                "title": "6 Months - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "6MonthsDayView",
-                "title": "6 Months - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "6MonthsMonthView",
-                "title": "6 Months - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "6MonthsYearView",
-                "title": "6 Months - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             },
             {
                 "id": "1YearDefaultView",
@@ -562,52 +314,21 @@
                 "defaultValue": "Month"
             },
             {
-                "id": "1YearSecondView",
-                "title": "1 Year - Second View",
+                "id": "1YearViews",
+                "title": "1 Year - Views",
                 "type": {
-                    "name": "BOOLEAN"
+                    "name": "ENUM",
+                    "possibleValues": [
+                        "Second",
+                        "Minute",
+                        "Hour",
+                        "Day",
+                        "Month",
+                        "Year"
+                    ],
+                    "multiple": "true"
                 },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1YearMinuteView",
-                "title": "1 Year - Minute View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1YearHourView",
-                "title": "1 Year - Hour View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1YearDayView",
-                "title": "1 Year - Day View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1YearMonthView",
-                "title": "1 Year - Month View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
-            },
-            {
-                "id": "1YearYearView",
-                "title": "1 Year - Year View",
-                "type": {
-                    "name": "BOOLEAN"
-                },
-                "defaultValue": "true"
+                "defaultValue": ["Second", "Minute", "Hour", "Day", "Month", "Year"]
             }
         ]
     }
