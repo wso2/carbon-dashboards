@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.react-resizable {
+    position: relative;
+    margin-bottom: 50px;
+}
+
+.react-resizable-handle {
+    position: absolute;
+    height: 24px;
+    bottom: -25px;
+    right: 0;
+    left: 0;
+    background-image: linear-gradient(to bottom, transparent, transparent 11px, #386d86 11px, #386d86 13px, transparent 13px, transparent), url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAF96VFh0UmF3IHByb2ZpbGUgdHlwZSBBUFAxAAAImeNKT81LLcpMVigoyk/LzEnlUgADYxMuE0sTS6NEAwMDCwMIMDQwMDYEkkZAtjlUKNEABZiYm6UBoblZspkpiM8FAE+6FWgbLdiMAAABIUlEQVRIie2VMUvDUBSFz3kWXN2kgpOrZGiEugiZ9CeIYAKuLkk6dHGwiji41PwBBytI/4JToSIt2ILB1bXFzbUi77o0WCT2pVqc8m3v3nvOWe57D8iZJ7YXVGwvqMyiWchs7vo1RXVOcKdolTmMu625BYzNj5MzSSdriDFgww2OFNXp9zpJZ8XafB/Enftp+oIpQMA1CJ5+aK+a9DlGaLvhFYGSAG+jD737fBu9lvbDLaUQQaCSQSHuetf1KgDYXnhBwfaXC7TW8Ps39fb6nr+8WFBNAksC9FVKaM7/QtNAsgTpXXl4bFweTtMbbzIhLyQPUu0FTZPe+BYN4k67aJVJ0pmsa9EnvUZ09ucAABjG3dZkyNi8lkU7E7/5cHKMfALouViloM8HvQAAAABJRU5ErkJggg==");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    box-sizing: border-box;
+    cursor: ns-resize;
+}
+
+.react-resizable-handle:hover {
+    background-image: linear-gradient(to bottom, transparent, transparent 11px, #7cd5ff 11px, #7cd5ff 13px, transparent 13px, transparent), url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAF96VFh0UmF3IHByb2ZpbGUgdHlwZSBBUFAxAAAImeNKT81LLcpMVigoyk/LzEnlUgADYxMuE0sTS6NEAwMDCwMIMDQwMDYEkkZAtjlUKNEABZiYm6UBoblZspkpiM8FAE+6FWgbLdiMAAABIUlEQVRIie2VMUvDUBSFz3kWXN2kgpOrZGiEugiZ9CeIYAKuLkk6dHGwiji41PwBBytI/4JToSIt2ILB1bXFzbUi77o0WCT2pVqc8m3v3nvOWe57D8iZJ7YXVGwvqMyiWchs7vo1RXVOcKdolTmMu625BYzNj5MzSSdriDFgww2OFNXp9zpJZ8XafB/Enftp+oIpQMA1CJ5+aK+a9DlGaLvhFYGSAG+jD737fBu9lvbDLaUQQaCSQSHuetf1KgDYXnhBwfaXC7TW8Ps39fb6nr+8WFBNAksC9FVKaM7/QtNAsgTpXXl4bFweTtMbbzIhLyQPUu0FTZPe+BYN4k67aJVJ0pmsa9EnvUZ09ucAABjG3dZkyNi8lkU7E7/5cHKMfALouViloM8HvQAAAABJRU5ErkJggg==");
+}

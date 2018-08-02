@@ -92,6 +92,20 @@ export default class DashboardDesignerPage extends Component {
         this.setState({ hasWidgetsLoaded: true });
     }
 
+    /**
+     * Update the dashboard when modified.
+     *
+     * @param {{*}} dashboard Dashboard object
+     */
+    dashboardUpdated(dashboard) {
+        this.dashboard = dashboard;
+    }
+
+    /**
+     * Render dashboard.
+     *
+     * @param {{*}} theme Theme
+     */
     renderDashboard(theme) {
         if (!this.state.hasWidgetsLoaded) {
             return (
@@ -104,15 +118,13 @@ export default class DashboardDesignerPage extends Component {
         }
 
         return (
-            <span>
-                <DashboardRenderer
-                    dashboard={this.dashboard}
-                    widgetsConfigurations={this.widgetsConfigurations}
-                    pageId={this.props.match.params.pageId}
-                    updateDashboard={this.handleDashboardUpdate}
-                    theme={theme}
-                />
-            </span>
+            <DashboardRenderer
+                dashboard={this.dashboard}
+                widgetsConfigurations={this.widgetsConfigurations}
+                pageId={this.props.match.params.pageId}
+                updateDashboard={this.handleDashboardUpdate}
+                theme={theme}
+            />
         );
     }
 
@@ -150,8 +162,21 @@ export default class DashboardDesignerPage extends Component {
                             dashboard={this.dashboard}
                             updateDashboard={this.handleDashboardUpdate}
                             setWidgetsConfigurations={this.handleSetWidgetsConfigurations}
+                            onDashboardUpdate={this.dashboardUpdated}
                         />
-                        {this.renderDashboard(defaultTheme)}
+                        <div
+                            style={{
+                                position: 'fixed',
+                                top: 40,
+                                right: 0,
+                                bottom: 0,
+                                left: 55,
+                                overflowX: 'hidden',
+                                overflowY: 'scroll',
+                            }}
+                        >
+                            {this.renderDashboard(defaultTheme)}
+                        </div>
                     </div>
                     <Snackbar
                         open={this.state.dashboardUpdateResultMessage != null}

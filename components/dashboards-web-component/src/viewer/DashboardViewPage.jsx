@@ -139,7 +139,18 @@ class DashboardViewPage extends Component {
             <MuiThemeProvider muiTheme={currentTheme}>
                 {this.renderHeader(currentTheme)}
                 {this.renderSidePane(currentTheme)}
-                {this.renderDashboard(currentTheme)}
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 40,
+                        right: 0,
+                        bottom: 0,
+                        left: 0,
+                        overflowY: 'scroll',
+                    }}
+                >
+                    {this.renderDashboard(currentTheme)}
+                </div>
             </MuiThemeProvider>
         );
     }
@@ -246,10 +257,8 @@ class DashboardViewPage extends Component {
     }
 
     renderDashboard(theme) {
-        const pageId = this.props.match.params.pageId,
-            subPageId = this.props.match.params.subPageId;
+        const { pageId, subPageId } = this.props.match.params;
         let page = this.dashboard.pages.find(page => (page.id === pageId));
-
         if (page) {
             if (page.pages && subPageId) {
                 page = page.pages.find(page => (page.id === subPageId));
@@ -258,6 +267,7 @@ class DashboardViewPage extends Component {
                 <DashboardRenderer
                     dashboardId={this.dashboard.url}
                     goldenLayoutContents={page.content}
+                    height={page.height}
                     theme={theme}
                 />
             );

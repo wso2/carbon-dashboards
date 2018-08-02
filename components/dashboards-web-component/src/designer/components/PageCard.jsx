@@ -32,7 +32,7 @@ import {
     IconButton,
     TextField,
 } from 'material-ui';
-import { ActionDeleteForever } from 'material-ui/svg-icons';
+import { ActionDeleteForever, ActionCached } from 'material-ui/svg-icons';
 
 class PageCard extends Component {
     constructor(props) {
@@ -40,6 +40,7 @@ class PageCard extends Component {
         this.state = {
             title: props.page.name,
             url: props.page.id,
+            height: props.page.height || '',
             titleValidationErrorMessage: null,
             urlValidationErrorMessage: null,
             isDashboardDeleteConfirmDialogOpen: false,
@@ -50,6 +51,11 @@ class PageCard extends Component {
         this.handlePageUrlUpdate = this.handlePageUrlUpdate.bind(this);
         this.hideDashboardDeleteConfirmDialog = this.hideDashboardDeleteConfirmDialog.bind(this);
         this.showDashboardDeleteConfirmDialog = this.showDashboardDeleteConfirmDialog.bind(this);
+        this.handlePageHeightUpdate = this.handlePageHeightUpdate.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({height: nextProps.page.height});
     }
 
     handleCardClick(expand) {
@@ -80,6 +86,28 @@ class PageCard extends Component {
         this.props.updatePageUrl(page.id, newPageUrl)
             .then(() => this.setState({ titleValidationErrorMessage: null }))
             .catch(errorMessage => this.setState({ url: page.id, urlValidationErrorMessage: errorMessage }));
+    }
+
+    /**
+     * Handle page height update.
+     *
+     * @param {boolean} reset Reset height to default size
+     */
+    handlePageHeightUpdate(reset) {
+        const page = this.props.page;
+        if (reset) {
+            // If reset option is set, reset the height to default i.e. empty.
+            this.state.height = '';
+            this.setState({height: ''});
+        }
+        if (page.height === this.state.height) {
+            // Page height did not change.
+            return;
+        }
+        if (this.props.updatePageHeight) {
+            // Update page height
+            this.props.updatePageHeight(page.id, this.state.height);
+        }
     }
 
     hideDashboardDeleteConfirmDialog() {
@@ -142,6 +170,24 @@ class PageCard extends Component {
                             onChange={event => this.setState({ url: event.target.value })}
                             onBlur={this.handlePageUrlUpdate}
                         />
+                        <div style={{position: 'relative'}}>
+                            <TextField
+                                fullWidth
+                                floatingLabelText={<FormattedMessage id="page.height" defaultMessage="Height (px)" />}
+                                value={this.state.height}
+                                onChange={e => this.setState({ height: e.target.value })}
+                                onBlur={() => this.handlePageHeightUpdate(false)}
+                                type="number"
+                            />
+                            <IconButton
+                                tooltip={<FormattedMessage id="page.height.reset" defaultMessage="Reset height" />}
+                                tooltipPosition="top-left"
+                                onClick={() => this.handlePageHeightUpdate(true)}
+                                style={{position: 'absolute', top: 18, right: 0}}
+                            >
+                                <ActionCached />
+                            </IconButton>
+                        </div>
                     </CardText>
                     <CardActions expandable style={{ display: 'flex' }}>
                         <div style={{ marginRight: 0, flexGrow: 2 }}>

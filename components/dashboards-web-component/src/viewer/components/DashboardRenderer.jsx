@@ -42,6 +42,9 @@ export default class DashboardRenderer extends Component {
         super(props);
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
+        this.state = {
+            height: window.innerHeight
+        };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
         this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
@@ -55,9 +58,11 @@ export default class DashboardRenderer extends Component {
         if (this.goldenLayout) {
             this.goldenLayout.updateSize();
         }
+        this.setState({height: window.innerHeight});
     }
 
     componentDidMount() {
+        this.setState({height: window.innerHeight});
         window.addEventListener('resize', this.handleWindowResize);
     }
 
@@ -72,6 +77,10 @@ export default class DashboardRenderer extends Component {
             // Receiving a new dashboard to render.
             this.destroyGoldenLayout();
             return true;
+        } else if (this.state.height !== nextState.height) {
+            // Dashboard resized.
+            this.destroyGoldenLayout();
+            return true;
         } else if (this.props.theme !== nextProps.theme) {
             // Receiving a new theme.
             this.triggerThemeChangeEvent(nextProps.theme);
@@ -81,24 +90,37 @@ export default class DashboardRenderer extends Component {
     }
 
     render() {
+        let { theme, height } = this.props;
+
+        // Calculate optimal dashboard height for the current screen.
+        const containerHeight = this.state.height - 55;
+        if (height) {
+            height = parseInt(height);
+        }
+        height = height && height > containerHeight ? height : containerHeight;
+
         return (
-            <span>
+            <div>
                 <style>{this.props.theme.name === 'dark' ? glDarkThemeCss : glLightThemeCss}</style>
                 <div
-                    id={dashboardContainerId}
-                    className='dashboard-view-container'
                     style={{
-                        color: this.props.theme.palette.textColor,
-                        backgroundColor: this.props.theme.palette.canvasColor,
-                        fontFamily: this.props.theme.fontFamily,
+                        color: theme.palette.textColor,
+                        backgroundColor: theme.palette.canvasColor,
+                        fontFamily: theme.fontFamily,
+                        height: height,
                     }}
-                    ref={() => {
-                        if (!this.unmounted) {
-                            this.renderGoldenLayout();
-                        }
-                    }}
-                />
-            </span>
+                >
+                    <div
+                        id={dashboardContainerId}
+                        className="dashboard-view-container"
+                        ref={() => {
+                            if (!this.unmounted) {
+                                this.renderGoldenLayout();
+                            }
+                        }}
+                    />
+                </div>
+            </div>
         );
     }
 
