@@ -83,13 +83,15 @@ export default class UniversalWidget extends Widget {
                     .filter((widgetInputOutputMapping) => {
                         return widgetInputOutputMapping.publisherId === publisherId;
                     });
-                let filteredWidgetInputOutputMapping;
-                filteredWidgetInputOutputMapping = subscriberWidgetInputMapping.map((widgetInputOutputMapping) => {
+                let filteredWidgetInputOutputMapping = new Map();
+                subscriberWidgetInputMapping.map((widgetInputOutputMapping) => {
                     const widgetInputOutput = {};
                     widgetInputOutput[widgetInputOutputMapping.subscriberWidgetInput]
                         = widgetInputOutputMapping.publisherWidgetOutput;
-                    return widgetInputOutput;
-                })[0];
+                    filteredWidgetInputOutputMapping.set(widgetInputOutputMapping.subscriberWidgetInput,
+                        widgetInputOutputMapping.publisherWidgetOutput);
+                });
+
                 const subscriberCallbackContext = {};
                 subscriberCallbackContext.widgetContext = this;
                 subscriberCallbackContext.filteredWidgetInputOutputMapping = filteredWidgetInputOutputMapping;
@@ -106,17 +108,19 @@ export default class UniversalWidget extends Widget {
             widgetInputs.push(systemInput);
         });
         this.widgetContext.props.configs.pubsub.subscriberWidgetInputs.map((widgetInput) => {
-            if (this.filteredWidgetInputOutputMapping[widgetInput]) {
-                if (receivedKeys.has(this.filteredWidgetInputOutputMapping[widgetInput])) {
-                    this.widgetContext[widgetInput] = receivedData[this.filteredWidgetInputOutputMapping[widgetInput]];
-                    widgetInputs.push(receivedData[this.filteredWidgetInputOutputMapping[widgetInput]]);
+                if (this.filteredWidgetInputOutputMapping.get(widgetInput)) {
+                    if (receivedKeys.has(this.filteredWidgetInputOutputMapping.get(widgetInput))) {
+                        this.widgetContext[widgetInput] =
+                            receivedData[this.filteredWidgetInputOutputMapping.get(widgetInput)];
+                        widgetInputs.push(receivedData[this.filteredWidgetInputOutputMapping.get(widgetInput)]);
+                    }
+                } else {
+                    widgetInputs.push(this.widgetContext[widgetInput] ||
+                        this.widgetContext.state.queryData.customWidgetInputs
+                        .filter((customInput) => {
+                            return customInput.name === widgetInput;
+                        })[0].defaultValue);
                 }
-            } else {
-                widgetInputs.push(this.widgetContext[widgetInput] || this.widgetContext.state.queryData.customWidgetInputs
-                    .filter((customInput) => {
-                        return customInput.name === widgetInput;
-                    })[0].defaultValue);
-            }
         });
         eval(this.widgetContext.state.queryData.queryFunction);
         this.widgetContext.state.providerConfigs.configs.config.queryData.query =
