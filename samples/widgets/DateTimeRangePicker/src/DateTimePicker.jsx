@@ -89,7 +89,7 @@ export default class DateTimePicker extends React.Component {
                     }}
                 >
                     {
-                        ['year','millisecond','month','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                        ['year','month','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <Select
                                 value={year}
                                 onChange={event => {
@@ -103,7 +103,7 @@ export default class DateTimePicker extends React.Component {
                             null
                     }
                     {
-                        ['month','millisecond','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                        ['month','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <Select
                                 value={month}
                                 onChange={event => {
@@ -118,7 +118,7 @@ export default class DateTimePicker extends React.Component {
                             null
                     }
                     {
-                        ['day','millisecond', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                        ['day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <Select
                                 value={days}
                                 onChange={event => {
@@ -134,7 +134,7 @@ export default class DateTimePicker extends React.Component {
                     }
                 </div>
                 {
-                    ['millisecond', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                    ['hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                         <div>
                             <br/>Time<br/>
                             <div className={'MuiFormControl-root-69'}>
@@ -216,8 +216,6 @@ export default class DateTimePicker extends React.Component {
                 return 60;
             case 'second':
                 return 1;
-            case 'millisecond':
-                return 0.001;
         }
     }
 
@@ -229,8 +227,6 @@ export default class DateTimePicker extends React.Component {
                 return moment().format('HH:mm:00.000');
             case 'second':
                 return moment().format('HH:mm:ss.000');
-            case 'millisecond':
-                return moment().format('HH:mm:ss.SSS');
         }
     }
 

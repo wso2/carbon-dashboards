@@ -18,11 +18,11 @@
 
 import React from 'react';
 import Widget from '@wso2-dashboards/widget';
-import { MuiThemeProvider, createMuiTheme, MenuItem, Select} from 'material-ui';
+import {MuiThemeProvider, createMuiTheme, MenuItem, Select} from 'material-ui';
 import GranularityModeSelector from "./GranularityModeSelector";
 import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
 import Moment from 'moment';
-import { Scrollbars } from 'react-custom-scrollbars';
+import {Scrollbars} from 'react-custom-scrollbars';
 
 const darkTheme = createMuiTheme({
     palette: {
@@ -46,7 +46,7 @@ export default class DateRangePicker extends Widget {
             height: props.glContainer.height,
             granularityMode: null,
             granularityValue: '',
-            options: this.props.configs.options,
+            options: this.props.configs.options
         };
 
         this.handleResize = this.handleResize.bind(this);
@@ -56,6 +56,11 @@ export default class DateRangePicker extends Widget {
         this.getTimeIntervalDescriptor = this.getTimeIntervalDescriptor.bind(this);
         this.generateGranularitySelector = this.generateGranularitySelector.bind(this);
 
+        this.lowerCaseFirstChar = this.lowerCaseFirstChar.bind(this);
+        this.generateGranularityViews = this.generateGranularityViews.bind(this);
+        this.getDefaultViewForGranularityMode = this.getDefaultViewForGranularityMode.bind(this);
+        this.getSelectedViewsForGranularityMode = this.getSelectedViewsForGranularityMode.bind(this);
+
     }
 
     handleResize() {
@@ -63,7 +68,7 @@ export default class DateRangePicker extends Widget {
     }
 
     publishTimeRange(message) {
-       super.publish(message);
+        super.publish(message);
     }
 
     handleGranularityChange(mode) {
@@ -71,7 +76,7 @@ export default class DateRangePicker extends Widget {
         let granularity = '';
         let startTime = null;
 
-        if(mode !== 'custom') {
+        if (mode !== 'custom') {
 
             switch (mode) {
                 case '1 Min':
@@ -119,7 +124,12 @@ export default class DateRangePicker extends Widget {
             });
         }
 
-        this.setState({ granularityMode: mode, granularityValue: granularity, startTime: startTime, endTime: new Date() });
+        this.setState({
+            granularityMode: mode,
+            granularityValue: granularity,
+            startTime: startTime,
+            endTime: new Date()
+        });
     }
 
     componentDidMount() {
@@ -127,15 +137,15 @@ export default class DateRangePicker extends Widget {
     }
 
     render() {
-        let { granularityMode, width, height } = this.state;
+        let {granularityMode, width, height} = this.state;
         return (
             <MuiThemeProvider theme={this.props.muiTheme.name === 'dark' ? darkTheme : lightTheme}>
-                <Scrollbars style={{ width, height }} >
-                    <div style={{ margin: '2%', maxWidth: 840 }}>
-                        <GranularityModeSelector onChange={this.handleGranularityChange} />
+                <Scrollbars style={{width, height}}>
+                    <div style={{margin: '2%', maxWidth: 840}}>
+                        <GranularityModeSelector onChange={this.handleGranularityChange}/>
                         {
                             granularityMode === 'custom' ?
-                                <CustomTimeRangeSelector publishMethod={this.publishTimeRange} /> :
+                                <CustomTimeRangeSelector publishMethod={this.publishTimeRange}/> :
                                 this.getTimeIntervalDescriptor(granularityMode)
                         }
                     </div>
@@ -204,7 +214,7 @@ export default class DateRangePicker extends Widget {
                         marginTop: 5
                     }}
                 >
-                    {`${startTime}  to  ${endTime}  per  `}{this.generateGranularitySelector()}
+                    {`${startTime}  to  ${endTime}  per  `}{this.generateGranularitySelector(granularityMode)}
                 </div>
             )
         } else {
@@ -212,30 +222,63 @@ export default class DateRangePicker extends Widget {
         }
     }
 
-    generateGranularitySelector() {
-        return(
+    generateGranularitySelector(granularityMode) {
+        return (
             <Select
                 className={'perUnderline'}
-                value={this.state.granularityValue}
-                onChange={(evt)=> {
+                value={this.lowerCaseFirstChar(this.getDefaultViewForGranularityMode(granularityMode))}
+                onChange={(evt) => {
                     super.publish({
                         granularity: evt.target.value,
                         from: this.state.startTime.getTime(),
                         to: this.state.endTime.getTime(),
                     });
-                    this.setState({ granularityValue: evt.target.value });
+                    this.setState({granularityValue: evt.target.value});
                 }}
             >
-                <MenuItem value={'millisecond'}>Millisecond</MenuItem>
-                <MenuItem value={'second'}>Second</MenuItem>
-                <MenuItem value={'minute'}>Minute</MenuItem>
-                <MenuItem value={'hour'}>Hour</MenuItem>
-                <MenuItem value={'day'}>Day</MenuItem>
-                <MenuItem value={'month'}>Month</MenuItem>
-                <MenuItem value={'year'}>Year</MenuItem>
+                {this.generateGranularityViews(granularityMode)}
             </Select>
         )
+    } 
+
+    generateGranularityViews(granularityMode) {
+        return (this.getSelectedViewsForGranularityMode(granularityMode)).map((view) =>
+            <MenuItem value={this.lowerCaseFirstChar(view)}>{view}</MenuItem>);
     }
+
+    lowerCaseFirstChar(str) {
+        return str.charAt(0).toLowerCase() + str.slice(1);
+    }
+
+    getDefaultViewForGranularityMode(granularityMode) {
+        let granularity = granularityMode.replace(/\s/g,'');
+        return this.state.options[granularity + 'DefaultView'];
+    }
+
+    getSelectedViewsForGranularityMode(granularityMode){
+        let views = [];
+        let granularity = granularityMode.replace(/\s/g,'');
+        if(this.state.options[granularity + 'SecondView']) {
+            views.push('Second');
+        }
+        if(this.state.options[granularity + 'MinuteView']) {
+            views.push('Minute');
+        }
+        if(this.state.options[granularity + 'HourView']) {
+            views.push('Hour');
+        }
+        if(this.state.options[granularity + 'DayView']) {
+            views.push('Day');
+        }
+        if(this.state.options[granularity + 'MonthView']) {
+            views.push('Month');
+        }
+        if(this.state.options[granularity + 'YearView']) {
+            views.push('Year');
+        }
+        return views;
+    }
+
 }
 
 global.dashboard.registerWidget("DateRangePicker", DateRangePicker);
