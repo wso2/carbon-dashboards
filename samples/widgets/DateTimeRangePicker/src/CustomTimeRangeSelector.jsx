@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { MenuItem , Select, Button } from 'material-ui';
+import {MenuItem, SelectField, RaisedButton} from 'material-ui';
 import DateTimePicker from "./DateTimePicker";
 
 export default class CustomTimeRangeSelector extends React.Component {
@@ -25,13 +25,19 @@ export default class CustomTimeRangeSelector extends React.Component {
         super(props);
 
         this.state = {
-            inputType: 'second',
+            inputType: this.getDefaultGranularity()
         };
 
-        this.startTime= new Date();
-        this.endTime= new Date();
+        this.startTime = new Date();
+        this.endTime = new Date();
         this.handleStartTimeChange = this.handleStartTimeChange.bind(this);
         this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
+
+        this.generateGranularityMenuItems = this.generateGranularityMenuItems.bind(this);
+        this.lowerCaseFirstChar = this.lowerCaseFirstChar.bind(this);
+        this.getSelectedGranularities = this.getSelectedGranularities.bind(this);
+        this.getDefaultGranularity = this.getDefaultGranularity.bind(this);
+
     }
 
     handleStartTimeChange(date) {
@@ -42,9 +48,70 @@ export default class CustomTimeRangeSelector extends React.Component {
         this.endTime = date;
     }
 
+    generateGranularityMenuItems() {
+        return (this.getSelectedGranularities()).map((view) =>
+            <MenuItem value={this.lowerCaseFirstChar(view)} primaryText={view}/>);
+    }
+
+    lowerCaseFirstChar(str) {
+        return str.charAt(0).toLowerCase() + str.slice(1);
+    }
+
+    getSelectedGranularities() {
+        let minGranularity =  this.props.options['availableGranularities'];
+        let granularities = [];
+
+        switch(minGranularity) {
+            case 'From Second':
+                granularities = ['Second', 'Minute', 'Hour', 'Day', 'Month', 'Year'];
+                break;
+            case 'From Minute':
+                granularities = ['Minute', 'Hour', 'Day', 'Month', 'Year'];
+                break;
+            case 'From Hour':
+                granularities = ['Hour', 'Day', 'Month', 'Year'];
+                break;
+            case 'From Day':
+                granularities = ['Day', 'Month', 'Year'];
+                break;
+            case 'From Month':
+                granularities = ['Month', 'Year'];
+                break;
+            case 'From Year':
+                granularities = ['Year'];
+                break;
+        }
+        return granularities;
+    }
+
+    getDefaultGranularity() {
+        let minGranularity =  this.props.options['availableGranularities'];
+        let defaultGranularity = '';
+        switch(minGranularity) {
+            case 'From Second':
+                defaultGranularity = 'second';
+                break;
+            case 'From Minute':
+                defaultGranularity = 'minute';
+                break;
+            case 'From Hour':
+                defaultGranularity = 'hour';
+                break;
+            case 'From Day':
+                defaultGranularity = 'day';
+                break;
+            case 'From Month':
+                defaultGranularity = 'month';
+                break;
+            case 'From Year':
+                defaultGranularity = 'year';
+                break;
+        }
+        return defaultGranularity;
+    }
+
     render() {
-        let {inputType} = this.state;
-        let { publishMethod } = this.props;
+        let { publishTimeRange } = this.props;
 
         return (
             <div style={{marginTop: 10}}>
@@ -54,28 +121,19 @@ export default class CustomTimeRangeSelector extends React.Component {
                         marginBottom: 10
                     }}
                 >
-                    Per<br />
-                    <Select
-                        value={inputType}
-                        style={{
-                            width: '50%',
-                            minWidth: 200,
-                            maxWidth: 400,
-                        }}
-                        onChange={(evt)=>{
-                            this.setState({ inputType: evt.target.value })
+                    Per<br/>
+                    <SelectField
+                        className={'perUnderline'}
+                        value={this.state.inputType}
+                        onChange={(event, index, value) => {
+                            this.setState({inputType: value});
                         }}
                     >
-                        <MenuItem value={'year'}>Year</MenuItem>
-                        <MenuItem value={'month'}>Month</MenuItem>
-                        <MenuItem value={'day'}>Day</MenuItem>
-                        <MenuItem value={'hour'}>Hour</MenuItem>
-                        <MenuItem value={'minute'}>Minute</MenuItem>
-                        <MenuItem value={'second'}>Second</MenuItem>
-                    </Select>
+                        {this.generateGranularityMenuItems()}
+                    </SelectField>
                 </div>
                 <div
-                    style={{ minWidth:420 }}
+                    style={{minWidth: 420}}
                 >
                     <div
                         style={{
@@ -87,7 +145,7 @@ export default class CustomTimeRangeSelector extends React.Component {
                         <br/>
                         <DateTimePicker
                             onChange={this.handleStartTimeChange}
-                            inputType={inputType}
+                            inputType={this.state.inputType}
                         />
                     </div>
                     <div
@@ -100,20 +158,24 @@ export default class CustomTimeRangeSelector extends React.Component {
                         <br/>
                         <DateTimePicker
                             onChange={this.handleEndTimeChange}
-                            inputType={inputType}
+                            inputType={this.state.inputType}
                         />
                     </div>
                 </div>
-                <Button
-                    variant="raised"
-                    color="primary"
-                    style={{ marginTop: 10, float: 'right' }}
-                    onClick={()=>{
-                        publishMethod({ granularity:inputType, from: this.startTime.getTime(), to: this.endTime.getTime() });
-                    }}
-                >
-                    Apply
-                </Button>
+                    <RaisedButton
+                        primary={true}
+                        style={{marginTop: 10, marginBottom: 10, float: 'right'}}
+                        onClick={() => {
+                            publishTimeRange({
+                                granularity: this.state.inputType,
+                                from: this.startTime.getTime(),
+                                to: this.endTime.getTime()
+                            });
+                        }}
+                    >
+                        Apply
+                    </RaisedButton>
+
             </div>
         )
     }

@@ -18,23 +18,10 @@
 
 import React from 'react';
 import Widget from '@wso2-dashboards/widget';
-import {MuiThemeProvider, createMuiTheme, MenuItem, Select} from 'material-ui';
+import {MuiThemeProvider, MenuItem, SelectField} from 'material-ui';
 import GranularityModeSelector from "./GranularityModeSelector";
-import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
 import Moment from 'moment';
 import {Scrollbars} from 'react-custom-scrollbars';
-
-const darkTheme = createMuiTheme({
-    palette: {
-        type: 'dark',
-    },
-});
-
-const lightTheme = createMuiTheme({
-    palette: {
-        type: 'light',
-    },
-});
 
 export default class DateRangePicker extends Widget {
 
@@ -57,9 +44,9 @@ export default class DateRangePicker extends Widget {
         this.generateGranularitySelector = this.generateGranularitySelector.bind(this);
 
         this.lowerCaseFirstChar = this.lowerCaseFirstChar.bind(this);
-        this.generateGranularityViews = this.generateGranularityViews.bind(this);
-        this.getDefaultViewForGranularityMode = this.getDefaultViewForGranularityMode.bind(this);
-        this.getSelectedViewsForGranularityMode = this.getSelectedViewsForGranularityMode.bind(this);
+        this.generateGranularityMenuItems = this.generateGranularityMenuItems.bind(this);
+        this.getSelectedGranularities = this.getSelectedGranularities.bind(this);
+        this.verifyDefaultGranularity = this.verifyDefaultGranularity.bind(this);
 
     }
 
@@ -116,14 +103,13 @@ export default class DateRangePicker extends Widget {
                     granularity = 'month';
                     break;
             }
-
+            granularity = this.verifyDefaultGranularity(granularity);
             this.publishTimeRange({
                 granularity: granularity,
                 from: startTime.getTime(),
                 to: new Date().getTime()
             });
         }
-
         this.setState({
             granularityMode: mode,
             granularityValue: granularity,
@@ -132,22 +118,28 @@ export default class DateRangePicker extends Widget {
         });
     }
 
+    verifyDefaultGranularity(granularity) {
+        let availableGranularities = this.getSelectedGranularities();
+        if(availableGranularities.indexOf(granularity) > -1) {
+            return granularity;
+        } else {
+            return this.lowerCaseFirstChar(availableGranularities[0]);
+        }
+    }
+
     componentDidMount() {
-        this.handleGranularityChange(this.state.options.defaultValue)
+        this.handleGranularityChange(this.state.options.defaultValue);
     }
 
     render() {
         let {granularityMode, width, height} = this.state;
         return (
-            <MuiThemeProvider theme={this.props.muiTheme.name === 'dark' ? darkTheme : lightTheme}>
+            <MuiThemeProvider theme={this.props.muiTheme}>
                 <Scrollbars style={{width, height}}>
                     <div style={{margin: '2%', maxWidth: 840}}>
-                        <GranularityModeSelector onChange={this.handleGranularityChange}/>
-                        {
-                            granularityMode === 'custom' ?
-                                <CustomTimeRangeSelector publishMethod={this.publishTimeRange}/> :
-                                this.getTimeIntervalDescriptor(granularityMode)
-                        }
+                        <GranularityModeSelector onChange={this.handleGranularityChange} options={this.state.options}
+                                                 publishTimeRange={this.publishTimeRange}/>
+                        {this.getTimeIntervalDescriptor(granularityMode)}
                     </div>
                 </Scrollbars>
             </MuiThemeProvider>
@@ -155,134 +147,118 @@ export default class DateRangePicker extends Widget {
     }
 
     getTimeIntervalDescriptor(granularityMode) {
-        let startTime = null;
-        let endTime = null;
-        let granularity = null;
+        if (granularityMode !== 'custom') {
+            let startTime = null;
+            let endTime = null;
 
-        switch (granularityMode) {
-            case '1 Min':
-                startTime = Moment().subtract(1, 'minutes').format("DD-MMM-YYYY hh:mm A");
-                endTime = Moment().format("DD-MMM-YYYY hh:mm A");
-                granularity = 'minute';
-                break;
-            case '15 Min':
-                startTime = Moment().subtract(15, 'minutes').format("DD-MMM-YYYY hh:mm A");
-                endTime = Moment().format("DD-MMM-YYYY hh:mm A");
-                granularity = 'minute';
-                break;
-            case '1 Hour' :
-                startTime = Moment().subtract(1, 'hours').format("DD-MMM-YYYY hh:mm A");
-                endTime = Moment().format("DD-MMM-YYYY hh:mm A");
-                granularity = 'minute';
-                break;
-            case '1 Day':
-                startTime = Moment().subtract(1, 'days').format("DD-MMM-YYYY");
-                endTime = Moment().format("DD-MMM-YYYY");
-                granularity = 'day';
-                break;
-            case '7 Days':
-                startTime = Moment().subtract(7, 'days').format("DD-MMM-YYYY");
-                endTime = Moment().format("DD-MMM-YYYY");
-                granularity = 'day';
-                break;
-            case '1 Month':
-                startTime = Moment().subtract(1, 'months').format("MMM-YYYY");
-                endTime = Moment().format('MMM-YYYY');
-                granularity = 'month';
-                break;
-            case '3 Months':
-                startTime = Moment().subtract(3, 'months').format('MMM-YYYY');
-                endTime = Moment().format('MMM-YYYY');
-                granularity = 'month';
-                break;
-            case '6 Months':
-                startTime = Moment().subtract(6, 'months').format('MMM-YYYY');
-                endTime = Moment().format('MMM-YYYY');
-                granularity = 'month';
-                break;
-            case '1 Year':
-                startTime = Moment().subtract(1, 'years').format('YYYY');
-                endTime = Moment().format('YYYY');
-                granularity = 'month';
-                break;
-        }
-
-        if (granularityMode) {
-            return (
-                <div
-                    style={{
-                        marginTop: 5
-                    }}
-                >
-                    {`${startTime}  to  ${endTime}  per  `}{this.generateGranularitySelector(granularityMode)}
-                </div>
-            )
+            switch (granularityMode) {
+                case '1 Min':
+                    startTime = Moment().subtract(1, 'minutes').format("DD-MMM-YYYY hh:mm A");
+                    endTime = Moment().format("DD-MMM-YYYY hh:mm A");
+                    break;
+                case '15 Min':
+                    startTime = Moment().subtract(15, 'minutes').format("DD-MMM-YYYY hh:mm A");
+                    endTime = Moment().format("DD-MMM-YYYY hh:mm A");
+                    break;
+                case '1 Hour' :
+                    startTime = Moment().subtract(1, 'hours').format("DD-MMM-YYYY hh:mm A");
+                    endTime = Moment().format("DD-MMM-YYYY hh:mm A");
+                    break;
+                case '1 Day':
+                    startTime = Moment().subtract(1, 'days').format("DD-MMM-YYYY");
+                    endTime = Moment().format("DD-MMM-YYYY");
+                    break;
+                case '7 Days':
+                    startTime = Moment().subtract(7, 'days').format("DD-MMM-YYYY");
+                    endTime = Moment().format("DD-MMM-YYYY");
+                    break;
+                case '1 Month':
+                    startTime = Moment().subtract(1, 'months').format("MMM-YYYY");
+                    endTime = Moment().format('MMM-YYYY');
+                    break;
+                case '3 Months':
+                    startTime = Moment().subtract(3, 'months').format('MMM-YYYY');
+                    endTime = Moment().format('MMM-YYYY');
+                    break;
+                case '6 Months':
+                    startTime = Moment().subtract(6, 'months').format('MMM-YYYY');
+                    endTime = Moment().format('MMM-YYYY');
+                    break;
+                case '1 Year':
+                    startTime = Moment().subtract(1, 'years').format('YYYY');
+                    endTime = Moment().format('YYYY');
+                    break;
+            }
+            if (granularityMode) {
+                return (
+                    <div
+                        style={{
+                            marginTop: 5
+                        }}
+                    >
+                        {`${startTime}  to  ${endTime}  per  `}{this.generateGranularitySelector()}
+                    </div>
+                )
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
     }
 
-    generateGranularitySelector(granularityMode) {
+    generateGranularitySelector() {
         return (
-            <Select
+            <SelectField
                 className={'perUnderline'}
-                value={this.lowerCaseFirstChar(this.getDefaultViewForGranularityMode(granularityMode))}
-                onChange={(evt) => {
+                value={this.state.granularityValue}
+                onChange={(event, index, value) => {
                     super.publish({
-                        granularity: evt.target.value,
+                        granularity: value,
                         from: this.state.startTime.getTime(),
                         to: this.state.endTime.getTime(),
                     });
-                    this.setState({granularityValue: evt.target.value});
+                    this.setState({granularityValue: value});
                 }}
             >
-                {this.generateGranularityViews(granularityMode)}
-            </Select>
+                {this.generateGranularityMenuItems()}
+            </SelectField>
         )
-    } 
+    }
 
-    generateGranularityViews(granularityMode) {
-        return (this.getSelectedViewsForGranularityMode(granularityMode)).map((view) =>
-            <MenuItem value={this.lowerCaseFirstChar(view)}>{view}</MenuItem>);
+    generateGranularityMenuItems() {
+        return (this.getSelectedGranularities()).map((view) =>
+            <MenuItem value={this.lowerCaseFirstChar(view)} primaryText={view}/>);
     }
 
     lowerCaseFirstChar(str) {
         return str.charAt(0).toLowerCase() + str.slice(1);
     }
 
-    getDefaultViewForGranularityMode(granularityMode) {
-        let granularity = granularityMode.replace(/\s/g,'');
-        return this.state.options[granularity + 'DefaultView'];
-    }
-
-    getSelectedViewsForGranularityMode(granularityMode){
-        let granularity = granularityMode.replace(/\s/g,'');
-        let views = this.state.options[granularity + 'Views'];
-        let sortedViews = [];
-
-        if(!this.state.options[granularity + 'Views'].some(item => this.state.options[granularity + 'DefaultView'] === item)) {
-            views.push(this.state.options[granularity + 'DefaultView']);
+    getSelectedGranularities() {
+        let minGranularity = this.state.options['availableGranularities'];
+        let granularities = [];
+        switch (minGranularity) {
+            case 'From Second':
+                granularities = ['Second', 'Minute', 'Hour', 'Day', 'Month', 'Year'];
+                break;
+            case 'From Minute':
+                granularities = ['Minute', 'Hour', 'Day', 'Month', 'Year'];
+                break;
+            case 'From Hour':
+                granularities = ['Hour', 'Day', 'Month', 'Year'];
+                break;
+            case 'From Day':
+                granularities = ['Day', 'Month', 'Year'];
+                break;
+            case 'From Month':
+                granularities = ['Month', 'Year'];
+                break;
+            case 'From Year':
+                granularities = ['Year'];
+                break;
         }
-
-        if(views.includes('Second')){
-            sortedViews.push('Second');
-        }
-        if(views.includes('Minute')){
-            sortedViews.push('Minute');
-        }
-        if(views.includes('Hour')){
-            sortedViews.push('Hour');
-        }
-        if(views.includes('Day')){
-            sortedViews.push('Day');
-        }
-        if(views.includes('Month')){
-            sortedViews.push('Month');
-        }
-        if(views.includes('Year')){
-            sortedViews.push('Year');
-        }
-        return sortedViews;
+        return granularities;
     }
 
 }

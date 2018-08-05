@@ -17,9 +17,12 @@
  */
 
 import React from 'react';
-import { Button, IconButton } from 'material-ui';
-import HighGranularityMode from '@material-ui/icons/KeyboardArrowRight';
-import LowGranularityMode from '@material-ui/icons/KeyboardArrowLeft';
+import {IconButton, FlatButton, Popover, Menu} from 'material-ui';
+// import HighGranularityMode from '@material-ui/icons/KeyboardArrowRight';
+// import LowGranularityMode from '@material-ui/icons/KeyboardArrowLeft';
+import {HardwareKeyboardArrowLeft, HardwareKeyboardArrowRight} from 'material-ui/svg-icons'
+import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
+
 
 export default class GranularityModeSelector extends React.Component {
     constructor(props) {
@@ -27,87 +30,151 @@ export default class GranularityModeSelector extends React.Component {
         this.state = {
             granularityMode: 'high',
             granularityModeValue: 'none',
+            open: false
         };
 
-
-        this.highGranularityOptions = [
-            {
-                label: '1 Day',
-                value: '1 Day',
-            }, {
-                label: '7 Days',
-                value: '7 Days',
-            }, {
-                label: '1 Month',
-                value: '1 Month',
-            }, {
-                label: '3 Months',
-                value: '3 Months',
-            }, {
-                label: '6 Months',
-                value: '6 Months',
-            }, {
-                label: '1 Year',
-                value: '1 Year',
-            },
-        ];
-
-        this.lowGranularityOptions = [
-            {
-                label: '1 Min',
-                value: '1 Min',
-            }, {
-                label: '15 Min',
-                value: '15 Min',
-            }, {
-                label: '1 Hour',
-                value: '1 Hour',
-            }, {
-                label: '1 Day',
-                value: '1 Day',
-            }
-        ];
 
         this.generateTabs = this.generateTabs.bind(this);
         this.switchGranularity = this.switchGranularity.bind(this);
         this.onGranularityModeChange = this.onGranularityModeChange.bind(this);
+
+        this.handleClick = this.handleClick.bind(this);
+        this.handleRequestClose = this.handleRequestClose.bind(this);
+        this.getHighGranularityOptions = this.getHighGranularityOptions.bind(this);
+        this.getLowGranularityOptions = this.getLowGranularityOptions.bind(this);
+        this.generateGranularityModeSwitchButton = this.generateGranularityModeSwitchButton.bind(this);
+        this.generateLeftArrow = this.generateLeftArrow.bind(this);
+        this.generateRightArrow = this.generateRightArrow.bind(this);
+
     }
 
     render() {
-        let { granularityMode } = this.state;
+        let {granularityMode} = this.state;
+        let {publishTimeRange} = this.props;
+
         return (
             <div>
                 <div>
                     Last :
                     {this.generateTabs(granularityMode)}
-                    <IconButton aria-label="Delete" style={{ marginRight: 5 }} onClick={this.switchGranularity}>
-                        {
-                            granularityMode === 'low' ?
-                                <HighGranularityMode />:
-                                <LowGranularityMode />
-                        }
-                    </IconButton>
-                    <Button onClick={() => this.onGranularityModeChange('custom')}>Custom</Button>
+                    {this.generateGranularityModeSwitchButton(granularityMode)}
+                    <FlatButton onClick={this.handleClick}>Custom</FlatButton>
+                    <Popover
+                        open={this.state.open}
+                        anchorEl={this.state.anchorEl}
+                        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                        onRequestClose={this.handleRequestClose}
+                        style={{width: '40%'}}
+                    >
+                        <Menu>
+                            <div style={{margin: 20, paddingBottom: 20}}>
+                                <CustomTimeRangeSelector publishTimeRange={publishTimeRange}
+                                                         options={this.props.options}/>
+                            </div>
+                        </Menu>
+                    </Popover>
                 </div>
             </div>
         );
     }
 
     switchGranularity() {
-        this.setState({ granularityMode : this.state.granularityMode==='low' ? 'high' : 'low' });
+        this.setState({granularityMode: this.state.granularityMode === 'low' ? 'high' : 'low'});
     }
 
     generateTabs(granularityMode) {
-        let options = granularityMode==='high' ? this.highGranularityOptions : this.lowGranularityOptions;
-        return  options.map((option) =>
-            <Button onClick={() => this.onGranularityModeChange(option.value)}>
-                {option.label}</Button>
+        let options = granularityMode === 'high' ? this.getHighGranularityOptions() : this.getLowGranularityOptions();
+        return options.map((option) =>
+            <FlatButton onClick={() => this.onGranularityModeChange(option)} label={option}/>
         );
     }
 
     onGranularityModeChange(value) {
-        let { onChange } = this.props;
-        this.setState({ granularityModeValue: value });
+        let {onChange} = this.props;
+        this.setState({granularityModeValue: value});
         return onChange && onChange(value);
     }
+
+    generateGranularityModeSwitchButton(granularityMode) {
+        return granularityMode === 'low' ? this.generateRightArrow() : this.generateLeftArrow();
+    }
+
+    generateRightArrow() {
+        if (this.getHighGranularityOptions().length > 0) {
+            return (
+                <IconButton aria-label="Delete" style={{marginRight: 5}} onClick={this.switchGranularity}>
+                    <HardwareKeyboardArrowRight/>
+                </IconButton>);
+        }
+    }
+
+    generateLeftArrow() {
+        if (this.getLowGranularityOptions().length > 0) {
+            return (
+                <IconButton aria-label="Delete" style={{marginRight: 5}} onClick={this.switchGranularity}>
+                    <HardwareKeyboardArrowLeft/>
+                </IconButton>);
+        }
+    }
+
+    getLowGranularityOptions() {
+        let minGranularity = this.props.options.availableGranularities;
+        let granularityOptions = [];
+
+        switch (minGranularity) {
+            case 'From Second':
+            case 'From Minute':
+                granularityOptions = ['1 Min', '15 Min', '1 Hour', '1 Day'];
+                break;
+            case 'From Hour':
+                granularityOptions = ['1 Hour', '1 Day'];
+                break;
+        }
+        return granularityOptions;
+    }
+
+
+    getHighGranularityOptions() {
+        let minGranularity = this.props.options.availableGranularities;
+        let granularityOptions = [];
+
+        switch (minGranularity) {
+            case 'From Second':
+                granularityOptions = ['1 Day', '7 Days', '1 Month', '3 Months', '6 Months', '1 Year'];
+                break;
+            case 'From Minute':
+            case 'From Hour':
+            case 'From Day':
+                granularityOptions = ['1 Day', '7 Days', '1 Month', '3 Months', '6 Months', '1 Year'];
+                break;
+            case 'From Month':
+                granularityOptions = ['1 Month', '3 Months', '6 Months', '1 Year'];
+                break;
+            case 'From Year':
+                granularityOptions = ['1 Year'];
+                break;
+        }
+        return granularityOptions;
+    }
+
+
+    // popup
+    handleClick(event) {
+        // This prevents ghost click.
+        event.preventDefault();
+
+        this.setState({
+            open: true,
+            anchorEl: event.currentTarget,
+        });
+        this.onGranularityModeChange('custom');
+    }
+
+    handleRequestClose() {
+        this.setState({
+            open: false,
+        });
+    };
+
 }
