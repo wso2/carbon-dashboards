@@ -16,7 +16,7 @@
  * under the License.
  */
 import React from 'react';
-import { MenuItem, SelectField } from 'material-ui';
+import {MenuItem, SelectField} from 'material-ui';
 import moment from 'moment';
 
 export default class DateTimePicker extends React.Component {
@@ -37,12 +37,12 @@ export default class DateTimePicker extends React.Component {
 
     handleOnChange(property, value) {
 
-        let { inputType, onChange } = this.props;
+        let {inputType, onChange} = this.props;
         let state = this.state;
 
         state[property] = value;
 
-        let date = moment(`${state.year}:${(state.month+1)}:${state.days} ${state.time}`,'YYYY-MM-DD HH:mm:ss.SSS').toDate();
+        let date = moment(`${state.year}:${(state.month + 1)}:${state.days} ${state.time}`, 'YYYY-MM-DD HH:mm:ss.SSS').toDate();
 
         switch (inputType) {
             case 'year':
@@ -65,8 +65,8 @@ export default class DateTimePicker extends React.Component {
     }
 
     render() {
-        let { year, month, days, time } = this.state;
-        let { inputType } = this.props;
+        let {year, month, days, time} = this.state;
+        let {inputType} = this.props;
 
         switch (inputType) {
             case 'hour':
@@ -88,7 +88,7 @@ export default class DateTimePicker extends React.Component {
                     }}
                 >
                     {
-                        ['year','month','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                        ['year', 'month', 'day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <SelectField
                                 value={year}
                                 onChange={(event, index, value) => {
@@ -98,11 +98,11 @@ export default class DateTimePicker extends React.Component {
                                 {
                                     this.generateYears()
                                 }
-                            </SelectField>:
+                            </SelectField> :
                             null
                     }
                     {
-                        ['month','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                        ['month', 'day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                             <SelectField
                                 value={month}
                                 onChange={(event, index, value) => {
@@ -113,7 +113,7 @@ export default class DateTimePicker extends React.Component {
                                 {
                                     this.generateMonths()
                                 }
-                            </SelectField>:
+                            </SelectField> :
                             null
                     }
                     {
@@ -128,7 +128,7 @@ export default class DateTimePicker extends React.Component {
                                 {
                                     this.generateDays(year, month)
                                 }
-                            </SelectField>:
+                            </SelectField> :
                             null
                     }
                 </div>
@@ -136,17 +136,24 @@ export default class DateTimePicker extends React.Component {
                     ['hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                         <div>
                             <br/>Time<br/>
-                            <div className={'MuiFormControl-root-69'}>
-                                <div className={'MuiInput-root-52 MuiInput-formControl-53 MuiInput-underline-56 underline'}>
-                                    <input className={'MuiInput-input-60'} type="time" step={this.getTimeStep(inputType)} value={time} onChange={(evt) => {
-                                        this.handleOnChange('time', evt.target.value);
+                            <div
+                                className={'MuiFormControl-root-69'}>
+                                <div
+                                    className={'MuiInput-root-52 MuiInput-formControl-53 MuiInput-underline-56 underline'}>
+                                    <input
+                                        className={'MuiInput-input-60'}
+                                        type="time"
+                                        step={this.getTimeStep(inputType)}
+                                        value={time}
+                                        onChange={(evt) => {
+                                            this.handleOnChange('time', evt.target.value);
 
-                                    }}/>
+                                        }}/>
 
                                 </div>
                             </div>
 
-                        </div>:
+                        </div> :
                         null
 
                 }
@@ -160,7 +167,10 @@ export default class DateTimePicker extends React.Component {
 
         for (let index = 1970; index <= 2099; index++) {
             yearArray.push(
-                <MenuItem key={`year-${index}`} value={index} primaryText={index}/>
+                <MenuItem
+                    key={`year-${index}`}
+                    value={index}
+                    primaryText={index}/>
             )
         }
 
@@ -174,7 +184,10 @@ export default class DateTimePicker extends React.Component {
 
         for (let i = 0; i < monthArray.length; i++) {
             monthComponents.push(
-                <MenuItem key={`month-${i}`} value={i} primaryText={monthArray[i]}/>
+                <MenuItem
+                    key={`month-${i}`}
+                    value={i}
+                    primaryText={monthArray[i]}/>
             )
         }
 
@@ -196,7 +209,10 @@ export default class DateTimePicker extends React.Component {
 
         for (let i = 1; i <= days; i++) {
             dayComponents.push(
-                <MenuItem key={`$days-${i}`} value={i} primaryText={i}/>
+                <MenuItem
+                    key={`$days-${i}`}
+                    value={i}
+                    primaryText={i}/>
             )
         }
 

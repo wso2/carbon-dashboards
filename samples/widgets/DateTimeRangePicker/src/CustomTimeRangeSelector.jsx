@@ -32,7 +32,6 @@ export default class CustomTimeRangeSelector extends React.Component {
         this.endTime = new Date();
         this.handleStartTimeChange = this.handleStartTimeChange.bind(this);
         this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
-
         this.generateGranularityMenuItems = this.generateGranularityMenuItems.bind(this);
         this.lowerCaseFirstChar = this.lowerCaseFirstChar.bind(this);
         this.getSelectedGranularities = this.getSelectedGranularities.bind(this);
@@ -50,7 +49,9 @@ export default class CustomTimeRangeSelector extends React.Component {
 
     generateGranularityMenuItems() {
         return (this.getSelectedGranularities()).map((view) =>
-            <MenuItem value={this.lowerCaseFirstChar(view)} primaryText={view}/>);
+            <MenuItem
+                value={this.lowerCaseFirstChar(view)}
+                primaryText={view}/>);
     }
 
     lowerCaseFirstChar(str) {
@@ -58,10 +59,10 @@ export default class CustomTimeRangeSelector extends React.Component {
     }
 
     getSelectedGranularities() {
-        let minGranularity =  this.props.options['availableGranularities'];
+        let minGranularity = this.props.options['availableGranularities'];
         let granularities = [];
 
-        switch(minGranularity) {
+        switch (minGranularity) {
             case 'From Second':
                 granularities = ['Second', 'Minute', 'Hour', 'Day', 'Month', 'Year'];
                 break;
@@ -85,9 +86,9 @@ export default class CustomTimeRangeSelector extends React.Component {
     }
 
     getDefaultGranularity() {
-        let minGranularity =  this.props.options['availableGranularities'];
+        let minGranularity = this.props.options['availableGranularities'];
         let defaultGranularity = '';
-        switch(minGranularity) {
+        switch (minGranularity) {
             case 'From Second':
                 defaultGranularity = 'second';
                 break;
@@ -111,10 +112,11 @@ export default class CustomTimeRangeSelector extends React.Component {
     }
 
     render() {
-        let { publishTimeRange } = this.props;
+        let {publishTimeRange} = this.props;
 
         return (
-            <div style={{marginTop: 10}}>
+            <div
+                style={{marginTop: 10}}>
                 <div
                     style={{
                         width: '100%',
@@ -162,20 +164,23 @@ export default class CustomTimeRangeSelector extends React.Component {
                         />
                     </div>
                 </div>
-                    <RaisedButton
-                        primary={true}
-                        style={{marginTop: 10, marginBottom: 10, float: 'right'}}
-                        onClick={() => {
-                            publishTimeRange({
-                                granularity: this.state.inputType,
-                                from: this.startTime.getTime(),
-                                to: this.endTime.getTime()
-                            });
-                        }}
-                    >
-                        Apply
-                    </RaisedButton>
-
+                <RaisedButton
+                    primary={true}
+                    style={{
+                        marginTop: 10,
+                        marginBottom: 10,
+                        float: 'right'
+                    }}
+                    onClick={() => {
+                        publishTimeRange({
+                            granularity: this.state.inputType,
+                            from: this.startTime.getTime(),
+                            to: this.endTime.getTime()
+                        });
+                    }}
+                >
+                    Apply
+                </RaisedButton>
             </div>
         )
     }

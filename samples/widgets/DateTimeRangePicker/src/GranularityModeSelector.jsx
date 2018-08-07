@@ -18,8 +18,6 @@
 
 import React from 'react';
 import {IconButton, FlatButton, Popover, Menu} from 'material-ui';
-// import HighGranularityMode from '@material-ui/icons/KeyboardArrowRight';
-// import LowGranularityMode from '@material-ui/icons/KeyboardArrowLeft';
 import {HardwareKeyboardArrowLeft, HardwareKeyboardArrowRight} from 'material-ui/svg-icons'
 import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
 
@@ -33,11 +31,9 @@ export default class GranularityModeSelector extends React.Component {
             open: false
         };
 
-
         this.generateTabs = this.generateTabs.bind(this);
         this.switchGranularity = this.switchGranularity.bind(this);
         this.onGranularityModeChange = this.onGranularityModeChange.bind(this);
-
         this.handleClick = this.handleClick.bind(this);
         this.handleRequestClose = this.handleRequestClose.bind(this);
         this.getHighGranularityOptions = this.getHighGranularityOptions.bind(this);
@@ -45,7 +41,6 @@ export default class GranularityModeSelector extends React.Component {
         this.generateGranularityModeSwitchButton = this.generateGranularityModeSwitchButton.bind(this);
         this.generateLeftArrow = this.generateLeftArrow.bind(this);
         this.generateRightArrow = this.generateRightArrow.bind(this);
-
     }
 
     render() {
@@ -58,19 +53,32 @@ export default class GranularityModeSelector extends React.Component {
                     Last :
                     {this.generateTabs(granularityMode)}
                     {this.generateGranularityModeSwitchButton(granularityMode)}
-                    <FlatButton onClick={this.handleClick}>Custom</FlatButton>
+                    <FlatButton
+                        onClick={this.handleClick}
+                        label='Custom'/>
                     <Popover
                         open={this.state.open}
                         anchorEl={this.state.anchorEl}
-                        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                        anchorOrigin={{
+                            horizontal: 'left',
+                            vertical: 'bottom'
+                        }}
+                        targetOrigin={{
+                            horizontal: 'left',
+                            vertical: 'top'
+                        }}
                         onRequestClose={this.handleRequestClose}
                         style={{width: '40%'}}
                     >
                         <Menu>
-                            <div style={{margin: 20, paddingBottom: 20}}>
-                                <CustomTimeRangeSelector publishTimeRange={publishTimeRange}
-                                                         options={this.props.options}/>
+                            <div
+                                style={{
+                                    margin: 20,
+                                    paddingBottom: 20
+                                }}>
+                                <CustomTimeRangeSelector
+                                    publishTimeRange={publishTimeRange}
+                                    options={this.props.options}/>
                             </div>
                         </Menu>
                     </Popover>
@@ -86,7 +94,9 @@ export default class GranularityModeSelector extends React.Component {
     generateTabs(granularityMode) {
         let options = granularityMode === 'high' ? this.getHighGranularityOptions() : this.getLowGranularityOptions();
         return options.map((option) =>
-            <FlatButton onClick={() => this.onGranularityModeChange(option)} label={option}/>
+            <FlatButton
+                onClick={() => this.onGranularityModeChange(option)}
+                label={option}/>
         );
     }
 
@@ -103,7 +113,9 @@ export default class GranularityModeSelector extends React.Component {
     generateRightArrow() {
         if (this.getHighGranularityOptions().length > 0) {
             return (
-                <IconButton aria-label="Delete" style={{marginRight: 5}} onClick={this.switchGranularity}>
+                <IconButton
+                    style={{marginRight: 5}}
+                    onClick={this.switchGranularity}>
                     <HardwareKeyboardArrowRight/>
                 </IconButton>);
         }
@@ -112,7 +124,9 @@ export default class GranularityModeSelector extends React.Component {
     generateLeftArrow() {
         if (this.getLowGranularityOptions().length > 0) {
             return (
-                <IconButton aria-label="Delete" style={{marginRight: 5}} onClick={this.switchGranularity}>
+                <IconButton
+                    style={{marginRight: 5}}
+                    onClick={this.switchGranularity}>
                     <HardwareKeyboardArrowLeft/>
                 </IconButton>);
         }
@@ -158,10 +172,7 @@ export default class GranularityModeSelector extends React.Component {
         return granularityOptions;
     }
 
-
-    // popup
     handleClick(event) {
-        // This prevents ghost click.
         event.preventDefault();
 
         this.setState({
