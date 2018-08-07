@@ -49,8 +49,10 @@ export default class DateRangePicker extends Widget {
         this.lowerCaseFirstChar = this.lowerCaseFirstChar.bind(this);
         this.capitalizeCaseFirstChar = this.capitalizeCaseFirstChar.bind(this);
         this.generateGranularityMenuItems = this.generateGranularityMenuItems.bind(this);
-        this.getSelectedGranularities = this.getSelectedGranularities.bind(this);
+        this.getAvailableGranularities = this.getAvailableGranularities.bind(this);
+        this.getSupportedGranularities = this.getSupportedGranularities.bind(this);
         this.verifyDefaultGranularity = this.verifyDefaultGranularity.bind(this);
+        this.getDefaultTimeRange = this.getDefaultTimeRange.bind(this);
         this.autoSyncClick = this.autoSyncClick.bind(this);
         this.setRefreshInterval = this.setRefreshInterval.bind(this);
         this.clearRefreshInterval = this.clearRefreshInterval.bind(this);
@@ -137,7 +139,7 @@ export default class DateRangePicker extends Widget {
     }
 
     verifyDefaultGranularity(granularity) {
-        let availableGranularities = this.getSelectedGranularities();
+        let availableGranularities = this.getAvailableGranularities();
         if (availableGranularities.indexOf(this.capitalizeCaseFirstChar(granularity)) > -1) {
             return granularity;
         } else {
@@ -145,8 +147,38 @@ export default class DateRangePicker extends Widget {
         }
     }
 
+    getDefaultTimeRange() {
+        let defaultTimeRange = this.state.options.defaultValue;
+        let minGranularity = this.state.options.availableGranularities;
+        let availableViews = [];
+        switch (minGranularity) {
+            case 'From Second':
+            case 'From Minute':
+                availableViews = ['1 Min', '15 Min', '1 Hour', '1 Day', '7 Days', '1 Month', '3 Months', '6 Months', '1 Year'];
+                break;
+            case 'From Hour':
+                availableViews = ['1 Hour', '1 Day', '7 Days', '1 Month', '3 Months', '6 Months', '1 Year'];
+                break;
+            case 'From Day':
+                availableViews = ['1 Day', '7 Days', '1 Month', '3 Months', '6 Months', '1 Year'];
+                break;
+            case 'From Month':
+                availableViews = ['1 Month', '3 Months', '6 Months', '1 Year'];
+                break;
+            case 'From Year':
+                availableViews = ['1 Year'];
+                break;
+        }
+
+        if (availableViews.indexOf(defaultTimeRange) > -1) {
+            return defaultTimeRange;
+        } else {
+            return availableViews[0];
+        }
+    }
+
     componentDidMount() {
-        this.handleGranularityChange(this.state.options.defaultValue);
+        this.handleGranularityChange(this.getDefaultTimeRange());
     }
 
     componentWillUnmount() {
@@ -271,10 +303,18 @@ export default class DateRangePicker extends Widget {
     }
 
     generateGranularityMenuItems() {
-        return (this.getSelectedGranularities()).map((view) =>
-            <MenuItem
-                value={this.lowerCaseFirstChar(view)}
-                primaryText={view}/>);
+        let supportedGranularities = this.getSupportedGranularities(this.state.granularityMode);
+
+        return (this.getAvailableGranularities()).map((view) =>
+            supportedGranularities.indexOf(view) > -1 ?
+                <MenuItem
+                    value={this.lowerCaseFirstChar(view)}
+                    primaryText={view}/> :
+                <MenuItem
+                    value={this.lowerCaseFirstChar(view)}
+                    primaryText={view}
+                    disabled={true}/>
+        );
     }
 
     lowerCaseFirstChar(str) {
@@ -285,7 +325,7 @@ export default class DateRangePicker extends Widget {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    getSelectedGranularities() {
+    getAvailableGranularities() {
         let minGranularity = this.state.options['availableGranularities'];
         let granularities = [];
         switch (minGranularity) {
@@ -310,6 +350,34 @@ export default class DateRangePicker extends Widget {
         }
         return granularities;
     }
+
+    getSupportedGranularities(granularityMode) {
+        let supportedGranularities = [];
+        switch (granularityMode) {
+            case '1 Min':
+            case '15 Min':
+                supportedGranularities = ['Second', 'Minute'];
+                break;
+            case '1 Hour' :
+                supportedGranularities = ['Second', 'Minute', 'Hour'];
+                break;
+            case '1 Day':
+            case '7 Days':
+                supportedGranularities = ['Second', 'Minute', 'Hour', 'Day'];
+                break;
+            case '1 Month':
+            case '3 Months':
+            case '6 Months':
+                supportedGranularities = ['Second', 'Minute', 'Hour', 'Day', 'Month'];
+                break;
+            case '1 Year':
+                supportedGranularities = ['Second', 'Minute', 'Hour', 'Day', 'Month', 'Year'];
+                break;
+        }
+        return supportedGranularities;
+    }
+
+    x
 
     autoSyncClick() {
         if (!this.state.enableSync) {
