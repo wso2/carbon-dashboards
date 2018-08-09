@@ -19,6 +19,7 @@ package org.wso2.carbon.dashboards.core;
 
 import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
+import org.wso2.carbon.dashboards.core.bean.export.Dashboard;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.util.List;
@@ -62,4 +63,13 @@ public interface DashboardMetadataProvider {
 
     void updateDashboardRoles(String user, String dashboardUrl, Map<String, List<String>> roles) throws
             DashboardException;
+
+    /**
+     * Return exportable dashboard definition.
+     *
+     * @param dashboardUrl URL of the dashboard
+     * @return Exportable dashboard definition
+     * @throws DashboardException If an error occurred while reading or processing dashboards
+     */
+    Dashboard exportDashboard(String dashboardUrl) throws DashboardException;
 }
