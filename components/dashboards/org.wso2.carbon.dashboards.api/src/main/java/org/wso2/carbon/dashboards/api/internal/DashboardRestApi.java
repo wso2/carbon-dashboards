@@ -25,6 +25,7 @@ import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationIntercep
 import org.wso2.carbon.analytics.msf4j.interceptor.common.util.InterceptorConstants;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
+import org.wso2.carbon.dashboards.core.bean.export.Dashboard;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
 import org.wso2.msf4j.Microservice;
@@ -41,6 +42,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -262,6 +264,34 @@ public class DashboardRestApi implements Microservice {
             return Response.serverError()
                     .entity("Cannot update user roles of dashboard '" + url + "'.")
                     .build();
+        }
+    }
+
+    /**
+     * Get dashboard with widget definitions.
+     * URL: https://localhost:9643/portal/apis/dashboards/<DASHBOARD_URL>/export
+     *
+     * To download the dashboard as an attachment,
+     * URL: https://localhost:9643/portal/apis/dashboards/<DASHBOARD_URL>/export?download=true
+     *
+     * @param url Dashboard URL
+     * @param download Flag to download as an attachment
+     * @return Dashboard JSON
+     */
+    @GET
+    @Path("/{url}/export")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response exportDashboard(@PathParam("url") String url, @QueryParam("download") boolean download) {
+        try {
+            Dashboard dashboard = dashboardDataProvider.exportDashboard(url);
+            Response.ResponseBuilder responseBuilder = Response.ok(dashboard);
+            if (download) {
+                responseBuilder.header("Content-Disposition", "attachment; filename=\"" + url + ".json\"");
+            }
+            return responseBuilder.build();
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot export dashboard '" + replaceCRLFCharacters(url) + "'.", e);
+            return Response.serverError().entity("Cannot export dashboard '" + url + "'.").build();
         }
     }
 

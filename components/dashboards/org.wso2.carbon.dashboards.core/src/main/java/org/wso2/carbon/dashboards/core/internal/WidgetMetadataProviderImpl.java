@@ -38,6 +38,7 @@ import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.uiserver.api.App;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -141,6 +142,36 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
                 widgetMetaInfo.setVersion(generatedWidgetConfigs.getVersion());
                 widgetMetaInfo.setConfigs(widgetConfigs);
                 widgetMetaInfoSet.add(widgetMetaInfo);
+            }
+        }
+        return widgetMetaInfoSet;
+    }
+
+    /**
+     * Get configurations of given set of widgets.
+     *
+     * @param widgetIds Set of widget Ids
+     * @return Set of widget configurations
+     * @throws DashboardException If an error occurred when reading or processing configurations
+     */
+    @Override
+    public Set<WidgetMetaInfo> getWidgetConfigurations(Set<String> widgetIds) throws DashboardException {
+        Set<WidgetMetaInfo> widgetMetaInfoSet = new HashSet<>();
+        if (isDaoInitialized) {
+            Set<GeneratedWidgetConfigs> generatedWidgetIdSet = widgetMetadataDao.getGeneratedWidgetIdSet();
+            for (GeneratedWidgetConfigs generatedWidgetConfigs: generatedWidgetIdSet) {
+                if (widgetIds.contains(generatedWidgetConfigs.getId())) {
+                    WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
+                    WidgetConfigs widgetConfigs = new WidgetConfigs();
+                    widgetMetaInfo.setId(generatedWidgetConfigs.getId());
+                    widgetMetaInfo.setName(generatedWidgetConfigs.getName());
+                    widgetConfigs.setPubsub(generatedWidgetConfigs.getPubsub());
+                    widgetConfigs.setMetadata(generatedWidgetConfigs.getMetadata());
+                    widgetConfigs.setGenerated(true);
+                    widgetMetaInfo.setVersion(generatedWidgetConfigs.getVersion());
+                    widgetMetaInfo.setConfigs(widgetConfigs);
+                    widgetMetaInfoSet.add(widgetMetaInfo);
+                }
             }
         }
         return widgetMetaInfoSet;
