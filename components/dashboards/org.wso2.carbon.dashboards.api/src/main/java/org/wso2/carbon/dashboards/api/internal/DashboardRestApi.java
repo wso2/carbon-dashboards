@@ -275,4 +275,47 @@ public class DashboardRestApi implements Microservice {
         }
         return str;
     }
+
+
+    /**
+     * Gets the header image for the pdf generated for dashboard
+     *
+     * @return response
+     */
+    @GET
+    @Path("/pdfHeader")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPdfHeader(@Context Request request) {
+        try {
+            Object pdfHeader = dashboardDataProvider.getPdfHeader();
+            return Response.ok().entity(pdfHeader).build();
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot retrieve header image for pdf '", e);
+            return Response.serverError()
+                    .entity("Cannot retrieve header image for pdf '")
+                    .build();
+        }
+    }
+
+    /**
+     * Gets the footer image for the pdf generated for dashboard
+     *
+     * @return response
+     */
+    @GET
+    @Path("/pdfFooter")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPdfFooter(@Context Request request) {
+        try {
+            Object pdfFooter = dashboardDataProvider.getPdfFooter();
+            return Response.ok().entity(pdfFooter).build();
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot retrieve footer image for pdf '", e);
+            return Response.serverError()
+                    .entity("Cannot retrieve footer image for pdf '")
+                    .build();
+        }
+    }
 }
