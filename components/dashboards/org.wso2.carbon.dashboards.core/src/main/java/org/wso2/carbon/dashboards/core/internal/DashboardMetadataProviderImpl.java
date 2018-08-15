@@ -402,7 +402,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     protected void unsetIdP(IdPClient client) {
         this.identityClient = null;
     }
-    
+
     public String getPdfHeader() {
         try {
             Object x = ((Map<String, Object>) configProvider.getConfigurationObject("wso2.status.dashboard"))
