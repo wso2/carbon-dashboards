@@ -16,33 +16,52 @@
  * under the License.
  */
 
-package org.wso2.carbon.dashboards.core.bean.export;
+package org.wso2.carbon.dashboards.core.bean.importer;
 
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 
 /**
- * Bean class used represent a dashboard to export/import dashboards.
+ * Defines a dashboard data format to import/export a dashboard.
  *
- * @since 4.0.28
+ * @since 4.0.29
  */
-public class Dashboard {
+public class DashboardArtifact {
     private DashboardMetadata dashboard;
     private WidgetCollection widgets = new WidgetCollection();
 
+    /**
+     * Returns dashboard metadata object.
+     *
+     * @return Dashboard metadata
+     */
     public DashboardMetadata getDashboard() {
         return dashboard;
     }
 
+    /**
+     * Set dashboard metadata object.
+     *
+     * @param dashboard Dashboard metadata
+     */
     public void setDashboard(DashboardMetadata dashboard) {
         this.dashboard = dashboard;
     }
 
+    /**
+     * Returns widgets.
+     *
+     * @return Set of widgets
+     */
     public WidgetCollection getWidgets() {
         return widgets;
     }
 
+    /**
+     * Set widgets.
+     *
+     * @param widgets Set of widgets
+     */
     public void setWidgets(WidgetCollection widgets) {
         this.widgets = widgets;
     }
 }
-

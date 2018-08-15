@@ -19,7 +19,7 @@ package org.wso2.carbon.dashboards.core;
 
 import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
-import org.wso2.carbon.dashboards.core.bean.export.Dashboard;
+import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.util.List;
@@ -48,8 +48,42 @@ public interface DashboardMetadataProvider {
 
     Set<DashboardMetadata> getAllByUser(String user) throws DashboardException;
 
+    /**
+     * Add dashboard without permission check.
+     *
+     * @since 4.0.29
+     *
+     * @param dashboardMetadata Dashboard metadata
+     * @throws DashboardException
+     */
+    void add(DashboardMetadata dashboardMetadata) throws DashboardException;
+
+    /**
+     * Add dashboard with permission check for the given user.
+     *
+     * @param user Username
+     * @param dashboardMetadata Dashboard metadata
+     * @throws DashboardException
+     */
     void add(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
 
+    /**
+     * Update dashboard without permission check.
+     *
+     * @since 4.0.29
+     *
+     * @param dashboardMetadata Dashboard metadata
+     * @throws DashboardException
+     */
+    void update(DashboardMetadata dashboardMetadata) throws DashboardException;
+
+    /**
+     * Update dashboard with permission check for the given user.
+     *
+     * @param user Username
+     * @param dashboardMetadata Dashboard metadata
+     * @throws DashboardException
+     */
     void update(String user, DashboardMetadata dashboardMetadata) throws DashboardException;
 
     void delete(String user, String dashboardUrl) throws DashboardException;
@@ -67,9 +101,11 @@ public interface DashboardMetadataProvider {
     /**
      * Return exportable dashboard definition.
      *
+     * @since 4.0.29
+     *
      * @param dashboardUrl URL of the dashboard
      * @return Exportable dashboard definition
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
-    Dashboard exportDashboard(String dashboardUrl) throws DashboardException;
+    DashboardArtifact exportDashboard(String dashboardUrl) throws DashboardException;
 }

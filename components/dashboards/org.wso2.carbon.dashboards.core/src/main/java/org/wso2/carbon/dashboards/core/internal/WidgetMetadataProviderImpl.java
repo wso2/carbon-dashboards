@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
+import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
@@ -37,7 +38,11 @@ import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDaoFactor
 import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.uiserver.api.App;
+import org.wso2.carbon.utils.Utils;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -112,11 +117,41 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
         widgetMetadataDao.addGeneratedWidgetConfigs(generatedWidgetConfigs);
     }
 
+    @Override
     public boolean isWidgetPresent(String widgetName) throws DashboardException {
-        if (isDaoInitialized) {
-            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdSet();
-            for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
-                if (generatedWidgetConfigs.getName().equals(widgetName)) {
+        return isWidgetPresent(widgetName, WidgetType.CUSTOM);
+    }
+
+    @Override
+    public boolean isWidgetPresent(String widgetName, WidgetType widgetType) throws DashboardException {
+        if (widgetType == WidgetType.GENERATED || widgetType == WidgetType.ALL) {
+            if (isDaoInitialized) {
+                Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdSet();
+                for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
+                    if (generatedWidgetConfigs.getName().equals(widgetName)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return (widgetType == WidgetType.CUSTOM || widgetType == WidgetType.ALL) && isWidgetInFilesystem(widgetName);
+    }
+
+    /**
+     * Check whether the widget is in the file system.
+     *
+     * @param widgetName Name of the widget
+     * @return
+     */
+    private boolean isWidgetInFilesystem(String widgetName) {
+        // The following line doesn't work, since getDashboardApp() returns null.
+        // return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetName).isPresent();
+        Path widgetsDirectory = Utils.getRuntimePath().resolve(
+                Paths.get("deployment", "web-ui-apps", "portal", "extensions", "widgets"));
+        String[] widgets = widgetsDirectory.toFile().list((current, name) -> new File(current, name).isDirectory());
+        if (widgets != null) {
+            for (String widget : widgets) {
+                if (widgetName.equals(widget)) {
                     return true;
                 }
             }
@@ -175,6 +210,11 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
             }
         }
         return widgetMetaInfoSet;
+    }
+
+    public Set<GeneratedWidgetConfigs> getGeneratedWidgetConfigs(Set<String> widgetIds) throws DashboardException {
+        Set<GeneratedWidgetConfigs> generatedWidgetIdSet = widgetMetadataDao.getGeneratedWidgetIdSet();
+        return generatedWidgetIdSet.stream().filter(w -> widgetIds.contains(w.getId())).collect(Collectors.toSet());
     }
 
     @Override

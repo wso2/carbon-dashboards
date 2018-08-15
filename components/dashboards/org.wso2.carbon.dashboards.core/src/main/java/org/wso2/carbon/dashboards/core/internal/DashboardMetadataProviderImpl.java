@@ -18,6 +18,8 @@
 package org.wso2.carbon.dashboards.core.internal;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -40,11 +42,12 @@ import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
-import org.wso2.carbon.dashboards.core.bean.export.Dashboard;
-import org.wso2.carbon.dashboards.core.bean.export.DashboardPage;
-import org.wso2.carbon.dashboards.core.bean.export.DashboardPageContent;
-import org.wso2.carbon.dashboards.core.bean.export.WidgetCollection;
-import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
+import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
+import org.wso2.carbon.dashboards.core.bean.importer.Page;
+import org.wso2.carbon.dashboards.core.bean.importer.PageContent;
+import org.wso2.carbon.dashboards.core.bean.importer.WidgetCollection;
+import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
+import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
@@ -71,14 +74,11 @@ import java.util.stream.Collectors;
  */
 @Component(service = DashboardMetadataProvider.class, immediate = true)
 public class DashboardMetadataProviderImpl implements DashboardMetadataProvider {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
     private static final String PERMISSION_APP_NAME = "DASH";
     private static final String PERMISSION_SUFFIX_VIEWER = ".viewer";
     private static final String PERMISSION_SUFFIX_EDITOR = ".editor";
     private static final String PERMISSION_SUFFIX_OWNER = ".owner";
-    private static final String WIDGET_GENERATED = "GENERATED";
-    private static final String WIDGET_CUSTOM = "CUSTOM";
     private static final String UNIVERSAL_WIDGET = "UniversalWidget";
 
     private DashboardMetadataDao dao;
@@ -217,6 +217,24 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
+    public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
+        RolesProvider rolesProvider;
+        try {
+            rolesProvider = new RolesProvider(configProvider.getConfigurationObject(DashboardConfigurations.class));
+        } catch (ConfigurationException e) {
+            throw new DashboardException("Error in reading dashboard creator roles!", e);
+        }
+
+        dao.add(dashboardMetadata);
+        for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
+            permissionProvider.addPermission(permission);
+            for (String roleId: rolesProvider.getCreatorRoleIds()) {
+                permissionProvider.grantPermission(permission, new Role(roleId, ""));
+            }
+        }
+    }
+
+    @Override
     public void add(String user, DashboardMetadata dashboardMetadata) throws DashboardException {
         // TODO: 11/10/17 validate parameters
         List<String> creatorRoleIds;
@@ -244,6 +262,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
+    public void update(DashboardMetadata dashboardMetadata) throws DashboardException {
+        dao.update(dashboardMetadata);
+    }
+
+    @Override
     public void update(String user, DashboardMetadata dashboardMetadata) throws DashboardException {
         // TODO: 11/10/17 validate parameters
         if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardMetadata.getUrl() +
@@ -255,7 +278,6 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             throw new UnauthorizedException("Insufficient permissions to update the dashboard with ID "
                     + dashboardMetadata.getUrl());
         }
-
     }
 
     @Override
@@ -349,25 +371,32 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
     @Override
-    public Dashboard exportDashboard(String dashboardUrl) throws DashboardException {
-        Optional<DashboardMetadata> dashboardMetadata = dao.get(dashboardUrl);
-        if (!dashboardMetadata.isPresent()) {
+    public DashboardArtifact exportDashboard(String dashboardUrl) throws DashboardException {
+        Optional<DashboardMetadata> dashboardMetadataOptional = dao.get(dashboardUrl);
+        if (!dashboardMetadataOptional.isPresent()) {
             throw new DashboardException("Cannot find the dashboard '" + dashboardUrl + "'");
         }
 
-        Dashboard exportableDashboard = new Dashboard();
-        exportableDashboard.setDashboard(dashboardMetadata.get());
-        Map<String, Set<String>> widgets = findWidgets(dashboardMetadata.get());
+        DashboardArtifact artifact = new DashboardArtifact();
 
-        // Get metadata of generated widgets
-        Set<WidgetMetaInfo> generatedWidgetMetaInfos = widgetMetadataProvider
-                .getWidgetConfigurations(widgets.get(WIDGET_GENERATED));
+        // Set JSON parsed content to pages.
+        DashboardMetadata dashboardMetadata = dashboardMetadataOptional.get();
+        // Convert stringified pages object to proper JSONElement before exporting.
+        dashboardMetadata.setPages(new JsonParser().parse((String) dashboardMetadata.getPages()));
+        artifact.setDashboard(dashboardMetadata);
 
-        WidgetCollection widgetCollection = exportableDashboard.getWidgets();
-        widgetCollection.setGenerated(generatedWidgetMetaInfos);
-        widgetCollection.setCustom(widgets.get(WIDGET_CUSTOM));
+        Map<WidgetType, Set<String>> widgets = findWidgets(dashboardMetadata);
 
-        return exportableDashboard;
+        // Set metadata of generated widgets
+        Set<GeneratedWidgetConfigs> generatedWidgetConfigs = widgetMetadataProvider
+                .getGeneratedWidgetConfigs(widgets.get(WidgetType.GENERATED));
+        WidgetCollection widgetCollection = new WidgetCollection();
+        widgetCollection.setGenerated(generatedWidgetConfigs);
+
+        // Set list of custom widgets
+        widgetCollection.setCustom(widgets.get(WidgetType.CUSTOM));
+        artifact.setWidgets(widgetCollection);
+        return artifact;
     }
 
     /**
@@ -377,13 +406,13 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
      * @return Set of widget IDs
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
-    private Map<String, Set<String>> findWidgets(DashboardMetadata dashboardMetadata) throws DashboardException {
-        String pages = (String) dashboardMetadata.getPages();
-        DashboardPage[] dashboardPages = new Gson().fromJson(pages, DashboardPage[].class);
-        Map<String, Set<String>> widgets = new HashMap<>();
-        widgets.put(WIDGET_GENERATED, new HashSet<>());
-        widgets.put(WIDGET_CUSTOM, new HashSet<>());
-        for (DashboardPage page : dashboardPages) {
+    private Map<WidgetType, Set<String>> findWidgets(DashboardMetadata dashboardMetadata) throws DashboardException {
+        Page[] dashboardPages = new Gson().fromJson((JsonElement) dashboardMetadata.getPages(),
+                Page[].class);
+        Map<WidgetType, Set<String>> widgets = new HashMap<>();
+        widgets.put(WidgetType.GENERATED, new HashSet<>());
+        widgets.put(WidgetType.CUSTOM, new HashSet<>());
+        for (Page page : dashboardPages) {
             findWidgets(page.getContent(), widgets);
         }
         return widgets;
@@ -393,15 +422,15 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
      * Recursively find widgets by analyzing dashboard page contents.
      *
      * @param contents Dashboard page content
-     * @param widgets Set of widget IDs
+     * @param widgets  Set of widget IDs
      */
-    private void findWidgets(Set<DashboardPageContent> contents, Map<String, Set<String>> widgets) {
-        for (DashboardPageContent content : contents) {
+    private void findWidgets(Set<PageContent> contents, Map<WidgetType, Set<String>> widgets) {
+        for (PageContent content : contents) {
             if (content.getComponent() != null) {
                 if (UNIVERSAL_WIDGET.equals(content.getComponent())) {
-                    widgets.get(WIDGET_GENERATED).add(content.getTitle());
+                    widgets.get(WidgetType.GENERATED).add(content.getTitle());
                 } else {
-                    widgets.get(WIDGET_CUSTOM).add(content.getComponent());
+                    widgets.get(WidgetType.CUSTOM).add(content.getComponent());
                 }
             }
             if (content.getContent() != null) {

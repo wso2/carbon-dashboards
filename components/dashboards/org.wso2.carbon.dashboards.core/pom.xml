@@ -110,6 +110,13 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
+
+        <!--Utils-->
+        <dependency>
+            <groupId>org.wso2.carbon.utils</groupId>
+            <artifactId>org.wso2.carbon.utils</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -146,6 +153,7 @@
             com.google.gson.*; version="${gson.version.range}",
             org.yaml.snakeyaml.*; version="${org.yaml.version.range}",
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
+            org.wso2.carbon.utils.*; version="${carbon.utils.version.range}",
         </import.package>
         <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
     </properties>

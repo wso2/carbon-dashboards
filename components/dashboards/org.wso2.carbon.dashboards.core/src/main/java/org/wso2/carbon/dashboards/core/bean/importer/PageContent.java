@@ -16,51 +16,89 @@
  * under the License.
  */
 
-package org.wso2.carbon.dashboards.core.bean.export;
+package org.wso2.carbon.dashboards.core.bean.importer;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Bean class to represent a dashboard page content.
+ * Defines major contents of a dashboard page.
  *
- * @since 4.0.28
+ * @since 4.0.29
  */
-public class DashboardPageContent {
+public class PageContent {
     private String title;
     private String type;
     private String component;
-    private Set<DashboardPageContent> content = new HashSet<>();
+    private Set<PageContent> content = new HashSet<>();
 
+    /**
+     * Returns widget title.
+     *
+     * @return Widget title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Ste title of the widget.
+     * @param title Widget title
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Returns type of the widget.
+     *
+     * @return Type of the widget
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Set type of the widget.
+     * @param type Widget type
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * Returns related component for the widget.
+     *
+     * @return Component of the widget
+     */
     public String getComponent() {
         return component;
     }
 
+    /**
+     * Set component of the widget.
+     *
+     * @param component Component
+     */
     public void setComponent(String component) {
         this.component = component;
     }
 
-    public Set<DashboardPageContent> getContent() {
+    /**
+     * Returns nested content of the page.
+     *
+     * @return Nested content
+     */
+    public Set<PageContent> getContent() {
         return content;
     }
 
-    public void setContent(Set<DashboardPageContent> content) {
+    /**
+     * Set nested content of the page.
+     *
+     * @param content Page content
+     */
+    public void setContent(Set<PageContent> content) {
         this.content = content;
     }
 }
