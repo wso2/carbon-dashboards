@@ -387,6 +387,20 @@
                 <version>${mockito.core.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <!-- Carbon Utils -->
+            <dependency>
+                <groupId>org.wso2.carbon.utils</groupId>
+                <artifactId>org.wso2.carbon.utils</artifactId>
+                <version>${carbon.utils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.utils</groupId>
+                <artifactId>org.wso2.carbon.utils.feature</artifactId>
+                <version>${carbon.utils.version}</version>
+                <type>zip</type>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -402,7 +416,10 @@
         <carbon.config.version>2.0.3</carbon.config.version>
         <carbon.config.version.range>[2.0.3, 3.0.0)</carbon.config.version.range>
         <carbon.securevault.version>5.0.8</carbon.securevault.version>
+
+        <!--Utils-->
         <carbon.utils.version>2.0.2</carbon.utils.version>
+        <carbon.utils.version.range>[2.0.2, 3.0.0)</carbon.utils.version.range>
 
         <!--UI Server-->
         <carbon.uiserver.version>0.19.5</carbon.uiserver.version>

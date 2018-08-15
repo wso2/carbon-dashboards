@@ -16,34 +16,53 @@
  * under the License.
  */
 
-package org.wso2.carbon.dashboards.core.bean.export;
+package org.wso2.carbon.dashboards.core.bean.importer;
 
-import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
-
+import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Bean class to hold generated and custom widget definitions.
+ * Organizes widgets based on their type.
  *
- * @since 4.0.28
+ * @since 4.0.29
  */
 public class WidgetCollection {
-    private Set<WidgetMetaInfo> generated = new HashSet<>();
+    private Set<GeneratedWidgetConfigs> generated = new HashSet<>();
     private Set<String> custom = new HashSet<>();
 
-    public Set<WidgetMetaInfo> getGenerated() {
+    /**
+     * Returns generated widgets.
+     *
+     * @return Set of generated widgets
+     */
+    public Set<GeneratedWidgetConfigs> getGenerated() {
         return generated;
     }
 
-    public void setGenerated(Set<WidgetMetaInfo> generated) {
+    /**
+     * Set set of generated widgets.
+     *
+     * @param generated Generated widgets
+     */
+    public void setGenerated(Set<GeneratedWidgetConfigs> generated) {
         this.generated = generated;
     }
 
+    /**
+     * Returns Ids of the custom widgets.
+     *
+     * @return Set of IDs of the custom widgets
+     */
     public Set<String> getCustom() {
         return custom;
     }
 
+    /**
+     * Set Ids of the custom widgets.
+     *
+     * @param custom Set of IDs of the custom widgets
+     */
     public void setCustom(Set<String> custom) {
         this.custom = custom;
     }

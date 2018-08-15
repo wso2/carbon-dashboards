@@ -16,42 +16,72 @@
  * under the License.
  */
 
-package org.wso2.carbon.dashboards.core.bean.export;
+package org.wso2.carbon.dashboards.core.bean.importer;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Bean class to represent a dashboard page.
+ * Defines a page in dashboard JSON format.
  *
- * @since 4.0.28
+ * @since 4.0.29
  */
-public class DashboardPage {
+public class Page {
     private String id;
     private String name;
-    private Set<DashboardPageContent> content = new HashSet<>();
+    private Set<PageContent> content = new HashSet<>();
 
+    /**
+     * Returns dashboard Id.
+     *
+     * @return Dashboard ID
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Set dashboard Id.
+     *
+     * @param id Dashboard ID
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Returns name of the dashboard.
+     *
+     * @return Dashboard name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set name of the dashboard.
+     *
+     * @param name Dashboard name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    public Set<DashboardPageContent> getContent() {
+    /**
+     * Returns contents of the page.
+     *
+     * @return Set of contents
+     */
+    public Set<PageContent> getContent() {
         return content;
     }
 
-    public void setContent(Set<DashboardPageContent> content) {
+    /**
+     * Set contents of the dashboard.
+     *
+     * @param content Set of contents
+     */
+    public void setContent(Set<PageContent> content) {
         this.content = content;
     }
 }

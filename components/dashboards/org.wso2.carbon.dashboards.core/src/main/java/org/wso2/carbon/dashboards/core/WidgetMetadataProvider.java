@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.dashboards.core;
 
+import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
@@ -61,11 +62,24 @@ public interface WidgetMetadataProvider {
     /**
      * Get configurations of given set of widgets.
      *
+     * @since 4.0.29
+     *
      * @param widgetIds Set of widget Ids
      * @return Set of widget configurations
      * @throws DashboardException If an error occurred when reading or processing configurations
      */
     Set<WidgetMetaInfo> getWidgetConfigurations(Set<String> widgetIds) throws DashboardException;
+
+    /**
+     * Get generated widget configurations.
+     *
+     * @since 4.0.29
+     *
+     * @param widgetIds List og widget Ids
+     * @return Set of widget configurations
+     * @throws DashboardException
+     */
+    Set<GeneratedWidgetConfigs> getGeneratedWidgetConfigs(Set<String> widgetIds) throws DashboardException;
 
     /**
      * Delete the configuration of the specified widget.
@@ -83,6 +97,17 @@ public interface WidgetMetadataProvider {
      */
     boolean isWidgetPresent(String widgetName) throws DashboardException;
 
+    /**
+     * Check if the given widget is present in the filesystem.
+     *
+     * @since 4.0.29
+     *
+     * @param widgetName Name fo the widget
+     * @param widgetType Type of the widget
+     * @return Status
+     * @throws DashboardException
+     */
+    boolean isWidgetPresent(String widgetName, WidgetType widgetType) throws DashboardException;
     /**
      * Sets the dashboard portal app to this provider.
      *
