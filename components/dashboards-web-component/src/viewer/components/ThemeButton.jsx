@@ -22,8 +22,8 @@ import PropTypes from 'prop-types';
 
 import { IconButton } from 'material-ui';
 
-import LightBulbFill from './LightBulbFill'
-import LightBulbOutline from './LightBulbOutline';
+import LightBulbFillIcon from './LightBulbFill'
+import LightBulbOutlineIcon from './LightBulbOutline';
 
 class ThemeButton extends Component {
     render() {
@@ -33,7 +33,7 @@ class ThemeButton extends Component {
                 onClick={this.props.onThemeButtonClick}
                 title="Toggle Light/Dark theme"
             >
-                {this.props.theme.name === 'dark' ? <LightBulbFill /> : <LightBulbOutline />}
+                {this.props.theme.name === 'dark' ? <LightBulbFillIcon /> : <LightBulbOutlineIcon />}
             </IconButton>
         );
     }

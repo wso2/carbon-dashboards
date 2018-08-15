@@ -19,7 +19,7 @@
 import React, { Component } from 'react';
 import SvgIcon from 'material-ui/SvgIcon';
 
-class LightBulbOutline extends Component {
+class LightBulbOutlineIcon extends Component {
     render() {
         return (
             <SvgIcon {...this.props}>
@@ -29,6 +29,6 @@ class LightBulbOutline extends Component {
     }
 }
 
-LightBulbOutline.muiName = 'SvgIcon';
+LightBulbOutlineIcon.muiName = 'SvgIcon';
 
-export default LightBulbOutline;
+export default LightBulbOutlineIcon;

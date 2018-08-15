@@ -19,7 +19,7 @@
 import React, { Component } from 'react';
 import SvgIcon from 'material-ui/SvgIcon';
 
-class LightBulbFill extends Component {
+class LightBulbFillIcon extends Component {
     render() {
         return (
             <SvgIcon {...this.props}>
@@ -29,6 +29,6 @@ class LightBulbFill extends Component {
     }
 }
 
-LightBulbFill.muiName = 'SvgIcon';
+LightBulbFillIcon.muiName = 'SvgIcon';
 
-export default LightBulbFill;
+export default LightBulbFillIcon;
