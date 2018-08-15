@@ -36,6 +36,7 @@ import DashboardRenderer from './components/DashboardRenderer';
 import Header from '../common/Header';
 import UserMenu from '../common/UserMenu';
 import PortalButton from '../common/PortalButton';
+import ThemeButton from './components/ThemeButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
 import '../utils/GoldenLayoutOverrides.css';
 
@@ -45,7 +46,7 @@ class DashboardViewPage extends Component {
 
     constructor(props) {
         super(props);
-        let isDarkTheme = window.localStorage.getItem('isDarkTheme');
+        const isDarkTheme = window.localStorage.getItem('isDarkTheme');
         this.dashboard = null;
         this.isInitilialLoading = true;
         this.state = {
@@ -166,7 +167,16 @@ class DashboardViewPage extends Component {
                 title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
                 logo={logo}
                 onLogoClick={this.handleSidePaneToggle}
-                rightElement={<span><PortalButton /><UserMenu /></span>}
+                rightElement = {
+                    <span style={{ position: 'relative' }}>
+                        <ThemeButton
+                            onThemeButtonClick={this.handleThemeToggle}
+                            theme={theme}
+                        />
+                        <PortalButton />
+                        <UserMenu />
+                    </span>
+                }
                 theme={theme}
             />
         );
@@ -189,21 +199,6 @@ class DashboardViewPage extends Component {
                 <SelectableList value={subPageId ? `${pageId}/${subPageId}` : pageId}>
                     {this.renderPagesList()}
                 </SelectableList>
-                <Divider />
-                <Subheader>
-                    <FormattedMessage id='theme.change-theme' defaultMessage='Theme' />
-                </Subheader>
-                <div style={{ display: 'flex', marginLeft: 72 }}>
-                    <span style={{ marginTop: 2, marginRight: 10 }}>
-                        <FormattedMessage id='theme.name.light' defaultMessage='Light' />
-                    </span>
-                    <Toggle
-                        toggled={this.state.isCurrentThemeDark}
-                        label={<FormattedMessage id='theme.name.dark' defaultMessage='Dark' />}
-                        labelPosition='right'
-                        onToggle={this.handleThemeToggle}
-                    />
-                </div>
             </Drawer>
         );
     }
