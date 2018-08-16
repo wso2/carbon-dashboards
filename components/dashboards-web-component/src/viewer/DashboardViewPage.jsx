@@ -141,7 +141,6 @@ class DashboardViewPage extends Component {
                 {this.renderHeader(currentTheme)}
                 {this.renderSidePane(currentTheme)}
                 <div
-                    id=''
                     style={{
                         position: 'fixed',
                         top: 40,
