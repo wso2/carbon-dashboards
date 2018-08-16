@@ -147,7 +147,8 @@ class DashboardViewPage extends Component {
                         right: 0,
                         bottom: 0,
                         left: 0,
-                        overflowY: 'scroll',
+                        overflowX: 'hidden',
+                        overflowY: 'auto',
                     }}
                 >
                     {this.renderDashboard(currentTheme)}
