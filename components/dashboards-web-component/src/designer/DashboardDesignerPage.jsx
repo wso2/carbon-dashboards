@@ -172,7 +172,7 @@ export default class DashboardDesignerPage extends Component {
                                 bottom: 0,
                                 left: 55,
                                 overflowX: 'hidden',
-                                overflowY: 'scroll',
+                                overflowY: 'auto',
                             }}
                         >
                             {this.renderDashboard(defaultTheme)}

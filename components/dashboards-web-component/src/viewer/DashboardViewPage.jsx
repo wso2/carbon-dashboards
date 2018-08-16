@@ -141,13 +141,15 @@ class DashboardViewPage extends Component {
                 {this.renderHeader(currentTheme)}
                 {this.renderSidePane(currentTheme)}
                 <div
+                    id=''
                     style={{
                         position: 'fixed',
                         top: 40,
                         right: 0,
                         bottom: 0,
                         left: 0,
-                        overflowY: 'scroll',
+                        overflowX: 'hidden',
+                        overflowY: 'auto',
                     }}
                 >
                     {this.renderDashboard(currentTheme)}
