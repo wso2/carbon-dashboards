@@ -18,7 +18,7 @@
 
 import React from 'react';
 import {IconButton, FlatButton, Popover, Menu} from 'material-ui';
-import {HardwareKeyboardArrowLeft, HardwareKeyboardArrowRight} from 'material-ui/svg-icons'
+import {HardwareKeyboardArrowRight, HardwareKeyboardArrowLeft} from 'material-ui/svg-icons';
 import CustomTimeRangeSelector from "./CustomTimeRangeSelector";
 
 
@@ -26,7 +26,7 @@ export default class GranularityModeSelector extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            granularityMode: 'high',
+            granularityMode: this.getSelectedGranularityLevel(),
             granularityModeValue: 'none',
             open: false
         };
@@ -34,54 +34,32 @@ export default class GranularityModeSelector extends React.Component {
         this.generateTabs = this.generateTabs.bind(this);
         this.switchGranularity = this.switchGranularity.bind(this);
         this.onGranularityModeChange = this.onGranularityModeChange.bind(this);
-        this.handleClick = this.handleClick.bind(this);
-        this.handleRequestClose = this.handleRequestClose.bind(this);
         this.getHighGranularityOptions = this.getHighGranularityOptions.bind(this);
         this.getLowGranularityOptions = this.getLowGranularityOptions.bind(this);
         this.generateGranularityModeSwitchButton = this.generateGranularityModeSwitchButton.bind(this);
         this.generateLeftArrow = this.generateLeftArrow.bind(this);
         this.generateRightArrow = this.generateRightArrow.bind(this);
+        this.generateRightArrow = this.generateRightArrow.bind(this);
+        this.getCustomSelectButton = this.getCustomSelectButton.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleRequestClose = this.handleRequestClose.bind(this);
+        this.getSelectedTimeRange = this.getSelectedTimeRange.bind(this);
+        this.getSelectedGranularityLevel = this.getSelectedGranularityLevel.bind(this);
     }
 
     render() {
         let {granularityMode} = this.state;
-        let {publishTimeRange} = this.props;
 
         return (
             <div>
                 <div>
-                    Last :
+                    <span
+                        style={{marginRight: 10}}>
+                        Last :
+                    </span>
                     {this.generateTabs(granularityMode)}
                     {this.generateGranularityModeSwitchButton(granularityMode)}
-                    <FlatButton
-                        onClick={this.handleClick}
-                        label='Custom'/>
-                    <Popover
-                        open={this.state.open}
-                        anchorEl={this.state.anchorEl}
-                        anchorOrigin={{
-                            horizontal: 'left',
-                            vertical: 'bottom'
-                        }}
-                        targetOrigin={{
-                            horizontal: 'left',
-                            vertical: 'top'
-                        }}
-                        onRequestClose={this.handleRequestClose}
-                        style={{width: '40%'}}
-                    >
-                        <Menu>
-                            <div
-                                style={{
-                                    margin: 20,
-                                    paddingBottom: 20
-                                }}>
-                                <CustomTimeRangeSelector
-                                    publishTimeRange={publishTimeRange}
-                                    options={this.props.options}/>
-                            </div>
-                        </Menu>
-                    </Popover>
+                    {this.getCustomSelectButton()}
                 </div>
             </div>
         );
@@ -92,11 +70,17 @@ export default class GranularityModeSelector extends React.Component {
     }
 
     generateTabs(granularityMode) {
+        let selectedTimeRange = this.getSelectedTimeRange();
         let options = granularityMode === 'high' ? this.getHighGranularityOptions() : this.getLowGranularityOptions();
         return options.map((option) =>
-            <FlatButton
-                onClick={() => this.onGranularityModeChange(option)}
-                label={option}/>
+            selectedTimeRange === option ?
+                <FlatButton
+                    onClick={() => this.onGranularityModeChange(option)}
+                    label={option}
+                    style={{backgroundColor: '#383838'}}/> :
+                <FlatButton
+                    onClick={() => this.onGranularityModeChange(option)}
+                    label={option}/>
         );
     }
 
@@ -114,7 +98,10 @@ export default class GranularityModeSelector extends React.Component {
         if (this.getHighGranularityOptions().length > 0) {
             return (
                 <IconButton
-                    style={{marginRight: 5}}
+                    style={{
+                        marginRight: 5,
+                        verticalAlign: 'middle'
+                    }}
                     onClick={this.switchGranularity}>
                     <HardwareKeyboardArrowRight/>
                 </IconButton>);
@@ -125,7 +112,10 @@ export default class GranularityModeSelector extends React.Component {
         if (this.getLowGranularityOptions().length > 0) {
             return (
                 <IconButton
-                    style={{marginRight: 5}}
+                    style={{
+                        marginRight: 5,
+                        verticalAlign: 'middle'
+                    }}
                     onClick={this.switchGranularity}>
                     <HardwareKeyboardArrowLeft/>
                 </IconButton>);
@@ -172,6 +162,57 @@ export default class GranularityModeSelector extends React.Component {
         return granularityOptions;
     }
 
+    getCustomSelectButton() {
+        let selectedTimeRange = '';
+        // if (location.hash.length > 1) {
+        //     selectedTimeRange = JSON.parse(decodeURI(location.hash.substr(1))).tr;
+        // }
+        if (location.search.length > 1) {
+            selectedTimeRange = JSON.parse(decodeURI(location.search.substr(1))).tr;
+        }
+        let customButton = selectedTimeRange === 'custom' ?
+            <FlatButton
+                onClick={this.handleClick}
+                label='Custom'
+                style={{backgroundColor: '#383838'}}/> :
+            <FlatButton
+                onClick={this.handleClick}
+                label='Custom'/>;
+        return (
+            <div
+                style={{display: 'inline'}}>
+                {customButton}
+                <Popover
+                    open={this.state.open}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{
+                        horizontal: 'left',
+                        vertical: 'bottom'
+                    }}
+                    targetOrigin={{
+                        horizontal: 'left',
+                        vertical: 'top'
+                    }}
+                    onRequestClose={this.handleRequestClose}
+                    style={{width: '40%'}}
+                >
+                    <Menu>
+                        <div
+                            style={{
+                                margin: 20,
+                                paddingBottom: 20
+                            }}>
+                            <CustomTimeRangeSelector
+                                options={this.props.options}
+                                handleClose={this.handleRequestClose}
+                                onChangeCustom={this.props.onChangeCustom}/>
+                        </div>
+                    </Menu>
+                </Popover>
+            </div>
+        );
+    }
+
     handleClick(event) {
         event.preventDefault();
 
@@ -187,5 +228,29 @@ export default class GranularityModeSelector extends React.Component {
             open: false,
         });
     };
+
+    getSelectedTimeRange() {
+        let selectedTimeRange = '';
+        // if (location.hash.length > 1) {
+        //     selectedTimeRange = this.props.getTimeRangeName(JSON.parse(decodeURI(location.hash.substr(1))).tr);
+        // }
+        if (location.search.length > 1) {
+            selectedTimeRange = this.props.getTimeRangeName(JSON.parse(decodeURI(location.search.substr(1))).tr);
+        }
+        return selectedTimeRange;
+    }
+
+    getSelectedGranularityLevel() {
+        let selectedTimeRange = this.getSelectedTimeRange();
+        if (this.getHighGranularityOptions().indexOf(selectedTimeRange) > -1
+            || this.getHighGranularityOptions().indexOf(this.props.options.defaultValue) > -1) {
+            return 'high';
+        } else if (this.getLowGranularityOptions().indexOf(selectedTimeRange) > -1
+            || this.getLowGranularityOptions().indexOf(this.props.options.defaultValue) > -1) {
+            return 'low';
+        } else {
+            return '';
+        }
+    }
 
 }

@@ -19,6 +19,7 @@
 import React from 'react';
 import {MenuItem, SelectField, RaisedButton} from 'material-ui';
 import DateTimePicker from "./DateTimePicker";
+import Moment from "moment";
 
 export default class CustomTimeRangeSelector extends React.Component {
     constructor(props) {
@@ -36,7 +37,7 @@ export default class CustomTimeRangeSelector extends React.Component {
         this.lowerCaseFirstChar = this.lowerCaseFirstChar.bind(this);
         this.getSelectedGranularities = this.getSelectedGranularities.bind(this);
         this.getDefaultGranularity = this.getDefaultGranularity.bind(this);
-
+        this.publishCustomTimeRange = this.publishCustomTimeRange.bind(this);
     }
 
     handleStartTimeChange(date) {
@@ -111,8 +112,13 @@ export default class CustomTimeRangeSelector extends React.Component {
         return defaultGranularity;
     }
 
+    publishCustomTimeRange() {
+        let {handleClose, onChangeCustom} = this.props;
+        handleClose();
+        onChangeCustom('custom', this.startTime, this.endTime, this.state.inputType)
+    }
+
     render() {
-        let {publishTimeRange} = this.props;
 
         return (
             <div
@@ -171,13 +177,7 @@ export default class CustomTimeRangeSelector extends React.Component {
                         marginBottom: 10,
                         float: 'right'
                     }}
-                    onClick={() => {
-                        publishTimeRange({
-                            granularity: this.state.inputType,
-                            from: this.startTime.getTime(),
-                            to: this.endTime.getTime()
-                        });
-                    }}
+                    onClick={this.publishCustomTimeRange}
                 >
                     Apply
                 </RaisedButton>
