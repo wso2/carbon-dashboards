@@ -81,8 +81,7 @@ export default class DateRangePicker extends Widget {
     }
 
     publishTimeRange(message) {
-        super.publish(JSON.stringify(message));
-        // super.publish(message);
+        super.publish(message);
     }
 
     handleGranularityChange(mode) {
@@ -100,13 +99,13 @@ export default class DateRangePicker extends Widget {
                 to: new Date().getTime()
             });
             this.setRefreshInterval();
+            this.setState({
+                granularityMode: mode,
+                granularityValue: granularity,
+                startTime: startTime,
+                endTime: new Date()
+            });
         }
-        this.setState({
-            granularityMode: mode,
-            granularityValue: granularity,
-            startTime: startTime,
-            endTime: new Date()
-        });
     }
 
     handleGranularityChangeForCustom(mode, startTime, endTime, granularity) {
@@ -211,8 +210,6 @@ export default class DateRangePicker extends Widget {
     }
 
     loadDefaultTimeRange() {
-        // if (location.hash !== "") {
-        //     let dateTimeRangeInfo = JSON.parse(decodeURI(location.hash.substr(1)));
         if (location.search !== "") {
             let dateTimeRangeInfo = JSON.parse(decodeURI(location.search.substr(1)));
             if (dateTimeRangeInfo.hasOwnProperty('tr')) {
@@ -407,7 +404,7 @@ export default class DateRangePicker extends Widget {
             let dateParts = dateTimeParts[0].split(dateDelimiter);
             if (dateParts.length === 2) {
                 let monthFormat = 'MM';
-                if (dateParts[0].length === 3) {
+                if (dateParts[1].length === 3) {
                     monthFormat = 'MMM';
                 }
                 dateFormat = monthFormat + dateDelimiter + 'YYYY';
@@ -416,7 +413,7 @@ export default class DateRangePicker extends Widget {
                 if (dateParts[1].length === 3) {
                     monthFormat = 'MMM';
                 }
-                dateFormat = 'DD' + dateDelimiter + monthFormat + dateDelimiter + 'YYYY';
+                dateFormat = 'YYYY' + dateDelimiter + monthFormat + dateDelimiter + 'DD';
             }
         } else {
             dateFormat = 'YYYY';
@@ -445,15 +442,15 @@ export default class DateRangePicker extends Widget {
     getStandardDateTimeFormat(granularityMode) {
         let format = '';
         if (granularityMode.toLowerCase().indexOf('second') > -1) {
-            format = 'DD-MMM-YYYY hh:mm:ss A';
+            format = 'YYYY-MMM-DD hh:mm:ss A';
         } else if (granularityMode.toLowerCase().indexOf('minute') > -1) {
-            format = 'DD-MMM-YYYY hh:mm A';
+            format = 'YYYY-MMM-DD hh:mm A';
         } else if (granularityMode.toLowerCase().indexOf('hour') > -1) {
-            format = 'DD-MMM-YYYY hh:00 A';
+            format = 'YYYY-MMM-DD hh:00 A';
         } else if (granularityMode.toLowerCase().indexOf('day') > -1) {
-            format = 'DD-MMM-YYYY';
+            format = 'YYYY-MMM-DD';
         } else if (granularityMode.toLowerCase().indexOf('month') > -1) {
-            format = 'MMM-YYYY';
+            format = 'YYYY-MMM';
         } else if (granularityMode.toLowerCase().indexOf('year') > -1) {
             format = 'YYYY';
         }
@@ -506,13 +503,6 @@ export default class DateRangePicker extends Widget {
             endTime = this.timestampToDateFormat(this.state.endTime.getTime() / 1000, this.state.granularityValue);
         }
         if (granularityMode && startTime && endTime) {
-            // location.hash = encodeURI(JSON.stringify({
-            //     tr: granularityMode.replace(' ', '').toLowerCase(),
-            //     sd: startTime.toLowerCase(),
-            //     ed: endTime.toLowerCase(),
-            //     g: this.state.granularityValue,
-            //     sync: this.state.enableSync
-            // }));
             this.setQueryParamToURL(
                 granularityMode.replace(' ', '').toLowerCase(),
                 startTime.toLowerCase(),
@@ -561,36 +551,36 @@ export default class DateRangePicker extends Widget {
 
         switch (granularityMode) {
             case '1 Min':
-                startTime = Moment().subtract(1, 'minutes').format("DD-MMM-YYYY hh:mm A");
-                endTime = Moment().format("DD-MMM-YYYY hh:mm A");
+                startTime = Moment().subtract(1, 'minutes').format("YYYY-MMM-DD hh:mm A");
+                endTime = Moment().format("YYYY-MMM-DD hh:mm A");
                 break;
             case '15 Min':
-                startTime = Moment().subtract(15, 'minutes').format("DD-MMM-YYYY hh:mm A");
-                endTime = Moment().format("DD-MMM-YYYY hh:mm A");
+                startTime = Moment().subtract(15, 'minutes').format("YYYY-MMM-DD hh:mm A");
+                endTime = Moment().format("YYYY-MMM-DD hh:mm A");
                 break;
             case '1 Hour' :
-                startTime = Moment().subtract(1, 'hours').format("DD-MMM-YYYY hh:mm A");
-                endTime = Moment().format("DD-MMM-YYYY hh:mm A");
+                startTime = Moment().subtract(1, 'hours').format("YYYY-MMM-DD hh:mm A");
+                endTime = Moment().format("YYYY-MMM-DD hh:mm A");
                 break;
             case '1 Day':
-                startTime = Moment().subtract(1, 'days').format("DD-MMM-YYYY");
-                endTime = Moment().format("DD-MMM-YYYY");
+                startTime = Moment().subtract(1, 'days').format("YYYY-MMM-DD");
+                endTime = Moment().format("YYYY-MMM-DD");
                 break;
             case '7 Days':
-                startTime = Moment().subtract(7, 'days').format("DD-MMM-YYYY");
-                endTime = Moment().format("DD-MMM-YYYY");
+                startTime = Moment().subtract(7, 'days').format("YYYY-MMM-DD");
+                endTime = Moment().format("YYYY-MMM-DD");
                 break;
             case '1 Month':
-                startTime = Moment().subtract(1, 'months').format("MMM-YYYY");
-                endTime = Moment().format('MMM-YYYY');
+                startTime = Moment().subtract(1, 'months').format("YYYY-MMM");
+                endTime = Moment().format('YYYY-MMM');
                 break;
             case '3 Months':
-                startTime = Moment().subtract(3, 'months').format('MMM-YYYY');
-                endTime = Moment().format('MMM-YYYY');
+                startTime = Moment().subtract(3, 'months').format('YYYY-MMM');
+                endTime = Moment().format('YYYY-MMM');
                 break;
             case '6 Months':
-                startTime = Moment().subtract(6, 'months').format('MMM-YYYY');
-                endTime = Moment().format('MMM-YYYY');
+                startTime = Moment().subtract(6, 'months').format('YYYY-MMM');
+                endTime = Moment().format('YYYY-MMM');
                 break;
             case '1 Year':
                 startTime = Moment().subtract(1, 'years').format('YYYY');
@@ -613,15 +603,6 @@ export default class DateRangePicker extends Widget {
                             this.state.endTime.getTime(), this.state.granularityMode).toLowerCase(),
                         value,
                         this.state.enableSync);
-                    // location.hash = encodeURI(JSON.stringify({
-                    //     tr: this.state.granularityMode.replace(' ', '').toLowerCase(),
-                    //     sd: this.timestampToDateFormat(
-                    //         this.state.startTime.getTime(), this.state.granularityMode).toLowerCase(),
-                    //     ed: this.timestampToDateFormat(
-                    //         this.state.endTime.getTime(), this.state.granularityMode).toLowerCase(),
-                    //     g: value,
-                    //     sync: this.state.enableSync
-                    // }));
                     this.state.granularityMode === 'custom' ?
                         this.onChangeForCustomTimeRange(value) :
                         this.onChangeForFixedTimeRange(value)
@@ -794,12 +775,12 @@ export default class DateRangePicker extends Widget {
 
     setRefreshInterval() {
         if (this.state.enableSync) {
-            let refreshInterval = this.state.options.refreshTimeInterval * 1000;
+            let refreshInterval = this.state.options.autoSyncInterval * 1000;
             let refresh = () => {
                 let startTimeAndGranularity = this.getStartTimeAndGranularity(this.state.granularityMode);
                 this.publishTimeRange({
                     granularity: this.state.granularityValue,
-                    from: startTimeAndGranularity['startTime'].getTime(),
+                    from: startTimeAndGranularity.startTime.getTime(),
                     to: new Date().getTime(),
                 });
             };

@@ -50,8 +50,8 @@
                 "defaultValue": "From Second"
             },
             {
-                "id": "refreshTimeInterval",
-                "title": "Refresh Time Interval (Seconds)",
+                "id": "autoSyncInterval",
+                "title": "Auto-Sync Interval (Seconds)",
                 "type": {
                     "name": "TEXT"
                 },

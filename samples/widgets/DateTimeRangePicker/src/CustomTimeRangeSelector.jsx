@@ -19,7 +19,6 @@
 import React from 'react';
 import {MenuItem, SelectField, RaisedButton} from 'material-ui';
 import DateTimePicker from "./DateTimePicker";
-import Moment from "moment";
 
 export default class CustomTimeRangeSelector extends React.Component {
     constructor(props) {

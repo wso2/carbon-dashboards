@@ -164,9 +164,6 @@ export default class GranularityModeSelector extends React.Component {
 
     getCustomSelectButton() {
         let selectedTimeRange = '';
-        // if (location.hash.length > 1) {
-        //     selectedTimeRange = JSON.parse(decodeURI(location.hash.substr(1))).tr;
-        // }
         if (location.search.length > 1) {
             selectedTimeRange = JSON.parse(decodeURI(location.search.substr(1))).tr;
         }
@@ -231,9 +228,6 @@ export default class GranularityModeSelector extends React.Component {
 
     getSelectedTimeRange() {
         let selectedTimeRange = '';
-        // if (location.hash.length > 1) {
-        //     selectedTimeRange = this.props.getTimeRangeName(JSON.parse(decodeURI(location.hash.substr(1))).tr);
-        // }
         if (location.search.length > 1) {
             selectedTimeRange = this.props.getTimeRangeName(JSON.parse(decodeURI(location.search.substr(1))).tr);
         }
@@ -242,11 +236,13 @@ export default class GranularityModeSelector extends React.Component {
 
     getSelectedGranularityLevel() {
         let selectedTimeRange = this.getSelectedTimeRange();
-        if (this.getHighGranularityOptions().indexOf(selectedTimeRange) > -1
-            || this.getHighGranularityOptions().indexOf(this.props.options.defaultValue) > -1) {
+        if (this.getHighGranularityOptions().indexOf(selectedTimeRange) > -1) {
             return 'high';
-        } else if (this.getLowGranularityOptions().indexOf(selectedTimeRange) > -1
-            || this.getLowGranularityOptions().indexOf(this.props.options.defaultValue) > -1) {
+        } else if (this.getLowGranularityOptions().indexOf(selectedTimeRange) > -1) {
+            return 'low';
+        } else if (this.getHighGranularityOptions().indexOf(this.props.options.defaultValue) > -1) {
+            return 'high';
+        } else if (this.getLowGranularityOptions().indexOf(this.props.options.defaultValue) > -1) {
             return 'low';
         } else {
             return '';
