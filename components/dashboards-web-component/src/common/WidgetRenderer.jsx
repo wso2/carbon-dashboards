@@ -114,7 +114,7 @@ export default class WidgetRenderer extends Component {
                 window.eval(response.data);
                 if (this.getWidgetClass()) {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADED);
-                    this.triggerEvent(Event.DASHBOARD_VIEW_WIDGET_LOADED, this.widgetName);
+                    this.triggerEvent(Event.DASHBOARD_VIEWER_WIDGET_LOADED, this.widgetName);
                 } else {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING_FAIL);
                 }

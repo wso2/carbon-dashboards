@@ -153,7 +153,7 @@ export default class DashboardRenderer extends Component {
         const goldenLayout = new GoldenLayout(config, dashboardContainer);
         const renderingWidgetClassNames = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents);
         renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
-        goldenLayout.eventHub.on(Event.DASHBOARD_VIEW_WIDGET_LOADED,
+        goldenLayout.eventHub.on(Event.DASHBOARD_VIEWER_WIDGET_LOADED,
             () => this.onWidgetLoadedEvent(renderingWidgetClassNames.length, this.props.dashboardId));
 
         // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
@@ -186,6 +186,6 @@ export default class DashboardRenderer extends Component {
 
 DashboardRenderer.propTypes = {
     dashboardId: PropTypes.string.isRequired,
-    goldenLayoutContents: PropTypes.array.isRequired,
+    goldenLayoutContents: PropTypes.arrayOf({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
 };
