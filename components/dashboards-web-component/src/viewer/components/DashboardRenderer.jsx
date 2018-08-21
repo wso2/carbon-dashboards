@@ -172,7 +172,7 @@ export default class DashboardRenderer extends Component {
 
     triggerThemeChangeEvent(newTheme) {
         if (this.goldenLayout) {
-            this.goldenLayout.eventHub.trigger(Event.DASHBOARD_VIEW_THEME_CHANGE, newTheme);
+            this.goldenLayout.eventHub.trigger(Event.DASHBOARD_VIEWER_THEME_CHANGE, newTheme);
         }
     }
 

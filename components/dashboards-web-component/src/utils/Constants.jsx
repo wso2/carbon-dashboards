@@ -40,10 +40,10 @@ const MediaType = {
 
 /**
  * Events.
- * @type {{DASHBOARD_VIEW_THEME_CHANGE: string, DASHBOARD_VIEW_WIDGET_LOADED: string}}
+ * @type {{DASHBOARD_VIEWER_THEME_CHANGE: string, DASHBOARD_VIEW_WIDGET_LOADED: string}}
  */
 const Event = {
-    DASHBOARD_VIEW_THEME_CHANGE: 'dashboard-view-theme-change',
+    DASHBOARD_VIEWER_THEME_CHANGE: 'dashboard-viewer-theme-change',
     DASHBOARD_VIEW_WIDGET_LOADED: 'dashboard-view-widget-loaded',
     DASHBOARD_DESIGNER_WIDGET_RESIZE: 'dashboard-designer-widget-resize',
     DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE: 'dashboard-designer-widget-config-update',
