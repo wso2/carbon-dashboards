@@ -138,7 +138,7 @@ export default class UniversalWidget extends Widget {
     handleWidgetData(data) {
         if(data.data.length != 0){
             this.setState({
-                metadata: data.metadata ? data.metadata : this.state.metadata,
+                metadata: data.metadata || this.state.metadata,
                 data: data.data
             })
         }
