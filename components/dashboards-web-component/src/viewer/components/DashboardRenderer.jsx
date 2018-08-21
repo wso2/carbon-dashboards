@@ -204,7 +204,7 @@ export default class DashboardRenderer extends Component {
                         value={this.state.completed}
                         size={80}
                         thickness={5}
-                        style={{ marginLeft: '40%' }}
+                        style={{ marginLeft: '35%' }}
                     />
                 </Dialog>
             </div>
@@ -581,7 +581,10 @@ export default class DashboardRenderer extends Component {
     }
 
     progress = () => {
-        const { completed } = this.state;
+        let { completed } = this.state;
+        if(isNaN(completed)){
+            completed=0;
+        }
         this.setState({ completed: completed >= 100 ? 0 : completed + 10 });
     };
 }

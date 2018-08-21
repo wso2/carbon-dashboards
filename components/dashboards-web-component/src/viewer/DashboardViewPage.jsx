@@ -223,7 +223,7 @@ class DashboardViewPage extends Component {
                         value={this.state.completed}
                         size={80}
                         thickness={5}
-                        style={{ marginLeft: '25%' }}
+                        style={{ marginLeft: '35%' }}
                     />
                 </Dialog>
 
