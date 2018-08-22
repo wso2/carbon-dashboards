@@ -45,10 +45,10 @@ export default class GoldenLayoutFactory {
     }
 
     /**
-     *
-     * @param dashboardContainerId
-     * @param glContent
-     * @returns {module:golden-layout.GoldenLayout}
+     * Creates a GoldenLayout for the dashboard viewer.
+     * @param {string} dashboardContainerId container ID
+     * @param {object} glContent content
+     * @returns {module:golden-layout.GoldenLayout} created GoldenLayout
      */
     static createForViewer(dashboardContainerId, glContent) {
         const config = {
@@ -73,6 +73,12 @@ export default class GoldenLayoutFactory {
         return GoldenLayoutFactory.create(dashboardContainerId, config);
     }
 
+    /**
+     * Creates a GoldenLayout for the dashboard viewer.
+     * @param {string} dashboardContainerId container ID
+     * @param {object} glContent content
+     * @returns {module:golden-layout.GoldenLayout} created GoldenLayout
+     */
     static createForDesigner(dashboardContainerId, glContent) {
         const config = {
             settings: {
