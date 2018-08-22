@@ -147,7 +147,7 @@ export default class WidgetRenderer extends Component {
     }
 
     triggerEvent(name, parameter) {
-        this.props.glContainer.layoutManager.eventHub.trigger(name, parameter);
+        this.props.glEventHub.trigger(name, parameter);
     }
 
     renderWidgetLoadingStatus(message, isErrorMessage = false) {
