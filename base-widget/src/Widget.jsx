@@ -58,10 +58,10 @@ export default class Widget extends Component {
         if (!publisherId) {
             const publisherIds = this.props.configs.pubsub.publishers;
             if (publisherIds && Array.isArray(publisherIds)) {
-                publisherIds.forEach(id => this.props.glEventHub.on(id, listenerCallback));
+                publisherIds.forEach(id => this.props.pubSubHub.subscribe(id, listenerCallback));
             }
         } else {
-            this.props.glEventHub.on(publisherId, listenerCallback, context);
+            this.props.pubSubHub.subscribe(publisherId, listenerCallback, context);
         }
     }
 
@@ -70,12 +70,7 @@ export default class Widget extends Component {
      * @param listnerCallback
      */
     publish(message) {
-        let publishedChannel = this.props.id;
-        if (!this.props.glContainer.layoutManager.isInitialised) {
-            this.messageQueue.push(message)
-        } else {
-            this.props.glEventHub.emit(publishedChannel, message);
-        }
+        this.props.pubSubHub.publish(this.props.id, message);
     }
 
     /**
