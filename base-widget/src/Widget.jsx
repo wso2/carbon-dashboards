@@ -28,26 +28,12 @@ export default class Widget extends Component {
     constructor(props) {
         super(props);
 
-        this.messageQueue = [];
-        this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
         this._getLocalState = this._getLocalState.bind(this);
         this._setLocalState = this._setLocalState.bind(this);
         this.getWidgetState = this.getWidgetState.bind(this);
         this.setWidgetState = this.setWidgetState.bind(this);
         this.subscribe = this.subscribe.bind(this);
-        this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
         this.channelManager = props.channelManager;
-    }
-
-    /**
-     * This method publishers the queued messages in the widget. The messages are queued when the widget tried to
-     * publish before initializing the dashboard.
-     *
-     */
-    publishQueuedMessages() {
-        for (let messageId in this.messageQueue) {
-            this.publish(this.messageQueue[messageId])
-        }
     }
 
     /**
