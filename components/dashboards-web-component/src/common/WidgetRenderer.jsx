@@ -224,6 +224,7 @@ export default class WidgetRenderer extends Component {
                     ...this.props,
                     width: this.props.glContainer.width,
                     height: this.props.glContainer.height,
+                    pubSubHub: this.props.glContainer.layoutManager.pubSubHub,
                     muiTheme: this.state.currentTheme,
                     channelManager: getWidgetChannelManager(),
                 };
