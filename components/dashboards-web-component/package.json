@@ -6,7 +6,7 @@
   "scripts": {
     "test": "NODE_ENV=test NODE_TLS_REJECT_UNAUTHORIZED='0' mocha --recursive --require babel-register  -r mock-local-storage \"./test/**/*.test.js\"",
     "clean": "rimraf dist",
-    "dev": "NODE_ENV=development webpack -d --progress",
+    "dev": "NODE_ENV=development webpack -d --progress --devtool source-map",
     "lint": "eslint . --ext .jsx --ext .js",
     "build": "webpack -p",
     "deploy": "cp ./dist/bundle.js $DS_HOME/wso2/dashboard/deployment/web-ui-apps/portal/public/js/"
