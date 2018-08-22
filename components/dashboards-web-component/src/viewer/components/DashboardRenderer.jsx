@@ -515,31 +515,6 @@ export default class DashboardRenderer extends Component {
 
     async addPdfImage(url, callback) {
         let path = `/${appContext}/public/app/images/`;
-        /*
-                await axios.get(url, { auth: { username: 'admin', password: 'admin' } })
-                    .then(function (res) {
-                        if (res.data === '') {
-                            callback('none');
-                        } else {
-                            path += res.data;
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            const img = new Image();
-                            let imgStr;
-        
-                            img.onload = function () {
-                                canvas.width = img.width;
-                                canvas.height = img.height;
-                                ctx.drawImage(img, 0, 0);
-                                imgStr = canvas.toDataURL('image/png');
-                                callback(imgStr);
-                            }
-        
-                            img.src = path;
-                        }
-        
-                    });*/
-
         const httpClient = axios.create({
             baseURL: url,
             timeout: 2000,
