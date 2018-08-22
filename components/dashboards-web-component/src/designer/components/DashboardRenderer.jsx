@@ -21,9 +21,7 @@ import { FormattedMessage } from 'react-intl';
 import { Paper } from 'material-ui';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import GoldenLayout from 'golden-layout';
 import 'golden-layout/src/css/goldenlayout-base.css';
-import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
 import WidgetRenderer from '../../common/WidgetRenderer';
 import { ResizableBox } from 'react-resizable';
 
@@ -34,6 +32,7 @@ import './dashboard-container-styles.css';
 import WidgetConfigurationPane from './WidgetConfigurationPane';
 import DashboardUtils from '../../utils/DashboardUtils';
 import { Event } from '../../utils/Constants';
+import GoldenLayoutFactory from '../../utils/GoldenLayoutFactory';
 import './../../utils/GLResizable.css';
 
 const glDarkThemeCss = glDarkTheme.toString();
@@ -258,30 +257,8 @@ export default class DashboardRenderer extends Component {
             return;
         }
 
-        const goldenLayoutContents = this.getRenderingPage().content || [];
-        const config = {
-            settings: {
-                constrainDragToContainer: false,
-                reorderEnabled: true,
-                selectionEnabled: false,
-                popoutWholeStack: false,
-                blockedPopoutsThrowError: true,
-                closePopoutsOnUnload: true,
-                responsiveMode: 'always',
-                hasHeaders: true,
-                showPopoutIcon: false,
-                showMaximiseIcon: false,
-                showCloseIcon: true,
-            },
-            dimensions: {
-                headerHeight: 25,
-            },
-            content: goldenLayoutContents,
-        };
-        const dashboardContainer = document.getElementById(dashboardContainerId);
-        const goldenLayout = new GoldenLayout(config, dashboardContainer);
-        const renderingWidgetClassNames = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents);
-        renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
+        const goldenLayoutContents = this.getRenderingPage().content;
+        const goldenLayout = GoldenLayoutFactory.createForDesigner(dashboardContainerId, goldenLayoutContents);
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
@@ -291,8 +268,7 @@ export default class DashboardRenderer extends Component {
         goldenLayout.on('itemDestroyed', this.hideWidgetConfigurationPane);
         goldenLayout.eventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.updateDashboard);
 
-        // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
-        setTimeout(() => goldenLayout.init(), 0);
+        goldenLayout.initialize();
         this.goldenLayout = goldenLayout;
     }
 
