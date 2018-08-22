@@ -36,6 +36,7 @@ import jspdf from 'jspdf';
 import html2cavas from 'html2canvas';
 import { pdfConfig } from './JspdfConf.js';
 import axios from 'axios';
+import AuthManager from '../../auth/utils/AuthManager';
 
 import { Dialog, FlatButton, Checkbox, CircularProgress } from 'material-ui';
 
@@ -44,6 +45,11 @@ import autoTable from 'jspdf-autotable';  //Need to work with report generation 
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
 const dashboardContainerId = 'dashboard-container';
+
+/**
+ * App context sans starting forward slash.
+ */
+const appContext = window.contextPath.substr(1);
 
 export default class DashboardRenderer extends Component {
 
@@ -75,11 +81,11 @@ export default class DashboardRenderer extends Component {
         if (this.goldenLayout) {
             this.goldenLayout.updateSize();
         }
-        this.setState({height: window.innerHeight});
+        this.setState({ height: window.innerHeight });
     }
 
     componentDidMount() {
-        this.setState({height: window.innerHeight});
+        this.setState({ height: window.innerHeight });
         window.addEventListener('resize', this.handleWindowResize);
     }
 
@@ -136,12 +142,12 @@ export default class DashboardRenderer extends Component {
 
         const dialogActions = [
             <FlatButton
-                label="Cancel"
+                label='Cancel'
                 primary={true}
                 onClick={this.handleClose}
             />,
             <FlatButton
-                label="Export"
+                label='Export'
                 primary={true}
                 onClick={this.exportWidget}
             />,
@@ -166,7 +172,7 @@ export default class DashboardRenderer extends Component {
                 >
                     <div
                         id={dashboardContainerId}
-                        className="dashboard-view-container"
+                        className='dashboard-view-container'
                         ref={() => {
                             if (!this.unmounted) {
                                 this.renderGoldenLayout();
@@ -175,7 +181,7 @@ export default class DashboardRenderer extends Component {
                     />
                 </div>
                 <Dialog
-                    title="Select PDF options"
+                    title='Select PDF options'
                     actions={dialogActions}
                     modal={true}
                     open={this.state.dialogOpen}
@@ -194,13 +200,13 @@ export default class DashboardRenderer extends Component {
                 </Dialog>
 
                 <Dialog
-                    title="Report is generating"
+                    title='Report is generating'
                     contentStyle={customStatusDailogStyle}
                     modal={true}
                     open={this.state.reportStatusOpen}
                 >
                     <CircularProgress
-                        mode="determinate"
+                        mode='determinate'
                         value={this.state.completed}
                         size={80}
                         thickness={5}
@@ -285,7 +291,7 @@ export default class DashboardRenderer extends Component {
         day = day < 10 ? '0' + day : day;
         month = month < 10 ? '0' + month : month;
         const timeStr = hours + ':' + minutes + ' ' + ampm;
-        return day + "/" + month + "/" + date.getFullYear() + "  " + timeStr;
+        return day + '/' + month + '/' + date.getFullYear() + '  ' + timeStr;
     }
 
     sleep(ms) {
@@ -301,7 +307,7 @@ export default class DashboardRenderer extends Component {
         const docTitle = this.state.title;
 
         //Initialize pdf object with margin parameters
-        const pdf = new jspdf("l", "mm", "a4");
+        const pdf = new jspdf('l', 'mm', 'a4');
         const lMargin = 15;
         const rMargin = 15;
         const pdfInMM = 400;
@@ -310,13 +316,13 @@ export default class DashboardRenderer extends Component {
 
         //Gets the document title from HTML and adds that in the center of the front page
         //document and adds a border
-        const title = document.getElementsByTagName("h1")[0].innerText;
-        const mainTitle = title + " : ";
+        const title = document.getElementsByTagName('h1')[0].innerText;
+        const mainTitle = title + ' : ';
 
         const lines = pdf.splitTextToSize(mainTitle, (pdfInMM - lMargin - rMargin));
 
-        if (element.innerHTML.search("rt-table") > -1) {
-            const colDivs = element.getElementsByClassName("rt-resizable-header-content");
+        if (element.innerHTML.search('rt-table') > -1) {
+            const colDivs = element.getElementsByClassName('rt-resizable-header-content');
             const colData = [];
             const colNum = colDivs.length;
 
@@ -326,9 +332,9 @@ export default class DashboardRenderer extends Component {
 
             let rowDivs;
             if (this.props.theme.name == 'dark') {
-                rowDivs = element.getElementsByClassName("cell-data");
+                rowDivs = element.getElementsByClassName('cell-data');
             } else {
-                rowDivs = element.getElementsByTagName("span");
+                rowDivs = element.getElementsByTagName('span');
             }
 
             const rowNum = rowDivs.length / colDivs.length;
@@ -343,17 +349,15 @@ export default class DashboardRenderer extends Component {
             }
 
             const doc = new jspdf('p', 'pt');
-            const totalPagesExp = "{total_pages_count_string}";
+            const totalPagesExp = '{total_pages_count_string}';
 
-            await this.addPdfImage("/portal/apis/dashboards/pdfHeader", function (res) {
-
-                localStorage.setItem("dashboardHeader", res);
+            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfHeader`, function (res) {
+                localStorage.setItem('dashboardHeader', res);
             });
 
-            await this.addPdfImage("/portal/apis/dashboards/pdfFooter", function (res) {
+            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfFooter`, function (res) {
                 if (res != 'none') {
-
-                    localStorage.setItem("dashboardFooter", res);
+                    localStorage.setItem('dashboardFooter', res);
                 }
             });
 
@@ -362,23 +366,23 @@ export default class DashboardRenderer extends Component {
             doc.setFontType('bold');
             doc.text((pdf.internal.pageSize.getHeight() / 2 + 50), pdfConfig.title.coordinates.y - 30, mainTitle);
             const offset = doc.getStringUnitWidth(mainTitle);
-            const padding = Array.apply(null, Array(mainTitle.length + 1)).map(function () { return " " })
+            const padding = Array.apply(null, Array(mainTitle.length + 1)).map(function () { return ' ' })
             doc.setFontType('normal');
 
-            const ntext = padding.join(" ") + docTitle;
-            doc.text((pdf.internal.pageSize.getHeight() / 2 + 50), pdfConfig.title.coordinates.y - 30, ntext);
+            const finalTitle = padding.join(' ') + docTitle;
+            doc.text((pdf.internal.pageSize.getHeight() / 2 + 50), pdfConfig.title.coordinates.y - 30, finalTitle);
 
-            let pdfInfo = "";
+            let pdfInfo = '';
 
             if (this.state.includeTime) {
-                pdfInfo += "Generated on : " + this.formatDate(new Date());
+                pdfInfo += 'Generated on : ' + this.formatDate(new Date());
             }
 
             if (this.state.includeRecords) {
                 if (pdfInfo != '') {
-                    pdfInfo += "\n";
+                    pdfInfo += '\n';
                 }
-                pdfInfo += "No of records : " + rowData.length;
+                pdfInfo += 'No of records : ' + rowData.length;
             }
 
             doc.setFontType('bold');
@@ -390,23 +394,23 @@ export default class DashboardRenderer extends Component {
                 // HEADER
                 const headerImg = localStorage.getItem('dashboardHeader');
                 if (headerImg != null) {
-                    doc.addImage(headerImg, "JPEG", data.settings.margin.left,
-                                 pdfConfig.stampImageDashboard.coordinates.y, pdfConfig.stampImageDashboard.size.x,
-                                 pdfConfig.stampImageDashboard.size.y);
+                    doc.addImage(headerImg, 'JPEG', data.settings.margin.left,
+                        pdfConfig.stampImageDashboard.coordinates.y, pdfConfig.stampImageDashboard.size.x,
+                        pdfConfig.stampImageDashboard.size.y);
                 }
 
                 // FOOTER
-                let str = "Page " + data.pageCount;
+                let pageNumber = 'Page ' + data.pageCount;
                 // Total page number plugin only available in jspdf v1.0+
                 if (typeof doc.putTotalPages === 'function') {
-                    str = str + " of " + totalPagesExp;
+                    pageNumber = pageNumber + ' of ' + totalPagesExp;
                 }
                 doc.setFontSize(10);
                 const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-                doc.text(str, data.settings.margin.left, pageHeight - 10);
+                doc.text(pageNumber, data.settings.margin.left, pageHeight - 10);
                 const footerImg = localStorage.getItem('dashboardFooter');
                 if (footerImg != null) {
-                    doc.addImage(footerImg, "JPEG", 380, 780, pdfConfig.stampImage.size.x, pdfConfig.stampImage.size.y);
+                    doc.addImage(footerImg, 'JPEG', 380, 780, pdfConfig.stampImage.size.x, pdfConfig.stampImage.size.y);
                 }
 
             };
@@ -427,31 +431,31 @@ export default class DashboardRenderer extends Component {
             this.state.includeRecords = false;
             this.state.includeTime = false;
 
-            const tableDocumentName = docTitle + ".pdf";
+            const tableDocumentName = docTitle + '.pdf';
             doc.save(tableDocumentName);
 
 
         } else {
             //Add the element's snapshot into the page
-            await this.addPdfImage("/portal/apis/dashboards/pdfHeader", function (res) {
-                pdf.addImage(res, "JPEG", pdfConfig.stampImageLandscape.coordinates.x,
-                             pdfConfig.stampImageLandscape.coordinates.y, pdfConfig.stampImageLandscape.size.x,
-                             pdfConfig.stampImageLandscape.size.y);
+            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfHeader`, function (res) {
+                pdf.addImage(res, 'JPEG', pdfConfig.stampImageLandscape.coordinates.x,
+                    pdfConfig.stampImageLandscape.coordinates.y, pdfConfig.stampImageLandscape.size.x,
+                    pdfConfig.stampImageLandscape.size.y);
             });
 
             pdf.setFontType('bold');
             pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30), 12, mainTitle, null, null, 'center');
             const offset = pdf.getStringUnitWidth(mainTitle) * 2.5;
-            const padding = Array.apply(null, Array(mainTitle.length + 1)).map(function () { return " " })
+            const padding = Array.apply(null, Array(mainTitle.length + 1)).map(function () { return ' ' })
             pdf.setFontType('normal');
 
-            const ntext = padding.join(" ") + docTitle;
-            pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30) + offset, 12, ntext, null, null, 'center');
+            const finalTitle = padding.join(' ') + docTitle;
+            pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30) + offset, 12, finalTitle, null, null, 'center');
 
-            let pdfInfo = "";
+            let pdfInfo = '';
 
             if (this.state.includeTime) {
-                pdfInfo = "Generated on : " + this.formatDate(new Date());
+                pdfInfo = 'Generated on : ' + this.formatDate(new Date());
             }
 
             pdf.setFontType('bold');
@@ -459,11 +463,11 @@ export default class DashboardRenderer extends Component {
             pdf.text(pdfInfo, pdfConfig.stampImageLandscape.coordinates.x, 18);
             pdf.setFontType('normal');
 
-            await this.addPdfImage("/portal/apis/dashboards/pdfFooter", function (res) {
+            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfFooter`, function (res) {
                 if (res != 'none') {
-                    pdf.addImage(res, "JPEG", (pdf.internal.pageSize.getWidth() - 45),
-                                 (pdf.internal.pageSize.getHeight() - 8), pdfConfig.stampImageLandscape.size.x,
-                                 pdfConfig.stampImageLandscape.size.y);
+                    pdf.addImage(res, 'JPEG', (pdf.internal.pageSize.getWidth() - 40),
+                        (pdf.internal.pageSize.getHeight() - 8), pdfConfig.stampImageLandscape.size.x,
+                        pdfConfig.stampImageLandscape.size.y);
                 }
             });
 
@@ -478,23 +482,23 @@ export default class DashboardRenderer extends Component {
                     if (canvas.height * val < 210) {
                         if (canvas.height * val < 180) {
                             pdf.addImage(imgData, 'JPEG', xposition, 45, canvas.width * val, canvas.height * val,
-                                                                                                "widget", "FAST");
+                                'widget', 'FAST');
                         } else {
                             pdf.addImage(imgData, 'JPEG', xposition, 25, canvas.width * val, canvas.height * val,
-                                                                                                "widget", "FAST");
+                                'widget', 'FAST');
                         }
                     } else {
                         const valH = (pdf.internal.pageSize.getHeight() - 28) / canvas.height;
                         const xposition = (pdf.internal.pageSize.getWidth() - canvas.width * valH) / 2;
                         pdf.addImage(imgData, 'JPEG', xposition, 25, canvas.width * valH, canvas.height * valH,
-                                                                                                "widget", "FAST");
+                            'widget', 'FAST');
                     }
                 } else {
                     const val = (pdf.internal.pageSize.getHeight() - 28) / canvas.height;
                     const xposition = (pdf.internal.pageSize.getWidth() - canvas.width * val) / 2;
-                    pdf == new jspdf("p", "mm", "a4");
+                    pdf == new jspdf('p', 'mm', 'a4');
                     pdf.addImage(imgData, 'JPEG', xposition, 25, canvas.width * val, canvas.height * val,
-                                                                                                 "widget", "FAST");
+                        'widget', 'FAST');
                 }
             });
 
@@ -504,20 +508,52 @@ export default class DashboardRenderer extends Component {
             this.state.includeRecords = false;
             this.state.includeTime = false;
 
-            const documentName = docTitle + ".pdf";
+            const documentName = docTitle + '.pdf';
             pdf.save(documentName);
         }
     }
 
     async addPdfImage(url, callback) {
-        let path = "/portal/public/app/images/"
+        let path = `/${appContext}/public/app/images/`;
+        /*
+                await axios.get(url, { auth: { username: 'admin', password: 'admin' } })
+                    .then(function (res) {
+                        if (res.data === '') {
+                            callback('none');
+                        } else {
+                            path += res.data;
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            const img = new Image();
+                            let imgStr;
+        
+                            img.onload = function () {
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                ctx.drawImage(img, 0, 0);
+                                imgStr = canvas.toDataURL('image/png');
+                                callback(imgStr);
+                            }
+        
+                            img.src = path;
+                        }
+        
+                    });*/
 
-        await axios.get(url, { auth: { username: "admin", password: "admin" } })
+        const httpClient = axios.create({
+            baseURL: url,
+            timeout: 2000,
+            headers: { Authorization: 'Bearer ' + AuthManager.getUser().SDID },
+        });
+
+        await httpClient.get()
             .then(function (res) {
                 if (res.data === '') {
                     callback('none');
                 } else {
                     path += res.data;
+
+                    //Convert image to bdase64 encoded image (data_url)
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     const img = new Image();
@@ -527,13 +563,12 @@ export default class DashboardRenderer extends Component {
                         canvas.width = img.width;
                         canvas.height = img.height;
                         ctx.drawImage(img, 0, 0);
-                        imgStr = canvas.toDataURL("image/png");
+                        imgStr = canvas.toDataURL('image/png');
                         callback(imgStr);
                     }
 
                     img.src = path;
                 }
-
             });
     }
 
@@ -543,9 +578,9 @@ export default class DashboardRenderer extends Component {
         settingsButton.className = 'fw fw-export widget-export-button';
         settingsButton.addEventListener('click', () => {
             const selectedElement = component.element[0];
-            if (selectedElement.innerHTML.search("rt-table") > -1) {
+            if (selectedElement.innerHTML.search('rt-table') > -1) {
                 this.setState({ recordCountEnabled: true });
-            }else{
+            } else {
                 this.setState({ recordCountEnabled: false });
             }
             this.handleOpen();
@@ -582,8 +617,8 @@ export default class DashboardRenderer extends Component {
 
     progress = () => {
         let { completed } = this.state;
-        if(isNaN(completed)){
-            completed=0;
+        if (isNaN(completed)) {
+            completed = 0;
         }
         this.setState({ completed: completed >= 100 ? 0 : completed + 10 });
     };

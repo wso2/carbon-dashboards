@@ -46,8 +46,14 @@ import jspdf from 'jspdf';
 import html2cavas from 'html2canvas';
 import axios from 'axios';
 import { pdfConfig } from './components/JspdfConf.js';
+import AuthManager from '../auth/utils/AuthManager';
 
 const SelectableList = makeSelectable(List);
+
+/**
+ * App context sans starting forward slash.
+ */
+const appContext = window.contextPath.substr(1);
 
 class DashboardViewPage extends Component {
 
@@ -60,10 +66,10 @@ class DashboardViewPage extends Component {
             dashboardFetchStatus: HttpStatus.UNKNOWN,
             isSidePaneOpen: true,
             isCurrentThemeDark: isDarkTheme ? isDarkTheme === 'true' : true,
-            printEnabledList: [],
+            exportPagesList: [],
             pageList: [],
             isPrintChecked: false,
-            pageSize: "A4",
+            pageSize: 'A4',
             resizeRatio: 1,
             canvasWidth: 0,
             canvasHeight: 0,
@@ -165,12 +171,12 @@ class DashboardViewPage extends Component {
 
         const dialogActions = [
             <FlatButton
-                label="Cancel"
+                label='Cancel'
                 primary={true}
                 onClick={this.handleClose}
             />,
             <FlatButton
-                label="Export"
+                label='Export'
                 primary={true}
                 onClick={this.generatePdf}
             />,
@@ -201,7 +207,7 @@ class DashboardViewPage extends Component {
                 </div>
 
                 <Dialog
-                    title="Select PDF options"
+                    title='Select PDF options'
                     actions={dialogActions}
                     modal={true}
                     open={this.state.dialogOpen}
@@ -213,13 +219,13 @@ class DashboardViewPage extends Component {
                 </Dialog>
 
                 <Dialog
-                    title="Report is generating"
+                    title='Report is generating'
                     contentStyle={customStatusDailogStyle}
                     modal={true}
                     open={this.state.reportStatusOpen}
                 >
                     <CircularProgress
-                        mode="determinate"
+                        mode='determinate'
                         value={this.state.completed}
                         size={80}
                         thickness={5}
@@ -261,7 +267,8 @@ class DashboardViewPage extends Component {
         const pageId = this.props.match.params.pageId,
             subPageId = this.props.match.params.subPageId;
 
-        const pageSizes = ["A4", "Letter", "Government-Letter"];
+        const pageSizes = ['A4', 'Letter', 'Government-Letter'];
+        const orientations = ['Landscape', 'Portrait'];
 
         return (
             <Drawer
@@ -338,14 +345,14 @@ class DashboardViewPage extends Component {
     }
 
     handleChange(index) {
-        let newArray = this.state.printEnabledList.slice();
+        let tempExportList = this.state.exportPagesList.slice();
 
-        if (typeof newArray[index] != 'undefined') {
-            newArray[index].value = !newArray[index].value;
-            this.setState({ printEnabledList: newArray }, () => this.capturePage(index));
+        if (typeof tempExportList[index] != 'undefined') {
+            tempExportList[index].value = !tempExportList[index].value;
+            this.setState({ exportPagesList: tempExportList }, () => this.capturePage(index));
         } else {
-            newArray[index] = { value: true };
-            this.setState({ printEnabledList: newArray }, () => this.capturePage(index));
+            tempExportList[index] = { value: true };
+            this.setState({ exportPagesList: tempExportList }, () => this.capturePage(index));
         }
 
     }
@@ -456,7 +463,7 @@ class DashboardViewPage extends Component {
         day = day < 10 ? '0' + day : day;
         month = month < 10 ? '0' + month : month;
         const timeStr = hours + ':' + minutes + ' ' + ampm;
-        return day + "/" + month + "/" + date.getFullYear() + "  " + timeStr;
+        return day + '/' + month + '/' + date.getFullYear() + '  ' + timeStr;
     }
 
     sleep(ms) {
@@ -470,29 +477,29 @@ class DashboardViewPage extends Component {
         this.handleReportStatusOpen();
         this.timer = setInterval(this.progress, 195);
 
-        let pdf = new jspdf("l", "px", this.state.pageSize.toLowerCase());
+        const pdf = new jspdf('l', 'px', this.state.pageSize.toLowerCase());
 
-        const title = document.getElementsByTagName("h1")[0].innerText;
+        const title = document.getElementsByTagName('h1')[0].innerText;
 
         // Get header : a cutomized header defined by the user or else the default stream processor header
-        await this.addPdfImage("/portal/apis/dashboards/pdfHeader", function (res) {
+        await this.addPdfImage(`/${appContext}/apis/dashboards/pdfHeader`, function (res) {
             if (res != 'none') {
-                localStorage.setItem("dashboardHeader", res);
+                localStorage.setItem('dashboardHeader', res);
             }
         });
 
         // Get footer : a cutomized footer defined by the user or else the no footer by default
-        await this.addPdfImage("/portal/apis/dashboards/pdfFooter", function (res) {
+        await this.addPdfImage(`/${appContext}/apis/dashboards/pdfFooter`, function (res) {
             if (res != 'none') {
-                localStorage.setItem("dashboardFooter", res);
+                localStorage.setItem('dashboardFooter', res);
             }
         });
 
         // To handle the async calls (wait until the image data is stored in localStorage)
         await this.sleep(2000);
 
-        const img = localStorage.getItem("dashboardHeader");
-        pdf.addImage(img, "JPEG", pdfConfig.stampImageDashboard.coordinates.x,
+        const img = localStorage.getItem('dashboardHeader');
+        pdf.addImage(img, 'JPEG', pdfConfig.stampImageDashboard.coordinates.x,
                      pdfConfig.stampImageDashboard.coordinates.y, pdfConfig.stampImageDashboard.size.x,
                      pdfConfig.stampImageDashboard.size.y);
 
@@ -511,17 +518,17 @@ class DashboardViewPage extends Component {
             //Add title
             pdf.setFontSize(15);
             pdf.setFontType('bold');
-            const padding = Array.apply(null, Array(title.length + 4)).map(function () { return "  " })
-            pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30), 18, title + " : ");
+            const padding = Array.apply(null, Array(title.length + 4)).map(function () { return '  ' })
+            pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30), 18, title + ' : ');
 
-            const ntext = padding.join("") + page.name;
+            const ntext = padding.join('') + page.name;
             pdf.setFontType('normal');
             pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30), 18, ntext);
 
-            let pdfInfo = "";
+            let pdfInfo = '';
 
             if (this.state.includeTime) {
-                pdfInfo = "Generated on : " + this.formatDate(new Date());
+                pdfInfo = 'Generated on : ' + this.formatDate(new Date());
             }
 
             pdf.setFontType('bold');
@@ -531,29 +538,29 @@ class DashboardViewPage extends Component {
 
             if (imgWidth > imgHeight) {
                 const val = (pdf.internal.pageSize.getWidth()) / imgWidth;
-
-                if (imgHeight * val < (pdf.internal.pageSize.getHeight())) {
-                    pdf.addImage(imgData, 'JPEG', 0, 55, imgWidth * val, imgHeight * val, "dashboard" + ind, "FAST");
+                if (imgHeight * val < (pdf.internal.pageSize.getHeight()-60)) {
+                    pdf.addImage(imgData, 'JPEG', 0, 55, imgWidth * val, imgHeight * val, 'dashboard' + ind, 'FAST');
                 } else {
-                    const valH = (pdf.internal.pageSize.getHeight()) / imgHeight;
-                    pdf.addImage(imgData, 'JPEG', 0, 55, imgWidth * valH, imgHeight * valH, "dashboard" + ind, "FAST");
+                    const valH = (pdf.internal.pageSize.getHeight()-60) / imgHeight;
+                    const xposition = (pdf.internal.pageSize.getWidth() - imgWidth * valH) / 2;
+                    pdf.addImage(imgData, 'JPEG', xposition, 45, imgWidth * valH, imgHeight * valH, 'dashboard' + ind,
+                    'FAST');
                 }
-
             } else {
                 const val = (pdf.internal.pageSize.getHeight()) / imgHeight;
-                pdf = new jspdf("p", "px", "a4");
-                pdf.addImage(imgData, 'JPEG', 0, 35, imgWidth * val, imgHeight * val, "dashboard" + ind, "FAST");
+                pdf == new jspdf('p', 'px', this.state.pageSize.toLowerCase());
+                pdf.addImage(imgData, 'JPEG', 0, 35, imgWidth * val, imgHeight * val, 'dashboard' + ind, 'FAST');
             }
 
             // FOOTER : a customized footer defined by the user in the deployment.yaml file or else no footer by default
-            const str = "Page " + (ind + 1) + " of " + this.state.pageList.length;
+            const pageNo = 'Page ' + (ind + 1) + ' of ' + this.state.pageList.length;
             pdf.setFontSize(10);
             const pageHeight = pdf.internal.pageSize.height || pdf.internal.pageSize.getHeight();
-            pdf.text(str, 10, pageHeight - 10);
+            pdf.text(pageNo, 10, pageHeight - 10);
 
             const footerImg = localStorage.getItem('dashboardFooter');
             if (footerImg != null) {
-                pdf.addImage(footerImg, "JPEG", 380, 780, pdfConfig.stampImage.size.x, pdfConfig.stampImage.size.y);
+                pdf.addImage(footerImg, 'JPEG', 380, 780, pdfConfig.stampImage.size.x, pdfConfig.stampImage.size.y);
             }
 
             if (ind < this.state.pageList.length - 1) {
@@ -562,7 +569,7 @@ class DashboardViewPage extends Component {
                 // HEADER : a cutomized header defined by the user or else the default stream processor header
                 const headerImg = localStorage.getItem('dashboardHeader');
                 if (headerImg != null) {
-                    pdf.addImage(headerImg, "JPEG", pdfConfig.stampImageDashboard.coordinates.x,
+                    pdf.addImage(headerImg, 'JPEG', pdfConfig.stampImageDashboard.coordinates.x,
                                  pdfConfig.stampImageDashboard.coordinates.y, pdfConfig.stampImageDashboard.size.x,
                                  pdfConfig.stampImageDashboard.size.y);
                 }
@@ -574,16 +581,48 @@ class DashboardViewPage extends Component {
         this.state.completed = 0;
         this.state.includeTime = false;
 
-        const docName = title + ".pdf";
+        const docName = title + '.pdf';
         pdf.save(docName);
 
     }
 
     // Get the image from deployment.yaml file through the server
     async addPdfImage(url, callback) {
-        let path = "/portal/public/app/images/"
+        let path = `/${appContext}/public/app/images/`;
 
-        await axios.get(url, { auth: { username: "admin", password: "admin" } })
+        const httpClient = axios.create({
+            baseURL: url,
+            timeout: 2000,
+            headers: { Authorization: 'Bearer ' + AuthManager.getUser().SDID },
+        });
+
+        await httpClient.get()
+            .then(function(res){
+                if (res.data === '') {
+                    callback('none');
+                } else {
+                    path += res.data;
+
+                    //Convert image to bdase64 encoded image (data_url)
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    let imgStr;
+
+                    img.onload = function () {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        imgStr = canvas.toDataURL('image/png');
+                        callback(imgStr);
+                    }
+
+                    img.src = path;
+                }
+            });
+
+/*
+        await axios.get(url, { auth: { username: 'admin', password: 'admin' } })
             .then(function (res) {
                 if (res.data === '') {
                     callback('none');
@@ -600,7 +639,7 @@ class DashboardViewPage extends Component {
                         canvas.width = img.width;
                         canvas.height = img.height;
                         ctx.drawImage(img, 0, 0);
-                        imgStr = canvas.toDataURL("image/png");
+                        imgStr = canvas.toDataURL('image/png');
                         callback(imgStr);
                     }
 
@@ -608,16 +647,17 @@ class DashboardViewPage extends Component {
                 }
 
             });
+            */
     }
 
     async removePage(index) {
 
-        const newAr = this.state.pageList.slice();
-        const ind = newAr.indexOf(index);
-        newAr.splice(ind, 1);
+        const tempPageList = this.state.pageList.slice();
+        const ind = tempPageList.indexOf(index);
+        tempPageList.splice(ind, 1);
         this.setState({ pageList: newAr });
 
-        if (newAr.indexOf(index) == -1) {
+        if (tempPageList.indexOf(index) == -1) {
             localStorage.removeItem(index);
         }
 
@@ -627,17 +667,17 @@ class DashboardViewPage extends Component {
 
         const url = window.location.href;
         const parts = url.split('/');
-        const currentPage = parts[parts.length - 1] === "" ? parts[parts.length - 2] : parts[parts.length - 1];
+        const currentPage = parts[parts.length - 1] === '' ? parts[parts.length - 2] : parts[parts.length - 1];
 
-        await html2cavas(document.getElementById("dashboard-container")).then((canvas) => {
+        await html2cavas(document.getElementById('dashboard-container')).then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
             const w = canvas.width;
             const h = canvas.height;
             localStorage.setItem(currentPage, JSON.stringify({ imageData: imgData, width: w, height: h }));
 
-            const newAr = this.state.pageList.slice();
-            newAr.push(currentPage);
-            this.setState({ pageList: newAr });
+            const tempPageList = this.state.pageList.slice();
+            tempPageList.push(currentPage);
+            this.setState({ pageList: tempPageList });
 
             const val = 620 / canvas.width;
             this.state.resizeRatio = val;
