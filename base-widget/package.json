@@ -23,7 +23,7 @@
     "babel-preset-react": "^6.24.1"
   },
   "bugs": {
-    "url": "https://github.com/npm/npm/issues"
+    "url": "https://github.com/wso2/carbon-dashboards/issues"
   },
   "dependencies": {
     "axios": "^0.17.1"
