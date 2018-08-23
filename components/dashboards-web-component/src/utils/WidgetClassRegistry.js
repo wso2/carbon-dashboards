@@ -80,22 +80,10 @@ function extendsFromDeprecatedWidgetClassVersion(widgetClass) {
  */
 function patchWidgetClass(widgetClass) {
     const superWidgetClassPrototype = Object.getPrototypeOf(widgetClass.prototype);
-    // TODO 2018/08/22: When the new version of base-widget published, replace following patching with prototype.
     // Patch subscribe method.
-    superWidgetClassPrototype.subscribe = function (listenerCallback, publisherId, context) {
-        if (!publisherId) {
-            const publisherIds = this.props.configs.pubsub.publishers;
-            if (publisherIds && Array.isArray(publisherIds)) {
-                publisherIds.forEach(id => this.props.pubSubHub.subscribe(id, listenerCallback));
-            }
-        } else {
-            this.props.pubSubHub.subscribe(publisherId, listenerCallback, context);
-        }
-    };
+    superWidgetClassPrototype.subscribe = Widget.prototype.subscribe;
     // Patch publish method.
-    superWidgetClassPrototype.publish = function (message) {
-        this.props.pubSubHub.publish(this.props.id, message);
-    };
+    superWidgetClassPrototype.publish = Widget.prototype.publish;
 }
 
 global.dashboard = {};
