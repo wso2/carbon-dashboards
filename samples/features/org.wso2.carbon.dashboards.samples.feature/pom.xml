@@ -111,11 +111,6 @@
             <artifactId>org.wso2.carbon.dashboards.samples.widgets.user-info</artifactId>
             <type>zip</type>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-            <artifactId>org.wso2.carbon.dashboards.samples.widgets.date-time-range-picker</artifactId>
-            <type>zip</type>
-        </dependency>
 
         <!--Gson-->
         <dependency>
