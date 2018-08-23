@@ -527,4 +527,25 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         this.identityClient = null;
     }
 
+    public String getPdfHeader() {
+        try {
+            Object pdfHeader = ((Map<String, Object>) configProvider.getConfigurationObject("wso2.status.dashboard"))
+                    .get("pdfHeader");
+            return pdfHeader.toString();
+        } catch (ConfigurationException e) {
+            LOGGER.error("Error in getting the pdf header image", e);
+        }
+        return "";
+    }
+
+    public String getPdfFooter() {
+        try {
+            Object pdfFooter = ((Map<String, Object>) configProvider.getConfigurationObject("wso2.status.dashboard"))
+                    .get("pdfFooter");
+            return pdfFooter.toString();
+        } catch (ConfigurationException e) {
+            LOGGER.error("Error in getting the pdf header image", e);
+        }
+        return "";
+    }
 }
