@@ -22,11 +22,9 @@ import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 
-import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader, Toggle, Checkbox, CardText, CardHeader,
-         CardActions ,RaisedButton, SelectField, MenuItem, Card, FlatButton, Dialog, CircularProgress } from 'material-ui';
+import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 import { ActionHome, NavigationMenu } from 'material-ui/svg-icons';
-import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import Error403 from '../error-pages/Error403';
@@ -42,19 +40,7 @@ import ThemeButton from './components/ThemeButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
 import '../utils/GoldenLayoutOverrides.css';
 
-import jspdf from 'jspdf';
-import html2cavas from 'html2canvas';
-import axios from 'axios';
-import { pdfConfig } from './components/JspdfConf.js';
-import AuthManager from '../auth/utils/AuthManager';
-import ReportGeneration from '../utils/ReportGeneration';
-
 const SelectableList = makeSelectable(List);
-
-/**
- * App context sans starting forward slash.
- */
-const appContext = window.contextPath.substr(1);
 
 class DashboardViewPage extends Component {
 
@@ -67,17 +53,6 @@ class DashboardViewPage extends Component {
             dashboardFetchStatus: HttpStatus.UNKNOWN,
             isSidePaneOpen: true,
             isCurrentThemeDark: isDarkTheme ? isDarkTheme === 'true' : true,
-            exportPagesList: [],
-            pageList: [],
-            isPrintChecked: false,
-            pageSize: 'A4',
-            resizeRatio: 1,
-            canvasWidth: 0,
-            canvasHeight: 0,
-            expanded: false,
-            reportStatusOpen: false,
-            completed: 0,
-            dialogOpen: false,
         };
 
         this.fetchDashboard = this.fetchDashboard.bind(this);
@@ -88,15 +63,6 @@ class DashboardViewPage extends Component {
         this.renderSidePane = this.renderSidePane.bind(this);
         this.renderPagesList = this.renderPagesList.bind(this);
         this.renderDashboard = this.renderDashboard.bind(this);
-
-        this.handleChange = this.handleChange.bind(this);
-        this.capturePage = this.capturePage.bind(this);
-        this.handleCardClick = this.handleCardClick.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleIncludeGenerateTime = this.handleIncludeGenerateTime.bind(this);
-        this.removePage = this.removePage.bind(this);
-        this.generateDashboardReport=this.generateDashboardReport.bind(this);
     }
 
     componentDidMount() {
@@ -170,25 +136,6 @@ class DashboardViewPage extends Component {
             setTimeout(() => this.handleSidePaneToggle(), 1000);
         }
 
-        const dialogActions = [
-            <FlatButton
-                label='Cancel'
-                primary={true}
-                onClick={this.handleClose}
-            />,
-            <FlatButton
-                label='Export'
-                primary={true}
-                onClick={this.generateDashboardReport}
-            />,
-        ];
-
-        const customStatusDailogStyle = {
-            width: 400,
-            maxWidth: 'none',
-            position: 'relative'
-        };
-
         return (
             <MuiThemeProvider muiTheme={currentTheme}>
                 {this.renderHeader(currentTheme)}
@@ -206,34 +153,6 @@ class DashboardViewPage extends Component {
                 >
                     {this.renderDashboard(currentTheme)}
                 </div>
-
-                <Dialog
-                    title='Select PDF options'
-                    actions={dialogActions}
-                    modal={true}
-                    open={this.state.dialogOpen}
-                >
-                    <Checkbox
-                        label='Include report genetation time'
-                        onClick={this.handleIncludeGenerateTime}
-                    />
-                </Dialog>
-
-                <Dialog
-                    title='Report is generating'
-                    contentStyle={customStatusDailogStyle}
-                    modal={true}
-                    open={this.state.reportStatusOpen}
-                >
-                    <CircularProgress
-                        mode='determinate'
-                        value={this.state.completed}
-                        size={80}
-                        thickness={5}
-                        style={{ marginLeft: '35%' }}
-                    />
-                </Dialog>
-
             </MuiThemeProvider>
         );
     }
@@ -267,10 +186,6 @@ class DashboardViewPage extends Component {
     renderSidePane(theme) {
         const pageId = this.props.match.params.pageId,
             subPageId = this.props.match.params.subPageId;
-
-        const pageSizes = ['A4', 'Letter', 'Government-Letter'];
-        const orientations = ['Landscape', 'Portrait'];
-
         return (
             <Drawer
                 docked={false}
@@ -285,77 +200,8 @@ class DashboardViewPage extends Component {
                 <SelectableList value={subPageId ? `${pageId}/${subPageId}` : pageId}>
                     {this.renderPagesList()}
                 </SelectableList>
-                <br />
-                <Divider />
-                <span>
-                    <Card
-                        style={{ margin: 10 }}
-                        expanded={this.state.expanded}
-                        onExpandChange={this.handleCardClick}
-                    >
-                        <CardHeader title='Export dashboard' actAsExpander style={{ paddingRight: '0px' }} />
-                        <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
-                            <div style={{ marginRight: 0 }}>
-
-
-                                <RaisedButton label='Capture current page'
-                                    onClick={this.capturePage}
-                                    primary />
-
-                                <List>
-                                    {this.state.pageList.map(field =>
-                                        <ListItem primaryText={
-                                                        this.dashboard.pages.find(page => page.id === field).name}
-                                        rightIcon={<DeleteIcon />}
-                                                  onClick={() => this.removePage(field)} />
-                                    )}
-                                </List>
-
-                                <SelectField
-                                    style={{ width: 200 }}
-                                    floatingLabelText='Page Size'
-                                    value={this.state.pageSize}
-                                    onChange={(event, index, value) => { this.setState({ pageSize: value }) }}
-
-                                >
-                                    {pageSizes.map(field =>
-                                        (
-                                            <MenuItem
-                                                key={field}
-                                                value={field}
-                                                primaryText={field}
-                                            />
-                                        ))}
-                                </SelectField>
-
-                                <RaisedButton label='Export'
-                                    onClick={this.handleOpen}
-                                    disabled={!(this.state.pageList.length > 0)}
-                                    primary />
-                            </div>
-                        </CardActions>
-                    </Card>
-                </span>
-
             </Drawer>
         );
-    }
-
-    handleCardClick(expand) {
-        this.setState({ expanded: expand });
-    }
-
-    handleChange(index) {
-        let tempExportList = this.state.exportPagesList.slice();
-
-        if (typeof tempExportList[index] != 'undefined') {
-            tempExportList[index].value = !tempExportList[index].value;
-            this.setState({ exportPagesList: tempExportList }, () => this.capturePage(index));
-        } else {
-            tempExportList[index] = { value: true };
-            this.setState({ exportPagesList: tempExportList }, () => this.capturePage(index));
-        }
-
     }
 
     /**
@@ -426,93 +272,6 @@ class DashboardViewPage extends Component {
             return <Redirect to={this.getNavigationToPage(this.dashboard.landingPage)} />;
         }
     }
-
-    handleClose() {
-        this.setState({ dialogOpen: false });
-    }
-
-    handleOpen() {
-        this.setState({ dialogOpen: true });
-    }
-
-    handleIncludeGenerateTime() {
-        this.setState({ includeTime: !this.state.includeTime });
-    }
-
-    handleReportStatusClose() {
-        this.setState({ reportStatusOpen: false });
-    }
-
-    handleReportStatusOpen() {
-        this.setState({ reportStatusOpen: true });
-    }
-
-    progress = () => {
-        const { completed } = this.state;
-        this.setState({ completed: completed >= 100 ? 0 : completed + 10});
-    };
-
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async generateDashboardReport(){
-
-        //Starts showing report generation progress
-        this.handleClose();
-        this.handleReportStatusOpen();
-        this.timer = setInterval(this.progress, 192);
-        await this.sleep(2000);
-
-        const title = document.getElementsByTagName('h1')[0].innerText;
-
-        const pdf=ReportGeneration.generatePdf(this.state.pageSize.toLowerCase(),this.state.pageList,
-                                                this.state.includeTime,title,this.dashboard.pages);
-
-        clearInterval(this.timer);
-        this.handleReportStatusClose();
-        this.state.completed = 0;
-        this.state.includeRecords = false;
-        this.state.includeTime = false;
-
-    }
-
-    async removePage(index) {
-
-        const tempPageList = this.state.pageList.slice();
-        const ind = tempPageList.indexOf(index);
-        tempPageList.splice(ind, 1);
-        this.setState({ pageList: newAr });
-
-        if (tempPageList.indexOf(index) == -1) {
-            localStorage.removeItem(index);
-        }
-
-    }
-
-    async capturePage(index) {
-
-        const url = window.location.href;
-        const parts = url.split('/');
-        const currentPage = parts[parts.length - 1] === '' ? parts[parts.length - 2] : parts[parts.length - 1];
-
-        await html2cavas(document.getElementById('dashboard-container')).then((canvas) => {
-            const imgData = canvas.toDataURL('image/png');
-            const w = canvas.width;
-            const h = canvas.height;
-            localStorage.setItem(currentPage, JSON.stringify({ imageData: imgData, width: w, height: h }));
-
-            const tempPageList = this.state.pageList.slice();
-            tempPageList.push(currentPage);
-            this.setState({ pageList: tempPageList });
-
-            const val = 620 / canvas.width;
-            this.state.resizeRatio = val;
-            this.state.canvasWidth = canvas.width;
-            this.state.canvasHeight = canvas.height;
-        });
-    }
-
 }
 
 export default withRouter(DashboardViewPage);
