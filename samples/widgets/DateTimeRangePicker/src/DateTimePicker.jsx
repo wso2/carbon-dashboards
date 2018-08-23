@@ -16,7 +16,7 @@
  * under the License.
  */
 import React from 'react';
-import { MenuItem, Select } from 'material-ui';
+import {MenuItem, SelectField} from 'material-ui';
 import moment from 'moment';
 
 export default class DateTimePicker extends React.Component {
@@ -35,14 +35,14 @@ export default class DateTimePicker extends React.Component {
 
     }
 
-    handleOnChange(property, evt) {
+    handleOnChange(property, value) {
 
-        let { inputType, onChange } = this.props;
+        let {inputType, onChange} = this.props;
         let state = this.state;
 
-        state[property] = evt.target.value;
+        state[property] = value;
 
-        let date = moment(`${state.year}:${(state.month+1)}:${state.days} ${state.time}`,'YYYY-MM-DD HH:mm:ss.SSS').toDate();
+        let date = moment(`${state.year}:${(state.month + 1)}:${state.days} ${state.time}`, 'YYYY-MM-DD HH:mm:ss.SSS').toDate();
 
         switch (inputType) {
             case 'year':
@@ -65,9 +65,8 @@ export default class DateTimePicker extends React.Component {
     }
 
     render() {
-        let { year, month, days, time } = this.state;
-        let { inputType } = this.props;
-
+        let {year, month, days, time} = this.state;
+        let {inputType} = this.props;
 
         switch (inputType) {
             case 'hour':
@@ -89,65 +88,72 @@ export default class DateTimePicker extends React.Component {
                     }}
                 >
                     {
-                        ['year','millisecond','month','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
-                            <Select
+                        ['year', 'month', 'day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                            <SelectField
                                 value={year}
-                                onChange={event => {
-                                    this.handleOnChange('year', event);
+                                onChange={(event, index, value) => {
+                                    this.handleOnChange('year', value);
                                 }}
                             >
                                 {
                                     this.generateYears()
                                 }
-                            </Select>:
+                            </SelectField> :
                             null
                     }
                     {
-                        ['month','millisecond','day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
-                            <Select
+                        ['month', 'day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                            <SelectField
                                 value={month}
-                                onChange={event => {
-                                    this.handleOnChange('month', event);
+                                onChange={(event, index, value) => {
+                                    this.handleOnChange('month', value);
                                 }}
 
                             >
                                 {
                                     this.generateMonths()
                                 }
-                            </Select>:
+                            </SelectField> :
                             null
                     }
                     {
-                        ['day','millisecond', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
-                            <Select
+                        ['day', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                            <SelectField
                                 value={days}
-                                onChange={event => {
-                                    this.handleOnChange('days', event);
+                                onChange={(event, index, value) => {
+                                    this.handleOnChange('days', value);
                                 }}
 
                             >
                                 {
                                     this.generateDays(year, month)
                                 }
-                            </Select>:
+                            </SelectField> :
                             null
                     }
                 </div>
                 {
-                    ['millisecond', 'hour', 'minute', 'second'].indexOf(inputType) > -1 ?
+                    ['hour', 'minute', 'second'].indexOf(inputType) > -1 ?
                         <div>
                             <br/>Time<br/>
-                            <div className={'MuiFormControl-root-69'}>
-                                <div className={'MuiInput-root-52 MuiInput-formControl-53 MuiInput-underline-56 underline'}>
-                                    <input className={'MuiInput-input-60'} type="time" step={this.getTimeStep(inputType)} value={time} onChange={(evt) => {
-                                        this.handleOnChange('time', evt);
+                            <div
+                                className={'MuiFormControl-root-69'}>
+                                <div
+                                    className={'MuiInput-root-52 MuiInput-formControl-53 MuiInput-underline-56 underline'}>
+                                    <input
+                                        className={'MuiInput-input-60'}
+                                        type="time"
+                                        step={this.getTimeStep(inputType)}
+                                        value={time}
+                                        onChange={(evt) => {
+                                            this.handleOnChange('time', evt.target.value);
 
-                                    }}/>
+                                        }}/>
 
                                 </div>
                             </div>
 
-                        </div>:
+                        </div> :
                         null
 
                 }
@@ -161,7 +167,10 @@ export default class DateTimePicker extends React.Component {
 
         for (let index = 1970; index <= 2099; index++) {
             yearArray.push(
-                <MenuItem key={`year-${index}`} value={index}>{index}</MenuItem>
+                <MenuItem
+                    key={`year-${index}`}
+                    value={index}
+                    primaryText={index}/>
             )
         }
 
@@ -175,7 +184,10 @@ export default class DateTimePicker extends React.Component {
 
         for (let i = 0; i < monthArray.length; i++) {
             monthComponents.push(
-                <MenuItem key={`month-${i}`} value={i}>{monthArray[i]}</MenuItem>
+                <MenuItem
+                    key={`month-${i}`}
+                    value={i}
+                    primaryText={monthArray[i]}/>
             )
         }
 
@@ -197,7 +209,10 @@ export default class DateTimePicker extends React.Component {
 
         for (let i = 1; i <= days; i++) {
             dayComponents.push(
-                <MenuItem key={`$days-${i}`} value={i}>{i}</MenuItem>
+                <MenuItem
+                    key={`$days-${i}`}
+                    value={i}
+                    primaryText={i}/>
             )
         }
 
@@ -216,8 +231,6 @@ export default class DateTimePicker extends React.Component {
                 return 60;
             case 'second':
                 return 1;
-            case 'millisecond':
-                return 0.001;
         }
     }
 
@@ -229,9 +242,6 @@ export default class DateTimePicker extends React.Component {
                 return moment().format('HH:mm:00.000');
             case 'second':
                 return moment().format('HH:mm:ss.000');
-            case 'millisecond':
-                return moment().format('HH:mm:ss.SSS');
         }
     }
-
 }
