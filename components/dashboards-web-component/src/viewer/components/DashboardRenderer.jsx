@@ -37,6 +37,7 @@ import html2cavas from 'html2canvas';
 import { pdfConfig } from './JspdfConf.js';
 import axios from 'axios';
 import AuthManager from '../../auth/utils/AuthManager';
+import ReportGeneration from '../../utils/ReportGeneration';
 
 import { Dialog, FlatButton, Checkbox, CircularProgress } from 'material-ui';
 
@@ -58,7 +59,8 @@ export default class DashboardRenderer extends Component {
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
-            height: window.innerHeight
+            height: window.innerHeight,
+            completed:0
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -69,11 +71,13 @@ export default class DashboardRenderer extends Component {
         this.onGoldenLayoutComponentAddEvent = this.onGoldenLayoutComponentAddEvent.bind(this);
         this.unmounted = false;
 
-        this.exportWidget = this.exportWidget.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
-        this.handleincludeGenerateTime = this.handleincludeGenerateTime.bind(this);
-        this.handleincludeNoOfRecords = this.handleincludeNoOfRecords.bind(this);
+        this.handleIncludeGenerateTime = this.handleIncludeGenerateTime.bind(this);
+        this.handleIncludeNoOfRecords = this.handleIncludeNoOfRecords.bind(this);
+        this.handleReportStatusOpen=this.handleReportStatusOpen.bind(this);
+        this.handleReportStatusClose=this.handleReportStatusClose.bind(this);
+        this.generateWidgetReport=this.generateWidgetReport.bind(this);
 
     }
 
@@ -149,7 +153,7 @@ export default class DashboardRenderer extends Component {
             <FlatButton
                 label='Export'
                 primary={true}
-                onClick={this.exportWidget}
+                onClick={this.generateWidgetReport}
             />,
         ];
 
@@ -188,13 +192,13 @@ export default class DashboardRenderer extends Component {
                 >
                     <Checkbox
                         label='Include report genetation time'
-                        onClick={this.handleincludeGenerateTime}
+                        onClick={this.handleIncludeGenerateTime}
                     />
 
                     {(this.state.recordCountEnabled) && (
                         <Checkbox
                             label='Include number of records'
-                            onClick={this.handleincludeNoOfRecords}
+                            onClick={this.handleIncludeNoOfRecords}
                         />
                     )}
                 </Dialog>
@@ -278,273 +282,28 @@ export default class DashboardRenderer extends Component {
         }
     }
 
-
-    formatDate(date) {
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        day = day < 10 ? '0' + day : day;
-        month = month < 10 ? '0' + month : month;
-        const timeStr = hours + ':' + minutes + ' ' + ampm;
-        return day + '/' + month + '/' + date.getFullYear() + '  ' + timeStr;
-    }
-
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async exportWidget() {
+    async generateWidgetReport(){
         this.handleClose();
         this.handleReportStatusOpen();
         this.timer = setInterval(this.progress, 200);
+        await this.sleep(2000);
 
         const element = this.state.widget;
         const docTitle = this.state.title;
 
-        //Initialize pdf object with margin parameters
-        const pdf = new jspdf('l', 'mm', 'a4');
-        const lMargin = 15;
-        const rMargin = 15;
-        const pdfInMM = 400;
-        const heightINMM = 600;
-        const pageCenter = pdfInMM / 2;
+        const pdf=ReportGeneration.exportWidget(element,docTitle,this.state.includeTime,this.state.includeRecords,
+                                                this.props.theme.name);
 
-        //Gets the document title from HTML and adds that in the center of the front page
-        //document and adds a border
-        const title = document.getElementsByTagName('h1')[0].innerText;
-        const mainTitle = title + ' : ';
+        clearInterval(this.timer);
+        this.handleReportStatusClose();
+        this.state.completed = 0;
+        this.state.includeRecords = false;
+        this.state.includeTime = false;
 
-        const lines = pdf.splitTextToSize(mainTitle, (pdfInMM - lMargin - rMargin));
-
-        if (element.innerHTML.search('rt-table') > -1) {
-            const colDivs = element.getElementsByClassName('rt-resizable-header-content');
-            const colData = [];
-            const colNum = colDivs.length;
-
-            for (let i = 0; i < colNum; i++) {
-                colData.push(colDivs[i].innerHTML);
-            }
-
-            let rowDivs;
-            if (this.props.theme.name == 'dark') {
-                rowDivs = element.getElementsByClassName('cell-data');
-            } else {
-                rowDivs = element.getElementsByTagName('span');
-            }
-
-            const rowNum = rowDivs.length / colDivs.length;
-            const rowData = [];
-
-            for (let i = 0; i < rowNum; i++) {
-                const row = [];
-                for (let j = 0; j < colNum; j++) {
-                    row.push(rowDivs[colNum * i + j].innerText)
-                }
-                rowData.push(row);
-            }
-
-            const doc = new jspdf('p', 'pt');
-            const totalPagesExp = '{total_pages_count_string}';
-
-            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfHeader`, function (res) {
-                localStorage.setItem('dashboardHeader', res);
-            });
-
-            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfFooter`, function (res) {
-                if (res != 'none') {
-                    localStorage.setItem('dashboardFooter', res);
-                }
-            });
-
-            await this.sleep(2000);
-
-            doc.setFontType('bold');
-            doc.text((pdf.internal.pageSize.getHeight() / 2 + 50), pdfConfig.title.coordinates.y - 30, mainTitle);
-            const offset = doc.getStringUnitWidth(mainTitle);
-            const padding = Array.apply(null, Array(mainTitle.length + 1)).map(function () { return ' ' })
-            doc.setFontType('normal');
-
-            const finalTitle = padding.join(' ') + docTitle;
-            doc.text((pdf.internal.pageSize.getHeight() / 2 + 50), pdfConfig.title.coordinates.y - 30, finalTitle);
-
-            let pdfInfo = '';
-
-            if (this.state.includeTime) {
-                pdfInfo += 'Generated on : ' + this.formatDate(new Date());
-            }
-
-            if (this.state.includeRecords) {
-                if (pdfInfo != '') {
-                    pdfInfo += '\n';
-                }
-                pdfInfo += 'No of records : ' + rowData.length;
-            }
-
-            doc.setFontType('bold');
-            doc.setFontSize(pdfConfig.text.size);
-            doc.text(pdfInfo, pdfConfig.text.coordinates.x, pdfConfig.text.coordinates.y - 20);
-            doc.setFontType('normal');
-
-            const pageContent = function (data) {
-                // HEADER
-                const headerImg = localStorage.getItem('dashboardHeader');
-                if (headerImg != null) {
-                    doc.addImage(headerImg, 'JPEG', data.settings.margin.left,
-                        pdfConfig.stampImageDashboard.coordinates.y, pdfConfig.stampImageDashboard.size.x,
-                        pdfConfig.stampImageDashboard.size.y);
-                }
-
-                // FOOTER
-                let pageNumber = 'Page ' + data.pageCount;
-                // Total page number plugin only available in jspdf v1.0+
-                if (typeof doc.putTotalPages === 'function') {
-                    pageNumber = pageNumber + ' of ' + totalPagesExp;
-                }
-                doc.setFontSize(10);
-                const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-                doc.text(pageNumber, data.settings.margin.left, pageHeight - 10);
-                const footerImg = localStorage.getItem('dashboardFooter');
-                if (footerImg != null) {
-                    doc.addImage(footerImg, 'JPEG', 380, 780, pdfConfig.stampImage.size.x, pdfConfig.stampImage.size.y);
-                }
-
-            };
-
-            let tstyles = pdfConfig.pdfTableStyles;
-            tstyles.addPageContent = pageContent;
-            tstyles.margin = { top: 50, bottom: 50 };
-
-            doc.autoTable(colData, rowData, tstyles);
-
-            if (typeof doc.putTotalPages === 'function') {
-                doc.putTotalPages(totalPagesExp);
-            }
-
-            clearInterval(this.timer);
-            this.handleReportStatusClose();
-            this.state.completed = 0;
-            this.state.includeRecords = false;
-            this.state.includeTime = false;
-
-            const tableDocumentName = docTitle + '.pdf';
-            doc.save(tableDocumentName);
-
-
-        } else {
-            //Add the element's snapshot into the page
-            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfHeader`, function (res) {
-                pdf.addImage(res, 'JPEG', pdfConfig.stampImageLandscape.coordinates.x,
-                    pdfConfig.stampImageLandscape.coordinates.y, pdfConfig.stampImageLandscape.size.x,
-                    pdfConfig.stampImageLandscape.size.y);
-            });
-
-            pdf.setFontType('bold');
-            pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30), 12, mainTitle, null, null, 'center');
-            const offset = pdf.getStringUnitWidth(mainTitle) * 2.5;
-            const padding = Array.apply(null, Array(mainTitle.length + 1)).map(function () { return ' ' })
-            pdf.setFontType('normal');
-
-            const finalTitle = padding.join(' ') + docTitle;
-            pdf.text((pdf.internal.pageSize.getHeight() / 2 + 30) + offset, 12, finalTitle, null, null, 'center');
-
-            let pdfInfo = '';
-
-            if (this.state.includeTime) {
-                pdfInfo = 'Generated on : ' + this.formatDate(new Date());
-            }
-
-            pdf.setFontType('bold');
-            pdf.setFontSize(12);
-            pdf.text(pdfInfo, pdfConfig.stampImageLandscape.coordinates.x, 18);
-            pdf.setFontType('normal');
-
-            await this.addPdfImage(`/${appContext}/apis/dashboards/pdfFooter`, function (res) {
-                if (res != 'none') {
-                    pdf.addImage(res, 'JPEG', (pdf.internal.pageSize.getWidth() - 40),
-                        (pdf.internal.pageSize.getHeight() - 8), pdfConfig.stampImageLandscape.size.x,
-                        pdfConfig.stampImageLandscape.size.y);
-                }
-            });
-
-            await this.sleep(2000);
-
-            await html2cavas(element).then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                if (canvas.width > canvas.height - 28) {
-                    const val = (pdf.internal.pageSize.getWidth()) / canvas.width;
-                    const xposition = (pdf.internal.pageSize.getWidth() - canvas.width * val) / 2;
-
-                    if (canvas.height * val < 210) {
-                        if (canvas.height * val < 180) {
-                            pdf.addImage(imgData, 'JPEG', xposition, 45, canvas.width * val, canvas.height * val,
-                                'widget', 'FAST');
-                        } else {
-                            pdf.addImage(imgData, 'JPEG', xposition, 25, canvas.width * val, canvas.height * val,
-                                'widget', 'FAST');
-                        }
-                    } else {
-                        const valH = (pdf.internal.pageSize.getHeight() - 28) / canvas.height;
-                        const xposition = (pdf.internal.pageSize.getWidth() - canvas.width * valH) / 2;
-                        pdf.addImage(imgData, 'JPEG', xposition, 25, canvas.width * valH, canvas.height * valH,
-                            'widget', 'FAST');
-                    }
-                } else {
-                    const val = (pdf.internal.pageSize.getHeight() - 28) / canvas.height;
-                    const xposition = (pdf.internal.pageSize.getWidth() - canvas.width * val) / 2;
-                    pdf == new jspdf('p', 'mm', 'a4');
-                    pdf.addImage(imgData, 'JPEG', xposition, 25, canvas.width * val, canvas.height * val,
-                        'widget', 'FAST');
-                }
-            });
-
-            clearInterval(this.timer);
-            this.handleReportStatusClose();
-            this.state.completed = 0;
-            this.state.includeRecords = false;
-            this.state.includeTime = false;
-
-            const documentName = docTitle + '.pdf';
-            pdf.save(documentName);
-        }
-    }
-
-    async addPdfImage(url, callback) {
-        let path = `/${appContext}/public/app/images/`;
-        const httpClient = axios.create({
-            baseURL: url,
-            timeout: 2000,
-            headers: { Authorization: 'Bearer ' + AuthManager.getUser().SDID },
-        });
-
-        await httpClient.get()
-            .then(function (res) {
-                if (res.data === '') {
-                    callback('none');
-                } else {
-                    path += res.data;
-
-                    //Convert image to bdase64 encoded image (data_url)
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const img = new Image();
-                    let imgStr;
-
-                    img.onload = function () {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-                        imgStr = canvas.toDataURL('image/png');
-                        callback(imgStr);
-                    }
-
-                    img.src = path;
-                }
-            });
     }
 
     onGoldenLayoutComponentAddEvent(component) {
@@ -574,11 +333,11 @@ export default class DashboardRenderer extends Component {
         this.setState({ dialogOpen: true });
     }
 
-    handleincludeGenerateTime() {
+    handleIncludeGenerateTime() {
         this.setState({ includeTime: !this.state.includeTime });
     }
 
-    handleincludeNoOfRecords() {
+    handleIncludeNoOfRecords() {
         this.setState({ includeRecords: !this.state.includeRecords });
     }
 
@@ -592,9 +351,6 @@ export default class DashboardRenderer extends Component {
 
     progress = () => {
         let { completed } = this.state;
-        if (isNaN(completed)) {
-            completed = 0;
-        }
         this.setState({ completed: completed >= 100 ? 0 : completed + 10 });
     };
 }
