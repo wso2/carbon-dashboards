@@ -108,4 +108,8 @@ public interface DashboardMetadataProvider {
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
     DashboardArtifact exportDashboard(String dashboardUrl) throws DashboardException;
+
+    String getPdfHeader() throws DashboardException;
+
+    String getPdfFooter() throws DashboardException;
 }

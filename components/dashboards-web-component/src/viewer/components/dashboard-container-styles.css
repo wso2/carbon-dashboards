@@ -24,4 +24,13 @@
     margin: 0;
     border: 0;
 }
-
+.widget-export-button {
+    float: left;
+    color: #929292;
+    margin-right: 5px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+.widget-export-button:hover {
+    opacity: 1;
+}
