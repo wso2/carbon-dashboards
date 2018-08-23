@@ -28,8 +28,8 @@ export default class WidgetPubSubHub {
      * @param {object} message publishing message
      */
     publish(publisherId, message) {
-        this.lastPublishedMessages[publisherId] = message;
         this.glEventHub.emit(publisherId, message);
+        this.lastPublishedMessages[publisherId] = message;
     }
 
     /**
