@@ -39,6 +39,8 @@ export default class WidgetPubSubHub {
      * @param {object} [listenerThisContext] The value of the <code>this</code> pointer in the listener function
      */
     subscribe(publisherId, listenerCallback, listenerThisContext) {
+        // TODO 2018/08/23: There can be a race condition when right after getting the last message, a new message get
+        // published, thus loosing the newly published message.
         const lastPublishedMessage = this.lastPublishedMessages[publisherId];
         if (lastPublishedMessage) {
             listenerCallback.call(listenerThisContext, lastPublishedMessage);
