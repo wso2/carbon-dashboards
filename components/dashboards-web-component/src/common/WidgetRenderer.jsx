@@ -69,7 +69,7 @@ export default class WidgetRenderer extends Component {
         this.triggerEvent = this.triggerEvent.bind(this);
 
         props.glContainer.on('resize', this.handleResize);
-        props.glEventHub.on(Event.DASHBOARD_VIEW_THEME_CHANGE, this.handleThemeUpdate);
+        props.glEventHub.on(Event.DASHBOARD_VIEWER_THEME_CHANGE, this.handleThemeUpdate);
         props.glEventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE, this.handleWidgetConfigUpdate);
     }
 
@@ -114,7 +114,7 @@ export default class WidgetRenderer extends Component {
                 window.eval(response.data);
                 if (this.getWidgetClass()) {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.LOADED);
-                    this.triggerEvent(Event.DASHBOARD_VIEW_WIDGET_LOADED, this.widgetName);
+                    this.triggerEvent(Event.DASHBOARD_VIEWER_WIDGET_LOADED, this.widgetName);
                 } else {
                     this.updateWidgetLoadingStatus(WidgetLoadingStatus.FETCHING_FAIL);
                 }
@@ -147,7 +147,7 @@ export default class WidgetRenderer extends Component {
     }
 
     triggerEvent(name, parameter) {
-        this.props.glContainer.layoutManager.eventHub.trigger(name, parameter);
+        this.props.glEventHub.trigger(name, parameter);
     }
 
     renderWidgetLoadingStatus(message, isErrorMessage = false) {
@@ -224,6 +224,7 @@ export default class WidgetRenderer extends Component {
                     ...this.props,
                     width: this.props.glContainer.width,
                     height: this.props.glContainer.height,
+                    pubSubHub: this.props.glContainer.layoutManager.pubSubHub,
                     muiTheme: this.state.currentTheme,
                     channelManager: getWidgetChannelManager(),
                 };
