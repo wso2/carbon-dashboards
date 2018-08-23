@@ -18,13 +18,12 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import GoldenLayout from 'golden-layout';
 import 'golden-layout/src/css/goldenlayout-base.css';
 
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
-import WidgetRenderer from '../../common/WidgetRenderer';
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import { Event } from '../../utils/Constants';
+import GoldenLayoutFactory from '../../utils/GoldenLayoutFactory';
 
 import '../../common/styles/custom-goldenlayout-dark-theme.css';
 import glDarkTheme from '!!css-loader!../../common/styles/custom-goldenlayout-dark-theme.css';
@@ -129,35 +128,14 @@ export default class DashboardRenderer extends Component {
             return;
         }
 
-        const goldenLayoutContents = this.props.goldenLayoutContents || [];
-        const config = {
-            settings: {
-                constrainDragToContainer: false,
-                reorderEnabled: false,
-                selectionEnabled: false,
-                popoutWholeStack: false,
-                blockedPopoutsThrowError: true,
-                closePopoutsOnUnload: true,
-                responsiveMode: 'always',
-                hasHeaders: true,
-                showPopoutIcon: false,
-                showMaximiseIcon: true,
-                showCloseIcon: false,
-            },
-            dimensions: {
-                headerHeight: 25,
-            },
-            content: goldenLayoutContents,
-        };
-        const dashboardContainer = document.getElementById(dashboardContainerId);
-        const goldenLayout = new GoldenLayout(config, dashboardContainer);
-        const renderingWidgetClassNames = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents);
-        renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
-        goldenLayout.eventHub.on(Event.DASHBOARD_VIEW_WIDGET_LOADED,
-            () => this.onWidgetLoadedEvent(renderingWidgetClassNames.length, this.props.dashboardId));
+        const goldenLayoutContents = this.props.goldenLayoutContents;
+        const goldenLayout = GoldenLayoutFactory.createForViewer(dashboardContainerId, goldenLayoutContents);
 
-        // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
-        setTimeout(() => goldenLayout.init(), 0);
+        const numberOfWidgets = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents).length;
+        goldenLayout.eventHub.on(Event.DASHBOARD_VIEWER_WIDGET_LOADED,
+            () => this.onWidgetLoadedEvent(numberOfWidgets, this.props.dashboardId));
+
+        goldenLayout.initialize();
         this.goldenLayout = goldenLayout;
     }
 
@@ -172,7 +150,7 @@ export default class DashboardRenderer extends Component {
 
     triggerThemeChangeEvent(newTheme) {
         if (this.goldenLayout) {
-            this.goldenLayout.eventHub.trigger(Event.DASHBOARD_VIEW_THEME_CHANGE, newTheme);
+            this.goldenLayout.eventHub.trigger(Event.DASHBOARD_VIEWER_THEME_CHANGE, newTheme);
         }
     }
 
@@ -186,6 +164,6 @@ export default class DashboardRenderer extends Component {
 
 DashboardRenderer.propTypes = {
     dashboardId: PropTypes.string.isRequired,
-    goldenLayoutContents: PropTypes.array.isRequired,
+    goldenLayoutContents: PropTypes.arrayOf({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
 };

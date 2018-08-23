@@ -28,26 +28,12 @@ export default class Widget extends Component {
     constructor(props) {
         super(props);
 
-        this.messageQueue = [];
-        this.props.glContainer.layoutManager.on('initialised', this.publishQueuedMessages);
         this._getLocalState = this._getLocalState.bind(this);
         this._setLocalState = this._setLocalState.bind(this);
         this.getWidgetState = this.getWidgetState.bind(this);
         this.setWidgetState = this.setWidgetState.bind(this);
         this.subscribe = this.subscribe.bind(this);
-        this.publishQueuedMessages = this.publishQueuedMessages.bind(this);
         this.channelManager = props.channelManager;
-    }
-
-    /**
-     * This method publishers the queued messages in the widget. The messages are queued when the widget tried to
-     * publish before initializing the dashboard.
-     *
-     */
-    publishQueuedMessages() {
-        for (let messageId in this.messageQueue) {
-            this.publish(this.messageQueue[messageId])
-        }
     }
 
     /**
@@ -58,10 +44,10 @@ export default class Widget extends Component {
         if (!publisherId) {
             const publisherIds = this.props.configs.pubsub.publishers;
             if (publisherIds && Array.isArray(publisherIds)) {
-                publisherIds.forEach(id => this.props.glEventHub.on(id, listenerCallback));
+                publisherIds.forEach(id => this.props.pubSubHub.subscribe(id, listenerCallback));
             }
         } else {
-            this.props.glEventHub.on(publisherId, listenerCallback, context);
+            this.props.pubSubHub.subscribe(publisherId, listenerCallback, context);
         }
     }
 
@@ -70,12 +56,7 @@ export default class Widget extends Component {
      * @param listnerCallback
      */
     publish(message) {
-        let publishedChannel = this.props.id;
-        if (!this.props.glContainer.layoutManager.isInitialised) {
-            this.messageQueue.push(message)
-        } else {
-            this.props.glEventHub.emit(publishedChannel, message);
-        }
+        this.props.pubSubHub.publish(this.props.id, message);
     }
 
     /**
