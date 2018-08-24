@@ -82,6 +82,8 @@ function patchWidgetClass(widgetClass) {
     const superWidgetClassPrototype = Object.getPrototypeOf(widgetClass.prototype);
     // Patch subscribe method.
     superWidgetClassPrototype.subscribe = Widget.prototype.subscribe;
+    // Patch publish method.
+    superWidgetClassPrototype.publish = Widget.prototype.publish;
 }
 
 global.dashboard = {};
