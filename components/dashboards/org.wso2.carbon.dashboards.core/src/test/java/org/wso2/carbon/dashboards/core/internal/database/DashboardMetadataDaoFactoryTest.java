@@ -20,8 +20,6 @@ package org.wso2.carbon.dashboards.core.internal.database;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.wso2.carbon.config.ConfigurationException;
-import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
@@ -30,7 +28,6 @@ import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import javax.sql.DataSource;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,24 +42,10 @@ public class DashboardMetadataDaoFactoryTest {
     void testCreateDaoWhenDataSourceServiceThrowException() throws Exception {
         DataSourceService dataSourceService = mock(DataSourceService.class);
         when(dataSourceService.getDataSource(anyString())).thenThrow(DataSourceException.class);
-        ConfigProvider configProvider = mock(ConfigProvider.class);
+        DashboardConfigurations configurations = new DashboardConfigurations();
 
         Assertions.assertThrows(DashboardException.class,
-                                () -> DashboardMetadataDaoFactory.createDao(dataSourceService, configProvider));
-    }
-
-    @Test
-    void testCreateDaoWhenConfigProviderThrowException() throws Exception {
-        DataSource dataSource = mock(DataSource.class);
-        DataSourceService dataSourceService = mock(DataSourceService.class);
-        when(dataSourceService.getDataSource(anyString())).thenReturn(dataSource);
-
-        ConfigProvider configProvider = mock(ConfigProvider.class);
-        when(configProvider.getConfigurationObject(eq(DashboardConfigurations.class)))
-                .thenThrow(ConfigurationException.class);
-
-        Assertions.assertThrows(DashboardException.class,
-                                () -> DashboardMetadataDaoFactory.createDao(dataSourceService, configProvider));
+                                () -> DashboardMetadataDaoFactory.createDao(dataSourceService, configurations));
     }
 
     @Test
@@ -70,13 +53,10 @@ public class DashboardMetadataDaoFactoryTest {
         DataSource dataSource = mock(DataSource.class);
         DataSourceService dataSourceService = mock(DataSourceService.class);
         when(dataSourceService.getDataSource(anyString())).thenReturn(dataSource);
-
-        ConfigProvider configProvider = mock(ConfigProvider.class);
-        when(configProvider.getConfigurationObject(eq(DashboardConfigurations.class)))
-                .thenReturn(new DashboardConfigurations());
+        DashboardConfigurations configurations = new DashboardConfigurations();
 
         try {
-            DashboardMetadataDaoFactory.createDao(dataSourceService, configProvider);
+            DashboardMetadataDaoFactory.createDao(dataSourceService, configurations);
         } catch (DashboardException e) {
             Assertions.fail("DAO instantiation failed", e);
         }
