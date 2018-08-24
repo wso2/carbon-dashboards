@@ -147,14 +147,15 @@ class PageCard extends Component {
 
     render() {
         const page = this.props.page;
+        const isExpanded = (this.props.match.params.pageId === page.id);
         return (
             <span>
                 <Card
                     style={{ margin: 10 }}
-                    expanded={this.props.match.params.pageId === page.id}
+                    expanded={isExpanded}
                     onExpandChange={this.handleCardClick}
                 >
-                    <CardHeader title={page.name} actAsExpander showExpandableButton={false} />
+                    <CardHeader title={page.name} actAsExpander={!isExpanded} showExpandableButton={false} />
                     <CardText expandable>
                         <TextField
                             floatingLabelText={<FormattedMessage id="page.title" defaultMessage="Title" />}
