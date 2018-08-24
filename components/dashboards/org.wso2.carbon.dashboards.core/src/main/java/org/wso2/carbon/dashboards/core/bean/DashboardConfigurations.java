@@ -38,7 +38,7 @@ public class DashboardConfigurations {
     List<Queries> queries = new ArrayList<>();
 
     @Element(description = "Map of roles list")
-    public Roles roles;
+    public Roles roles = new Roles();
 
     /**
      * Get map of roles.
