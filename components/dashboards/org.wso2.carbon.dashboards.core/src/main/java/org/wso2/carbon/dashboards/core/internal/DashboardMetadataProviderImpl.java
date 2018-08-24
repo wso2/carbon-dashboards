@@ -83,7 +83,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     private DashboardMetadataDao dao;
     private DataSourceService dataSourceService;
-    private ConfigProvider configProvider;
+    private DashboardConfigurations dashboardConfigurations;
     private PermissionProvider permissionProvider;
     private IdPClient identityClient;
     private RolesProvider rolesProvider;
@@ -105,7 +105,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     @Activate
     protected void activate(BundleContext bundleContext) {
         try {
-            this.dao = DashboardMetadataDaoFactory.createDao(dataSourceService, configProvider);
+            this.dao = DashboardMetadataDaoFactory.createDao(dataSourceService, dashboardConfigurations);
             this.dao.initDashboardTable();
         } catch (DashboardException e) {
             throw new DashboardRuntimeException("Cannot create DAO for DB access.", e);
@@ -135,11 +135,17 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unsetConfigProvider")
     protected void setConfigProvider(ConfigProvider configProvider) {
-        this.configProvider = configProvider;
+        try {
+            this.dashboardConfigurations = configProvider.getConfigurationObject(DashboardConfigurations.class);
+        } catch (ConfigurationException e) {
+            LOGGER.error("Cannot load dashboard configurations from 'deployment.yaml'. Falling-back to defaults.", e);
+            this.dashboardConfigurations = new DashboardConfigurations();
+        }
     }
 
     protected void unsetConfigProvider(ConfigProvider configProvider) {
-        this.configProvider = null;
+        LOGGER.debug("An instance of class '{}' unregistered as a config provider.",
+                     configProvider.getClass().getName());
     }
 
     @Reference(
@@ -218,12 +224,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     @Override
     public void add(DashboardMetadata dashboardMetadata) throws DashboardException {
-        RolesProvider rolesProvider;
-        try {
-            rolesProvider = new RolesProvider(configProvider.getConfigurationObject(DashboardConfigurations.class));
-        } catch (ConfigurationException e) {
-            throw new DashboardException("Error in reading dashboard creator roles!", e);
-        }
+        RolesProvider rolesProvider = new RolesProvider(dashboardConfigurations);
 
         dao.add(dashboardMetadata);
         for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
@@ -237,14 +238,8 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     @Override
     public void add(String user, DashboardMetadata dashboardMetadata) throws DashboardException {
         // TODO: 11/10/17 validate parameters
-        List<String> creatorRoleIds;
-        RolesProvider rolesProvider = null;
-        try {
-            rolesProvider = new RolesProvider(configProvider.getConfigurationObject(DashboardConfigurations.class));
-            creatorRoleIds = rolesProvider.getCreatorRoleIds();
-        } catch (ConfigurationException e) {
-            throw new DashboardException("Error in reading dashboard creator roles !", e);
-        }
+        RolesProvider rolesProvider = new RolesProvider(dashboardConfigurations);
+        List<String> creatorRoleIds = rolesProvider.getCreatorRoleIds();
         Set<String> filteredRoleIds = creatorRoleIds.stream()
                 .filter(role -> hasRoles(user, role))
                 .collect(Collectors.toSet());
