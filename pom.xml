@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.0.29-SNAPSHOT</version>
+    <version>4.0.30-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
@@ -353,12 +353,6 @@
                 <version>${carbon.dashboards.version}</version>
                 <type>zip</type>
             </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
-                <artifactId>org.wso2.carbon.dashboards.samples.widgets.date-time-range-picker</artifactId>
-                <version>${carbon.dashboards.version}</version>
-                <type>zip</type>
-            </dependency>
             <!--Feature-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples</groupId>
@@ -405,7 +399,7 @@
     </dependencyManagement>
 
     <properties>
-        <carbon.dashboards.version>4.0.29-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.0.30-SNAPSHOT</carbon.dashboards.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
