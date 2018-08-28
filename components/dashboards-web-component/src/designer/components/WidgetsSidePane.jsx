@@ -95,8 +95,10 @@ export default class WidgetsSidePane extends Component {
                                 onChange={event => this.setState({ filter: event.target.value })}
                             />
                         </div>
-                        <div style={{ height: '100%', overflowY: 'auto' }}>{this.widgets.map(
-                            widget => this.renderWidgetCard(widget))}</div>
+                        <div style={{ height: '100%', overflowY: 'auto' }}>
+                            {this.widgets.map(widget => this.renderWidgetCard(widget))}
+                            <div style={{ height: '10%' }} />
+                        </div>
                     </span>
                 );
             }
