@@ -66,8 +66,9 @@ export default class Widget extends Component {
      */
     static _getStateObject() {
         // De-serialize the object in suitable format
-        return (window.location.hash === '' || window.location.hash === '#') ?
-            {} : JSON.parse(window.location.hash.substr(1));
+        let hash = decodeURIComponent(window.location.hash);
+        return (hash === '' || hash === '#') ?
+            {} : JSON.parse(hash.substr(1));
     }
 
     /**

@@ -89,6 +89,7 @@ class WidgetState extends Widget {
         let message = document.getElementById('txtMessage').value;
         super.setWidgetState('message', message);
         alert('State persisted successfully!');
+        this.forceUpdate();
     }
 
     handleChange(event) {
