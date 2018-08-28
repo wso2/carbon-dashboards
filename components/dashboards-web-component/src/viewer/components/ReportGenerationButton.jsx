@@ -22,12 +22,10 @@ import PropTypes from 'prop-types';
 import { Checkbox, RaisedButton, FlatButton, Dialog, CircularProgress } from 'material-ui';
 import ReportGeneration from '../../utils/DashboardReportGenerator';
 
-
 export default class ReportGenerationButton extends Component {
 
     constructor(props) {
         super(props);
-        const isDarkTheme = window.localStorage.getItem('isDarkTheme');
         this.state = {
             reportStatusOpen: false,
             completed: 0,
@@ -135,8 +133,8 @@ export default class ReportGenerationButton extends Component {
         //Starts showing report generation progress
         this.handleClose();
         this.handleReportStatusOpen();
-        this.timer = setInterval(this.progress, 192);
-        await this.sleep(2000);
+        //this.timer = setInterval(this.progress, 192);
+        //await this.sleep(2000);
 
         const title = document.getElementsByTagName('h1')[0].innerText;
 

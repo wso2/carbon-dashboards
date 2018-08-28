@@ -145,7 +145,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     protected void unsetConfigProvider(ConfigProvider configProvider) {
         LOGGER.debug("An instance of class '{}' unregistered as a config provider.",
-                     configProvider.getClass().getName());
+                configProvider.getClass().getName());
     }
 
     @Reference(
@@ -229,7 +229,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         dao.add(dashboardMetadata);
         for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
             permissionProvider.addPermission(permission);
-            for (String roleId: rolesProvider.getCreatorRoleIds()) {
+            for (String roleId : rolesProvider.getCreatorRoleIds()) {
                 permissionProvider.grantPermission(permission, new Role(roleId, ""));
             }
         }
@@ -522,25 +522,15 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         this.identityClient = null;
     }
 
+    @Override
     public String getPdfHeader() {
-        try {
-            Object pdfHeader = ((Map<String, Object>) configProvider.getConfigurationObject("wso2.status.dashboard"))
-                    .get("pdfHeader");
-            return pdfHeader.toString();
-        } catch (ConfigurationException e) {
-            LOGGER.error("Error in getting the pdf header image", e);
-        }
-        return "";
+        String val=this.dashboardConfigurations.getPdfHeader();
+        return "exo";
+        //return this.dashboardConfigurations.getPdfHeader();
     }
 
+    @Override
     public String getPdfFooter() {
-        try {
-            Object pdfFooter = ((Map<String, Object>) configProvider.getConfigurationObject("wso2.status.dashboard"))
-                    .get("pdfFooter");
-            return pdfFooter.toString();
-        } catch (ConfigurationException e) {
-            LOGGER.error("Error in getting the pdf header image", e);
-        }
-        return "";
+        return this.dashboardConfigurations.getPdfFooter();
     }
 }

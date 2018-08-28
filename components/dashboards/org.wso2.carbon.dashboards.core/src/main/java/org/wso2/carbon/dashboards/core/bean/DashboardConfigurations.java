@@ -40,6 +40,12 @@ public class DashboardConfigurations {
     @Element(description = "Map of roles list")
     public Roles roles = new Roles();
 
+    @Element(description = "Pdf header image for report generation")
+    String pdfHeader = "stream-processor.png";
+
+    @Element(description = "Pdf footer image for report generation")
+    String pdfFooter = "";
+
     /**
      * Get map of roles.
      *
@@ -56,5 +62,23 @@ public class DashboardConfigurations {
      */
     public List<Queries> getQueries() {
         return queries;
+    }
+
+    /**
+     * Get pdf header image
+     *
+     * @return
+     */
+    public String getPdfHeader() {
+        return pdfHeader;
+    }
+
+    /**
+     * Get pdf footer image
+     *
+     * @return
+     */
+    public String getPdfFooter() {
+        return pdfFooter;
     }
 }

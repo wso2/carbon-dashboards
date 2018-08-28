@@ -45,6 +45,7 @@ import '../utils/GoldenLayoutOverrides.css';
 import html2cavas from 'html2canvas';
 import DashboardReportGenerator from '../utils/DashboardReportGenerator';
 import ReportGenerationButton from './components/ReportGenerationButton';
+import DashboardExportCard from './components/DashboardExportCard';
 
 const SelectableList = makeSelectable(List);
 
@@ -64,14 +65,6 @@ class DashboardViewPage extends Component {
             dashboardFetchStatus: HttpStatus.UNKNOWN,
             isSidePaneOpen: true,
             isCurrentThemeDark: isDarkTheme ? isDarkTheme === 'true' : true,
-            exportPagesList: [],
-            pageList: [],
-            isPrintChecked: false,
-            pageSize: 'A4',
-            resizeRatio: 1,
-            canvasWidth: 0,
-            canvasHeight: 0,
-            expanded: false,
         };
 
         this.fetchDashboard = this.fetchDashboard.bind(this);
@@ -82,12 +75,6 @@ class DashboardViewPage extends Component {
         this.renderSidePane = this.renderSidePane.bind(this);
         this.renderPagesList = this.renderPagesList.bind(this);
         this.renderDashboard = this.renderDashboard.bind(this);
-
-        this.handleChange = this.handleChange.bind(this);
-        this.capturePage = this.capturePage.bind(this);
-        this.handleCardClick = this.handleCardClick.bind(this);
-        this.removePage = this.removePage.bind(this);
-
     }
 
     componentDidMount() {
@@ -213,9 +200,6 @@ class DashboardViewPage extends Component {
         const pageId = this.props.match.params.pageId,
             subPageId = this.props.match.params.subPageId;
 
-        const pageSizes = ['A4', 'Letter', 'Government-Letter'];
-        const orientations = ['Landscape', 'Portrait'];
-
         return (
             <Drawer
                 docked={false}
@@ -232,78 +216,11 @@ class DashboardViewPage extends Component {
                 </SelectableList>
                 <br />
                 <Divider />
-                <span>
-                    <Card
-                        style={{ margin: 10 }}
-                        expanded={this.state.expanded}
-                        onExpandChange={this.handleCardClick}
-                    >
-                        <CardHeader title='Export dashboard' actAsExpander style={{ paddingRight: '0px' }} />
-                        <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
-                            <div style={{ marginRight: 0 }}>
-
-
-                                <RaisedButton label='Capture current page'
-                                    onClick={this.capturePage}
-                                    primary />
-
-                                <List>
-                                    {this.state.pageList.map(field =>
-                                        <ListItem primaryText={
-                                                        this.dashboard.pages.find(page => page.id === field).name}
-                                        rightIcon={<DeleteIcon />}
-                                                  onClick={() => this.removePage(field)} />
-                                    )}
-                                </List>
-
-                                <SelectField
-                                    style={{ width: 200 }}
-                                    floatingLabelText='Page Size'
-                                    value={this.state.pageSize}
-                                    onChange={(event, index, value) => { this.setState({ pageSize: value }) }}
-
-                                >
-                                    {pageSizes.map(field =>
-                                        (
-                                            <MenuItem
-                                                key = {field}
-                                                value = {field}
-                                                primaryText = {field}
-                                            />
-                                        ))}
-                                </SelectField>
-
-                                <ReportGenerationButton
-                                    pageSize = {this.state.pageSize}
-                                    pageList = {this.state.pageList}
-                                    pages = {this.dashboard.pages}
-                                />
-
-
-                            </div>
-                        </CardActions>
-                    </Card>
-                </span>
-
+                <DashboardExportCard
+                    pages = {this.dashboard.pages}
+                />
             </Drawer>
         );
-    }
-
-    handleCardClick(expand) {
-        this.setState({ expanded: expand });
-    }
-
-    handleChange(index) {
-        let tempExportList = this.state.exportPagesList.slice();
-
-        if (typeof tempExportList[index] != 'undefined') {
-            tempExportList[index].value = !tempExportList[index].value;
-            this.setState({ exportPagesList: tempExportList }, () => this.capturePage(index));
-        } else {
-            tempExportList[index] = { value: true };
-            this.setState({ exportPagesList: tempExportList }, () => this.capturePage(index));
-        }
-
     }
 
     /**
@@ -374,43 +291,6 @@ class DashboardViewPage extends Component {
             return <Redirect to={this.getNavigationToPage(this.dashboard.landingPage)} />;
         }
     }
-
-    async removePage(index) {
-
-        const tempPageList = this.state.pageList.slice();
-        const ind = tempPageList.indexOf(index);
-        tempPageList.splice(ind, 1);
-        this.setState({ pageList: tempPageList });
-
-        if (tempPageList.indexOf(index) == -1) {
-            localStorage.removeItem(index);
-        }
-
-    }
-
-    async capturePage(index) {
-
-        const url = window.location.href;
-        const parts = url.split('/');
-        const currentPage = parts[parts.length - 1] === '' ? parts[parts.length - 2] : parts[parts.length - 1];
-
-        await html2cavas(document.getElementById('dashboard-container')).then((canvas) => {
-            const imgData = canvas.toDataURL('image/png');
-            const w = canvas.width;
-            const h = canvas.height;
-            localStorage.setItem(currentPage, JSON.stringify({ imageData: imgData, width: w, height: h }));
-
-            const tempPageList = this.state.pageList.slice();
-            tempPageList.push(currentPage);
-            this.setState({ pageList: tempPageList });
-
-            const val = 620 / canvas.width;
-            this.state.resizeRatio = val;
-            this.state.canvasWidth = canvas.width;
-            this.state.canvasHeight = canvas.height;
-        });
-    }
-
 }
 
 export default withRouter(DashboardViewPage);

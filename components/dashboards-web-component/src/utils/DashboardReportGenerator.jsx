@@ -285,14 +285,14 @@ export default class DashboardReportGenerator{
 
         const pdf = new jspdf('l', 'px', pageSize);
 
-        // Get header : a cutomized header defined by the user or else the default stream processor header
+        // Get header : a customized header defined by the user or else the default stream processor header
         await this.addPdfImage(`/${appContext}/apis/dashboards/pdfHeader`, function (res) {
             if (res != 'none') {
                 localStorage.setItem('dashboardHeader', res);
             }
         });
 
-        // Get footer : a cutomized footer defined by the user or else the no footer by default
+        // Get footer : a customized footer defined by the user or else the no footer by default
         await this.addPdfImage(`/${appContext}/apis/dashboards/pdfFooter`, function (res) {
             if (res != 'none') {
                 localStorage.setItem('dashboardFooter', res);
@@ -300,7 +300,7 @@ export default class DashboardReportGenerator{
         });
 
         // To handle the async calls (wait until the image data is stored in localStorage)
-        await this.sleep(100);
+        await this.sleep(20);
 
         const img = localStorage.getItem('dashboardHeader');
         pdf.addImage(img, 'JPEG', pdfConfig.stampImageDashboard.coordinates.x,
