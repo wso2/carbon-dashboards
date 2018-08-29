@@ -54,10 +54,10 @@ export default class UniversalWidget extends Widget {
                     providerConfiguration.configs.config.queryData.query = providerConfiguration.configs.config.query;
                     delete providerConfiguration.configs.config.query;
                 }
+                this.state.providerConfigs = providerConfiguration;
                 if (this.props.configs.pubsub.types.includes("subscriber")) {
                     this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData)
                 }
-                this.state.providerConfigs = providerConfiguration;
                 super.getWidgetChannelManager().
                     subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
                 this.setState({ config: message.data.configs.chartConfig, metadata: message.data.configs.metadata });
