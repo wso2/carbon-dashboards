@@ -16,15 +16,15 @@
  * under the License.
  */
 
-import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
+import React, {Component} from 'react';
+import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Card, CardHeader, CardText, Checkbox, MenuItem, SelectField } from 'material-ui';
+import {Card, CardHeader, CardText, Checkbox, MenuItem, SelectField} from 'material-ui';
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
 
 const styles = {
-    fadedText: { paddingTop: 10, opacity: 0.4 },
+    fadedText: {paddingTop: 10, opacity: 0.4},
 };
 
 export default class WidgetPubSubConfiguration extends Component {
@@ -116,9 +116,12 @@ export default class WidgetPubSubConfiguration extends Component {
 
     initializePublisherDropDowns(selectedWidget) {
         const availablePublishersContents = this.getSelectedPagePublisherWidgetsContents();
-        const selectedWidgetPubSub = selectedWidget.props.configs.pubsub;
+        let selectedWidgetPubSub = selectedWidget.props.configs.pubsub;
         const subscribedPublishers = new Map();
-        if (!selectedWidgetPubSub.publishers) {
+        if (!selectedWidgetPubSub) {
+            selectedWidgetPubSub = {};
+            selectedWidgetPubSub.publishers = [];
+        } else if (!selectedWidgetPubSub.publishers) {
             // Somehow this subscriber widget doesn't have a publishers array. Let's fix that.
             selectedWidgetPubSub.publishers = [];
         }
@@ -168,7 +171,7 @@ export default class WidgetPubSubConfiguration extends Component {
         }
 
         this.getSelectedWidget().props.configs.pubsub.publishers = Array.from(subscribedPublishers.keys());
-        this.setState({ subscribedPublishers, widgetInputsOutputsMappings });
+        this.setState({subscribedPublishers, widgetInputsOutputsMappings});
     }
 
     handlePubSubWiringSelectFieldChange(subscriberInputName, selectedValueString) {
@@ -188,7 +191,7 @@ export default class WidgetPubSubConfiguration extends Component {
             });
         }
         this.updateSelectedWidgetInputOutputMapping(widgetInputsOutputsMappings);
-        this.setState({ widgetInputsOutputsMappings });
+        this.setState({widgetInputsOutputsMappings});
     }
 
     updateSelectedWidgetInputOutputMapping(widgetInputsOutputsMappings) {
@@ -229,7 +232,7 @@ export default class WidgetPubSubConfiguration extends Component {
     }
 
     renderWidgetInputDropdownItems(subscriberInputName) {
-        const elements = [<MenuItem value={null} primaryText='' />];
+        const elements = [<MenuItem value={null} primaryText=''/>];
         this.state.subscribedPublishers.forEach((publisherOutputsNames, publisherId) => {
             publisherOutputsNames
                 .map((publisherOutputName) => {
@@ -276,7 +279,7 @@ export default class WidgetPubSubConfiguration extends Component {
             const subscriberInputName = mapping.subscriberWidgetInput;
             const element = (
                 <div key={subscriberInputName}>
-                    <div style={{ display: 'inline-block', float: 'left', marginLeft: 10, marginTop: 30 }}>
+                    <div style={{display: 'inline-block', float: 'left', marginLeft: 10, marginTop: 30}}>
                         {subscriberInputName}
                     </div>
                     <SelectField
@@ -325,10 +328,10 @@ export default class WidgetPubSubConfiguration extends Component {
         }
 
         return (
-            <Card style={{ margin: 10 }} initiallyExpanded>
+            <Card style={{margin: 10}} initiallyExpanded>
                 <CardHeader
-                    title={<FormattedMessage id='widget-configuration.pubsub.title' defaultMessage='Publishers' />}
-                    style={{ paddingBottom: 0 }}
+                    title={<FormattedMessage id='widget-configuration.pubsub.title' defaultMessage='Publishers'/>}
+                    style={{paddingBottom: 0}}
                     actAsExpander={false}
                     showExpandableButton={false}
                 />
