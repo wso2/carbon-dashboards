@@ -66,7 +66,7 @@ export default class Widget extends Component {
      */
     static _getStateObject() {
         // De-serialize the object in suitable format
-        let hash = decodeURIComponent(window.location.hash);
+        const hash = decodeURIComponent(window.location.hash);
         return (hash === '' || hash === '#') ?
             {} : JSON.parse(hash.substr(1));
     }
@@ -109,8 +109,7 @@ export default class Widget extends Component {
      * @returns {{}}
      */
     getGlobalState(key) {
-        let states = Widget._getStateObject();
-        return Object.prototype.hasOwnProperty.call(states, key) ? states[key] : { };
+        return Widget._getStateObject()[key] || { };
     }
 
     /**
