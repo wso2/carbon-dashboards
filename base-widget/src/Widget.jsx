@@ -66,8 +66,9 @@ export default class Widget extends Component {
      */
     static _getStateObject() {
         // De-serialize the object in suitable format
-        return (window.location.hash === '' || window.location.hash === '#') ?
-            {} : JSON.parse(window.location.hash.substr(1));
+        const hash = decodeURIComponent(window.location.hash);
+        return (hash === '' || hash === '#') ?
+            {} : JSON.parse(hash.substr(1));
     }
 
     /**
@@ -102,13 +103,34 @@ export default class Widget extends Component {
     }
 
     /**
+     * Get global widget state.
+     *
+     * @param {string} key Key
+     * @returns {{}}
+     */
+    getGlobalState(key) {
+        return Widget._getStateObject()[key] || { };
+    }
+
+    /**
+     * Set global widget state.
+     *
+     * @param {string} key Key
+     * @param {{}} state State
+     */
+    setGlobalState(key, state) {
+        const states = Widget._getStateObject();
+        states[key] = state;
+        Widget._setStateObject(states);
+    }
+
+    /**
      * Get local widget state.
      *
      * @return {{}} State
      */
     _getLocalState() {
-        let states = Widget._getStateObject();
-        return Object.prototype.hasOwnProperty.call(states, this.props.id) ? states[this.props.id] : {};
+        return this.getGlobalState(this.props.id);
     }
 
     /**
@@ -117,9 +139,7 @@ export default class Widget extends Component {
      * @param {{}} state State
      */
     _setLocalState(state) {
-        let states = Widget._getStateObject();
-        states[this.props.id] = state;
-        Widget._setStateObject(states);
+        this.setGlobalState(this.props.id, state);
     }
 
     /**
