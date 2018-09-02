@@ -131,4 +131,18 @@ export default class DashboardAPI {
             .getHTTPClient()
             .post(`${dashboardId}/roles`, roles);
     }
+
+    /**
+     * Get report congifs for pdf
+     *
+     * @param {string} dashboardId Dashboard ID
+     * @param {{}} roles Roles
+     * @returns {Promise} Promise
+     */
+    static getDashboardReportPdfConfigs() {
+        return new DashboardAPI()
+            .getHTTPClient()
+            .get(`/report-config/pdf`);
+    }
+
 }

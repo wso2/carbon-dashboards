@@ -20,6 +20,7 @@ package org.wso2.carbon.dashboards.core.bean;
 
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
+import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.bean.roles.provider.Roles;
 import org.wso2.carbon.database.query.manager.config.Queries;
 
@@ -40,11 +41,8 @@ public class DashboardConfigurations {
     @Element(description = "Map of roles list")
     public Roles roles = new Roles();
 
-    @Element(description = "Pdf header image for report generation")
-    String pdfHeader = "stream-processor.png";
-
-    @Element(description = "Pdf footer image for report generation")
-    String pdfFooter = "";
+    @Element(description = "Report generation configurations")
+    public ReportConfigs reportGeneration = new ReportConfigs();
 
     /**
      * Get map of roles.
@@ -65,20 +63,12 @@ public class DashboardConfigurations {
     }
 
     /**
-     * Get pdf header image
+     * Get map of report generation configuration configs
      *
      * @return
      */
-    public String getPdfHeader() {
-        return pdfHeader;
+    public ReportConfigs getReportConfigs() {
+        return reportGeneration;
     }
 
-    /**
-     * Get pdf footer image
-     *
-     * @return
-     */
-    public String getPdfFooter() {
-        return pdfFooter;
-    }
 }

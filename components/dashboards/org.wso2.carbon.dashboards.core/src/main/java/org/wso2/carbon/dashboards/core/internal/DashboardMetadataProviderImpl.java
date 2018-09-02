@@ -523,14 +523,8 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public String getPdfHeader() {
-        String val=this.dashboardConfigurations.getPdfHeader();
-        return "exo";
-        //return this.dashboardConfigurations.getPdfHeader();
+    public Map<String, Object> getReportGenerationConfigurations() {
+        return this.dashboardConfigurations.getReportConfigs().getPdf();
     }
 
-    @Override
-    public String getPdfFooter() {
-        return this.dashboardConfigurations.getPdfFooter();
-    }
 }

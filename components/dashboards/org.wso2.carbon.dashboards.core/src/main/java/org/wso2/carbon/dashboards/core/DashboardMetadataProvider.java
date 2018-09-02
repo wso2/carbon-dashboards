@@ -51,17 +51,16 @@ public interface DashboardMetadataProvider {
     /**
      * Add dashboard without permission check.
      *
-     * @since 4.0.29
-     *
      * @param dashboardMetadata Dashboard metadata
      * @throws DashboardException
+     * @since 4.0.29
      */
     void add(DashboardMetadata dashboardMetadata) throws DashboardException;
 
     /**
      * Add dashboard with permission check for the given user.
      *
-     * @param user Username
+     * @param user              Username
      * @param dashboardMetadata Dashboard metadata
      * @throws DashboardException
      */
@@ -70,17 +69,16 @@ public interface DashboardMetadataProvider {
     /**
      * Update dashboard without permission check.
      *
-     * @since 4.0.29
-     *
      * @param dashboardMetadata Dashboard metadata
      * @throws DashboardException
+     * @since 4.0.29
      */
     void update(DashboardMetadata dashboardMetadata) throws DashboardException;
 
     /**
      * Update dashboard with permission check for the given user.
      *
-     * @param user Username
+     * @param user              Username
      * @param dashboardMetadata Dashboard metadata
      * @throws DashboardException
      */
@@ -101,15 +99,13 @@ public interface DashboardMetadataProvider {
     /**
      * Return exportable dashboard definition.
      *
-     * @since 4.0.29
-     *
      * @param dashboardUrl URL of the dashboard
      * @return Exportable dashboard definition
      * @throws DashboardException If an error occurred while reading or processing dashboards
+     * @since 4.0.29
      */
     DashboardArtifact exportDashboard(String dashboardUrl) throws DashboardException;
 
-    String getPdfHeader() throws DashboardException;
+    Map<String, Object> getReportGenerationConfigurations() throws DashboardException;
 
-    String getPdfFooter() throws DashboardException;
 }
