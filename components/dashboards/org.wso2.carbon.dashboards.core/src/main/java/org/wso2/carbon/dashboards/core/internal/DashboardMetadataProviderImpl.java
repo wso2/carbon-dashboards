@@ -423,7 +423,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         for (PageContent content : contents) {
             if (content.getComponent() != null) {
                 if (UNIVERSAL_WIDGET.equals(content.getComponent())) {
-                    widgets.get(WidgetType.GENERATED).add(content.getTitle());
+                    widgets.get(WidgetType.GENERATED).add(content.getTitle().replaceAll(" ", "-"));
                 } else {
                     widgets.get(WidgetType.CUSTOM).add(content.getComponent());
                 }
