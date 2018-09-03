@@ -17,6 +17,8 @@
  */
 
 import jspdf from 'jspdf';
+import autoTable from 'jspdf-autotable'; // jspdf plugin to get table data
+import DateFormat from 'dateformat';
 import html2canvas from 'html2canvas';
 import { pdfConfig } from './JspdfConf.js';
 import DashboardAPI from './apis/DashboardAPI';
@@ -27,21 +29,6 @@ import DashboardAPI from './apis/DashboardAPI';
 const appContext = window.contextPath.substr(1);
 
 export default class DashboardReportGenerator {
-    static formatDate(date) {
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        hours %= 12;
-        hours = hours || 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        day = day < 10 ? '0' + day : day;
-        month = month < 10 ? '0' + month : month;
-        const timeStr = hours + ':' + minutes + ' ' + ampm;
-        return day + '/' + month + '/' + date.getFullYear() + '  ' + timeStr;
-    }
-
     /**
      * Generates the report for widget
      * @param {object} element element to be considered
@@ -50,7 +37,7 @@ export default class DashboardReportGenerator {
      * @param {boolean} includeRecords add the number of records
      * @param {string} themeName name of the current theme
      */
-    static exportWidget(element, widgetName, includeTime, includeRecords, themeName) {
+    static generateWidgetPdf(element, widgetName, includeTime, includeRecords, themeName) {
         // Gets the document title from HTML and adds that in the center of the front page
         const dashboardName = (document.getElementsByTagName('h1')[0].innerText) + ' : ';
 
@@ -69,7 +56,7 @@ export default class DashboardReportGenerator {
     /**
      * Create the report for the table data
      * @private
-     * @param element jspdf object
+     * @param element jspdf objectexportWidget
      * @param widgetName name of the widget
      * @param includeTime add the report generation time
      * @param includeRecords add the number of records in the table
@@ -257,7 +244,7 @@ export default class DashboardReportGenerator {
         let pdfInfo = '';
 
         if (includeTime) {
-            pdfInfo = 'Generated on : ' + DashboardReportGenerator.formatDate(new Date());
+            pdfInfo = 'Generated on : ' + DateFormat(new Date(), 'dd/mm/yyyy, h:MM TT');
         }
 
         if (includeRecords) {
@@ -280,13 +267,13 @@ export default class DashboardReportGenerator {
      * @param {string} widgetName name of the component to be in the report
      * @param {string} type name of the dashboard component
      * @param {string} orientation report orientation
-     * @param {list} pageList list of the pages to be added in the report
+     * @param {list} dashboardPages list of the pages to be added in the report
      */
-    static addPdfConfigs(pdf, canvas, widgetName, type, orientation, pageList) {
+    static addPdfConfigs(pdf, canvas, widgetName, type, orientation, dashboardPages) {
         // separate methods for widget type , dashboard etc.
 
         const path = `/${appContext}/public/app/images/`;
-        const documentName = widgetName + '.pdf';
+        const reportName = widgetName + '.pdf';
 
         DashboardAPI.getDashboardReportPdfConfigs().then((res) => {
             if (res.data !== '') {
@@ -298,20 +285,20 @@ export default class DashboardReportGenerator {
                         if (res.data.footer) {
                             DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
                                 DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', orientation);
-                                DashboardReportGenerator.addPdfContent(pdf, type, canvas, pageList, footerImgData,
-                                    'footer', orientation, documentName);
+                                DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
+                                    'footer', orientation, reportName);
                             });
                         }
-                        DashboardReportGenerator.addPdfContent(pdf, type, canvas, pageList, headerImgData,
-                            'header', orientation, documentName);
+                        DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, headerImgData,
+                            'header', orientation, reportName);
                     });
                 }
 
                 if (res.data.footer) {
                     DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
                         DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', 'portrait');
-                        DashboardReportGenerator.addPdfContent(pdf, type, canvas, pageList, footerImgData,
-                            'footer', orientation, documentName);
+                        DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
+                            'footer', orientation, reportName);
                     });
                 }
             }
@@ -437,59 +424,52 @@ export default class DashboardReportGenerator {
 
     /**
      * Generate pdf report containing dashboard pages
-     * @param {int} pageSize pageSize page size of the report
-     * @param {map} pageList pageList list of pages
+     * @param {string} paperSize paperSize page size of the report
+     * @param {map} dashboardPages dashboardPages list of pages
      * @param {boolean} includeTime includeTime add the report generation time of the report
      * @param {string} title dashboardName dashboard name to be printed in the report
-     * @param {list} pages list of dashboard pages
      */
-    static generatePdf(pageSize, pageList, includeTime, title, pages) {
-        DashboardReportGenerator.createDashboardPdf(pageSize, pageList, includeTime, title, pages);
+    static generateDashboardPdf(paperSize, dashboardPages, includeTime, title) {
+        DashboardReportGenerator.createDashboardPdf(paperSize, dashboardPages, includeTime, title);
     }
 
     /**
      * Generate dashboard report
      * @private
-     * @param {string} pageSize page size of the report
-     * @param {map} pageList list of pages
+     * @param {string} paperSize page size of the report
+     * @param {map} dashboardPages list of pages
      * @param {boolean} includeTime add the report generation time of the report
      * @param {string} dashboardName dashboard name to be printed in the report
-     * @param {list} pages list of dashboard pages
      */
-    static createDashboardPdf(pageSize, pageList, includeTime, dashboardName, pages) {
-        const pdf = new jspdf('l', 'pt', pageSize);
-        DashboardReportGenerator.addDashboardImages(pdf, pageList, includeTime, dashboardName, pages);
+    static createDashboardPdf(paperSize, dashboardPages, includeTime, dashboardName) {
+        const pdf = new jspdf('l', 'pt', paperSize);
+        DashboardReportGenerator.addDashboardImages(pdf, dashboardPages, includeTime, dashboardName);
     }
 
     /**
      * Add dashboard report dashboard snapshots
      * @private
      * @param {string} pdf jspdf object
-     * @param {map} pageList list of pages
+     * @param {map} dashboardPages list of pages
      * @param {boolean} includeTime add report generation time in the report
      * @param {string} dashboardName dashboard name to be printed in the report
-     * @param {list} pages list of pages to be added in the reports
      */
-    static addDashboardImages(pdf, pageList, includeTime, dashboardName, pages) {
-        pageList.map((dashboardPage, ind) => {
+    static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName) {
+        dashboardPages.map((dashboardPage, ind) => {
             const rawImageData = localStorage.getItem(dashboardPage);
             const image = JSON.parse(rawImageData);
 
-            const printPage = pages.find((page) => {
-                return page.id === dashboardPage;
-            });
-
-            DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', printPage.name);
+            DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', dashboardPage);
             DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0);
             DashboardReportGenerator.addWidgetImage(pdf, image);
-            DashboardReportGenerator.addPageNumber(pdf, printPage, pageList, ind);
+            DashboardReportGenerator.addPageNumber(pdf, dashboardPage, dashboardPages, ind);
 
-            if (ind < pageList.length - 1) {
+            if (ind < dashboardPages.length - 1) {
                 pdf.addPage();
             }
         });
 
-        DashboardReportGenerator.addPdfConfigs(pdf, null, dashboardName, 'dashboard', 'landscape', pageList);
+        DashboardReportGenerator.addPdfConfigs(pdf, null, dashboardName, 'dashboard', 'landscape', dashboardPages);
     }
 
     /**
@@ -497,11 +477,11 @@ export default class DashboardReportGenerator {
      * @private
      * @param {object} pdf jspdf object
      * @param {object} page page to add the number
-     * @param {map} pageList list of pages
+     * @param {map} dashboardPages list of pages
      * @param {int} index index of the page the number should be added
      */
-    static addPageNumber(pdf, page, pageList, index) {
-        const pageNo = 'Page ' + (index + 1) + ' of ' + pageList.length;
+    static addPageNumber(pdf, page, dashboardPages, pageIndex) {
+        const pageNo = 'Page ' + (pageIndex + 1) + ' of ' + dashboardPages.length;
         pdf.setFontSize(10);
         const pageHeight = pdf.internal.pageSize.height || pdf.internal.pageSize.getHeight();
         pdf.text(pageNo, 10, pageHeight - 10);
@@ -511,13 +491,13 @@ export default class DashboardReportGenerator {
      * Add pdf configurations for a list of pages
      * @private
      * @param {object} pdf jspdf object
-     * @param {map} pageList list of pages, the configurations to be added
+     * @param {map} dashboardPages list of pages, the configurations to be added
      * @param {string} headerImgData configuration encoded image data
      * @param {string} property type of the configuration to be added (header, footer)
      * @param {string} orientation orientation of the page
      */
-    static addPageConfigsToAll(pdf, pageList, headerImgData, property, orientation) {
-        for (let i = 0; i < pageList.length; i++) {
+    static addPageConfigsToAll(pdf, dashboardPages, headerImgData, property, orientation) {
+        for (let i = 0; i < dashboardPages.length; i++) {
             pdf.setPage(i);
             DashboardReportGenerator.addPdfConfigImage(pdf, headerImgData, property, orientation);
         }
@@ -529,21 +509,21 @@ export default class DashboardReportGenerator {
      * @param {object} pdf jspdf object
      * @param {string} type report type (dashboard, widget or table)
      * @param {object} canvas canvas object
-     * @param {map} pageList list of pages to be added
+     * @param {map} dashboardPages list of pages to be added
      * @param {string} imgData pdf configuration image data
      * @param {string} property configuration property
      * @param {string} orientation orientation of the report
-     * @param {string} documentName name of the report
+     * @param {string} reportName name of the report
      */
-    static addPdfContent(pdf, type, canvas, pageList, imgData, property, orientation, documentName) {
+    static addPdfContent(pdf, type, canvas, dashboardPages, imgData, property, orientation, reportName) {
         if (type === 'widget') {
             DashboardReportGenerator.addWidgetImage(pdf, canvas);
-            pdf.save(documentName);
+            pdf.save(reportName);
         } else if (type === 'table') {
-            pdf.save(documentName);
+            pdf.save(reportName);
         } else if (type === 'dashboard') {
-            DashboardReportGenerator.addPageConfigsToAll(pdf, pageList, imgData, property, orientation);
-            pdf.save(documentName);
+            DashboardReportGenerator.addPageConfigsToAll(pdf, dashboardPages, imgData, property, orientation);
+            pdf.save(reportName);
         }
     }
 }

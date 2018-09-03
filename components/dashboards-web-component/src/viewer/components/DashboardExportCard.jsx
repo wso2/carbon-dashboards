@@ -26,16 +26,12 @@ import html2canvas from 'html2canvas';
 
 
 export default class DashboardExportCard extends Component {
-
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             expanded: false,
             pageList: [],
             pageSize: 'A4',
-            resizeRatio: 1,
-            canvasWidth: 0,
-            canvasHeight: 0,
         };
 
         this.handleCardClick = this.handleCardClick.bind(this);
@@ -43,8 +39,7 @@ export default class DashboardExportCard extends Component {
         this.removePage = this.removePage.bind(this);
     }
 
-    render(){
-
+    render() {
         const pageSizes = ['A4', 'Letter', 'Government-Letter'];
 
         return (
@@ -53,21 +48,23 @@ export default class DashboardExportCard extends Component {
                 expanded={this.state.expanded}
                 onExpandChange={this.handleCardClick}
             >
-                <CardHeader title='Export dashboard' actAsExpander style={{ paddingRight: '0px' }} />
+                <CardHeader title='Generate dashboard report' actAsExpander style={{ paddingRight: '0px' }} />
                 <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
-
-
-                        <RaisedButton label='Capture current page'
+                        <RaisedButton
+                            label='Capture current page'
                             onClick={this.capturePage}
-                            primary />
+                            primary
+                        />
 
                         <List>
                             {this.state.pageList.map(field =>
-                                <ListItem primaryText={
-                                                this.props.pages.find(page => page.id === field).name}
-                                rightIcon={<DeleteIcon />}
-                                          onClick={() => this.removePage(field)} />
+                                (<ListItem
+primaryText={
+                                    field}
+                                    rightIcon={<DeleteIcon />}
+                                onClick={() => this.removePage(field)}
+                                />),
                             )}
                         </List>
 
@@ -75,26 +72,24 @@ export default class DashboardExportCard extends Component {
                             style={{ width: 200 }}
                             floatingLabelText='Page Size'
                             value={this.state.pageSize}
-                            onChange={(event, index, value) => { this.setState({ pageSize: value }) }}
+                            onChange={(event, index, value) => { this.setState({ pageSize: value }); }}
 
                         >
                             {pageSizes.map(field =>
                                 (
                                     <MenuItem
-                                        key = {field}
-                                        value = {field}
-                                        primaryText = {field}
+                                        key={field}
+                                        value={field}
+                                        primaryText={field}
                                     />
                                 ))}
                         </SelectField>
 
                         <ReportGenerationButton
-                            pageSize = {this.state.pageSize}
-                            pageList = {this.state.pageList}
-                            pages = {this.props.pages}
+                            pageSize={this.state.pageSize}
+                            pageList={this.state.pageList}
+                            pages={this.props.pages}
                         />
-
-
                     </div>
                 </CardActions>
             </Card>
@@ -106,8 +101,7 @@ export default class DashboardExportCard extends Component {
         this.setState({ expanded: expand });
     }
 
-    async removePage(index) {
-
+    removePage(index) {
         const tempPageList = this.state.pageList.slice();
         const ind = tempPageList.indexOf(index);
         tempPageList.splice(ind, 1);
@@ -116,29 +110,25 @@ export default class DashboardExportCard extends Component {
         if (tempPageList.indexOf(index) == -1) {
             localStorage.removeItem(index);
         }
-
     }
 
-    async capturePage(index) {
-
+    capturePage(index) {
         const url = window.location.href;
         const parts = url.split('/');
-        const currentPage = parts[parts.length - 1] === '' ? parts[parts.length - 2] : parts[parts.length - 1];
+        let currentPage = parts[parts.length - 1] === '' ? parts[parts.length - 2] : parts[parts.length - 1];
+        currentPage = this.props.pages.find((page) => {
+            return page.id === currentPage;
+        });
 
-        await html2canvas(document.getElementById('dashboard-container')).then((canvas) => {
+        html2canvas(document.getElementById('dashboard-container')).then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
             const w = canvas.width;
             const h = canvas.height;
-            localStorage.setItem(currentPage, JSON.stringify({ imageData: imgData, width: w, height: h }));
+            localStorage.setItem(currentPage.name, JSON.stringify({ imageData: imgData, width: w, height: h }));
 
             const tempPageList = this.state.pageList.slice();
-            tempPageList.push(currentPage);
+            tempPageList.push(currentPage.name);
             this.setState({ pageList: tempPageList });
-
-            const val = 620 / canvas.width;
-            this.state.resizeRatio = val;
-            this.state.canvasWidth = canvas.width;
-            this.state.canvasHeight = canvas.height;
         });
     }
 }

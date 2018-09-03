@@ -35,26 +35,17 @@ import DashboardReportGenerator from '../../utils/DashboardReportGenerator';
 
 import { Dialog, FlatButton, Checkbox, CircularProgress } from 'material-ui';
 
-import autoTable from 'jspdf-autotable';  //Need to work with report generation for tables (jspdf extension)
-
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
 const dashboardContainerId = 'dashboard-container';
 
-/**
- * App context sans starting forward slash.
- */
-const appContext = window.contextPath.substr(1);
-
 export default class DashboardRenderer extends Component {
-
     constructor(props) {
         super(props);
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
             height: window.innerHeight,
-            completed:0
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -69,21 +60,18 @@ export default class DashboardRenderer extends Component {
         this.handleOpen = this.handleOpen.bind(this);
         this.handleIncludeGenerateTime = this.handleIncludeGenerateTime.bind(this);
         this.handleIncludeNoOfRecords = this.handleIncludeNoOfRecords.bind(this);
-        this.handleReportStatusOpen=this.handleReportStatusOpen.bind(this);
-        this.handleReportStatusClose=this.handleReportStatusClose.bind(this);
-        this.generateWidgetReport=this.generateWidgetReport.bind(this);
-
+        this.generateWidgetReport = this.generateWidgetReport.bind(this);
     }
 
     handleWindowResize() {
         if (this.goldenLayout) {
             this.goldenLayout.updateSize();
         }
-        this.setState({height: window.innerHeight});
+        this.setState({ height: window.innerHeight });
     }
 
     componentDidMount() {
-        this.setState({height: window.innerHeight});
+        this.setState({ height: window.innerHeight });
         window.addEventListener('resize', this.handleWindowResize);
     }
 
@@ -107,21 +95,14 @@ export default class DashboardRenderer extends Component {
             this.triggerThemeChangeEvent(nextProps.theme);
             return true;
         }
-
-        if (this.props.theme.name == 'light') {
+        if (this.props.theme.name === 'light') {
             this.triggerThemeChangeEvent(nextProps.theme);
         }
 
-        if (this.state.dialogOpen != nextState.dialogOpen) {
+        if (this.state.dialogOpen !== nextState.dialogOpen) {
             return true;
         }
-        if (this.state.reportStatusOpen != nextState.reportStatusOpen) {
-            return true;
-        }
-        if (this.state.completed < nextState.completed & nextState.completed <= 100) {
-            return true;
-        }
-        if (this.state.recordCountEnabled != nextState.recordCountEnabled) {
+        if (this.state.recordCountEnabled !== nextState.recordCountEnabled) {
             return true;
         }
 
@@ -141,12 +122,12 @@ export default class DashboardRenderer extends Component {
         const dialogActions = [
             <FlatButton
                 label='Cancel'
-                primary={true}
+                primary
                 onClick={this.handleClose}
             />,
             <FlatButton
-                label='Export'
-                primary={true}
+                label='Generate Report'
+                primary
                 onClick={this.generateWidgetReport}
             />,
         ];
@@ -154,7 +135,7 @@ export default class DashboardRenderer extends Component {
         const customStatusDailogStyle = {
             width: 400,
             maxWidth: 'none',
-            position: 'relative'
+            position: 'relative',
         };
 
         return (
@@ -165,7 +146,7 @@ export default class DashboardRenderer extends Component {
                         color: theme.palette.textColor,
                         backgroundColor: theme.palette.canvasColor,
                         fontFamily: theme.fontFamily,
-                        height: height,
+                        height,
                     }}
                 >
                     <div
@@ -181,7 +162,7 @@ export default class DashboardRenderer extends Component {
                 <Dialog
                     title='Select PDF options'
                     actions={dialogActions}
-                    modal={true}
+                    modal
                     open={this.state.dialogOpen}
                 >
                     <Checkbox
@@ -195,21 +176,6 @@ export default class DashboardRenderer extends Component {
                             onClick={this.handleIncludeNoOfRecords}
                         />
                     )}
-                </Dialog>
-
-                <Dialog
-                    title='Report is generating'
-                    contentStyle={customStatusDailogStyle}
-                    modal={true}
-                    open={this.state.reportStatusOpen}
-                >
-                    <CircularProgress
-                        mode='determinate'
-                        value={this.state.completed}
-                        size={80}
-                        thickness={5}
-                        style={{ marginLeft: '35%' }}
-                    />
                 </Dialog>
             </div>
         );
@@ -259,30 +225,20 @@ export default class DashboardRenderer extends Component {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async generateWidgetReport(){
+    generateWidgetReport() {
         this.handleClose();
-        this.handleReportStatusOpen();
-        this.timer = setInterval(this.progress, 200);
-        await this.sleep(2000);
-
         const element = this.state.widget;
         const docTitle = this.state.title;
-
-        const pdf=DashboardReportGenerator.exportWidget(element,docTitle,this.state.includeTime,this.state.includeRecords,
-                                                this.props.theme.name);
-
-        clearInterval(this.timer);
-        this.handleReportStatusClose();
-        this.state.completed = 0;
+        const pdf = DashboardReportGenerator.generateWidgetPdf(element, docTitle, this.state.includeTime, this.state.includeRecords,
+            this.props.theme.name);
         this.state.includeRecords = false;
         this.state.includeTime = false;
-
     }
 
     onGoldenLayoutComponentAddEvent(component) {
         const exportButton = document.createElement('i');
-        exportButton.title = 'Export';
-        exportButton.className = 'fw fw-export widget-export-button';
+        exportButton.title = 'Generate Report';
+        exportButton.className = 'fw fw-pdf widget-export-button';
         exportButton.addEventListener('click', () => {
             const selectedElement = component.element[0];
             if (selectedElement.innerHTML.search('rt-table') > -1) {
@@ -313,19 +269,6 @@ export default class DashboardRenderer extends Component {
     handleIncludeNoOfRecords() {
         this.setState({ includeRecords: !this.state.includeRecords });
     }
-
-    handleReportStatusClose() {
-        this.setState({ reportStatusOpen: false });
-    }
-
-    handleReportStatusOpen() {
-        this.setState({ reportStatusOpen: true });
-    }
-
-    progress = () => {
-        let { completed } = this.state;
-        this.setState({ completed: completed >= 100 ? 0 : completed + 10 });
-    };
 }
 
 DashboardRenderer.propTypes = {

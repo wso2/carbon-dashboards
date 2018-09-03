@@ -23,7 +23,7 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 
 import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader, Toggle, Checkbox, CardText, CardHeader,
-         CardActions ,RaisedButton, SelectField, MenuItem, Card, FlatButton, Dialog, CircularProgress } from 'material-ui';
+    CardActions, RaisedButton, SelectField, MenuItem, Card, FlatButton, Dialog, CircularProgress } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 import { ActionHome, NavigationMenu } from 'material-ui/svg-icons';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
@@ -55,7 +55,6 @@ const SelectableList = makeSelectable(List);
 const appContext = window.contextPath.substr(1);
 
 class DashboardViewPage extends Component {
-
     constructor(props) {
         super(props);
         const isDarkTheme = window.localStorage.getItem('isDarkTheme');
@@ -181,7 +180,7 @@ class DashboardViewPage extends Component {
                 title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
                 logo={logo}
                 onLogoClick={this.handleSidePaneToggle}
-                rightElement = {
+                rightElement={
                     <span style={{ position: 'relative' }}>
                         <ThemeButton
                             onThemeButtonClick={this.handleThemeToggle}
@@ -217,7 +216,7 @@ class DashboardViewPage extends Component {
                 <br />
                 <Divider />
                 <DashboardExportCard
-                    pages = {this.dashboard.pages}
+                    pages={this.dashboard.pages}
                 />
             </Drawer>
         );
@@ -231,13 +230,13 @@ class DashboardViewPage extends Component {
     renderPagesList() {
         const landingPage = this.dashboard.landingPage;
         const history = this.props.history;
-        let pagesList = [];
+        const pagesList = [];
         this.dashboard.pages.forEach((page) => {
             if (page.hidden) {
                 return;
             }
             const isLandingPage = (page.id === landingPage);
-            let subPagesList = [];
+            const subPagesList = [];
             if (page.pages) {
                 page.pages.forEach((subPage) => {
                     if (subPage.hidden) {
@@ -251,7 +250,7 @@ class DashboardViewPage extends Component {
                             primaryText={subPage.name}
                             insetChildren
                             onClick={() => history.push(this.getNavigationToPage(subPageId))}
-                        />
+                        />,
                     );
                 });
             }
@@ -265,7 +264,7 @@ class DashboardViewPage extends Component {
                     nestedItems={subPagesList}
                     open={!!subPagesList}
                     onClick={() => history.push(this.getNavigationToPage(page.id))}
-                />
+                />,
             );
         });
         return pagesList;
