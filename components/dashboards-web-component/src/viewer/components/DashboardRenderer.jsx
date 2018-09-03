@@ -19,6 +19,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import 'golden-layout/src/css/goldenlayout-base.css';
+import { Dialog, FlatButton, Checkbox } from 'material-ui';
 
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
@@ -32,8 +33,6 @@ import glLightTheme from '!!css-loader!../../common/styles/custom-goldenlayout-l
 import './dashboard-container-styles.css';
 
 import DashboardReportGenerator from '../../utils/DashboardReportGenerator';
-
-import { Dialog, FlatButton, Checkbox, CircularProgress } from 'material-ui';
 
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
@@ -221,15 +220,11 @@ export default class DashboardRenderer extends Component {
         }
     }
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     generateWidgetReport() {
         this.handleClose();
         const element = this.state.widget;
         const docTitle = this.state.title;
-        const pdf = DashboardReportGenerator.generateWidgetPdf(element, docTitle, this.state.includeTime, this.state.includeRecords,
+        DashboardReportGenerator.generateWidgetPdf(element, docTitle, this.state.includeTime, this.state.includeRecords,
             this.props.theme.name);
         this.state.includeRecords = false;
         this.state.includeTime = false;
@@ -238,7 +233,7 @@ export default class DashboardRenderer extends Component {
     onGoldenLayoutComponentAddEvent(component) {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
-        exportButton.className = 'fw fw-pdf widget-export-button';
+        exportButton.className = 'fw fw-pdf widget-report-generation-button';
         exportButton.addEventListener('click', () => {
             const selectedElement = component.element[0];
             if (selectedElement.innerHTML.search('rt-table') > -1) {

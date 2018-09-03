@@ -22,11 +22,9 @@ import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 
-import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader, Toggle, Checkbox, CardText, CardHeader,
-    CardActions, RaisedButton, SelectField, MenuItem, Card, FlatButton, Dialog, CircularProgress } from 'material-ui';
+import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 import { ActionHome, NavigationMenu } from 'material-ui/svg-icons';
-import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
 import DashboardAPI from '../utils/apis/DashboardAPI';
 import Error403 from '../error-pages/Error403';
@@ -41,10 +39,6 @@ import PortalButton from '../common/PortalButton';
 import ThemeButton from './components/ThemeButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
 import '../utils/GoldenLayoutOverrides.css';
-
-import html2cavas from 'html2canvas';
-import DashboardReportGenerator from '../utils/DashboardReportGenerator';
-import ReportGenerationButton from './components/ReportGenerationButton';
 import DashboardExportCard from './components/DashboardExportCard';
 
 const SelectableList = makeSelectable(List);
@@ -180,7 +174,7 @@ class DashboardViewPage extends Component {
                 title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
                 logo={logo}
                 onLogoClick={this.handleSidePaneToggle}
-                rightElement={
+                rightElement = {
                     <span style={{ position: 'relative' }}>
                         <ThemeButton
                             onThemeButtonClick={this.handleThemeToggle}
