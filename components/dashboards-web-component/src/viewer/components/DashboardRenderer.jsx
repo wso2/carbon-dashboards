@@ -44,7 +44,7 @@ export default class DashboardRenderer extends Component {
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
-            height: window.innerHeight,
+            height: window.innerHeight
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -66,11 +66,11 @@ export default class DashboardRenderer extends Component {
         if (this.goldenLayout) {
             this.goldenLayout.updateSize();
         }
-        this.setState({ height: window.innerHeight });
+        this.setState({height: window.innerHeight});
     }
 
     componentDidMount() {
-        this.setState({ height: window.innerHeight });
+        this.setState({height: window.innerHeight});
         window.addEventListener('resize', this.handleWindowResize);
     }
 

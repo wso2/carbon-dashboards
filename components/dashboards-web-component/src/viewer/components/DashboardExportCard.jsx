@@ -17,8 +17,6 @@
  */
 
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { Card, CardHeader, CardActions, RaisedButton, List, ListItem, SelectField, MenuItem } from 'material-ui';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import ReportGenerationButton from './ReportGenerationButton';

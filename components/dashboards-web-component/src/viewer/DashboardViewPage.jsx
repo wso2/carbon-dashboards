@@ -22,7 +22,7 @@ import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 
-import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader } from 'material-ui';
+import { Divider, Drawer, IconButton, List, ListItem, makeSelectable, Subheader, Toggle } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 import { ActionHome, NavigationMenu } from 'material-ui/svg-icons';
 
@@ -49,6 +49,7 @@ const SelectableList = makeSelectable(List);
 const appContext = window.contextPath.substr(1);
 
 class DashboardViewPage extends Component {
+
     constructor(props) {
         super(props);
         const isDarkTheme = window.localStorage.getItem('isDarkTheme');
@@ -158,7 +159,6 @@ class DashboardViewPage extends Component {
                 >
                     {this.renderDashboard(currentTheme)}
                 </div>
-
             </MuiThemeProvider>
         );
     }
@@ -192,7 +192,6 @@ class DashboardViewPage extends Component {
     renderSidePane(theme) {
         const pageId = this.props.match.params.pageId,
             subPageId = this.props.match.params.subPageId;
-
         return (
             <Drawer
                 docked={false}
@@ -224,13 +223,13 @@ class DashboardViewPage extends Component {
     renderPagesList() {
         const landingPage = this.dashboard.landingPage;
         const history = this.props.history;
-        const pagesList = [];
+        let pagesList = [];
         this.dashboard.pages.forEach((page) => {
             if (page.hidden) {
                 return;
             }
             const isLandingPage = (page.id === landingPage);
-            const subPagesList = [];
+            let subPagesList = [];
             if (page.pages) {
                 page.pages.forEach((subPage) => {
                     if (subPage.hidden) {
@@ -244,7 +243,7 @@ class DashboardViewPage extends Component {
                             primaryText={subPage.name}
                             insetChildren
                             onClick={() => history.push(this.getNavigationToPage(subPageId))}
-                        />,
+                        />
                     );
                 });
             }
@@ -258,7 +257,7 @@ class DashboardViewPage extends Component {
                     nestedItems={subPagesList}
                     open={!!subPagesList}
                     onClick={() => history.push(this.getNavigationToPage(page.id))}
-                />,
+                />
             );
         });
         return pagesList;

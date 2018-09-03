@@ -47,6 +47,7 @@ import org.wso2.carbon.dashboards.core.bean.importer.Page;
 import org.wso2.carbon.dashboards.core.bean.importer.PageContent;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetCollection;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
+import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
@@ -145,7 +146,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
     protected void unsetConfigProvider(ConfigProvider configProvider) {
         LOGGER.debug("An instance of class '{}' unregistered as a config provider.",
-                configProvider.getClass().getName());
+                     configProvider.getClass().getName());
     }
 
     @Reference(
@@ -229,7 +230,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         dao.add(dashboardMetadata);
         for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
             permissionProvider.addPermission(permission);
-            for (String roleId : rolesProvider.getCreatorRoleIds()) {
+            for (String roleId: rolesProvider.getCreatorRoleIds()) {
                 permissionProvider.grantPermission(permission, new Role(roleId, ""));
             }
         }
@@ -523,8 +524,8 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public Map<String, Object> getReportGenerationConfigurations() {
-        return this.dashboardConfigurations.getReportConfigs().getPdf();
+    public ReportConfigs getReportGenerationConfigurations() {
+        return this.dashboardConfigurations.getReportConfigs();
     }
 
 }
