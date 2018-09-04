@@ -21,6 +21,7 @@ import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.uiserver.api.App;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,22 @@ import java.util.Set;
  * @since 4.0.0
  */
 public interface DashboardMetadataProvider {
+
+    /**
+     * Initializes dashboard provider. This should be invoked before any operations.
+     *
+     * @param dashboardApp dashboard portal app
+     * @since 4.0.32
+     */
+    void init(App dashboardApp);
+
+    /**
+     * Returns the widget provider.
+     *
+     * @return widget provider.
+     * @since 4.0.32
+     */
+    WidgetMetadataProvider getWidgetMetadataProvider();
 
     /**
      * Returns the dashboard for the given URL.
