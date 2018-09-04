@@ -450,7 +450,7 @@ export default class DashboardReportGenerator {
      */
     static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName) {
         dashboardPages.map((dashboardPage, ind) => {
-            const rawImageData = localStorage.getItem(dashboardPage);
+            const rawImageData = localStorage.getItem('_dashboard-report:'+dashboardPage);
             const image = JSON.parse(rawImageData);
 
             DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', dashboardPage);
