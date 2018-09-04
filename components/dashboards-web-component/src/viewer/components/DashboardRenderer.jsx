@@ -44,7 +44,10 @@ export default class DashboardRenderer extends Component {
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
-            height: window.innerHeight
+            height: window.innerHeight,
+            widget: null,
+            title: '',
+            dialog: false,
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -202,9 +205,7 @@ export default class DashboardRenderer extends Component {
         exportButton.title = 'Generate Report';
         exportButton.className = 'fw fw-pdf widget-report-generation-button';
         exportButton.addEventListener('click', () => {
-            this.setState({ widget: component.element[0] });
-            this.setState({ title: component.config.title });
-            this.setState({ dialog: true });
+            this.setState({ widget: component.element[0], title: component.config.title, dialog: true });
         });
         component.parent.header.controlsContainer.prepend(exportButton);
     }

@@ -85,6 +85,7 @@ export default class DashboardReportGenerationCard extends Component {
                             pageSize={this.state.pageSize}
                             pageList={this.state.pageList}
                             pages={this.props.pages}
+                            dashboardName={this.props.dashboardName}
                         />
                     </div>
                 </CardActions>

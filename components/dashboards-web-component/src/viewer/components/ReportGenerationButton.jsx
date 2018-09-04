@@ -87,6 +87,7 @@ export default class ReportGenerationButton extends Component {
     }
 
     generateDashboardReport() {
+        this.handleClose();
         const title = this.props.dashboardName;
         DashboardReportGenerator.generateDashboardPdf(this.props.pageSize.toLowerCase(), this.props.pageList,
             this.state.includeTime, title);

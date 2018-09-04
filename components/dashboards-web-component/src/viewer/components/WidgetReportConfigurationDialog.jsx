@@ -26,6 +26,8 @@ export default class WidgetReportConfigurationDialog extends Component {
         this.state = {
             dialogOpen: this.props.dialog,
             includeTime: false,
+            includeRecords: false,
+            recordCountEnabled: false,
         };
 
         this.handleClose = this.handleClose.bind(this);

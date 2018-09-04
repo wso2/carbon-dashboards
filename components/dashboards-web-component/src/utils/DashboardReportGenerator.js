@@ -64,7 +64,7 @@ export default class DashboardReportGenerator {
     static createTablePdf(element, widgetName, includeTime, includeRecords, dashboardName, themeName) {
         const pdf = new jspdf('p', 'pt');
 
-        DashboardReportGenerator.addTitle(pdf, includeTime, includeRecords, dashboardName, widgetName);
+        DashboardReportGenerator.addTitle(pdf, includeTime, includeRecords, dashboardName + ' : ', widgetName);
         const tableData = DashboardReportGenerator.getTableData(pdf, element, themeName);
         DashboardReportGenerator.addSubTitle(pdf, includeTime, includeRecords, tableData.rowData.length);
         DashboardReportGenerator.addTable(pdf, tableData, widgetName);
@@ -186,7 +186,7 @@ export default class DashboardReportGenerator {
      */
     static createWidgetPdf(widgetName, includeTime, canvas, dashboardName) {
         const pdf = new jspdf('l', 'pt', 'a4');
-        DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, widgetName);
+        DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', widgetName);
         DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0);
         DashboardReportGenerator.addPdfConfigs(pdf, canvas, widgetName, 'widget', 'landscape', false);
     }
@@ -450,7 +450,7 @@ export default class DashboardReportGenerator {
      */
     static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName) {
         dashboardPages.map((dashboardPage, ind) => {
-            const rawImageData = localStorage.getItem(dashboardPage);
+            const rawImageData = localStorage.getItem('_dashboard-report:'+dashboardPage);
             const image = JSON.parse(rawImageData);
 
             DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', dashboardPage);
