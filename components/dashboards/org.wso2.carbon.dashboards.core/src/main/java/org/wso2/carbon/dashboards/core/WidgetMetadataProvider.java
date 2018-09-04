@@ -60,17 +60,6 @@ public interface WidgetMetadataProvider {
     Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardException;
 
     /**
-     * Get configurations of given set of widgets.
-     *
-     * @since 4.0.29
-     *
-     * @param widgetIds Set of widget Ids
-     * @return Set of widget configurations
-     * @throws DashboardException If an error occurred when reading or processing configurations
-     */
-    Set<WidgetMetaInfo> getWidgetConfigurations(Set<String> widgetIds) throws DashboardException;
-
-    /**
      * Get generated widget configurations.
      *
      * @since 4.0.29
