@@ -38,12 +38,13 @@ const glLightThemeCss = glLightTheme.toString();
 const dashboardContainerId = 'dashboard-container';
 
 export default class DashboardRenderer extends Component {
+
     constructor(props) {
         super(props);
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
-            height: window.innerHeight,
+            height: window.innerHeight
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -105,7 +106,7 @@ export default class DashboardRenderer extends Component {
     }
 
     render() {
-        let {theme, height} = this.props;
+        let { theme, height } = this.props;
 
         // Calculate optimal dashboard height for the current screen.
         const containerHeight = this.state.height - 55;
@@ -122,7 +123,7 @@ export default class DashboardRenderer extends Component {
                         color: theme.palette.textColor,
                         backgroundColor: theme.palette.canvasColor,
                         fontFamily: theme.fontFamily,
-                        height,
+                        height: height,
                     }}
                 >
                     <div
