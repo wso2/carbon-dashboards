@@ -101,39 +101,25 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
     @Override
     public boolean isWidgetPresent(String widgetName, WidgetType widgetType) throws DashboardException {
-        if (widgetType == WidgetType.GENERATED || widgetType == WidgetType.ALL) {
-            if (isDaoInitialized) {
-                Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdSet();
-                for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
-                    if (generatedWidgetConfigs.getName().equals(widgetName)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return (widgetType == WidgetType.CUSTOM || widgetType == WidgetType.ALL) && isWidgetInFilesystem(widgetName);
-    }
-
-    /**
-     * Check whether the widget is in the file system.
-     *
-     * @param widgetName Name of the widget
-     * @return
-     */
-    private boolean isWidgetInFilesystem(String widgetName) {
-        // The following line doesn't work, since getDashboardApp() returns null.
-        // return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetName).isPresent();
-        Path widgetsDirectory = Utils.getRuntimePath().resolve(
-                Paths.get("deployment", "web-ui-apps", "portal", "extensions", "widgets"));
-        String[] widgets = widgetsDirectory.toFile().list((current, name) -> new File(current, name).isDirectory());
-        if (widgets != null) {
-            for (String widget : widgets) {
-                if (widgetName.equals(widget)) {
-                    return true;
-                }
-            }
+        switch (widgetType) {
+            case CUSTOM:
+                return isCustomWidgetPresent(widgetName);
+            case GENERATED:
+                return isGeneratedWidgetPresent(widgetName);
+            case ALL:
+                return isCustomWidgetPresent(widgetName) || isGeneratedWidgetPresent(widgetName);
         }
         return false;
+    }
+
+    private boolean isGeneratedWidgetPresent(String widgetName) throws DashboardException {
+        return widgetMetadataDao.getGeneratedWidgetIdSet().stream()
+                .map(GeneratedWidgetConfigs::getName)
+                .anyMatch(name -> name.equals(widgetName));
+    }
+
+    private boolean isCustomWidgetPresent(String widgetName) {
+        return dashboardApp.getExtension(EXTENSION_TYPE_WIDGETS, widgetName).isPresent();
     }
 
     @Override
