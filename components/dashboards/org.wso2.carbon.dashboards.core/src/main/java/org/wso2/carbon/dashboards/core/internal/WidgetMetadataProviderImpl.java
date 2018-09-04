@@ -82,7 +82,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
             widgetMetaInfo.setId(generatedWidgetConfigs.getId());
             widgetMetaInfo.setName(generatedWidgetConfigs.getName());
             widgetMetaInfo.setConfigs(widgetConfigs);
-            return Optional.ofNullable(widgetMetaInfo);
+            return Optional.of(widgetMetaInfo);
         } else {
             return dashboardApp.getExtension(EXTENSION_TYPE_WIDGETS, widgetId)
                     .map(WidgetConfigurationReader::getConfiguration);
@@ -145,8 +145,9 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
     @Override
     public Set<GeneratedWidgetConfigs> getGeneratedWidgetConfigs(Set<String> widgetIds) throws DashboardException {
-        Set<GeneratedWidgetConfigs> generatedWidgetIdSet = widgetMetadataDao.getGeneratedWidgetIdSet();
-        return generatedWidgetIdSet.stream().filter(w -> widgetIds.contains(w.getId())).collect(Collectors.toSet());
+        return widgetMetadataDao.getGeneratedWidgetIdSet().stream()
+                .filter(generatedWidgetConfigs -> widgetIds.contains(generatedWidgetConfigs.getId()))
+                .collect(Collectors.toSet());
     }
 
     @Override
