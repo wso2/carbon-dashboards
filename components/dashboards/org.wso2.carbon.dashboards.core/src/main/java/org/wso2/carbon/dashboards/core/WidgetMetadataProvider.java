@@ -22,7 +22,6 @@ import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
-import org.wso2.carbon.uiserver.api.App;
 
 import java.util.Optional;
 import java.util.Set;
@@ -58,17 +57,6 @@ public interface WidgetMetadataProvider {
      * @throws DashboardException if an error occurred when reading or processing configurations
      */
     Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardException;
-
-    /**
-     * Get configurations of given set of widgets.
-     *
-     * @since 4.0.29
-     *
-     * @param widgetIds Set of widget Ids
-     * @return Set of widget configurations
-     * @throws DashboardException If an error occurred when reading or processing configurations
-     */
-    Set<WidgetMetaInfo> getWidgetConfigurations(Set<String> widgetIds) throws DashboardException;
 
     /**
      * Get generated widget configurations.
@@ -108,17 +96,4 @@ public interface WidgetMetadataProvider {
      * @throws DashboardException
      */
     boolean isWidgetPresent(String widgetName, WidgetType widgetType) throws DashboardException;
-    /**
-     * Sets the dashboard portal app to this provider.
-     *
-     * @param dashboardApp dashboard portal app
-     */
-    void setDashboardApp(App dashboardApp);
-
-    /**
-     * Returns the dashboard portal app of this provider.
-     *
-     * @return dashboard portal app
-     */
-    App getDashboardApp();
 }

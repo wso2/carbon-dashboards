@@ -130,7 +130,7 @@ export default class DashboardRenderer extends Component {
                 });
             }
             const itemConfig = {
-                title: widget.name,
+                title: '[' + (widget.displayName || widget.name) + ']',
                 type: 'react-component',
                 component: widget.configs.isGenerated ? 'UniversalWidget' : widget.id,
                 props: {
