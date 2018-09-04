@@ -25,15 +25,11 @@ import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.analytics.permissions.bean.Permission;
-import org.wso2.carbon.config.provider.ConfigProvider;
+import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
-import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDao;
-import org.wso2.carbon.dashboards.core.internal.roles.provider.RolesProvider;
-import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.datasource.core.exception.DataSourceException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,11 +56,12 @@ public class DashboardMetadataProviderImplTest {
         when(dao.get(eq("foo"))).thenReturn(Optional.of(new DashboardMetadata()));
         when(dao.get(eq("bar"))).thenReturn(Optional.empty());
         when(dao.get(eq("foo-bar"))).thenReturn(Optional.empty());
+
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
-                        DashboardConfigurations()));
         when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
+
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider);
+
         Assertions.assertTrue(dashboardMetadataProvider.getDashboardByUser("testUser", "foo", "designer").isPresent());
         Assertions.assertFalse(dashboardMetadataProvider.getDashboardByUser("testUser", "bar", null).isPresent());
         Assertions.assertFalse(dashboardMetadataProvider.
@@ -76,11 +73,11 @@ public class DashboardMetadataProviderImplTest {
     void testGetAll() throws Exception {
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         when(dao.getAll()).thenReturn(Collections.singleton(new DashboardMetadata()));
+
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
-                        DashboardConfigurations()));
         when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
+
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider);
         Assertions.assertEquals(1, dashboardMetadataProvider.getAllByUser("testUser").size());
         verify(dao).getAll();
     }
@@ -90,19 +87,16 @@ public class DashboardMetadataProviderImplTest {
         final DashboardMetadata dashboardMetadata = new DashboardMetadata();
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
 
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, new MockPermissionProvider(), new RolesProvider(new
-                        DashboardConfigurations()));
-        ConfigProvider configProvider = mock(ConfigProvider.class);
+        PermissionProvider permissionProvider = mock(PermissionProvider.class);
+
         IdPClient idPClient = mock(IdPClient.class);
-        when(configProvider.getConfigurationObject(DashboardConfigurations.class)).
-                thenReturn(new DashboardConfigurations());
-        dashboardMetadataProvider.setConfigProvider(configProvider);
-        dashboardMetadataProvider.setIdP(idPClient);
         List<org.wso2.carbon.analytics.idp.client.core.models.Role> userRoles = new ArrayList<>();
         userRoles.add(new org.wso2.carbon.analytics.idp.client.core.models.Role
-                ("1", "admin"));
+                              ("1", "admin"));
         when(idPClient.getUserRoles(anyString())).thenReturn(userRoles);
+
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider,
+                                                                                          idPClient);
         dashboardMetadataProvider.add("", dashboardMetadata);
         verify(dao).add(eq(dashboardMetadata));
     }
@@ -112,20 +106,17 @@ public class DashboardMetadataProviderImplTest {
         final DashboardMetadata dashboardMetadata = new DashboardMetadata();
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
 
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, new MockPermissionProvider(), new RolesProvider(new
-                        DashboardConfigurations()));
-        ConfigProvider configProvider = mock(ConfigProvider.class);
+        PermissionProvider permissionProvider = mock(PermissionProvider.class);
+
         IdPClient idPClient = mock(IdPClient.class);
-        when(configProvider.getConfigurationObject(DashboardConfigurations.class)).
-                thenReturn(new DashboardConfigurations());
-        dashboardMetadataProvider.setConfigProvider(configProvider);
-        dashboardMetadataProvider.setIdP(idPClient);
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(new org.wso2.carbon.analytics.idp.client.core.models.Role
-                ("test_role", "test_role"));
+                              ("test_role", "test_role"));
         when(idPClient.getUserRoles(anyString())).thenReturn(userRoles);
         when(idPClient.getAdminRole()).thenReturn(new Role("test_role2", "test_role2"));
+
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider,
+                                                                                          idPClient);
         Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 add("testUser", dashboardMetadata));
     }
@@ -135,22 +126,20 @@ public class DashboardMetadataProviderImplTest {
         final DashboardMetadata dashboardMetadata = new DashboardMetadata();
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
-                        DashboardConfigurations()));
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider);
+
         when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
         dashboardMetadataProvider.update("testUser", dashboardMetadata);
         verify(dao).update(eq(dashboardMetadata));
     }
 
     @Test
-    void testUnauthorizedUpdate() throws Exception {
+    void testUnauthorizedUpdate() {
         final DashboardMetadata dashboardMetadata = new DashboardMetadata();
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
-                        DashboardConfigurations()));
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider);
+
         when(permissionProvider.hasPermission(eq("testUser"), anyString())).thenReturn(true);
         Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 update("testUser1", dashboardMetadata));
@@ -161,36 +150,38 @@ public class DashboardMetadataProviderImplTest {
         final String dashboardUrl = "foo";
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
-                        DashboardConfigurations()));
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider);
+
         when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
         dashboardMetadataProvider.delete("testUser", dashboardUrl);
         verify(dao).delete(eq(dashboardUrl));
     }
 
     @Test
-    void testUnauthorizedDelete() throws Exception {
+    void testUnauthorizedDelete() {
         final String dashboardUrl = "fooo";
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider =
-                new DashboardMetadataProviderImpl(dao, permissionProvider, new RolesProvider(new
-                        DashboardConfigurations()));
+        DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider);
+
         when(permissionProvider.hasPermission(eq("testUser"), anyString())).thenReturn(true);
         Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 delete("testUser1", dashboardUrl));
     }
 
-    @Test
-    void testActivateThrowException() throws Exception {
-        DataSourceService dataSourceService = mock(DataSourceService.class);
-        when(dataSourceService.getDataSource(anyString())).thenThrow(DataSourceException.class);
-        DashboardMetadataProviderImpl dashboardMetadataProvider = new DashboardMetadataProviderImpl();
-        dashboardMetadataProvider.setDataSourceService(dataSourceService);
-        dashboardMetadataProvider.setConfigProvider(mock(ConfigProvider.class));
+    private static DashboardMetadataProviderImpl createDashboardProvider(DashboardMetadataDao dao,
+                                                                         PermissionProvider permissionProvider) {
+        return createDashboardProvider(dao, permissionProvider, mock(IdPClient.class));
+    }
 
-        Assertions.assertThrows(DashboardRuntimeException.class, () -> dashboardMetadataProvider.
-                activate(null));
+    private static DashboardMetadataProviderImpl createDashboardProvider(DashboardMetadataDao dao,
+                                                                         PermissionProvider permissionProvider,
+                                                                         IdPClient idPClient) {
+        DashboardMetadataProviderImpl provider = new DashboardMetadataProviderImpl(dao,
+                                                                                   new DashboardConfigurations(),
+                                                                                   permissionProvider,
+                                                                                   idPClient);
+        provider.setWidgetMetadataProvider(mock(WidgetMetadataProvider.class));
+        return provider;
     }
 }

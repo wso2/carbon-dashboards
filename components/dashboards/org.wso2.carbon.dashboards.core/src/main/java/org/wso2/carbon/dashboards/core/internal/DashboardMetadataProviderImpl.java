@@ -20,24 +20,14 @@ package org.wso2.carbon.dashboards.core.internal;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
 import org.wso2.carbon.analytics.idp.client.core.exception.IdPClientException;
-import org.wso2.carbon.analytics.permissions.PermissionManager;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.analytics.permissions.bean.Permission;
 import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.analytics.permissions.exceptions.PermissionException;
-import org.wso2.carbon.config.ConfigurationException;
-import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
@@ -55,6 +45,7 @@ import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.database.DashboardMetadataDaoFactory;
 import org.wso2.carbon.dashboards.core.internal.roles.provider.RolesProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.carbon.uiserver.api.App;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,8 +63,8 @@ import java.util.stream.Collectors;
  *
  * @since 4.0.0
  */
-@Component(service = DashboardMetadataProvider.class, immediate = true)
 public class DashboardMetadataProviderImpl implements DashboardMetadataProvider {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardMetadataProviderImpl.class);
     private static final String PERMISSION_APP_NAME = "DASH";
     private static final String PERMISSION_SUFFIX_VIEWER = ".viewer";
@@ -81,100 +72,52 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     private static final String PERMISSION_SUFFIX_OWNER = ".owner";
     private static final String UNIVERSAL_WIDGET = "UniversalWidget";
 
-    private DashboardMetadataDao dao;
+    private final DashboardMetadataDao dao;
     private DataSourceService dataSourceService;
-    private DashboardConfigurations dashboardConfigurations;
-    private PermissionProvider permissionProvider;
-    private IdPClient identityClient;
-    private RolesProvider rolesProvider;
+    private final DashboardConfigurations dashboardConfigurations;
+    private final PermissionProvider permissionProvider;
+    private final IdPClient identityClient;
+
     private WidgetMetadataProvider widgetMetadataProvider;
 
-    /**
-     * Creates a new dashboard data provider.
-     */
-    public DashboardMetadataProviderImpl() {
-    }
-
-    DashboardMetadataProviderImpl(DashboardMetadataDao dao, PermissionProvider permissionProvider, RolesProvider
-            rolesProvider) {
-        this.dao = dao;
-        this.permissionProvider = permissionProvider;
-        this.rolesProvider = rolesProvider;
-    }
-
-    @Activate
-    protected void activate(BundleContext bundleContext) {
+    public DashboardMetadataProviderImpl(DataSourceService dataSourceService,
+                                         DashboardConfigurations dashboardConfigurations,
+                                         PermissionProvider permissionProvider, IdPClient identityClient) {
         try {
             this.dao = DashboardMetadataDaoFactory.createDao(dataSourceService, dashboardConfigurations);
             this.dao.initDashboardTable();
         } catch (DashboardException e) {
-            throw new DashboardRuntimeException("Cannot create DAO for DB access.", e);
+            throw new DashboardRuntimeException("Cannot create dashboard DAO for DB access.", e);
         }
-        LOGGER.debug("{} activated.", this.getClass().getName());
-    }
-
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        LOGGER.debug("{} deactivated.", this.getClass().getName());
-    }
-
-    @Reference(service = DataSourceService.class,
-            cardinality = ReferenceCardinality.AT_LEAST_ONE,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetDataSourceService")
-    protected void setDataSourceService(DataSourceService dataSourceService) {
         this.dataSourceService = dataSourceService;
+        this.dashboardConfigurations = dashboardConfigurations;
+        this.permissionProvider = permissionProvider;
+        this.identityClient = identityClient;
     }
 
-    protected void unsetDataSourceService(DataSourceService dataSourceService) {
-        this.dataSourceService = null;
+    DashboardMetadataProviderImpl(DashboardMetadataDao dao, DashboardConfigurations dashboardConfigurations,
+                                  PermissionProvider permissionProvider, IdPClient identityClient) {
+        this.dao = dao;
+        this.dashboardConfigurations = dashboardConfigurations;
+        this.permissionProvider = permissionProvider;
+        this.identityClient = identityClient;
     }
 
-    @Reference(service = ConfigProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetConfigProvider")
-    protected void setConfigProvider(ConfigProvider configProvider) {
-        try {
-            this.dashboardConfigurations = configProvider.getConfigurationObject(DashboardConfigurations.class);
-        } catch (ConfigurationException e) {
-            LOGGER.error("Cannot load dashboard configurations from 'deployment.yaml'. Falling-back to defaults.", e);
-            this.dashboardConfigurations = new DashboardConfigurations();
-        }
+    @Override
+    public void init(App dashboardApp) {
+        this.widgetMetadataProvider = new WidgetMetadataProviderImpl(dashboardApp, dataSourceService,
+                                                                     dashboardConfigurations);
+        DashboardImporter dashboardImporter = new DashboardImporter(this, widgetMetadataProvider);
+        dashboardImporter.importDashboards();
     }
 
-    protected void unsetConfigProvider(ConfigProvider configProvider) {
-        LOGGER.debug("An instance of class '{}' unregistered as a config provider.",
-                     configProvider.getClass().getName());
-    }
-
-    @Reference(
-            name = "permission-manager",
-            service = PermissionManager.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetPermissionManager"
-    )
-    protected void setPermissionManager(PermissionManager permissionManager) {
-        this.permissionProvider = permissionManager.getProvider();
-    }
-
-    protected void unsetPermissionManager(PermissionManager permissionManager) {
-        this.permissionProvider = null;
-    }
-
-    @Reference(service = WidgetMetadataProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetWidgetMetadataProvider")
-    protected void setWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
+    void setWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
         this.widgetMetadataProvider = widgetMetadataProvider;
-        LOGGER.debug("WidgetMetadataProvider '{}' registered.", widgetMetadataProvider.getClass().getName());
     }
 
-    protected void unsetWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
-        this.widgetMetadataProvider = null;
-        LOGGER.debug("WidgetMetadataProvider '{}' registered.", widgetMetadataProvider.getClass().getName());
+    @Override
+    public WidgetMetadataProvider getWidgetMetadataProvider() {
+        return widgetMetadataProvider;
     }
 
     @Override
@@ -505,21 +448,4 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         return permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardUrl +
                 permissionSuffix));
     }
-
-
-    @Reference(
-            name = "IdPClient",
-            service = IdPClient.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetIdP"
-    )
-    protected void setIdP(IdPClient client) {
-        this.identityClient = client;
-    }
-
-    protected void unsetIdP(IdPClient client) {
-        this.identityClient = null;
-    }
-
 }
