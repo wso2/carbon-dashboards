@@ -21,7 +21,9 @@ import { Card, CardHeader, CardActions, RaisedButton, List, ListItem, SelectFiel
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import ReportGenerationButton from './ReportGenerationButton';
 import html2canvas from 'html2canvas';
+import PropTypes from "prop-types";
 
+const pageSizes = ['A4', 'Letter', 'Government-Letter'];
 
 export default class DashboardReportGenerationCard extends Component {
     constructor(props) {
@@ -38,8 +40,6 @@ export default class DashboardReportGenerationCard extends Component {
     }
 
     render() {
-        const pageSizes = ['A4', 'Letter', 'Government-Letter'];
-
         return (
             <Card
                 style={{ margin: 10 }}
