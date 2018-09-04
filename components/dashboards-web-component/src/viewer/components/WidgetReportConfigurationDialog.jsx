@@ -24,7 +24,7 @@ export default class WidgetReportConfigurationDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dialogOpen: false,
+            dialogOpen: this.props.dialog,
             includeTime: false,
         };
 
@@ -41,16 +41,19 @@ export default class WidgetReportConfigurationDialog extends Component {
         const docTitle = this.props.title;
         DashboardReportGenerator.generateWidgetPdf(element, docTitle, this.state.includeTime, this.state.includeRecords,
             this.props.themeName);
-        this.state.includeRecords = false;
-        this.state.includeTime = false;
+        this.setState({ includeRecords: false });
+        this.setState({ includeTime: false });
     }
 
     handleClose() {
+        this.props.dialog = false;
         this.setState({ dialogOpen: false });
+        this.props.resetDialog();
     }
 
     handleOpen() {
-        this.hasTable(this.props.widget);
+        const isTable = this.hasTable(this.props.widget);
+        this.setState({ recordCountEnabled: isTable });
         this.setState({ dialogOpen: true });
     }
 
@@ -64,9 +67,9 @@ export default class WidgetReportConfigurationDialog extends Component {
 
     hasTable(element) {
         if (element.innerHTML.search('rt-table') > -1) {
-            this.setState({ recordCountEnabled: true });
+            return true;
         } else {
-            this.setState({ recordCountEnabled: false });
+            return false;
         }
     }
 
@@ -83,6 +86,8 @@ export default class WidgetReportConfigurationDialog extends Component {
                 onClick={this.generateWidgetReport}
             />,
         ];
+
+        this.state.dialogOpen = this.props.dialog;
 
         return (
             <Dialog
@@ -111,4 +116,6 @@ WidgetReportConfigurationDialog.propTypes = {
     widget: PropTypes.object.isRequired,
     title: PropTypes.string.isRequired,
     themeName: PropTypes.string.isRequired,
+    dialog: PropTypes.bool.isRequired,
+    resetDialog: PropTypes.func.isRequired,
 };
