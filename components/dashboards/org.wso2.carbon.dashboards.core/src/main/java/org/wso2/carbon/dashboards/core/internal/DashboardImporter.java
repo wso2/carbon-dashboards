@@ -27,21 +27,13 @@ import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
-import org.wso2.carbon.dashboards.core.exception.DashboardDeploymentException;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.dashboards.core.internal.io.DashboardArtifactHandler;
 import org.wso2.carbon.utils.Utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
+import java.util.Map;
 
 /**
  * Dashboard importer component. This is used to import dashboards in {DASHBOARD_RUNTIME}/resources/dashboards directory
@@ -50,141 +42,87 @@ import java.util.Locale;
  * @since 4.2.8
  */
 public class DashboardImporter {
-    private static final Logger log = LoggerFactory.getLogger(DashboardImporter.class);
-    private static final String ARTIFACT_EXTENSION = "json";
-    private DashboardMetadataProvider dashboardMetadataProvider;
-    private WidgetMetadataProvider widgetMetadataProvider;
 
-    @Activate
-    protected void activate(BundleContext bundleContext) {
-        log.info("Dashboard importer activated.");
-        importDashboards();
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardImporter.class);
+
+    private final DashboardMetadataProvider dashboardMetadataProvider;
+    private final WidgetMetadataProvider widgetMetadataProvider;
+
+    public DashboardImporter(DashboardMetadataProvider dashboardMetadataProvider,
+                             WidgetMetadataProvider widgetMetadataProvider) {
+        this.dashboardMetadataProvider = dashboardMetadataProvider;
+        this.widgetMetadataProvider = widgetMetadataProvider;
     }
 
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        log.info("Dashboard importer deactivated.");
-    }
-
-    /**
-     * Import dashboard artifacts from {DASHBOARD_RUNTIME}/resources/dashboards directory.
-     */
-    private void importDashboards() {
-        Path resourcesDir = Utils.getRuntimePath().resolve(Paths.get("resources", "dashboards"));
-        File[] files = resourcesDir.toFile().listFiles(f -> ARTIFACT_EXTENSION.equals(getExtension(f.getName())));
-        if (files != null) {
-            for (File file : files) {
-                try {
-                    importDashboard(file);
-                } catch (DashboardDeploymentException e) {
-                    log.error(e.getMessage(), e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Import single dashboard artifact from the given file.
-     *
-     * @param file Dashboard artifact
-     * @throws DashboardDeploymentException
-     */
-    private void importDashboard(File file) throws DashboardDeploymentException {
-        InputStream inputStream = null;
+    public void importDashboards() {
+        Path path = Utils.getRuntimePath().resolve(Paths.get("resources", "dashboards"));
+        Map<String, DashboardArtifact> dashboardArtifacts;
         try {
-            inputStream = new FileInputStream(file);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,
-                    Charset.forName("UTF-8")));
-            DashboardArtifact dashboardArtifact = new Gson().fromJson(bufferedReader, DashboardArtifact.class);
-            if (dashboardArtifact != null) {
-                DashboardMetadata dashboard = dashboardArtifact.getDashboard();
+            dashboardArtifacts = DashboardArtifactHandler.readArtifactsIn(path);
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot read dashboard artifacts in '{}' to import.", path, e);
+            return;
+        }
 
-                log.info("Deploying dashboard '" + dashboard.getName() + "'...");
+        for (Map.Entry<String, DashboardArtifact> entry : dashboardArtifacts.entrySet()) {
+            DashboardArtifact dashboardArtifact = entry.getValue();
+            DashboardMetadata dashboard = dashboardArtifact.getDashboard();
+            String dashboardArtifactPath = entry.getKey();
+            boolean importedSuccessfully = true;
 
-                // Save the dashboard.
+            // Save the dashboard to DB.
+            try {
                 if (dashboardMetadataProvider.get(dashboard.getUrl()).isPresent()) {
                     dashboardMetadataProvider.update(dashboard);
                 } else {
                     dashboardMetadataProvider.add(dashboard);
                 }
-
-                // Notify missing custom widgets.
-                for (String widgetId : dashboardArtifact.getWidgets().getCustom()) {
-                    if (!widgetMetadataProvider.isWidgetPresent(widgetId, WidgetType.ALL)) {
-                        log.info("Widget '" + widgetId + "' not found. Please copy the widget.");
-                    }
-                }
-
-                // Deploy generated widgets if not available.
-                for (GeneratedWidgetConfigs widgetConfigs : dashboardArtifact.getWidgets().getGenerated()) {
-                    if (!widgetMetadataProvider.isWidgetPresent(widgetConfigs.getId(), WidgetType.ALL)) {
-                        log.info("Deploying widget '" + widgetConfigs.getId() + "'...");
-                        widgetMetadataProvider.addGeneratedWidgetConfigs(widgetConfigs);
-                    } else {
-                        log.info("Widget '" + widgetConfigs.getId() + "' is already deployed, hence skipping.");
-                    }
-                }
-
-                // Rename the dashboard json to prevent future deployments.
-                if (!file.renameTo(new File(file.getPath() + ".deployed"))) {
-                    log.warn("Error while renaming the dashboard artifact. The artifact will re-import in the next " +
-                            "server startup");
-                }
+            } catch (DashboardException e) {
+                LOGGER.warn("Cannot save dashboard importing from '{}' to the database.", dashboardArtifactPath, e);
+                continue;
             }
-        } catch (DashboardException e) {
-            throw new DashboardDeploymentException("Cannot import the dashboard.", e);
-        } catch (FileNotFoundException e) {
-            throw new DashboardDeploymentException("Cannot find the dashboard file.", e);
-        } finally {
-            if (inputStream != null) {
+
+            // Notify missing custom widgets.
+            for (String widgetId : dashboardArtifact.getWidgets().getCustom()) {
                 try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    throw new DashboardDeploymentException("Error while closing the dashboard artifact.", e);
+                    if (!widgetMetadataProvider.isWidgetPresent(widgetId, WidgetType.ALL)) {
+                        LOGGER.warn(
+                                "Widget '{}' does not exists. Please copy the widget to " +
+                                "'deployment/web-ui-apps/portal/extensions/widgets/' directory.",
+                                widgetId);
+                    }
+                } catch (DashboardException e) {
+                    LOGGER.warn(
+                            "Cannot check existence of custom widget '{}' which is included in the importing " +
+                            "dashboard '{}'.",
+                            widgetId, dashboardArtifactPath, e);
+                    importedSuccessfully = false;
                 }
             }
+
+            // Deploy generated widgets if not available.
+            for (GeneratedWidgetConfigs widgetConfigs : dashboardArtifact.getWidgets().getGenerated()) {
+                String widgetId = widgetConfigs.getId();
+                try {
+                    if (!widgetMetadataProvider.isWidgetPresent(widgetId, WidgetType.ALL)) {
+                        widgetMetadataProvider.addGeneratedWidgetConfigs(widgetConfigs);
+                        LOGGER.debug("Successfully imported generated widget '{}' from dashboard '{}'.", widgetId,
+                                     dashboardArtifactPath);
+                    } else {
+                        LOGGER.debug("Generated widget '{}' is already deployed, hence skipping.", widgetId);
+                    }
+                } catch (DashboardException e) {
+                    LOGGER.warn(
+                            "Cannot load generated widget '{}' which is included in the importing dashboard '{}'. " +
+                            "Hence, dashboard will be imported partially.",
+                            widgetId, dashboardArtifactPath, e);
+                    importedSuccessfully = false;
+                }
+            }
+
+            DashboardArtifactHandler.markArtifactAsImported(dashboardArtifactPath);
+            LOGGER.info("{} imported dashboard '{}' from '{}'.", (importedSuccessfully ? "Successfully" : "Partially"),
+                        dashboard.getUrl(), dashboardArtifactPath);
         }
-    }
-
-    /**
-     * Get extension from the given file name.
-     *
-     * @param name Name of the file
-     * @return Extension
-     */
-    private String getExtension(String name) {
-        int pos = name.lastIndexOf('.');
-        if (pos > 0 && pos < name.length()) {
-            return name.toLowerCase(Locale.ROOT).substring(pos + 1);
-        }
-        return "";
-    }
-
-    @Reference(service = DashboardMetadataProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetDashboardMetadataProvider")
-    protected void setDashboardMetadataProvider(DashboardMetadataProvider dashboardMetadataProvider) {
-        this.dashboardMetadataProvider = dashboardMetadataProvider;
-        log.debug("DashboardMetadataProvider '{}' registered.", dashboardMetadataProvider.getClass().getName());
-    }
-
-    protected void unsetDashboardMetadataProvider(DashboardMetadataProvider dashboardMetadataProvider) {
-        this.dashboardMetadataProvider = null;
-        log.debug("DashboardMetadataProvider '{}' registered.", dashboardMetadataProvider.getClass().getName());
-    }
-
-    @Reference(service = WidgetMetadataProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetWidgetMetadataProvider")
-    protected void setWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
-        this.widgetMetadataProvider = widgetMetadataProvider;
-        log.debug("WidgetMetadataProvider '{}' registered.", widgetMetadataProvider.getClass().getName());
-    }
-
-    protected void unsetWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
-        this.widgetMetadataProvider = null;
-        log.debug("WidgetMetadataProvider '{}' registered.", widgetMetadataProvider.getClass().getName());
     }
 }
