@@ -34,13 +34,6 @@ import java.util.Collections;
 public class WidgetMetadataProviderImplTest {
 
     @Test
-    void testSetDashboardApp() {
-        WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
-        Assertions.assertThrows(NullPointerException.class,
-                                () -> widgetInfoProvider.setDashboardApp(null));
-    }
-
-    @Test
     void testGetWidgetConfigurationOfAbsentWidget() throws DashboardException {
         WidgetMetadataProviderImpl widgetInfoProvider = createWidgetInfoProvider();
         Assertions.assertFalse(widgetInfoProvider.getWidgetConfiguration("table").isPresent(),

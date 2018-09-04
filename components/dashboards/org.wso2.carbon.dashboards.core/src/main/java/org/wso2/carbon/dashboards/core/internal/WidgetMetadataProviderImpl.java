@@ -107,7 +107,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
             widgetMetaInfo.setConfigs(widgetConfigs);
             return Optional.ofNullable(widgetMetaInfo);
         } else {
-            return getDashboardApp().getExtension(EXTENSION_TYPE_WIDGETS, widgetId)
+            return dashboardApp.getExtension(EXTENSION_TYPE_WIDGETS, widgetId)
                     .map(WidgetConfigurationReader::getConfiguration);
         }
     }
@@ -161,7 +161,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
     @Override
     public Set<WidgetMetaInfo> getAllWidgetConfigurations() throws DashboardException {
-        Set<WidgetMetaInfo> widgetMetaInfoSet = getDashboardApp().getExtensions(EXTENSION_TYPE_WIDGETS).stream()
+        Set<WidgetMetaInfo> widgetMetaInfoSet = dashboardApp.getExtensions(EXTENSION_TYPE_WIDGETS).stream()
                 .map(WidgetConfigurationReader::getConfiguration)
                 .collect(Collectors.toSet());
         if (isDaoInitialized) {
@@ -191,40 +191,5 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
     @Override
     public void delete(String widgetId) throws DashboardException {
         widgetMetadataDao.delete(widgetId);
-    }
-
-    @Override
-    public void setDashboardApp(App dashboardApp) {
-        Objects.requireNonNull(dashboardApp, "Dashboard portal web app cannot be null.");
-        this.dashboardApp = dashboardApp;
-    }
-
-    @Override
-    public App getDashboardApp() {
-        return dashboardApp;
-    }
-
-    @Reference(service = DataSourceService.class,
-               cardinality = ReferenceCardinality.AT_LEAST_ONE,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetDataSourceService")
-    protected void setDataSourceService(DataSourceService dataSourceService) {
-        this.dataSourceService = dataSourceService;
-    }
-
-    protected void unsetDataSourceService(DataSourceService dataSourceService) {
-        this.dataSourceService = null;
-    }
-
-    @Reference(service = ConfigProvider.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetConfigProvider")
-    protected void setConfigProvider(ConfigProvider configProvider) {
-        this.configProvider = configProvider;
-    }
-
-    protected void unsetConfigProvider(ConfigProvider configProvider) {
-        this.configProvider = null;
     }
 }
