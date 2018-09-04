@@ -87,8 +87,7 @@ export default class ReportGenerationButton extends Component {
     }
 
     generateDashboardReport() {
-        this.handleClose();
-        const title = document.getElementsByTagName('h1')[0].innerText;
+        const title = this.props.dashboardName;
         DashboardReportGenerator.generateDashboardPdf(this.props.pageSize.toLowerCase(), this.props.pageList,
             this.state.includeTime, title);
         this.state.includeRecords = false;
@@ -100,4 +99,5 @@ ReportGenerationButton.propTypes = {
     pageSize: PropTypes.string.isRequired,
     pageList: PropTypes.array.isRequired,
     pages: PropTypes.array.isRequired,
+    dashboardName: PropTypes.string.isRequired,
 };
