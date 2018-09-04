@@ -361,11 +361,10 @@ export default class DashboardReportGenerator {
             canvas = canvas.imageData;
         }
         const xPosition = (pdf.internal.pageSize.getWidth() - resizeDimensions.width) / 2;
-        let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height - 50) / 2;
-        if (yPosition < 40) {
-            yPosition += 85;
+        let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height - 70) / 2;
+        if (yPosition < 70) {
+            yPosition += 70;
         }
-        alert(yPosition);
         pdf.addImage(canvas, 'PNG', xPosition, yPosition, resizeDimensions.width, resizeDimensions.height);
     }
 
@@ -392,10 +391,7 @@ export default class DashboardReportGenerator {
                 printHeight /= k;
                 printWidth /= k;
             }
-
-            alert(printHeight + ' :: ' + printWidth);
         }
-
         return { width: printWidth, height: printHeight };
     }
 

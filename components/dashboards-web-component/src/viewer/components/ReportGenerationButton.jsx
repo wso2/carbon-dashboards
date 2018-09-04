@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, RaisedButton, FlatButton, Dialog, CircularProgress } from 'material-ui';
+import { Checkbox, RaisedButton, FlatButton, Dialog } from 'material-ui';
 import DashboardReportGenerator from '../../utils/DashboardReportGenerator';
 
 export default class ReportGenerationButton extends Component {
@@ -48,12 +48,6 @@ export default class ReportGenerationButton extends Component {
                 onClick={this.generateDashboardReport}
             />,
         ];
-
-        const customStatusDailogStyle = {
-            width: 400,
-            maxWidth: 'none',
-            position: 'relative',
-        };
 
         return (
             <div>
@@ -95,10 +89,8 @@ export default class ReportGenerationButton extends Component {
     generateDashboardReport() {
         this.handleClose();
         const title = document.getElementsByTagName('h1')[0].innerText;
-
         DashboardReportGenerator.generateDashboardPdf(this.props.pageSize.toLowerCase(), this.props.pageList,
             this.state.includeTime, title);
-
         this.state.includeRecords = false;
         this.state.includeTime = false;
     }

@@ -19,7 +19,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import 'golden-layout/src/css/goldenlayout-base.css';
-import { Dialog, FlatButton, Checkbox } from 'material-ui';
 
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
@@ -32,7 +31,7 @@ import '../../common/styles/custom-goldenlayout-light-theme.css';
 import glLightTheme from '!!css-loader!../../common/styles/custom-goldenlayout-light-theme.css';
 import './dashboard-container-styles.css';
 
-import DashboardReportGenerator from '../../utils/DashboardReportGenerator';
+import WidgetReportConfigurationDialog from './WidgetReportConfigurationDialog';
 
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
@@ -44,7 +43,7 @@ export default class DashboardRenderer extends Component {
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
-            height: window.innerHeight
+            height: window.innerHeight,
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -54,12 +53,6 @@ export default class DashboardRenderer extends Component {
         this.onWidgetLoadedEvent = this.onWidgetLoadedEvent.bind(this);
         this.onGoldenLayoutComponentAddEvent = this.onGoldenLayoutComponentAddEvent.bind(this);
         this.unmounted = false;
-
-        this.handleClose = this.handleClose.bind(this);
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleIncludeGenerateTime = this.handleIncludeGenerateTime.bind(this);
-        this.handleIncludeNoOfRecords = this.handleIncludeNoOfRecords.bind(this);
-        this.generateWidgetReport = this.generateWidgetReport.bind(this);
     }
 
     handleWindowResize() {
@@ -101,7 +94,10 @@ export default class DashboardRenderer extends Component {
         if (this.state.dialogOpen !== nextState.dialogOpen) {
             return true;
         }
-        if (this.state.recordCountEnabled !== nextState.recordCountEnabled) {
+        if (this.state.widget !== nextState.widget) {
+            return true;
+        }
+        if (this.state.title !== nextState.title) {
             return true;
         }
 
@@ -109,7 +105,7 @@ export default class DashboardRenderer extends Component {
     }
 
     render() {
-        let { theme, height } = this.props;
+        let {theme, height} = this.props;
 
         // Calculate optimal dashboard height for the current screen.
         const containerHeight = this.state.height - 55;
@@ -117,25 +113,6 @@ export default class DashboardRenderer extends Component {
             height = parseInt(height);
         }
         height = height && height > containerHeight ? height : containerHeight;
-
-        const dialogActions = [
-            <FlatButton
-                label='Cancel'
-                primary
-                onClick={this.handleClose}
-            />,
-            <FlatButton
-                label='Generate Report'
-                primary
-                onClick={this.generateWidgetReport}
-            />,
-        ];
-
-        const customStatusDailogStyle = {
-            width: 400,
-            maxWidth: 'none',
-            position: 'relative',
-        };
 
         return (
             <div>
@@ -158,24 +135,12 @@ export default class DashboardRenderer extends Component {
                         }}
                     />
                 </div>
-                <Dialog
-                    title='Select PDF options'
-                    actions={dialogActions}
-                    modal
-                    open={this.state.dialogOpen}
-                >
-                    <Checkbox
-                        label='Include report genetation time'
-                        onClick={this.handleIncludeGenerateTime}
-                    />
-
-                    {(this.state.recordCountEnabled) && (
-                        <Checkbox
-                            label='Include number of records'
-                            onClick={this.handleIncludeNoOfRecords}
-                        />
-                    )}
-                </Dialog>
+                <WidgetReportConfigurationDialog
+                    widget={this.state.widget}
+                    title={this.state.title}
+                    themeName={this.props.theme.name}
+                    ref={'widgetReportConfigurationDialog'}
+                />
             </div>
         );
     }
@@ -220,49 +185,16 @@ export default class DashboardRenderer extends Component {
         }
     }
 
-    generateWidgetReport() {
-        this.handleClose();
-        const element = this.state.widget;
-        const docTitle = this.state.title;
-        DashboardReportGenerator.generateWidgetPdf(element, docTitle, this.state.includeTime, this.state.includeRecords,
-            this.props.theme.name);
-        this.state.includeRecords = false;
-        this.state.includeTime = false;
-    }
-
     onGoldenLayoutComponentAddEvent(component) {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
         exportButton.className = 'fw fw-pdf widget-report-generation-button';
         exportButton.addEventListener('click', () => {
-            const selectedElement = component.element[0];
-            if (selectedElement.innerHTML.search('rt-table') > -1) {
-                this.setState({ recordCountEnabled: true });
-            } else {
-                this.setState({ recordCountEnabled: false });
-            }
-            this.handleOpen();
-            this.state.widget = component.element[0];
-            this.state.title = component.config.title;
+            this.setState({ widget: component.element[0] });
+            this.setState({ title: component.config.title });
+            this.refs.widgetReportConfigurationDialog.handleOpen();
         });
-
         component.parent.header.controlsContainer.prepend(exportButton);
-    }
-
-    handleClose() {
-        this.setState({ dialogOpen: false });
-    }
-
-    handleOpen() {
-        this.setState({ dialogOpen: true });
-    }
-
-    handleIncludeGenerateTime() {
-        this.setState({ includeTime: !this.state.includeTime });
-    }
-
-    handleIncludeNoOfRecords() {
-        this.setState({ includeRecords: !this.state.includeRecords });
     }
 }
 

@@ -39,7 +39,7 @@ import PortalButton from '../common/PortalButton';
 import ThemeButton from './components/ThemeButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
 import '../utils/GoldenLayoutOverrides.css';
-import DashboardExportCard from './components/DashboardExportCard';
+import DashboardReportGenerationCard from './components/DashboardReportGenerationCard';
 
 const SelectableList = makeSelectable(List);
 
@@ -208,7 +208,7 @@ class DashboardViewPage extends Component {
                 </SelectableList>
                 <br />
                 <Divider />
-                <DashboardExportCard
+                <DashboardReportGenerationCard
                     pages={this.dashboard.pages}
                 />
             </Drawer>

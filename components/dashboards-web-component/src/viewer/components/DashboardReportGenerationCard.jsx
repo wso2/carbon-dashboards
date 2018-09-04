@@ -23,7 +23,7 @@ import ReportGenerationButton from './ReportGenerationButton';
 import html2canvas from 'html2canvas';
 
 
-export default class DashboardExportCard extends Component {
+export default class DashboardReportGenerationCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
