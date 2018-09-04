@@ -21,10 +21,13 @@ package org.wso2.carbon.dashboards.core.internal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDao;
 import org.wso2.carbon.uiserver.api.App;
 import org.wso2.carbon.uiserver.api.Extension;
 
 import java.util.Collections;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Test cases for {@link WidgetMetadataProviderImpl} class.
@@ -53,13 +56,6 @@ public class WidgetMetadataProviderImplTest {
         Assertions.assertEquals(1, widgetInfoProvider.getAllWidgetConfigurations().size());
     }
 
-    @Test
-    void testOthers() {
-        WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
-        widgetInfoProvider.activate(null);
-        widgetInfoProvider.deactivate(null);
-    }
-
     private static App createPortalApp() {
         Extension chartWidget = new Extension("LineChart", "widgets", "src/test/resources/LineChart");
         return new App("portal", "/portal", Collections.emptySortedSet(), Collections.singleton(chartWidget),
@@ -68,8 +64,7 @@ public class WidgetMetadataProviderImplTest {
 
     private static WidgetMetadataProviderImpl createWidgetInfoProvider() {
         App portalApp = createPortalApp();
-        WidgetMetadataProviderImpl widgetInfoProvider = new WidgetMetadataProviderImpl();
-        widgetInfoProvider.setDashboardApp(portalApp);
-        return widgetInfoProvider;
+        WidgetMetadataDao dao = mock(WidgetMetadataDao.class);
+        return new WidgetMetadataProviderImpl(portalApp, dao);
     }
 }

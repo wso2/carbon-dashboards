@@ -17,34 +17,22 @@
  */
 package org.wso2.carbon.dashboards.core.internal;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
+import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
+import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
 import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDao;
 import org.wso2.carbon.dashboards.core.internal.database.WidgetMetadataDaoFactory;
 import org.wso2.carbon.dashboards.core.internal.io.WidgetConfigurationReader;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.uiserver.api.App;
-import org.wso2.carbon.utils.Utils;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,45 +42,34 @@ import java.util.stream.Collectors;
  *
  * @since 4.0.0
  */
-@Component(service = WidgetMetadataProvider.class,
-           immediate = true)
 public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WidgetMetadataProviderImpl.class);
     private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
 
-    private WidgetMetadataDao widgetMetadataDao;
-    private DataSourceService dataSourceService;
-    private ConfigProvider configProvider;
-    private boolean isDaoInitialized = false;
+    private final App dashboardApp;
+    private final WidgetMetadataDao widgetMetadataDao;
 
-    private App dashboardApp;
-
-    @Activate
-    protected void activate(BundleContext bundleContext) {
+    public WidgetMetadataProviderImpl(App dashboardApp, DataSourceService dataSourceService,
+                                      DashboardConfigurations dashboardConfigurations) {
+        this.dashboardApp = dashboardApp;
         try {
-            if (dataSourceService != null && configProvider != null) {
-                this.widgetMetadataDao = WidgetMetadataDaoFactory.createDao(dataSourceService, configProvider);
-                this.widgetMetadataDao.initWidgetTable();
-                this.isDaoInitialized = true;
-            }
+            this.widgetMetadataDao = WidgetMetadataDaoFactory.createDao(dataSourceService, dashboardConfigurations);
+            this.widgetMetadataDao.initWidgetTable();
         } catch (DashboardException e) {
-            //ignore as its required to start with default widget extension loading.
-            LOGGER.debug("Error in activating widget DAO {}", e.getMessage());
+            throw new DashboardRuntimeException("Cannot create widget DAO for DB access.", e);
         }
-        LOGGER.debug("{} activated.", this.getClass().getName());
     }
 
-    @Deactivate
-    protected void deactivate(BundleContext bundleContext) {
-        LOGGER.debug("{} deactivated.", this.getClass().getName());
+    WidgetMetadataProviderImpl(App dashboardApp, WidgetMetadataDao dao) {
+        this.dashboardApp = dashboardApp;
+        this.widgetMetadataDao = dao;
     }
 
     @Override
     public Optional<WidgetMetaInfo> getWidgetConfiguration(String widgetId) throws DashboardException {
-        GeneratedWidgetConfigs generatedWidgetConfigs = isDaoInitialized ? widgetMetadataDao
-                .getGeneratedWidgetConfigsForId(widgetId) : null;
+        GeneratedWidgetConfigs generatedWidgetConfigs = widgetMetadataDao.getGeneratedWidgetConfigsForId(widgetId);
         if (generatedWidgetConfigs != null) {
             WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
             WidgetConfigs widgetConfigs = new WidgetConfigs();
@@ -164,20 +141,18 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
         Set<WidgetMetaInfo> widgetMetaInfoSet = dashboardApp.getExtensions(EXTENSION_TYPE_WIDGETS).stream()
                 .map(WidgetConfigurationReader::getConfiguration)
                 .collect(Collectors.toSet());
-        if (isDaoInitialized) {
-            Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdSet();
-            for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
-                WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
-                WidgetConfigs widgetConfigs = new WidgetConfigs();
-                widgetMetaInfo.setId(generatedWidgetConfigs.getId());
-                widgetMetaInfo.setName(generatedWidgetConfigs.getName());
-                widgetConfigs.setPubsub(generatedWidgetConfigs.getPubsub());
-                widgetConfigs.setMetadata(generatedWidgetConfigs.getMetadata());
-                widgetConfigs.setGenerated(true);
-                widgetMetaInfo.setVersion(generatedWidgetConfigs.getVersion());
-                widgetMetaInfo.setConfigs(widgetConfigs);
-                widgetMetaInfoSet.add(widgetMetaInfo);
-            }
+        Set<GeneratedWidgetConfigs> generatedWidgetConfigsSet = widgetMetadataDao.getGeneratedWidgetIdSet();
+        for (GeneratedWidgetConfigs generatedWidgetConfigs : generatedWidgetConfigsSet) {
+            WidgetMetaInfo widgetMetaInfo = new WidgetMetaInfo();
+            WidgetConfigs widgetConfigs = new WidgetConfigs();
+            widgetMetaInfo.setId(generatedWidgetConfigs.getId());
+            widgetMetaInfo.setName(generatedWidgetConfigs.getName());
+            widgetConfigs.setPubsub(generatedWidgetConfigs.getPubsub());
+            widgetConfigs.setMetadata(generatedWidgetConfigs.getMetadata());
+            widgetConfigs.setGenerated(true);
+            widgetMetaInfo.setVersion(generatedWidgetConfigs.getVersion());
+            widgetMetaInfo.setConfigs(widgetConfigs);
+            widgetMetaInfoSet.add(widgetMetaInfo);
         }
         return widgetMetaInfoSet;
     }
