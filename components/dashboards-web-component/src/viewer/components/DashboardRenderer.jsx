@@ -135,6 +135,9 @@ export default class DashboardRenderer extends Component {
             if (typeof isHeaderShown != 'undefined'){
                 widgetContent.header.show = isHeaderShown;
             }
+            if (widgetContent.displayName) {
+                widgetContent.title = widgetContent.displayName;
+            }
         });
 
         const goldenLayout = GoldenLayoutFactory.createForViewer(dashboardContainerId, goldenLayoutContents);

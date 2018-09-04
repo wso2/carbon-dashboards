@@ -138,6 +138,9 @@ export default class WidgetRenderer extends Component {
 
     handleWidgetConfigUpdate(newConfig) {
         if (this.props.id === newConfig.props.id) {
+            if (newConfig.props.configs.options.headerTitle) {
+                newConfig.displayName = newConfig.props.configs.options.headerTitle;
+            }
             this.setState({ reRenderWidget: true });
         }
     }
