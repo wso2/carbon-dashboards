@@ -40,7 +40,7 @@ export default class WidgetReportConfigurationDialog extends Component {
         const element = this.props.widget;
         const docTitle = this.props.title;
         DashboardReportGenerator.generateWidgetPdf(element, docTitle, this.state.includeTime, this.state.includeRecords,
-            this.props.themeName);
+            this.props.themeName, this.props.dashboardName);
         this.setState({ includeRecords: false });
         this.setState({ includeTime: false });
     }
@@ -118,4 +118,5 @@ WidgetReportConfigurationDialog.propTypes = {
     themeName: PropTypes.string.isRequired,
     dialog: PropTypes.bool.isRequired,
     resetDialog: PropTypes.func.isRequired,
+    dashboardName: PropTypes.string.isRequired,
 };

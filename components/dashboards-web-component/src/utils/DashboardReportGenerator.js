@@ -36,11 +36,9 @@ export default class DashboardReportGenerator {
      * @param {boolean} includeTime add the report generation time
      * @param {boolean} includeRecords add the number of records
      * @param {string} themeName name of the current theme
+     * @param {string} dashboardName name of the dashboard
      */
-    static generateWidgetPdf(element, widgetName, includeTime, includeRecords, themeName) {
-        // Gets the document title from HTML and adds that in the center of the front page
-        const dashboardName = (document.getElementsByTagName('h1')[0].innerText) + ' : ';
-
+    static generateWidgetPdf(element, widgetName, includeTime, includeRecords, themeName, dashboardName) {
         if (DashboardReportGenerator.containsTable(element)) {
             DashboardReportGenerator.createTablePdf(element, widgetName, includeTime, includeRecords,
                 dashboardName, themeName);

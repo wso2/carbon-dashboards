@@ -210,6 +210,7 @@ class DashboardViewPage extends Component {
                 <Divider />
                 <DashboardReportGenerationCard
                     pages={this.dashboard.pages}
+                    dashboardName={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
                 />
             </Drawer>
         );
@@ -276,6 +277,7 @@ class DashboardViewPage extends Component {
                     goldenLayoutContents={page.content}
                     height={page.height}
                     theme={theme}
+                    dashboardName={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
                 />
             );
         } else {
