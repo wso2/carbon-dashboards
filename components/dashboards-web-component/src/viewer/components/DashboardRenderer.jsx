@@ -54,6 +54,7 @@ export default class DashboardRenderer extends Component {
         this.onWidgetLoadedEvent = this.onWidgetLoadedEvent.bind(this);
         this.onGoldenLayoutComponentAddEvent = this.onGoldenLayoutComponentAddEvent.bind(this);
         this.unmounted = false;
+        this.resetDialog = this.resetDialog.bind(this);
     }
 
     handleWindowResize() {
@@ -101,6 +102,9 @@ export default class DashboardRenderer extends Component {
         if (this.state.title !== nextState.title) {
             return true;
         }
+        if (this.state.dialog !== nextState.dialog) {
+            return true;
+        }
 
         return false;
     }
@@ -140,7 +144,8 @@ export default class DashboardRenderer extends Component {
                     widget={this.state.widget}
                     title={this.state.title}
                     themeName={this.props.theme.name}
-                    ref={'widgetReportConfigurationDialog'}
+                    dialog={this.state.dialog}
+                    resetDialog={this.resetDialog}
                 />
             </div>
         );
@@ -193,9 +198,13 @@ export default class DashboardRenderer extends Component {
         exportButton.addEventListener('click', () => {
             this.setState({ widget: component.element[0] });
             this.setState({ title: component.config.title });
-            this.refs.widgetReportConfigurationDialog.handleOpen();
+            this.setState({ dialog: true });
         });
         component.parent.header.controlsContainer.prepend(exportButton);
+    }
+
+    resetDialog() {
+        this.setState({ dialog: false });
     }
 }
 

@@ -523,3 +523,4 @@ export default class DashboardReportGenerator {
         }
     }
 }
+

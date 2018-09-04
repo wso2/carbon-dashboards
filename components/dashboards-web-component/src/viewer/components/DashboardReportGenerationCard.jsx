@@ -58,10 +58,9 @@ export default class DashboardReportGenerationCard extends Component {
                         <List>
                             {this.state.pageList.map(field =>
                                 (<ListItem
-primaryText={
-                                    field}
+                                    primaryText={field}
                                     rightIcon={<DeleteIcon />}
-                                onClick={() => this.removePage(field)}
+                                    onClick={() => this.removePage(field)}
                                 />),
                             )}
                         </List>
@@ -71,7 +70,6 @@ primaryText={
                             floatingLabelText='Page Size'
                             value={this.state.pageSize}
                             onChange={(event, index, value) => { this.setState({ pageSize: value }); }}
-
                         >
                             {pageSizes.map(field =>
                                 (
@@ -91,7 +89,6 @@ primaryText={
                     </div>
                 </CardActions>
             </Card>
-
         );
     }
 
@@ -122,7 +119,7 @@ primaryText={
             const imgData = canvas.toDataURL('image/png');
             const w = canvas.width;
             const h = canvas.height;
-            localStorage.setItem(currentPage.name, JSON.stringify({ imageData: imgData, width: w, height: h }));
+            localStorage.setItem('_dashboard-report:'+currentPage.name, JSON.stringify({ imageData: imgData, width: w, height: h }));
 
             const tempPageList = this.state.pageList.slice();
             tempPageList.push(currentPage.name);
