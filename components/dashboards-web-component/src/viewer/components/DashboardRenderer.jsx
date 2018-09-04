@@ -132,7 +132,9 @@ export default class DashboardRenderer extends Component {
 
         GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             let isHeaderShown = _.get(widgetContent, 'props.configs.options.header');
-            widgetContent.header.show = isHeaderShown;
+            if (typeof isHeaderShown != 'undefined'){
+                widgetContent.header.show = isHeaderShown;
+            }
         });
 
         const goldenLayout = GoldenLayoutFactory.createForViewer(dashboardContainerId, goldenLayoutContents);
