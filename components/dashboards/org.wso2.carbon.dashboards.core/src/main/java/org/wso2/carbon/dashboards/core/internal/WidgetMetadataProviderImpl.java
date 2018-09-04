@@ -17,8 +17,6 @@
  */
 package org.wso2.carbon.dashboards.core.internal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
@@ -44,8 +42,6 @@ import java.util.stream.Collectors;
  */
 public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WidgetMetadataProviderImpl.class);
-    private static final String APP_NAME_DASHBOARD = "portal";
     private static final String EXTENSION_TYPE_WIDGETS = "widgets";
 
     private final App dashboardApp;
