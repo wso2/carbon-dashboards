@@ -18,9 +18,9 @@
 package org.wso2.carbon.dashboards.core;
 
 import org.wso2.carbon.analytics.permissions.bean.Role;
+import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
-import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.util.List;
@@ -110,6 +110,6 @@ public interface DashboardMetadataProvider {
      */
     DashboardArtifact exportDashboard(String dashboardUrl) throws DashboardException;
 
-    ReportConfigs getReportGenerationConfigurations() throws DashboardException;
+    DashboardConfigurations getReportGenerationConfigurations();
 
 }

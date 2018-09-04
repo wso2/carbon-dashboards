@@ -63,7 +63,7 @@ public class DashboardConfigurations {
     }
 
     /**
-     * Get map of report generation configuration configs
+     * Get map of report generation configuration configs.
      *
      * @return
      */

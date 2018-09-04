@@ -111,16 +111,16 @@ public class DashboardRestApi implements Microservice {
     public Response get(@PathParam("id") String id, @Context Request request) {
         try {
             return dashboardDataProvider.getDashboardByUser(getUserName(request), id,
-                                                            request.getHeader("X-Dashboard-Origin-Component")).map(
+                    request.getHeader("X-Dashboard-Origin-Component")).map(
                     metadata ->
                             Response.ok().entity(metadata).build())
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + id + "'.").build());
         } catch (UnauthorizedException e) {
             return Response.status(FORBIDDEN).entity("Insufficient permissions to retrieve dashboard with ID : " +
-                                                        id).build();
+                    id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when retrieving" +
-                                       " dashboard for ID %s.", replaceCRLFCharacters(id)), e);
+                    " dashboard for ID %s.", replaceCRLFCharacters(id)), e);
             return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
         }
     }
@@ -150,7 +150,7 @@ public class DashboardRestApi implements Microservice {
         } catch (DashboardException e) {
             // TODO: 12/7/17
             LOGGER.error("An error occurred when creating a new dashboard from {} data.",
-                         replaceCRLFCharacters(dashboardMetadata.toString()), e);
+                    replaceCRLFCharacters(dashboardMetadata.toString()), e);
             return Response.serverError()
                     .entity("Cannot create a new dashboard from '" + dashboardMetadata + "'.").build();
         }
@@ -173,7 +173,7 @@ public class DashboardRestApi implements Microservice {
             return Response.ok().build();
         } catch (UnauthorizedException e) {
             return Response.status(FORBIDDEN).entity("Insufficient permissions to update the dashboard with ID : " +
-                                                        dashboardMetadata.getUrl()).build();
+                    dashboardMetadata.getUrl()).build();
         } catch (DashboardException e) {
             LOGGER.error("An error occurred when updating dashboard '{}' with {} data.", id, dashboardMetadata, e);
             return Response.serverError().entity("Cannot update dashboard '" + id + "'.").build();
@@ -194,10 +194,10 @@ public class DashboardRestApi implements Microservice {
             return Response.ok().build();
         } catch (UnauthorizedException e) {
             return Response.status(FORBIDDEN).entity("Insufficient permissions to delete the dashboard with ID : "
-                                                        + id).build();
+                    + id).build();
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when deleting dashboard %s",
-                                       replaceCRLFCharacters(id)), e);
+                    replaceCRLFCharacters(id)), e);
             return Response.serverError().entity("Cannot delete dashboard '" + id + "'.").build();
         }
     }
@@ -262,7 +262,7 @@ public class DashboardRestApi implements Microservice {
             return Response.ok().build();
         } catch (UnauthorizedException e) {
             return Response.status(FORBIDDEN).entity("Insufficient permissions to update the roles of dashboard " +
-                                                        "with ID : " + url).build();
+                    "with ID : " + url).build();
         } catch (DashboardException e) {
             LOGGER.error("Cannot update user roles of dashboard '" + replaceCRLFCharacters(url) + "'.", e);
             return Response.serverError()
@@ -274,15 +274,14 @@ public class DashboardRestApi implements Microservice {
     /**
      * Get dashboard with widget definitions.
      * URL: https://localhost:9643/portal/apis/dashboards/<DASHBOARD_URL>/export
-     *
+     * <p>
      * To download the dashboard as an attachment,
      * URL: https://localhost:9643/portal/apis/dashboards/<DASHBOARD_URL>/export?download=true
      *
-     * @since 4.0.29
-     *
-     * @param url Dashboard URL
+     * @param url      Dashboard URL
      * @param download Flag to download as an attachment
      * @return Dashboard JSON
+     * @since 4.0.29
      */
     @GET
     @Path("/{url}/export")
@@ -324,16 +323,12 @@ public class DashboardRestApi implements Microservice {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReportConfigs(@PathParam("type") String type) {
-        try {
-            ReportConfigs configurations = dashboardDataProvider.getReportGenerationConfigurations();
-            Map<String, Object> reportConfigurations = Collections.emptyMap();
-            if (type.equals("pdf")) {
-                reportConfigurations = configurations.getPdf();
-            }
-            return Response.ok().entity(GSON.toJson(reportConfigurations)).build();
-        } catch (DashboardException e) {
-            LOGGER.error("Cannot retrieve footer image for pdf '", e);
-            return Response.serverError().entity("Cannot retrieve footer image for pdf '").build();
+        ReportConfigs configurations = dashboardDataProvider.getReportGenerationConfigurations().getReportConfigs();
+        Map<String, Object> reportConfigurations = Collections.emptyMap();
+        if (type.equals("pdf")) {
+            reportConfigurations = configurations.getPdf();
         }
+        return Response.ok().entity(reportConfigurations).build();
+
     }
 }

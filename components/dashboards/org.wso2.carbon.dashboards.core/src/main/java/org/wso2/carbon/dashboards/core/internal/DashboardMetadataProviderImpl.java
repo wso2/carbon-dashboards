@@ -47,7 +47,6 @@ import org.wso2.carbon.dashboards.core.bean.importer.Page;
 import org.wso2.carbon.dashboards.core.bean.importer.PageContent;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetCollection;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
-import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.DashboardRuntimeException;
@@ -524,8 +523,8 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public ReportConfigs getReportGenerationConfigurations() {
-        return this.dashboardConfigurations.getReportConfigs();
+    public DashboardConfigurations getReportGenerationConfigurations() {
+        return this.dashboardConfigurations;
     }
 
 }
