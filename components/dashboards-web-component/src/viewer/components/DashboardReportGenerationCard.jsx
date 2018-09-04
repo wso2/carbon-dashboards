@@ -127,3 +127,8 @@ export default class DashboardReportGenerationCard extends Component {
         });
     }
 }
+
+DashboardReportGenerationCard.propTypes = {
+    pages: PropTypes.array.isRequired,
+    dashboardName: PropTypes.string.isRequired,
+};
