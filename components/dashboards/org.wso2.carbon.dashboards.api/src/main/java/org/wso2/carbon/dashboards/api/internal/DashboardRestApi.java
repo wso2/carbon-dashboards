@@ -34,6 +34,7 @@ import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
@@ -64,6 +65,7 @@ public class DashboardRestApi implements Microservice {
 
     public static final String API_CONTEXT_PATH = "/apis/dashboards";
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApi.class);
+    private static final Gson GSON = new Gson();
 
     private final DashboardMetadataProvider dashboardDataProvider;
 
@@ -324,12 +326,11 @@ public class DashboardRestApi implements Microservice {
     public Response getReportConfigs(@PathParam("type") String type) {
         try {
             ReportConfigs configurations = dashboardDataProvider.getReportGenerationConfigurations();
-            Map<String, Object> reportConfigurations;
-            if (type == 'pdf') {
+            Map<String, Object> reportConfigurations = Collections.emptyMap();
+            if (type.equals("pdf")) {
                 reportConfigurations = configurations.getPdf();
             }
-            Gson data = new Gson();
-            return Response.ok().entity(data.toJson(reportConfigurations)).build();
+            return Response.ok().entity(GSON.toJson(reportConfigurations)).build();
         } catch (DashboardException e) {
             LOGGER.error("Cannot retrieve footer image for pdf '", e);
             return Response.serverError().entity("Cannot retrieve footer image for pdf '").build();
