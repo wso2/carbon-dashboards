@@ -64,12 +64,12 @@ public class DashboardRestApiProvider implements RestApiProvider {
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetDashboardMetadataProvider")
     protected void setDashboardMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
-        this.dashboardDataProvider = dashboardDataProvider;
+        this.dashboardMetadataProvider = dashboardDataProvider;
         LOGGER.debug("DashboardMetadataProvider '{}' registered.", dashboardDataProvider.getClass().getName());
     }
 
     protected void unsetDashboardMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
-        this.dashboardDataProvider = null;
+        this.dashboardMetadataProvider = null;
         LOGGER.debug("DashboardMetadataProvider '{}' unregistered.", dashboardDataProvider.getClass().getName());
     }
 
@@ -80,10 +80,11 @@ public class DashboardRestApiProvider implements RestApiProvider {
 
     @Override
     public Map<String, Microservice> getMicroservices(App app) {
+        dashboardMetadataProvider.init(app);
         Map<String, Microservice> microservices = new HashMap<>(2);
-        microservices.put(DashboardRestApi.API_CONTEXT_PATH, new DashboardRestApi(dashboardDataProvider));
-        widgetMetadataProvider.setDashboardApp(app);
-        microservices.put(WidgetRestApi.API_CONTEXT_PATH, new WidgetRestApi(widgetMetadataProvider));
+        microservices.put(DashboardRestApi.API_CONTEXT_PATH, new DashboardRestApi(dashboardMetadataProvider));
+        microservices.put(WidgetRestApi.API_CONTEXT_PATH,
+                          new WidgetRestApi(dashboardMetadataProvider.getWidgetMetadataProvider()));
         return microservices;
     }
 }
