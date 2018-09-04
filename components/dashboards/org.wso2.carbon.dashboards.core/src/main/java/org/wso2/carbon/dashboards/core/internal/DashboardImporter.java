@@ -19,14 +19,6 @@
 package org.wso2.carbon.dashboards.core.internal;
 
 
-import com.google.gson.Gson;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
@@ -57,7 +49,6 @@ import java.util.Locale;
  *
  * @since 4.2.8
  */
-@Component(immediate = true)
 public class DashboardImporter {
     private static final Logger log = LoggerFactory.getLogger(DashboardImporter.class);
     private static final String ARTIFACT_EXTENSION = "json";
