@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
-import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.uiserver.api.App;
 import org.wso2.carbon.uiserver.spi.RestApiProvider;
 import org.wso2.msf4j.Microservice;
@@ -48,8 +47,7 @@ public class DashboardRestApiProvider implements RestApiProvider {
     public static final String DASHBOARD_PORTAL_APP_NAME = "portal";
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApiProvider.class);
 
-    private DashboardMetadataProvider dashboardDataProvider;
-    private WidgetMetadataProvider widgetMetadataProvider;
+    private DashboardMetadataProvider dashboardMetadataProvider;
 
     @Activate
     protected void activate(BundleContext bundleContext) {
@@ -66,27 +64,13 @@ public class DashboardRestApiProvider implements RestApiProvider {
                policy = ReferencePolicy.DYNAMIC,
                unbind = "unsetDashboardMetadataProvider")
     protected void setDashboardMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
-        this.dashboardDataProvider = dashboardDataProvider;
+        this.dashboardMetadataProvider = dashboardDataProvider;
         LOGGER.debug("DashboardMetadataProvider '{}' registered.", dashboardDataProvider.getClass().getName());
     }
 
     protected void unsetDashboardMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
-        this.dashboardDataProvider = null;
+        this.dashboardMetadataProvider = null;
         LOGGER.debug("DashboardMetadataProvider '{}' unregistered.", dashboardDataProvider.getClass().getName());
-    }
-
-    @Reference(service = WidgetMetadataProvider.class,
-               cardinality = ReferenceCardinality.MANDATORY,
-               policy = ReferencePolicy.DYNAMIC,
-               unbind = "unsetWidgetMetadataProvider")
-    protected void setWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
-        this.widgetMetadataProvider = widgetMetadataProvider;
-        LOGGER.debug("WidgetMetadataProvider '{}' registered.", widgetMetadataProvider.getClass().getName());
-    }
-
-    protected void unsetWidgetMetadataProvider(WidgetMetadataProvider widgetMetadataProvider) {
-        this.widgetMetadataProvider = null;
-        LOGGER.debug("WidgetMetadataProvider '{}' registered.", widgetMetadataProvider.getClass().getName());
     }
 
     @Override
@@ -96,10 +80,11 @@ public class DashboardRestApiProvider implements RestApiProvider {
 
     @Override
     public Map<String, Microservice> getMicroservices(App app) {
+        dashboardMetadataProvider.init(app);
         Map<String, Microservice> microservices = new HashMap<>(2);
-        microservices.put(DashboardRestApi.API_CONTEXT_PATH, new DashboardRestApi(dashboardDataProvider));
-        widgetMetadataProvider.setDashboardApp(app);
-        microservices.put(WidgetRestApi.API_CONTEXT_PATH, new WidgetRestApi(widgetMetadataProvider));
+        microservices.put(DashboardRestApi.API_CONTEXT_PATH, new DashboardRestApi(dashboardMetadataProvider));
+        microservices.put(WidgetRestApi.API_CONTEXT_PATH,
+                          new WidgetRestApi(dashboardMetadataProvider.getWidgetMetadataProvider()));
         return microservices;
     }
 }

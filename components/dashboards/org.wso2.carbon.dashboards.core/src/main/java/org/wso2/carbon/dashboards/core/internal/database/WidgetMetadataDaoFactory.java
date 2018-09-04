@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.dashboards.core.internal.database;
 
-import org.wso2.carbon.config.ConfigurationException;
-import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
@@ -39,24 +37,19 @@ public class WidgetMetadataDaoFactory {
     /**
      * Creates a new DAO.
      *
-     * @param dataSourceService data sources service
-     * @param configProvider    config provider
+     * @param dataSourceService       data sources service
+     * @param dashboardConfigurations dashboard configurations
      * @return DAO
      * @throws DashboardException if cannot find required data source or load dashboard configurations
      */
-    public static WidgetMetadataDao createDao(DataSourceService dataSourceService, ConfigProvider configProvider)
+    public static WidgetMetadataDao createDao(DataSourceService dataSourceService,
+                                              DashboardConfigurations dashboardConfigurations)
             throws DashboardException {
         DataSource dataSource;
         try {
             dataSource = (DataSource) dataSourceService.getDataSource(DATA_SOURCE_NAME_DASHBOARD);
         } catch (DataSourceException e) {
             throw new DashboardException("Cannot find data source named '" + DATA_SOURCE_NAME_DASHBOARD + "'.", e);
-        }
-        DashboardConfigurations dashboardConfigurations;
-        try {
-            dashboardConfigurations = configProvider.getConfigurationObject(DashboardConfigurations.class);
-        } catch (ConfigurationException e) {
-            throw new DashboardException("Cannot load dashboard configurations from 'deployment.yaml'.", e);
         }
         QueryManager queryManager = new QueryManager(dashboardConfigurations);
         return new WidgetMetadataDao(dataSource, queryManager);
