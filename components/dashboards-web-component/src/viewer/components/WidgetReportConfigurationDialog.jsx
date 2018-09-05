@@ -68,11 +68,14 @@ export default class WidgetReportConfigurationDialog extends Component {
     }
 
     hasTable(element) {
-        if (element.innerHTML.search('rt-table') > -1) {
-            return true;
-        } else {
-            return false;
+        if (element) {
+            if (element.innerHTML.search('rt-table') > -1) {
+                return true;
+            } else {
+                return false;
+            }
         }
+        return false;
     }
 
     render() {
@@ -90,6 +93,8 @@ export default class WidgetReportConfigurationDialog extends Component {
         ];
 
         this.state.dialogOpen = this.props.dialog;
+        const isTable = this.hasTable(this.props.widget);
+        this.state.recordCountEnabled = isTable;
 
         return (
             <Dialog

@@ -204,7 +204,8 @@ export default class DashboardReportGenerator {
         // Apply bold and normal styles separately for the widget name and dashboard name as to be appeared as title.
         pdf.setFontType('bold');
         pdf.setFontSize(18);
-        const centerPosition = DashboardReportGenerator.getCenterCoordinate(pdf, dashboardName + widgetName);
+        const centerPosition = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, dashboardName + widgetName
+            , 'center');
 
         pdf.text(centerPosition, pdfConfig.title.coordinates.y - 50, dashboardName);
         const padding = Array(...Array(dashboardName.length + 1)).map(() => {
@@ -223,11 +224,17 @@ export default class DashboardReportGenerator {
      * @param {string} text text to be centered
      * @returns {number} returns the x coordinate to center the text
      */
-    static getCenterCoordinate(pdf, text) {
+    static getTextAlignmentXCoordinate(pdf, text, alignment) {
         const fontSize = pdf.internal.getFontSize();
         const pageWidth = pdf.internal.pageSize.getWidth();
         const txtWidth = pdf.getStringUnitWidth(text) * fontSize / pdf.internal.scaleFactor;
-        return (pageWidth - txtWidth) / 2;
+        if (alignment === 'center') {
+            return (pageWidth - txtWidth) / 2;
+        } else if (alignment === 'right') {
+            return (pageWidth - pdfConfig.pdfFooter.margin.x - txtWidth);
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -243,19 +250,19 @@ export default class DashboardReportGenerator {
 
         if (includeTime) {
             pdfInfo = 'Generated on : ' + DateFormat(new Date(), 'dd/mm/yyyy, h:MM TT');
+            pdf.setFontSize(10);
+            const yCoordinate = pdf.internal.pageSize.getHeight() - pdfConfig.pdfFooter.margin.y;
+            const xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
+            pdf.text(pdfInfo, xCoordinate, yCoordinate);
         }
 
         if (includeRecords) {
-            if (pdfInfo !== '') {
-                pdfInfo += '\n';
-            }
-            pdfInfo += 'No of records : ' + recordCount;
+            pdfInfo = 'No of records : ' + recordCount;
+            pdf.setFontType('bold');
+            pdf.setFontSize(12);
+            pdf.text(pdfInfo, pdfConfig.text.coordinates.x, pdfConfig.text.coordinates.y - 30);
+            pdf.setFontType('normal');
         }
-
-        pdf.setFontType('bold');
-        pdf.setFontSize(12);
-        pdf.text(pdfInfo, pdfConfig.text.coordinates.x, pdfConfig.text.coordinates.y - 30);
-        pdf.setFontType('normal');
     }
 
     /**
@@ -378,7 +385,7 @@ export default class DashboardReportGenerator {
         let printHeight = canvas.height;
         let printWidth = canvas.width;
         const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
+        const pageHeight = pdf.internal.pageSize.getHeight() - 70;
         const k = Math.max(printWidth / pageWidth, printHeight / pageHeight);
 
         while ((pageWidth < printWidth) || ((pageHeight - 70) < printHeight)) {
@@ -450,7 +457,7 @@ export default class DashboardReportGenerator {
      */
     static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName) {
         dashboardPages.map((dashboardPage, ind) => {
-            const rawImageData = localStorage.getItem('_dashboard-report:'+dashboardPage);
+            const rawImageData = localStorage.getItem('_dashboard-report:' + dashboardPage);
             const image = JSON.parse(rawImageData);
 
             DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', dashboardPage);
