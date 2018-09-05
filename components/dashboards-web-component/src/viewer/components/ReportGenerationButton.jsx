@@ -25,7 +25,7 @@ export default class ReportGenerationButton extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dialogOpen: false,
+            isDialogOpen: false,
             includeTime: false,
         };
 
@@ -62,7 +62,7 @@ export default class ReportGenerationButton extends Component {
                     title='Select PDF options'
                     actions={dialogActions}
                     modal
-                    open={this.state.dialogOpen}
+                    open={this.state.isDialogOpen}
                 >
                     <Checkbox
                         label='Include report genetation time'
@@ -75,11 +75,11 @@ export default class ReportGenerationButton extends Component {
     }
 
     handleClose() {
-        this.setState({ dialogOpen: false });
+        this.setState({ isDialogOpen: false });
     }
 
     handleOpen() {
-        this.setState({ dialogOpen: true });
+        this.setState({ isDialogOpen: true });
     }
 
     handleIncludeGenerateTime() {

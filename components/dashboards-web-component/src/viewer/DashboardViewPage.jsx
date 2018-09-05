@@ -43,11 +43,6 @@ import DashboardReportGenerationCard from './components/DashboardReportGeneratio
 
 const SelectableList = makeSelectable(List);
 
-/**
- * App context sans starting forward slash.
- */
-const appContext = window.contextPath.substr(1);
-
 class DashboardViewPage extends Component {
 
     constructor(props) {
