@@ -55,7 +55,7 @@ export default class ReportGenerationButton extends Component {
                     label='Generate Report'
                     onClick={this.handleOpen}
                     disabled={!(this.props.pageList.length > 0)}
-                    primary
+                    backgroundColor={'#a4b6c2'}
                 />
 
                 <Dialog

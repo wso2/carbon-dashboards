@@ -443,7 +443,9 @@ export default class DashboardReportGenerator {
      * @param {string} dashboardName dashboard name to be printed in the report
      */
     static createDashboardPdf(paperSize, dashboardPages, includeTime, dashboardName) {
-        const pdf = new jspdf('l', 'pt', paperSize);
+        const orientation = paperSize.split(' ')[1];
+        paperSize = paperSize.split(' ')[0];
+        const pdf = new jspdf(orientation, 'pt', paperSize);
         DashboardReportGenerator.addDashboardImages(pdf, dashboardPages, includeTime, dashboardName);
     }
 

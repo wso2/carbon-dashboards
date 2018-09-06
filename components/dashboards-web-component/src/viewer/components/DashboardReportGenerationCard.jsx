@@ -23,7 +23,7 @@ import ReportGenerationButton from './ReportGenerationButton';
 import html2canvas from 'html2canvas';
 import PropTypes from "prop-types";
 
-const pageSizes = ['A4', 'Letter', 'Government-Letter'];
+const pageSizes = ['A4 Landscape','A4 Portrait', 'Letter Landscape', 'Letter Portrait', 'A3 Landscape', 'A3 Portrait'];
 
 export default class DashboardReportGenerationCard extends Component {
     constructor(props) {
@@ -31,7 +31,7 @@ export default class DashboardReportGenerationCard extends Component {
         this.state = {
             expanded: false,
             pageList: [],
-            pageSize: 'A4',
+            pageSize: 'A4 Landscape',
         };
 
         this.handleCardClick = this.handleCardClick.bind(this);
@@ -46,13 +46,13 @@ export default class DashboardReportGenerationCard extends Component {
                 expanded={this.state.expanded}
                 onExpandChange={this.handleCardClick}
             >
-                <CardHeader title='Generate dashboard report' actAsExpander style={{ paddingRight: '0px' }} />
+                <CardHeader title='Download dashboard' actAsExpander textStyle={{ paddingRight: '0px' }} />
                 <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
                         <RaisedButton
                             label='Capture current page'
                             onClick={this.capturePage}
-                            primary
+                            backgroundColor={'#a4b6c2'}
                         />
 
                         <List>
@@ -99,8 +99,8 @@ export default class DashboardReportGenerationCard extends Component {
 
     removePage(index) {
         const tempPageList = this.state.pageList.slice();
-        const ind = tempPageList.indexOf(index);
-        tempPageList.splice(ind, 1);
+        const indexOfPage = tempPageList.indexOf(index);
+        tempPageList.splice(indexOfPage, 1);
         this.setState({ pageList: tempPageList });
 
         if (tempPageList.indexOf(index) == -1) {
