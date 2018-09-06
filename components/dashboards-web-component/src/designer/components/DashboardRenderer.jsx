@@ -74,7 +74,7 @@ export default class DashboardRenderer extends Component {
         };
 
         this.onGoldenLayoutInitializedEvent = this.onGoldenLayoutInitializedEvent.bind(this);
-        this.onGoldenLayoutComponentAddEvent = this.onGoldenLayoutComponentAddEvent.bind(this);
+        this.addWidgetSettingsButton = this.addWidgetSettingsButton.bind(this);
         this.hideWidgetConfigurationPane = this.hideWidgetConfigurationPane.bind(this);
         this.onWidgetConfigurationPaneClose = this.onWidgetConfigurationPaneClose.bind(this);
         this.getRenderingPage = this.getRenderingPage.bind(this);
@@ -151,7 +151,16 @@ export default class DashboardRenderer extends Component {
         });
     }
 
-    onGoldenLayoutComponentAddEvent(component) {
+    onWidgetConfigurationPaneClose() {
+        this.unhighlightSelectedWidgetContainer();
+        this.updateDashboard(true);
+    }
+
+    getRenderingPage() {
+        return this.props.dashboard.pages.find(page => (page.id === this.props.pageId));
+    }
+
+    addWidgetSettingsButton(component) {
         if (!component.parent || !component.parent.header) {
             return; // Added component is not a widget.
         }
@@ -175,15 +184,6 @@ export default class DashboardRenderer extends Component {
             });
             component.parent.header.controlsContainer.prepend(settingsButton);
         }
-    }
-
-    onWidgetConfigurationPaneClose() {
-        this.unhighlightSelectedWidgetContainer();
-        this.updateDashboard(true);
-    }
-
-    getRenderingPage() {
-        return this.props.dashboard.pages.find(page => (page.id === this.props.pageId));
     }
 
     hideWidgetConfigurationPane() {
@@ -263,8 +263,8 @@ export default class DashboardRenderer extends Component {
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
         goldenLayout.on('itemDropped', this.updateDashboard);
-        goldenLayout.on('itemDropped', this.onGoldenLayoutComponentAddEvent);
-        goldenLayout.on('componentCreated', this.onGoldenLayoutComponentAddEvent);
+        goldenLayout.on('itemDropped', this.addWidgetSettingsButton);
+        goldenLayout.on('componentCreated', this.addWidgetSettingsButton);
         goldenLayout.on('itemDestroyed', this.hideWidgetConfigurationPane);
         goldenLayout.eventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.updateDashboard);
 
