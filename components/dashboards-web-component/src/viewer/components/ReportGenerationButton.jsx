@@ -18,81 +18,39 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox, RaisedButton, FlatButton, Dialog } from 'material-ui';
+import { FormattedMessage } from 'react-intl';
+import { RaisedButton } from 'material-ui';
 import DashboardReportGenerator from '../../utils/DashboardReportGenerator';
 
 export default class ReportGenerationButton extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isDialogOpen: false,
             includeTime: false,
         };
 
-        this.handleClose = this.handleClose.bind(this);
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleIncludeGenerateTime = this.handleIncludeGenerateTime.bind(this);
         this.generateDashboardReport = this.generateDashboardReport.bind(this);
     }
 
     render() {
-        const dialogActions = [
-            <FlatButton
-                label='Cancel'
-                primary
-                onClick={this.handleClose}
-            />,
-            <FlatButton
-                label='Generate Report'
-                primary
-                onClick={this.generateDashboardReport}
-            />,
-        ];
-
         return (
             <div>
                 <RaisedButton
-                    label='Generate Report'
-                    onClick={this.handleOpen}
+                    label={<FormattedMessage id='dashboardReportGeneration.title' defaultMessage='Generate Report' />}
+                    onClick={this.generateDashboardReport}
                     disabled={!(this.props.pageList.length > 0)}
                     backgroundColor={'#a4b6c2'}
                 />
-
-                <Dialog
-                    title='Select PDF options'
-                    actions={dialogActions}
-                    modal
-                    open={this.state.isDialogOpen}
-                >
-                    <Checkbox
-                        label='Include report genetation time'
-                        onClick={this.handleIncludeGenerateTime}
-                    />
-                </Dialog>
             </div>
 
         );
     }
 
-    handleClose() {
-        this.setState({ isDialogOpen: false });
-    }
-
-    handleOpen() {
-        this.setState({ isDialogOpen: true });
-    }
-
-    handleIncludeGenerateTime() {
-        this.setState({ includeTime: !this.state.includeTime });
-    }
-
     generateDashboardReport() {
-        this.handleClose();
         const title = this.props.dashboardName;
+        this.state.includeTime = true;
         DashboardReportGenerator.generateDashboardPdf(this.props.pageSize.toLowerCase(), this.props.pageList,
             this.state.includeTime, title);
-        this.state.includeRecords = false;
-        this.state.includeTime = false;
     }
 }
 

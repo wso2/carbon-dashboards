@@ -21,7 +21,8 @@ import { Card, CardHeader, CardActions, RaisedButton, List, ListItem, SelectFiel
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import ReportGenerationButton from './ReportGenerationButton';
 import html2canvas from 'html2canvas';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 
 const pageSizes = ['A4 Landscape','A4 Portrait', 'Letter Landscape', 'Letter Portrait', 'A3 Landscape', 'A3 Portrait'];
 
@@ -46,11 +47,11 @@ export default class DashboardReportGenerationCard extends Component {
                 expanded={this.state.expanded}
                 onExpandChange={this.handleCardClick}
             >
-                <CardHeader title='Download dashboard' actAsExpander textStyle={{ paddingRight: '0px' }} />
+                <CardHeader title={<FormattedMessage id='dashboardDownload.title' defaultMessage='Download dashboard'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
                 <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
                         <RaisedButton
-                            label='Capture current page'
+                            label={<FormattedMessage id='dashboardCapture.title' defaultMessage='Capture current page'/>}
                             onClick={this.capturePage}
                             backgroundColor={'#a4b6c2'}
                         />
@@ -67,7 +68,7 @@ export default class DashboardReportGenerationCard extends Component {
 
                         <SelectField
                             style={{ width: 200 }}
-                            floatingLabelText='Page Size'
+                            floatingLabelText={<FormattedMessage id='dashboardReportPageSize.title' defaultMessage='Page Size'/>}
                             value={this.state.pageSize}
                             onChange={(event, index, value) => { this.setState({ pageSize: value }); }}
                         >
