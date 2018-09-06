@@ -202,17 +202,19 @@ export default class DashboardReportGenerator {
      */
     static addTitle(pdf, includeTime, includeRecords, dashboardName, widgetName) {
         // Apply bold and normal styles separately for the widget name and dashboard name as to be appeared as title.
+        //TODO:change the font
         pdf.setFont('roboto');
         pdf.setFontType('bold');
         pdf.setFontSize(18);
         const rightPosition = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, dashboardName, 'right');
 
-        pdf.text(rightPosition, 20, dashboardName);
+        pdf.text(rightPosition, pdfConfig.pdfTitle.coordinates.y, dashboardName);
         pdf.setLineWidth(1);
-        pdf.line(pdfConfig.stampImageLandscape.coordinates.x, 35, pdf.internal.pageSize.getWidth() - 10, 35);
+        pdf.line(pdfConfig.stampImageLandscape.coordinates.x, pdfConfig.pdfLine.coordinates.y,
+            pdf.internal.pageSize.getWidth() - pdfConfig.pdfPadding.width, pdfConfig.pdfLine.coordinates.y);
         pdf.setFontType('normal');
         pdf.setFontSize(12);
-        pdf.text(pdfConfig.stampImageLandscape.coordinates.x, 60, widgetName);
+        pdf.text(pdfConfig.stampImageLandscape.coordinates.x, pdfConfig.pdfSubtitle.coordinates.y, widgetName);
     }
 
     /**
@@ -260,7 +262,7 @@ export default class DashboardReportGenerator {
             pdfInfo += '\nNo of records : ' + recordCount;
         }
         const xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
-        pdf.text(pdfInfo, xCoordinate, 60);
+        pdf.text(pdfInfo, xCoordinate, pdfConfig.pdfSubtitle.coordinates.y);
     }
 
     /**
@@ -364,9 +366,10 @@ export default class DashboardReportGenerator {
             canvas = canvas.imageData;
         }
         const xPosition = (pdf.internal.pageSize.getWidth() - resizeDimensions.width) / 2;
-        let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height - 70) / 2;
-        if (yPosition < 70) {
-            yPosition += 50;
+        let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height
+                                                            - pdfConfig.pdfContentPadding.height) / 2;
+        if (yPosition < pdfConfig.pdfContentPadding.height) {
+            yPosition += pdfConfig.pdfContentPadding.header;
         }
         pdf.addImage(canvas, 'PNG', xPosition, yPosition, resizeDimensions.width, resizeDimensions.height);
     }
@@ -383,10 +386,10 @@ export default class DashboardReportGenerator {
         let printHeight = canvas.height;
         let printWidth = canvas.width;
         const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight() - 70;
+        const pageHeight = pdf.internal.pageSize.getHeight() - pdfConfig.pdfContentPadding.height;
         const k = Math.max(printWidth / pageWidth, printHeight / pageHeight);
 
-        while ((pageWidth < printWidth) || ((pageHeight - 70) < printHeight)) {
+        while ((pageWidth < printWidth) || ((pageHeight - pdfConfig.pdfContentPadding.height) < printHeight)) {
             if (k < 1) {
                 printHeight *= k;
                 printWidth *= k;

@@ -83,9 +83,9 @@
   "page.height": "Hauteur (px)",
   "page.height.reset": "Réinitialiser hauteur",
   "page.height.overlay": "Hauteur",
-  "dashboardCapture.title":"Capturer la page en cours",
-  "dashboardReportPageSize.title":"Taille de la page",
-  "dashboardReportGeneration.title":"Générer un rapport",
-  "dashboardReport.title":"Exporter le tableau de bord en format PDF",
-  "dashboardReportPageOrientation.title":"Orientation de la page"
+  "report.generation.capture.button.title":"Capturer la page en cours",
+  "report.generation.page.size.title":"Taille de la page",
+  "report.generation.export.button.title":"Générer un rapport",
+  "report.generation.card.title":"Exporter le tableau de bord en format PDF",
+  "report.generation.page.orientation.title":"Orientation de la page"
 }

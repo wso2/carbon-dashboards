@@ -85,9 +85,9 @@
   "page.height": "Height (px)",
   "page.height.reset": "Reset height",
   "page.height.overlay": "Height",
-  "dashboardCapture.title":"Capture current page",
-  "dashboardReportPageSize.title":"Page Size",
-  "dashboardReportGeneration.title":"Generate Report",
-  "dashboardReport.title":"Export Dashboard As Pdf",
-  "dashboardReportPageOrientation.title":"Page Orientation"
+  "report.generation.capture.button.title":"Capture current page",
+  "report.generation.page.size.title":"Page Size",
+  "report.generation.export.button.title":"Generate Report",
+  "report.generation.card.title":"Export Dashboard As Pdf",
+  "report.generation.page.orientation.title":"Page Orientation"
 }

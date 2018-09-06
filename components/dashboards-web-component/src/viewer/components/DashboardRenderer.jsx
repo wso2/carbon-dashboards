@@ -87,9 +87,7 @@ export default class DashboardRenderer extends Component {
             this.triggerThemeChangeEvent(nextProps.theme);
             return true;
         }
-        if (this.props.theme.name === 'light') {
-            this.triggerThemeChangeEvent(nextProps.theme);
-        }
+        //TODO : change the widget props when theme changes
         return false;
     }
 
@@ -147,7 +145,6 @@ export default class DashboardRenderer extends Component {
 
         const goldenLayout = GoldenLayoutFactory.createForViewer(dashboardContainerId, goldenLayoutContents);
         const numberOfWidgets = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents).length;
-        goldenLayout.on('itemDropped', this.onGoldenLayoutComponentCreateEvent);
         goldenLayout.on('componentCreated', this.onGoldenLayoutComponentCreateEvent);
         goldenLayout.eventHub.on(Event.DASHBOARD_VIEWER_WIDGET_LOADED,
             () => this.onWidgetLoadedEvent(numberOfWidgets, this.props.dashboardId));

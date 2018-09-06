@@ -11,6 +11,11 @@ const pdfConfig = {
     title: { size: 10, coordinates: { x: 295, y: 90 } },
     LandscapeTitle: { size: 10, coordinates: { x: 45, y: 45 } },
     text: { size: 8, coordinates: { x: 40, y: 90 } },
+    pdfTitle: { coordinates: { y: 20 } },
+    pdfLine: { coordinates: { y: 35 } },
+    pdfPadding: { height: 0, width: 10 },
+    pdfSubtitle: { coordinates: { y: 60 } },
+    pdfContentPadding: { height: 70, header: 50 },
 
     pdfTableStyles: {
         startY: 110,

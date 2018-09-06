@@ -49,11 +49,11 @@ export default class DashboardReportGenerationCard extends Component {
                 expanded={this.state.expanded}
                 onExpandChange={this.handleCardClick}
             >
-                <CardHeader title={<FormattedMessage id='dashboardReport.title' defaultMessage='Export Dashboard As Pdf'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
+                <CardHeader title={<FormattedMessage id='report.generation.card.title' defaultMessage='Export Dashboard As Pdf'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
                 <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
                         <RaisedButton
-                            label={<FormattedMessage id='dashboardCapture.title' defaultMessage='Capture Current Page'/>}
+                            label={<FormattedMessage id='report.generation.capture.button.title' defaultMessage='Capture Current Page'/>}
                             onClick={this.capturePage}
                             backgroundColor={'#1c3b4a'}
                         />
@@ -70,7 +70,7 @@ export default class DashboardReportGenerationCard extends Component {
 
                         <SelectField
                             style={{ width: 200 }}
-                            floatingLabelText={<FormattedMessage id='dashboardReportPageSize.title' defaultMessage='Page Size'/>}
+                            floatingLabelText={<FormattedMessage id='report.generation.page.size.title' defaultMessage='Page Size'/>}
                             value={this.state.pageSize}
                             onChange={(event, index, value) => { this.setState({ pageSize: value }); }}
                         >
@@ -86,7 +86,7 @@ export default class DashboardReportGenerationCard extends Component {
 
                         <SelectField
                             style={{ width: 200 }}
-                            floatingLabelText={<FormattedMessage id='dashboardReportPageOrientation.title' defaultMessage='Page Orientation'/>}
+                            floatingLabelText={<FormattedMessage id='report.generation.page.orientation.title' defaultMessage='Page Orientation'/>}
                             value={this.state.orientation}
                             onChange={(event, index, value) => { this.setState({ orientation: value }); }}
                         >

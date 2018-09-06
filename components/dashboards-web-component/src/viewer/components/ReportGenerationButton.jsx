@@ -37,7 +37,7 @@ export default class ReportGenerationButton extends Component {
             <div>
                 <RaisedButton
                     primary
-                    label={<FormattedMessage id='dashboardReportGeneration.title' defaultMessage='Generate Report' />}
+                    label={<FormattedMessage id='report.generation.export.button.title' defaultMessage='Generate Report' />}
                     onClick={this.generateDashboardReport}
                     disabled={!(this.props.pageList.length > 0)}
                     disabledBackgroundColor="rgb(27, 40, 47)"
