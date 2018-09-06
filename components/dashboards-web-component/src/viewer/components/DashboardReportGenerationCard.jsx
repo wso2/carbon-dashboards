@@ -49,7 +49,7 @@ export default class DashboardReportGenerationCard extends Component {
                 expanded={this.state.expanded}
                 onExpandChange={this.handleCardClick}
             >
-                <CardHeader title={<FormattedMessage id='report.generation.card.title' defaultMessage='Export Dashboard As Pdf'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
+                <CardHeader title={<FormattedMessage id='report.generation.card.title' defaultMessage='Export Dashboard As PDF'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
                 <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
                         <RaisedButton
