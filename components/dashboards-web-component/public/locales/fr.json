@@ -85,5 +85,7 @@
   "page.height.overlay": "Hauteur",
   "dashboardCapture.title":"Capturer la page en cours",
   "dashboardReportPageSize.title":"Taille de la page",
-  "dashboardReportGeneration.title":"Générer un rapport"
+  "dashboardReportGeneration.title":"Générer un rapport",
+  "dashboardReport.title":"Exporter le tableau de bord en format PDF",
+  "dashboardReportPageOrientation.title":"Orientation de la page"
 }

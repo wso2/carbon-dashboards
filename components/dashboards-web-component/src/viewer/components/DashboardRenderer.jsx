@@ -180,7 +180,8 @@ export default class DashboardRenderer extends Component {
     onGoldenLayoutComponentCreateEvent(component) {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
-        exportButton.className = 'fw fw fw-document widget-report-generation-button';
+        //TODO: change icon
+        exportButton.className = 'fw fw-document widget-report-generation-button';
         exportButton.addEventListener('click', () => {
             DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
                 this.props.theme.name, this.props.dashboardName);

@@ -24,7 +24,8 @@ import html2canvas from 'html2canvas';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-const pageSizes = ['A4 Landscape','A4 Portrait', 'Letter Landscape', 'Letter Portrait', 'A3 Landscape', 'A3 Portrait'];
+const pageSizes = ['A4', 'Letter', 'A3'];
+const orientations = ['Landscape','Portrait'];
 
 export default class DashboardReportGenerationCard extends Component {
     constructor(props) {
@@ -32,7 +33,8 @@ export default class DashboardReportGenerationCard extends Component {
         this.state = {
             expanded: false,
             pageList: [],
-            pageSize: 'A4 Landscape',
+            pageSize: 'A4',
+            orientation:'Landscape'
         };
 
         this.handleCardClick = this.handleCardClick.bind(this);
@@ -47,13 +49,13 @@ export default class DashboardReportGenerationCard extends Component {
                 expanded={this.state.expanded}
                 onExpandChange={this.handleCardClick}
             >
-                <CardHeader title={<FormattedMessage id='dashboardDownload.title' defaultMessage='Download dashboard'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
+                <CardHeader title={<FormattedMessage id='dashboardReport.title' defaultMessage='Export Dashboard As Pdf'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
                 <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
                         <RaisedButton
-                            label={<FormattedMessage id='dashboardCapture.title' defaultMessage='Capture current page'/>}
+                            label={<FormattedMessage id='dashboardCapture.title' defaultMessage='Capture Current Page'/>}
                             onClick={this.capturePage}
-                            backgroundColor={'#a4b6c2'}
+                            backgroundColor={'#1c3b4a'}
                         />
 
                         <List>
@@ -82,8 +84,25 @@ export default class DashboardReportGenerationCard extends Component {
                                 ))}
                         </SelectField>
 
+                        <SelectField
+                            style={{ width: 200 }}
+                            floatingLabelText={<FormattedMessage id='dashboardReportPageOrientation.title' defaultMessage='Page Orientation'/>}
+                            value={this.state.orientation}
+                            onChange={(event, index, value) => { this.setState({ orientation: value }); }}
+                        >
+                            {orientations.map(field =>
+                                (
+                                    <MenuItem
+                                        key={field}
+                                        value={field}
+                                        primaryText={field}
+                                    />
+                                ))}
+                        </SelectField>
+
                         <ReportGenerationButton
                             pageSize={this.state.pageSize}
+                            orientation={this.state.orientation}
                             pageList={this.state.pageList}
                             pages={this.props.pages}
                             dashboardName={this.props.dashboardName}
@@ -121,8 +140,8 @@ export default class DashboardReportGenerationCard extends Component {
             const imgData = canvas.toDataURL('image/png');
             const w = canvas.width;
             const h = canvas.height;
-            localStorage.setItem('_dashboard-report:'+currentPage.name, JSON.stringify({ imageData: imgData, width: w, height: h }));
-
+            localStorage.setItem('_dashboard-report:'+currentPage.name,
+                JSON.stringify({ imageData: imgData, width: w, height: h, timestamp:new Date() }));
             const tempPageList = this.state.pageList.slice();
             tempPageList.push(currentPage.name);
             this.setState({ pageList: tempPageList });

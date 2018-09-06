@@ -17,6 +17,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
+import { FormattedMessage } from 'react-intl';
 import { Checkbox, FlatButton, Dialog } from 'material-ui';
 import DashboardReportGenerator from '../../utils/DashboardReportGenerator';
 

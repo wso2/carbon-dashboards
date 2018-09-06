@@ -66,7 +66,7 @@ export default class DashboardReportGenerator {
 
         DashboardReportGenerator.addTitle(pdf, includeTime, includeRecords, dashboardName, widgetName);
         const tableData = DashboardReportGenerator.getTableData(pdf, element, themeName);
-        DashboardReportGenerator.addSubTitle(pdf, includeTime, includeRecords, tableData.rowData.length);
+        DashboardReportGenerator.addSubTitle(pdf, includeTime, includeRecords, tableData.rowData.length, null);
         DashboardReportGenerator.addTable(pdf, tableData, widgetName);
     }
 
@@ -187,7 +187,7 @@ export default class DashboardReportGenerator {
     static createWidgetPdf(widgetName, includeTime, canvas, dashboardName) {
         const pdf = new jspdf('l', 'pt', 'a4');
         DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, widgetName);
-        DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0);
+        DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0, null);
         DashboardReportGenerator.addPdfConfigs(pdf, canvas, widgetName, 'widget', 'landscape', false);
     }
 
@@ -242,13 +242,18 @@ export default class DashboardReportGenerator {
      * @param {boolean} includeTime add the report generation time
      * @param {boolean} includeRecords add number of records to the report
      * @param {int} recordCount number of records in the report (only for table)
+     * @param {object} timestamp captured timestamp
      */
-    static addSubTitle(pdf, includeTime, includeRecords, recordCount) {
+    static addSubTitle(pdf, includeTime, includeRecords, recordCount, timestamp) {
         let pdfInfo = '';
         pdf.setFontSize(12);
 
         if (includeTime) {
-            pdfInfo = 'Generated on : ' + DateFormat(new Date(), 'dd/mm/yyyy, h:MM TT');
+            if (timestamp) {
+                pdfInfo = 'Generated on : ' + DateFormat(timestamp, 'dd/mm/yyyy, h:MM TT');
+            } else {
+                pdfInfo = 'Generated on : ' + DateFormat(new Date(), 'dd/mm/yyyy, h:MM TT');
+            }
         }
 
         if (includeRecords) {
@@ -361,7 +366,7 @@ export default class DashboardReportGenerator {
         const xPosition = (pdf.internal.pageSize.getWidth() - resizeDimensions.width) / 2;
         let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height - 70) / 2;
         if (yPosition < 70) {
-            yPosition += 70;
+            yPosition += 50;
         }
         pdf.addImage(canvas, 'PNG', xPosition, yPosition, resizeDimensions.width, resizeDimensions.height);
     }
@@ -423,8 +428,8 @@ export default class DashboardReportGenerator {
      * @param {boolean} includeTime includeTime add the report generation time of the report
      * @param {string} title dashboardName dashboard name to be printed in the report
      */
-    static generateDashboardPdf(paperSize, dashboardPages, includeTime, title) {
-        DashboardReportGenerator.createDashboardPdf(paperSize, dashboardPages, includeTime, title);
+    static generateDashboardPdf(paperSize, orientation, dashboardPages, includeTime, title) {
+        DashboardReportGenerator.createDashboardPdf(paperSize, orientation, dashboardPages, includeTime, title);
     }
 
     /**
@@ -435,8 +440,7 @@ export default class DashboardReportGenerator {
      * @param {boolean} includeTime add the report generation time of the report
      * @param {string} dashboardName dashboard name to be printed in the report
      */
-    static createDashboardPdf(paperSize, dashboardPages, includeTime, dashboardName) {
-        const orientation = paperSize.split(' ')[1];
+    static createDashboardPdf(paperSize, orientation, dashboardPages, includeTime, dashboardName) {
         paperSize = paperSize.split(' ')[0];
         const pdf = new jspdf(orientation, 'pt', paperSize);
         DashboardReportGenerator.addDashboardImages(pdf, dashboardPages, includeTime, dashboardName, orientation);
@@ -457,7 +461,7 @@ export default class DashboardReportGenerator {
             const image = JSON.parse(rawImageData);
 
             DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, dashboardPage);
-            DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0);
+            DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0, image.timestamp);
             DashboardReportGenerator.addWidgetImage(pdf, image);
             DashboardReportGenerator.addPageNumber(pdf, dashboardPage, dashboardPages, ind);
 

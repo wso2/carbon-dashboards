@@ -88,5 +88,6 @@
   "dashboardCapture.title":"Capture current page",
   "dashboardReportPageSize.title":"Page Size",
   "dashboardReportGeneration.title":"Generate Report",
-  "dashboardDownload.title":"Download Dashboard"
+  "dashboardReport.title":"Export Dashboard As Pdf",
+  "dashboardReportPageOrientation.title":"Page Orientation"
 }

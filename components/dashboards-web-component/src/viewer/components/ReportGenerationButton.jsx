@@ -36,10 +36,11 @@ export default class ReportGenerationButton extends Component {
         return (
             <div>
                 <RaisedButton
+                    primary
                     label={<FormattedMessage id='dashboardReportGeneration.title' defaultMessage='Generate Report' />}
                     onClick={this.generateDashboardReport}
                     disabled={!(this.props.pageList.length > 0)}
-                    backgroundColor={'#a4b6c2'}
+                    disabledBackgroundColor="rgb(27, 40, 47)"
                 />
             </div>
 
@@ -49,13 +50,14 @@ export default class ReportGenerationButton extends Component {
     generateDashboardReport() {
         const title = this.props.dashboardName;
         this.state.includeTime = true;
-        DashboardReportGenerator.generateDashboardPdf(this.props.pageSize.toLowerCase(), this.props.pageList,
-            this.state.includeTime, title);
+        DashboardReportGenerator.generateDashboardPdf(this.props.pageSize.toLowerCase(),
+            this.props.orientation.toLocaleLowerCase(), this.props.pageList, this.state.includeTime, title);
     }
 }
 
 ReportGenerationButton.propTypes = {
     pageSize: PropTypes.string.isRequired,
+    orientation: PropTypes.string.isRequired,
     pageList: PropTypes.array.isRequired,
     pages: PropTypes.array.isRequired,
     dashboardName: PropTypes.string.isRequired,
