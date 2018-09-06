@@ -30,8 +30,7 @@ import glDarkTheme from '!!css-loader!../../common/styles/custom-goldenlayout-da
 import '../../common/styles/custom-goldenlayout-light-theme.css';
 import glLightTheme from '!!css-loader!../../common/styles/custom-goldenlayout-light-theme.css';
 import './dashboard-container-styles.css';
-
-import WidgetReportConfigurationDialog from './WidgetReportConfigurationDialog';
+import DashboardReportGenerator from "../../utils/DashboardReportGenerator";
 
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
@@ -45,9 +44,6 @@ export default class DashboardRenderer extends Component {
         this.loadedWidgetsCount = 0;
         this.state = {
             height: window.innerHeight,
-            widget: null,
-            title: '',
-            dialog: false,
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -57,7 +53,6 @@ export default class DashboardRenderer extends Component {
         this.onWidgetLoadedEvent = this.onWidgetLoadedEvent.bind(this);
         this.onGoldenLayoutComponentCreateEvent = this.onGoldenLayoutComponentCreateEvent.bind(this);
         this.unmounted = false;
-        this.resetDialog = this.resetDialog.bind(this);
     }
 
     handleWindowResize() {
@@ -95,16 +90,6 @@ export default class DashboardRenderer extends Component {
         if (this.props.theme.name === 'light') {
             this.triggerThemeChangeEvent(nextProps.theme);
         }
-        if (this.state.widget !== nextState.widget) {
-            return true;
-        }
-        if (this.state.title !== nextState.title) {
-            return true;
-        }
-        if (this.state.dialog !== nextState.dialog) {
-            return true;
-        }
-
         return false;
     }
 
@@ -139,14 +124,6 @@ export default class DashboardRenderer extends Component {
                         }}
                     />
                 </div>
-                <WidgetReportConfigurationDialog
-                    widget={this.state.widget}
-                    title={this.state.title}
-                    themeName={this.props.theme.name}
-                    dialog={this.state.dialog}
-                    resetDialog={this.resetDialog}
-                    dashboardName={this.props.dashboardName}
-                />
             </div>
         );
     }
@@ -203,15 +180,12 @@ export default class DashboardRenderer extends Component {
     onGoldenLayoutComponentCreateEvent(component) {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
-        exportButton.className = 'fw fw-pdf widget-report-generation-button';
+        exportButton.className = 'fw fw fw-document widget-report-generation-button';
         exportButton.addEventListener('click', () => {
-            this.setState({ widget: component.element[0], title: component.config.title, dialog: true });
+            DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
+                this.props.theme.name, this.props.dashboardName);
         });
         component.parent.header.controlsContainer.prepend(exportButton);
-    }
-
-    resetDialog() {
-        this.setState({ dialog: false });
     }
 }
 

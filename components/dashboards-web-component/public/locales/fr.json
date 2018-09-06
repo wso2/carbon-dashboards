@@ -82,5 +82,8 @@
   "designer.hide.page": "Masquer la page",
   "page.height": "Hauteur (px)",
   "page.height.reset": "Réinitialiser hauteur",
-  "page.height.overlay": "Hauteur"
+  "page.height.overlay": "Hauteur",
+  "dashboardCapture.title":"Capturer la page en cours",
+  "dashboardReportPageSize.title":"Taille de la page",
+  "dashboardReportGeneration.title":"Générer un rapport"
 }

@@ -64,7 +64,7 @@ export default class DashboardReportGenerator {
     static createTablePdf(element, widgetName, includeTime, includeRecords, dashboardName, themeName) {
         const pdf = new jspdf('p', 'pt');
 
-        DashboardReportGenerator.addTitle(pdf, includeTime, includeRecords, dashboardName + ' : ', widgetName);
+        DashboardReportGenerator.addTitle(pdf, includeTime, includeRecords, dashboardName, widgetName);
         const tableData = DashboardReportGenerator.getTableData(pdf, element, themeName);
         DashboardReportGenerator.addSubTitle(pdf, includeTime, includeRecords, tableData.rowData.length);
         DashboardReportGenerator.addTable(pdf, tableData, widgetName);
@@ -89,7 +89,7 @@ export default class DashboardReportGenerator {
             if (typeof pdf.putTotalPages === 'function') {
                 pageNumber = pageNumber + ' of ' + totalPagesExp;
             }
-            pdf.setFontSize(10);
+            pdf.setFontSize(12);
             const pageHeight = pdf.internal.pageSize.getHeight();
             pdf.text(pageNumber, data.settings.margin.left, pageHeight - 10);
         };
@@ -186,7 +186,7 @@ export default class DashboardReportGenerator {
      */
     static createWidgetPdf(widgetName, includeTime, canvas, dashboardName) {
         const pdf = new jspdf('l', 'pt', 'a4');
-        DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', widgetName);
+        DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, widgetName);
         DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0);
         DashboardReportGenerator.addPdfConfigs(pdf, canvas, widgetName, 'widget', 'landscape', false);
     }
@@ -202,19 +202,17 @@ export default class DashboardReportGenerator {
      */
     static addTitle(pdf, includeTime, includeRecords, dashboardName, widgetName) {
         // Apply bold and normal styles separately for the widget name and dashboard name as to be appeared as title.
+        pdf.setFont('roboto');
         pdf.setFontType('bold');
         pdf.setFontSize(18);
-        const centerPosition = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, dashboardName + widgetName
-            , 'center');
+        const rightPosition = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, dashboardName, 'right');
 
-        pdf.text(centerPosition, pdfConfig.title.coordinates.y - 50, dashboardName);
-        const padding = Array(...Array(dashboardName.length + 1)).map(() => {
-            return ' ';
-        });
+        pdf.text(rightPosition, 20, dashboardName);
+        pdf.setLineWidth(1);
+        pdf.line(pdfConfig.stampImageLandscape.coordinates.x, 35, pdf.internal.pageSize.getWidth() - 10, 35);
         pdf.setFontType('normal');
-
-        const finalTitle = padding.join(' ') + widgetName;
-        pdf.text(centerPosition, pdfConfig.title.coordinates.y - 50, finalTitle);
+        pdf.setFontSize(12);
+        pdf.text(pdfConfig.stampImageLandscape.coordinates.x, 60, widgetName);
     }
 
     /**
@@ -247,22 +245,17 @@ export default class DashboardReportGenerator {
      */
     static addSubTitle(pdf, includeTime, includeRecords, recordCount) {
         let pdfInfo = '';
+        pdf.setFontSize(12);
 
         if (includeTime) {
             pdfInfo = 'Generated on : ' + DateFormat(new Date(), 'dd/mm/yyyy, h:MM TT');
-            pdf.setFontSize(10);
-            const yCoordinate = pdf.internal.pageSize.getHeight() - pdfConfig.pdfFooter.margin.y;
-            const xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
-            pdf.text(pdfInfo, xCoordinate, yCoordinate);
         }
 
         if (includeRecords) {
-            pdfInfo = 'No of records : ' + recordCount;
-            pdf.setFontType('bold');
-            pdf.setFontSize(12);
-            pdf.text(pdfInfo, pdfConfig.text.coordinates.x, pdfConfig.text.coordinates.y - 30);
-            pdf.setFontType('normal');
+            pdfInfo += '\nNo of records : ' + recordCount;
         }
+        const xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
+        pdf.text(pdfInfo, xCoordinate, 60);
     }
 
     /**
@@ -291,19 +284,20 @@ export default class DashboardReportGenerator {
                             DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
                                 DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', orientation);
                                 DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
-                                    'footer', orientation, reportName);
+                                    'footer', orientation, reportName, false);
+                                DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, headerImgData,
+                                    'header', orientation, reportName, true);
                             });
+                        } else {
+                            DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, headerImgData,
+                                'header', orientation, reportName, true);
                         }
-                        DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, headerImgData,
-                            'header', orientation, reportName);
                     });
-                }
-
-                if (res.data.footer) {
+                } else if (res.data.footer) {
                     DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
                         DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', 'portrait');
                         DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
-                            'footer', orientation, reportName);
+                            'footer', orientation, reportName, true);
                     });
                 }
             }
@@ -332,10 +326,10 @@ export default class DashboardReportGenerator {
                 imageWidth = pdfConfig.stampImageLandscape.size.x;
                 imageHeight = pdfConfig.stampImageLandscape.size.y;
             } else if (property === 'footer') {
-                xCoordinate = pdf.internal.pageSize.getWidth() - pdfConfig.pdfFooter.margin.x;
-                yCoordinate = pdf.internal.pageSize.getHeight() - pdfConfig.pdfFooter.margin.y;
                 imageWidth = pdfConfig.stampImageLandscape.size.x;
                 imageHeight = pdfConfig.stampImageLandscape.size.y;
+                xCoordinate = pdf.internal.pageSize.getWidth() - pdfConfig.pdfFooter.margin.x - imageWidth;
+                yCoordinate = pdf.internal.pageSize.getHeight() - pdfConfig.pdfFooter.margin.y - imageHeight;
             }
         } else if (orientation === 'portrait') {
             if (property === 'header') {
@@ -344,13 +338,12 @@ export default class DashboardReportGenerator {
                 imageWidth = pdfConfig.stampImageDashboard.size.x;
                 imageHeight = pdfConfig.stampImageDashboard.size.y;
             } else if (property === 'footer') {
-                xCoordinate = pdfConfig.pdfFooterPortrait.coordinates.x;
-                yCoordinate = pdfConfig.pdfFooterPortrait.coordinates.y;
                 imageWidth = pdfConfig.stampImage.size.x;
                 imageHeight = pdfConfig.stampImage.size.y;
+                xCoordinate = pdf.internal.pageSize.getWidth() - pdfConfig.pdfFooter.margin.x - imageWidth;
+                yCoordinate = pdf.internal.pageSize.getHeight() - pdfConfig.pdfFooter.margin.y - imageHeight;
             }
         }
-
         pdf.addImage(imgData, 'PNG', xCoordinate, yCoordinate, imageWidth, imageHeight);
     }
 
@@ -446,7 +439,7 @@ export default class DashboardReportGenerator {
         const orientation = paperSize.split(' ')[1];
         paperSize = paperSize.split(' ')[0];
         const pdf = new jspdf(orientation, 'pt', paperSize);
-        DashboardReportGenerator.addDashboardImages(pdf, dashboardPages, includeTime, dashboardName);
+        DashboardReportGenerator.addDashboardImages(pdf, dashboardPages, includeTime, dashboardName, orientation);
     }
 
     /**
@@ -456,13 +449,14 @@ export default class DashboardReportGenerator {
      * @param {map} dashboardPages list of pages
      * @param {boolean} includeTime add report generation time in the report
      * @param {string} dashboardName dashboard name to be printed in the report
+     * @param {string} orientation orientation of the report
      */
-    static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName) {
+    static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName, orientation) {
         dashboardPages.map((dashboardPage, ind) => {
             const rawImageData = localStorage.getItem('_dashboard-report:' + dashboardPage);
             const image = JSON.parse(rawImageData);
 
-            DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName + ' : ', dashboardPage);
+            DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, dashboardPage);
             DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0);
             DashboardReportGenerator.addWidgetImage(pdf, image);
             DashboardReportGenerator.addPageNumber(pdf, dashboardPage, dashboardPages, ind);
@@ -472,7 +466,7 @@ export default class DashboardReportGenerator {
             }
         });
 
-        DashboardReportGenerator.addPdfConfigs(pdf, null, dashboardName, 'dashboard', 'landscape', dashboardPages);
+        DashboardReportGenerator.addPdfConfigs(pdf, null, dashboardName, 'dashboard', orientation, dashboardPages);
     }
 
     /**
@@ -481,7 +475,7 @@ export default class DashboardReportGenerator {
      * @param {object} pdf jspdf object
      * @param {object} page page to add the number
      * @param {map} dashboardPages list of pages
-     * @param {int} index index of the page the number should be added
+     * @param {int} pageIndex index of the page the number should be added
      */
     static addPageNumber(pdf, page, dashboardPages, pageIndex) {
         const pageNo = 'Page ' + (pageIndex + 1) + ' of ' + dashboardPages.length;
@@ -517,16 +511,21 @@ export default class DashboardReportGenerator {
      * @param {string} property configuration property
      * @param {string} orientation orientation of the report
      * @param {string} reportName name of the report
+     * @param {boolean} savePdf save the pdf
      */
-    static addPdfContent(pdf, type, canvas, dashboardPages, imgData, property, orientation, reportName) {
+    static addPdfContent(pdf, type, canvas, dashboardPages, imgData, property, orientation, reportName, savePdf) {
         if (type === 'widget') {
             DashboardReportGenerator.addWidgetImage(pdf, canvas);
-            pdf.save(reportName);
+            if (savePdf) {
+                pdf.save(reportName);
+            }
         } else if (type === 'table') {
             pdf.save(reportName);
         } else if (type === 'dashboard') {
             DashboardReportGenerator.addPageConfigsToAll(pdf, dashboardPages, imgData, property, orientation);
-            pdf.save(reportName);
+            if (savePdf) {
+                pdf.save(reportName);
+            }
         }
     }
 }

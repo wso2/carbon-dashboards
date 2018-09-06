@@ -34,7 +34,6 @@ import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.Consumes;
@@ -320,16 +319,12 @@ public class DashboardRestApi implements Microservice {
      * @return response
      */
     @GET
-    @Path("/report-config/{type}")
+    @Path("/report-config")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReportConfigs(@PathParam("type") String type) {
+    public Response getReportConfigs() {
         ReportConfigs configurations = dashboardDataProvider.getReportGenerationConfigurations().getReportConfigs();
-        Map<String, Object> reportConfigurations = Collections.emptyMap();
-        if (type.equals("pdf")) {
-            reportConfigurations = configurations.getPdf();
-        }
+        Map<String, Object> reportConfigurations = configurations.getPdf();
         return Response.ok().entity(reportConfigurations).build();
-
     }
 }

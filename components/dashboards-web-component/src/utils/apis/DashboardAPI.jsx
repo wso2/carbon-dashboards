@@ -142,7 +142,6 @@ export default class DashboardAPI {
     static getDashboardReportPdfConfigs() {
         return new DashboardAPI()
             .getHTTPClient()
-            .get(`/report-config/pdf`);
+            .get(`/report-config`);
     }
-
 }
