@@ -47,6 +47,7 @@ const Event = {
     DASHBOARD_VIEWER_WIDGET_LOADED: 'dashboard-viewer-widget-loaded',
     DASHBOARD_DESIGNER_WIDGET_RESIZE: 'dashboard-designer-widget-resize',
     DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE: 'dashboard-designer-widget-config-update',
+    DASHBOARD_DESIGNER_LAST_WIDGET_DELETED: 'dashboard-designer-last-widget-deleted',
 };
 
 export { HttpStatus, MediaType, Event };
