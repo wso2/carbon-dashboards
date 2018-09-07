@@ -20,6 +20,7 @@ import GoldenLayout from 'golden-layout';
 import WidgetRenderer from '../common/WidgetRenderer';
 import GoldenLayoutContentUtils from './GoldenLayoutContentUtils';
 import WidgetPubSubHub from './WidgetPubSubHub';
+import { Event } from './Constants';
 
 export default class GoldenLayoutFactory {
     /**
@@ -38,7 +39,10 @@ export default class GoldenLayoutFactory {
         goldenLayout.pubSubHub = new WidgetPubSubHub(goldenLayout.eventHub);
         goldenLayout.initialize = () => {
             // Workaround suggested in https://github.com/golden-layout/golden-layout/pull/348#issuecomment-350839014
-            setTimeout(() => goldenLayout.init(), 0);
+            setTimeout(() => {
+                goldenLayout.init();
+                GoldenLayoutFactory.patchRootItemRemoveChildFunction(goldenLayout);
+            }, 0);
         };
 
         return goldenLayout;
@@ -100,5 +104,19 @@ export default class GoldenLayoutFactory {
             content: glContent || [],
         };
         return GoldenLayoutFactory.create(dashboardContainerId, config);
+    }
+
+    /**
+     * Patches the removeChild function of the root item of the given GoldenLayout.
+     * @param {module:golden-layout.GoldenLayout} goldenLayout GoldenLayout
+     * @private
+     */
+    static patchRootItemRemoveChildFunction(goldenLayout) {
+        const root = goldenLayout.root;
+        const originalRemoveChildFunction = root.removeChild;
+        root.removeChild = function () {
+            originalRemoveChildFunction.apply(root, arguments);
+            goldenLayout.emit(Event.DASHBOARD_DESIGNER_LAST_WIDGET_DELETED);
+        };
     }
 }
