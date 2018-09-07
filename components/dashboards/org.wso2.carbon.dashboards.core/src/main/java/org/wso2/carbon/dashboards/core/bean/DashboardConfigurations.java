@@ -20,6 +20,7 @@ package org.wso2.carbon.dashboards.core.bean;
 
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
+import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.bean.roles.provider.Roles;
 import org.wso2.carbon.database.query.manager.config.Queries;
 
@@ -40,6 +41,9 @@ public class DashboardConfigurations {
     @Element(description = "Map of roles list")
     public Roles roles = new Roles();
 
+    @Element(description = "Report generation configurations")
+    public ReportConfigs reportGeneration = new ReportConfigs();
+
     /**
      * Get map of roles.
      *
@@ -57,4 +61,14 @@ public class DashboardConfigurations {
     public List<Queries> getQueries() {
         return queries;
     }
+
+    /**
+     * Get map of report generation configuration configs.
+     *
+     * @return
+     */
+    public ReportConfigs getReportConfigs() {
+        return reportGeneration;
+    }
+
 }

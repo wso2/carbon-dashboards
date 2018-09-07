@@ -39,6 +39,7 @@ import PortalButton from '../common/PortalButton';
 import ThemeButton from './components/ThemeButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
 import '../utils/GoldenLayoutOverrides.css';
+import DashboardReportGenerationCard from './components/DashboardReportGenerationCard';
 
 const SelectableList = makeSelectable(List);
 
@@ -200,6 +201,12 @@ class DashboardViewPage extends Component {
                 <SelectableList value={subPageId ? `${pageId}/${subPageId}` : pageId}>
                     {this.renderPagesList()}
                 </SelectableList>
+                <br />
+                <Divider />
+                <DashboardReportGenerationCard
+                    pages={this.dashboard.pages}
+                    dashboardName={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
+                />
             </Drawer>
         );
     }
@@ -265,6 +272,7 @@ class DashboardViewPage extends Component {
                     goldenLayoutContents={page.content}
                     height={page.height}
                     theme={theme}
+                    dashboardName={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
                 />
             );
         } else {

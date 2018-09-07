@@ -82,5 +82,10 @@
   "designer.hide.page": "Masquer la page",
   "page.height": "Hauteur (px)",
   "page.height.reset": "Réinitialiser hauteur",
-  "page.height.overlay": "Hauteur"
+  "page.height.overlay": "Hauteur",
+  "report.generation.capture.button.title":"Capturer la page en cours",
+  "report.generation.page.size.title":"Taille de la page",
+  "report.generation.export.button.title":"Générer un rapport",
+  "report.generation.card.title":"Exporter le tableau de bord en format PDF",
+  "report.generation.page.orientation.title":"Orientation de la page"
 }

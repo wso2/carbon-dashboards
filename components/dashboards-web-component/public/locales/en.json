@@ -84,5 +84,10 @@
   "designer.hide.page": "Hide Page",
   "page.height": "Height (px)",
   "page.height.reset": "Reset height",
-  "page.height.overlay": "Height"
+  "page.height.overlay": "Height",
+  "report.generation.capture.button.title":"Capture current page",
+  "report.generation.page.size.title":"Page Size",
+  "report.generation.export.button.title":"Generate Report",
+  "report.generation.card.title":"Export Dashboard As PDF",
+  "report.generation.page.orientation.title":"Page Orientation"
 }

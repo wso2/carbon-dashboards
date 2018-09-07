@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.dashboards.api.internal;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
@@ -26,6 +27,7 @@ import org.wso2.carbon.analytics.msf4j.interceptor.common.util.InterceptorConsta
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
+import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
 import org.wso2.msf4j.Microservice;
@@ -62,6 +64,7 @@ public class DashboardRestApi implements Microservice {
 
     public static final String API_CONTEXT_PATH = "/apis/dashboards";
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApi.class);
+    private static final Gson GSON = new Gson();
 
     private final DashboardMetadataProvider dashboardDataProvider;
 
@@ -308,5 +311,20 @@ public class DashboardRestApi implements Microservice {
             str = str.replace('\n', '_').replace('\r', '_');
         }
         return str;
+    }
+
+    /**
+     * Gets the configs for pdf
+     *
+     * @return response
+     */
+    @GET
+    @Path("/report-config")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getReportConfigs() {
+        ReportConfigs configurations = dashboardDataProvider.getReportGenerationConfigurations().getReportConfigs();
+        Map<String, Object> reportConfigurations = configurations.getPdf();
+        return Response.ok().entity(reportConfigurations).build();
     }
 }

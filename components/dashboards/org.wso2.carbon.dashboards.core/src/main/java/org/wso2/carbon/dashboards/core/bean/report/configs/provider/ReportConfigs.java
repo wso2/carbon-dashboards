@@ -16,22 +16,26 @@
  * under the License.
  */
 
-.dashboard-view-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    border: 0;
-}
-.widget-report-generation-button {
-    float: left;
-    margin-right: 5px;
-    cursor: pointer;
-    opacity: 0.6;
-    font-size: 0.8em;
-    padding-top: 1px;
-}
-.widget-report-generation-button:hover {
-    opacity: 1;
+package org.wso2.carbon.dashboards.core.bean.report.configs.provider;
+
+import org.wso2.carbon.config.annotation.Element;
+
+import java.util.Collections;
+import java.util.Map;
+
+/**
+ * This is the bean class for Report generation configurations in deployment yaml.
+ * Add new fields of report types as attributes
+ */
+public class ReportConfigs {
+    @Element(description = "List of report generation configurations")
+    private Map<String, Object> pdf = Collections.emptyMap();
+
+    public Map<String, Object> getPdf() {
+        return pdf;
+    }
+
+    public void setPdf(Map<String, Object> pdf) {
+        this.pdf = pdf;
+    }
 }

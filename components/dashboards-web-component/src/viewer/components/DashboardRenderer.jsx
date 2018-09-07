@@ -30,6 +30,7 @@ import glDarkTheme from '!!css-loader!../../common/styles/custom-goldenlayout-da
 import '../../common/styles/custom-goldenlayout-light-theme.css';
 import glLightTheme from '!!css-loader!../../common/styles/custom-goldenlayout-light-theme.css';
 import './dashboard-container-styles.css';
+import DashboardReportGenerator from "../../utils/DashboardReportGenerator";
 
 const glDarkThemeCss = glDarkTheme.toString();
 const glLightThemeCss = glLightTheme.toString();
@@ -42,7 +43,7 @@ export default class DashboardRenderer extends Component {
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
-            height: window.innerHeight
+            height: window.innerHeight,
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -50,6 +51,7 @@ export default class DashboardRenderer extends Component {
         this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
         this.triggerThemeChangeEvent = this.triggerThemeChangeEvent.bind(this);
         this.onWidgetLoadedEvent = this.onWidgetLoadedEvent.bind(this);
+        this.onGoldenLayoutComponentCreateEvent = this.onGoldenLayoutComponentCreateEvent.bind(this);
         this.unmounted = false;
     }
 
@@ -85,11 +87,12 @@ export default class DashboardRenderer extends Component {
             this.triggerThemeChangeEvent(nextProps.theme);
             return true;
         }
+        //TODO : change the widget props when theme changes
         return false;
     }
 
     render() {
-        let { theme, height } = this.props;
+        let {theme, height} = this.props;
 
         // Calculate optimal dashboard height for the current screen.
         const containerHeight = this.state.height - 55;
@@ -142,6 +145,7 @@ export default class DashboardRenderer extends Component {
 
         const goldenLayout = GoldenLayoutFactory.createForViewer(dashboardContainerId, goldenLayoutContents);
         const numberOfWidgets = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents).length;
+        goldenLayout.on('componentCreated', this.onGoldenLayoutComponentCreateEvent);
         goldenLayout.eventHub.on(Event.DASHBOARD_VIEWER_WIDGET_LOADED,
             () => this.onWidgetLoadedEvent(numberOfWidgets, this.props.dashboardId));
         goldenLayout.initialize();
@@ -169,10 +173,23 @@ export default class DashboardRenderer extends Component {
             DashboardThumbnail.saveDashboardThumbnail(dashboardName, dashboardContainerId);
         }
     }
+
+    onGoldenLayoutComponentCreateEvent(component) {
+        const exportButton = document.createElement('i');
+        exportButton.title = 'Generate Report';
+        //TODO: change icon
+        exportButton.className = 'fw fw-document widget-report-generation-button';
+        exportButton.addEventListener('click', () => {
+            DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
+                this.props.theme.name, this.props.dashboardName);
+        });
+        component.parent.header.controlsContainer.prepend(exportButton);
+    }
 }
 
 DashboardRenderer.propTypes = {
     dashboardId: PropTypes.string.isRequired,
     goldenLayoutContents: PropTypes.arrayOf({}).isRequired,
     theme: PropTypes.shape({}).isRequired,
+    dashboardName: PropTypes.string.isRequired,
 };
