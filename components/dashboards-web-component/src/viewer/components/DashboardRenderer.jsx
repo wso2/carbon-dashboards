@@ -135,7 +135,7 @@ export default class DashboardRenderer extends Component {
 
         GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             let isHeaderShown = _.get(widgetContent, 'props.configs.options.header');
-            if (typeof isHeaderShown != 'undefined'){
+            if (typeof (isHeaderShown) != 'undefined'){
                 widgetContent.header.show = isHeaderShown;
             }
             if (widgetContent.displayName) {
