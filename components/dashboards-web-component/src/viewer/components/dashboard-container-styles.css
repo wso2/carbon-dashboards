@@ -29,8 +29,8 @@
     margin-right: 5px;
     cursor: pointer;
     opacity: 0.6;
-    font-size: 0.8em;
-    padding-top: 1px;
+    font-size: 0.6em;
+    padding-top: 5px;
 }
 .widget-report-generation-button:hover {
     opacity: 1;

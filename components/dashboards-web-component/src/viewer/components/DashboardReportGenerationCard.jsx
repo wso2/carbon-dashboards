@@ -34,8 +34,10 @@ export default class DashboardReportGenerationCard extends Component {
             expanded: false,
             pageList: [],
             pageSize: 'A4',
-            orientation:'Landscape'
+            orientation:'Landscape',
         };
+
+        this.capturedPageList = [];
 
         this.handleCardClick = this.handleCardClick.bind(this);
         this.capturePage = this.capturePage.bind(this);
@@ -49,7 +51,7 @@ export default class DashboardReportGenerationCard extends Component {
                 expanded={this.state.expanded}
                 onExpandChange={this.handleCardClick}
             >
-                <CardHeader title={<FormattedMessage id='report.generation.card.title' defaultMessage='Export Dashboard As PDF'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
+                <CardHeader title={<FormattedMessage id='report.generation.card.title' defaultMessage='Export Dashboard as PDF'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
                 <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
                         <RaisedButton
@@ -59,11 +61,12 @@ export default class DashboardReportGenerationCard extends Component {
                         />
 
                         <List>
-                            {this.state.pageList.map(field =>
+                            {this.state.pageList.map((field,index) =>
                                 (<ListItem
                                     primaryText={field}
-                                    rightIcon={<DeleteIcon />}
-                                    onClick={() => this.removePage(field)}
+                                    rightIcon={<DeleteIcon style={{height:'20px', width:'20px',top:'4px'}} />}
+                                    onClick={() => this.removePage(field, index)}
+                                    style={{paddingLeft: '0px'}}
                                 />),
                             )}
                         </List>
@@ -117,15 +120,13 @@ export default class DashboardReportGenerationCard extends Component {
         this.setState({ expanded: expand });
     }
 
-    removePage(index) {
+    removePage(pageName,index) {
+        this.capturedPageList.splice(index,1);
+        localStorage.setItem('_dashboard-report:'+this.props.dashboardName,JSON.stringify(this.capturedPageList));
         const tempPageList = this.state.pageList.slice();
-        const indexOfPage = tempPageList.indexOf(index);
+        const indexOfPage = tempPageList.indexOf(pageName);
         tempPageList.splice(indexOfPage, 1);
         this.setState({ pageList: tempPageList });
-
-        if (tempPageList.indexOf(index) == -1) {
-            localStorage.removeItem(index);
-        }
     }
 
     capturePage(index) {
@@ -138,11 +139,14 @@ export default class DashboardReportGenerationCard extends Component {
 
         html2canvas(document.getElementById('dashboard-container')).then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
-            const w = canvas.width;
-            const h = canvas.height;
-            localStorage.setItem('_dashboard-report:'+currentPage.name,
-                JSON.stringify({ imageData: imgData, width: w, height: h, timestamp:new Date() }));
-            const tempPageList = this.state.pageList.slice();
+            const width = canvas.width;
+            const height = canvas.height;
+            const imageData = JSON.stringify({ imageData: imgData, width: width, height: height, timestamp:new Date() });
+
+            this.capturedPageList.push(imageData);
+            localStorage.setItem('_dashboard-report:'+this.props.dashboardName,JSON.stringify(this.capturedPageList));
+
+            const tempPageList = this.state.pageList;
             tempPageList.push(currentPage.name);
             this.setState({ pageList: tempPageList });
         });
