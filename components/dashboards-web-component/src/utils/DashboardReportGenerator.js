@@ -263,11 +263,14 @@ export default class DashboardReportGenerator {
             }
         }
 
-        if (includeRecords) {
-            pdfInfo += '\nNo of records : ' + recordCount;
-        }
-        const xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
+        let xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
         pdf.text(pdfInfo, xCoordinate, pdfConfig.pdfSubtitle.coordinates.y);
+
+        if (includeRecords) {
+            pdfInfo = 'No of records : ' + recordCount;
+        }
+        xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
+        pdf.text(pdfInfo, xCoordinate, pdfConfig.pdfSubtitle.coordinates.y + pdf.internal.getLineHeight());
     }
 
     /**
@@ -530,7 +533,9 @@ export default class DashboardReportGenerator {
                 pdf.save(reportName);
             }
         } else if (type === 'table') {
-            pdf.save(reportName);
+            if (savePdf) {
+                pdf.save(reportName);
+            }
         } else if (type === 'dashboard') {
             DashboardReportGenerator.addPageConfigsToAll(pdf, dashboardPages, imgData, property, orientation);
             if (savePdf) {
