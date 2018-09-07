@@ -178,7 +178,7 @@ export default class DashboardRenderer extends Component {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
         //TODO: change icon
-        exportButton.className = 'fw fw-document widget-report-generation-button';
+        exportButton.className = 'fw fw-download widget-report-generation-button';
         exportButton.addEventListener('click', () => {
             DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
                 this.props.theme.name, this.props.dashboardName);

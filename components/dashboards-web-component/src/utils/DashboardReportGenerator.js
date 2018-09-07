@@ -206,14 +206,17 @@ export default class DashboardReportGenerator {
         pdf.setFont('roboto');
         pdf.setFontType('bold');
         pdf.setFontSize(18);
+        pdf.setTextColor('#424242');
         const rightPosition = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, dashboardName, 'right');
 
         pdf.text(rightPosition, pdfConfig.pdfTitle.coordinates.y, dashboardName);
         pdf.setLineWidth(1);
+        pdf.setDrawColor('#9E9E9E')
         pdf.line(pdfConfig.stampImageLandscape.coordinates.x, pdfConfig.pdfLine.coordinates.y,
             pdf.internal.pageSize.getWidth() - pdfConfig.pdfPadding.width, pdfConfig.pdfLine.coordinates.y);
         pdf.setFontType('normal');
-        pdf.setFontSize(12);
+        pdf.setFontSize(14);
+        pdf.setTextColor('#616161')
         pdf.text(pdfConfig.stampImageLandscape.coordinates.x, pdfConfig.pdfSubtitle.coordinates.y, widgetName);
     }
 
@@ -222,6 +225,7 @@ export default class DashboardReportGenerator {
      * @private
      * @param {object} pdf jspdf object
      * @param {string} text text to be centered
+     * @param {string} alignment alignment to be applied
      * @returns {number} returns the x coordinate to center the text
      */
     static getTextAlignmentXCoordinate(pdf, text, alignment) {
@@ -231,7 +235,7 @@ export default class DashboardReportGenerator {
         if (alignment === 'center') {
             return (pageWidth - txtWidth) / 2;
         } else if (alignment === 'right') {
-            return (pageWidth - pdfConfig.pdfFooter.margin.x - txtWidth);
+            return (pageWidth - pdfConfig.pdfPadding.width - txtWidth);
         } else {
             return 0;
         }
@@ -249,6 +253,7 @@ export default class DashboardReportGenerator {
     static addSubTitle(pdf, includeTime, includeRecords, recordCount, timestamp) {
         let pdfInfo = '';
         pdf.setFontSize(12);
+        pdf.setTextColor('#000000')
 
         if (includeTime) {
             if (timestamp) {
@@ -359,7 +364,6 @@ export default class DashboardReportGenerator {
      * @param {object} pdf jspdf object
      * @param {object} canvas canvas containing the snapshot
      */
-
     static addWidgetImage(pdf, canvas) {
         const resizeDimensions = DashboardReportGenerator.getImageResizeDimensions(canvas, pdf);
         if (!(canvas instanceof HTMLCanvasElement)) {
@@ -381,7 +385,6 @@ export default class DashboardReportGenerator {
      * @param {object} pdf jspdf object
      * @returns {{width: *, height: *}}
      */
-
     static getImageResizeDimensions(canvas, pdf) {
         let printHeight = canvas.height;
         let printWidth = canvas.width;
@@ -427,6 +430,7 @@ export default class DashboardReportGenerator {
     /**
      * Generate pdf report containing dashboard pages
      * @param {string} paperSize paperSize page size of the report
+     * @param {string} orientation orientation of the report page
      * @param {map} dashboardPages dashboardPages list of pages
      * @param {boolean} includeTime includeTime add the report generation time of the report
      * @param {string} title dashboardName dashboard name to be printed in the report
@@ -439,6 +443,7 @@ export default class DashboardReportGenerator {
      * Generate dashboard report
      * @private
      * @param {string} paperSize page size of the report
+     * @param {string} orientation of the report page
      * @param {map} dashboardPages list of pages
      * @param {boolean} includeTime add the report generation time of the report
      * @param {string} dashboardName dashboard name to be printed in the report
@@ -459,20 +464,18 @@ export default class DashboardReportGenerator {
      * @param {string} orientation orientation of the report
      */
     static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName, orientation) {
-        dashboardPages.map((dashboardPage, ind) => {
-            const rawImageData = localStorage.getItem('_dashboard-report:' + dashboardPage);
+        const capturedPagesList = JSON.parse(localStorage.getItem('_dashboard-report:' + dashboardName));
+        capturedPagesList.map((rawImageData, ind) => {
             const image = JSON.parse(rawImageData);
-
-            DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, dashboardPage);
+            DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, dashboardPages[ind]);
             DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0, image.timestamp);
             DashboardReportGenerator.addWidgetImage(pdf, image);
-            DashboardReportGenerator.addPageNumber(pdf, dashboardPage, dashboardPages, ind);
+            DashboardReportGenerator.addPageNumber(pdf, null, dashboardPages, ind);
 
             if (ind < dashboardPages.length - 1) {
                 pdf.addPage();
             }
         });
-
         DashboardReportGenerator.addPdfConfigs(pdf, null, dashboardName, 'dashboard', orientation, dashboardPages);
     }
 

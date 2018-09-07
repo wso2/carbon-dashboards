@@ -41,6 +41,7 @@ export default class ReportGenerationButton extends Component {
                     onClick={this.generateDashboardReport}
                     disabled={!(this.props.pageList.length > 0)}
                     disabledBackgroundColor="rgb(27, 40, 47)"
+                    style={{ paddingTop: '5px', paddingBottom: '5px' }}
                 />
             </div>
 
