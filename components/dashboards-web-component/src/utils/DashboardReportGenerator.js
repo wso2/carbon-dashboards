@@ -86,7 +86,7 @@ export default class DashboardReportGenerator {
             // Page numbers
             let pageNumber = 'Page ' + data.pageCount;
             // Total page number plugin only available in jspdf v1.0+
-            if (typeof pdf.putTotalPages === 'function') {
+            if (typeof (pdf.putTotalPages === 'function')) {
                 pageNumber = pageNumber + ' of ' + totalPagesExp;
             }
             pdf.setFontSize(12);
@@ -100,7 +100,7 @@ export default class DashboardReportGenerator {
 
         pdf.autoTable(tableData.columnData, tableData.rowData, tableStyles);
 
-        if (typeof pdf.putTotalPages === 'function') {
+        if (typeof (pdf.putTotalPages) === 'function') {
             pdf.putTotalPages(totalPagesExp);
         }
     }
@@ -268,9 +268,9 @@ export default class DashboardReportGenerator {
 
         if (includeRecords) {
             pdfInfo = 'No of records : ' + recordCount;
+            xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
+            pdf.text(pdfInfo, xCoordinate, pdfConfig.pdfSubtitle.coordinates.y + pdf.internal.getLineHeight());
         }
-        xCoordinate = DashboardReportGenerator.getTextAlignmentXCoordinate(pdf, pdfInfo, 'right');
-        pdf.text(pdfInfo, xCoordinate, pdfConfig.pdfSubtitle.coordinates.y + pdf.internal.getLineHeight());
     }
 
     /**
@@ -289,7 +289,7 @@ export default class DashboardReportGenerator {
         const reportName = widgetName + '.pdf';
 
         DashboardAPI.getDashboardReportPdfConfigs().then((res) => {
-            if (res.data !== '') {
+            if (JSON.stringify(res.data) !== JSON.stringify({})) {
                 if (res.data.header) {
                     DashboardReportGenerator.convertImageToBase64(path + res.data.header, (headerImgData) => {
                         // to handle the header and footer adding and widget image addition in separate promises
@@ -315,6 +315,13 @@ export default class DashboardReportGenerator {
                             'footer', orientation, reportName, true);
                     });
                 }
+            } else {
+                const defaultHeaderImage = 'stream-processor.png';
+                DashboardReportGenerator.convertImageToBase64(path + defaultHeaderImage, (headerImgData) => {
+                    DashboardReportGenerator.addPdfConfigImage(pdf, headerImgData, 'header', orientation);
+                    DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, headerImgData,
+                        'header', orientation, reportName, true);
+                });
             }
         }).catch((e) => {
             console.log(e);
