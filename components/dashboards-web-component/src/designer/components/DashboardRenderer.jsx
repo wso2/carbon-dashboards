@@ -266,9 +266,9 @@ export default class DashboardRenderer extends Component {
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
-        goldenLayout.on('itemDropped', this.updateDashboardOnContentChanged);
-        goldenLayout.on('itemDropped', this.addWidgetSettingsButton);
         goldenLayout.on('componentCreated', this.addWidgetSettingsButton);
+        goldenLayout.on('itemDropped', this.addWidgetSettingsButton);
+        goldenLayout.on('itemDropped', this.updateDashboardOnContentChanged);
         goldenLayout.on('itemDestroyed', this.hideWidgetConfigurationPane);
         goldenLayout.on(Event.DASHBOARD_DESIGNER_LAST_WIDGET_DELETED, this.updateDashboardOnContentChanged);
         goldenLayout.eventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.updateDashboardOnContentChanged);
