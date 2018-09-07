@@ -83,7 +83,8 @@ export default class DashboardRenderer extends Component {
         this.cleanDashboardJSON = this.cleanDashboardJSON.bind(this);
         this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
         this.handleWindowResize = this.handleWindowResize.bind(this);
-        this.updateDashboard = this.updateDashboard.bind(this);
+        this.updateDashboardOnConfigChange = this.updateDashboardOnConfigChange.bind(this);
+        this.updateDashboardOnContentChanged = this.updateDashboardOnContentChanged.bind(this);
         this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
         this.unmounted = false;
     }
@@ -153,7 +154,7 @@ export default class DashboardRenderer extends Component {
 
     onWidgetConfigurationPaneClose() {
         this.unhighlightSelectedWidgetContainer();
-        this.updateDashboard(true);
+        this.updateDashboardOnConfigChange();
     }
 
     getRenderingPage() {
@@ -242,10 +243,14 @@ export default class DashboardRenderer extends Component {
         }
     }
 
-    updateDashboard(force) {
+    updateDashboardOnConfigChange() {
+        this.props.updateDashboard();
+    }
+
+    updateDashboardOnContentChanged() {
         const updatingPage = this.getRenderingPage();
         const newPageContent = this.cleanDashboardJSON(this.goldenLayout.toConfig().content);
-        if (force || !_.isEqual(updatingPage.content, newPageContent)) {
+        if (!_.isEqual(updatingPage.content, newPageContent)) {
             updatingPage.content = newPageContent;
             this.props.updateDashboard();
         }
@@ -262,11 +267,11 @@ export default class DashboardRenderer extends Component {
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
-        goldenLayout.on('itemDropped', this.updateDashboard);
+        goldenLayout.on('itemDropped', this.updateDashboardOnContentChanged);
         goldenLayout.on('itemDropped', this.addWidgetSettingsButton);
         goldenLayout.on('componentCreated', this.addWidgetSettingsButton);
         goldenLayout.on('itemDestroyed', this.hideWidgetConfigurationPane);
-        goldenLayout.eventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.updateDashboard);
+        goldenLayout.eventHub.on(Event.DASHBOARD_DESIGNER_WIDGET_RESIZE, this.updateDashboardOnContentChanged);
 
         goldenLayout.initialize();
         this.goldenLayout = goldenLayout;
@@ -315,7 +320,7 @@ export default class DashboardRenderer extends Component {
                                 this.goldenLayout.updateSize();
                             }
                             renderingPage.height = data.size.height;
-                            this.props.updateDashboard();
+                            this.updateDashboardOnConfigChange();
                         }}
                         axis="y"
                     >
