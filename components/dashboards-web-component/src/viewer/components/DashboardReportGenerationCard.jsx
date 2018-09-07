@@ -31,7 +31,6 @@ export default class DashboardReportGenerationCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: false,
             pageList: [],
             pageSize: 'A4',
             orientation:'Landscape',
@@ -39,7 +38,6 @@ export default class DashboardReportGenerationCard extends Component {
 
         this.capturedPageList = [];
 
-        this.handleCardClick = this.handleCardClick.bind(this);
         this.capturePage = this.capturePage.bind(this);
         this.removePage = this.removePage.bind(this);
     }
@@ -48,14 +46,15 @@ export default class DashboardReportGenerationCard extends Component {
         return (
             <Card
                 style={{ margin: 10 }}
-                expanded={this.state.expanded}
-                onExpandChange={this.handleCardClick}
             >
-                <CardHeader title={<FormattedMessage id='report.generation.card.title' defaultMessage='Export Dashboard as PDF'/>} actAsExpander textStyle={{ paddingRight: '0px' }} />
-                <CardActions expandable style={{ display: 'flex', paddingRight: '0px' }}>
+                <CardHeader title={<FormattedMessage id='report.generation.card.title'
+                                                     defaultMessage='Export Dashboard as PDF'/>}
+                            textStyle={{ paddingRight: '0px' }} />
+                <CardActions style={{ display: 'flex', paddingRight: '0px' }}>
                     <div style={{ marginRight: 0 }}>
                         <RaisedButton
-                            label={<FormattedMessage id='report.generation.capture.button.title' defaultMessage='Capture Current Page'/>}
+                            label={<FormattedMessage id='report.generation.capture.button.title'
+                                                     defaultMessage='Capture Current Page'/>}
                             onClick={this.capturePage}
                             backgroundColor={'#1c3b4a'}
                         />
@@ -73,7 +72,8 @@ export default class DashboardReportGenerationCard extends Component {
 
                         <SelectField
                             style={{ width: 200 }}
-                            floatingLabelText={<FormattedMessage id='report.generation.page.size.title' defaultMessage='Page Size'/>}
+                            floatingLabelText={<FormattedMessage id='report.generation.page.size.title'
+                                                                 defaultMessage='Page Size'/>}
                             value={this.state.pageSize}
                             onChange={(event, index, value) => { this.setState({ pageSize: value }); }}
                         >
@@ -116,10 +116,6 @@ export default class DashboardReportGenerationCard extends Component {
         );
     }
 
-    handleCardClick(expand) {
-        this.setState({ expanded: expand });
-    }
-
     removePage(pageName,index) {
         this.capturedPageList.splice(index,1);
         localStorage.setItem('_dashboard-report:'+this.props.dashboardName,JSON.stringify(this.capturedPageList));
@@ -149,6 +145,8 @@ export default class DashboardReportGenerationCard extends Component {
             const tempPageList = this.state.pageList;
             tempPageList.push(currentPage.name);
             this.setState({ pageList: tempPageList });
+        }).catch((er) => {
+            console.log(er);
         });
     }
 }
