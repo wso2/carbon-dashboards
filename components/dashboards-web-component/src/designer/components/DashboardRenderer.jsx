@@ -74,10 +74,10 @@ export default class DashboardRenderer extends Component {
         };
 
         this.onGoldenLayoutInitializedEvent = this.onGoldenLayoutInitializedEvent.bind(this);
-        this.addWidgetSettingsButton = this.addWidgetSettingsButton.bind(this);
-        this.hideWidgetConfigurationPane = this.hideWidgetConfigurationPane.bind(this);
         this.onWidgetConfigurationPaneClose = this.onWidgetConfigurationPaneClose.bind(this);
         this.getRenderingPage = this.getRenderingPage.bind(this);
+        this.addWidgetSettingsButton = this.addWidgetSettingsButton.bind(this);
+        this.hideWidgetConfigurationPane = this.hideWidgetConfigurationPane.bind(this);
         this.highlightSelectedWidgetContainer = this.highlightSelectedWidgetContainer.bind(this);
         this.unhighlightSelectedWidgetContainer = this.unhighlightSelectedWidgetContainer.bind(this);
         this.cleanDashboardJSON = this.cleanDashboardJSON.bind(this);
@@ -123,10 +123,9 @@ export default class DashboardRenderer extends Component {
 
     onGoldenLayoutInitializedEvent() {
         this.props.widgetsConfigurations.forEach((widget) => {
-            const dragSourceElement = document.getElementById(widget.id);
             const options = {};
             if (widget.configs && widget.configs.options) {
-                widget.configs.options.map((option) => {
+                widget.configs.options.forEach((option) => {
                     options[option.id] = option.defaultValue;
                 });
             }
@@ -143,7 +142,7 @@ export default class DashboardRenderer extends Component {
                 reorderEnabled: true,
                 header: { show: true },
             };
-            this.goldenLayout.createDragSource(dragSourceElement, itemConfig);
+            this.goldenLayout.createDragSource(document.getElementById(widget.id), itemConfig);
             try {
                 this.goldenLayout.registerComponent(itemConfig.component, WidgetRenderer);
             } catch (e) {
@@ -294,7 +293,7 @@ export default class DashboardRenderer extends Component {
         const { theme } = this.props;
         // Calculate optimal page height for the current screen.
         const pageHeight = renderingPage.height ? parseInt(renderingPage.height) : undefined;
-        const containerHeight =  window.innerHeight - 90;
+        const containerHeight = window.innerHeight - 90;
         const height = pageHeight && pageHeight > containerHeight ? pageHeight : containerHeight;
 
         if (renderingPage) {
@@ -303,19 +302,16 @@ export default class DashboardRenderer extends Component {
                     color: theme.palette.textColor,
                     backgroundColor: theme.palette.canvasColor,
                     fontFamily: theme.fontFamily,
-                }}>
+                }}
+                >
                     <style>{glDarkThemeCss}</style>
                     <ResizableBox
                         height={height}
                         minConstraints={['100%', containerHeight]}
-                        onResizeStart={() => {
-                            this.setState({resizeStarted: true});
-                        }}
-                        onResize={(e, data) => {
-                            this.setState({resizingHeight: data.size.height});
-                        }}
+                        onResizeStart={() => this.setState({ resizeStarted: true })}
+                        onResize={(e, data) => this.setState({ resizingHeight: data.size.height })}
                         onResizeStop={(e, data) => {
-                            this.setState({resizeStarted: false});
+                            this.setState({ resizeStarted: false });
                             if (this.goldenLayout) {
                                 this.goldenLayout.updateSize();
                             }
@@ -326,9 +322,7 @@ export default class DashboardRenderer extends Component {
                     >
                         <div
                             id={dashboardContainerId}
-                            style={{
-                                height: '100%',
-                            }}
+                            style={{ height: '100%' }}
                             ref={() => {
                                 if (!this.unmounted) {
                                     this.renderGoldenLayout();
@@ -337,7 +331,7 @@ export default class DashboardRenderer extends Component {
                         />
                         {
                             this.state.resizeStarted &&
-                            <div style={{height: '100%'}}>
+                            <div style={{ height: '100%' }}>
                                 <div
                                     style={{
                                         position: 'fixed',
