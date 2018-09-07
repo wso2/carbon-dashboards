@@ -40,7 +40,9 @@ const MediaType = {
 
 /**
  * Events.
- * @type {{DASHBOARD_VIEWER_THEME_CHANGE: string, DASHBOARD_VIEWER_WIDGET_LOADED: string}}
+ * @type {{DASHBOARD_VIEWER_THEME_CHANGE: string, DASHBOARD_VIEWER_WIDGET_LOADED: string,
+ *     DASHBOARD_DESIGNER_WIDGET_RESIZE: string, DASHBOARD_DESIGNER_WIDGET_CONFIG_UPDATE: string,
+ *     DASHBOARD_DESIGNER_LAST_WIDGET_DELETED: string}}
  */
 const Event = {
     DASHBOARD_VIEWER_THEME_CHANGE: 'dashboard-viewer-theme-change',
