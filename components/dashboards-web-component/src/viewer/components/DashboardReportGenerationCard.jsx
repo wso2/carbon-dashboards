@@ -89,7 +89,8 @@ export default class DashboardReportGenerationCard extends Component {
 
                         <SelectField
                             style={{ width: 200 }}
-                            floatingLabelText={<FormattedMessage id='report.generation.page.orientation.title' defaultMessage='Page Orientation'/>}
+                            floatingLabelText={<FormattedMessage id='report.generation.page.orientation.title'
+                                                                 defaultMessage='Page Orientation'/>}
                             value={this.state.orientation}
                             onChange={(event, index, value) => { this.setState({ orientation: value }); }}
                         >
