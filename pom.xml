@@ -395,17 +395,17 @@
         <carbon.dashboards.version>4.0.36-SNAPSHOT</carbon.dashboards.version>
 
         <!-- Datasource -->
-        <carbon.datasource.core.version>1.1.2</carbon.datasource.core.version>
+        <carbon.datasource.core.version>1.1.4</carbon.datasource.core.version>
         <carbon.datasource.core.version.range>[1.1.2, 2.0.0)</carbon.datasource.core.version.range>
         <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
 
         <!--Config-->
-        <carbon.config.version>2.0.3</carbon.config.version>
+        <carbon.config.version>2.1.5</carbon.config.version>
         <carbon.config.version.range>[2.0.3, 3.0.0)</carbon.config.version.range>
-        <carbon.securevault.version>5.0.8</carbon.securevault.version>
+        <carbon.securevault.version>5.0.11</carbon.securevault.version>
 
         <!--Utils-->
-        <carbon.utils.version>2.0.2</carbon.utils.version>
+        <carbon.utils.version>2.0.8</carbon.utils.version>
         <carbon.utils.version.range>[2.0.2, 3.0.0)</carbon.utils.version.range>
 
         <!--UI Server-->
@@ -421,13 +421,13 @@
         <javax.websocket.version.range>[1.1.0, 2.0.0)</javax.websocket.version.range>
 
         <!--Metrics-->
-        <carbon.metrics.version>2.3.0</carbon.metrics.version>
+        <carbon.metrics.version>2.3.7</carbon.metrics.version>
         <carbon.metrics.version.range>[2.3.0, 3.0.0)</carbon.metrics.version.range>
-        <carbon.jndi.version>1.0.3</carbon.jndi.version>
-        <carbon.datasources.version>1.1.2</carbon.datasources.version>
+        <carbon.jndi.version>1.0.5</carbon.jndi.version>
+        <carbon.datasources.version>1.1.4</carbon.datasources.version>
 
         <!--Analytics-->
-        <carbon.analytics.version>2.0.409</carbon.analytics.version>
+        <carbon.analytics.version>2.0.412</carbon.analytics.version>
         <carbon.analytics.version.range>[2.0.395, 3.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
         <carbon.analytics-common.version>6.0.68</carbon.analytics-common.version>
