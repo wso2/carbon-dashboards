@@ -135,7 +135,7 @@ export default class DashboardRenderer extends Component {
 
         GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
             let isHeaderShown = _.get(widgetContent, 'props.configs.options.header');
-            if (typeof (isHeaderShown) != 'undefined'){
+            if (typeof isHeaderShown != 'undefined'){
                 widgetContent.header.show = isHeaderShown;
             }
             if (widgetContent.displayName) {
@@ -177,8 +177,7 @@ export default class DashboardRenderer extends Component {
     onGoldenLayoutComponentCreateEvent(component) {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
-        //TODO: change icon
-        exportButton.className = 'fw fw-download widget-report-generation-button';
+        exportButton.className = 'fw fw-export widget-report-generation-button';
         exportButton.addEventListener('click', () => {
             DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
                 this.props.theme.name, this.props.dashboardName);

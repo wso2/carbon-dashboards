@@ -18,14 +18,14 @@
 
 import React, { Component } from 'react';
 import { Card, CardHeader, CardActions, RaisedButton, List, ListItem, SelectField, MenuItem } from 'material-ui';
-import DeleteIcon from 'material-ui/svg-icons/action/delete';
-import ReportGenerationButton from './ReportGenerationButton';
 import html2canvas from 'html2canvas';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import DashboardReportGenerator from '../../utils/DashboardReportGenerator';
 
 const pageSizes = ['A4', 'Letter', 'A3'];
-const orientations = ['Landscape','Portrait'];
+const orientations = ['Landscape', 'Portrait'];
 
 export default class DashboardReportGenerationCard extends Component {
     constructor(props) {
@@ -33,100 +33,58 @@ export default class DashboardReportGenerationCard extends Component {
         this.state = {
             pageList: [],
             pageSize: 'A4',
-            orientation:'Landscape',
+            orientation: 'Landscape',
+            includeTime: true,
         };
 
         this.capturedPageList = [];
 
         this.capturePage = this.capturePage.bind(this);
         this.removePage = this.removePage.bind(this);
+        this.resetFields = this.resetFields.bind(this);
+        this.generateDashboardReport = this.generateDashboardReport.bind(this);
+        this.renderCapturedPageList = this.renderCapturedPageList.bind(this);
     }
 
-    render() {
-        return (
-            <Card
-                style={{ margin: 10 }}
-            >
-                <CardHeader title={<FormattedMessage id='report.generation.card.title'
-                                                     defaultMessage='Export Dashboard as PDF'/>}
-                            textStyle={{ paddingRight: '0px' }} />
-                <CardActions style={{ display: 'flex', paddingRight: '0px' }}>
-                    <div style={{ marginRight: 0 }}>
-                        <RaisedButton
-                            label={<FormattedMessage id='report.generation.capture.button.title'
-                                                     defaultMessage='Capture Current Page'/>}
-                            onClick={this.capturePage}
-                            backgroundColor={'#1c3b4a'}
-                        />
-
-                        <List>
-                            {this.state.pageList.map((field,index) =>
-                                (<ListItem
-                                    primaryText={field}
-                                    rightIcon={<DeleteIcon style={{height:'20px', width:'20px',top:'4px'}} />}
-                                    onClick={() => this.removePage(field, index)}
-                                    style={{paddingLeft: '0px'}}
-                                />),
-                            )}
-                        </List>
-
-                        <SelectField
-                            style={{ width: 200 }}
-                            floatingLabelText={<FormattedMessage id='report.generation.page.size.title'
-                                                                 defaultMessage='Page Size'/>}
-                            value={this.state.pageSize}
-                            onChange={(event, index, value) => { this.setState({ pageSize: value }); }}
-                        >
-                            {pageSizes.map(field =>
-                                (
-                                    <MenuItem
-                                        key={field}
-                                        value={field}
-                                        primaryText={field}
-                                    />
-                                ))}
-                        </SelectField>
-
-                        <SelectField
-                            style={{ width: 200 }}
-                            floatingLabelText={<FormattedMessage id='report.generation.page.orientation.title'
-                                                                 defaultMessage='Page Orientation'/>}
-                            value={this.state.orientation}
-                            onChange={(event, index, value) => { this.setState({ orientation: value }); }}
-                        >
-                            {orientations.map(field =>
-                                (
-                                    <MenuItem
-                                        key={field}
-                                        value={field}
-                                        primaryText={field}
-                                    />
-                                ))}
-                        </SelectField>
-
-                        <ReportGenerationButton
-                            pageSize={this.state.pageSize}
-                            orientation={this.state.orientation}
-                            pageList={this.state.pageList}
-                            pages={this.props.pages}
-                            dashboardName={this.props.dashboardName}
-                        />
-                    </div>
-                </CardActions>
-            </Card>
-        );
+    /**
+     * Generate dashboard report from the captured list of pages
+     */
+    generateDashboardReport() {
+        const title = this.props.dashboardName;
+        DashboardReportGenerator.generateDashboardPdf(this.state.pageSize.toLowerCase(),
+            this.state.orientation.toLocaleLowerCase(), this.state.pageList, this.state.includeTime, title);
+        this.resetFields();
     }
 
-    removePage(pageName,index) {
-        this.capturedPageList.splice(index,1);
-        localStorage.setItem('_dashboard-report:'+this.props.dashboardName,JSON.stringify(this.capturedPageList));
+    /**
+     * Reset the state fields into the default values
+     */
+    resetFields() {
+        this.capturedPageList = [];
+        this.setState({ pageList: [], pageSize: 'A4', orientation: 'Landscape' });
+        // localStorage.removeItem(localStorageLabelPrefix + this.props.dashboardName);
+        DashboardReportGenerator.removePage(this.props.dashboardName);
+    }
+
+    /**
+     * Removes a given page from the dashboard report generation pages list.
+     * @param {string} pageName the name of the page to be removed from the captured list
+     * @param {int} index the index of page to be removed from the page list.
+     */
+    removePage(pageName, index) {
+        this.capturedPageList.splice(index, 1);
+        const newCapturedObjectList = JSON.stringify(this.capturedPageList);
+        DashboardReportGenerator.savePage(this.props.dashboardName, newCapturedObjectList);
         const tempPageList = this.state.pageList.slice();
         const indexOfPage = tempPageList.indexOf(pageName);
         tempPageList.splice(indexOfPage, 1);
         this.setState({ pageList: tempPageList });
     }
 
-    capturePage(index) {
+    /**
+     * Capture the current dashboard page to be included in the report.
+     */
+    capturePage() {
         const url = window.location.href;
         const parts = url.split('/');
         let currentPage = parts[parts.length - 1] === '' ? parts[parts.length - 2] : parts[parts.length - 1];
@@ -138,21 +96,129 @@ export default class DashboardReportGenerationCard extends Component {
             const imgData = canvas.toDataURL('image/png');
             const width = canvas.width;
             const height = canvas.height;
-            const imageData = JSON.stringify({ imageData: imgData, width: width, height: height, timestamp:new Date() });
-
+            const imageData = JSON.stringify({ imageData: imgData, width, height, timestamp: new Date() });
             this.capturedPageList.push(imageData);
-            localStorage.setItem('_dashboard-report:'+this.props.dashboardName,JSON.stringify(this.capturedPageList));
-
+            const capturedPagesObject = JSON.stringify(this.capturedPageList);
+            DashboardReportGenerator.savePage(this.props.dashboardName, capturedPagesObject);
             const tempPageList = this.state.pageList;
             tempPageList.push(currentPage.name);
             this.setState({ pageList: tempPageList });
         }).catch((er) => {
-            console.log(er);
+            console.error(er);
         });
+    }
+
+    /**
+     * Renders the captured page list for report generation
+     * @returns {any[]} the list of captured pages
+     */
+    renderCapturedPageList() {
+        return (
+            this.state.pageList.map((field, index) =>
+                (<ListItem
+                    primaryText={field}
+                    rightIcon={<DeleteIcon style={{ height: '20px', width: '20px', top: '4px' }} />}
+                    onClick={() => this.removePage(field, index)}
+                    style={{ paddingLeft: '0px' }}
+                />))
+        );
+    }
+
+    render() {
+        return (
+            <div>
+                <Card style={{ margin: 10 }}>
+                    <CardHeader
+                        title={
+                            <FormattedMessage
+                                id='report.generation.card.title'
+                                defaultMessage='Export Dashboard as PDF'
+                            />
+                        }
+                        textStyle={{ paddingRight: '0px' }}
+                    />
+                    <CardActions style={{ display: 'flex', paddingRight: '0px' }}>
+                        <div style={{ marginRight: 0 }}>
+                            <RaisedButton
+                                label={<FormattedMessage
+                                    id='report.generation.capture.button.title'
+                                    defaultMessage='Capture Current Page'
+                                />}
+                                onClick={this.capturePage}
+                                backgroundColor={'#1c3b4a'}
+                            />
+
+                            <List>
+                                {this.renderCapturedPageList()}
+                            </List>
+
+                            <SelectField
+                                style={{ width: 200 }}
+                                floatingLabelText={<FormattedMessage
+                                    id='report.generation.page.size.title'
+                                    defaultMessage='Page Size'
+                                />}
+                                value={this.state.pageSize}
+                                onChange={(event, index, value) => {
+                                    this.setState({ pageSize: value });
+                                }}
+                            >
+                                {pageSizes.map(field =>
+                                    (
+                                        <MenuItem
+                                            key={field}
+                                            value={field}
+                                            primaryText={field}
+                                        />
+                                    ))}
+                            </SelectField>
+
+                            <SelectField
+                                style={{ width: 200 }}
+                                floatingLabelText={<FormattedMessage
+                                    id='report.generation.page.orientation.title'
+                                    defaultMessage='Page Orientation'
+                                />}
+                                value={this.state.orientation}
+                                onChange={(event, index, value) => {
+                                    this.setState({ orientation: value });
+                                }}
+                            >
+                                {orientations.map(field =>
+                                    (
+                                        <MenuItem
+                                            key={field}
+                                            value={field}
+                                            primaryText={field}
+                                        />
+                                    ))}
+                            </SelectField>
+
+                            <RaisedButton
+                                primary
+                                label={
+                                    <FormattedMessage
+                                        id='report.generation.export.button.title'
+                                        defaultMessage='Generate Report'
+                                    />
+                                }
+                                onClick={this.generateDashboardReport}
+                                disabled={!(this.state.pageList.length > 0)}
+                                disabledBackgroundColor="rgb(27, 40, 47)"
+                                style={{ paddingTop: '5px', paddingBottom: '5px' }}
+                            />
+                        </div>
+                    </CardActions>
+                </Card>
+            </div>
+        );
     }
 }
 
 DashboardReportGenerationCard.propTypes = {
-    pages: PropTypes.array.isRequired,
+    pages: PropTypes.arrayOf({
+        id: PropTypes.string.isRequired,
+        content: PropTypes.arrayOf({}).isRequired,
+    }).isRequired,
     dashboardName: PropTypes.string.isRequired,
 };
