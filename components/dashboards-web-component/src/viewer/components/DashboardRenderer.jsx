@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import 'golden-layout/src/css/goldenlayout-base.css';
 
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
@@ -126,11 +127,10 @@ export default class DashboardRenderer extends Component {
             return;
         }
 
-        let goldenLayoutContents = this.props.goldenLayoutContents;
-
+        const goldenLayoutContents = this.props.dashboardPageContents;
         GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
-            let isHeaderShown = _.get(widgetContent, 'props.configs.options.header');
-            if (typeof (isHeaderShown) != 'undefined'){
+            const isHeaderShown = _.get(widgetContent, 'props.configs.options.header');
+            if (isHeaderShown != null) {
                 widgetContent.header.show = isHeaderShown;
             }
             if (widgetContent.displayName) {
@@ -172,7 +172,7 @@ export default class DashboardRenderer extends Component {
     onGoldenLayoutComponentCreateEvent(component) {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
-        //TODO: change icon
+        // TODO: change icon
         exportButton.className = 'fw fw-download widget-report-generation-button';
         exportButton.addEventListener('click', () => {
             DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
