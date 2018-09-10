@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import 'golden-layout/src/css/goldenlayout-base.css';
 
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
@@ -43,7 +44,7 @@ export default class DashboardRenderer extends Component {
         this.goldenLayout = null;
         this.loadedWidgetsCount = 0;
         this.state = {
-            height: window.innerHeight,
+            viewportHeight: window.innerHeight,
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -56,14 +57,13 @@ export default class DashboardRenderer extends Component {
     }
 
     handleWindowResize() {
+        this.setState({ viewportHeight: window.innerHeight });
         if (this.goldenLayout) {
             this.goldenLayout.updateSize();
         }
-        this.setState({height: window.innerHeight});
     }
 
     componentDidMount() {
-        this.setState({height: window.innerHeight});
         window.addEventListener('resize', this.handleWindowResize);
     }
 
@@ -74,42 +74,38 @@ export default class DashboardRenderer extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        if (this.props.goldenLayoutContents !== nextProps.goldenLayoutContents) {
+        if (this.props.dashboardPageContents !== nextProps.dashboardPageContents) {
             // Receiving a new dashboard to render.
             this.destroyGoldenLayout();
             return true;
-        } else if (this.state.height !== nextState.height) {
+        } else if (this.state.viewportHeight !== nextState.viewportHeight) {
             // Dashboard resized.
-            this.destroyGoldenLayout();
             return true;
         } else if (this.props.theme !== nextProps.theme) {
             // Receiving a new theme.
             this.triggerThemeChangeEvent(nextProps.theme);
             return true;
         }
-        //TODO : change the widget props when theme changes
+        // TODO : change the widget props when theme changes
         return false;
     }
 
     render() {
-        let {theme, height} = this.props;
+        const { theme, dashboardPageHeight } = this.props;
 
         // Calculate optimal dashboard height for the current screen.
-        const containerHeight = this.state.height - 55;
-        if (height) {
-            height = parseInt(height);
-        }
-        height = height && height > containerHeight ? height : containerHeight;
+        const height = (dashboardPageHeight != null) ? dashboardPageHeight : (this.state.viewportHeight - 55);
 
         return (
             <div>
-                <style>{this.props.theme.name === 'dark' ? glDarkThemeCss : glLightThemeCss}</style>
+                <style>{theme.name === 'dark' ? glDarkThemeCss : glLightThemeCss}</style>
                 <div
                     style={{
                         color: theme.palette.textColor,
                         backgroundColor: theme.palette.canvasColor,
                         fontFamily: theme.fontFamily,
-                        height: height,
+                        width: '100%',
+                        height,
                     }}
                 >
                     <div
@@ -131,11 +127,10 @@ export default class DashboardRenderer extends Component {
             return;
         }
 
-        let goldenLayoutContents = this.props.goldenLayoutContents;
-
+        const goldenLayoutContents = this.props.dashboardPageContents;
         GoldenLayoutContentUtils.traverseWidgetContents(goldenLayoutContents, (widgetContent) => {
-            let isHeaderShown = _.get(widgetContent, 'props.configs.options.header');
-            if (typeof (isHeaderShown) != 'undefined'){
+            const isHeaderShown = _.get(widgetContent, 'props.configs.options.header');
+            if (isHeaderShown != null) {
                 widgetContent.header.show = isHeaderShown;
             }
             if (widgetContent.displayName) {
@@ -177,7 +172,7 @@ export default class DashboardRenderer extends Component {
     onGoldenLayoutComponentCreateEvent(component) {
         const exportButton = document.createElement('i');
         exportButton.title = 'Generate Report';
-        //TODO: change icon
+        // TODO: change icon
         exportButton.className = 'fw fw-download widget-report-generation-button';
         exportButton.addEventListener('click', () => {
             DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
@@ -189,7 +184,8 @@ export default class DashboardRenderer extends Component {
 
 DashboardRenderer.propTypes = {
     dashboardId: PropTypes.string.isRequired,
-    goldenLayoutContents: PropTypes.arrayOf({}).isRequired,
-    theme: PropTypes.shape({}).isRequired,
     dashboardName: PropTypes.string.isRequired,
+    dashboardPageContents: PropTypes.arrayOf({}).isRequired,
+    dashboardPageHeight: PropTypes.number.isRequired,
+    theme: PropTypes.shape({}).isRequired,
 };

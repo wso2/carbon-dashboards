@@ -269,10 +269,10 @@ class DashboardViewPage extends Component {
             return (
                 <DashboardRenderer
                     dashboardId={this.dashboard.url}
-                    goldenLayoutContents={page.content}
-                    height={page.height}
-                    theme={theme}
                     dashboardName={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
+                    dashboardPageContents={page.content}
+                    dashboardPageHeight={page.height}
+                    theme={theme}
                 />
             );
         } else {

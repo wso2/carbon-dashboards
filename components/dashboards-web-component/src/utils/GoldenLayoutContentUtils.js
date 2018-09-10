@@ -87,7 +87,6 @@ export default class GoldenLayoutContentUtils {
      * @param {array} goldenLayoutContents GoldenLayout content
      * @param {function(widgetContent: object)} consumer consumer function
      * @returns {null} always returns null
-     * @private
      */
     static traverseWidgetContents(goldenLayoutContents, consumer) {
         if (!Array.isArray(goldenLayoutContents)) {
