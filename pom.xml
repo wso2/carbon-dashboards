@@ -233,11 +233,6 @@
             </dependency>
 
             <!--Samples-->
-            <dependency>
-                <groupId>org.wso2.carbon.dashboards.samples</groupId>
-                <artifactId>org.wso2.carbon.dashboards.samples.endpoint</artifactId>
-                <version>${carbon.dashboards.version}</version>
-            </dependency>
             <!--Widgets-->
             <dependency>
                 <groupId>org.wso2.carbon.dashboards.samples.widgets</groupId>
