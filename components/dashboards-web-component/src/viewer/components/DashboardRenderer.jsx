@@ -189,7 +189,8 @@ export default class DashboardRenderer extends Component {
 
 DashboardRenderer.propTypes = {
     dashboardId: PropTypes.string.isRequired,
-    goldenLayoutContents: PropTypes.arrayOf({}).isRequired,
-    theme: PropTypes.shape({}).isRequired,
     dashboardName: PropTypes.string.isRequired,
+    dashboardPageContents: PropTypes.arrayOf({}).isRequired,
+    dashboardPageHeight: PropTypes.number.isRequired,
+    theme: PropTypes.shape({}).isRequired,
 };
