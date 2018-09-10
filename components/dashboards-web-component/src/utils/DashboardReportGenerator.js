@@ -288,12 +288,11 @@ export default class DashboardReportGenerator {
         DashboardAPI.getDashboardReportPdfConfigs().then((res) => {
             if (!_.isEmpty(res.data.pdf)) {
                 if (res.data.pdf.header) {
-                    DashboardReportGenerator.convertImageToBase64(path + res.data.header, (headerImgData) => {
+                    DashboardReportGenerator.convertImageToBase64(path + res.data.pdf.header, (headerImgData) => {
                         // to handle the header and footer adding and widget image addition in separate promises
                         DashboardReportGenerator.addPdfConfigImage(pdf, headerImgData, 'header', orientation);
-
                         if (res.data.pdf.footer) {
-                            DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
+                            DashboardReportGenerator.convertImageToBase64(path + res.data.pdf.footer, (footerImgData) => {
                                 DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', orientation);
                                 DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
                                     'footer', orientation, reportName, false);
@@ -306,7 +305,7 @@ export default class DashboardReportGenerator {
                         }
                     });
                 } else if (res.data.pdf.footer) {
-                    DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
+                    DashboardReportGenerator.convertImageToBase64(path + res.data.pdf.footer, (footerImgData) => {
                         DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', orientation);
                         DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
                             'footer', orientation, reportName, true);
