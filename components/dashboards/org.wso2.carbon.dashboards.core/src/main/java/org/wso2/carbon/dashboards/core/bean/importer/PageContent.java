@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.dashboards.core.bean.importer;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ public class PageContent {
     private String type;
     private String component;
     private Set<PageContent> content = new HashSet<>();
+    private HashMap<String, Object> props = new HashMap<>();
 
     /**
      * Returns widget title.
@@ -100,5 +102,23 @@ public class PageContent {
      */
     public void setContent(Set<PageContent> content) {
         this.content = content;
+    }
+
+    /**
+     * Returns widget props.
+     *
+     * @return Props
+     */
+    public HashMap<String, Object> getProps() {
+        return props;
+    }
+
+    /**
+     * Set widget props.
+     *
+     * @param props Props
+     */
+    public void setProps(HashMap<String, Object> props) {
+        this.props = props;
     }
 }
