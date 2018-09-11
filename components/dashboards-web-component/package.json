@@ -31,7 +31,6 @@
     "jspdf-autotable": "^2.3.4",
     "lodash": "^4.17.5",
     "material-ui": "^0.20.0",
-    "material-ui-icons": "^1.0.0-beta.36",
     "prop-types": "^15.6.0",
     "qs": "^6.5.1",
     "react": "^16.4.0",
