@@ -140,8 +140,9 @@ export default class DashboardRenderer extends Component {
             if (isHeaderShown != null) {
                 widgetContent.header.show = isHeaderShown;
             }
-            if (widgetContent.displayName) {
-                widgetContent.title = widgetContent.displayName;
+            const headerTitle = _.get(widgetContent, 'props.configs.options.headerTitle');
+            if (headerTitle != null) {
+                widgetContent.title = headerTitle;
             }
         });
 
