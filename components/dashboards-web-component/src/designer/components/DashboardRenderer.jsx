@@ -243,6 +243,8 @@ export default class DashboardRenderer extends Component {
     }
 
     updateDashboardOnConfigChange() {
+        const updatingPage = this.getRenderingPage();
+        updatingPage.content = this.cleanDashboardJSON(this.goldenLayout.toConfig().content);
         this.props.updateDashboard();
     }
 
