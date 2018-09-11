@@ -43,8 +43,7 @@
     "react-shadow": "^2.0.2",
     "react-speed-dial": "^0.4.7",
     "react-tooltip": "^3.4.0",
-    "react-vizgrammar": "^0.7.14",
-    "recharts": "^1.0.0-alpha.2"
+    "react-vizgrammar": "^0.7.14"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
