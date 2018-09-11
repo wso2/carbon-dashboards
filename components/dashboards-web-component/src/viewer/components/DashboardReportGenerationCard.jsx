@@ -62,7 +62,6 @@ export default class DashboardReportGenerationCard extends Component {
     resetFields() {
         this.capturedPageList = [];
         this.setState({ pageList: [], pageSize: 'A4', orientation: 'Landscape' });
-        // localStorage.removeItem(localStorageLabelPrefix + this.props.dashboardName);
         DashboardReportGenerator.removePage(this.props.dashboardName);
     }
 
@@ -85,7 +84,7 @@ export default class DashboardReportGenerationCard extends Component {
      * Capture the current dashboard page to be included in the report.
      */
     capturePage() {
-        const url = window.location.href;
+        const url = window.location.pathname;
         const parts = url.split('/');
         let currentPage = parts[parts.length - 1] === '' ? parts[parts.length - 2] : parts[parts.length - 1];
         currentPage = this.props.pages.find((page) => {
@@ -127,7 +126,7 @@ export default class DashboardReportGenerationCard extends Component {
     render() {
         return (
             <div>
-                <Card style={{ margin: 10 }}>
+                <Card style={{ margin: 10, paddingBottom: '25px' }}>
                     <CardHeader
                         title={
                             <FormattedMessage

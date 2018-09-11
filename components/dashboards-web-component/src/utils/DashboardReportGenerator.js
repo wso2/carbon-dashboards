@@ -35,8 +35,9 @@ export default class DashboardReportGenerator {
      * @param {boolean} includeRecords add the number of records
      * @param {string} themeName name of the current theme
      * @param {string} dashboardName name of the dashboard
+     * @param {function} reject the function which is called when an error occurs with html2canvas
      */
-    static generateWidgetPdf(element, widgetName, includeTime, includeRecords, themeName, dashboardName) {
+    static generateWidgetPdf(element, widgetName, includeTime, includeRecords, themeName, dashboardName, reject) {
         if (DashboardReportGenerator.containsTable(element)) {
             DashboardReportGenerator.createTablePdf(element, widgetName, includeTime, includeRecords,
                 dashboardName, themeName);
@@ -44,7 +45,7 @@ export default class DashboardReportGenerator {
             html2canvas(element).then((canvas) => {
                 DashboardReportGenerator.createWidgetPdf(widgetName, includeTime, canvas, dashboardName);
             }).catch((e) => {
-                console.error(e);
+                reject();
             });
         }
     }
@@ -478,6 +479,7 @@ export default class DashboardReportGenerator {
                 pdf.addPage();
             }
         });
+        DashboardReportGenerator.removePage(dashboardName);
         DashboardReportGenerator.addPdfConfigs(pdf, null, dashboardName, 'dashboard', orientation, dashboardPages);
     }
 
