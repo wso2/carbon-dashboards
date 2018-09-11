@@ -16,17 +16,15 @@
  * under the License.
  */
 
-import jspdf from 'jspdf';
-import autoTable from 'jspdf-autotable'; // jspdf plugin to get table data
+import Jspdf from 'jspdf';
+import 'jspdf-autotable'; // Jspdf plugin to get table data
 import DateFormat from 'dateformat';
 import html2canvas from 'html2canvas';
+import _ from 'lodash';
 import { pdfConfig } from './JspdfConf.js';
 import DashboardAPI from './apis/DashboardAPI';
 
-/**
- * App context sans starting forward slash.
- */
-const appContext = window.contextPath.substr(1);
+const localStorageLabelPrefix = '_dashboard-report:';
 
 export default class DashboardReportGenerator {
     /**
@@ -46,7 +44,7 @@ export default class DashboardReportGenerator {
             html2canvas(element).then((canvas) => {
                 DashboardReportGenerator.createWidgetPdf(widgetName, includeTime, canvas, dashboardName);
             }).catch((e) => {
-                console.log(e);
+                console.error(e);
             });
         }
     }
@@ -54,15 +52,15 @@ export default class DashboardReportGenerator {
     /**
      * Create the report for the table data
      * @private
-     * @param element jspdf objectexportWidget
-     * @param widgetName name of the widget
-     * @param includeTime add the report generation time
-     * @param includeRecords add the number of records in the table
-     * @param dashboardName name of the dashboard
-     * @param themeName name of the current theme
+     * @param {object} element Jspdf report generation widget
+     * @param {string} widgetName name of the widget
+     * @param {boolean} includeTime add the report generation time
+     * @param {boolean} includeRecords add the number of records in the table
+     * @param {string} dashboardName name of the dashboard
+     * @param {string} themeName name of the current theme
      */
     static createTablePdf(element, widgetName, includeTime, includeRecords, dashboardName, themeName) {
-        const pdf = new jspdf('p', 'pt');
+        const pdf = new Jspdf('p', 'pt');
 
         DashboardReportGenerator.addTitle(pdf, includeTime, includeRecords, dashboardName, widgetName);
         const tableData = DashboardReportGenerator.getTableData(pdf, element, themeName);
@@ -73,7 +71,7 @@ export default class DashboardReportGenerator {
     /**
      * Add the table into the report
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {list} tableData table data from the table element
      * @param {string} widgetName name of the widget
      */
@@ -85,8 +83,8 @@ export default class DashboardReportGenerator {
 
             // Page numbers
             let pageNumber = 'Page ' + data.pageCount;
-            // Total page number plugin only available in jspdf v1.0+
-            if (typeof (pdf.putTotalPages === 'function')) {
+            // Total page number plugin only available in Jspdf v1.0+
+            if (typeof (pdf.putTotalPages) === 'function') {
                 pageNumber = pageNumber + ' of ' + totalPagesExp;
             }
             pdf.setFontSize(12);
@@ -108,7 +106,7 @@ export default class DashboardReportGenerator {
     /**
      * Get the data from the table component
      * @private
-     * @param pdf jspdf object
+     * @param pdf Jspdf object
      * @param element element which included the table data
      * @param themeName current theme
      * @returns {{columnData: Array, rowData: Array}} returns column and row data
@@ -185,7 +183,7 @@ export default class DashboardReportGenerator {
      * @param {string} dashboardName name of the dashboard
      */
     static createWidgetPdf(widgetName, includeTime, canvas, dashboardName) {
-        const pdf = new jspdf('l', 'pt', 'a4');
+        const pdf = new Jspdf('l', 'pt', 'a4');
         DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, widgetName);
         DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0, null);
         DashboardReportGenerator.addPdfConfigs(pdf, canvas, widgetName, 'widget', 'landscape', false);
@@ -194,7 +192,7 @@ export default class DashboardReportGenerator {
     /**
      * Add title to the report
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {boolean} includeTime add the report generation time
      * @param {boolean} includeRecords add the number of records
      * @param {string} dashboardName name of the dashboard
@@ -202,7 +200,7 @@ export default class DashboardReportGenerator {
      */
     static addTitle(pdf, includeTime, includeRecords, dashboardName, widgetName) {
         // Apply bold and normal styles separately for the widget name and dashboard name as to be appeared as title.
-        //TODO:change the font
+        // TODO:change the font
         pdf.setFont('roboto');
         pdf.setFontType('bold');
         pdf.setFontSize(18);
@@ -211,19 +209,19 @@ export default class DashboardReportGenerator {
 
         pdf.text(rightPosition, pdfConfig.pdfTitle.coordinates.y, dashboardName);
         pdf.setLineWidth(1);
-        pdf.setDrawColor('#9E9E9E')
+        pdf.setDrawColor('#9E9E9E');
         pdf.line(pdfConfig.stampImageLandscape.coordinates.x, pdfConfig.pdfLine.coordinates.y,
             pdf.internal.pageSize.getWidth() - pdfConfig.pdfPadding.width, pdfConfig.pdfLine.coordinates.y);
         pdf.setFontType('normal');
         pdf.setFontSize(14);
-        pdf.setTextColor('#616161')
+        pdf.setTextColor('#616161');
         pdf.text(pdfConfig.stampImageLandscape.coordinates.x, pdfConfig.pdfSubtitle.coordinates.y, widgetName);
     }
 
     /**
      * Calculates the center x coordinate
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {string} text text to be centered
      * @param {string} alignment alignment to be applied
      * @returns {number} returns the x coordinate to center the text
@@ -244,7 +242,7 @@ export default class DashboardReportGenerator {
     /**
      * Add subtitle containing report generation time and record count
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {boolean} includeTime add the report generation time
      * @param {boolean} includeRecords add number of records to the report
      * @param {int} recordCount number of records in the report (only for table)
@@ -253,7 +251,7 @@ export default class DashboardReportGenerator {
     static addSubTitle(pdf, includeTime, includeRecords, recordCount, timestamp) {
         let pdfInfo = '';
         pdf.setFontSize(12);
-        pdf.setTextColor('#000000')
+        pdf.setTextColor('#000000');
 
         if (includeTime) {
             if (timestamp) {
@@ -275,7 +273,7 @@ export default class DashboardReportGenerator {
 
     /**
      * Add pdf configurations loaded from deployment.yaml file
-     * @param {object }pdf jspdf object
+     * @param {object }pdf Jspdf object
      * @param {object} canvas canvas containing the snapshot image
      * @param {string} widgetName name of the component to be in the report
      * @param {string} type name of the dashboard component
@@ -284,19 +282,17 @@ export default class DashboardReportGenerator {
      */
     static addPdfConfigs(pdf, canvas, widgetName, type, orientation, dashboardPages) {
         // separate methods for widget type , dashboard etc.
-
-        const path = `/${appContext}/public/app/images/`;
+        const path = window.contextPath + '/public/app/images/';
         const reportName = widgetName + '.pdf';
 
         DashboardAPI.getDashboardReportPdfConfigs().then((res) => {
-            if (JSON.stringify(res.data) !== JSON.stringify({})) {
-                if (res.data.header) {
-                    DashboardReportGenerator.convertImageToBase64(path + res.data.header, (headerImgData) => {
+            if (!_.isEmpty(res.data.pdf)) {
+                if (res.data.pdf.header) {
+                    DashboardReportGenerator.convertImageToBase64(path + res.data.pdf.header, (headerImgData) => {
                         // to handle the header and footer adding and widget image addition in separate promises
                         DashboardReportGenerator.addPdfConfigImage(pdf, headerImgData, 'header', orientation);
-
-                        if (res.data.footer) {
-                            DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
+                        if (res.data.pdf.footer) {
+                            DashboardReportGenerator.convertImageToBase64(path + res.data.pdf.footer, (footerImgData) => {
                                 DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', orientation);
                                 DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
                                     'footer', orientation, reportName, false);
@@ -308,30 +304,26 @@ export default class DashboardReportGenerator {
                                 'header', orientation, reportName, true);
                         }
                     });
-                } else if (res.data.footer) {
-                    DashboardReportGenerator.convertImageToBase64(path + res.data.footer, (footerImgData) => {
-                        DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', 'portrait');
+                } else if (res.data.pdf.footer) {
+                    DashboardReportGenerator.convertImageToBase64(path + res.data.pdf.footer, (footerImgData) => {
+                        DashboardReportGenerator.addPdfConfigImage(pdf, footerImgData, 'footer', orientation);
                         DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, footerImgData,
                             'footer', orientation, reportName, true);
                     });
                 }
             } else {
-                const defaultHeaderImage = 'stream-processor.png';
-                DashboardReportGenerator.convertImageToBase64(path + defaultHeaderImage, (headerImgData) => {
-                    DashboardReportGenerator.addPdfConfigImage(pdf, headerImgData, 'header', orientation);
-                    DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, headerImgData,
-                        'header', orientation, reportName, true);
-                });
+                DashboardReportGenerator.addPdfContent(pdf, type, canvas, dashboardPages, null, 'header', orientation,
+                    reportName, true);
             }
         }).catch((e) => {
-            console.log(e);
+            console.error(e);
         });
     }
 
     /**
      * Add pdf configuration image to the report
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {string} imgData encoded image data
      * @param {string} property configuration type (header,footer)
      * @param {string} orientation orientation of the report page
@@ -371,7 +363,7 @@ export default class DashboardReportGenerator {
 
     /**
      * Add the widget snapshot to the report
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {object} canvas canvas containing the snapshot
      */
     static addWidgetImage(pdf, canvas) {
@@ -381,7 +373,7 @@ export default class DashboardReportGenerator {
         }
         const xPosition = (pdf.internal.pageSize.getWidth() - resizeDimensions.width) / 2;
         let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height
-                                                            - pdfConfig.pdfContentPadding.height) / 2;
+            - pdfConfig.pdfContentPadding.height) / 2;
         if (yPosition < pdfConfig.pdfContentPadding.height) {
             yPosition += pdfConfig.pdfContentPadding.header;
         }
@@ -392,8 +384,8 @@ export default class DashboardReportGenerator {
      * Resize an image
      * @private
      * @param {object} canvas canvas containing the image to be resized
-     * @param {object} pdf jspdf object
-     * @returns {{width: *, height: *}}
+     * @param {object} pdf Jspdf object
+     * @returns {{width: *, height: *}} returns the image resize height and width
      */
     static getImageResizeDimensions(canvas, pdf) {
         let printHeight = canvas.height;
@@ -460,22 +452,22 @@ export default class DashboardReportGenerator {
      */
     static createDashboardPdf(paperSize, orientation, dashboardPages, includeTime, dashboardName) {
         paperSize = paperSize.split(' ')[0];
-        const pdf = new jspdf(orientation, 'pt', paperSize);
+        const pdf = new Jspdf(orientation, 'pt', paperSize);
         DashboardReportGenerator.addDashboardImages(pdf, dashboardPages, includeTime, dashboardName, orientation);
     }
 
     /**
      * Add dashboard report dashboard snapshots
      * @private
-     * @param {string} pdf jspdf object
+     * @param {string} pdf Jspdf object
      * @param {map} dashboardPages list of pages
      * @param {boolean} includeTime add report generation time in the report
      * @param {string} dashboardName dashboard name to be printed in the report
      * @param {string} orientation orientation of the report
      */
     static addDashboardImages(pdf, dashboardPages, includeTime, dashboardName, orientation) {
-        const capturedPagesList = JSON.parse(localStorage.getItem('_dashboard-report:' + dashboardName));
-        capturedPagesList.map((rawImageData, ind) => {
+        const capturedPagesList = JSON.parse(DashboardReportGenerator.getPage(dashboardName));
+        capturedPagesList.forEach((rawImageData, ind) => {
             const image = JSON.parse(rawImageData);
             DashboardReportGenerator.addTitle(pdf, includeTime, false, dashboardName, dashboardPages[ind]);
             DashboardReportGenerator.addSubTitle(pdf, includeTime, false, 0, image.timestamp);
@@ -492,7 +484,7 @@ export default class DashboardReportGenerator {
     /**
      * Add the page number
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {object} page page to add the number
      * @param {map} dashboardPages list of pages
      * @param {int} pageIndex index of the page the number should be added
@@ -507,7 +499,7 @@ export default class DashboardReportGenerator {
     /**
      * Add pdf configurations for a list of pages
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {map} dashboardPages list of pages, the configurations to be added
      * @param {string} headerImgData configuration encoded image data
      * @param {string} property type of the configuration to be added (header, footer)
@@ -523,7 +515,7 @@ export default class DashboardReportGenerator {
     /**
      * Add pdf content specific to the report type (Dashboard, Widget, Table).
      * @private
-     * @param {object} pdf jspdf object
+     * @param {object} pdf Jspdf object
      * @param {string} type report type (dashboard, widget or table)
      * @param {object} canvas canvas object
      * @param {map} dashboardPages list of pages to be added
@@ -544,11 +536,25 @@ export default class DashboardReportGenerator {
                 pdf.save(reportName);
             }
         } else if (type === 'dashboard') {
-            DashboardReportGenerator.addPageConfigsToAll(pdf, dashboardPages, imgData, property, orientation);
+            if (imgData !== null) {
+                DashboardReportGenerator.addPageConfigsToAll(pdf, dashboardPages, imgData, property, orientation);
+            }
             if (savePdf) {
                 pdf.save(reportName);
             }
         }
+    }
+
+    static savePage(dashboardName, dashboardList) {
+        localStorage.setItem(localStorageLabelPrefix + dashboardName, dashboardList);
+    }
+
+    static removePage(dashboardName) {
+        localStorage.removeItem(localStorageLabelPrefix + dashboardName);
+    }
+
+    static getPage(dashboardName) {
+        return localStorage.getItem(localStorageLabelPrefix + dashboardName);
     }
 }
 

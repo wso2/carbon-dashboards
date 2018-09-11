@@ -20,12 +20,13 @@ package org.wso2.carbon.dashboards.core.bean;
 
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
-import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.bean.roles.provider.Roles;
 import org.wso2.carbon.database.query.manager.config.Queries;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration bean class for dashboard.
@@ -42,7 +43,7 @@ public class DashboardConfigurations {
     public Roles roles = new Roles();
 
     @Element(description = "Report generation configurations")
-    public ReportConfigs reportGeneration = new ReportConfigs();
+    Map<String, Object> reportGeneration = Collections.emptyMap();
 
     /**
      * Get map of roles.
@@ -67,7 +68,7 @@ public class DashboardConfigurations {
      *
      * @return
      */
-    public ReportConfigs getReportConfigs() {
+    public Map<String, Object> getReportConfigs() {
         return reportGeneration;
     }
 

@@ -27,7 +27,6 @@ import org.wso2.carbon.analytics.msf4j.interceptor.common.util.InterceptorConsta
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
-import org.wso2.carbon.dashboards.core.bean.report.configs.provider.ReportConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
 import org.wso2.msf4j.Microservice;
@@ -323,8 +322,8 @@ public class DashboardRestApi implements Microservice {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReportConfigs() {
-        ReportConfigs configurations = dashboardDataProvider.getReportGenerationConfigurations().getReportConfigs();
-        Map<String, Object> reportConfigurations = configurations.getPdf();
+        Map<String, Object> reportConfigurations = dashboardDataProvider.getReportGenerationConfigurations()
+                                                                  .getReportConfigs();
         return Response.ok().entity(reportConfigurations).build();
     }
 }
