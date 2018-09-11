@@ -19,6 +19,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { Snackbar } from 'material-ui';
 import 'golden-layout/src/css/goldenlayout-base.css';
 
 import GoldenLayoutContentUtils from '../../utils/GoldenLayoutContentUtils';
@@ -45,6 +46,7 @@ export default class DashboardRenderer extends Component {
         this.loadedWidgetsCount = 0;
         this.state = {
             viewportHeight: window.innerHeight,
+            showWidgetReportGenerationError: false,
         };
 
         this.handleWindowResize = this.handleWindowResize.bind(this);
@@ -54,6 +56,8 @@ export default class DashboardRenderer extends Component {
         this.onWidgetLoadedEvent = this.onWidgetLoadedEvent.bind(this);
         this.onGoldenLayoutComponentCreateEvent = this.onGoldenLayoutComponentCreateEvent.bind(this);
         this.unmounted = false;
+        this.handleReportGenerationError = this.handleReportGenerationError.bind(this);
+        this.renderReportGenerationErrorSnackBar = this.renderReportGenerationErrorSnackBar.bind(this);
     }
 
     handleWindowResize() {
@@ -84,6 +88,8 @@ export default class DashboardRenderer extends Component {
         } else if (this.props.theme !== nextProps.theme) {
             // Receiving a new theme.
             this.triggerThemeChangeEvent(nextProps.theme);
+            return true;
+        } else if (this.state.showWidgetReportGenerationError !== nextState.showWidgetReportGenerationError) {
             return true;
         }
         // TODO : change the widget props when theme changes
@@ -118,6 +124,7 @@ export default class DashboardRenderer extends Component {
                         }}
                     />
                 </div>
+                {this.renderReportGenerationErrorSnackBar()}
             </div>
         );
     }
@@ -175,9 +182,24 @@ export default class DashboardRenderer extends Component {
         exportButton.className = 'fw fw-export widget-report-generation-button';
         exportButton.addEventListener('click', () => {
             DashboardReportGenerator.generateWidgetPdf(component.element[0], component.config.title, true, true,
-                this.props.theme.name, this.props.dashboardName);
+                this.props.theme.name, this.props.dashboardName, this.handleReportGenerationError);
         });
         component.parent.header.controlsContainer.prepend(exportButton);
+    }
+
+    handleReportGenerationError() {
+        this.setState({ showWidgetReportGenerationError: true });
+    }
+
+    renderReportGenerationErrorSnackBar() {
+        return (
+            <Snackbar
+                message={'Error occured while capturing the widget snapshot'}
+                open={this.state.showWidgetReportGenerationError}
+                autoHideDuration="4000"
+                onRequestClose={() => this.setState({ showWidgetReportGenerationError: false })}
+            />
+        );
     }
 }
 
