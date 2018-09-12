@@ -33,7 +33,7 @@ import WidgetConfigurationPane from './WidgetConfigurationPane';
 import DashboardUtils from '../../utils/DashboardUtils';
 import { Event } from '../../utils/Constants';
 import GoldenLayoutFactory from '../../utils/GoldenLayoutFactory';
-import './../../utils/GLResizable.css';
+import './GLResizable.css';
 
 const glDarkThemeCss = glDarkTheme.toString();
 const dashboardContainerId = 'dashboard-design-container';
