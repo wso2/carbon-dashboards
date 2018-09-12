@@ -51,6 +51,14 @@ public interface WidgetMetadataProvider {
     void addGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException;
 
     /**
+     * Update the configuration of the specified generated widget.
+     *
+     * @param generatedWidgetConfigs configurations of the generated widget
+     * @throws DashboardException if an error occurred when reading or processing configuration of the widget
+     */
+    void updateGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException;
+
+    /**
      * Returns configurations of al available widgets.
      *
      * @return configurations of the widgets
