@@ -374,9 +374,9 @@ export default class DashboardReportGenerator {
         }
         const xPosition = (pdf.internal.pageSize.getWidth() - resizeDimensions.width) / 2;
         let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height
-            - pdfConfig.pdfContentPadding.height) / 2;
+            - pdfConfig.pdfContentPadding.height - pdfConfig.pdfContentPadding.footer) / 2;
         if (yPosition < pdfConfig.pdfContentPadding.height) {
-            yPosition += pdfConfig.pdfContentPadding.header;
+            yPosition += pdfConfig.pdfContentPadding.height;
         }
         pdf.addImage(canvas, 'PNG', xPosition, yPosition, resizeDimensions.width, resizeDimensions.height);
     }
@@ -392,10 +392,11 @@ export default class DashboardReportGenerator {
         let printHeight = canvas.height;
         let printWidth = canvas.width;
         const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight() - pdfConfig.pdfContentPadding.height;
+        const pageHeight = pdf.internal.pageSize.getHeight() - pdfConfig.pdfContentPadding.height
+            - pdfConfig.pdfContentPadding.footer;
         const k = Math.max(printWidth / pageWidth, printHeight / pageHeight);
 
-        while ((pageWidth < printWidth) || ((pageHeight - pdfConfig.pdfContentPadding.height) < printHeight)) {
+        while ((Math.round(pageWidth) < Math.round(printWidth)) || (Math.round(pageHeight) < Math.round(printHeight))) {
             if (k < 1) {
                 printHeight *= k;
                 printWidth *= k;
@@ -404,7 +405,7 @@ export default class DashboardReportGenerator {
                 printWidth /= k;
             }
         }
-        return { width: printWidth, height: printHeight };
+        return { width: Math.round(printWidth), height: Math.round(printHeight) };
     }
 
     /**
@@ -547,14 +548,28 @@ export default class DashboardReportGenerator {
         }
     }
 
+    /**
+     * Add the captured dashboard page array into the local storage
+     * @param {string} dashboardName name of the dashboard
+     * @param {list} dashboardList list of captured pages
+     */
     static savePage(dashboardName, dashboardList) {
         localStorage.setItem(localStorageLabelPrefix + dashboardName, dashboardList);
     }
 
+    /**
+     * Remove the captured pages array from the local storage
+     * @param {string} dashboardName name of the dashboard
+     */
     static removePage(dashboardName) {
         localStorage.removeItem(localStorageLabelPrefix + dashboardName);
     }
 
+    /**
+     * Gets the list of captured page for a given dashboard
+     * @param {string} dashboardName name of the dashboard
+     * @returns {string} returns the list of the captured dashboard pages
+     */
     static getPage(dashboardName) {
         return localStorage.getItem(localStorageLabelPrefix + dashboardName);
     }

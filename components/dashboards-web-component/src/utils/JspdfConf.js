@@ -15,7 +15,7 @@ const pdfConfig = {
     pdfLine: { coordinates: { y: 35 } },
     pdfPadding: { height: 0, width: 10 },
     pdfSubtitle: { coordinates: { y: 60 } },
-    pdfContentPadding: { height: 70, header: 25 },
+    pdfContentPadding: { height: 70, header: 25, footer: 35 },
 
     pdfTableStyles: {
         startY: 110,
