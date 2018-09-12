@@ -136,6 +136,33 @@ public class WidgetMetadataDao {
         }
     }
 
+    public void updateGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        String query = null;
+        generatedWidgetConfigs.setId(generatedWidgetConfigs.getName().replace(" ", "-"));
+        try {
+            connection = getConnection();
+            query = queryManager.getQuery(connection, QueryManager.UPDATE_WIDGET_CONFIG_QUERY);
+            connection.setAutoCommit(false);
+            ps = connection.prepareStatement(query);
+            Blob blob = connection.createBlob();
+            blob.setBytes(1, toJsonBytes(generatedWidgetConfigs));
+            ps.setObject(1, blob);
+            ps.setString(2, generatedWidgetConfigs.getId());
+            ps.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            rollbackQuietly(connection);
+            LOGGER.debug("Failed to execute SQL query {}", query);
+            throw new DashboardException("Cannot update widget with " + generatedWidgetConfigs + ".", e);
+        } finally {
+            closeQuietly(connection, ps, null);
+        }
+    }
+
+
+
     private static byte[] toJsonBytes(Object generatedWidgetConfigs) {
         return GSON.toJson(generatedWidgetConfigs).getBytes(StandardCharsets.UTF_8);
     }

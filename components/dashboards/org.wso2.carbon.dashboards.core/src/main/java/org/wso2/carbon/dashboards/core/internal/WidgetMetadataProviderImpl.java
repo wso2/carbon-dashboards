@@ -91,6 +91,11 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
     }
 
     @Override
+    public void updateGeneratedWidgetConfigs(GeneratedWidgetConfigs generatedWidgetConfigs) throws DashboardException {
+        widgetMetadataDao.updateGeneratedWidgetConfigs(generatedWidgetConfigs);
+    }
+
+    @Override
     public boolean isWidgetPresent(String widgetName) throws DashboardException {
         return isWidgetPresent(widgetName, WidgetType.CUSTOM);
     }

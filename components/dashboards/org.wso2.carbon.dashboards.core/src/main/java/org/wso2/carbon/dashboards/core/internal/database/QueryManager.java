@@ -48,6 +48,7 @@ public class QueryManager {
     public static final String TABLE_NAME_PLACEHOLDER = "{{TABLE_NAME}}";
     public static final String ADD_DASHBOARD_CONTENT_QUERY = "add_dashboard";
     public static final String ADD_WIDGET_CONFIG_QUERY = "add_widget_config";
+    public static final String UPDATE_WIDGET_CONFIG_QUERY = "update_widget_config";
     public static final String GET_WIDGET_CONFIG_QUERY = "get_widget_config";
     public static final String GET_WIDGET_NAME_ID_MAP_QUERY = "get_widget_name_id_map";
     public static final String DELETE_WIDGET_BY_ID = "delete_widget_by_id";
