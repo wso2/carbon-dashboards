@@ -374,7 +374,7 @@ export default class DashboardReportGenerator {
         }
         const xPosition = (pdf.internal.pageSize.getWidth() - resizeDimensions.width) / 2;
         let yPosition = (pdf.internal.pageSize.getHeight() - resizeDimensions.height
-            - pdfConfig.pdfContentPadding.height - pdfConfig.pdfContentPadding.footer) / 2;
+            - pdfConfig.pdfContentPadding.height) / 2;
         if (yPosition < pdfConfig.pdfContentPadding.height) {
             yPosition += pdfConfig.pdfContentPadding.height;
         }
