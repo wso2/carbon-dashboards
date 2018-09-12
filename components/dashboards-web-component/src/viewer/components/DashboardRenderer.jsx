@@ -100,7 +100,10 @@ export default class DashboardRenderer extends Component {
         const { theme, dashboardPageHeight } = this.props;
 
         // Calculate optimal dashboard height for the current screen.
-        const height = (dashboardPageHeight != null) ? dashboardPageHeight : (this.state.viewportHeight - 55);
+        let height = (dashboardPageHeight != null) ? dashboardPageHeight : (this.state.viewportHeight - 55);
+        if (height) {
+            height = parseInt(height);
+        }
 
         return (
             <div>
