@@ -51,7 +51,8 @@ export default class WidgetsSidePane extends Component {
                 _.remove(this.widgets, widget => (widget.id === 'UniversalWidget'));
                 this.setState({ widgetsLoadingStatus: 'success' });
             })
-            .catch(() => {
+            .catch((error) => {
+                console.error(error);
                 this.props.setWidgetsConfigurations([]);
                 this.setState({ widgetsLoadingStatus: 'fail' });
             });
