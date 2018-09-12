@@ -29,7 +29,7 @@ import Login from './auth/Login';
 import Logout from './auth/Logout';
 import SecuredRouter from './auth/SecuredRouter';
 
-import '../public/css/dashboard.css';
+import './common/styles/dashboard.css';
 
 /**
  * App context.
