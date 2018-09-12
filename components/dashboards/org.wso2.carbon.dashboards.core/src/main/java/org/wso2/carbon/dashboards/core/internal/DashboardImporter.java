@@ -106,11 +106,11 @@ public class DashboardImporter {
                 try {
                     if (!widgetMetadataProvider.isWidgetPresent(widgetName, WidgetType.GENERATED)) {
                         widgetMetadataProvider.addGeneratedWidgetConfigs(widgetConfigs);
-                        LOGGER.debug("Successfully imported generated widget '{}' from dashboard '{}'.", widgetName,
-                                     dashboardArtifactPath);
                     } else {
                         widgetMetadataProvider.updateGeneratedWidgetConfigs(widgetConfigs);
                     }
+                    LOGGER.debug("Successfully imported generated widget '{}' from dashboard '{}'.", widgetName,
+                            dashboardArtifactPath);
                 } catch (DashboardException e) {
                     LOGGER.warn(
                             "Cannot load generated widget '{}' which is included in the importing dashboard '{}'. " +
