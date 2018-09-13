@@ -152,6 +152,10 @@ export default class DashboardRenderer extends Component {
         goldenLayout.on('componentCreated', this.onGoldenLayoutComponentCreateEvent);
         goldenLayout.eventHub.on(Event.DASHBOARD_VIEWER_WIDGET_LOADED,
             () => this.onWidgetLoadedEvent(numberOfWidgets, this.props.dashboardId));
+        goldenLayout.on('initialised', () => {
+            // Set default theme
+            this.triggerThemeChangeEvent(this.props.theme);
+        });
         goldenLayout.initialize();
         this.goldenLayout = goldenLayout;
     }
