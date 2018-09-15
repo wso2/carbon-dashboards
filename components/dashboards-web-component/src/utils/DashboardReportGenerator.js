@@ -42,12 +42,26 @@ export default class DashboardReportGenerator {
             DashboardReportGenerator.createTablePdf(element, widgetName, includeTime, includeRecords,
                 dashboardName, themeName);
         } else {
+            DashboardReportGenerator.setSVGProperties(element);
             html2canvas(element).then((canvas) => {
                 DashboardReportGenerator.createWidgetPdf(widgetName, includeTime, canvas, dashboardName);
             }).catch((e) => {
                 reject();
             });
         }
+    }
+
+    static setSVGProperties(element) {
+        const svg = Array.from(element.getElementsByTagName('svg'));
+        svg.forEach((svgElement) => {
+            if (svgElement.clientWidth === 0 || svgElement.clientHeight === 0) {
+                svgElement.setAttribute('width', svgElement.width.baseVal.value);
+                svgElement.setAttribute('height', svgElement.height.baseVal.value);
+            } else {
+                svgElement.setAttribute('width', svgElement.clientWidth);
+                svgElement.setAttribute('height', svgElement.clientHeight);
+            }
+        });
     }
 
     /**
