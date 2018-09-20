@@ -91,7 +91,9 @@ export default class DashboardReportGenerationCard extends Component {
             return page.id === currentPage;
         });
 
-        html2canvas(document.getElementById('dashboard-container')).then((canvas) => {
+        const element = document.getElementById('dashboard-container');
+        DashboardReportGenerator.setSVGProperties(element);
+        html2canvas(element).then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
             const width = canvas.width;
             const height = canvas.height;
