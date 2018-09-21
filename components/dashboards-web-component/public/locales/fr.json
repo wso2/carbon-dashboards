@@ -83,9 +83,15 @@
   "page.height": "Hauteur (px)",
   "page.height.reset": "Réinitialiser hauteur",
   "page.height.overlay": "Hauteur",
-  "report.generation.capture.button.title":"Capturer la page en cours",
-  "report.generation.page.size.title":"Taille de la page",
-  "report.generation.export.button.title":"Générer un rapport",
-  "report.generation.card.title":"Exporter le tableau de bord en format PDF",
-  "report.generation.page.orientation.title":"Orientation de la page"
+  "report.generation.capture.button.title": "Capturer la page en cours",
+  "report.generation.page.size.title": "Taille de la page",
+  "report.generation.export.button.title": "Générer un rapport",
+  "report.generation.card.title": "Exporter le tableau de bord en format PDF",
+  "report.generation.page.orientation.title": "Orientation de la page",
+  "delete.button": "Effacer",
+  "widget-gen-wizard.title": "Widget Designer",
+  "widgets.loading": "Chargement",
+  "widgets.loading-failed": "Le chargement des widgets a échoué!",
+  "widget-configuration.pubsub.title": "Les éditeurs",
+  "widgets.loading.dashboard": "Widget sont toujours en cours de chargement ..."
 }
