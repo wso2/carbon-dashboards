@@ -1,0 +1,522 @@
+/*
+ *  Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ *
+ */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #081921;
+}
+
+a {
+    text-decoration: none;
+}
+
+.dashboard-listing-header {
+    background-color: #353c48;
+    color: white;
+    float: left;
+    width: 100%;
+}
+
+.dashboard-listing-h1 {
+    padding: 10px;
+    margin: 0;
+}
+
+.dashboard-listing-header-logo {
+    margin-right: 10px;
+}
+
+.dashboard-view {
+    padding: 15px;
+    box-sizing: border-box;
+    height: calc(100vh - 64px);
+    font-family: Roboto, sans-serif;
+    position: relative;
+}
+
+.dashboard-view-full-width {
+    margin-left: 0;
+    height: 88vh;
+    position: relative;
+}
+
+.pages-navigation-panel {
+    width: 14%;
+    height: 100%;
+    background-color: #353c48;
+}
+
+.pages-nav-panel-product-logo {
+    text-align: center;
+    font-size: 50px;
+}
+
+.pages-nav-panel-dashboard-name {
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 25px;
+}
+
+.dashboard-view-header {
+    background-color: #353c48;
+    color: white;
+    height: 60px;
+    margin-bottom: 1%;
+    margin-left: 0;
+}
+
+.dashboard-view-header-toggled {
+    background-color: #353c48;
+    color: white;
+    height: 60px;
+    margin-bottom: 1%;
+    margin-left: 14%;
+}
+
+.pages-nav-toggle-btn {
+    float: left;
+    font-size: 30px;
+    background: #438cad;
+}
+
+.dark-light-theme-switch-div {
+    display: flex;
+    margin-left: 15px;
+    margin-top: 20px;
+}
+
+.dark-light-theme-switch-toggleBtn {
+    margin-left: 10px;
+}
+
+.dashboard-view-product-logo {
+    text-align: center;
+    font-size: 50px;
+    margin-bottom: 15px;
+    padding-top: 24px;
+}
+
+.dashboard-view-product-name {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.content-box {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.content-drawer-closed {
+    padding-left: 0;
+}
+
+.content-drawer-opened {
+    padding-left: 256px;
+}
+
+.widget-list-thumbnail {
+    padding: 20px;
+    margin: 25px;
+    background-color: #43525a;
+}
+
+.widget-list-thumbnail-header {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.widget-list-thumbnail div {
+    text-align: center;
+}
+
+.designer-left-panel-list {
+    background-color: #272c30 !important;
+    z-index: 1301 !important;
+    top: 115px !important;
+}
+
+.designer-left-panel-list-comp {
+    padding: 0 !important;
+}
+
+.designer-list-item {
+    height: 48px !important;
+}
+
+.designer-widget-list-panel {
+    background-color: #373e44 !important;
+    margin-left: 50px !important;
+    top: 115px !important;
+}
+
+.designer-widget-list-panel {
+    color: white;
+    display: block;
+    width: 100%;
+    height: 94% !important;
+}
+
+.widget-search-div {
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 15px;
+}
+
+.widget-search-textfield {
+    color: white;
+    display: block !important;
+    width: 100% !important;
+}
+
+.widget-list-header {
+    background-color: #29313e;
+    font-size: 20px;
+    text-align: center;
+    padding: 13px;
+}
+
+.header-component {
+    position: fixed !important;
+    z-index: 2000 !important;
+}
+
+.dashboard-designer-container-expanded {
+    width: 82%;
+    padding: 124px 10px 10px 325px;
+    color: white;
+    height: 89vh;
+    z-index: 0;
+}
+
+.dashboard-designer-container-collapsed {
+    width: 96%;
+    padding: 125px 10px 10px 65px;
+    color: white;
+    height: 89vh;
+    z-index: 0;
+}
+
+.create-dashboard-header {
+    color: #455a64;
+    margin: 0 0 0 15px;
+    padding-top: 10px;
+}
+
+.dashboard-settings-header {
+    color: #455a64;
+    margin: 0 0 0 15px;
+    padding-top: 10px;
+}
+
+.create-dashboard-page-label-name {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 75px;
+    color: white;
+    float: left;
+}
+
+.dashboard-settings-page-label-name {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 88px;
+    color: white;
+    float: left;
+    margin-top: 5px;
+}
+
+.create-dashboard-page-label-url {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 265px;
+    color: white;
+    float: left;
+}
+
+.dashboard-settings-page-label-url {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 290px;
+    color: white;
+    float: left;
+    margin-top: 0;
+}
+
+.create-dashboard-page-label-description {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 210px;
+    color: white;
+}
+
+.dashboard-settings-page-label-description {
+    font-family: "sans-serif";
+    font-weight: bold;
+    margin: 15px;
+    margin-bottom: 5px;
+    display: inline-block;
+    margin-right: 210px;
+    color: white;
+}
+
+.create-dashboard-form-group {
+    padding-top: 25px;
+    padding-left: 25px;
+}
+
+.dashboard-settings-form-group {
+    padding-top: 25px;
+    padding-left: 25px;
+}
+
+.create-dashboard-text-field-hint {
+    color: grey;
+    bottom: 0;
+}
+
+.create-dashboard-text-field {
+    color: black;
+}
+
+.create-dashboard-text-field-underline {
+    bottom: 0;
+    bottomBorder: 1px solid #424242;
+    color: blue;
+}
+
+.create-dashboard-text-box {
+    marginLeft: 15px;
+    width: 500px;
+    height: 25px;
+    color: black;
+}
+
+.create-dashboard-button {
+    margin-left: 40px;
+    margin-top: 35px;
+}
+
+.dashboard-settings-save-button {
+    margin-left: 40px;
+    margin-top: 35px;
+}
+
+.create-dashboard-divider {
+    margin-top: 15px;
+}
+
+.dashboard-settings-divider {
+    margin-top: 15px;
+}
+
+.portal-navigation-bar {
+    width: 100%;
+    padding-top: 65px;
+    background-color: #37474F;
+    position: fixed;
+    z-index: 25;
+}
+
+.navigation-icon {
+    margin: 5px;
+}
+
+.create-dashboard-text {
+    display: inline;
+    font-family: sans-serif;
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    padding-top: 15px;
+}
+
+.dashboard-settings-text {
+    display: inline;
+    font-family: sans-serif;
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    padding-top: 15px;
+}
+
+.required {
+    color: #FF5722;
+}
+
+.no-widgets-text {
+    padding: 10px;
+    text-align: center;
+}
+
+.edit-dashboard-icon {
+    margin-left: 10px;
+}
+
+.create-page-form-container,
+.dashboard-settings-page-form-container {
+    position: fixed;
+    top: 130px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+}
+
+.trash-button-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #bbb;
+}
+
+.trash-button-icon:hover {
+    color: #fff;
+}
+
+.dashboard-thumbnail-deleted {
+    display: none;
+}
+
+.dashboard-settings-url {
+    color: white;
+}
+
+.no-dashboard-label {
+    color: white;
+    font-size: 30px;
+}
+
+.default-snackbar {
+    background-color: #24353f !important;
+    color: #f5f5f5;
+    border: 1px solid #e74c3c;
+}
+
+/* dashboard viewer styles */
+.app-bar {
+    background-color: #8d979c;
+    height: 45px;
+    box-shadow: none !important;
+}
+
+.app-bar button {
+    margin: 0 -24px !important;
+}
+
+.viewer-drawer > div {
+    box-shadow: none !important;
+}
+
+.viewer-dark, .viewer-light {
+    font-family: Roboto, sans-serif;
+}
+
+.viewer-dark {
+    background-color: #081921;
+}
+
+.viewer-light {
+    background-color: #fff;
+}
+
+/* sample dashboard styles */
+.sample-rev-table td {
+    padding: 0 60px 10px 0;
+    white-space: nowrap;
+}
+
+.viewer-dark .sample-rev-table tbody {
+    color: #bbb;
+    font-size: 38px;
+}
+
+.viewer-light .sample-rev-table tbody {
+    color: #5d6e77;
+    font-size: 38px;
+}
+
+.sample-rev-table thead {
+    color: #5d6e77;
+    font-size: 14px;
+}
+
+.sample-rev-table {
+    margin: 40px 0;
+}
+
+.sample-instructions {
+    font-size: 18px;
+    color: #5d6e77;
+    margin: 10px 0;
+}
+
+.sample-dashboard-content-rev-text {
+    width: 35%;
+    float: left;
+    box-sizing: border-box;
+    padding: 38px 30px;
+}
+
+.sample-dashboard-content-map {
+    width: 65%;
+    float: right;
+    box-sizing: border-box;
+    padding-right: 60px;
+}
+
+.sample-rev-table .currency {
+    font-size: 22px;
+}
+
+/* Dashboard loading spinner */
+.dashboard-spinner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    padding-top: 100px;
+}
+
+.dashboard-spinner .loading-label {
+    color: #fff;
+    text-align: center;
+    padding-top: 20px;
+}
