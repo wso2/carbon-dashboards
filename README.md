@@ -3,7 +3,7 @@
 ## Getting Started
 
 Please follow the below steps to setup the WSO2 Dashboard Component.
-1. Clone and build carbon-dashboards repository. You need to build the "react-based-dashboard" branch
+1. Clone and build carbon-dashboards repository. 
 2. Clone and build the carbon-ui-server repository available here ( Carbon-UI-Server - https://github.com/wso2/carbon-ui-server )
 3. Install Dashboard Core API Feature and Dashboard Portal Feature in to distribution available in carbon-ui-server.
 
@@ -44,7 +44,7 @@ Carbon dashboards is available under the Apache 2 License.
 
 ## How To Contribute
 * Please report issues at [WSO2 Dashboards Issues](https://github.com/wso2/carbon-dashboards/issues).
-* Send your pull requests [react-based-dashboard_branch](https://github.com/wso2/carbon-dashboards/tree/react-based-dashboard).
+* Send your pull requests https://github.com/wso2/carbon-dashboards.
 * You can find more instructions on howto contribute on community site (http://wso2.com/community).
 
 ## Contact Us
