@@ -458,6 +458,7 @@
         <!--Maven Plugin-->
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.exec.plugin.version>1.5.0</maven.exec.plugin.version>
+        <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
         <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
         <junit-platform.surefire-provider.version>1.0.2</junit-platform.surefire-provider.version>
 
@@ -495,6 +496,20 @@
                     <groupId>org.wso2.carbon.maven</groupId>
                     <artifactId>carbon-feature-plugin</artifactId>
                     <version>${carbon.feature.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven.clean.plugin.version}</version>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>${project.basedir}/node_modules</directory>
+                            </fileset>
+                            <fileset>
+                                <directory>${project.basedir}/dist</directory>
+                            </fileset>
+                        </filesets>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
