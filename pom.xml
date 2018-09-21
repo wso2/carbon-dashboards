@@ -458,6 +458,7 @@
         <!--Maven Plugin-->
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.exec.plugin.version>1.5.0</maven.exec.plugin.version>
+        <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
         <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
         <junit-platform.surefire-provider.version>1.0.2</junit-platform.surefire-provider.version>
 
@@ -497,6 +498,20 @@
                     <version>${carbon.feature.plugin.version}</version>
                 </plugin>
                 <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven.clean.plugin.version}</version>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>${project.basedir}/node_modules</directory>
+                            </fileset>
+                            <fileset>
+                                <directory>${project.basedir}/dist</directory>
+                            </fileset>
+                        </filesets>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${maven.exec.plugin.version}</version>
@@ -514,38 +529,8 @@
                                 </arguments>
                             </configuration>
                         </execution>
-                        <!-- 'npm run clean' which is run in clean lifecycle needs 'rimraf' node module.
-                         Make sure it is installed  -->
                         <execution>
-                            <id>npm install rimraf (clean)</id>
-                            <goals>
-                                <goal>exec</goal>
-                            </goals>
-                            <phase>pre-clean</phase>
-                            <configuration>
-                                <executable>${npm.executable}</executable>
-                                <arguments>
-                                    <argument>install</argument>
-                                    <argument>rimraf</argument>
-                                </arguments>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>npm run clean (clean)</id>
-                            <goals>
-                                <goal>exec</goal>
-                            </goals>
-                            <phase>clean</phase>
-                            <configuration>
-                                <executable>${npm.executable}</executable>
-                                <arguments>
-                                    <argument>run</argument>
-                                    <argument>clean</argument>
-                                </arguments>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>npm run dev (compile)</id>
+                            <id>npm run build (compile and build)</id>
                             <goals>
                                 <goal>exec</goal>
                             </goals>
