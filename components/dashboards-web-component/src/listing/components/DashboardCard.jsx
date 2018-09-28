@@ -232,7 +232,10 @@ class DashboardCard extends Component {
                         title={
                             <div>
                                 <span style={styles.cardTitle}>{title}</span>
-                                <NavigationMoreVert onClick={this.handleMenuIconClick} style={styles.moreButton} />
+                                {
+                                    dashboard.hasOwnerPermission && dashboard.hasDesignerPermission &&
+                                    (<NavigationMoreVert onClick={this.handleMenuIconClick} style={styles.moreButton} />)
+                                }
                             </div>
                         }
                         titleStyle={styles.cardTitleText}
