@@ -52,7 +52,8 @@ const styles = {
     },
     moreButton: {
         float: 'right',
-        padding: '4px'
+        padding: '4px',
+        cursor: 'pointer',
     },
     cardTitle: {
         float: 'left',
