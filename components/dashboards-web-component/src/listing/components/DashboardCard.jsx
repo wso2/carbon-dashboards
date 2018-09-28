@@ -50,7 +50,7 @@ const styles = {
         float: 'right',
         paddingRight: 0,
     },
-    moreButton: {
+    menuIcon: {
         float: 'right',
         padding: '4px',
         cursor: 'pointer',
@@ -235,7 +235,7 @@ class DashboardCard extends Component {
                                 <span style={styles.cardTitle}>{title}</span>
                                 {
                                     dashboard.hasOwnerPermission && dashboard.hasDesignerPermission &&
-                                    (<NavigationMoreVert onClick={this.handleMenuIconClick} style={styles.moreButton} />)
+                                    (<NavigationMoreVert onClick={this.handleMenuIconClick} style={styles.menuIcon} />)
                                 }
                             </div>
                         }
