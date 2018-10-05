@@ -16,9 +16,10 @@
 
 import React from 'react';
 import Widget from '@wso2-dashboards/widget';
-import VizG from 'react-vizgrammar';
 import Axios from 'axios';
 import AuthManager from '../../dashboards-web-component/src/auth/utils/AuthManager';
+import SearchRenderer from '../search-renderer/src/SearchRenderer';
+import VizRenderer from '../vizgrammar-renderer/src/VizgrammarRenderer';
 
 export default class UniversalWidget extends Widget {
     constructor(props) {
@@ -33,6 +34,7 @@ export default class UniversalWidget extends Widget {
             widgetInputs: [],
             systemInputs: [],
             providerConfigs: {},
+            preview: this.props.preview || false,
         };
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
@@ -44,29 +46,40 @@ export default class UniversalWidget extends Widget {
     }
 
     componentDidMount() {
-        this.handleWidgetData = this.handleWidgetData.bind(this);
-        this.getHTTPClient()
-            .get(`apis/widgets/${this.props.widgetID}`)
-            .then((message) => {
-                let providerConfiguration = message.data.configs.providerConfig;
-                if (message.data.version !== "1.0.0") {
-                    providerConfiguration.configs.config.queryData = {};
-                    providerConfiguration.configs.config.queryData.query = providerConfiguration.configs.config.query;
-                    delete providerConfiguration.configs.config.query;
-                }
-                this.state.providerConfigs = providerConfiguration;
-                if (this.props.configs.pubsub.types.includes("subscriber")) {
-                    this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData)
-                }
-                super.getWidgetChannelManager().
-                    subscribeWidget(this.props.id, this.handleWidgetData, providerConfiguration);
-                this.setState({ config: message.data.configs.chartConfig, metadata: message.data.configs.metadata });
-            })
-            .catch((error) => {
-                // TODO: Handle error
-            });
+        // if in preview state take chart config and provider config and meta data from props instead of using api
+        if (this.state.preview) {
+            this.state.providerConfigs = this.props.providerConfig;
+            super.getWidgetChannelManager().subscribeWidget(
+                this.props.id, this.handleWidgetData, this.props.providerConfig);
+            this.setState({config: this.props.chartConfig, metadata: this.props.metadata});
+        } else {
+            this.getHTTPClient()
+                .get(`apis/widgets/${this.props.widgetID}`)
+                .then((message) => {
+                    let providerConfiguration = message.data.configs.providerConfig;
+                    if (message.data.version !== "1.0.0") {
+                        providerConfiguration.configs.config.queryData = {};
+                        providerConfiguration.configs.config
+                            .queryData.query = providerConfiguration.configs.config.query;
+                        delete providerConfiguration.configs.config.query;
+                    }
+                    this.state.providerConfigs = providerConfiguration;
+                    if (this.props.configs.pubsub.types.includes("subscriber")) {
+                        this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData)
+                    }
+                    super.getWidgetChannelManager().subscribeWidget(
+                        this.props.id, this.handleWidgetData, providerConfiguration);
+                    this.setState({config: message.data.configs.chartConfig, metadata: message.data.configs.metadata});
+                })
+                .catch((error) => {
+                    // TODO: Handle error
+                });
+        }
     }
 
+    /**
+     * Publish data selected
+     * */
     publishEvents(selectedData) {
         let data = {};
         this.state.config.widgetOutputConfigs.map(publishingAttribute => {
@@ -75,6 +88,9 @@ export default class UniversalWidget extends Widget {
         super.publish(data);
     }
 
+    /**
+     * Handle publisher config
+     * */
     handleCustomWidgetInputs(queryData) {
         if (this.props.configs.pubsub.publishers) {
             this.props.configs.pubsub.publishers.map((publisherId) => {
@@ -101,6 +117,9 @@ export default class UniversalWidget extends Widget {
         }
     }
 
+    /**
+     * Handle widget inputs
+     * */
     subscribeCallback(receivedData) {
         const receivedKeys = new Set(Object.keys(receivedData));
         const widgetInputs = [];
@@ -135,8 +154,11 @@ export default class UniversalWidget extends Widget {
         super.getWidgetChannelManager().unsubscribeWidget(this.props.id);
     }
 
+    /**
+     * Handle data received
+     * */
     handleWidgetData(data) {
-        if(data.data.length != 0){
+        if(data.data.length !== 0){
             this.setState({
                 metadata: data.metadata || this.state.metadata,
                 data: data.data
@@ -144,26 +166,57 @@ export default class UniversalWidget extends Widget {
         }
     }
 
-    render() {
-        return (
-            <div style={{ margin: 10, boxSizing: 'border-box' }}>
-                <VizG
+    /**
+     * Return render based of chart renderer type
+     * */
+    getRenderer() {
+        const renderers = {
+            VizgrammarRenderer: VizRenderer,
+            SearchRenderer: SearchRenderer,
+        };
+
+        let RendererComponent = null;
+        if(this.state.config) {
+            RendererComponent = renderers[this.state.config.charts[0].renderer];
+        }
+
+        if(RendererComponent) {
+            return (
+                <RendererComponent
+                    id={this.state.id}
                     config={this.state.config}
                     metadata={this.state.metadata}
                     data={this.state.data}
-                    height={this.props.glContainer.height}
-                    width={this.props.glContainer.width}
-                    onClick={this.state.config && this.state.config.widgetOutputConfigs ? this.publishEvents : ""}
-                    theme={this.props.muiTheme.name}
+                    height={this.state.height}
+                    width={this.state.width}
+                    onClick={!this.state.preview && this.state.config && this.state.config.widgetOutputConfigs ?
+                        this.publishEvents : ""}
+                    theme={this.props.muiTheme}
                 />
+            )
+        } else {
+            return '';
+        }
+    }
+
+    render() {
+        return (
+            <div style={{ margin: 10, boxSizing: 'border-box' }}>
+                {this.getRenderer()}
             </div>
         )
     }
 
+    /**
+     * Handle widget resize
+     * */
     handleResize() {
         this.setState({width: this.props.glContainer.width, height: this.props.glContainer.height});
     }
 
+    /**
+     * Create HTTP client
+     * */
     getHTTPClient() {
         let httpClient = Axios.create({
             baseURL: window.location.origin + window.contextPath,

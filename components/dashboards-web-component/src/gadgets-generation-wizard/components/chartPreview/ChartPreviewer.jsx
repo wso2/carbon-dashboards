@@ -18,16 +18,107 @@
  */
 
 import React, { Component } from 'react';
-import PreviewerWidget from './PreviewerWidget';
+import '../../../common/styles/custom-goldenlayout-dark-theme.css';
+import glDarkTheme from '!!css-loader!../../../common/styles/custom-goldenlayout-dark-theme.css';
+import WidgetClassRegistry from '../../../utils/WidgetClassRegistry';
+import DashboardUtils from '../../../utils/DashboardUtils';
+import GoldenLayoutFactory from '../../../utils/GoldenLayoutFactory';
+import { darkTheme } from '../../../utils/Theme';
 
+const glDarkThemeCss = glDarkTheme.toString();
+
+const previewContainerId = 'preview-container';
 /**
  * Previews the chart according to the values maintained in the state
  */
 class ChartPreviewer extends Component {
+    constructor(props) {
+        super(props);
+        this.goldenLayout = null;
+        this.unmounted = false;
+        this.widgetClass = WidgetClassRegistry.getWidgetClass('UniversalWidget');
+
+        this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
+        this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
+    }
+
+    componentWillUnmount() {
+        this.unmounted = true;
+        this.destroyGoldenLayout();
+    }
+
+    /**
+     * Render goldenLayout instance
+     */
+    renderGoldenLayout() {
+        // This is necessary as this method is called via a ref in render(). Also we cannot pass arguments to here.
+        if (this.goldenLayout) {
+            return;
+        }
+
+        const previewConfig = [
+            {
+                title: '[' + this.props.config.name + ']',
+                type: 'component',
+                component: 'UniversalWidget',
+                props: {
+                    id: DashboardUtils.generateUuid(),
+                    configs: {
+                        pubsub: {
+                            types: [],
+                        },
+                        isGenerated: true,
+                        options: {},
+                    },
+                    widgetID: this.props.config.id,
+                    preview: true,
+                    metadata: this.props.config.metadata,
+                    chartConfig: this.props.config.chartConfig,
+                    providerConfig: this.props.config.providerConfig,
+                },
+                isClosable: false,
+                reorderEnabled: true,
+                header: { show: true },
+                componentName: 'lm-react-component',
+            },
+        ];
+
+        this.goldenLayout = GoldenLayoutFactory.createForViewer(previewContainerId, previewConfig);
+        this.goldenLayout.initialize();
+    }
+
+    /**
+     * Destroy goldenLayout instance
+     */
+    destroyGoldenLayout() {
+        if (this.goldenLayout) {
+            this.goldenLayout.destroy();
+            delete this.goldenLayout;
+        }
+        this.goldenLayout = null;
+    }
+
     render() {
         return (
-            <div style={{ height: (window.innerHeight * 50 / 100) }}>
-                <PreviewerWidget config={this.props.config} />
+            <div>
+                <style>{glDarkThemeCss}</style>
+                <div
+                    style={{
+                        color: darkTheme.palette.textColor,
+                        backgroundColor: darkTheme.palette.canvasColor,
+                        fontFamily: darkTheme.fontFamily,
+                    }}
+                >
+                    <div
+                        id={previewContainerId}
+                        style={{ height: (window.innerHeight * 50 / 100) }}
+                        ref={() => {
+                            if (!this.unmounted) {
+                                this.renderGoldenLayout();
+                            }
+                        }}
+                    />
+                </div>
             </div>
         );
     }

@@ -19,7 +19,6 @@
 
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import defaultTheme from '../../utils/Theme';
 import { withRouter } from 'react-router-dom';
 // Material UI Components
 import { Step, StepLabel, Stepper } from 'material-ui/Stepper';
@@ -28,7 +27,7 @@ import FlatButton from 'material-ui/FlatButton';
 import ExpandTransition from 'material-ui/internal/ExpandTransition';
 import Dialog from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
-import { darkBaseTheme, getMuiTheme, MuiThemeProvider } from 'material-ui/styles';
+import { MuiThemeProvider } from 'material-ui/styles';
 // App Components
 import FormPanel from '../../common/FormPanel';
 import Header from '../../common/Header';
@@ -39,6 +38,8 @@ import GadgetDetailsConfigurator from './GadgetDetailsConfigurator';
 import ChartPreviewer from './chartPreview/ChartPreviewer';
 // API
 import GadgetsGenerationAPI from '../../utils/apis/GadgetsGenerationAPI';
+import Types from '../utils/Types';
+import defaultTheme from '../../utils/Theme';
 
 const appContext = window.contextPath;
 
@@ -71,7 +72,7 @@ class GadgetsGenerationWizard extends Component {
             providersList: [],
             providerConfiguration: {},
             providerConfigRenderTypes: {},
-            providerConfigRenderHints:{},
+            providerConfigRenderHints: {},
             providerDescription: '',
             chartConfiguration: {},
             pubsub: {},
@@ -181,20 +182,20 @@ class GadgetsGenerationWizard extends Component {
      * Previews the gadget
      */
     previewGadget() {
-        const validatedConfiguration = this.child.getValidatedConfiguration();
+        let validatedConfiguration = this.child.getValidatedConfiguration();
         if (!UtilFunctions.isEmpty(validatedConfiguration)) {
+            validatedConfiguration = this.addRendererType(validatedConfiguration);
             const previewableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
-                configs: {
-                    providerConfig: {
-                        configs: {
-                            type: this.state.providerType,
-                            config: this.state.providerConfiguration,
-                        },
+                chartConfig: validatedConfiguration,
+                providerConfig: {
+                    configs: {
+                        type: this.state.providerType,
+                        config: this.state.providerConfiguration,
                     },
-                    chartConfig: validatedConfiguration,
                 },
+                metadata: this.state.metadata,
             };
             this.setState({
                 previewConfiguration: previewableConfig,
@@ -205,13 +206,37 @@ class GadgetsGenerationWizard extends Component {
         }
     }
 
+
+    addRendererType(config) {
+        const vizGCharts = [
+            Types.chart.lineChart,
+            Types.chart.areaChart,
+            Types.chart.barChart,
+            Types.chart.scatter,
+            Types.chart.arc,
+            Types.chart.number,
+            Types.chart.map,
+            Types.chart.table,
+        ];
+
+        if (config && config.charts && config.charts.length > 0) {
+            if (vizGCharts.indexOf(config.charts[0].type) !== -1) {
+                config.charts[0].renderer = Types.chartRenderer.vizgrammarRenderer;
+            } else if (config.charts[0].type === Types.chart.searchBar) {
+                config.charts[0].renderer = Types.chartRenderer.searchRenderer;
+            }
+        }
+        return config;
+    }
+
     /**
      * Submits gadget configuration
      */
     submitGadgetConfig() {
-        const validatedConfiguration = this.child.getValidatedConfiguration();
+        let validatedConfiguration = this.child.getValidatedConfiguration();
         if (!UtilFunctions.isEmpty(validatedConfiguration)) {
-            const submittableConfig = {
+            validatedConfiguration = this.addRendererType(validatedConfiguration);
+            const submitTableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
                 version: '1.0.0',
@@ -227,7 +252,7 @@ class GadgetsGenerationWizard extends Component {
                 metadata: this.state.metadata,
             };
             const apis = new GadgetsGenerationAPI();
-            apis.addGadgetConfiguration(JSON.stringify(submittableConfig)).then((response) => {
+            apis.addGadgetConfiguration(JSON.stringify(submitTableConfig)).then((response) => {
                 if (response.status === 201) {
                     this.displaySnackbar(`Widget ${this.state.gadgetDetails.name} was created successfully!`,
                         'successMessage');
@@ -286,7 +311,6 @@ class GadgetsGenerationWizard extends Component {
         return pubsub;
     }
 
-
     /**
      * Handles onClick of Next button, including validations
      */
@@ -325,7 +349,6 @@ class GadgetsGenerationWizard extends Component {
                 break;
             case (1):
                 // Validate provider configuration and get metadata
-                const isProviderConfigurationValid = true;
                 if (!UtilFunctions.isEmpty(this.state.providerConfiguration)) {
                     if (this.state.providerType !== 'WebSocketProvider') {
                         eval(this.state.providerConfiguration.queryData.queryFunction);
@@ -489,7 +512,7 @@ class GadgetsGenerationWizard extends Component {
                     <FlatButton
                         label="Cancel"
                         onClick={() => this.props.history.push('/')}
-                        style={{marginRight: 12}}
+                        style={{ marginRight: 12 }}
                     />
                 </div>
             </div>
@@ -532,12 +555,13 @@ class GadgetsGenerationWizard extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
-                    <Header title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />}/>
+                    <Header title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />} />
                     <Dialog
                         modal={false}
                         open={this.state.previewGadget}
                         onRequestClose={() => this.setState({ previewGadget: false })}
                         repositionOnUpdate
+                        paperProps={{ style: { backgroundColor: 'transparent' } }}
                     >
                         <ChartPreviewer
                             config={this.state.previewConfiguration}

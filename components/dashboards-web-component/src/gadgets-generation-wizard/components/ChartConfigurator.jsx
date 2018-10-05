@@ -35,6 +35,7 @@ import ScatterChart from './chartPropertyGenerators/main/ScatterChart';
 import NumberChart from './chartPropertyGenerators/main/NumberChart';
 import GeographicalChart from './chartPropertyGenerators/main/GeographicalChart';
 import TableChart from './chartPropertyGenerators/main/TableChart';
+import SearchBar from './chartPropertyGenerators/main/SearchBar';
 // App Utils
 import UtilFunctions from '../utils/UtilFunctions';
 import DataPublishingComponent from './DataPublishingComponent';
@@ -138,11 +139,50 @@ class ChartConfigurator extends Component {
                             onConfigurationChange={configuration => this.props.onConfigurationChange(configuration)}
                         />
                     );
+                case (Types.chart.searchBar):
+                    return (
+                        <SearchBar
+                            metadata={this.props.metadata}
+                            configuration={this.state.chartConfiguration}
+                            onConfigurationChange={configuration => this.props.onConfigurationChange(configuration)}
+                        />
+                    );
                 default:
                     return (<div />);
             }
         }
         return (<div />);
+    }
+
+    /**
+     * Displays properties related to data publish
+     * @returns {XML}
+     */
+    displayDataPublishComponent() {
+        if (this.state.chartType !== '') {
+            if (this.state.chartType === Types.chart.searchBar) {
+                // if search bar is selected only tht column selected must be available for data publisher config
+                const columnName = [];
+                if (this.state.chartConfiguration.charts[0].column !== '') {
+                    columnName.push(this.state.chartConfiguration.charts[0].column);
+                }
+                return (
+                    <DataPublishingComponent
+                        outputAttributes={columnName}
+                        onConfigurationChange={this.handlePublisherConfigs}
+                        chartType={this.state.chartType}
+                    />
+                );
+            } else {
+                return (
+                    <DataPublishingComponent
+                        outputAttributes={this.state.metadata.names}
+                        onConfigurationChange={this.handlePublisherConfigs}
+                        chartType={this.state.chartType}
+                    />
+                );
+            }
+        }
     }
 
     /**
@@ -186,6 +226,12 @@ class ChartConfigurator extends Component {
             case (Types.chart.tableChart):
                 if (UtilFunctions.validateTableChartConfiguration(configuration)) {
                     configuration = UtilFunctions.prepareTableChartConfiguration(configuration);
+                    isGadgetConfigurationValid = true;
+                }
+                break;
+            case (Types.chart.searchBar):
+                if (UtilFunctions.validateSearchBarConfiguration(configuration)) {
+                    configuration = UtilFunctions.prepareSearchBarConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
@@ -246,13 +292,13 @@ class ChartConfigurator extends Component {
                             value={Types.chart.tableChart}
                             primaryText={Constants.CHART_NAMES.TABLE_CHART}
                         />
+                        <MenuItem
+                            value={Types.chart.searchBar}
+                            primaryText={Constants.CHART_NAMES.SEARCH_BAR}
+                        />
                     </SelectField>
                     {this.displayChartProperties()}
-                    {this.state.chartType !== '' ?
-                        <DataPublishingComponent
-                            outputAttributes={this.state.metadata.names}
-                            onConfigurationChange={this.handlePublisherConfigs}
-                        /> : ''}
+                    {this.displayDataPublishComponent()}
                     <br />
                     {(this.state.chartType !== '') ?
                         (<RaisedButton

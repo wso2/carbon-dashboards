@@ -37,6 +37,7 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table';
+import Types from "../utils/Types";
 
 const deleteBtnStyle = {
     color: ' #e74c3c'
@@ -64,6 +65,12 @@ const h3Style = {
     marginRight: 10,
     verticalAlign: 'top',
     display: 'inline-block'
+};
+
+const h4Style = {
+    verticalAlign: 'top',
+    display: 'inline-block',
+    fontWeight: 'normal'
 };
 
 const widgetInputsPaneStyle = {
@@ -149,8 +156,159 @@ class DataPublishingComponent extends Component {
         this.setState({errorTextField: ''})
     }
 
+    handlePublishedAsForSearchBar(value) {
+        if(value && value !== '') {
+            this.state.publishedAsValue = value;
+            this.state.errorTextField = '';
+            this.updateWidgetOutputconfigForSearchBar();
+        } else {
+            this.setState({
+                errorTextField:
+                    <FormattedMessage
+                        id="data.publishingAsValue.error"
+                        defaultMessage="The publishedAsValue cannot be empty"
+                    />
+            });
+        }
+    }
+
+    updateWidgetOutputconfigForSearchBar() {
+        let widgetOutputConfigs = [];
+        widgetOutputConfigs.push({
+            publishingValue: this.state.selectedValue,
+            publishedAsValue: this.state.publishedAsValue
+        });
+        this.props.onConfigurationChange(widgetOutputConfigs);
+        this.state.widgetOutputConfigs = widgetOutputConfigs;
+    }
+
+    getDataPublishDetailForm(){
+        const vizCharts = [
+            Types.chart.lineAreaBarChart,
+            Types.chart.pieChart,
+            Types.chart.scatterChart,
+            Types.chart.numberChart,
+            Types.chart.geographicalChart,
+            Types.chart.tableChart,
+        ];
+
+        if(this.props.chartType === Types.chart.searchBar){
+            return this.getDataPublishDetailFormForSearchBar();
+        } else if(vizCharts.indexOf(this.props.chartType) !== -1){
+            return this.getDataPublishDetailFormForVizG();
+        } else {
+            return '';
+        }
+    }
+
+    getDataPublishDetailFormForSearchBar(){
+        let { selectedValue } = this.state;
+        let { outputAttributes } = this.props;
+
+        if((!selectedValue
+            && outputAttributes.length > 0)
+            ||(selectedValue
+                && outputAttributes.length > 0
+                && outputAttributes.indexOf(selectedValue) === -1)) {
+            selectedValue = outputAttributes[0];
+            this.state.selectedValue = selectedValue;
+            this.state.publishedAsValue = selectedValue;
+            this.updateWidgetOutputconfigForSearchBar();
+        }
+
+        if(selectedValue) {
+            let { errorTextField } = this.state;
+
+            return (
+                <div style={{marginTop: 15}}>
+                    <div style={widgetInputsPaneStyle}>Add widget outputs</div>
+                    <h4 style={h4Style}>
+                        {selectedValue}
+                    </h4>
+                    <h3 style={h3Style}>As</h3>
+                    <TextField
+                        style={publishedAsValueStyle}
+                        errorText={errorTextField}
+                        onChange={(event, value) =>{this.handlePublishedAsForSearchBar(value)}}
+                    />
+                </div>
+            )
+        } else {
+            return '';
+        }
+    }
+
+    getDataPublishDetailFormForVizG(){
+        let { selectedKey, selectedValue, errorTextField, widgetOutputConfigs, selectedRow } = this.state;
+        let { outputAttributes } = this.props;
+
+        return (
+            <div style={{marginTop: 15}}>
+                <div style={widgetInputsPaneStyle}>Add widget outputs</div>
+                <SelectField style={{width: '30%'}} key={selectedKey}
+                             value={selectedValue}
+                             onChange={this.handleDropDown}>
+                    {outputAttributes.map((outputAttribute, key) => {
+                        return <MenuItem key={key} value={outputAttribute} primaryText={outputAttribute}/>
+                    })}
+                </SelectField>
+                <h3 style={h3Style}>As</h3>
+                <TextField
+                    style={publishedAsValueStyle}
+                    errorText={errorTextField}
+                    onChange={this.handlePublishedAs}
+                />
+                <FloatingActionButton
+                    mini={true}
+                    style={addBtnStyle}
+                    onClick={this.addWidgetInput}
+                >
+                    <ContentAdd/>
+                </FloatingActionButton>
+                {widgetOutputConfigs.length !== 0 ?
+                    <Paper style={{
+                        marginTop: 10, marginBottom: 10
+                    }}>
+                        <Table onRowSelection={this.handleRowSelection}>
+                            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                <TableRow>
+                                    <TableHeaderColumn>Publishing Value</TableHeaderColumn>
+                                    <TableHeaderColumn>Published As</TableHeaderColumn>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody displayRowCheckbox={false} deselectOnClickaway={false}>
+                                {
+                                    widgetOutputConfigs.map(function (outputAttribute, index) {
+                                        return (
+                                            <TableRow
+                                                selected={selectedRow[0] === index}>
+                                                <TableRowColumn>
+                                                    {outputAttribute.publishingValue}
+                                                </TableRowColumn>
+                                                <TableRowColumn>
+                                                    {outputAttribute.publishedAsValue}
+                                                </TableRowColumn>
+                                            </TableRow>
+                                        );
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                        {selectedRow.length !== 0 ?
+                            <FlatButton label={<FormattedMessage id="delete.selected.row"
+                                                                 defaultMessage="Delete Selected Row"/>}
+                                        primary
+                                        style={deleteBtnStyle}
+                                        icon={<ContentDelete/>}
+                                        onClick={this.handleDelete}/> : ""
+                        }
+                    </Paper> : ""
+                }
+            </div>
+        )
+    }
+
     render() {
-        let that = this;
         return (
             <Card
                 style={widgetInputsCardStyle}
@@ -163,68 +321,7 @@ class DataPublishingComponent extends Component {
                             showExpandableButton
                 />
                 <CardMedia expandable style={{paddingLeft: 15}}>
-                    <div style={{marginTop: 15}}>
-                        <div style={widgetInputsPaneStyle}>Add widget outputs</div>
-                        <SelectField style={{width: '30%'}} key={this.state.selectedKey}
-                                     value={this.state.selectedValue}
-                                     onChange={this.handleDropDown}>
-                            {this.props.outputAttributes.map((outputAttribute, key) => {
-                                return <MenuItem key={key} value={outputAttribute} primaryText={outputAttribute}/>
-                            })}
-                        </SelectField>
-                        <h3 style={h3Style}>As</h3>
-                        <TextField
-                            style={publishedAsValueStyle}
-                            errorText={this.state.errorTextField}
-                            onChange={this.handlePublishedAs}
-                        />
-                        <FloatingActionButton
-                            mini={true}
-                            style={addBtnStyle}
-                            onClick={this.addWidgetInput}
-                        >
-                            <ContentAdd/>
-                        </FloatingActionButton>
-                        {this.state.widgetOutputConfigs.length !== 0 ?
-                            <Paper style={{
-                                marginTop: 10, marginBottom: 10
-                            }}>
-                                <Table onRowSelection={this.handleRowSelection}>
-                                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                                        <TableRow>
-                                            <TableHeaderColumn>Publishing Value</TableHeaderColumn>
-                                            <TableHeaderColumn>Published As</TableHeaderColumn>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody displayRowCheckbox={false} deselectOnClickaway={false}>
-                                        {
-                                            this.state.widgetOutputConfigs.map(function (outputAttribute, index) {
-                                                return (
-                                                    <TableRow
-                                                        selected={that.state.selectedRow[0] === index}>
-                                                        <TableRowColumn>
-                                                            {outputAttribute.publishingValue}
-                                                        </TableRowColumn>
-                                                        <TableRowColumn>
-                                                            {outputAttribute.publishedAsValue}
-                                                        </TableRowColumn>
-                                                    </TableRow>
-                                                );
-                                            })
-                                        }
-                                    </TableBody>
-                                </Table>
-                                {this.state.selectedRow.length !== 0 ?
-                                    <FlatButton label={<FormattedMessage id="delete.selected.row"
-                                                                         defaultMessage="Delete Selected Row"/>}
-                                                primary
-                                                style={deleteBtnStyle}
-                                                icon={<ContentDelete/>}
-                                                onClick={this.handleDelete}/> : ""
-                                }
-                            </Paper> : ""
-                        }
-                    </div>
+                    {this.getDataPublishDetailForm()}
                 </CardMedia>
             </Card>
         );

@@ -158,6 +158,15 @@ const Configurations = {
             pagination: false,
             append: false,
         },
+        searchBar: {
+            charts: [
+                {
+                    type: 'searchBar',
+                    column: '',
+                    selectMultiple: true,
+                },
+            ],
+        },
     },
 };
 
