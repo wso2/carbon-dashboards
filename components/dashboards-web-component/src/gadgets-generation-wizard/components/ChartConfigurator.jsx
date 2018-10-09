@@ -156,32 +156,18 @@ class ChartConfigurator extends Component {
 
     /**
      * Displays properties related to data publish
-     * @returns {XML}
+     * @returns {Array}
      */
-    displayDataPublishComponent() {
-        if (this.state.chartType !== '') {
-            if (this.state.chartType === Types.chart.searchBar) {
-                // if search bar is selected only tht column selected must be available for data publisher config
-                const columnName = [];
-                if (this.state.chartConfiguration.charts[0].column !== '') {
-                    columnName.push(this.state.chartConfiguration.charts[0].column);
-                }
-                return (
-                    <DataPublishingComponent
-                        outputAttributes={columnName}
-                        onConfigurationChange={this.handlePublisherConfigs}
-                        chartType={this.state.chartType}
-                    />
-                );
-            } else {
-                return (
-                    <DataPublishingComponent
-                        outputAttributes={this.state.metadata.names}
-                        onConfigurationChange={this.handlePublisherConfigs}
-                        chartType={this.state.chartType}
-                    />
-                );
+    getOptionsForDataPublishComponent() {
+        if (this.state.chartType === Types.chart.searchBar) {
+            // if search bar is selected only tht column selected must be available for data publisher config
+            const columnName = [];
+            if (this.state.chartConfiguration.charts[0].column !== '') {
+                columnName.push(this.state.chartConfiguration.charts[0].column);
             }
+            return columnName;
+        } else {
+            return this.state.metadata.names;
         }
     }
 
@@ -298,7 +284,16 @@ class ChartConfigurator extends Component {
                         />
                     </SelectField>
                     {this.displayChartProperties()}
-                    {this.displayDataPublishComponent()}
+                    {
+                        this.state.chartType !== ''
+                        && this.getOptionsForDataPublishComponent().length > 0
+                        &&
+                        <DataPublishingComponent
+                            outputAttributes={this.getOptionsForDataPublishComponent()}
+                            onConfigurationChange={this.handlePublisherConfigs}
+                            chartType={this.state.chartType}
+                        />
+                    }
                     <br />
                     {(this.state.chartType !== '') ?
                         (<RaisedButton

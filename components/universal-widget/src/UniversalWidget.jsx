@@ -18,8 +18,14 @@ import React from 'react';
 import Widget from '@wso2-dashboards/widget';
 import Axios from 'axios';
 import AuthManager from '../../dashboards-web-component/src/auth/utils/AuthManager';
-import SearchRenderer from '../search-renderer/src/SearchRenderer';
-import VizRenderer from '../vizgrammar-renderer/src/VizgrammarRenderer';
+import SearchRenderer from './renderers/search-renderer/src/SearchRenderer';
+import VizRenderer from './renderers/vizgrammar-renderer/src/VizgrammarRenderer';
+import Types from "../../dashboards-web-component/src/gadgets-generation-wizard/utils/Types";
+
+const renderers = {
+    VizgrammarRenderer: VizRenderer,
+    SearchRenderer: SearchRenderer,
+};
 
 export default class UniversalWidget extends Widget {
     constructor(props) {
@@ -34,7 +40,6 @@ export default class UniversalWidget extends Widget {
             widgetInputs: [],
             systemInputs: [],
             providerConfigs: {},
-            preview: this.props.preview || false,
         };
         this.handleResize = this.handleResize.bind(this);
         this.props.glContainer.on('resize', this.handleResize);
@@ -47,7 +52,7 @@ export default class UniversalWidget extends Widget {
 
     componentDidMount() {
         // if in preview state take chart config and provider config and meta data from props instead of using api
-        if (this.state.preview) {
+        if (this.props.providerConfig) {
             this.state.providerConfigs = this.props.providerConfig;
             super.getWidgetChannelManager().subscribeWidget(
                 this.props.id, this.handleWidgetData, this.props.providerConfig);
@@ -73,6 +78,7 @@ export default class UniversalWidget extends Widget {
                 })
                 .catch((error) => {
                     // TODO: Handle error
+                    console.error(error)
                 });
         }
     }
@@ -167,20 +173,27 @@ export default class UniversalWidget extends Widget {
     }
 
     /**
+     * Handle data received
+     * */
+    getRendererType() {
+        if (this.state.config
+            && this.state.config.charts
+            && this.state.config.charts.length > 0) {
+            if (this.state.config.charts[0].type === Types.chart.searchBar) {
+                return Types.chartRenderer.searchRenderer;
+            } else {
+                return Types.chartRenderer.vizgrammarRenderer;
+            }
+        }
+    }
+
+    /**
      * Return render based of chart renderer type
      * */
     getRenderer() {
-        const renderers = {
-            VizgrammarRenderer: VizRenderer,
-            SearchRenderer: SearchRenderer,
-        };
 
-        let RendererComponent = null;
         if(this.state.config) {
-            RendererComponent = renderers[this.state.config.charts[0].renderer];
-        }
-
-        if(RendererComponent) {
+            const RendererComponent = renderers[this.getRendererType()];
             return (
                 <RendererComponent
                     id={this.state.id}
@@ -189,13 +202,11 @@ export default class UniversalWidget extends Widget {
                     data={this.state.data}
                     height={this.state.height}
                     width={this.state.width}
-                    onClick={!this.state.preview && this.state.config && this.state.config.widgetOutputConfigs ?
+                    onClick={this.state.config && this.state.config.widgetOutputConfigs ?
                         this.publishEvents : ""}
                     theme={this.props.muiTheme}
                 />
             )
-        } else {
-            return '';
         }
     }
 

@@ -183,21 +183,10 @@ class DataPublishingComponent extends Component {
     }
 
     getDataPublishDetailForm(){
-        const vizCharts = [
-            Types.chart.lineAreaBarChart,
-            Types.chart.pieChart,
-            Types.chart.scatterChart,
-            Types.chart.numberChart,
-            Types.chart.geographicalChart,
-            Types.chart.tableChart,
-        ];
-
         if(this.props.chartType === Types.chart.searchBar){
             return this.getDataPublishDetailFormForSearchBar();
-        } else if(vizCharts.indexOf(this.props.chartType) !== -1){
-            return this.getDataPublishDetailFormForVizG();
         } else {
-            return '';
+            return this.getDataPublishDetailFormForVizG();
         }
     }
 

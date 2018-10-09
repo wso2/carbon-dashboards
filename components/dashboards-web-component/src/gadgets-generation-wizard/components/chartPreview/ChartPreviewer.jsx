@@ -20,7 +20,6 @@
 import React, { Component } from 'react';
 import '../../../common/styles/custom-goldenlayout-dark-theme.css';
 import glDarkTheme from '!!css-loader!../../../common/styles/custom-goldenlayout-dark-theme.css';
-import WidgetClassRegistry from '../../../utils/WidgetClassRegistry';
 import DashboardUtils from '../../../utils/DashboardUtils';
 import GoldenLayoutFactory from '../../../utils/GoldenLayoutFactory';
 import { darkTheme } from '../../../utils/Theme';
@@ -35,15 +34,12 @@ class ChartPreviewer extends Component {
     constructor(props) {
         super(props);
         this.goldenLayout = null;
-        this.unmounted = false;
-        this.widgetClass = WidgetClassRegistry.getWidgetClass('UniversalWidget');
 
         this.destroyGoldenLayout = this.destroyGoldenLayout.bind(this);
         this.renderGoldenLayout = this.renderGoldenLayout.bind(this);
     }
 
     componentWillUnmount() {
-        this.unmounted = true;
         this.destroyGoldenLayout();
     }
 
@@ -83,7 +79,7 @@ class ChartPreviewer extends Component {
             },
         ];
 
-        this.goldenLayout = GoldenLayoutFactory.createForViewer(previewContainerId, previewConfig);
+        this.goldenLayout = GoldenLayoutFactory.createForPreviewer(previewContainerId, previewConfig);
         this.goldenLayout.initialize();
     }
 
@@ -113,9 +109,7 @@ class ChartPreviewer extends Component {
                         id={previewContainerId}
                         style={{ height: (window.innerHeight * 50 / 100) }}
                         ref={() => {
-                            if (!this.unmounted) {
-                                this.renderGoldenLayout();
-                            }
+                            this.renderGoldenLayout();
                         }}
                     />
                 </div>

@@ -26,6 +26,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import ExpandTransition from 'material-ui/internal/ExpandTransition';
 import Dialog from 'material-ui/Dialog';
+import IconButton from 'material-ui/IconButton';
+import Close from 'material-ui/svg-icons/navigation/close';
 import Snackbar from 'material-ui/Snackbar';
 import { MuiThemeProvider } from 'material-ui/styles';
 // App Components
@@ -38,7 +40,6 @@ import GadgetDetailsConfigurator from './GadgetDetailsConfigurator';
 import ChartPreviewer from './chartPreview/ChartPreviewer';
 // API
 import GadgetsGenerationAPI from '../../utils/apis/GadgetsGenerationAPI';
-import Types from '../utils/Types';
 import defaultTheme from '../../utils/Theme';
 
 const appContext = window.contextPath;
@@ -182,9 +183,8 @@ class GadgetsGenerationWizard extends Component {
      * Previews the gadget
      */
     previewGadget() {
-        let validatedConfiguration = this.child.getValidatedConfiguration();
+        const validatedConfiguration = this.child.getValidatedConfiguration();
         if (!UtilFunctions.isEmpty(validatedConfiguration)) {
-            validatedConfiguration = this.addRendererType(validatedConfiguration);
             const previewableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
@@ -206,36 +206,12 @@ class GadgetsGenerationWizard extends Component {
         }
     }
 
-
-    addRendererType(config) {
-        const vizGCharts = [
-            Types.chart.lineChart,
-            Types.chart.areaChart,
-            Types.chart.barChart,
-            Types.chart.scatter,
-            Types.chart.arc,
-            Types.chart.number,
-            Types.chart.map,
-            Types.chart.table,
-        ];
-
-        if (config && config.charts && config.charts.length > 0) {
-            if (vizGCharts.indexOf(config.charts[0].type) !== -1) {
-                config.charts[0].renderer = Types.chartRenderer.vizgrammarRenderer;
-            } else if (config.charts[0].type === Types.chart.searchBar) {
-                config.charts[0].renderer = Types.chartRenderer.searchRenderer;
-            }
-        }
-        return config;
-    }
-
     /**
      * Submits gadget configuration
      */
     submitGadgetConfig() {
-        let validatedConfiguration = this.child.getValidatedConfiguration();
+        const validatedConfiguration = this.child.getValidatedConfiguration();
         if (!UtilFunctions.isEmpty(validatedConfiguration)) {
-            validatedConfiguration = this.addRendererType(validatedConfiguration);
             const submitTableConfig = {
                 name: this.state.gadgetDetails.name,
                 id: (UtilFunctions.generateID(this.state.gadgetDetails.name)),
@@ -352,7 +328,8 @@ class GadgetsGenerationWizard extends Component {
                 if (!UtilFunctions.isEmpty(this.state.providerConfiguration)) {
                     if (this.state.providerType !== 'WebSocketProvider') {
                         eval(this.state.providerConfiguration.queryData.queryFunction);
-                        this.state.providerConfiguration.queryData.query = this.getQuery.apply(this, this.widgetInputsDefaultValues);
+                        this.state.providerConfiguration.queryData.query = this.getQuery.apply(
+                            this, this.widgetInputsDefaultValues);
                         apis.getProviderMetadata(this.state.providerType,
                             this.state.providerConfiguration).then((response) => {
                             if (!this.state.loading) {
@@ -555,7 +532,8 @@ class GadgetsGenerationWizard extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
-                    <Header title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />} />
+                    <Header
+                        title={<FormattedMessage id="widget-gen-wizard.title" defaultMessage="Widget Designer" />} />
                     <Dialog
                         modal={false}
                         open={this.state.previewGadget}
@@ -563,6 +541,13 @@ class GadgetsGenerationWizard extends Component {
                         repositionOnUpdate
                         paperProps={{ style: { backgroundColor: 'transparent' } }}
                     >
+                        <div
+                            style={{textAlign: 'right'}}>
+                            <IconButton
+                                onClick={() => this.setState({ previewGadget: false })}>
+                                <Close/>
+                            </IconButton>
+                        </div>
                         <ChartPreviewer
                             config={this.state.previewConfiguration}
                         />

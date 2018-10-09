@@ -240,12 +240,13 @@ export default class SearchRenderer extends Component {
         this.publish = this.publish.bind(this);
         this.updateStyleColor = this.updateStyleColor.bind(this);
         this.updateTextBoxColor = this.updateTextBoxColor.bind(this);
-        this.getSelectField = this.getSelectField.bind(this);
         this.setupPopperAnchorID = this.setupPopperAnchorID.bind(this);
     }
 
     componentDidMount() {
-        document.getElementById(popperAnchor).style = 'display: flex';
+        if(document.getElementById(popperAnchor)) {
+            document.getElementById(popperAnchor).style = 'display: flex';
+        }
     }
 
     componentWillReceiveProps(props) {
@@ -256,7 +257,9 @@ export default class SearchRenderer extends Component {
      * Publish selection
      * */
     publish() {
-        if(this.state.selectedOptions && this.state.selectedOptions.length > 0) {
+        if(this.props.config.widgetOutputConfigs
+            && this.state.selectedOptions
+            && this.state.selectedOptions.length > 0) {
             const { onClick } = this.props;
             const data = {};
             const selectedOptions = [];
@@ -275,7 +278,7 @@ export default class SearchRenderer extends Component {
         if(this.state.options.length > 0) {
             options = this.state.options;
         }
-        data.map(dataUnit => {
+        data.forEach(dataUnit => {
             const data = dataUnit[this.state.columnIndex];
             if(options.indexOf(data) === -1) {
                 options.push(data);
@@ -386,51 +389,9 @@ export default class SearchRenderer extends Component {
         textInputElement = '#' + popperAnchor + ' div div div input';
     }
 
-    /**
-     * Return either a single select or multi select autocomplete
-     * */
-    getSelectField() {
-        this.setupPopperAnchorID(this.state.id);
-        return (
-            this.props.config.charts[0].selectMultiple ?
-                <Select
-                    id={this.state.id}
-                    className='autocomplete'
-                    classNamePrefix='autocomplete'
-                    textFieldProps={{
-                        label: '',
-                        InputLabelProps: {
-                            shrink: false,
-                        },
-                    }}
-                    options={this.state.availableOptions}
-                    components={components}
-                    value={this.state.selectedOptions}
-                    onChange={this.handleChange}
-                    placeholder='Select option'
-                    isMulti
-                /> :
-                <Select
-                    id={this.state.id}
-                    className='autocomplete'
-                    classNamePrefix='autocomplete'
-                    textFieldProps={{
-                        label: '',
-                        InputLabelProps: {
-                            shrink: false,
-                        },
-                    }}
-                    options={this.state.availableOptions}
-                    components={components}
-                    value={this.state.selectedOptions}
-                    onChange={this.handleChange}
-                    placeholder='Select option'
-                />
-        );
-    }
-
     render() {
         this.updateTextBoxColor();
+        this.setupPopperAnchorID(this.state.id);
         return (
             <JssProvider
                 generateClassName={generateClassName}>
@@ -441,7 +402,23 @@ export default class SearchRenderer extends Component {
                             paddingLeft: 24,
                             paddingRight: 16
                         }}>
-                        {this.getSelectField()}
+                        <Select
+                            id={this.state.id}
+                            className='autocomplete'
+                            classNamePrefix='autocomplete'
+                            textFieldProps={{
+                                label: '',
+                                InputLabelProps: {
+                                    shrink: false,
+                                },
+                            }}
+                            options={this.state.availableOptions}
+                            components={components}
+                            value={this.state.selectedOptions}
+                            onChange={this.handleChange}
+                            placeholder='Select option'
+                            isMulti={this.props.config.charts[0].selectMultiple}
+                        />
                     </div>
                 </MuiThemeProvider>
             </JssProvider>
