@@ -172,17 +172,6 @@ class DataPublishingComponent extends Component {
         this.state.widgetOutputConfigs = widgetOutputConfigs;
     }
 
-    updateWidgetOutputconfigForSearchBar() {
-        let widgetOutputConfigs = [];
-        widgetOutputConfigs.push({
-            publishingValue: this.state.selectedValue,
-            publishedAsValue: this.state.publishedAsValue
-        });
-        this.props.onConfigurationChange(widgetOutputConfigs);
-        this.state.widgetOutputConfigs = widgetOutputConfigs;
-        console.log(this.state)
-    }
-
     getDataPublishDetailForm(){
         if(this.props.chartType === Types.chart.searchBar){
             return this.getDataPublishDetailFormForSearchBar();
