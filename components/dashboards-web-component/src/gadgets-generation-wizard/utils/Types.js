@@ -27,10 +27,8 @@ const Types = {
     chart: {
         lineAreaBarChart: 'lineAreaBarChart',
         lineChart: 'line',
-        arc: 'arc',
         areaChart: 'area',
         barChart: 'bar',
-        scatter: 'scatter',
         scatterChart: 'scatterChart',
         pieChart: 'pieChart',
         pie: 'pie',

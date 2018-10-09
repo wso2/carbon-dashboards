@@ -191,7 +191,6 @@ export default class UniversalWidget extends Widget {
      * Return render based of chart renderer type
      * */
     getRenderer() {
-
         if(this.state.config) {
             const RendererComponent = renderers[this.getRendererType()];
             return (

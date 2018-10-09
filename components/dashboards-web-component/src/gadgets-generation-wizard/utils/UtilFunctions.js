@@ -480,7 +480,7 @@ class UtilFunctions {
      * @param configuration
      */
     static validateSearchBarConfiguration(configuration) {
-        return configuration.column !== '';
+        return configuration.charts[0].column !== '';
     }
 
     /**

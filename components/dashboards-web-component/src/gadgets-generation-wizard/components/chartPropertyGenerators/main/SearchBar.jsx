@@ -22,7 +22,7 @@ import SwitchProperty from '../../inputTypes/SwitchProperty';
 import StreamProperty from '../../inputTypes/StreamProperty';
 
 /**
- * Represents a Pie chart
+ * Represents a search bar
  */
 class SearchBar extends Component {
     constructor(props) {
@@ -34,7 +34,7 @@ class SearchBar extends Component {
     }
 
     /**
-     * Assigns value for the main chart's main property, that has the given key
+     * Assigns value for the search bar's property, that has the given key
      * @param key
      * @param value
      */
