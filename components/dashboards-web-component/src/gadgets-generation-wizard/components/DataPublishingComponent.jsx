@@ -159,17 +159,17 @@ class DataPublishingComponent extends Component {
     handlePublishedAsForSearchBar(value) {
         if(value && value !== '') {
             this.state.publishedAsValue = value;
-            this.state.errorTextField = '';
-            this.updateWidgetOutputconfigForSearchBar();
         } else {
-            this.setState({
-                errorTextField:
-                    <FormattedMessage
-                        id="data.publishingAsValue.error"
-                        defaultMessage="The publishedAsValue cannot be empty"
-                    />
-            });
+            this.state.publishedAsValue = this.state.selectedValue;
         }
+
+        let widgetOutputConfigs = [];
+        widgetOutputConfigs.push({
+            publishingValue: this.state.selectedValue,
+            publishedAsValue: this.state.publishedAsValue
+        });
+        this.props.onConfigurationChange(widgetOutputConfigs);
+        this.state.widgetOutputConfigs = widgetOutputConfigs;
     }
 
     updateWidgetOutputconfigForSearchBar() {
@@ -180,6 +180,7 @@ class DataPublishingComponent extends Component {
         });
         this.props.onConfigurationChange(widgetOutputConfigs);
         this.state.widgetOutputConfigs = widgetOutputConfigs;
+        console.log(this.state)
     }
 
     getDataPublishDetailForm(){
@@ -191,40 +192,25 @@ class DataPublishingComponent extends Component {
     }
 
     getDataPublishDetailFormForSearchBar(){
-        let { selectedValue } = this.state;
         let { outputAttributes } = this.props;
 
-        if((!selectedValue
-            && outputAttributes.length > 0)
-            ||(selectedValue
-                && outputAttributes.length > 0
-                && outputAttributes.indexOf(selectedValue) === -1)) {
-            selectedValue = outputAttributes[0];
-            this.state.selectedValue = selectedValue;
-            this.state.publishedAsValue = selectedValue;
-            this.updateWidgetOutputconfigForSearchBar();
-        }
+        const selectedValue = outputAttributes[0];
+        this.state.selectedValue = selectedValue;
+        this.handlePublishedAsForSearchBar(selectedValue);
 
-        if(selectedValue) {
-            let { errorTextField } = this.state;
-
-            return (
-                <div style={{marginTop: 15}}>
-                    <div style={widgetInputsPaneStyle}>Add widget outputs</div>
-                    <h4 style={h4Style}>
-                        {selectedValue}
-                    </h4>
-                    <h3 style={h3Style}>As</h3>
-                    <TextField
-                        style={publishedAsValueStyle}
-                        errorText={errorTextField}
-                        onChange={(event, value) =>{this.handlePublishedAsForSearchBar(value)}}
-                    />
-                </div>
-            )
-        } else {
-            return '';
-        }
+        return (
+            <div style={{marginTop: 15}}>
+                <div style={widgetInputsPaneStyle}>Add widget outputs</div>
+                <h4 style={h4Style}>
+                    {selectedValue}
+                </h4>
+                <h3 style={h3Style}>As</h3>
+                <TextField
+                    style={publishedAsValueStyle}
+                    onChange={(event, value) =>{this.handlePublishedAsForSearchBar(value)}}
+                />
+            </div>
+        )
     }
 
     getDataPublishDetailFormForVizG(){
