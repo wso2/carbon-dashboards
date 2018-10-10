@@ -295,7 +295,7 @@ export default class SearchRenderer extends Component {
         this.setState({
             options: options,
             availableOptions: availableOptions,
-        }, this.publish);
+        });
     }
 
     /**
