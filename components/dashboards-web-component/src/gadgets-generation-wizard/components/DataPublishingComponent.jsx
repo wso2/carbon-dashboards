@@ -101,7 +101,7 @@ class DataPublishingComponent extends Component {
             selectedRow: [],
             errorTextField: "",
             expandAdvanced: false
-        }
+        };
     }
 
     handleDropDown(event, index, value) {
@@ -181,11 +181,13 @@ class DataPublishingComponent extends Component {
     }
 
     getDataPublishDetailFormForSearchBar(){
-        let { outputAttributes } = this.props;
+        let { selectedValue, outputAttributes } = this.props;
 
-        const selectedValue = outputAttributes[0];
-        this.state.selectedValue = selectedValue;
-        this.handlePublishedAsForSearchBar(selectedValue);
+        if(outputAttributes.indexOf(selectedValue) === -1) {
+            selectedValue = outputAttributes[0];
+            this.state.selectedValue = selectedValue;
+            this.handlePublishedAsForSearchBar(selectedValue);
+        }
 
         return (
             <div style={{marginTop: 15}}>
