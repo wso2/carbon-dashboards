@@ -258,8 +258,7 @@ export default class SearchRenderer extends Component {
      * */
     publish() {
         if(this.props.config.widgetOutputConfigs
-            && this.state.selectedOptions
-            && this.state.selectedOptions.length > 0) {
+            && this.state.selectedOptions) {
             const { onClick } = this.props;
             const data = {};
             const selectedOptions = [];

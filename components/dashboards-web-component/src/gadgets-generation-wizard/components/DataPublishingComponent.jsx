@@ -96,7 +96,7 @@ class DataPublishingComponent extends Component {
         this.validatePublishingValues = this.validatePublishingValues.bind(this);
         this.state = {
             selectedKey: 0,
-            selectedValue: this.props.outputAttributes[0],
+            selectedValue: props.outputAttributes[0],
             widgetOutputConfigs: [],
             selectedRow: [],
             errorTextField: "",
@@ -181,11 +181,16 @@ class DataPublishingComponent extends Component {
     }
 
     getDataPublishDetailFormForSearchBar(){
-        let { selectedValue, outputAttributes } = this.props;
+        let { selectedValue } = this.state;
+        const { outputAttributes } = this.props;
 
         if(outputAttributes.indexOf(selectedValue) === -1) {
             selectedValue = outputAttributes[0];
             this.state.selectedValue = selectedValue;
+            this.state.searchBarPublishAsText = selectedValue;
+            this.handlePublishedAsForSearchBar(selectedValue);
+        } else if(!this.state.publishedAsValue) {
+            this.state.searchBarPublishAsText = selectedValue;
             this.handlePublishedAsForSearchBar(selectedValue);
         }
 
@@ -198,7 +203,10 @@ class DataPublishingComponent extends Component {
                 <h3 style={h3Style}>As</h3>
                 <TextField
                     style={publishedAsValueStyle}
-                    onChange={(event, value) =>{this.handlePublishedAsForSearchBar(value)}}
+                    value={this.state.searchBarPublishAsText || ''}
+                    onChange={(event, value) =>{
+                        this.setState({searchBarPublishAsText: value});
+                        this.handlePublishedAsForSearchBar(value)}}
                 />
             </div>
         )
