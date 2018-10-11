@@ -101,6 +101,7 @@ const Control = function (props) {
                     inputRef: props.innerRef,
                     children: props.children,
                     ...props.innerProps,
+                    style:{display:'flex'}
                 },
             }}
             {...props.selectProps.textFieldProps}
@@ -241,12 +242,6 @@ export default class SearchRenderer extends Component {
         this.updateStyleColor = this.updateStyleColor.bind(this);
         this.updateTextBoxColor = this.updateTextBoxColor.bind(this);
         this.setupPopperAnchorID = this.setupPopperAnchorID.bind(this);
-    }
-
-    componentDidMount() {
-        if(document.getElementById(popperAnchor)) {
-            document.getElementById(popperAnchor).style = 'display: flex';
-        }
     }
 
     componentWillReceiveProps(props) {
