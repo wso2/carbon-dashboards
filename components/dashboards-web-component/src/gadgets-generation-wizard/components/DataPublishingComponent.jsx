@@ -96,7 +96,7 @@ class DataPublishingComponent extends Component {
         this.validatePublishingValues = this.validatePublishingValues.bind(this);
         this.state = {
             selectedKey: 0,
-            selectedValue: props.outputAttributes[0],
+            selectedValue: this.props.outputAttributes[0],
             widgetOutputConfigs: [],
             selectedRow: [],
             errorTextField: "",
