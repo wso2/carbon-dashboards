@@ -124,7 +124,7 @@ export default class UniversalWidget extends Widget {
     }
 
     /**
-     * Handle widget inputs
+     * Handle subscribe call back
      * */
     subscribeCallback(receivedData) {
         const receivedKeys = new Set(Object.keys(receivedData));
@@ -173,7 +173,7 @@ export default class UniversalWidget extends Widget {
     }
 
     /**
-     * Handle data received
+     * get renderer type
      * */
     getRendererType() {
         if (this.state.config

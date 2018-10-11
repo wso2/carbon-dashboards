@@ -484,7 +484,7 @@ class UtilFunctions {
     }
 
     /**
-     * Removes unfilled optional properties from the given  search bar
+     * Return properties of search bar
      * @param configuration
      */
     static prepareSearchBarConfiguration(configuration) {

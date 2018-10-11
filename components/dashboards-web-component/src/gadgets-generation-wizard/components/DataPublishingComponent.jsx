@@ -84,6 +84,9 @@ const widgetInputsCardStyle = {
     marginTop: 10
 };
 
+/**
+ * DataPublishingComponent contains the chart's data publish configuration
+ * */
 class DataPublishingComponent extends Component {
 
     constructor(props) {
@@ -104,14 +107,23 @@ class DataPublishingComponent extends Component {
         };
     }
 
+    /**
+     * Handle drop down of select containing data available for data publish
+     * */
     handleDropDown(event, index, value) {
         this.setState({selectedKey: index, selectedValue: value});
     }
 
+    /**
+     * Handle selection of row to be deleted from data publish config
+     * */
     handleRowSelection(selectedRow) {
         this.setState({selectedRow: selectedRow});
     }
 
+    /**
+     * Validate data publish config
+     * */
     validatePublishingValues() {
         let isPublishingValuesValid = true;
         if (!this.state.publishedAsValue || this.state.publishedAsValue === "") {
@@ -135,6 +147,9 @@ class DataPublishingComponent extends Component {
         return isPublishingValuesValid;
     }
 
+    /**
+     * Add data publish config
+     * */
     addWidgetInput(event) {
         if (this.validatePublishingValues()) {
             this.state.widgetOutputConfigs.push({
@@ -146,16 +161,25 @@ class DataPublishingComponent extends Component {
         }
     }
 
+    /**
+     * Delete selected data publish config
+     * */
     handleDelete(event) {
         this.state.widgetOutputConfigs.splice(this.state.selectedRow[0], 1);
         this.setState({widgetOutputConfigs: this.state.widgetOutputConfigs, selectedRow: []});
     }
 
+    /**
+     * Handle change of publishing name for VizG
+     * */
     handlePublishedAs(event, value) {
         this.state.publishedAsValue = value;
         this.setState({errorTextField: ''})
     }
 
+    /**
+     * Handle change of publishing name for search bar
+     * */
     handlePublishedAsForSearchBar(value) {
         if(value && value !== '') {
             this.state.publishedAsValue = value;
@@ -172,6 +196,9 @@ class DataPublishingComponent extends Component {
         this.state.widgetOutputConfigs = widgetOutputConfigs;
     }
 
+    /**
+     * Return data publish config form
+     * */
     getDataPublishDetailForm(){
         if(this.props.chartType === Types.chart.searchBar){
             return this.getDataPublishDetailFormForSearchBar();
@@ -180,16 +207,21 @@ class DataPublishingComponent extends Component {
         }
     }
 
+    /**
+     * Return data publish config form for search bar
+     * */
     getDataPublishDetailFormForSearchBar(){
         let { selectedValue } = this.state;
         const { outputAttributes } = this.props;
 
         if(outputAttributes.indexOf(selectedValue) === -1) {
+            // handle change of selected column
             selectedValue = outputAttributes[0];
             this.state.selectedValue = selectedValue;
             this.state.searchBarPublishAsText = selectedValue;
             this.handlePublishedAsForSearchBar(selectedValue);
         } else if(!this.state.publishedAsValue) {
+            // handle initial column select
             this.state.searchBarPublishAsText = selectedValue;
             this.handlePublishedAsForSearchBar(selectedValue);
         }
@@ -212,6 +244,9 @@ class DataPublishingComponent extends Component {
         )
     }
 
+    /**
+     * Return data publish config form for VizG
+     * */
     getDataPublishDetailFormForVizG(){
         let { selectedKey, selectedValue, errorTextField, widgetOutputConfigs, selectedRow } = this.state;
         let { outputAttributes } = this.props;

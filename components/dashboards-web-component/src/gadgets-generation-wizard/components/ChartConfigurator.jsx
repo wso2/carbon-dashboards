@@ -155,7 +155,7 @@ class ChartConfigurator extends Component {
     }
 
     /**
-     * Displays properties related to data publish
+     * Return data available for data publish
      * @returns {Array}
      */
     getOptionsForDataPublishComponent() {
