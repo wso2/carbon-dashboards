@@ -169,6 +169,23 @@
         <url-pattern>/rest/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>URLFilter</filter-name>
+        <filter-class>org.apache.shindig.common.servlet.URLFilter</filter-class>
+        <init-param>
+            <param-name>allowedHostNames</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>enable</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>URLFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>etagFilter</filter-name>
         <url-pattern>*</url-pattern>
