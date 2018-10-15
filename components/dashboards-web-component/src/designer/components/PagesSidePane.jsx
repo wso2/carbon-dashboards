@@ -213,8 +213,7 @@ class PagesSidePane extends Component {
             const currentHeight = page.height;
             page.height = height;
             this.props.updateDashboard()
-                .then(() => {
-                    this.props.onDashboardUpdate(this.props.dashboard);
+                .then(() => {                    
                     resolve();
                 })
                 .catch(() => {
