@@ -104,7 +104,6 @@ export default class DashboardRenderer extends Component {
             // Check whether the page height is difference for the same page.
             let changingPage = nextProps.dashboard.pages.find(p => p.id === nextProps.pageId);
             let newHeight = (changingPage === undefined) ? undefined:changingPage.height;
-            // let newHeight = nextProps.dashboard.pages.find(p => p.id === nextProps.pageId).height;
             if(newHeight != undefined){
                 if (this.pageHeight !== newHeight) {
                     this.pageHeight = newHeight;
