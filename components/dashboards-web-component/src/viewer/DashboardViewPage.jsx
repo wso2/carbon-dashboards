@@ -64,6 +64,7 @@ class DashboardViewPage extends Component {
         this.renderSidePane = this.renderSidePane.bind(this);
         this.renderPagesList = this.renderPagesList.bind(this);
         this.renderDashboard = this.renderDashboard.bind(this);
+        this.renderSideBarNav = this.renderSideBarNav.bind(this);
     }
 
     componentDidMount() {
@@ -141,13 +142,14 @@ class DashboardViewPage extends Component {
             <MuiThemeProvider muiTheme={currentTheme}>
                 {this.renderHeader(currentTheme)}
                 {this.renderSidePane(currentTheme)}
+                {this.renderSideBarNav(currentTheme)}
                 <div
                     style={{
                         position: 'fixed',
                         top: 40,
                         right: 0,
                         bottom: 0,
-                        left: 0,
+                        width: 'calc(100% - 25px)',
                         overflowX: 'hidden',
                         overflowY: 'auto',
                     }}
@@ -253,10 +255,23 @@ class DashboardViewPage extends Component {
                     nestedItems={subPagesList}
                     open={!!subPagesList}
                     onClick={() => history.push(this.getNavigationToPage(page.id))}
+                    className={'list-item'}
                 />
             );
         });
         return pagesList;
+    }
+
+    renderSideBarNav(theme) {
+        const pageId = this.props.match.params.pageId,
+            subPageId = this.props.match.params.subPageId;
+        return (
+            <div className={'side-bar-nav'} style={{ background: theme.appBar.color }}>
+                <SelectableList value={subPageId ? `${pageId}/${subPageId}` : pageId}>
+                    {this.renderPagesList()}
+                </SelectableList>
+            </div>
+        );
     }
 
     renderDashboard(theme) {
