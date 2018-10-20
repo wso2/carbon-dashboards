@@ -11,7 +11,7 @@
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-jss": "^8.6.1",
-    "react-select": "^2.0.0-beta.4",
+    "react-select": "2.1.0",
     "react-vizgrammar": "^0.7.32",
     "rimraf": "^2.6.2"
   },
