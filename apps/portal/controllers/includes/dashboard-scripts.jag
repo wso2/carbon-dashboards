@@ -36,6 +36,7 @@
                 viewType = 'default';
             }
         }
+        dashboard.description = encodeHtml(dashboard.description);
     %>
     ues.global.fresh = <%=fresh%>;
     ues.global.dashboard = <%=dashboard%>;
