@@ -176,9 +176,7 @@ export default class UniversalWidget extends Widget {
      * get renderer type
      * */
     getRendererType() {
-        if (this.state.config
-            && this.state.config.charts
-            && this.state.config.charts.length > 0) {
+        if (this.state.config && this.state.config.charts && this.state.config.charts.length > 0) {
             if (this.state.config.charts[0].type === Types.chart.searchBar) {
                 return Types.chartRenderer.searchRenderer;
             } else {

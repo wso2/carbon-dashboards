@@ -181,7 +181,7 @@ class DataPublishingComponent extends Component {
      * Handle change of publishing name for search bar
      * */
     handlePublishedAsForSearchBar(value) {
-        if(value && value !== '') {
+        if(value) {
             this.state.publishedAsValue = value;
         } else {
             this.state.publishedAsValue = this.state.selectedValue;

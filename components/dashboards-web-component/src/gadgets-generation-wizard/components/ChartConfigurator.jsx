@@ -162,7 +162,7 @@ class ChartConfigurator extends Component {
         if (this.state.chartType === Types.chart.searchBar) {
             // if search bar is selected only tht column selected must be available for data publisher config
             const columnName = [];
-            if (this.state.chartConfiguration.charts[0].column !== '') {
+            if (this.state.chartConfiguration.charts[0].column) { 
                 columnName.push(this.state.chartConfiguration.charts[0].column);
             }
             return columnName;
