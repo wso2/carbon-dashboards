@@ -237,7 +237,7 @@ export default class SearchRenderer extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleDataReceived = this.handleDataReceived.bind(this);
-        this.naturalSort = this.naturalSort.bind(this);
+        this.naturalSortComparator = this.naturalSortComparator.bind(this);
         this.publish = this.publish.bind(this);
         this.updateStyleColor = this.updateStyleColor.bind(this);
         this.updateTextBoxColor = this.updateTextBoxColor.bind(this);
@@ -278,7 +278,7 @@ export default class SearchRenderer extends Component {
                 options.push(data);
             }
         });
-        options.sort(this.naturalSort);
+        options.sort(this.naturalSortComparator);
 
         availableOptions = options.map(option => ({
             value: option,
@@ -295,7 +295,7 @@ export default class SearchRenderer extends Component {
     /**
      * Sort the options in asc order
      * */
-    naturalSort(a, b) {
+    naturalSortComparator(a, b) {
         if(typeof a === "number" && typeof b === "number") {
             return a-b;
         } else {
