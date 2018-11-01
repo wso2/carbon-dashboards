@@ -228,11 +228,19 @@ class DataPublishingComponent extends Component {
 
         return (
             <div style={{marginTop: 15}}>
-                <div style={widgetInputsPaneStyle}>Add widget outputs</div>
+                <div style={widgetInputsPaneStyle}>
+                    <FormattedMessage
+                        id="add.widget.outputs"
+                        defaultMessage="Add widget outputs"/>
+                </div>
                 <h4 style={h4Style}>
                     {selectedValue}
                 </h4>
-                <h3 style={h3Style}>As</h3>
+                <h3 style={h3Style}>
+                    <FormattedMessage
+                        id="add.widget.outputs.as"
+                        defaultMessage="As"/>
+                </h3>
                 <TextField
                     style={publishedAsValueStyle}
                     value={this.state.searchBarPublishAsText || ''}
@@ -253,7 +261,11 @@ class DataPublishingComponent extends Component {
 
         return (
             <div style={{marginTop: 15}}>
-                <div style={widgetInputsPaneStyle}>Add widget outputs</div>
+                <div style={widgetInputsPaneStyle}>
+                    <FormattedMessage
+                        id="add.widget.outputs"
+                        defaultMessage="Add widget outputs"/>
+                </div>
                 <SelectField style={{width: '30%'}} key={selectedKey}
                              value={selectedValue}
                              onChange={this.handleDropDown}>
@@ -261,7 +273,11 @@ class DataPublishingComponent extends Component {
                         return <MenuItem key={key} value={outputAttribute} primaryText={outputAttribute}/>
                     })}
                 </SelectField>
-                <h3 style={h3Style}>As</h3>
+                <h3 style={h3Style}>
+                    <FormattedMessage
+                        id="add.widget.outputs.as"
+                        defaultMessage="As"/>
+                </h3>
                 <TextField
                     style={publishedAsValueStyle}
                     errorText={errorTextField}

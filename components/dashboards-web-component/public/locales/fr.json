@@ -93,5 +93,7 @@
   "widgets.loading": "Chargement...",
   "widgets.loading-failed": "Le chargement des widgets a échoué!",
   "widget-configuration.pubsub.title": "Les éditeurs",
-  "widgets.loading.dashboard": "Les widgets se chargent toujours ..."
+  "widgets.loading.dashboard": "Les widgets se chargent toujours ...",
+  "add.widget.outputs": "Ajouter des sorties widget",
+  "add.widget.outputs.as": "Comme"
 }
