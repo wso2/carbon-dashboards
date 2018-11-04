@@ -34,6 +34,7 @@
     <modules>
         <module>components/dashboards/org.wso2.carbon.dashboards.core</module>
         <module>components/dashboards/org.wso2.carbon.dashboards.api</module>
+        <module>components/dashboards/org.wso2.carbon.dashboards.siddhi.apps.api</module>
         <module>components/dashboards-web-component</module>
         <module>components/universal-widget</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
@@ -461,6 +462,9 @@
         <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
         <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
         <junit-platform.surefire-provider.version>1.0.2</junit-platform.surefire-provider.version>
+
+        <!--Siddhi-->
+        <siddhi.version.range>[4.0.0, 5.0.0)</siddhi.version.range>
 
         <!--Character encoding for source files-->
         <!--See: https://maven.apache.org/general.html#encoding-warning-->

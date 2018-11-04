@@ -47,6 +47,10 @@
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboards.api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>org.wso2.carbon.dashboards.siddhi.apps.api</artifactId>
+        </dependency>
 
         <!--Datasources-->
         <dependency>
