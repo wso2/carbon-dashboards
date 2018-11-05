@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
  *   Version 2.0 (the "License"); you may not use this file except
@@ -35,11 +35,13 @@ import org.wso2.siddhi.query.api.definition.AggregationDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
 import org.wso2.siddhi.query.api.definition.WindowDefinition;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
-
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
@@ -113,7 +115,6 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
             //Get Window defintions with @store annotations
             for(Map.Entry<String, WindowDefinition> entry : windowDefinitionMap.entrySet()){
                 if(entry.getValue().toString().contains("@store")){
-
                     //Get attribute list
                     StringBuilder attributes  = new StringBuilder(entry.getValue().getAttributeList().get(0).getName()+
                             " "+entry.getValue().getAttributeList().get(0).getType());
@@ -125,14 +126,13 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                     siddhiDefinitions.add(siddhiDefinition);
                 }
             }
-
             Collections.sort(siddhiDefinitions);
             String jsonString = new Gson().toJson(siddhiDefinitions);
             return Response.ok().entity(jsonString).build();
         }catch(feign.RetryableException e){
             log.warn("Unable to reach the worker "+workerURI);
         }catch (Exception e){
-            log.warn("Error occured "+e.getMessage());
+            log.warn("Error occured while getting response from worker "+workerURI+e.getMessage());
         }
         return Response.ok(new ApiResponseMessage(ApiResponseMessage.ERROR, "Error occured while getting the response from "+workerURI)).build();
     }
@@ -210,7 +210,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                         }catch(feign.RetryableException e){
                             log.warn("Unable to reach the worker "+worker);
                         }catch (Exception e){
-                            log.warn("Error occured "+e.getMessage());
+                            log.warn("Error occured while getting response from worker "+worker+e.getMessage());
                         }
                     });
                     siddhiAppList.removeAll(removeList);
@@ -229,16 +229,11 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
             }catch(feign.RetryableException e){
                 log.warn("Unable to reach the worker "+worker);
             }catch(IOException e){
-                log.warn("Error occured while getting the response "+e.getMessage());
+                log.warn("Error occured while getting the response from worker "+worker+e.getMessage());
             }catch (Exception e){
-                log.warn("Error occured "+e.getMessage());
+                log.warn("Error occured while getting response from worker "+worker+e.getMessage());
             }
         });
-
-
-        //Set<Map.Entry<String,String>> entrySet = siddhiApps.entrySet();
-        //List<Map.Entry<String,String>> list = new ArrayList<Map.Entry<String,String>>(entrySet);
-
 
         List<SiddhiAppWorker> siddhiAppList = new ArrayList<>();
         for(Map.Entry<String, String> entry : siddhiApps.entrySet()){
@@ -250,14 +245,11 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
         return Response.ok().entity(jsonString).build();
     }
 
-
     private String generateURLHostPort(String host, String port) {
-
         return host + ":" + port;
     }
 
     private String generateWorkerKey(String host, String port) {
-
         return host + "_" + port;
     }
 }

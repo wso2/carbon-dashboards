@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
  *   Version 2.0 (the "License"); you may not use this file except
@@ -24,11 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.siddhi.apps.api.rest.factories.AppsApiServiceFactory;
 import org.wso2.msf4j.Microservice;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
-
 
 @RequestInterceptor(AuthenticationInterceptor.class)
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
@@ -57,7 +55,7 @@ public class SiddhiAppsApi implements Microservice {
     /**
      * Returns list of siddhi apps which contain @store annotated Aggregations,Tables,Windows
      *
-     * @return
+     * @return response
      */
     @Path("/siddhi-apps")
     @GET
