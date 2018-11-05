@@ -99,6 +99,10 @@
                                     <version>${carbon.dashboards.version}</version>
                                 </bundle>
                                 <bundle>
+                                    <symbolicName>org.wso2.carbon.dashboards.siddhi.apps.api</symbolicName>
+                                    <version>${carbon.dashboards.version}</version>
+                                </bundle>
+                                <bundle>
                                     <symbolicName>h2-database-engine</symbolicName>
                                     <version>${h2.database.engine.version}</version>
                                 </bundle>
