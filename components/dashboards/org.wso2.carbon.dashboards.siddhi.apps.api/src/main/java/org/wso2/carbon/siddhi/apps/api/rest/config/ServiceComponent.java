@@ -20,7 +20,6 @@ package org.wso2.carbon.siddhi.apps.api.rest.config;
 
 import org.osgi.service.component.annotations.*;
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
-import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
 @Component(
@@ -31,7 +30,7 @@ import org.wso2.carbon.config.provider.ConfigProvider;
 public class ServiceComponent {
 
     @Activate
-    public void start() throws ConfigurationException{
+    public void start(){
 
     }
     @Reference(
