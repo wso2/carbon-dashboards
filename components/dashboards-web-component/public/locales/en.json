@@ -95,5 +95,7 @@
   "widgets.loading": "Loading...",
   "widgets.loading-failed": "Widgets Loading failed!",
   "widget-configuration.pubsub.title": "Publishers",
-  "widgets.loading.dashboard": "Widget are still loading..."
+  "widgets.loading.dashboard": "Widget are still loading...",
+  "add.widget.outputs": "Add widget outputs",
+  "add.widget.outputs.as": "As"
 }

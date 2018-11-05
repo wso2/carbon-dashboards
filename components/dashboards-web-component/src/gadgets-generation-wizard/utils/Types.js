@@ -43,6 +43,7 @@ const Types = {
         usa: 'usa',
         tableChart: 'tableChart',
         table: 'table',
+        searchBar: 'searchBar',
     },
     dataset: {
         metadata: {
@@ -65,7 +66,12 @@ const Types = {
         DYNAMIC_SQL_CODE: 'DYNAMIC_SQL_CODE',
         SIDDHI_CODE: 'SIDDHI_CODE',
         DYNAMIC_SIDDHI_CODE: 'DYNAMIC_SIDDHI_CODE',
-    }
+    },
+    // type of chart renderers
+    chartRenderer: {
+        vizgrammarRenderer: 'VizgrammarRenderer',
+        searchRenderer: 'SearchRenderer',
+    },
 };
 
 export default Types;

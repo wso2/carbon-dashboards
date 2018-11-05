@@ -49,6 +49,35 @@ export default class GoldenLayoutFactory {
     }
 
     /**
+     * Creates a GoldenLayout for the generation wizard preview.
+     * @param {string} dashboardContainerId container ID
+     * @param {object} glContent content
+     * @returns {module:golden-layout.GoldenLayout} created GoldenLayout
+     */
+    static createForPreviewer(dashboardContainerId, glContent) {
+        const config = {
+            settings: {
+                constrainDragToContainer: false,
+                reorderEnabled: false,
+                selectionEnabled: false,
+                popoutWholeStack: false,
+                blockedPopoutsThrowError: true,
+                closePopoutsOnUnload: true,
+                responsiveMode: 'always',
+                hasHeaders: true,
+                showPopoutIcon: false,
+                showMaximiseIcon: false,
+                showCloseIcon: false,
+            },
+            dimensions: {
+                headerHeight: 25,
+            },
+            content: glContent || [],
+        };
+        return GoldenLayoutFactory.create(dashboardContainerId, config);
+    }
+
+    /**
      * Creates a GoldenLayout for the dashboard viewer.
      * @param {string} dashboardContainerId container ID
      * @param {object} glContent content

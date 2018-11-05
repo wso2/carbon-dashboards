@@ -42,6 +42,7 @@ const Constants = {
         EUROPE_MAP: 'europe',
         USA_MAP: 'usa',
         TABLE_CHART: 'Table Chart',
+        SEARCH_BAR: 'Search Bar',
     },
 };
 

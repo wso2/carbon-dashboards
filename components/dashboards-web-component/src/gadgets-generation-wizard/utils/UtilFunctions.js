@@ -475,6 +475,23 @@ class UtilFunctions {
         return configuration;
     }
 
+    /**
+     * Validates the given configuration of a search bar
+     * @param configuration
+     */
+    static validateSearchBarConfiguration(configuration) {
+        return configuration.charts[0].column !== '';
+    }
+
+    /**
+     * Return properties of search bar
+     * @param configuration
+     */
+    static prepareSearchBarConfiguration(configuration) {
+        configuration = JSON.parse(JSON.stringify(configuration)); // To avoid reference copying
+        return configuration;
+    }
+
     /* Chart Validation & Preparation functions [END] */
 }
 

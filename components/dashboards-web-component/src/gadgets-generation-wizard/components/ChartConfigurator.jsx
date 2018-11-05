@@ -35,6 +35,7 @@ import ScatterChart from './chartPropertyGenerators/main/ScatterChart';
 import NumberChart from './chartPropertyGenerators/main/NumberChart';
 import GeographicalChart from './chartPropertyGenerators/main/GeographicalChart';
 import TableChart from './chartPropertyGenerators/main/TableChart';
+import SearchBar from './chartPropertyGenerators/main/SearchBar';
 // App Utils
 import UtilFunctions from '../utils/UtilFunctions';
 import DataPublishingComponent from './DataPublishingComponent';
@@ -138,11 +139,36 @@ class ChartConfigurator extends Component {
                             onConfigurationChange={configuration => this.props.onConfigurationChange(configuration)}
                         />
                     );
+                case (Types.chart.searchBar):
+                    return (
+                        <SearchBar
+                            metadata={this.props.metadata}
+                            configuration={this.state.chartConfiguration}
+                            onConfigurationChange={configuration => this.props.onConfigurationChange(configuration)}
+                        />
+                    );
                 default:
                     return (<div />);
             }
         }
         return (<div />);
+    }
+
+    /**
+     * Return data available for data publish
+     * @returns {Array}
+     */
+    getOptionsForDataPublishComponent() {
+        if (this.state.chartType === Types.chart.searchBar) {
+            // if search bar is selected only tht column selected must be available for data publisher config
+            const columnName = [];
+            if (this.state.chartConfiguration.charts[0].column) { 
+                columnName.push(this.state.chartConfiguration.charts[0].column);
+            }
+            return columnName;
+        } else {
+            return this.state.metadata.names;
+        }
     }
 
     /**
@@ -186,6 +212,12 @@ class ChartConfigurator extends Component {
             case (Types.chart.tableChart):
                 if (UtilFunctions.validateTableChartConfiguration(configuration)) {
                     configuration = UtilFunctions.prepareTableChartConfiguration(configuration);
+                    isGadgetConfigurationValid = true;
+                }
+                break;
+            case (Types.chart.searchBar):
+                if (UtilFunctions.validateSearchBarConfiguration(configuration)) {
+                    configuration = UtilFunctions.prepareSearchBarConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
@@ -246,13 +278,22 @@ class ChartConfigurator extends Component {
                             value={Types.chart.tableChart}
                             primaryText={Constants.CHART_NAMES.TABLE_CHART}
                         />
+                        <MenuItem
+                            value={Types.chart.searchBar}
+                            primaryText={Constants.CHART_NAMES.SEARCH_BAR}
+                        />
                     </SelectField>
                     {this.displayChartProperties()}
-                    {this.state.chartType !== '' ?
+                    {
+                        this.state.chartType !== ''
+                        && this.getOptionsForDataPublishComponent().length > 0
+                        &&
                         <DataPublishingComponent
-                            outputAttributes={this.state.metadata.names}
+                            outputAttributes={this.getOptionsForDataPublishComponent()}
                             onConfigurationChange={this.handlePublisherConfigs}
-                        /> : ''}
+                            chartType={this.state.chartType}
+                        />
+                    }
                     <br />
                     {(this.state.chartType !== '') ?
                         (<RaisedButton
