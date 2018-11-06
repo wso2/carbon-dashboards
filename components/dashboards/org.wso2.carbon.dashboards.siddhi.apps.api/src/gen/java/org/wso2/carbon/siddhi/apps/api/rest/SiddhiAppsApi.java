@@ -33,7 +33,6 @@ import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
         date = "2018-08-01T11:26:25.925Z")
 public class SiddhiAppsApi implements Microservice {
     public static final String API_CONTEXT_PATH = "/apis/datasearch";
-    private Logger log = LoggerFactory.getLogger(SiddhiAppsApi.class);
     private final SiddhiAppsApiService delegate = AppsApiServiceFactory.getSiddhiAppsApi();
 
     /**
