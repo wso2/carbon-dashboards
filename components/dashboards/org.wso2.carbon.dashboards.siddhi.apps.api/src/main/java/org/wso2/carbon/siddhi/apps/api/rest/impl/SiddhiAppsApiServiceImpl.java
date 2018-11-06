@@ -131,11 +131,11 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
             String jsonString = new Gson().toJson(siddhiDefinitions);
             return Response.ok().entity(jsonString).build();
         }catch(feign.RetryableException e){
-            log.warn("Unable to reach the worker "+workerURI);
+            log.warn("Unable to reach the worker " + workerURI, e);
         }catch (Exception e){
-            log.warn("Error occured while getting response from worker "+workerURI+e.getMessage());
+            log.warn("Error occured while getting response from worker " + workerURI, e);
         }
-        return Response.ok(new ApiResponseMessage(ApiResponseMessage.ERROR, "Error occured while getting the response from "+workerURI)).build();
+        return Response.ok(new ApiResponseMessage(ApiResponseMessage.ERROR, "Error occured while getting the response from " + workerURI)).build();
     }
 
     @Override
@@ -167,7 +167,8 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                                     PROTOCOL + worker, username, password).getSiddhiAppContent(siddhiApp);
 
                             //Get App Content
-                            SiddhiAppContent siddhiAppContent = gson.fromJson(response.body().toString(), SiddhiAppContent.class);
+                            SiddhiAppContent siddhiAppContent = gson.fromJson(response.body().toString(),
+                                    SiddhiAppContent.class);
                             String siddhiAppText = siddhiAppContent.getContent();
 
                             //Compile and get Siddhi App
@@ -185,21 +186,24 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                             //Add definitions to list if they contain store anotation
                             for (Map.Entry<String, AggregationDefinition> entry : aggregationDefinitionMap.entrySet()) {
                                 if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), AGGREGATION);
+                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
+                                            entry.getValue().toString(), AGGREGATION);
                                     siddhiDefinitions.add(siddhiDefinition);
                                 }
                             }
 
                             for (Map.Entry<String, TableDefinition> entry : tableDefinitionMap.entrySet()) {
                                 if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), TABLE);
+                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
+                                            entry.getValue().toString(), TABLE);
                                     siddhiDefinitions.add(siddhiDefinition);
                                 }
                             }
 
                             for (Map.Entry<String, WindowDefinition> entry : windowDefinitionMap.entrySet()) {
                                 if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), WINDOW);
+                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
+                                            entry.getValue().toString(), WINDOW);
                                     siddhiDefinitions.add(siddhiDefinition);
                                 }
                             }
@@ -209,15 +213,15 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                                 removeList.add(siddhiApp);
                             }
                         }catch(feign.RetryableException e){
-                            log.warn("Unable to reach the worker "+worker);
+                            log.warn("Unable to reach the worker " + worker, e);
                         }catch (Exception e){
-                            log.warn("Error occured while getting response from worker "+worker+e.getMessage());
+                            log.warn("Error occured while getting response from worker " + worker, e);
                         }
                     });
                     siddhiAppList.removeAll(removeList);
 
                     if (!siddhiAppList.isEmpty()) {
-                        String[] hostPort = worker.split(":");
+                        String[] hostPort = worker.split(URL_HOST_PORT_SEPERATOR);
                         String workerId = generateWorkerKey(hostPort[0], hostPort[1]);
 
                         for (String appName : siddhiAppList) {
@@ -228,11 +232,11 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                     }
                 }
             }catch(feign.RetryableException e){
-                log.warn("Unable to reach the worker "+worker);
+                log.warn("Unable to reach the worker " + worker, e);
             }catch(IOException e){
-                log.warn("Error occured while getting the response from worker "+worker+e.getMessage());
+                log.warn("Error occured while getting the response from worker " + worker, e);
             }catch (Exception e){
-                log.warn("Error occured while getting response from worker "+worker+e.getMessage());
+                log.warn("Error occured while getting response from worker " + worker, e);
             }
         });
 
