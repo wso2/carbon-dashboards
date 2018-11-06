@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.wso2.carbon.siddhi.apps.api.rest.impl.utils.Constants.*;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
         date = "2017-11-01T11:26:25.925Z")
 public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
@@ -53,7 +55,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
     @Override
     public Response getSiddhiAppDefinitions(String id,String appName) {
-        String[] hostPort = id.split("_");
+        String[] hostPort = id.split(WORKER_KEY_GENERATOR);
         String workerURI = generateURLHostPort(hostPort[0],hostPort[1]);
         ConfigReader cf = new ConfigReader();
         String username = cf.getUserName();
@@ -62,7 +64,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
         try{
 
             feign.Response workerResponse = WorkerServiceFactory.getWorkerHttpsClient(
-                    "https://"+workerURI,username,password).getSiddhiAppContent(appName);
+                    PROTOCOL +workerURI,username,password).getSiddhiAppContent(appName);
 
             //Get App Content
             SiddhiAppContent siddhiAppContent = gson.fromJson(workerResponse.body().toString(),SiddhiAppContent.class);
@@ -81,7 +83,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
             //Get Aggregation defintions with @store annotations
             for(Map.Entry<String, AggregationDefinition> entry : aggregationDefinitionMap.entrySet()){
-                if(entry.getValue().toString().contains("@store")){
+                if(entry.getValue().toString().contains(STORE_ANNOTATION)){
 
                     //Get Attribute list
                     StringBuilder attributes  = new StringBuilder(entry.getValue().getAttributeList().get(0).getName()+
@@ -90,14 +92,14 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                         attributes.append(", "+entry.getValue().getAttributeList().get(i).getName()+" "+
                                 entry.getValue().getAttributeList().get(i).getType());
                     }
-                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),entry.getValue().toString(),"Aggregation",attributes.toString());
+                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),entry.getValue().toString(),AGGREGATION,attributes.toString());
                     siddhiDefinitions.add(siddhiDefinition);
                 }
             }
 
             //Get Table defintions with @store annotations
             for(Map.Entry<String, TableDefinition> entry : tableDefinitionMap.entrySet()){
-                if(entry.getValue().toString().contains("@store")){
+                if(entry.getValue().toString().contains(STORE_ANNOTATION)){
 
                     //Get Attribute list
                     StringBuilder attributes  = new StringBuilder(entry.getValue().getAttributeList().get(0).getName()+
@@ -106,14 +108,14 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                         attributes.append(", "+entry.getValue().getAttributeList().get(i).getName()+" "+
                                 entry.getValue().getAttributeList().get(i).getType());
                     }
-                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),entry.getValue().toString(),"Table",attributes.toString());
+                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),entry.getValue().toString(),TABLE,attributes.toString());
                     siddhiDefinitions.add(siddhiDefinition);
                 }
             }
 
             //Get Window defintions with @store annotations
             for(Map.Entry<String, WindowDefinition> entry : windowDefinitionMap.entrySet()){
-                if(entry.getValue().toString().contains("@store")){
+                if(entry.getValue().toString().contains(STORE_ANNOTATION)){
                     //Get attribute list
                     StringBuilder attributes  = new StringBuilder(entry.getValue().getAttributeList().get(0).getName()+
                             " "+entry.getValue().getAttributeList().get(0).getType());
@@ -121,7 +123,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                         attributes.append(", "+entry.getValue().getAttributeList().get(i).getName()+" "+
                                 entry.getValue().getAttributeList().get(i).getType());
                     }
-                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),entry.getValue().toString(),"Window",attributes.toString());
+                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),entry.getValue().toString(),WINDOW,attributes.toString());
                     siddhiDefinitions.add(siddhiDefinition);
                 }
             }
@@ -149,7 +151,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
         workerList.parallelStream().forEach(worker ->{
             try {
                 feign.Response workerResponse = WorkerServiceFactory.getWorkerHttpsClient(
-                        "https://" + worker, username, password).getSiddhiAppNames();
+                        PROTOCOL + worker, username, password).getSiddhiAppNames();
                 if (workerResponse != null && workerResponse.status() == 200) {
                     Reader inputStream = workerResponse.body().asReader();
 
@@ -162,7 +164,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                         try {
 
                             feign.Response response = WorkerServiceFactory.getWorkerHttpsClient(
-                                    "https://" + worker, username, password).getSiddhiAppContent(siddhiApp);
+                                    PROTOCOL + worker, username, password).getSiddhiAppContent(siddhiApp);
 
                             //Get App Content
                             SiddhiAppContent siddhiAppContent = gson.fromJson(response.body().toString(), SiddhiAppContent.class);
@@ -182,22 +184,22 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
                             //Add definitions to list if they contain store anotation
                             for (Map.Entry<String, AggregationDefinition> entry : aggregationDefinitionMap.entrySet()) {
-                                if (entry.getValue().toString().contains("@store")) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), "Aggregation");
+                                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), AGGREGATION);
                                     siddhiDefinitions.add(siddhiDefinition);
                                 }
                             }
 
                             for (Map.Entry<String, TableDefinition> entry : tableDefinitionMap.entrySet()) {
-                                if (entry.getValue().toString().contains("@store")) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), "Table");
+                                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), TABLE);
                                     siddhiDefinitions.add(siddhiDefinition);
                                 }
                             }
 
                             for (Map.Entry<String, WindowDefinition> entry : windowDefinitionMap.entrySet()) {
-                                if (entry.getValue().toString().contains("@store")) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), "Window");
+                                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue().toString(), WINDOW);
                                     siddhiDefinitions.add(siddhiDefinition);
                                 }
                             }
@@ -245,10 +247,10 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
     }
 
     private String generateURLHostPort(String host, String port) {
-        return host + ":" + port;
+        return host + URL_HOST_PORT_SEPERATOR + port;
     }
 
     private String generateWorkerKey(String host, String port) {
-        return host + "_" + port;
+        return host + WORKER_KEY_GENERATOR + port;
     }
 }
