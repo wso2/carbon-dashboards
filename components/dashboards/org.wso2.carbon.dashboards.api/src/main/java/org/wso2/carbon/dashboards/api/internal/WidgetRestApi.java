@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
+import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.msf4j.Microservice;
@@ -174,7 +175,7 @@ public class WidgetRestApi implements Microservice {
     @Path("/{id}")
     public Response deleteWidget(@PathParam("id") String widgetId) {
         try {
-            if (widgetMetadataProvider.isWidgetPresent(widgetId)) {
+            if (widgetMetadataProvider.isWidgetPresent(widgetId, WidgetType.GENERATED)) {
                 widgetMetadataProvider.delete(widgetId);
                 return Response.status(OK).build();
             } else {
