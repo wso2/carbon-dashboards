@@ -63,5 +63,4 @@ public class SiddhiAppsApi implements Microservice {
     public Response getAllSiddhiApps(){
         return delegate.getAllSiddhiApps();
     }
-
 }

@@ -16,6 +16,7 @@
  *   under the License.
  *
  */
+
 package org.wso2.carbon.siddhi.apps.api.rest.bean;
 
 public class SiddhiDefinition implements Comparable<SiddhiDefinition> {

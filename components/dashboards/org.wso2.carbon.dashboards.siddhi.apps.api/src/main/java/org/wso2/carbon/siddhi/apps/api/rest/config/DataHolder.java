@@ -16,6 +16,7 @@
  *   under the License.
  *
  */
+
 package org.wso2.carbon.siddhi.apps.api.rest.config;
 
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
@@ -26,8 +27,7 @@ public class DataHolder {
     private ConfigProvider configProvider;
     private AnalyticsHttpClientBuilderService clientBuilderService;
 
-    private DataHolder(){
-    }
+    private DataHolder(){}
 
     public static DataHolder getInstance(){
         return instance;

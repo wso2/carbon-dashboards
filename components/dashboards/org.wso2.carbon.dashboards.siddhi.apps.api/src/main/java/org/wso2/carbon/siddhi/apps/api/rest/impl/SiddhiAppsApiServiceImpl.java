@@ -53,7 +53,6 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
     @Override
     public Response getSiddhiAppDefinitions(String id,String appName) {
-
         String[] hostPort = id.split("_");
         String workerURI = generateURLHostPort(hostPort[0],hostPort[1]);
         ConfigReader cf = new ConfigReader();

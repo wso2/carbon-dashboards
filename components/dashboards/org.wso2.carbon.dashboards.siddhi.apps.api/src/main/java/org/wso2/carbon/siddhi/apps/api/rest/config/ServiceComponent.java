@@ -16,6 +16,7 @@
  *  under the License.
  *
  */
+
 package org.wso2.carbon.siddhi.apps.api.rest.config;
 
 import org.osgi.service.component.annotations.*;
@@ -28,7 +29,6 @@ import org.wso2.carbon.config.provider.ConfigProvider;
         immediate = true
 )
 public class ServiceComponent {
-
     @Activate
     public void start(){
 
@@ -47,8 +47,6 @@ public class ServiceComponent {
     protected void unregisterConfigProvider(ConfigProvider configProvider) {
         DataHolder.getInstance().setConfigProvider(null);
     }
-
-
 
     @Reference(
             name = "carbon.anaytics.common.clientservice",

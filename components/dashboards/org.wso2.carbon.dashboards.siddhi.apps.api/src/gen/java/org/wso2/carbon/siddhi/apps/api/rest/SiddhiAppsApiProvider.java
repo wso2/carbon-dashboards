@@ -16,6 +16,7 @@
  *   under the License.
  *
  */
+
 package org.wso2.carbon.siddhi.apps.api.rest;
 
 import org.osgi.framework.BundleContext;
