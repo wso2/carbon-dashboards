@@ -29,5 +29,5 @@ public abstract class SiddhiAppsApiService {
     public abstract Response getAllSiddhiApps();
 
     //Get Siddhi Definitions from a siddhi app
-    public abstract Response getSiddhiAppDefinitions(String id,String appName);
+    public abstract Response getSiddhiAppDefinitions(String id, String appName);
 }

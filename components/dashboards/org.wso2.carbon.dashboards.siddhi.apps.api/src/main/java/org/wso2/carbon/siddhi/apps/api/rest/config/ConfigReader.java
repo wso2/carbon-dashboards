@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigReader {
     private static final Logger log = LoggerFactory.getLogger(ConfigReader.class);
+    private static final String ADMIN = "admin";
     private static final String USER_NAME = "username";
     private static final String PASSWORD = "password";
     private static final String WORKER_NODES="workerNodes";
@@ -38,19 +39,19 @@ public class ConfigReader {
             return (Map<String,Object>) DataHolder.getInstance()
                     .getConfigProvider().getConfigurationObject(COMPONENT_NAMESPACE);
         }catch (Exception e){
-            log.error("Failed to read deplyment.yaml file",e);
+            log.error("Failed to read deplyment.yaml file", e);
         }
         return new HashMap<>();
     }
 
     public String getUserName() {
         Object username = configs.get(USER_NAME);
-        return username != null ? username.toString() : "admin";
+        return username != null ? username.toString() : ADMIN;
     }
 
     public String getPassword() {
         Object password = configs.get(PASSWORD);
-        return password != null ? password.toString() : "admin";
+        return password != null ? password.toString() : ADMIN;
     }
 
     public ArrayList getWorkerList(){
