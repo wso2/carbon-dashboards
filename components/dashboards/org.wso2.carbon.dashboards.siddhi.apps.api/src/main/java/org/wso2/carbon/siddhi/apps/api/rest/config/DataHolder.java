@@ -27,7 +27,8 @@ public class DataHolder {
     private ConfigProvider configProvider;
     private AnalyticsHttpClientBuilderService clientBuilderService;
 
-    private DataHolder(){}
+    private DataHolder(){
+    }
 
     public static DataHolder getInstance(){
         return instance;

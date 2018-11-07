@@ -19,11 +19,14 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.bean;
 
+import org.wso2.siddhi.query.api.definition.Attribute;
+import java.util.List;
+
 public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
     private String definitionName;
     private String definitionText;
     private String type;
-    private String attributes;
+    private List<Attribute> attributes;
 
     public SiddhiDefinition(String definitionName, String definitionText,String type) {
         this.definitionName = definitionName;
@@ -31,7 +34,7 @@ public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
         this.type = type;
     }
 
-    public SiddhiDefinition(String definitionName, String definitionText, String type, String attributes) {
+    public SiddhiDefinition(String definitionName, String definitionText, String type, List<Attribute> attributes) {
         this.definitionName = definitionName;
         this.definitionText = definitionText;
         this.type = type;
@@ -63,11 +66,11 @@ public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
     }
 
 
-    public String getAttributes() {
+    public List<Attribute> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(String attributes) {
+    public void setAttributes(List<Attribute> attributes) {
         this.attributes = attributes;
     }
 
