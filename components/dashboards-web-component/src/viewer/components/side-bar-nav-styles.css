@@ -25,7 +25,14 @@
 }
 
 .side-bar-nav svg {
-    display: none !important;
+    width: 16px !important;
+    height: 16px !important;
+    transform: rotate(-90deg);
+    left: 3px !important;
+    top: initial !important;
+    bottom: -3px !important;
+    fill: #929191 !important;
+    margin: 0 !important;
 }
 
 .side-bar-nav div {
@@ -65,4 +72,8 @@
 
 .side-bar-nav::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+.side-bar-nav .list-item.homePage {
+    padding: 0 0 7px !important;
 }

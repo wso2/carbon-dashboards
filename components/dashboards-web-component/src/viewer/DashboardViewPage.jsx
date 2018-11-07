@@ -39,6 +39,7 @@ import PortalButton from '../common/PortalButton';
 import ThemeButton from './components/ThemeButton';
 import { darkTheme, lightTheme } from '../utils/Theme';
 import './components/gl-override-styles.css';
+import './components/side-bar-nav-styles.css';
 import DashboardReportGenerationCard from './components/DashboardReportGenerationCard';
 
 const SelectableList = makeSelectable(List);
@@ -255,7 +256,7 @@ class DashboardViewPage extends Component {
                     nestedItems={subPagesList}
                     open={!!subPagesList}
                     onClick={() => history.push(this.getNavigationToPage(page.id))}
-                    className={'list-item'}
+                    className={isLandingPage ? 'list-item homePage' : 'list-item'}
                 />
             );
         });
