@@ -31,7 +31,7 @@ public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
     private String type;
     private List<Attribute> attributes;
 
-    public SiddhiDefinition(String definitionName, String definitionText,String type) {
+    public SiddhiDefinition(String definitionName, String definitionText, String type) {
         this.definitionName = definitionName;
         this.definitionText = definitionText;
         this.type = type;
@@ -41,7 +41,7 @@ public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
         this.definitionName = definitionName;
         this.definitionText = definitionText;
         this.type = type;
-        this.attributes=attributes;
+        this.attributes = attributes;
     }
 
     public String getDefinitionName() {

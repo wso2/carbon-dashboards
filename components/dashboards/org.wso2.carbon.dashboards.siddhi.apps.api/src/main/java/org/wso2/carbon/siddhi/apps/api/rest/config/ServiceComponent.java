@@ -19,7 +19,11 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.config;
 
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
@@ -34,8 +38,8 @@ import org.wso2.carbon.config.provider.ConfigProvider;
 public class ServiceComponent {
     @Activate
     public void start(){
-
     }
+
     @Reference(
             name = "carbon.config.provider",
             service = ConfigProvider.class,

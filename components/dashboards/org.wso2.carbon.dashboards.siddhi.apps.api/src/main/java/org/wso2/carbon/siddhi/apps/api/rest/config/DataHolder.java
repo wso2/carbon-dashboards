@@ -46,7 +46,7 @@ public class DataHolder {
      *
      * @return Instance of DataHolder
      */
-    public static DataHolder getInstance(){
+    public static DataHolder getInstance() {
         return instance;
     }
 
@@ -55,7 +55,7 @@ public class DataHolder {
      *
      * @return Instance of ConfigProvider
      */
-    public ConfigProvider getConfigProvider(){
+    public ConfigProvider getConfigProvider() {
         return this.configProvider;
     }
 

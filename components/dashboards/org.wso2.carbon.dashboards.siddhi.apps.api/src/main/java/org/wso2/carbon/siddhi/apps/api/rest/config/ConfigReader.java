@@ -19,11 +19,11 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Read worker node list, username, password from deployment.yaml and hold them for later use
@@ -33,19 +33,19 @@ public class ConfigReader {
     private static final String ADMIN = "admin";
     private static final String USER_NAME = "username";
     private static final String PASSWORD = "password";
-    private static final String WORKER_NODES="workerNodes";
+    private static final String WORKER_NODES = "workerNodes";
     private static final String COMPONENT_NAMESPACE = "wso2.dashboard.datasearch";
-    private  Map<String,Object> configs = readConfigs();
+    private  Map<String, Object> configs = readConfigs();
 
     /**
      * Read all the configs under given namespace from deployment.yaml of related runtime
      *
      */
-    private  static Map<String, Object> readConfigs(){
-        try{
-            return (Map<String,Object>) DataHolder.getInstance()
+    private  static Map<String, Object> readConfigs() {
+        try {
+            return (Map<String, Object>) DataHolder.getInstance()
                     .getConfigProvider().getConfigurationObject(COMPONENT_NAMESPACE);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Failed to read deplyment.yaml file", e);
         }
         return new HashMap<>();
@@ -61,7 +61,7 @@ public class ConfigReader {
         return password != null ? password.toString() : ADMIN;
     }
 
-    public ArrayList getWorkerList(){
+    public ArrayList getWorkerList() {
         return ((ArrayList) configs.get(WORKER_NODES));
     }
 }

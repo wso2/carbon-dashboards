@@ -21,6 +21,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>org.wso2.carbon.dashboards.siddhi.apps.api</artifactId>
+    <version>4.0.45-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+
+    <name>WSO2 Carbon Dashboards - Siddhi Apps REST API</name>
+
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
@@ -28,10 +34,6 @@
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.wso2.carbon.dashboards</groupId>
-    <artifactId>org.wso2.carbon.dashboards.siddhi.apps.api</artifactId>
-    <version>4.0.45-SNAPSHOT</version>
-    <packaging>bundle</packaging>
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.analytics</groupId>
@@ -81,7 +83,6 @@
         <carbon.component>
             osgi.service; objectClass="org.wso2.carbon.uiserver.spi.RestApiProvider"
         </carbon.component>
-        <checkstyle.skip>true</checkstyle.skip>
         <findbugs.skip>true</findbugs.skip>
     </properties>
     
