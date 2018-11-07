@@ -19,6 +19,9 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.bean;
 
+/**
+ * Bean class to hold the content of a SiddhiApp
+ */
 public class SiddhiAppContent {
     private String content;
 

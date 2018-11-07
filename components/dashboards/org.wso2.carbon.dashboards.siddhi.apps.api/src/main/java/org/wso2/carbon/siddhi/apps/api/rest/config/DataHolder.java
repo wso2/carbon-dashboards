@@ -22,16 +22,15 @@ package org.wso2.carbon.siddhi.apps.api.rest.config;
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
+/**
+ * Data holder for config provider implementations
+ */
 public class DataHolder {
     private static DataHolder instance = new DataHolder();
     private ConfigProvider configProvider;
     private AnalyticsHttpClientBuilderService clientBuilderService;
 
     private DataHolder(){
-    }
-
-    public static DataHolder getInstance(){
-        return instance;
     }
 
     public AnalyticsHttpClientBuilderService getClientBuilderService() {
@@ -42,10 +41,29 @@ public class DataHolder {
         this.clientBuilderService = clientBuilderService;
     }
 
+    /**
+     * Returns instance of DataHolder Class
+     *
+     * @return Instance of DataHolder
+     */
+    public static DataHolder getInstance(){
+        return instance;
+    }
+
+    /**
+     * Returns instance of Config Provider
+     *
+     * @return Instance of ConfigProvider
+     */
     public ConfigProvider getConfigProvider(){
         return this.configProvider;
     }
 
+    /**
+     * Sets instance of config provider
+     *
+     * @param configProvider instance of config provider
+     */
     public void setConfigProvider(ConfigProvider configProvider) {
         this.configProvider = configProvider;
     }

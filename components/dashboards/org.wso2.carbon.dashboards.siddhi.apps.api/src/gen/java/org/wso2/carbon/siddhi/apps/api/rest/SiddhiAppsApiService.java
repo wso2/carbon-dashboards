@@ -23,6 +23,9 @@ import javax.ws.rs.core.Response;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
         date = "2017-11-01T11:26:25.925Z")
+/**
+ * Auto generated class from Swagger to MSF4J.
+ */
 public abstract class SiddhiAppsApiService {
 
     //Get All sidhhi apps from a worker

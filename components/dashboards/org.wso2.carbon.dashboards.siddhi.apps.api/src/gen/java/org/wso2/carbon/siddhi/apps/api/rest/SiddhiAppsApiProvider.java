@@ -31,6 +31,9 @@ import org.wso2.msf4j.Microservice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provider that supplies Microservices for the {@link #DASHBOARD_PORTAL_APP_NAME} web app.
+ */
 @Component(service = RestApiProvider.class,
         immediate = true)
 public class SiddhiAppsApiProvider implements RestApiProvider {

@@ -19,8 +19,6 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.siddhi.apps.api.rest.factories.AppsApiServiceFactory;
 import org.wso2.msf4j.Microservice;
@@ -28,6 +26,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
+/**
+ * REST API to get deployed siddhi apps related data
+ */
 @RequestInterceptor(AuthenticationInterceptor.class)
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
         date = "2018-08-01T11:26:25.925Z")

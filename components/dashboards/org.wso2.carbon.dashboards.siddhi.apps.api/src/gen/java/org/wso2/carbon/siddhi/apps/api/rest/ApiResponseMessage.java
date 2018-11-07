@@ -24,7 +24,9 @@ import javax.xml.bind.annotation.XmlTransient;
 @javax.xml.bind.annotation.XmlRootElement
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
         date = "2018-08-01T11:26:25.925Z")
-
+/**
+ * Auto generated class from Swagger to MSF4J
+ */
 public class ApiResponseMessage {
     public static final int ERROR = 1;
     public static final int WARNING = 2;

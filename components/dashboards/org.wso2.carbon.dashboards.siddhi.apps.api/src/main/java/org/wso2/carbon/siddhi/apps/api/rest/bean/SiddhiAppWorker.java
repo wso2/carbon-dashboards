@@ -19,6 +19,9 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.bean;
 
+/**
+ * Bean class to hold appName and deployed worker of a SiddhiApp
+ */
 public class SiddhiAppWorker implements Comparable<SiddhiAppWorker>{
     private String appName;
     private String worker;

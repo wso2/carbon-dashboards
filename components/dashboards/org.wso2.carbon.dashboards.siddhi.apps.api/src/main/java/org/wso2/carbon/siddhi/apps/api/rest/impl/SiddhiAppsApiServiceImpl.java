@@ -48,6 +48,9 @@ import static org.wso2.carbon.siddhi.apps.api.rest.impl.utils.Constants.*;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
         date = "2017-11-01T11:26:25.925Z")
+/**
+ * Implementation of SiddhiApps REST API
+ */
 public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
     private static final Logger log = LoggerFactory.getLogger(SiddhiAppsApiServiceImpl.class);

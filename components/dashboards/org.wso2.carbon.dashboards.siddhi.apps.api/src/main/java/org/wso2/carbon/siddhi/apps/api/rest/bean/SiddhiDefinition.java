@@ -22,6 +22,9 @@ package org.wso2.carbon.siddhi.apps.api.rest.bean;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import java.util.List;
 
+/**
+ * Bean class to hold elements of a SiddhiApp Definition
+ */
 public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
     private String definitionName;
     private String definitionText;

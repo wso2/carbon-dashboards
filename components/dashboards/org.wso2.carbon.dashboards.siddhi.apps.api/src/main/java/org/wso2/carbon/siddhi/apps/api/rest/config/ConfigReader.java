@@ -25,6 +25,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Read worker node list, username, password from deployment.yaml and hold them for later use
+ */
 public class ConfigReader {
     private static final Logger log = LoggerFactory.getLogger(ConfigReader.class);
     private static final String ADMIN = "admin";
@@ -34,6 +37,10 @@ public class ConfigReader {
     private static final String COMPONENT_NAMESPACE = "wso2.dashboard.datasearch";
     private  Map<String,Object> configs = readConfigs();
 
+    /**
+     * Read all the configs under given namespace from deployment.yaml of related runtime
+     *
+     */
     private  static Map<String, Object> readConfigs(){
         try{
             return (Map<String,Object>) DataHolder.getInstance()

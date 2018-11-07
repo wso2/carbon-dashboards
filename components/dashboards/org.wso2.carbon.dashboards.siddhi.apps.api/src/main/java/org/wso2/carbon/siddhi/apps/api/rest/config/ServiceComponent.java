@@ -23,6 +23,9 @@ import org.osgi.service.component.annotations.*;
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
+/**
+ * OSGi-components to register config provider class.
+ */
 @Component(
         name = "org.wso2.carbon.siddhi.apps.api.rest.config.ServiceComponent",
         service = ServiceComponent.class,

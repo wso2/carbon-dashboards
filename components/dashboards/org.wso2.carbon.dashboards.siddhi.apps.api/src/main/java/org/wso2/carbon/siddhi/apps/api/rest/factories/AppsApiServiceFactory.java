@@ -22,6 +22,9 @@ package org.wso2.carbon.siddhi.apps.api.rest.factories;
 import org.wso2.carbon.siddhi.apps.api.rest.SiddhiAppsApiService;
 import org.wso2.carbon.siddhi.apps.api.rest.impl.SiddhiAppsApiServiceImpl;
 
+/**
+ * Factory class for SiddhiApps API service
+ */
 public class AppsApiServiceFactory {
     private final static SiddhiAppsApiService service = new SiddhiAppsApiServiceImpl();
 

@@ -24,6 +24,9 @@ import feign.Param;
 import feign.RequestLine;
 import feign.Response;
 
+/**
+ * Feign client to send request to workers
+ */
 public interface WorkerServiceStub {
 
     @RequestLine("GET /siddhi-apps")
