@@ -19,6 +19,8 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.bean;
 
+import java.util.Objects;
+
 /**
  * Bean class to hold appName and deployed worker of a SiddhiApp
  */
@@ -61,5 +63,23 @@ public class SiddhiAppWorker implements Comparable<SiddhiAppWorker> {
                 "appName='" + appName + '\'' +
                 ", worker='" + worker + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SiddhiAppWorker that = (SiddhiAppWorker) o;
+        return Objects.equals(appName, that.appName) &&
+                Objects.equals(worker, that.worker);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(appName, worker);
     }
 }

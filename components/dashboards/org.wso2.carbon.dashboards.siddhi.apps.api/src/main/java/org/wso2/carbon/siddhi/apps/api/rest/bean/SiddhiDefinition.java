@@ -21,6 +21,7 @@ package org.wso2.carbon.siddhi.apps.api.rest.bean;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Bean class to hold elements of a SiddhiApp Definition
@@ -78,7 +79,27 @@ public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SiddhiDefinition that = (SiddhiDefinition) o;
+        return Objects.equals(definitionName, that.definitionName) &&
+                Objects.equals(definitionText, that.definitionText) &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(attributes, that.attributes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(definitionName, definitionText, type, attributes);
+    }
+
+    @Override
     public int compareTo(SiddhiDefinition sd) {
-        return this.getDefinitionName().compareTo(sd.definitionName);
+        return definitionName.compareTo(sd.definitionName);
     }
 }
