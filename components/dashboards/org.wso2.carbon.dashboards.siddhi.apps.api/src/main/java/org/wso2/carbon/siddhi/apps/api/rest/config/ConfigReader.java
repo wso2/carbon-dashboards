@@ -21,8 +21,12 @@ package org.wso2.carbon.siddhi.apps.api.rest.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.analytics.permissions.PermissionProvider;
+import org.wso2.carbon.analytics.permissions.bean.Permission;
+import org.wso2.carbon.analytics.permissions.bean.Role;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,7 +39,17 @@ public class ConfigReader {
     private static final String PASSWORD = "password";
     private static final String WORKER_NODES = "workerNodes";
     private static final String COMPONENT_NAMESPACE = "wso2.dashboard.datasearch";
-    private  Map<String, Object> configs = readConfigs();
+    private static final String ROLES = "roles";
+    private static final String VIEWER = "viewer";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+
+    private static final Permission viewPermission = new Permission("DASH", "DASH.siddhiApp.viewer");
+
+    private static Map<String, Object> configs = readConfigs();
+    static {
+        registerRoles();
+    }
 
     /**
      * Read all the configs under given namespace from deployment.yaml of related runtime
@@ -62,6 +76,38 @@ public class ConfigReader {
     }
 
     public ArrayList getWorkerList() {
-        return ((ArrayList) configs.get(WORKER_NODES));
+        if (configs != null && configs.get(WORKER_NODES) != null) {
+            return ((ArrayList) configs.get(WORKER_NODES));
+        }
+        return null;
+    }
+
+    /*
+     * Add roles to the database and grant permissions to roles
+     * defined in deployment.yaml
+     */
+    private static void registerRoles() {
+        if (configs == null) {
+            log.error("Failed to find permission configs for wso2.dashboard.datasearch in dashboard deployment.yaml");
+        } else {
+            Map roles = (Map) configs.get(ROLES);
+            if (roles != null) {
+                List<Map<String, List>> viewers = (List<Map<String, List>>) roles.get(VIEWER);
+
+                PermissionProvider permissionProvider = DataHolder.getInstance().getPermissionProvider();
+
+                if (!permissionProvider.isPermissionExists(viewPermission)) {
+                    permissionProvider.addPermission(viewPermission);
+                }
+
+                for (Map viewer : viewers) {
+                    String name = viewer.get(NAME).toString();
+                    if (!permissionProvider.hasPermission(name, viewPermission)) {
+                        Role role = new Role(viewer.get(ID).toString(), viewer.get(NAME).toString());
+                        permissionProvider.grantPermission(viewPermission, role);
+                    }
+                }
+            }
+        }
     }
 }

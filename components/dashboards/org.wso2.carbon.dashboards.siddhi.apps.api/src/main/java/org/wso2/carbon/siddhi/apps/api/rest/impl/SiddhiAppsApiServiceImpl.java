@@ -23,13 +23,17 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.analytics.permissions.PermissionProvider;
+import org.wso2.carbon.analytics.permissions.bean.Permission;
 import org.wso2.carbon.siddhi.apps.api.rest.ApiResponseMessage;
 import org.wso2.carbon.siddhi.apps.api.rest.SiddhiAppsApiService;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiAppContent;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiAppWorker;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiDefinition;
 import org.wso2.carbon.siddhi.apps.api.rest.config.ConfigReader;
+import org.wso2.carbon.siddhi.apps.api.rest.config.DataHolder;
 import org.wso2.carbon.siddhi.apps.api.rest.worker.WorkerServiceFactory;
+import org.wso2.msf4j.Request;
 import org.wso2.siddhi.query.api.SiddhiApp;
 import org.wso2.siddhi.query.api.definition.AggregationDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
@@ -37,6 +41,7 @@ import org.wso2.siddhi.query.api.definition.WindowDefinition;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,10 +65,18 @@ import static org.wso2.carbon.siddhi.apps.api.rest.impl.utils.Constants.WORKER_K
 public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
     private static final Logger log = LoggerFactory.getLogger(SiddhiAppsApiServiceImpl.class);
+    private static final String PERMISSION_APP_NAME = "DASH";
+    private static final String VIEW_SIDDHI_APP_PERMISSION_STRING = "DASH.siddhiApp.viewer";
+    private static final Type listType = new TypeToken<List<String>>() { }.getType();
     private Gson gson = new Gson();
 
     @Override
-    public Response getSiddhiAppDefinitions(String id, String appName) {
+    public Response getSiddhiAppDefinitions(Request request, String id, String appName) {
+        if (getUserName(request) != null && !getPermissionProvider().hasPermission(getUserName(request), new
+                Permission(PERMISSION_APP_NAME, VIEW_SIDDHI_APP_PERMISSION_STRING))) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Insufficient permissions to view Siddhi " +
+                    "Apps").build();
+        }
         String[] hostPort = id.split(WORKER_KEY_GENERATOR);
         String workerURI = generateURLHostPort(hostPort[0], hostPort[1]);
         ConfigReader cf = new ConfigReader();
@@ -123,7 +136,12 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
     }
 
     @Override
-    public Response getAllSiddhiApps() {
+    public Response getAllSiddhiApps(Request request) {
+        if (getUserName(request) != null && !getPermissionProvider().hasPermission(getUserName(request), new
+                Permission(PERMISSION_APP_NAME, VIEW_SIDDHI_APP_PERMISSION_STRING))) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Insufficient permissions to view Siddhi " +
+                    "Apps").build();
+        }
         ConfigReader cf = new ConfigReader();
         String username = cf.getUserName();
         String password = cf.getPassword();
@@ -140,8 +158,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                     Reader inputStream = workerResponse.body().asReader();
 
                     //list of siddhi apps in the worker
-                    List<String> siddhiAppList = gson.fromJson(inputStream, new TypeToken<List<String>>() {
-                    }.getType());
+                    List<String> siddhiAppList = gson.fromJson(inputStream, listType);
                     ArrayList<String> removeList = new ArrayList<String>();
                     siddhiAppList.parallelStream().forEach(siddhiApp -> {
                         try {
@@ -233,5 +250,14 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
     private String generateWorkerKey(String host, String port) {
         return host + WORKER_KEY_GENERATOR + port;
+    }
+
+    private static String getUserName(Request request) {
+        Object username = request.getProperty("username");
+        return username != null ? username.toString() : null;
+    }
+
+    private PermissionProvider getPermissionProvider() {
+        return DataHolder.getInstance().getPermissionProvider();
     }
 }

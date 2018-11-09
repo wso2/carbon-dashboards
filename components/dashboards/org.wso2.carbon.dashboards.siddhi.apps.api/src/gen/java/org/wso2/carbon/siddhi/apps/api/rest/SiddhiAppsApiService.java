@@ -19,6 +19,7 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest;
 
+import org.wso2.msf4j.Request;
 import javax.ws.rs.core.Response;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaMSF4JServerCodegen",
@@ -29,8 +30,8 @@ import javax.ws.rs.core.Response;
 public abstract class SiddhiAppsApiService {
 
     //Get All sidhhi apps from a worker
-    public abstract Response getAllSiddhiApps();
+    public abstract Response getAllSiddhiApps(Request request);
 
     //Get Siddhi Definitions from a siddhi app
-    public abstract Response getSiddhiAppDefinitions(String id, String appName);
+    public abstract Response getSiddhiAppDefinitions(Request request, String id, String appName);
 }

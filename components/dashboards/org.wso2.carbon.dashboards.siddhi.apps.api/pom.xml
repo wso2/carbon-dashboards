@@ -40,6 +40,10 @@
             <artifactId>org.wso2.carbon.analytics.msf4j.interceptor.common</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.analytics.permissions</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon.uiserver</groupId>
             <artifactId>org.wso2.carbon.uiserver</artifactId>
         </dependency>
@@ -70,12 +74,12 @@
     </build>
 
     <properties>
-        <maven.findbugsplugin.version.exclude>findbugs-exclude.xml</maven.findbugsplugin.version.exclude>
         <export.package>
             org.wso2.carbon.siddhi.apps.api.*
         </export.package>
         <import.package>
             org.osgi.framework.*;version="${org.osgi.framework.version.range}",
+            org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.wso2.msf4j.*;version="${msf4j-core.version.range}",
             org.wso2.siddhi.*;version="${siddhi.version.range}",
             *;resolution:=optional
@@ -83,7 +87,6 @@
         <carbon.component>
             osgi.service; objectClass="org.wso2.carbon.uiserver.spi.RestApiProvider"
         </carbon.component>
-        <findbugs.skip>true</findbugs.skip>
     </properties>
     
 </project>

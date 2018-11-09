@@ -1,0 +1,46 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Dashboard Siddhi Apps REST Api
+  description: This provides information about siddhi apps deployed in workers.
+schemes:
+- https
+host: localhost
+basePath: /portal/apis/datasearch
+consumes:
+- text/plain
+produces:
+- application/json
+paths:
+  /siddhi-apps:
+    get:
+      summary: Lists Siddhi Applications.
+      description:
+        Provides siddhi apps which contain @store annotated Aggregation, Table, Window definitions.
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: The Siddhi Applications are successfully retrieved.
+  '/{id}/{appName}':
+    get:
+      summary: Retrieves definitions in specified Siddhi Application.
+      description: Retrieves @store annotated definitions, definition type and attribute list from a siddhi app.
+      produces:
+      - application/json
+      parameters:
+      - name: id
+          in: path
+          description: Id of the worker.
+          required: true
+          type: string
+      - name: appName
+        in: path
+        description: The name of the Siddhi Application.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Definitions in Siddhi Application are successfully retrieved.
+        '404':
+          description: The Siddhi Application specified is not found.

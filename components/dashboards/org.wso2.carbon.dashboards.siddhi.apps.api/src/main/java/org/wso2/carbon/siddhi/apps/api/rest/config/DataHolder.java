@@ -20,6 +20,7 @@
 package org.wso2.carbon.siddhi.apps.api.rest.config;
 
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
+import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
 /**
@@ -27,8 +28,10 @@ import org.wso2.carbon.config.provider.ConfigProvider;
  */
 public class DataHolder {
     private static DataHolder instance = new DataHolder();
+    private  PermissionProvider permissionProvider;
     private ConfigProvider configProvider;
     private AnalyticsHttpClientBuilderService clientBuilderService;
+
 
     private DataHolder(){
     }
@@ -66,5 +69,23 @@ public class DataHolder {
      */
     public void setConfigProvider(ConfigProvider configProvider) {
         this.configProvider = configProvider;
+    }
+
+    /**
+     * Returns permission provider
+     *
+     * @return permissionProvider
+     */
+    public  PermissionProvider getPermissionProvider() {
+        return permissionProvider;
+    }
+
+    /**
+     * Sets permission provider
+     *
+     * @param permissionProvider permission provider
+     */
+    public  void setPermissionProvider(PermissionProvider permissionProvider) {
+        this.permissionProvider = permissionProvider;
     }
 }

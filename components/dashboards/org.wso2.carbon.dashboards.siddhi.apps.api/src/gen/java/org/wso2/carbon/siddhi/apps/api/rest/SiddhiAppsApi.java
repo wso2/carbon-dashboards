@@ -21,10 +21,13 @@ package org.wso2.carbon.siddhi.apps.api.rest;
 
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
 import org.wso2.carbon.siddhi.apps.api.rest.factories.AppsApiServiceFactory;
-import org.wso2.msf4j.Microservice;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
+import org.wso2.msf4j.Microservice;
+import org.wso2.msf4j.Request;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
 
 /**
  * REST API to get deployed siddhi apps related data
@@ -47,9 +50,9 @@ public class SiddhiAppsApi implements Microservice {
     @Path("/{id}/{appName}")
     @GET
     @Produces({ "application/json" })
-    public Response getSiddhiAppDefinitions(
-         @PathParam("id") String id, @PathParam("appName") String appName) {
-        return delegate.getSiddhiAppDefinitions(id,appName);
+    public Response getSiddhiAppDefinitions(@Context Request request,@PathParam("id") String id, @PathParam("appName")
+            String appName) {
+        return delegate.getSiddhiAppDefinitions(request,id,appName);
     }
 
     /**
@@ -60,7 +63,7 @@ public class SiddhiAppsApi implements Microservice {
     @Path("/siddhi-apps")
     @GET
     @Produces({ "application/json" })
-    public Response getAllSiddhiApps(){
-        return delegate.getAllSiddhiApps();
+    public Response getAllSiddhiApps(@Context Request request){
+        return delegate.getAllSiddhiApps(request);
     }
 }
