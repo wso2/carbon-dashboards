@@ -127,9 +127,9 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
             String jsonString = new Gson().toJson(siddhiDefinitions);
             return Response.ok().entity(jsonString).build();
         } catch (feign.RetryableException e) {
-            log.warn("Unable to reach the worker " + workerURI, e);
+            log.warn("Unable to reach the worker " + workerURI + e.getMessage(), e);
         } catch (Exception e) {
-            log.warn("Error occured while getting response from worker " + workerURI, e);
+            log.warn("Error occured while getting response from worker " + workerURI + e.getMessage(), e);
         }
         return Response.ok(new ApiResponseMessage(ApiResponseMessage.ERROR, "Error occured while getting the" +
                 " response from " + workerURI)).build();
@@ -207,9 +207,9 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                                 removeList.add(siddhiApp);
                             }
                         } catch (feign.RetryableException e) {
-                            log.warn("Unable to reach the worker " + worker, e);
+                            log.warn("Unable to reach the worker " + worker + e.getMessage(), e);
                         } catch (Exception e) {
-                            log.warn("Error occured while getting response from worker " + worker, e);
+                            log.warn("Error occured while getting response from worker " + worker + e.getMessage(), e);
                         }
                     });
                     siddhiAppList.removeAll(removeList);
@@ -226,11 +226,11 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                     }
                 }
             } catch (feign.RetryableException e) {
-                log.warn("Unable to reach the worker " + worker, e);
+                log.warn("Unable to reach the worker " + worker + e.getMessage(), e);
             } catch (IOException e) {
-                log.warn("Error occured while getting the response from worker " + worker, e);
+                log.warn("Error occured while getting the response from worker " + worker + e.getMessage(), e);
             } catch (Exception e) {
-                log.warn("Error occured while getting response from worker " + worker, e);
+                log.warn("Error occured while getting response from worker " + worker + e.getMessage(), e);
             }
         });
 
