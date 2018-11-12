@@ -469,6 +469,9 @@
         <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
         <junit-platform.surefire-provider.version>1.0.2</junit-platform.surefire-provider.version>
 
+        <!--Feign-->
+        <openfeign.version>9.3.1</openfeign.version>
+
         <!--Siddhi-->
         <siddhi.version.range>[4.0.0, 5.0.0)</siddhi.version.range>
 

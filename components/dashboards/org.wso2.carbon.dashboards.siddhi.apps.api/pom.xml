@@ -81,8 +81,18 @@
             org.osgi.framework.*;version="${org.osgi.framework.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.wso2.msf4j.*;version="${msf4j-core.version.range}",
-            org.wso2.siddhi.*;version="${siddhi.version.range}",
-            *;resolution:=optional
+            org.wso2.carbon.uiserver.api.*; version="${carbon.uiserver.version.range}",
+            org.wso2.carbon.uiserver.spi.*; version="${carbon.uiserver.version.range}",
+            org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
+            org.wso2.carbon.analytics.idp.client.*; version="${carbon.analytics-common.version.range}",
+            org.wso2.carbon.analytics.msf4j.interceptor.common.*,
+            org.wso2.carbon.config.*; version="${carbon.config.version.range}",
+            org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
+            org.slf4j.*; version="${slf4j.version.range}",
+            org.wso2.siddhi.*; version="${siddhi.version.range}",
+            feign.*; version="${openfeign.version}",
+            javax.ws.rs.*; version="${javax.ws.rs.version.range}",
+            com.google.gson.*; version="${gson.version.range}",
         </import.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.carbon.uiserver.spi.RestApiProvider"
