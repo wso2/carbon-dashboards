@@ -14,7 +14,7 @@ produces:
 paths:
   /siddhi-apps:
     get:
-      summary: Lists Siddhi Applications.
+      summary: Lists Siddhi Apps and workers.
       description:
         Provides siddhi apps which contain @store annotated Aggregation, Table, Window definitions.
       produces:
@@ -22,6 +22,10 @@ paths:
       responses:
         '200':
           description: The Siddhi Applications are successfully retrieved.
+          schema:
+            $ref: '#/definitions/SiddhiAppWorker'
+        '401':
+          description: Insufficient permissions to view siddhi apps.
   '/{id}/{appName}':
     get:
       summary: Retrieves definitions in specified Siddhi Application.
@@ -42,5 +46,64 @@ paths:
       responses:
         '200':
           description: Definitions in Siddhi Application are successfully retrieved.
+          schema:
+            $ref: '#/definitions/SiddhiDefinition'
+        '401':
+          description: Unauthorized to view siddhi app.
         '404':
           description: The Siddhi Application specified is not found.
+          schema:
+            $ref: '#/definitions/ApiResponseMessageWithCode'
+definitions:
+  SiddhiAppContent:
+    type: object
+    properties:
+      content:
+        type: string
+        description: Content of the Siddhi Application
+  SiddhiAppWorker:
+    type: object
+    properties:
+      appName:
+        type: string
+        description: name of siddhi app
+      worker:
+        type: string
+        description: worker id
+  SiddhiDefinition:
+    type: object
+    properties:
+      definitionName:
+        type: string
+        description: name of definition
+      definitionText:
+        type: string
+        description: text view of definition
+      type:
+        type: string
+        description: type of the definition
+      attributes:
+        type: List<Attribute>
+        description: list of attributes
+  Attribute:
+    type: object
+    properties:
+      name:
+        type: string
+        description: name of the attribute
+      type:
+        type: string
+        description: type of the attribute
+  ApiResponseMessageWithCode:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+        description: Unique error code
+      type:
+        type: string
+        description: Error type
+      message:
+        type: string
+        description: Error message

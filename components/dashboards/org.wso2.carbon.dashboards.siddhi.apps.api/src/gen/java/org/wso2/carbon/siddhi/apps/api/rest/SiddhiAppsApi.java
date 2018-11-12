@@ -20,7 +20,7 @@
 package org.wso2.carbon.siddhi.apps.api.rest;
 
 import org.wso2.carbon.analytics.msf4j.interceptor.common.AuthenticationInterceptor;
-import org.wso2.carbon.siddhi.apps.api.rest.factories.AppsApiServiceFactory;
+import org.wso2.carbon.siddhi.apps.api.rest.factories.SiddhiAppsApiServiceFactory;
 import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
@@ -37,7 +37,7 @@ import javax.ws.rs.core.Response;
         date = "2018-08-01T11:26:25.925Z")
 public class SiddhiAppsApi implements Microservice {
     public static final String API_CONTEXT_PATH = "/apis/datasearch";
-    private final SiddhiAppsApiService delegate = AppsApiServiceFactory.getSiddhiAppsApi();
+    private final SiddhiAppsApiService delegate = SiddhiAppsApiServiceFactory.getSiddhiAppsApi();
 
     /**
      * Returns list of @store annotated Aggregations,Tables,Windows from a siddhi app

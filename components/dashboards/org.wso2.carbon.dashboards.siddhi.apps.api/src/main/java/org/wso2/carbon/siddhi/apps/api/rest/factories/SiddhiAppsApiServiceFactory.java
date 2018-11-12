@@ -17,17 +17,18 @@
  *
  */
 
-package org.wso2.carbon.siddhi.apps.api.rest.impl.utils;
+package org.wso2.carbon.siddhi.apps.api.rest.factories;
+
+import org.wso2.carbon.siddhi.apps.api.rest.SiddhiAppsApiService;
+import org.wso2.carbon.siddhi.apps.api.rest.impl.SiddhiAppsApiServiceImpl;
 
 /**
- * Class to define constants
+ * Factory class for SiddhiApps API service
  */
-public class Constants {
-    public static final String WORKER_KEY_GENERATOR = "_";
-    public static final String URL_HOST_PORT_SEPERATOR = ":";
-    public static final String PROTOCOL = "https://";
-    public static final String STORE_ANNOTATION = "@store";
-    public static final String AGGREGATION = "Aggregation";
-    public static final String TABLE = "Table";
-    public static final String WINDOW = "Window";
+public class SiddhiAppsApiServiceFactory {
+    private static final SiddhiAppsApiService service = new SiddhiAppsApiServiceImpl();
+
+    public static SiddhiAppsApiService getSiddhiAppsApi() {
+        return service;
+    }
 }

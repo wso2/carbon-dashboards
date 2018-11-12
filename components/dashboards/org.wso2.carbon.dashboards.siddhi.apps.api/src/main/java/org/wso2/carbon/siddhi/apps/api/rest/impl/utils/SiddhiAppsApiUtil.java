@@ -17,18 +17,26 @@
  *
  */
 
-package org.wso2.carbon.siddhi.apps.api.rest.factories;
+package org.wso2.carbon.siddhi.apps.api.rest.impl.utils;
 
-import org.wso2.carbon.siddhi.apps.api.rest.SiddhiAppsApiService;
-import org.wso2.carbon.siddhi.apps.api.rest.impl.SiddhiAppsApiServiceImpl;
+import feign.Response;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 /**
- * Factory class for SiddhiApps API service
+ * Util class for Siddhi Apps REST API.
  */
-public class AppsApiServiceFactory {
-    private static final SiddhiAppsApiService service = new SiddhiAppsApiServiceImpl();
+public class SiddhiAppsApiUtil {
 
-    public static SiddhiAppsApiService getSiddhiAppsApi() {
-        return service;
+    public static String processResponseBody(Object responseBody) throws IOException {
+        if (responseBody instanceof Response.Body) {
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(((Response.Body) responseBody).asInputStream(), "UTF-8"))) {
+                return br.lines().collect(Collectors.joining());
+            }
+        }
+        return responseBody.toString();
     }
 }

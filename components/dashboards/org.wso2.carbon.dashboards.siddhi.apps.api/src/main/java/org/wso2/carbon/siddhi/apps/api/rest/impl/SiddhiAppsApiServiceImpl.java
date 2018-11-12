@@ -25,13 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.analytics.permissions.bean.Permission;
-import org.wso2.carbon.siddhi.apps.api.rest.ApiResponseMessage;
+import org.wso2.carbon.siddhi.apps.api.rest.ApiResponseMessageWithCode;
 import org.wso2.carbon.siddhi.apps.api.rest.SiddhiAppsApiService;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiAppContent;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiAppWorker;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiDefinition;
 import org.wso2.carbon.siddhi.apps.api.rest.config.ConfigReader;
 import org.wso2.carbon.siddhi.apps.api.rest.config.DataHolder;
+import org.wso2.carbon.siddhi.apps.api.rest.impl.utils.SiddhiAppsApiUtil;
 import org.wso2.carbon.siddhi.apps.api.rest.worker.WorkerServiceFactory;
 import org.wso2.msf4j.Request;
 import org.wso2.siddhi.query.api.SiddhiApp;
@@ -86,53 +87,72 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
         try {
             feign.Response workerResponse = WorkerServiceFactory.getWorkerHttpsClient(
                     PROTOCOL + workerURI, username, password).getSiddhiAppContent(appName);
+            if (workerResponse == null) {
+                String jsonString = new Gson().
+                        toJson(new ApiResponseMessageWithCode(ApiResponseMessageWithCode.SERVER_CONNECTION_ERROR,
+                                "Requested Response is null"));
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(jsonString).build();
+            } else {
+                String responseAppBody = SiddhiAppsApiUtil.processResponseBody(workerResponse.body());
+                if (workerResponse.status() == 200) {
+                 //Get App Content
+                 SiddhiAppContent siddhiAppContent = gson.fromJson(workerResponse.body().toString(),
+                         SiddhiAppContent.class);
+                 String siddhiAppText = siddhiAppContent.getContent();
 
-            //Get App Content
-            SiddhiAppContent siddhiAppContent = gson.fromJson(workerResponse.body().toString(), SiddhiAppContent.class);
-            String siddhiAppText = siddhiAppContent.getContent();
+                 //Compile and get Siddhi App
+                 SiddhiApp siddhiApp = SiddhiCompiler.parse(siddhiAppText);
 
-            //Compile and get Siddhi App
-            SiddhiApp siddhiApp = SiddhiCompiler.parse(siddhiAppText);
+                 //ArrayList to store definitions
+                 List<SiddhiDefinition> siddhiDefinitions = new ArrayList<>();
 
-            //ArrayList to store definitions
-            List<SiddhiDefinition> siddhiDefinitions = new ArrayList<>();
+                 //Get Aggregation defintions with @store annotations
+                 for (Map.Entry<String, AggregationDefinition> entry : siddhiApp.getAggregationDefinitionMap()
+                         .entrySet()) {
+                     if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                         SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue()
+                                 .toString(), AGGREGATION, entry.getValue().getAttributeList());
+                         siddhiDefinitions.add(siddhiDefinition);
+                     }
+                 }
 
-            //Get Aggregation defintions with @store annotations
-            for (Map.Entry<String, AggregationDefinition> entry : siddhiApp.getAggregationDefinitionMap().entrySet()) {
-                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue()
-                            .toString(), AGGREGATION, entry.getValue().getAttributeList());
-                    siddhiDefinitions.add(siddhiDefinition);
+                 //Get Table defintions with @store annotations
+                 for (Map.Entry<String, TableDefinition> entry : siddhiApp.getTableDefinitionMap().entrySet()) {
+                     if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                         SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue()
+                                 .toString(), TABLE, entry.getValue().getAttributeList());
+                         siddhiDefinitions.add(siddhiDefinition);
+                     }
+                 }
+
+                 //Get Window defintions with @store annotations
+                 for (Map.Entry<String, WindowDefinition> entry : siddhiApp.getWindowDefinitionMap().entrySet()) {
+                     if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                         SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue()
+                                 .toString(), WINDOW, entry.getValue().getAttributeList());
+                         siddhiDefinitions.add(siddhiDefinition);
+                     }
+                 }
+                 Collections.sort(siddhiDefinitions);
+                 String jsonString = new Gson().toJson(siddhiDefinitions);
+                 return Response.ok().entity(jsonString).build();
+
+                } else if (workerResponse.status() == 401) {
+                    String jsonString = new Gson().toJson(responseAppBody);
+                    return Response.status(Response.Status.UNAUTHORIZED).entity(jsonString).build();
+                } else {
+                    return Response.status(Response.Status.NOT_FOUND).entity(responseAppBody).build();
                 }
             }
-
-            //Get Table defintions with @store annotations
-            for (Map.Entry<String, TableDefinition> entry : siddhiApp.getTableDefinitionMap().entrySet()) {
-                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue()
-                            .toString(), TABLE, entry.getValue().getAttributeList());
-                    siddhiDefinitions.add(siddhiDefinition);
-                }
-            }
-
-            //Get Window defintions with @store annotations
-            for (Map.Entry<String, WindowDefinition> entry : siddhiApp.getWindowDefinitionMap().entrySet()) {
-                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(), entry.getValue()
-                            .toString(), WINDOW, entry.getValue().getAttributeList());
-                    siddhiDefinitions.add(siddhiDefinition);
-                }
-            }
-            Collections.sort(siddhiDefinitions);
-            String jsonString = new Gson().toJson(siddhiDefinitions);
-            return Response.ok().entity(jsonString).build();
         } catch (feign.RetryableException e) {
-            log.warn("Unable to reach the worker " + workerURI + e.getMessage(), e);
-        } catch (Exception e) {
-            log.warn("Error occured while getting response from worker " + workerURI + e.getMessage(), e);
+            String jsonString = new Gson().toJson(new ApiResponseMessageWithCode(ApiResponseMessageWithCode
+                    .SERVER_CONNECTION_ERROR, e.getMessage()));
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(jsonString).build();
+        } catch (IOException e) {
+            log.warn("Unable to decode siddhi app " + appName + e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Unable to decode siddhi app. Please "
+                    + "try again.").build();
         }
-        return Response.ok(new ApiResponseMessage(ApiResponseMessage.ERROR, "Error occured while getting the" +
-                " response from " + workerURI)).build();
     }
 
     @Override
@@ -154,75 +174,84 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
             try {
                 feign.Response workerResponse = WorkerServiceFactory.getWorkerHttpsClient(
                         PROTOCOL + worker, username, password).getSiddhiAppNames();
-                if (workerResponse != null && workerResponse.status() == 200) {
-                    Reader inputStream = workerResponse.body().asReader();
+                if (workerResponse == null) {
+                    log.warn("Requested Response is null from worker " + worker);
+                } else {
+                    if (workerResponse.status() == 200) {
+                        Reader inputStream = workerResponse.body().asReader();
 
-                    //list of siddhi apps in the worker
-                    List<String> siddhiAppList = gson.fromJson(inputStream, listType);
-                    ArrayList<String> removeList = new ArrayList<String>();
-                    siddhiAppList.parallelStream().forEach(siddhiApp -> {
-                        try {
-                            feign.Response response = WorkerServiceFactory.getWorkerHttpsClient(
-                                    PROTOCOL + worker, username, password).getSiddhiAppContent(siddhiApp);
+                        //list of siddhi apps in the worker
+                        List<String> siddhiAppList = gson.fromJson(inputStream, listType);
+                        ArrayList<String> removeList = new ArrayList<String>();
+                        siddhiAppList.parallelStream().forEach(siddhiApp -> {
+                            try {
+                                feign.Response response = WorkerServiceFactory.getWorkerHttpsClient(
+                                        PROTOCOL + worker, username, password).getSiddhiAppContent(siddhiApp);
 
-                            //Get App Content
-                            SiddhiAppContent siddhiAppContent = gson.fromJson(response.body().toString(),
-                                    SiddhiAppContent.class);
-                            String siddhiAppText = siddhiAppContent.getContent();
+                                //Get App Content
+                                SiddhiAppContent siddhiAppContent = gson.fromJson(response.body().toString(),
+                                        SiddhiAppContent.class);
+                                String siddhiAppText = siddhiAppContent.getContent();
 
-                            //Compile and get Siddhi App
-                            SiddhiApp s = SiddhiCompiler.parse(String.valueOf(siddhiAppText));
+                                //Compile and get Siddhi App
+                                SiddhiApp s = SiddhiCompiler.parse(String.valueOf(siddhiAppText));
 
-                            //ArrayList to store definitions in the siddhi app
-                            List<SiddhiDefinition> siddhiDefinitions = new ArrayList<>();
+                                //ArrayList to store definitions in the siddhi app
+                                List<SiddhiDefinition> siddhiDefinitions = new ArrayList<>();
 
-                            //Add definitions to list if they contain store anotation
-                            for (Map.Entry<String, AggregationDefinition> entry : s.getAggregationDefinitionMap()
-                                    .entrySet()) {
-                                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
-                                            entry.getValue().toString(), AGGREGATION);
-                                    siddhiDefinitions.add(siddhiDefinition);
+                                //Add definitions to list if they contain store anotation
+                                for (Map.Entry<String, AggregationDefinition> entry : s.getAggregationDefinitionMap()
+                                        .entrySet()) {
+                                    if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                                        SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
+                                                entry.getValue().toString(), AGGREGATION);
+                                        siddhiDefinitions.add(siddhiDefinition);
+                                    }
+                                }
+
+                                for (Map.Entry<String, TableDefinition> entry : s.getTableDefinitionMap().entrySet()) {
+                                    if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                                        SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
+                                                entry.getValue().toString(), TABLE);
+                                        siddhiDefinitions.add(siddhiDefinition);
+                                    }
+                                }
+
+                                for (Map.Entry<String, WindowDefinition> entry : s.getWindowDefinitionMap()
+                                        .entrySet()) {
+                                    if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
+                                        SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
+                                                entry.getValue().toString(), WINDOW);
+                                        siddhiDefinitions.add(siddhiDefinition);
+                                    }
+                                }
+
+                                //Remove siddhiApp from the list if there are no definitions
+                                if (siddhiDefinitions.isEmpty()) {
+                                    removeList.add(siddhiApp);
+                                }
+                            } catch (feign.RetryableException e) {
+                                log.warn("Unable to reach the worker " + worker + e.getMessage(), e);
+                            } catch (Exception e) {
+                                log.warn("Error occured while getting response from worker " + worker
+                                        + e.getMessage(), e);
+                            }
+                        });
+                        siddhiAppList.removeAll(removeList);
+
+                        if (!siddhiAppList.isEmpty()) {
+                            String[] hostPort = worker.split(URL_HOST_PORT_SEPERATOR);
+                            String workerId = generateWorkerKey(hostPort[0], hostPort[1]);
+                            for (String appName : siddhiAppList) {
+                                if (!siddhiApps.containsKey(appName)) {
+                                    siddhiApps.put(appName, workerId);
                                 }
                             }
-
-                            for (Map.Entry<String, TableDefinition> entry : s.getTableDefinitionMap().entrySet()) {
-                                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
-                                            entry.getValue().toString(), TABLE);
-                                    siddhiDefinitions.add(siddhiDefinition);
-                                }
-                            }
-
-                            for (Map.Entry<String, WindowDefinition> entry : s.getWindowDefinitionMap().entrySet()) {
-                                if (entry.getValue().toString().contains(STORE_ANNOTATION)) {
-                                    SiddhiDefinition siddhiDefinition = new SiddhiDefinition(entry.getKey(),
-                                            entry.getValue().toString(), WINDOW);
-                                    siddhiDefinitions.add(siddhiDefinition);
-                                }
-                            }
-
-                            //Remove siddhiApp from the list if there are no definitions
-                            if (siddhiDefinitions.isEmpty()) {
-                                removeList.add(siddhiApp);
-                            }
-                        } catch (feign.RetryableException e) {
-                            log.warn("Unable to reach the worker " + worker + e.getMessage(), e);
-                        } catch (Exception e) {
-                            log.warn("Error occured while getting response from worker " + worker + e.getMessage(), e);
                         }
-                    });
-                    siddhiAppList.removeAll(removeList);
-
-                    if (!siddhiAppList.isEmpty()) {
-                        String[] hostPort = worker.split(URL_HOST_PORT_SEPERATOR);
-                        String workerId = generateWorkerKey(hostPort[0], hostPort[1]);
-
-                        for (String appName : siddhiAppList) {
-                            if (!siddhiApps.containsKey(appName)) {
-                                siddhiApps.put(appName, workerId);
-                            }
-                        }
+                    } else if (workerResponse.status() == 401) {
+                        log.warn("Unauthorized to get reponse from worker " + worker);
+                    } else {
+                        log.warn("Unknown Error occured while getting response from worker " + worker);
                     }
                 }
             } catch (feign.RetryableException e) {
