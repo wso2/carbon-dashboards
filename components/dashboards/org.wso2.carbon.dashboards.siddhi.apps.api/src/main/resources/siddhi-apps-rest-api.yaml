@@ -142,7 +142,3 @@ definitions:
       message:
         type: string
         description: Error message
-<<<<<<< HEAD
-=======
-        
->>>>>>> origin/master
