@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Configuration bean class for dashboard datasearch configurations.
  */
-@Configuration(namespace = "wso2.status.dashboard2", description = "Dashboard Datasearch Configurations")
+@Configuration(namespace = "wso2.dashboard.datasearch", description = "Dashboard Datasearch Configurations")
 public class DeploymentConfigs {
     @Element(description = "Admin Username across cluster")
     private WorkerAccessCredentials workerAccessCredentials = new WorkerAccessCredentials();
