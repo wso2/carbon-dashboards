@@ -17,28 +17,68 @@
  *
  */
 
-package org.wso2.carbon.siddhi.apps.api.rest.config;
+package org.wso2.carbon.siddhi.apps.api.rest.internal;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
+import org.wso2.carbon.analytics.permissions.PermissionManager;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
+import org.wso2.carbon.analytics.permissions.bean.Permission;
+import org.wso2.carbon.analytics.permissions.bean.Role;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
+import org.wso2.carbon.siddhi.apps.api.rest.config.DeploymentConfigs;
+import java.util.Map;
 
 /**
  * OSGi-components to register config provider class.
  */
 @Component(
-        name = "org.wso2.carbon.siddhi.apps.api.rest.config.ServiceComponent",
+        name = "org.wso2.carbon.siddhi.apps.api.rest.internal.ServiceComponent",
         service = ServiceComponent.class,
         immediate = true
 )
 public class ServiceComponent {
+    private static final Permission viewPermission = new Permission("DASH",
+            "DASH.siddhiApp.viewer");
+    private static final Logger logger = LoggerFactory.getLogger(ServiceComponent.class);
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private PermissionProvider permissionProvider;
+
     @Activate
-    public void start(){
+    public void start() {
+        try {
+            DeploymentConfigs deploymentConfigs = DataHolder.getInstance().getConfigProvider()
+                    .getConfigurationObject(DeploymentConfigs.class);
+            DataHolder.getInstance().setDatasearchConfigs(deploymentConfigs);
+
+        } catch (ConfigurationException e) {
+            logger.error("Error in reading configuration from deployment.yaml", e);
+        }
+        initPermission();
+    }
+
+    private void initPermission() {
+        if (!permissionProvider.isPermissionExists(viewPermission)) {
+            permissionProvider.addPermission(viewPermission);
+        }
+        DeploymentConfigs datasearchConfigs = DataHolder.getInstance().getDatasearchConfigs();
+        if (datasearchConfigs.getViewerRoles() != null) {
+            for (Map viewer : datasearchConfigs.getViewerRoles()) {
+                String name = viewer.get(NAME).toString();
+                if (!permissionProvider.hasPermission(name, viewPermission)) {
+                    Role role = new Role(viewer.get(ID).toString(), viewer.get(NAME).toString());
+                    permissionProvider.grantPermission(viewPermission, role);
+                }
+            }
+        }
     }
 
     @Reference(
@@ -72,17 +112,20 @@ public class ServiceComponent {
     }
 
     @Reference(
-            name = "carbon.permission.provider",
-            service = PermissionProvider.class,
+            name = "permission-manager",
+            service = PermissionManager.class,
             cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.DYNAMIC,
-            unbind = "unregisterPermissionProvider"
+            unbind = "unsetPermissionManager"
     )
-    protected void registerPermissionProvider(PermissionProvider permissionProvider) {
-        DataHolder.getInstance().setPermissionProvider(permissionProvider);
+    protected void setPermissionManager(PermissionManager permissionManager) {
+        this.permissionProvider = permissionManager.getProvider();
+        DataHolder.getInstance().setPermissionProvider(this.permissionProvider);
     }
 
-    protected void unregisterPermissionProvider(PermissionProvider permissionProvider) {
+    protected void unsetPermissionManager(PermissionManager permissionManager) {
+        this.permissionProvider = null;
         DataHolder.getInstance().setPermissionProvider(null);
     }
+
 }

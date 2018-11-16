@@ -30,9 +30,9 @@ import org.wso2.carbon.siddhi.apps.api.rest.SiddhiAppsApiService;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiAppContent;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiAppWorker;
 import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiDefinition;
-import org.wso2.carbon.siddhi.apps.api.rest.config.ConfigReader;
-import org.wso2.carbon.siddhi.apps.api.rest.config.DataHolder;
+import org.wso2.carbon.siddhi.apps.api.rest.config.DeploymentConfigs;
 import org.wso2.carbon.siddhi.apps.api.rest.impl.utils.SiddhiAppsApiUtil;
+import org.wso2.carbon.siddhi.apps.api.rest.internal.DataHolder;
 import org.wso2.carbon.siddhi.apps.api.rest.worker.WorkerServiceFactory;
 import org.wso2.msf4j.Request;
 import org.wso2.siddhi.query.api.SiddhiApp;
@@ -70,19 +70,25 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
     private static final String VIEW_SIDDHI_APP_PERMISSION_STRING = "DASH.siddhiApp.viewer";
     private static final Type listType = new TypeToken<List<String>>() { }.getType();
     private Gson gson = new Gson();
+    private PermissionProvider permissionProvider;
+    private DeploymentConfigs datasearchConfigs;
+
+    public SiddhiAppsApiServiceImpl() {
+        permissionProvider = DataHolder.getInstance().getPermissionProvider();
+        datasearchConfigs = DataHolder.getInstance().getDatasearchConfigs();
+    }
 
     @Override
     public Response getSiddhiAppDefinitions(Request request, String id, String appName) {
-        if (getUserName(request) != null && !getPermissionProvider().hasPermission(getUserName(request), new
+        if (getUserName(request) != null && !permissionProvider.hasPermission(getUserName(request), new
                 Permission(PERMISSION_APP_NAME, VIEW_SIDDHI_APP_PERMISSION_STRING))) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Insufficient permissions to view Siddhi " +
                     "Apps").build();
         }
         String[] hostPort = id.split(WORKER_KEY_GENERATOR);
         String workerURI = generateURLHostPort(hostPort[0], hostPort[1]);
-        ConfigReader cf = new ConfigReader();
-        String username = cf.getUserName();
-        String password = cf.getPassword();
+        String username = datasearchConfigs.getUsername();
+        String password = datasearchConfigs.getPassword();
 
         try {
             feign.Response workerResponse = WorkerServiceFactory.getWorkerHttpsClient(
@@ -157,15 +163,14 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
     @Override
     public Response getAllSiddhiApps(Request request) {
-        if (getUserName(request) != null && !getPermissionProvider().hasPermission(getUserName(request), new
+        if (getUserName(request) != null && !permissionProvider.hasPermission(getUserName(request), new
                 Permission(PERMISSION_APP_NAME, VIEW_SIDDHI_APP_PERMISSION_STRING))) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("Insufficient permissions to view Siddhi " +
                     "Apps").build();
         }
-        ConfigReader cf = new ConfigReader();
-        String username = cf.getUserName();
-        String password = cf.getPassword();
-        ArrayList<String> workerList =  cf.getWorkerList(); //list of worker urls
+        String username = datasearchConfigs.getUsername();
+        String password = datasearchConfigs.getPassword();
+        List<String> workerList = datasearchConfigs.getWorkerList();
 
         //Map to store siddhi apps from all the workers
         Map<String, String> siddhiApps = new ConcurrentHashMap<>();
@@ -284,9 +289,5 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
     private static String getUserName(Request request) {
         Object username = request.getProperty("username");
         return username != null ? username.toString() : null;
-    }
-
-    private PermissionProvider getPermissionProvider() {
-        return DataHolder.getInstance().getPermissionProvider();
     }
 }

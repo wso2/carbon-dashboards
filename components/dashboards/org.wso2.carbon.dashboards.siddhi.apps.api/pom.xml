@@ -75,7 +75,8 @@
 
     <properties>
         <export.package>
-            org.wso2.carbon.siddhi.apps.api.*
+            !org.wso2.carbon.siddhi.apps.api.rest.internal,
+            org.wso2.carbon.siddhi.apps.api.rest*;
         </export.package>
         <import.package>
             org.osgi.framework.*;version="${org.osgi.framework.version.range}",
@@ -94,6 +95,9 @@
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
             com.google.gson.*; version="${gson.version.range}",
         </import.package>
+        <private.package>
+            org.wso2.carbon.siddhi.apps.api.rest.internal.*
+        </private.package>
         <carbon.component>
             osgi.service; objectClass="org.wso2.carbon.uiserver.spi.RestApiProvider"
         </carbon.component>

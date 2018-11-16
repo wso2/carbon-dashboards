@@ -19,7 +19,7 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.worker;
 
-import org.wso2.carbon.siddhi.apps.api.rest.config.DataHolder;
+import org.wso2.carbon.siddhi.apps.api.rest.internal.DataHolder;
 
 /**
  * REST API service used to access service stub for calling workers
