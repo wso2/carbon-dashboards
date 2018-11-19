@@ -266,6 +266,7 @@ class GadgetsGenerationWizard extends Component {
             queryFunction,
             customWidgetInputs,
             systemWidgetInputs,
+            queryFunctionImpl
         });
     }
 
@@ -395,6 +396,7 @@ class GadgetsGenerationWizard extends Component {
                         providersList={this.state.providersList}
                         providerType={this.state.providerType}
                         configuration={this.state.providerConfiguration}
+                        queryFunctionImpl = {this.state.queryFunctionImpl}
                         configRenderTypes={this.state.providerConfigRenderTypes}
                         configRenderHints={this.state.providerConfigRenderHints}
                         configProviderDescription={this.state.providerDescription}

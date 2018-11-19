@@ -119,7 +119,7 @@ class ProviderConfigurator extends Component {
             case (Types.inputFields.DYNAMIC_SIDDHI_CODE):
                 return (
                     <DynamicQueryComponent
-                        value={this.props.configuration[value].queryFunction}
+                        value={this.props.configuration[value].queryFunctionImpl}
                         handleDynamicQuery={this.props.handleDynamicQuery}
                         inputHint={inputHint}
                     />

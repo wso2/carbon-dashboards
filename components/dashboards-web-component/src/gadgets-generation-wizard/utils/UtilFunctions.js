@@ -62,7 +62,10 @@ class UtilFunctions {
     static getDefaultH2Config() {
         return {
             "datasourceName": "SAMPLE_DB",
-            "queryData": {"queryFunction": "return \"select * from TRANSACTIONS_TABLE\";"},
+            "queryData": {
+                "queryFunction": "return \"select * from TRANSACTIONS_TABLE\";",
+                "queryFunctionImpl": "return \"select * from TRANSACTIONS_TABLE\";"
+            },
             "tableName": "TRANSACTIONS_TABLE",
             "incrementalColumn": "CREDITCARDNO",
             "timeColumns": "",
