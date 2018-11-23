@@ -46,11 +46,13 @@ class ProviderConfigurator extends Component {
     }
 
     componentWillReceiveProps(props) {
-        this.setState({
-            configuration: props.configuration,
-            configRenderTypes: props.configRenderTypes,
-            configRenderHints: props.configRenderHints || {},
-        });
+        if (this.state.configuration !== props.configuration) {
+            this.setState({
+                configuration: props.configuration,
+                configRenderTypes: props.configRenderTypes,
+                configRenderHints: props.configRenderHints || {},
+            });
+        }
     }
 
     /**
@@ -119,7 +121,7 @@ class ProviderConfigurator extends Component {
             case (Types.inputFields.DYNAMIC_SIDDHI_CODE):
                 return (
                     <DynamicQueryComponent
-                        value={this.props.configuration[value].queryFunction}
+                        value={this.props.configuration[value].queryFunctionImpl}
                         handleDynamicQuery={this.props.handleDynamicQuery}
                         inputHint={inputHint}
                     />

@@ -109,6 +109,15 @@ class DynamicQueryComponent extends Component {
         }
     }
 
+    componentWillReceiveProps(props) {
+        if (this.state.queryValue !== props.value) {
+            this.props.handleDynamicQuery(props.value, this.customWidgetInputs, this.state.systemWidgetInputs,
+                DynamicQueryComponent.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),
+                DynamicQueryComponent.generateFunctionDefaultValues(this.state.systemWidgetInputs, this.customWidgetInputs));
+            this.setState({queryValue: props.value});
+        }
+    }
+
     componentDidMount() {
         this.props.handleDynamicQuery(this.state.queryValue, this.customWidgetInputs, this.state.systemWidgetInputs,
             DynamicQueryComponent.generateFunctionParameters(this.state.systemWidgetInputs, this.customWidgetInputs),

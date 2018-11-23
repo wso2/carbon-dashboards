@@ -53,8 +53,8 @@ const Configurations = {
                     colorDomain: [],
                 },
             ],
-            legend: false,
-            maxLength: '',
+            legend: true,
+            maxLength: '30',
             style: {
                 axisLabelColor: '',
                 legendTitleColor: '',
@@ -82,7 +82,7 @@ const Configurations = {
                     colorScale: [],
                     colorDomain: [],
                     fill: '',
-                    maxLength: '',
+                    maxLength: '30',
                 },
             ],
             style: {
@@ -112,7 +112,7 @@ const Configurations = {
                     colorDomain: [],
                 },
             ],
-            legend: false,
+            legend: true,
             style: {
                 legendTitleColor: '',
                 legendTextColor: '',
@@ -153,7 +153,7 @@ const Configurations = {
                     ],
                 },
             ],
-            maxLength: '',
+            maxLength: '30',
             filterable: false,
             pagination: false,
             append: false,

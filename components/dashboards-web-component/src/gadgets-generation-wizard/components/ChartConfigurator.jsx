@@ -41,6 +41,14 @@ import UtilFunctions from '../utils/UtilFunctions';
 import DataPublishingComponent from './DataPublishingComponent';
 
 /**
+ * Style constants
+ */
+const styles = {
+    errorMessage: {backgroundColor: '#FF5722', color: 'white'},
+    successMessage: {backgroundColor: '#4CAF50', color: 'white'},
+};
+
+/**
  * Displays chart type selection, and the properties related to the selected chart type
  */
 class ChartConfigurator extends Component {
@@ -180,43 +188,43 @@ class ChartConfigurator extends Component {
         let isGadgetConfigurationValid = false;
         switch (this.state.chartType) {
             case (Types.chart.lineAreaBarChart):
-                if (UtilFunctions.validateLineChartConfiguration(configuration)) {
+                if (UtilFunctions.validateLineChartConfiguration(configuration, this)) {
                     configuration = UtilFunctions.prepareLineChartConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
             case (Types.chart.pieChart):
-                if (UtilFunctions.validatePieChartConfiguration(configuration)) {
+                if (UtilFunctions.validatePieChartConfiguration(configuration, this)) {
                     configuration = UtilFunctions.preparePieChartConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
             case (Types.chart.scatterChart):
-                if (UtilFunctions.validateScatterChartConfiguration(configuration)) {
+                if (UtilFunctions.validateScatterChartConfiguration(configuration, this)) {
                     configuration = UtilFunctions.prepareScatterChartConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
             case (Types.chart.numberChart):
-                if (UtilFunctions.validateNumberChartConfiguration(configuration)) {
+                if (UtilFunctions.validateNumberChartConfiguration(configuration, this)) {
                     configuration = UtilFunctions.prepareNumberChartConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
             case (Types.chart.geographicalChart):
-                if (UtilFunctions.validateGeographicalChartConfiguration(configuration)) {
+                if (UtilFunctions.validateGeographicalChartConfiguration(configuration, this)) {
                     configuration = UtilFunctions.prepareGeographicalChartConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
             case (Types.chart.tableChart):
-                if (UtilFunctions.validateTableChartConfiguration(configuration)) {
+                if (UtilFunctions.validateTableChartConfiguration(configuration, this)) {
                     configuration = UtilFunctions.prepareTableChartConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
                 break;
             case (Types.chart.searchBar):
-                if (UtilFunctions.validateSearchBarConfiguration(configuration)) {
+                if (UtilFunctions.validateSearchBarConfiguration(configuration, this)) {
                     configuration = UtilFunctions.prepareSearchBarConfiguration(configuration);
                     isGadgetConfigurationValid = true;
                 }
@@ -237,10 +245,11 @@ class ChartConfigurator extends Component {
      * Displays snackbar with the given message
      * @param message
      */
-    displaySnackbar(message) {
+    displaySnackbar(message, styleKey) {
         this.setState({
             snackbarMessage: message,
             isSnackbarOpen: true,
+            snackbarMessageType: styleKey,
         });
     }
 
@@ -315,6 +324,7 @@ class ChartConfigurator extends Component {
                             isSnackbarOpen: false,
                         });
                     }}
+                    bodyStyle={styles[this.state.snackbarMessageType]}
                 />
             </div>
         );
