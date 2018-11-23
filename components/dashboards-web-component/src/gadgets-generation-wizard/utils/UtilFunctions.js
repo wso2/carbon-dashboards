@@ -63,7 +63,6 @@ class UtilFunctions {
         return {
             "datasourceName": "SAMPLE_DB",
             "queryData": {
-                "queryFunction": "return \"select * from TRANSACTIONS_TABLE\";",
                 "queryFunctionImpl": "return \"select * from TRANSACTIONS_TABLE\";"
             },
             "tableName": "TRANSACTIONS_TABLE",
@@ -103,17 +102,24 @@ class UtilFunctions {
      * @param configuration
      * @returns {boolean}
      */
-    static validateLineChartConfiguration(configuration) {
-        // Main chart properties and number of sub charts
-        if (configuration.x === '' ||
-            configuration.maxLength === '' ||
-            configuration.charts.length === 0) {
+    static validateLineChartConfiguration(configuration, chatConfigs) {
+        if (configuration.x === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'X Axis\' to proceed", "errorMessage");
+            return false;
+        } else if (configuration.maxLength === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'Max Length\' to proceed", "errorMessage");
+            return false;
+        } else if (configuration.charts.length === 0) {
             return false;
         }
         // Sub chart properties
         for (const subChart of configuration.charts) {
-            if (subChart.type === '' ||
-                subChart.y === '') {
+            if (subChart.type === '') {
+                chatConfigs.displaySnackbar("Please fill the required field \'Chart Type\' to proceed",
+                    "errorMessage");
+                return false;
+            } else if (subChart.y === '') {
+                chatConfigs.displaySnackbar("Please fill the required field \'Y Axis\' to proceed", "errorMessage");
                 return false;
             }
         }
@@ -221,14 +227,22 @@ class UtilFunctions {
      * @param configuration
      * @returns {boolean}
      */
-    static validateScatterChartConfiguration(configuration) {
+    static validateScatterChartConfiguration(configuration, chatConfigs) {
         // Main chart properties and number of sub charts
         if (configuration.charts.length === 0) {
             return false;
         }
         // Sub chart properties
         for (const subChart of configuration.charts) {
-            if (subChart.x === '' || subChart.y === '' || subChart.maxLength === '') {
+            if (subChart.x === '') {
+                chatConfigs.displaySnackbar("Please fill the required field \'X Axis\' to proceed", "errorMessage");
+                return false;
+            } else if (subChart.y === '') {
+                chatConfigs.displaySnackbar("Please fill the required field \'Y Axis\' to proceed", "errorMessage");
+                return false;
+            } else if (subChart.maxLength === '') {
+                chatConfigs.displaySnackbar("Please fill the required field \'Max Length of Data\' to proceed",
+                    "errorMessage");
                 return false;
             }
         }
@@ -311,11 +325,13 @@ class UtilFunctions {
      * Validates the given configuration of a pie chart
      * @param configuration
      */
-    static validatePieChartConfiguration(configuration) {
+    static validatePieChartConfiguration(configuration, chatConfigs) {
         switch (configuration.chartType) {
             case (Types.chart.gauge):
                 if (configuration.colorScale) {
                     if (configuration.colorScale.length === 0) {
+                        chatConfigs.displaySnackbar("Please fill the required field \'Color Scale Length\' to" +
+                            " proceed", "errorMessage");
                         return false;
                     }
                 }
@@ -323,7 +339,15 @@ class UtilFunctions {
             default :
                 break;
         }
-        return (!(configuration.charts[0].x === '' || configuration.charts[0].color === ''));
+        if (configuration.charts[0].x === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'Data Field\' to proceed", "errorMessage");
+            return false;
+        } else if (configuration.charts[0].color === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'Color Categorize Field\' to proceed",
+                "errorMessage");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -385,9 +409,15 @@ class UtilFunctions {
      * Validates the given configuration of a number chart
      * @param configuration
      */
-    static validateNumberChartConfiguration(configuration) {
-        return (!(configuration.x === '' ||
-            configuration.title === ''));
+    static validateNumberChartConfiguration(configuration, chatConfigs) {
+        if (configuration.x === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'Number Field\' to proceed", "errorMessage");
+            return false;
+        } else if (configuration.title === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'Title\' to proceed", "errorMessage");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -409,13 +439,20 @@ class UtilFunctions {
      * Validates the given configuration of a geographical chart
      * @param configuration
      */
-    static validateGeographicalChartConfiguration(configuration) {
+    static validateGeographicalChartConfiguration(configuration, chatConfigs) {
         if (configuration.x === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'Field Values - Plotted in Choropleth\' to" +
+                " proceed", "errorMessage");
             return false;
         }
 
         for (const subChart of configuration.charts) {
-            if (subChart.y === '' || subChart.mapType === '') {
+            if (subChart.y === '') {
+                chatConfigs.displaySnackbar("Please fill the required field \'Field Values - Plotted in Map\' to" +
+                    " proceed", "errorMessage");
+                return false;
+            } else if (subChart.mapType === '') {
+                chatConfigs.displaySnackbar("Please fill the required field \'Map Type\' to proceed", "errorMessage");
                 return false;
             }
         }
@@ -446,8 +483,9 @@ class UtilFunctions {
      * Validates the given configuration of a table chart
      * @param configuration
      */
-    static validateTableChartConfiguration(configuration) {
+    static validateTableChartConfiguration(configuration, chatConfigs) {
         if (configuration.maxLength === '') {
+            chatConfigs.displaySnackbar("Please fill the required field \'Max Data Length\' to proceed", "errorMessage");
             return false;
         }
         return (configuration.charts[0].filterColumn.indexOf(true) !== -1);

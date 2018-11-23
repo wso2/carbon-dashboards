@@ -49,7 +49,15 @@ const appContext = window.contextPath;
  */
 const styles = {
     messageBox: { textAlign: 'center', color: 'white' },
-    errorMessage: { backgroundColor: '#FF5722', color: 'white' },
+    errorMessage: {
+        backgroundColor: '#FF5722',
+        color: 'white',
+        height: 'auto',
+        width: 'auto',
+        lineHeight: 1,
+        paddingTop: 15,
+        paddingBottom: 15
+    },
     successMessage: { backgroundColor: '#4CAF50', color: 'white' },
     completedStepperText: { color: 'white' },
     activeStepperText: { color: '#0097A7' },
@@ -104,6 +112,7 @@ class GadgetsGenerationWizard extends Component {
         this.handleDynamicQuery = this.handleDynamicQuery.bind(this);
         this.handleMetadataInput = this.handleMetadataInput.bind(this);
         GadgetsGenerationWizard.getPubSubConfiguration = GadgetsGenerationWizard.getPubSubConfiguration.bind(this);
+        this.validateProviderConfiguration = this.validateProviderConfiguration.bind(this);
     }
 
     componentDidMount() {
@@ -151,6 +160,7 @@ class GadgetsGenerationWizard extends Component {
                     providerType,
                     providerConfigRenderTypes: response.data[0],
                     providerConfiguration: response.data[1],
+                    queryFunctionImpl: response.data[1].queryData.queryFunctionImpl,
                     providerConfigRenderHints: response.data[2],
                     providerDescription: response.data[3] || '',
                 });
@@ -201,8 +211,6 @@ class GadgetsGenerationWizard extends Component {
                 previewConfiguration: previewableConfig,
                 previewGadget: true,
             });
-        } else {
-            this.displaySnackbar('Please fill in required values', 'errorMessage');
         }
     }
 
@@ -241,8 +249,6 @@ class GadgetsGenerationWizard extends Component {
             }).catch(() => {
                 this.displaySnackbar('Failed to save the widget', 'errorMessage');
             });
-        } else {
-            this.displaySnackbar('Please fill in required values', 'errorMessage');
         }
     }
 
@@ -327,7 +333,8 @@ class GadgetsGenerationWizard extends Component {
             case (1):
                 // Validate provider configuration and get metadata
                 if (!UtilFunctions.isEmpty(this.state.providerConfiguration)) {
-                    if (this.state.providerType !== 'WebSocketProvider') {
+                    if (this.state.providerType !== 'WebSocketProvider' &&
+                        this.validateProviderConfiguration(this.state.providerConfiguration)) {
                         eval(this.state.providerConfiguration.queryData.queryFunction);
                         this.state.providerConfiguration.queryData.query = this.getQuery.apply(
                             this, this.widgetInputsDefaultValues);
@@ -342,8 +349,8 @@ class GadgetsGenerationWizard extends Component {
                                     metadata: response.data,
                                 }));
                             }
-                        }).catch(() => {
-                            this.displaySnackbar('Unable to process your request', 'errorMessage');
+                        }).catch((e) => {
+                            this.displaySnackbar(e.response.data, 'errorMessage');
                         });
                     } else if (ProviderConfigurator.validateWebSocketConfig(this.state.providerConfiguration) &&
                             ProviderConfigurator.validateMetadata(this.state.metadata)) {
@@ -356,8 +363,6 @@ class GadgetsGenerationWizard extends Component {
                             stepIndex: stepIndex + 1,
                             finished: stepIndex >= 2,
                         });
-                    } else {
-                        this.displaySnackbar('Please provide a valid configuration', 'errorMessage');
                     }
                 } else {
                     this.displaySnackbar('Please select a data provider and configure details', 'errorMessage');
@@ -369,6 +374,22 @@ class GadgetsGenerationWizard extends Component {
             default:
                 this.displaySnackbar('Invalid step', 'errorMessage');
         }
+    }
+
+    validateProviderConfiguration(providerConfig) {
+        if (providerConfig.queryData.queryFunctionImpl === '') {
+            this.displaySnackbar('Please fill Javascript code segment to generate the query for data retrieving',
+                'errorMessage');
+            return false;
+        }
+        for (const key in providerConfig) {
+            if (key !== 'timeColumns' && providerConfig[key] === '') {
+                this.displaySnackbar('Please fill the required field \'' + key + '\' for a valid configuration',
+                    'errorMessage');
+                return false;
+            }
+        }
+        return true;
     }
 
     handlePrev() {
