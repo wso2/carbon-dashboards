@@ -51,7 +51,7 @@ class Scatter extends Component {
                         <StreamProperty
                             id="x"
                             value={this.props.configuration.x}
-                            fieldName="X axis field*"
+                            fieldName="X Axis*"
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             metadata={this.props.metadata}
                             fullWidth
@@ -60,7 +60,7 @@ class Scatter extends Component {
                         <StreamProperty
                             id="y"
                             value={this.props.configuration.y}
-                            fieldName="Y axis field*"
+                            fieldName="Y Axis*"
                             filter={Types.dataset.metadata.linear}
                             onChange={(id, value) => this.props.handleSubChartPropertyChange(id, value)}
                             metadata={this.props.metadata}
